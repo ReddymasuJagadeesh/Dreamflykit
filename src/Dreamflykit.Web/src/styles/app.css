@@ -1,0 +1,201 @@
+﻿@import "tailwindcss";
+
+/*
+|--------------------------------------------------------------------------
+| Dreamflykit Design System
+|--------------------------------------------------------------------------
+*/
+
+@theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --color-dfk-primary-50: #eff6ff;
+    --color-dfk-primary-100: #dbeafe;
+    --color-dfk-primary-200: #bfdbfe;
+    --color-dfk-primary-300: #93c5fd;
+    --color-dfk-primary-400: #60a5fa;
+    --color-dfk-primary-500: #3b82f6;
+    --color-dfk-primary-600: #2563eb;
+    --color-dfk-primary-700: #1d4ed8;
+    --color-dfk-primary-800: #1e40af;
+    --color-dfk-primary-900: #1e3a8a;
+    --color-dfk-accent-400: #a78bfa;
+    --color-dfk-accent-500: #8b5cf6;
+    --color-dfk-accent-600: #7c3aed;
+    --color-dfk-dark-900: #0f172a;
+    --color-dfk-dark-950: #020617;
+    --shadow-dfk-soft: 0 10px 40px rgba(15, 23, 42, 0.08);
+    --shadow-dfk-card: 0 20px 60px rgba(15, 23, 42, 0.10);
+    --shadow-dfk-glow: 0 0 60px rgba(59, 130, 246, 0.20);
+    --radius-dfk: 1.25rem;
+}
+
+@source "../../Views";
+@source "../../Models";
+@source "../../Controllers";
+
+/*
+|--------------------------------------------------------------------------
+| Base
+|--------------------------------------------------------------------------
+*/
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    background: #f8fafc;
+    color: #0f172a;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a {
+    text-decoration: none;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Premium utility classes
+|--------------------------------------------------------------------------
+*/
+
+.dfk-container {
+    width: min(100% - 2rem, 1280px);
+    margin-inline: auto;
+}
+
+.dfk-glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.dfk-gradient-text {
+    background: linear-gradient( 135deg, #2563eb 0%, #7c3aed 50%, #db2777 100% );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.dfk-hero-gradient {
+    background: radial-gradient( circle at 15% 20%, rgba(59, 130, 246, 0.22), transparent 32% ), radial-gradient( circle at 85% 30%, rgba(124, 58, 237, 0.18), transparent 30% ), radial-gradient( circle at 50% 100%, rgba(219, 39, 119, 0.12), transparent 35% ), linear-gradient( 135deg, #f8fbff 0%, #eef4ff 48%, #f7f2ff 100% );
+}
+
+.dfk-card {
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 1.25rem;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: var(--shadow-dfk-soft);
+    transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
+}
+
+    .dfk-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-dfk-card);
+        border-color: rgba(96, 165, 250, 0.45);
+    }
+
+.dfk-button-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.875rem;
+    background: linear-gradient( 135deg, #2563eb, #7c3aed );
+    color: white;
+    font-weight: 700;
+    padding: 0.85rem 1.25rem;
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.24);
+    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+    .dfk-button-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 36px rgba(37, 99, 235, 0.30);
+        filter: brightness(1.04);
+    }
+
+    .dfk-button-primary:active {
+        transform: translateY(0);
+    }
+
+/*
+|--------------------------------------------------------------------------
+| Motion
+|--------------------------------------------------------------------------
+*/
+
+.dfk-float {
+    animation: dfk-float 6s ease-in-out infinite;
+}
+
+@keyframes dfk-float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+.dfk-pulse-glow {
+    animation: dfk-pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes dfk-pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(59, 130, 246, 0);
+    }
+
+    50% {
+        box-shadow: 0 0 50px rgba(59, 130, 246, 0.20);
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| Accessibility
+|--------------------------------------------------------------------------
+*/
+
+:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.45);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| Mobile
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 640px) {
+    .dfk-container {
+        width: min(100% - 1.25rem, 1280px);
+    }
+}

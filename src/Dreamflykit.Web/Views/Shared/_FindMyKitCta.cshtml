@@ -1,0 +1,49 @@
+﻿<section class="dfk-section">
+
+    <div class="dfk-container">
+
+        <div class="relative overflow-hidden rounded-[28px] bg-[#06265f] px-6 py-10 text-white shadow-xl sm:px-10 lg:px-14">
+
+            <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-400/20 blur-3xl"></div>
+
+            <div class="absolute -bottom-20 left-1/3 h-64 w-64 rounded-full bg-orange-400/15 blur-3xl"></div>
+
+            <div class="relative flex flex-col items-start justify-between gap-7 lg:flex-row lg:items-center">
+
+                <div class="max-w-2xl">
+
+                    <p class="text-sm font-bold uppercase tracking-[0.2em] text-orange-300">
+                        Not sure what you need?
+                    </p>
+
+                    <h2 class="mt-3 text-3xl font-black sm:text-4xl">
+                        Find the right kit for your journey.
+                    </h2>
+
+                    <p class="mt-4 max-w-xl text-sm leading-7 text-blue-100 sm:text-base">
+                        Tell us your destination and arrival date,
+                        and we'll show you suitable Dreamflykit options.
+                    </p>
+
+                </div>
+
+                <a
+                    asp-controller="Kits"
+                    asp-action="FindMyKit"
+                    class="dfk-btn dfk-btn-orange shrink-0">
+
+                    Find My Kit
+
+                    <span aria-hidden="true">
+                        →
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

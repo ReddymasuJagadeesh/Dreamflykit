@@ -1,0 +1,1103 @@
+/* ============================================================
+   DREAMFLYKIT
+   Premium E-Commerce Homepage
+   Standalone CSS - no Tailwind dependency
+============================================================ */
+
+
+:root {
+    --dk-blue: #063f91;
+    --dk-blue-2: #075bc8;
+    --dk-blue-dark: #052b68;
+    --dk-orange: #ff7900;
+    --dk-orange-2: #ff9418;
+    --dk-text: #10254d;
+    --dk-muted: #64748b;
+    --dk-border: #e4e9f1;
+    --dk-bg: #ffffff;
+    --dk-soft: #f7faff;
+    --dk-radius: 14px;
+    --dk-radius-lg: 18px;
+    --dk-shadow: 0 8px 30px rgba(14, 45, 90, .08);
+    --dk-shadow-hover: 0 16px 40px rgba(14, 45, 90, .14);
+}
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    margin: 0;
+    background: var(--dk-bg);
+    color: var(--dk-text);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+button,
+input {
+    font: inherit;
+}
+
+
+button {
+    cursor: pointer;
+}
+
+
+img {
+    max-width: 100%;
+}
+
+
+/* ============================================================
+   GLOBAL CONTAINER
+============================================================ */
+
+.dk-shell {
+    width: min( 1420px, calc(100% - 36px) );
+    margin: 0 auto;
+}
+
+
+/* ============================================================
+   TOP UTILITY
+============================================================ */
+
+.dk-utility {
+    height: 42px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--dk-border);
+    font-size: 13px;
+}
+
+
+.dk-utility-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+
+.dk-utility-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+
+.dk-utility-link {
+    white-space: nowrap;
+    color: var(--dk-text);
+    font-weight: 600;
+}
+
+
+    .dk-utility-link:hover {
+        color: var(--dk-blue-2);
+    }
+
+
+.dk-utility-divider {
+    width: 1px;
+    height: 17px;
+    background: #d9dee7;
+}
+
+
+.dk-utility-spacer {
+    flex: 1;
+}
+
+
+.dk-icon {
+    color: var(--dk-blue-2);
+    font-weight: 700;
+}
+
+
+/* ============================================================
+   MAIN HEADER
+============================================================ */
+
+.dk-main-header {
+    height: 108px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--dk-border);
+}
+
+
+.dk-main-header-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+
+/* ============================================================
+   BRAND
+============================================================ */
+
+.dk-brand {
+    width: 245px;
+    flex: 0 0 245px;
+    display: flex;
+    align-items: center;
+}
+
+
+.dk-brand-image {
+    width: 225px;
+    height: 82px;
+    object-fit: contain;
+    object-position: left center;
+    display: block;
+}
+
+
+/* ============================================================
+   SEARCH
+============================================================ */
+
+.dk-search {
+    height: 48px;
+    flex: 1;
+    min-width: 280px;
+    max-width: 640px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #dce3ed;
+    border-radius: 8px;
+    background: #ffffff;
+    overflow: hidden;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+
+    .dk-search:focus-within {
+        border-color: #9bb9e8;
+        box-shadow: 0 0 0 4px rgba(7, 91, 200, .08);
+    }
+
+
+.dk-search-icon {
+    width: 52px;
+    display: grid;
+    place-items: center;
+    color: #6d7c93;
+}
+
+
+    .dk-search-icon svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+    }
+
+
+.dk-search input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--dk-text);
+    font-size: 14px;
+}
+
+
+    .dk-search input::placeholder {
+        color: #8290a4;
+    }
+
+
+.dk-search button {
+    width: 58px;
+    height: 100%;
+    border: 0;
+    background: var(--dk-orange);
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+}
+
+
+    .dk-search button:hover {
+        background: var(--dk-orange-2);
+    }
+
+
+    .dk-search button svg {
+        width: 21px;
+        height: 21px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+    }
+
+
+/* ============================================================
+   ACCOUNT
+============================================================ */
+
+.dk-account {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+
+.dk-account-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #f5f8fc;
+    color: var(--dk-blue-2);
+}
+
+
+    .dk-account-icon svg {
+        width: 23px;
+        height: 23px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+    }
+
+
+.dk-account-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+
+    .dk-account-text small {
+        color: #34435d;
+        font-size: 11px;
+    }
+
+
+    .dk-account-text strong {
+        font-size: 13px;
+    }
+
+
+/* ============================================================
+   MENU
+============================================================ */
+
+.dk-menu-button {
+    border: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--dk-text);
+}
+
+
+    .dk-menu-button svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+    }
+
+
+    .dk-menu-button span {
+        font-size: 11px;
+        line-height: 1.15;
+        text-align: left;
+    }
+
+
+/* ============================================================
+   CART
+============================================================ */
+
+.dk-cart {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-shrink: 0;
+}
+
+
+.dk-cart-icon {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    color: var(--dk-text);
+}
+
+
+    .dk-cart-icon svg {
+        width: 25px;
+        height: 25px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+    }
+
+
+.dk-cart-count {
+    position: absolute;
+    top: -1px;
+    right: -2px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--dk-blue-2);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+
+.dk-cart strong {
+    font-size: 13px;
+}
+
+
+/* ============================================================
+   CATEGORY NAV
+============================================================ */
+
+.dk-category-nav {
+    height: 58px;
+    background: white;
+    border-bottom: 1px solid var(--dk-border);
+}
+
+
+.dk-category-nav-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+
+.dk-category-link {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 12px;
+    color: #1e3154;
+    font-size: 12px;
+    font-weight: 650;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color .2s ease, border-color .2s ease;
+}
+
+
+    .dk-category-link:hover,
+    .dk-category-active {
+        color: var(--dk-blue-2);
+        border-bottom-color: var(--dk-blue-2);
+    }
+
+
+    .dk-category-link span {
+        font-size: 15px;
+    }
+
+
+.dk-find-kit {
+    margin-left: auto;
+    min-width: 190px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    border-radius: 10px;
+    background: linear-gradient( 135deg, var(--dk-orange), var(--dk-orange-2) );
+    color: white;
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 8px 20px rgba(255, 121, 0, .22);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+
+    .dk-find-kit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 26px rgba(255, 121, 0, .30);
+    }
+
+
+/* ============================================================
+   MOBILE NAV
+============================================================ */
+
+.dk-mobile-navigation {
+    display: none;
+    padding: 12px;
+    background: white;
+    border-bottom: 1px solid var(--dk-border);
+}
+
+
+    .dk-mobile-navigation a {
+        display: block;
+        padding: 14px;
+        border-bottom: 1px solid var(--dk-border);
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+
+        .dk-mobile-navigation a:last-child {
+            border-bottom: 0;
+        }
+
+
+.dk-mobile-find-kit {
+    margin-top: 10px;
+    text-align: center;
+    border-radius: 8px;
+    background: var(--dk-orange);
+    color: white !important;
+}
+
+
+/* ============================================================
+   HERO
+============================================================ */
+
+.dk-hero {
+    width: min( 1420px, calc(100% - 36px) );
+    margin: 16px auto 0;
+    overflow: hidden;
+    border-radius: 16px;
+    background: #dcecff;
+    box-shadow: var(--dk-shadow);
+}
+
+
+.dk-hero-image {
+    width: 100%;
+    display: block;
+    height: auto;
+}
+
+
+/* ============================================================
+   BENEFITS
+============================================================ */
+
+.dk-benefits {
+    width: min( 1420px, calc(100% - 36px) );
+    margin: 18px auto 0;
+    background: white;
+    border: 1px solid var(--dk-border);
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(20, 50, 90, .05);
+}
+
+
+.dk-benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+}
+
+
+.dk-benefit {
+    min-height: 96px;
+    padding: 17px 20px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    border-right: 1px solid var(--dk-border);
+}
+
+
+    .dk-benefit:last-child {
+        border-right: 0;
+    }
+
+
+.dk-benefit-icon {
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: #f0f6ff;
+    color: var(--dk-blue-2);
+}
+
+
+    .dk-benefit-icon svg {
+        width: 23px;
+        height: 23px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+    }
+
+
+.dk-benefit strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 13px;
+    color: var(--dk-blue-dark);
+}
+
+
+.dk-benefit span {
+    display: block;
+    color: #6a778d;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+
+/* ============================================================
+   HOME SECTIONS
+============================================================ */
+
+.dk-section {
+    width: min( 1420px, calc(100% - 36px) );
+    margin: 30px auto 0;
+}
+
+
+.dk-section-header {
+    margin-bottom: 17px;
+}
+
+
+.dk-section-header-row {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+
+.dk-section-title {
+    margin: 0;
+    color: var(--dk-blue-dark);
+    font-size: 22px;
+    line-height: 1.2;
+}
+
+
+.dk-section-description {
+    margin: 7px 0 0;
+    color: #6b778b;
+    font-size: 12px;
+}
+
+
+.dk-view-all {
+    color: var(--dk-blue-2);
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+
+/* ============================================================
+   COUNTRY KITS
+============================================================ */
+
+.dk-country-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+}
+
+
+.dk-country-card {
+    overflow: hidden;
+    background: white;
+    border: 1px solid var(--dk-border);
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(20, 50, 90, .05);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+
+    .dk-country-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--dk-shadow-hover);
+    }
+
+
+.dk-country-image {
+    width: 100%;
+    aspect-ratio: 1.34 / 1;
+    object-fit: cover;
+    display: block;
+}
+
+
+.dk-country-content {
+    padding: 12px;
+}
+
+
+    .dk-country-content h3 {
+        margin: 0 0 7px;
+        font-size: 15px;
+        color: var(--dk-blue-dark);
+    }
+
+
+.dk-country-description {
+    min-height: 32px;
+    margin: 0;
+    color: #6b778b;
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+
+.dk-country-price {
+    margin-top: 9px;
+    color: var(--dk-blue-2);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+
+/* ============================================================
+   CATEGORIES
+============================================================ */
+
+.dk-category-grid-home {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+}
+
+
+.dk-category-card-home {
+    min-height: 156px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: white;
+    border: 1px solid var(--dk-border);
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(20, 50, 90, .04);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+
+    .dk-category-card-home:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--dk-shadow-hover);
+    }
+
+
+.dk-category-image {
+    width: 82px;
+    height: 82px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 11px;
+}
+
+
+.dk-category-placeholder {
+    width: 82px;
+    height: 82px;
+    margin-bottom: 11px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: linear-gradient( 135deg, #e9f2ff, #fff1df );
+    color: var(--dk-blue-2);
+    font-size: 30px;
+}
+
+
+.dk-category-card-home h3 {
+    max-width: 125px;
+    margin: 0;
+    color: #182b4e;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+
+/* ============================================================
+   BOTTOM BENEFITS
+============================================================ */
+
+.dk-bottom-benefits {
+    width: min( 1420px, calc(100% - 36px) );
+    margin: 28px auto 22px;
+    padding: 11px 18px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-radius: 10px;
+    background: linear-gradient( 100deg, #073e91, #075fcf );
+    color: white;
+}
+
+
+.dk-bottom-benefit {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-right: 1px solid rgba(255,255,255,.18);
+}
+
+
+    .dk-bottom-benefit:last-child {
+        border-right: 0;
+    }
+
+
+.dk-bottom-benefit-icon {
+    font-size: 22px;
+}
+
+
+.dk-bottom-benefit strong {
+    display: block;
+    font-size: 11px;
+}
+
+
+.dk-bottom-benefit span {
+    display: block;
+    margin-top: 2px;
+    font-size: 9px;
+    opacity: .78;
+}
+
+
+/* ============================================================
+   FOOTER
+============================================================ */
+
+.dk-footer {
+    margin-top: 40px;
+    background: #071d45;
+    color: white;
+}
+
+
+.dk-footer-inner {
+    width: min( 1420px, calc(100% - 36px) );
+    margin: 0 auto;
+    padding: 42px 0 20px;
+}
+
+
+.dk-footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    gap: 50px;
+}
+
+
+.dk-footer-logo {
+    width: 200px;
+    height: auto;
+    background: white;
+    border-radius: 8px;
+}
+
+
+.dk-footer p {
+    max-width: 350px;
+    color: rgba(255,255,255,.70);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+
+.dk-footer h3 {
+    margin: 0 0 14px;
+    font-size: 14px;
+}
+
+
+.dk-footer a {
+    display: block;
+    margin-bottom: 9px;
+    color: rgba(255,255,255,.68);
+    font-size: 12px;
+}
+
+
+    .dk-footer a:hover {
+        color: white;
+    }
+
+
+.dk-footer-bottom {
+    margin-top: 30px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,.12);
+    display: flex;
+    justify-content: space-between;
+    color: rgba(255,255,255,.55);
+    font-size: 10px;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 1200px) {
+
+    .dk-category-link {
+        padding: 0 8px;
+        font-size: 11px;
+    }
+
+
+    .dk-country-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+
+    .dk-category-grid-home {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+
+    .dk-brand {
+        width: 200px;
+        flex-basis: 200px;
+    }
+
+
+    .dk-brand-image {
+        width: 190px;
+    }
+}
+
+
+@media (max-width: 950px) {
+
+    .dk-utility-item:nth-child(3),
+    .dk-utility-divider:nth-child(4) {
+        display: none;
+    }
+
+
+    .dk-account-text {
+        display: none;
+    }
+
+
+    .dk-category-nav {
+        overflow-x: auto;
+    }
+
+
+    .dk-category-nav-inner {
+        width: max-content;
+        min-width: 100%;
+    }
+
+
+    .dk-find-kit {
+        position: sticky;
+        right: 0;
+    }
+
+
+    .dk-benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+
+    .dk-benefit:nth-child(2) {
+        border-right: 0;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .dk-shell {
+        width: calc(100% - 24px);
+    }
+
+
+    .dk-utility {
+        display: none;
+    }
+
+
+    .dk-main-header {
+        height: 78px;
+    }
+
+
+    .dk-main-header-inner {
+        gap: 12px;
+    }
+
+
+    .dk-brand {
+        width: 150px;
+        flex-basis: 150px;
+    }
+
+
+    .dk-brand-image {
+        width: 145px;
+        height: 62px;
+    }
+
+
+    .dk-search {
+        display: none;
+    }
+
+
+    .dk-menu-button span {
+        display: none;
+    }
+
+
+    .dk-category-nav {
+        display: none;
+    }
+
+
+    .dk-mobile-navigation.is-open {
+        display: block;
+    }
+
+
+    .dk-hero {
+        width: calc(100% - 24px);
+        margin-top: 12px;
+        border-radius: 12px;
+    }
+
+
+    .dk-benefits {
+        width: calc(100% - 24px);
+    }
+
+
+    .dk-benefits-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .dk-benefit {
+        border-right: 0;
+        border-bottom: 1px solid var(--dk-border);
+    }
+
+
+        .dk-benefit:last-child {
+            border-bottom: 0;
+        }
+
+
+    .dk-section {
+        width: calc(100% - 24px);
+    }
+
+
+    .dk-country-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+
+    .dk-category-grid-home {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+
+    .dk-bottom-benefits {
+        width: calc(100% - 24px);
+        grid-template-columns: 1fr;
+    }
+
+
+    .dk-bottom-benefit {
+        justify-content: flex-start;
+        padding: 9px 12px;
+        border-right: 0;
+        border-bottom: 1px solid rgba(255,255,255,.15);
+    }
+
+
+        .dk-bottom-benefit:last-child {
+            border-bottom: 0;
+        }
+
+
+    .dk-footer-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .dk-country-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .dk-category-grid-home {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+
+    .dk-footer-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .dk-footer-bottom {
+        flex-direction: column;
+        gap: 8px;
+    }
+}

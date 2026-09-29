@@ -1,0 +1,20 @@
+{
+  "name": "dreamflykit-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "css:build": "npx @tailwindcss/cli -i ./src/input.css -o ./wwwroot/css/app.css",
+    "css:watch": "npx @tailwindcss/cli -i ./src/input.css -o ./wwwroot/css/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "latest",
+    "tailwindcss": "latest",
+    "typescript": "latest"
+  },
+  "dependencies": {
+    "alpinejs": "latest",
+    "gsap": "latest",
+    "lucide": "latest",
+    "swiper": "^14.3.0"
+  }
+}

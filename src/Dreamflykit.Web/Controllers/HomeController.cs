@@ -1,32 +1,44 @@
-using Dreamflykit.Web.Models;
+using Dreamflykit.Application.Geography;
+using Dreamflykit.Web.Models.Home;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
-namespace Dreamflykit.Web.Controllers
+namespace Dreamflykit.Web.Controllers;
+
+public sealed class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ICountryService _countryService;
+
+    public HomeController(
+        ICountryService countryService)
     {
-        private readonly ILogger<HomeController> _logger;
+        _countryService = countryService;
+    }
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+    [HttpGet]
+    public async Task<IActionResult> Index(
+        CancellationToken cancellationToken)
+    {
+        var countries =
+            await _countryService
+                .GetActiveCountriesWithKitsAsync(
+                    cancellationToken);
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+        var model =
+            new HomeViewModel
+            {
+                CountryKits = countries
+                    .Select(country =>
+                        new HomeCountryKitViewModel
+                        {
+                            CountryName =
+                                country.CountryName,
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+                            CountryRouteValue =
+                                country.CountryName
+                        })
+                    .ToList()
+            };
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        return View(model);
     }
 }

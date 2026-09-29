@@ -1,8 +1,698 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model Dreamflykit.Web.Models.Home.HomeViewModel
+
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+<div class="dk-home-page">
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="dk-hero">
+
+        <img src="~/images/home/hero.webp"
+             alt="Dreamflykit - Your Journey. Our Kit."
+             class="dk-hero-image" />
+
+    </section>
+
+
+    <!-- =====================================================
+         BENEFITS
+    ====================================================== -->
+
+    <section class="dk-benefits">
+
+        <div class="dk-benefits-grid">
+
+
+            <div class="dk-benefit">
+
+                <div class="dk-benefit-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 7h18v13H3z"></path>
+                        <path d="M3 7l3-4h12l3 4"></path>
+                        <path d="M8 11h8"></path>
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        Curated for Students
+                    </strong>
+
+                    <span>
+                        Handpicked essentials for every abroad journey
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="dk-benefit">
+
+                <div class="dk-benefit-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3l8 4v5c0 5-3.5 8-8 10-4.5-2-8-5-8-10V7z"></path>
+                        <path d="m8 12 2.5 2.5L16 9"></path>
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        Best Quality Products
+                    </strong>
+
+                    <span>
+                        100% genuine & premium brands
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="dk-benefit">
+
+                <div class="dk-benefit-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2v20"></path>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14.5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        Affordable Prices
+                    </strong>
+
+                    <span>
+                        Best value for students
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="dk-benefit">
+
+                <div class="dk-benefit-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 7h11v10H3z"></path>
+                        <path d="M14 10h4l3 3v4h-7z"></path>
+                        <circle cx="7" cy="19" r="2"></circle>
+                        <circle cx="18" cy="19" r="2"></circle>
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        Fast & Reliable Delivery
+                    </strong>
+
+                    <span>
+                        On-time delivery worldwide
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="dk-benefit">
+
+                <div class="dk-benefit-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 5h16v12H4z"></path>
+                        <path d="M8 21h8"></path>
+                        <path d="M12 17v4"></path>
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        24/7 Customer Support
+                    </strong>
+
+                    <span>
+                        We're always here to help you
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         TOP COUNTRY KITS
+    ====================================================== -->
+
+    <section class="dk-section">
+
+
+        <div class="dk-section-header">
+
+            <div class="dk-section-header-row">
+
+                <div>
+
+                    <h2 class="dk-section-title">
+                        Top Country Kits
+                    </h2>
+
+                    <p class="dk-section-description">
+                        Essential kits specially curated for students
+                        traveling to top study destinations.
+                    </p>
+
+                </div>
+
+                <a href="/Kits/FindMyKit"
+                   class="dk-view-all">
+
+                    Find My Kit →
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="dk-country-grid">
+
+
+            <a href="/kits/USA"
+               class="dk-country-card">
+
+                <img src="~/images/countries/usa.webp"
+                     alt="USA Kit"
+                     class="dk-country-image" />
+
+                <div class="dk-country-content">
+
+                    <h3>USA</h3>
+
+                    <p class="dk-country-description">
+                        Study in the Land of Opportunities
+                    </p>
+
+                    <div class="dk-country-price">
+                        From ₹4,999
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <a href="/kits/UK"
+               class="dk-country-card">
+
+                <img src="~/images/countries/uk.webp"
+                     alt="UK Kit"
+                     class="dk-country-image" />
+
+                <div class="dk-country-content">
+
+                    <h3>UK</h3>
+
+                    <p class="dk-country-description">
+                        Experience World-Class Education
+                    </p>
+
+                    <div class="dk-country-price">
+                        From ₹4,499
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <a href="/kits/Canada"
+               class="dk-country-card">
+
+                <img src="~/images/countries/canada.webp"
+                     alt="Canada Kit"
+                     class="dk-country-image" />
+
+                <div class="dk-country-content">
+
+                    <h3>Canada</h3>
+
+                    <p class="dk-country-description">
+                        Your Future, Our Essentials
+                    </p>
+
+                    <div class="dk-country-price">
+                        From ₹4,499
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <a href="/kits/Australia"
+               class="dk-country-card">
+
+                <img src="~/images/countries/australia.webp"
+                     alt="Australia Kit"
+                     class="dk-country-image" />
+
+                <div class="dk-country-content">
+
+                    <h3>Australia</h3>
+
+                    <p class="dk-country-description">
+                        Discover. Learn. Grow Abroad.
+                    </p>
+
+                    <div class="dk-country-price">
+                        From ₹4,999
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <a href="/kits/Germany"
+               class="dk-country-card">
+
+                <img src="~/images/countries/germany.webp"
+                     alt="Germany Kit"
+                     class="dk-country-image" />
+
+                <div class="dk-country-content">
+
+                    <h3>Germany</h3>
+
+                    <p class="dk-country-description">
+                        Excellence in Education Awaits
+                    </p>
+
+                    <div class="dk-country-price">
+                        From ₹4,999
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <a href="/kits/Ireland"
+               class="dk-country-card">
+
+                <img src="~/images/countries/ireland.webp"
+                     alt="Ireland Kit"
+                     class="dk-country-image" />
+
+                <div class="dk-country-content">
+
+                    <h3>Ireland</h3>
+
+                    <p class="dk-country-description">
+                        Your Gateway to Global Success
+                    </p>
+
+                    <div class="dk-country-price">
+                        From ₹4,499
+                    </div>
+
+                </div>
+
+            </a>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SHOP BY CATEGORY
+    ====================================================== -->
+
+    <section class="dk-section">
+
+
+        <div class="dk-section-header">
+
+            <div class="dk-section-header-row">
+
+                <div>
+
+                    <h2 class="dk-section-title">
+                        Shop By Category
+                    </h2>
+
+                    <p class="dk-section-description">
+                        Find everything you need in one place.
+                    </p>
+
+                </div>
+
+                <a href="/Categories"
+                   class="dk-view-all">
+
+                    View All Categories →
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="dk-category-grid-home">
+
+
+            <a href="/categories/study-essentials"
+               class="dk-category-card-home">
+
+                <div class="dk-category-placeholder">
+                    🎓
+                </div>
+
+                <h3>
+                    Study<br />
+                    Essentials
+                </h3>
+
+            </a>
+
+
+            <a href="/categories/electronics"
+               class="dk-category-card-home">
+
+                <div class="dk-category-placeholder">
+                    🎧
+                </div>
+
+                <h3>
+                    Electronics<br />
+                    & Accessories
+                </h3>
+
+            </a>
+
+
+            <a href="/categories/travel-essentials"
+               class="dk-category-card-home">
+
+                <div class="dk-category-placeholder">
+                    🧳
+                </div>
+
+                <h3>
+                    Travel<br />
+                    Essentials
+                </h3>
+
+            </a>
+
+
+            <a href="/categories/organizers"
+               class="dk-category-card-home">
+
+                <div class="dk-category-placeholder">
+                    📁
+                </div>
+
+                <h3>
+                    Documents<br />
+                    & Organizers
+                </h3>
+
+            </a>
+
+
+            <a href="/categories/personal-care"
+               class="dk-category-card-home">
+
+                <div class="dk-category-placeholder">
+                    🧴
+                </div>
+
+                <h3>
+                    Health &<br />
+                    Wellness
+                </h3>
+
+            </a>
+
+
+            <a href="/categories/fashion"
+               class="dk-category-card-home">
+
+                <div class="dk-category-placeholder">
+                    👟
+                </div>
+
+                <h3>
+                    Clothing &<br />
+                    Footwear
+                </h3>
+
+            </a>
+
+
+            <a href="/categories/room-living"
+               class="dk-category-card-home">
+
+                <div class="dk-category-placeholder">
+                    🛏
+                </div>
+
+                <h3>
+                    Room &<br />
+                    Living
+                </h3>
+
+            </a>
+
+
+            <a href="/categories/kitchen-utensils"
+               class="dk-category-card-home">
+
+                <div class="dk-category-placeholder">
+                    🍳
+                </div>
+
+                <h3>
+                    Kitchen &<br />
+                    Dining
+                </h3>
+
+            </a>
+
+
+            <a href="/categories/electronics"
+               class="dk-category-card-home">
+
+                <div class="dk-category-placeholder">
+                    🔌
+                </div>
+
+                <h3>
+                    Electricals<br />
+                    & Adapters
+                </h3>
+
+            </a>
+
+
+            <a href="/categories/personal-care"
+               class="dk-category-card-home">
+
+                <div class="dk-category-placeholder">
+                    🧴
+                </div>
+
+                <h3>
+                    Personal<br />
+                    Care
+                </h3>
+
+            </a>
+
+
+            <a href="/categories/food-snacks"
+               class="dk-category-card-home">
+
+                <div class="dk-category-placeholder">
+                    🍱
+                </div>
+
+                <h3>
+                    Food &<br />
+                    Snacks
+                </h3>
+
+            </a>
+
+
+            <a href="/categories/premium-products"
+               class="dk-category-card-home">
+
+                <div class="dk-category-placeholder">
+                    🎁
+                </div>
+
+                <h3>
+                    Gifts &<br />
+                    Accessories
+                </h3>
+
+            </a>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         BOTTOM BENEFITS
+    ====================================================== -->
+
+    <section class="dk-bottom-benefits">
+
+
+        <div class="dk-bottom-benefit">
+
+            <span class="dk-bottom-benefit-icon">
+                🚚
+            </span>
+
+            <div>
+
+                <strong>
+                    Worldwide Shipping
+                </strong>
+
+                <span>
+                    Delivering across destinations
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="dk-bottom-benefit">
+
+            <span class="dk-bottom-benefit-icon">
+                🛡
+            </span>
+
+            <div>
+
+                <strong>
+                    100% Secure Payments
+                </strong>
+
+                <span>
+                    Safe checkout
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="dk-bottom-benefit">
+
+            <span class="dk-bottom-benefit-icon">
+                ★
+            </span>
+
+            <div>
+
+                <strong>
+                    Premium Quality
+                </strong>
+
+                <span>
+                    Genuine products
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="dk-bottom-benefit">
+
+            <span class="dk-bottom-benefit-icon">
+                ♧
+            </span>
+
+            <div>
+
+                <strong>
+                    24/7 Customer Support
+                </strong>
+
+                <span>
+                    We're here to help
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="dk-bottom-benefit">
+
+            <span class="dk-bottom-benefit-icon">
+                📦
+            </span>
+
+            <div>
+
+                <strong>
+                    Easy Returns & Refunds
+                </strong>
+
+                <span>
+                    Simple return process
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
 </div>

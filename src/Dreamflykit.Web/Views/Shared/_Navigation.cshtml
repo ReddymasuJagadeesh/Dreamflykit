@@ -1,0 +1,187 @@
+﻿<nav x-data="{ open: false }"
+     class="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
+
+    <div class="dfk-container">
+
+        <div class="flex h-20 items-center justify-between">
+
+            <!-- BRAND -->
+
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="group flex items-center gap-3">
+
+                <span class="flex h-11 w-11 items-center justify-center rounded-2xl
+                    bg-gradient-to-br from-blue-600 via-violet-600 to-fuchsia-500
+                    text-lg font-black text-white shadow-lg
+                    transition-transform duration-300
+                    group-hover:scale-105">
+
+                    ✦
+
+                </span>
+
+                <span class="hidden sm:block">
+
+                    <span class="block text-lg font-black tracking-tight text-slate-950">
+                        Dreamflykit
+                    </span>
+
+                    <span class="block text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                        Your Journey. Our Kit.
+                    </span>
+
+                </span>
+
+            </a>
+
+
+            <!-- DESKTOP NAV -->
+
+            <div class="hidden items-center gap-7 lg:flex">
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="text-sm font-semibold text-slate-700 transition hover:text-blue-600">
+                    Home
+                </a>
+
+                <a href="/About"
+                   class="text-sm font-semibold text-slate-700 transition hover:text-blue-600">
+                    About Us
+                </a>
+
+                <a href="/Contact"
+                   class="text-sm font-semibold text-slate-700 transition hover:text-blue-600">
+                    Contact
+                </a>
+
+                <a href="/Consultancy"
+                   class="text-sm font-semibold text-slate-700 transition hover:text-blue-600">
+                    Consultancy
+                </a>
+
+                <a href="/Education-Loans"
+                   class="text-sm font-semibold text-slate-700 transition hover:text-blue-600">
+                    Education Loans
+                </a>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="hidden items-center gap-3 lg:flex">
+
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a href="/Account/Profile"
+                       class="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100">
+                        Account
+                    </a>
+                }
+                else
+                {
+                    <a href="/Account/Login"
+                       class="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100">
+                        Login
+                    </a>
+
+                    <a href="/Account/Register"
+                       class="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100">
+                        Sign Up
+                    </a>
+                }
+
+                <a asp-controller="Kits"
+                   asp-action="FindMyKit"
+                   class="dfk-button-primary">
+
+                    <span>Find My Kit</span>
+
+                    <span aria-hidden="true">
+                        →
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <!-- MOBILE BUTTON -->
+
+            <button type="button"
+                    x-on:click="open = !open"
+                    class="flex h-11 w-11 items-center justify-center rounded-xl
+                border border-slate-200 bg-white text-slate-800
+                lg:hidden"
+                    aria-label="Toggle navigation">
+
+                <span x-show="!open">
+                    ☰
+                </span>
+
+                <span x-show="open"
+                      x-cloak>
+                    ×
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <!-- MOBILE MENU -->
+
+        <div x-show="open"
+             x-cloak
+             x-transition
+             class="border-t border-slate-200 py-5 lg:hidden">
+
+            <div class="flex flex-col gap-2">
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="rounded-xl px-4 py-3 font-semibold text-slate-700 hover:bg-slate-50">
+                    Home
+                </a>
+
+                <a href="/About"
+                   class="rounded-xl px-4 py-3 font-semibold text-slate-700 hover:bg-slate-50">
+                    About Us
+                </a>
+
+                <a href="/Contact"
+                   class="rounded-xl px-4 py-3 font-semibold text-slate-700 hover:bg-slate-50">
+                    Contact
+                </a>
+
+                <a href="/Consultancy"
+                   class="rounded-xl px-4 py-3 font-semibold text-slate-700 hover:bg-slate-50">
+                    Consultancy
+                </a>
+
+                <a href="/Education-Loans"
+                   class="rounded-xl px-4 py-3 font-semibold text-slate-700 hover:bg-slate-50">
+                    Education Loans
+                </a>
+
+                <div class="my-2 border-t border-slate-200"></div>
+
+                <a asp-controller="Kits"
+                   asp-action="FindMyKit"
+                   class="dfk-button-primary w-full">
+
+                    Find My Kit
+
+                    <span>→</span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>

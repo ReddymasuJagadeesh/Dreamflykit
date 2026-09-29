@@ -1,0 +1,93 @@
+﻿@model Dreamflykit.Web.Models.Kits.CountryKitsViewModel
+
+@{
+    ViewData["Title"] = $"{Model.CountryName} Kits";
+}
+
+<div class="mx-auto max-w-7xl px-4 py-12">
+
+    <div class="mb-10">
+        <p class="text-sm font-semibold uppercase tracking-wide">
+            Dreamflykit Kits
+        </p>
+
+        <h1 class="mt-2 text-3xl font-bold">
+            Kits for @Model.CountryName
+        </h1>
+
+        <p class="mt-3">
+            Choose from the available Dreamflykit kits for
+            your destination.
+        </p>
+    </div>
+
+    @if (Model.Kits.Count == 0)
+    {
+        <div class="rounded-2xl border p-8">
+            <h2 class="text-xl font-semibold">
+                No kits available
+            </h2>
+
+            <p class="mt-2">
+                There are currently no active kits configured
+                for this destination.
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="grid gap-6 md:grid-cols-3">
+
+            @foreach (var kit in Model.Kits)
+            {
+                <article class="rounded-2xl border p-6">
+
+                    @if (kit.IsFeatured)
+                    {
+                        <span class="text-sm font-semibold">
+                            Featured
+                        </span>
+                    }
+
+                    <h2 class="mt-2 text-xl font-bold">
+                        @kit.Name
+                    </h2>
+
+                    <p class="mt-2 text-sm font-medium">
+                        @kit.SizeName Kit
+                    </p>
+
+                    <p class="mt-4 text-sm">
+                        @kit.Description
+                    </p>
+
+                    <div class="mt-6">
+                        <span class="text-sm line-through">
+                            ₹@kit.Mrp.ToString("N2")
+                        </span>
+
+                        <span class="ml-2 text-xl font-bold">
+                            ₹@kit.SellingPrice.ToString("N2")
+                        </span>
+                    </div>
+
+                    @if (kit.DiscountPercentage > 0)
+                    {
+                        <p class="mt-2 text-sm font-semibold">
+                            @kit.DiscountPercentage% off
+                        </p>
+                    }
+
+                    <a asp-controller="Kits"
+                       asp-action="Details"
+                       asp-route-kitSlug="@kit.Slug"
+                       class="mt-6 block rounded-lg border px-5 py-3 text-center font-semibold">
+                        View Kit
+                    </a>
+
+                </article>
+            }
+
+        </div>
+    }
+</div>

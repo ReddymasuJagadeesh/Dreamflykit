@@ -1,0 +1,71 @@
+﻿<section class="dfk-section bg-[#f8fafc]">
+
+    <div class="dfk-container">
+
+        <div class="mb-7 flex items-end justify-between gap-4">
+
+            <div>
+                <p class="text-sm font-bold uppercase tracking-[0.18em] text-[#ff7a00]">
+                    Shop
+                </p>
+
+                <h2 class="dfk-section-title mt-2">
+                    Shop By Category
+                </h2>
+
+                <p class="dfk-section-subtitle">
+                    Find everything you need for study,
+                    travel and everyday life.
+                </p>
+            </div>
+
+            <a
+                href="#"
+                class="hidden text-sm font-bold text-[#0d5bd7] sm:inline-flex">
+                View All Categories →
+            </a>
+
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+
+            @{
+                var categories = new[]
+                {
+                    ("Study Essentials", "🎓"),
+                    ("Electronics & Accessories", "💻"),
+                    ("Travel Essentials", "🧳"),
+                    ("Documents & Organizers", "📁"),
+                    ("Health & Wellness", "🩺"),
+                    ("Clothing & Footwear", "👕"),
+                    ("Room & Living", "🛏"),
+                    ("Kitchen & Dining", "🍳"),
+                    ("Electricals & Adapters", "🔌"),
+                    ("Personal Care", "🧴"),
+                    ("Food & Snacks", "🍪"),
+                    ("Gifts & Accessories", "🎁")
+                };
+            }
+
+            @foreach (var category in categories)
+            {
+                <a
+                    href="#"
+                    class="dfk-card group p-4 text-center">
+
+                    <div class="mx-auto flex aspect-square max-w-[110px] items-center justify-center rounded-full bg-blue-50 text-4xl transition-transform duration-300 group-hover:scale-110">
+                        @category.Item2
+                    </div>
+
+                    <h3 class="mt-4 text-sm font-bold leading-5 text-[#06265f]">
+                        @category.Item1
+                    </h3>
+
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+</section>

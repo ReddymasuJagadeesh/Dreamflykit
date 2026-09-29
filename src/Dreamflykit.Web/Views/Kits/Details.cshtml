@@ -1,0 +1,65 @@
+﻿@model Dreamflykit.Web.Models.Kits.KitDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="mx-auto max-w-5xl px-4 py-12">
+
+    <div class="mb-8">
+        @if (Model.IsFeatured)
+        {
+            <p class="text-sm font-semibold uppercase tracking-wide">
+                Featured Kit
+            </p>
+        }
+
+        <h1 class="mt-2 text-4xl font-bold">
+            @Model.Name
+        </h1>
+
+        <p class="mt-3 text-lg">
+            @Model.SizeName Kit
+        </p>
+    </div>
+
+    <div class="rounded-2xl border p-8">
+
+        <div>
+            <h2 class="text-2xl font-semibold">
+                About this kit
+            </h2>
+
+            <p class="mt-4">
+                @Model.Description
+            </p>
+        </div>
+
+        <div class="mt-8">
+
+            <span class="text-lg line-through">
+                ₹@Model.Mrp.ToString("N2")
+            </span>
+
+            <span class="ml-3 text-3xl font-bold">
+                ₹@Model.SellingPrice.ToString("N2")
+            </span>
+
+            @if (Model.DiscountPercentage > 0)
+            {
+                <p class="mt-2 font-semibold">
+                    @Model.DiscountPercentage% off
+                </p>
+            }
+
+        </div>
+
+        <div class="mt-8">
+            <button type="button"
+                    class="rounded-lg px-6 py-3 font-semibold">
+                Add Kit to Cart
+            </button>
+        </div>
+
+    </div>
+</div>
