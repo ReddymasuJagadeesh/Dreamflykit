@@ -1,0 +1,132 @@
+@model Dreamflykit.Web.Models.Addressing.AddressListViewModel
+@{
+    ViewData["Title"] = "My Addresses";
+    Layout = "_Layout";
+}
+
+<div class="dk-page-container dk-address-page">
+    <div class="dk-profile-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="dk-profile-sidebar">
+            <div class="dk-user-brief">
+                <div class="dk-avatar-circle">
+                    @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
+                </div>
+                <div>
+                    <span class="dk-user-greeting">Hello,</span>
+                    <h3 class="dk-user-display-name">@User.Identity?.Name</h3>
+                </div>
+            </div>
+
+            <nav class="dk-profile-menu">
+                <a asp-controller="Orders" asp-action="Index" class="dk-menu-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span>My Orders</span>
+                </a>
+                <a asp-controller="Address" asp-action="Index" class="dk-menu-item active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span>Manage Addresses</span>
+                </a>
+                <a asp-controller="Cart" asp-action="Index" class="dk-menu-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+                    </svg>
+                    <span>My Cart</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dk-profile-content">
+            <div class="dk-content-header">
+                <div>
+                    <h1 class="dk-section-title">Manage Addresses</h1>
+                    <p class="dk-section-subtitle">Save and manage delivery addresses for quick checkout</p>
+                </div>
+                <a asp-action="Create" asp-route-returnUrl="@Model.ReturnUrl" class="dk-btn dk-btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    <span>Add New Address</span>
+                </a>
+            </div>
+
+            @if (TempData["SuccessMessage"] is string success)
+            {
+                <div class="dk-alert dk-alert-success">@success</div>
+            }
+            @if (TempData["ErrorMessage"] is string error)
+            {
+                <div class="dk-alert dk-alert-danger">@error</div>
+            }
+
+            @if (Model.Addresses.Count == 0)
+            {
+                <div class="dk-empty-state">
+                    <div class="dk-empty-icon">📍</div>
+                    <h3>No Addresses Saved Yet</h3>
+                    <p>Add your delivery address so we can deliver your kits swiftly and securely.</p>
+                    <a asp-action="Create" asp-route-returnUrl="@Model.ReturnUrl" class="dk-btn dk-btn-primary">Add Address Now</a>
+                </div>
+            }
+            else
+            {
+                <div class="dk-address-grid">
+                    @foreach (var addr in Model.Addresses)
+                    {
+                        <div class="dk-address-card @(addr.IsDefault ? "is-default" : "")">
+                            <div class="dk-address-badge-row">
+                                <span class="dk-badge dk-badge-outline">@addr.AddressType</span>
+                                @if (addr.IsDefault)
+                                {
+                                    <span class="dk-badge dk-badge-accent">Default</span>
+                                }
+                            </div>
+
+                            <div class="dk-address-details">
+                                <h4 class="dk-address-name">@addr.FullName</h4>
+                                <p class="dk-address-phone">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                    </svg>
+                                    @addr.Phone
+                                </p>
+                                <p class="dk-address-text">
+                                    @addr.AddressLine1
+                                    @if (!string.IsNullOrWhiteSpace(addr.AddressLine2))
+                                    {
+                                        <span>, @addr.AddressLine2</span>
+                                    }
+                                </p>
+                                <p class="dk-address-location">
+                                    @addr.City, @addr.State - <strong>@addr.PostalCode</strong>, @addr.Country
+                                </p>
+                            </div>
+
+                            <div class="dk-address-actions">
+                                <a asp-action="Edit" asp-route-id="@addr.AddressId" asp-route-returnUrl="@Model.ReturnUrl" class="dk-btn-sm dk-btn-link">Edit</a>
+                                
+                                @if (!addr.IsDefault)
+                                {
+                                    <form asp-action="SetDefault" asp-route-id="@addr.AddressId" method="post" class="dk-inline-form">
+                                        <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                                        <button type="submit" class="dk-btn-sm dk-btn-link">Set as Default</button>
+                                    </form>
+                                }
+
+                                <form asp-action="Delete" asp-route-id="@addr.AddressId" method="post" class="dk-inline-form" onsubmit="return confirm('Are you sure you want to delete this address?');">
+                                    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                                    <button type="submit" class="dk-btn-sm dk-btn-link-danger">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </main>
+    </div>
+</div>

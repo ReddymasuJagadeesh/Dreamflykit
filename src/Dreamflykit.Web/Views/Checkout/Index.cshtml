@@ -1,0 +1,233 @@
+@model Dreamflykit.Web.Models.Orders.CheckoutViewModel
+@{
+    ViewData["Title"] = "Checkout — Dreamflykit";
+    Layout = "_Layout";
+}
+
+<div class="dk-page-container dk-checkout-page">
+    <div class="dk-checkout-layout">
+        <!-- Left: 3-Step Accordion/Cards -->
+        <div class="dk-checkout-steps">
+            
+            <form asp-controller="Checkout" asp-action="PlaceOrder" method="post" id="checkout-form">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="dk-validation-summary"></div>
+
+                <!-- STEP 1: DELIVERY ADDRESS -->
+                <div class="dk-checkout-step-card is-active" id="step-address">
+                    <div class="dk-step-header">
+                        <span class="dk-step-number">1</span>
+                        <h2 class="dk-step-title">DELIVERY ADDRESS</h2>
+                    </div>
+
+                    <div class="dk-step-body">
+                        <span asp-validation-for="SelectedShippingAddressId" class="dk-field-error"></span>
+
+                        @if (Model.Addresses.Count == 0)
+                        {
+                            <div class="dk-step-empty-address">
+                                <p>No delivery address found in your account.</p>
+                                <a asp-controller="Address" asp-action="Create" asp-route-returnUrl="/checkout" class="dk-btn dk-btn-primary">
+                                    + Add New Address
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="dk-address-selection-list">
+                                @foreach (var addr in Model.Addresses)
+                                {
+                                    var isSelected = addr.AddressId == Model.SelectedShippingAddressId;
+                                    <label class="dk-address-select-card @(isSelected ? "selected" : "")" for="addr_@addr.AddressId">
+                                        <div class="dk-radio-col">
+                                            <input type="radio" 
+                                                   id="addr_@addr.AddressId" 
+                                                   name="SelectedShippingAddressId" 
+                                                   value="@addr.AddressId" 
+                                                   @(isSelected ? "checked" : "") 
+                                                   onchange="document.querySelectorAll('.dk-address-select-card').forEach(c => c.classList.remove('selected')); this.closest('.dk-address-select-card').classList.add('selected');" />
+                                        </div>
+                                        <div class="dk-address-info-col">
+                                            <div class="dk-addr-header-row">
+                                                <strong class="dk-addr-name">@addr.FullName</strong>
+                                                <span class="dk-badge dk-badge-outline">@addr.AddressType</span>
+                                                <span class="dk-addr-phone">@addr.Phone</span>
+                                            </div>
+                                            <p class="dk-addr-text">
+                                                @addr.AddressLine1
+                                                @if (!string.IsNullOrWhiteSpace(addr.AddressLine2))
+                                                {
+                                                    <span>, @addr.AddressLine2</span>
+                                                }
+                                                , @addr.City, @addr.State - <strong>@addr.PostalCode</strong>
+                                            </p>
+                                        </div>
+                                        <div class="dk-addr-edit-col">
+                                            <a asp-controller="Address" asp-action="Edit" asp-route-id="@addr.AddressId" asp-route-returnUrl="/checkout" class="dk-btn-sm dk-btn-link">Edit</a>
+                                        </div>
+                                    </label>
+                                }
+                            </div>
+
+                            <div class="dk-add-new-address-link">
+                                <a asp-controller="Address" asp-action="Create" asp-route-returnUrl="/checkout" class="dk-btn-sm dk-btn-outline">
+                                    + Add A New Address
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- STEP 2: ORDER SUMMARY -->
+                <div class="dk-checkout-step-card is-active" id="step-summary">
+                    <div class="dk-step-header">
+                        <span class="dk-step-number">2</span>
+                        <h2 class="dk-step-title">ORDER SUMMARY (@Model.Cart.TotalItems items)</h2>
+                    </div>
+
+                    <div class="dk-step-body">
+                        <div class="dk-checkout-items-list">
+                            @foreach (var item in Model.Cart.Items)
+                            {
+                                <div class="dk-checkout-item-row">
+                                    <div class="dk-checkout-item-thumb">
+                                        @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                                        {
+                                            <img src="@item.ImageUrl" alt="@item.ProductName" />
+                                        }
+                                        else
+                                        {
+                                            <div class="dk-thumb-placeholder">📦</div>
+                                        }
+                                    </div>
+                                    <div class="dk-checkout-item-info">
+                                        <h4 class="dk-item-title">@item.ProductName</h4>
+                                        <p class="dk-item-variant">Variant: <strong>@item.VariantName</strong> &bull; SKU: @item.Sku</p>
+                                        <div class="dk-item-price-row">
+                                            <span class="dk-item-price">₹@item.UnitPrice.ToString("N0")</span>
+                                            @if (item.Mrp > item.UnitPrice)
+                                            {
+                                                <span class="dk-item-mrp">₹@item.Mrp.ToString("N0")</span>
+                                                <span class="dk-item-discount">@item.DiscountPercentage% off</span>
+                                            }
+                                            <span class="dk-item-qty">Qty: @item.Quantity</span>
+                                        </div>
+                                    </div>
+                                    <div class="dk-checkout-item-total">
+                                        <strong>₹@item.LineTotal.ToString("N0")</strong>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: PAYMENT OPTIONS -->
+                <div class="dk-checkout-step-card is-active" id="step-payment">
+                    <div class="dk-step-header">
+                        <span class="dk-step-number">3</span>
+                        <h2 class="dk-step-title">PAYMENT OPTIONS</h2>
+                    </div>
+
+                    <div class="dk-step-body">
+                        <div class="dk-payment-options-list">
+                            <!-- Cash on Delivery -->
+                            <label class="dk-payment-option-card selected" for="pay_cod">
+                                <div class="dk-radio-col">
+                                    <input type="radio" id="pay_cod" name="PaymentMethod" value="COD" checked 
+                                           onchange="document.querySelectorAll('.dk-payment-option-card').forEach(c => c.classList.remove('selected')); this.closest('.dk-payment-option-card').classList.add('selected');" />
+                                </div>
+                                <div class="dk-payment-info-col">
+                                    <div class="dk-pay-title-row">
+                                        <strong>Cash on Delivery (COD)</strong>
+                                        <span class="dk-badge dk-badge-accent">Recommended</span>
+                                    </div>
+                                    <p class="dk-pay-subtext">Pay cash or UPI at the time of delivery at your doorstep.</p>
+                                </div>
+                            </label>
+
+                            <!-- Online Payment via Cashfree -->
+                            <label class="dk-payment-option-card" for="pay_online">
+                                <div class="dk-radio-col">
+                                    <input type="radio" id="pay_online" name="PaymentMethod" value="ONLINE"
+                                           onchange="document.querySelectorAll('.dk-payment-option-card').forEach(c => c.classList.remove('selected')); this.closest('.dk-payment-option-card').classList.add('selected');" />
+                                </div>
+                                <div class="dk-payment-info-col">
+                                    <div class="dk-pay-title-row">
+                                        <strong>Online Payment (UPI, Cards, NetBanking)</strong>
+                                        <span class="dk-badge dk-badge-outline">Cashfree Secure</span>
+                                    </div>
+                                    <p class="dk-pay-subtext">Instant verification with 256-bit encrypted bank gateway.</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="dk-checkout-place-row">
+                            <p class="dk-order-confirmation-notice">
+                                By placing your order, you agree to Dreamflykit's Terms of Service and Privacy Policy.
+                            </p>
+                            <button type="submit" class="dk-btn dk-btn-primary dk-btn-lg dk-btn-pulse">
+                                CONFIRM &amp; PLACE ORDER (₹@Model.Cart.Subtotal.ToString("N0"))
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Right: Price Details Sidebar -->
+        <aside class="dk-checkout-sidebar">
+            <div class="dk-price-card">
+                <h3 class="dk-price-card-title">PRICE DETAILS</h3>
+                
+                <div class="dk-price-row">
+                    <span>Price (@Model.Cart.TotalItems items)</span>
+                    <span>₹@Model.Cart.TotalMrp.ToString("N0")</span>
+                </div>
+
+                <div class="dk-price-row dk-discount-text">
+                    <span>Discount</span>
+                    <span>− ₹@Model.Cart.TotalDiscount.ToString("N0")</span>
+                </div>
+
+                <div class="dk-price-row">
+                    <span>Delivery Charges</span>
+                    <span class="dk-free-badge">FREE</span>
+                </div>
+
+                <div class="dk-price-divider"></div>
+
+                <div class="dk-price-row dk-total-row">
+                    <strong>Total Payable</strong>
+                    <strong>₹@Model.Cart.Subtotal.ToString("N0")</strong>
+                </div>
+
+                <div class="dk-savings-callout">
+                    🎉 You will save ₹@Model.Cart.TotalDiscount.ToString("N0") on this order
+                </div>
+
+                <div class="dk-trust-badges">
+                    <div class="dk-trust-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        <span>Safe and Secure Payments</span>
+                    </div>
+                    <div class="dk-trust-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        </svg>
+                        <span>100% Authentic Kits</span>
+                    </div>
+                    <div class="dk-trust-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                        </svg>
+                        <span>3 Days Easy Return Window</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>

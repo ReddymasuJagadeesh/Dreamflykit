@@ -1,0 +1,127 @@
+@model Dreamflykit.Web.Areas.Admin.Models.AdminProductListViewModel
+
+@{
+    ViewData["Title"] = "Products & Catalog Management";
+}
+
+<div class="dk-admin-card">
+    <div class="dk-admin-card-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+        <div>
+            <h3 class="dk-admin-card-title" style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">
+                Catalog Inventory (@Model.TotalCount products)
+            </h3>
+            <p style="margin: 4px 0 0; font-size: 13px; color: #64748b;">
+                Create, update, manage variants, pricing, and S3 media galleries for all kit products.
+            </p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <a href="/Admin/Products/Create" class="dk-btn dk-btn-primary" style="padding: 8px 18px; font-size: 13px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(7,91,200,0.25);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                + Add Product
+            </a>
+
+            <form method="get" action="/Admin/Products" style="display: flex; gap: 6px;">
+                <input type="text"
+                       name="search"
+                       value="@Model.SearchTerm"
+                       placeholder="Search products..."
+                       class="dk-input"
+                       style="width: 220px; padding: 7px 12px; font-size: 13px;" />
+                <button type="submit" class="dk-btn dk-btn-secondary" style="padding: 7px 14px; font-size: 13px;">Search</button>
+                @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+                {
+                    <a href="/Admin/Products" class="dk-btn dk-btn-outline" style="padding: 7px 12px; font-size: 13px;">Clear</a>
+                }
+            </form>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="margin: 16px 20px 0; padding: 12px 16px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; color: #065f46; font-size: 13px; font-weight: 600;">
+            ✓ @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="dk-admin-table-wrap" style="margin-top: 16px;">
+        <table class="dk-admin-table">
+            <thead>
+                <tr>
+                    <th style="width: 50px;">Image</th>
+                    <th>Product Name & Slug</th>
+                    <th>Category</th>
+                    <th>Selling Price</th>
+                    <th>MRP</th>
+                    <th>Status</th>
+                    <th style="text-align: right; width: 220px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Products.Count == 0)
+                {
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">
+                            No products found. Click "+ Add Product" to list your first item.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var p in Model.Products)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@(string.IsNullOrWhiteSpace(p.ImageUrl) ? "/images/products/product-placeholder.webp" : p.ImageUrl)"
+                                     alt="@p.Name"
+                                     style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc;" />
+                            </td>
+                            <td>
+                                <div>
+                                    <strong style="color: #0f172a; font-size: 14px;">@p.Name</strong>
+                                    @if (p.IsFeatured)
+                                    {
+                                        <span style="font-size: 10px; background: #fef3c7; color: #b45309; padding: 1px 6px; border-radius: 4px; font-weight: 800; margin-left: 6px;">FEATURED</span>
+                                    }
+                                </div>
+                                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
+                                    <code>/Products/@p.Slug</code>
+                                    <a href="/Products/@p.Slug" target="_blank" rel="noopener" style="color: #075bc8; text-decoration: none; margin-left: 6px;">view ↗</a>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="dk-status-badge dk-status-confirmed">@p.CategoryName</span>
+                            </td>
+                            <td><strong style="color: #059669; font-size: 14px;">₹@p.SellingPrice.ToString("N0")</strong></td>
+                            <td style="color: #94a3b8; text-decoration: line-through; font-size: 13px;">₹@p.Mrp.ToString("N0")</td>
+                            <td>
+                                @if (p.IsActive)
+                                {
+                                    <span class="dk-status-badge dk-status-delivered">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="dk-status-badge dk-status-cancelled">Inactive</span>
+                                }
+                            </td>
+                            <td style="text-align: right; white-space: nowrap;">
+                                <a href="/Admin/Products/Edit/@p.ProductId" class="dk-btn dk-btn-secondary" style="padding: 4px 8px; font-size: 11px; margin-right: 4px; text-decoration: none;">
+                                    Edit
+                                </a>
+                                <a href="/Admin/Products/Media/@p.ProductId" class="dk-btn dk-btn-secondary" style="padding: 4px 8px; font-size: 11px; margin-right: 4px; text-decoration: none;" title="Manage S3 Gallery Images">
+                                    Gallery
+                                </a>
+                                <form method="post" action="/Admin/Products/ToggleStatus/@p.ProductId" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dk-btn @(p.IsActive ? "dk-btn-outline" : "dk-btn-primary")" style="padding: 4px 8px; font-size: 11px;">
+                                        @(p.IsActive ? "Deactivate" : "Activate")
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

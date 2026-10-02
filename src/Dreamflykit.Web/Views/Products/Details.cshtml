@@ -1,0 +1,274 @@
+﻿@model Dreamflykit.Web.Models.Products.ProductDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.Name;
+
+    var primaryImage =
+        Model.Media.FirstOrDefault(x => x.IsPrimary)
+        ?? Model.Media.FirstOrDefault();
+
+    var activeVariant =
+        Model.Variants.FirstOrDefault(x => x.IsActive)
+        ?? Model.Variants.FirstOrDefault();
+}
+
+<main class="min-h-screen bg-white">
+
+    <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+
+        <!-- Breadcrumb -->
+
+        <nav class="mb-8 text-sm text-slate-500"
+             aria-label="Breadcrumb">
+
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="transition hover:text-blue-700">
+                Home
+            </a>
+
+            <span class="mx-2">/</span>
+
+            <span>
+                @Model.CategoryName
+            </span>
+
+            @if (!string.IsNullOrWhiteSpace(Model.SubcategoryName))
+            {
+                <span class="mx-2">/</span>
+
+                <span>
+                    @Model.SubcategoryName
+                </span>
+            }
+
+            <span class="mx-2">/</span>
+
+            <span class="font-semibold text-slate-800">
+                @Model.Name
+            </span>
+
+        </nav>
+
+
+        <!-- Product -->
+
+        <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
+
+            <!-- Product Media -->
+
+            <div>
+
+                <div class="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50">
+
+                    @if (primaryImage is not null &&
+                         !string.IsNullOrWhiteSpace(primaryImage.Url))
+                    {
+                        <img src="@primaryImage.Url"
+                             alt="@(primaryImage.AltText ?? Model.Name)"
+                             decoding="async"
+                             fetchpriority="high"
+                             class="aspect-square h-full w-full object-cover" />
+                    }
+                    else
+                    {
+                        <div class="flex aspect-square items-center justify-center bg-slate-100 text-slate-400">
+                            <span>
+                                Product image unavailable
+                            </span>
+                        </div>
+                    }
+
+                </div>
+
+
+                @if (Model.Media.Count > 1)
+                {
+                    <div class="mt-4 grid grid-cols-5 gap-3">
+
+                        @foreach (var media in Model.Media)
+                        {
+                            if (!string.IsNullOrWhiteSpace(media.Url))
+                            {
+                                <div class="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+
+                                    <img src="@media.Url"
+                                         alt="@(media.AltText ?? Model.Name)"
+                                         loading="lazy"
+                                         decoding="async"
+                                         class="aspect-square w-full object-cover" />
+
+                                </div>
+                            }
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- Product Information -->
+
+            <div class="flex flex-col">
+
+                @if (Model.IsFeatured)
+                {
+                    <span class="w-fit rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-700">
+                        Featured Product
+                    </span>
+                }
+
+                <p class="mt-4 text-sm font-semibold uppercase tracking-wider text-blue-700">
+                    @Model.CategoryName
+                </p>
+
+                <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
+                    @Model.Name
+                </h1>
+
+
+                @if (!string.IsNullOrWhiteSpace(Model.ShortDescription))
+                {
+                    <p class="mt-4 text-lg leading-8 text-slate-600">
+                        @Model.ShortDescription
+                    </p>
+                }
+
+
+                <!-- Price -->
+                @if (activeVariant is not null)
+                {
+                    <div class="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+
+                        <div class="flex flex-wrap items-end gap-3">
+
+                            <span class="text-3xl font-extrabold text-blue-800">
+                                ₹@activeVariant.SellingPrice.ToString("N0")
+                            </span>
+
+                            @if (activeVariant.Mrp > activeVariant.SellingPrice)
+                            {
+                                <span class="text-lg text-slate-400 line-through">
+                                    ₹@activeVariant.Mrp.ToString("N0")
+                                </span>
+
+                                <span class="rounded-full bg-green-100 px-3 py-1 text-sm font-bold text-green-700">
+                                    @activeVariant.DiscountPercentage% OFF
+                                </span>
+                            }
+
+                        </div>
+
+                        <p class="mt-2 text-xs text-slate-500">
+                            SKU: @activeVariant.Sku
+                        </p>
+
+                    </div>
+                }
+
+
+                <!-- Stock -->
+                @if (activeVariant?.IsInStock == true)
+                {
+                    <div class="mt-5 flex items-center gap-2 text-sm font-bold text-emerald-600">
+
+                        <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+
+                        <span>
+                            In stock
+                        </span>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="mt-5 flex items-center gap-2 text-sm font-bold text-red-600">
+
+                        <span class="h-2.5 w-2.5 rounded-full bg-red-500"></span>
+
+                        <span>
+                            Currently unavailable
+                        </span>
+
+                    </div>
+                }
+
+
+                <!-- Product Actions -->
+
+                <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+
+                    @if (activeVariant?.IsInStock == true)
+                    {
+                        <button type="button"
+                                disabled
+                                class="flex flex-1 items-center justify-center rounded-xl bg-blue-700 px-6 py-4 text-base font-bold text-white shadow-lg">
+                            Add to Cart
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button"
+                                disabled
+                                class="flex-1 cursor-not-allowed rounded-xl bg-slate-200 px-6 py-4 text-base font-bold text-slate-400">
+                            Out of Stock
+                        </button>
+                    }
+
+                </div>
+
+
+                <!-- Description -->
+
+                <div class="mt-10 border-t border-slate-200 pt-8">
+
+                    <h2 class="text-xl font-bold text-slate-950">
+                        Product Description
+                    </h2>
+
+                    <div class="mt-4 whitespace-pre-line text-base leading-8 text-slate-600">
+                        @Model.Description
+                    </div>
+
+                </div>
+
+
+                <!-- Product Attributes -->
+                @if (Model.Attributes.Count > 0)
+                {
+                    <div class="mt-10 border-t border-slate-200 pt-8">
+
+                        <h2 class="text-xl font-bold text-slate-950">
+                            Product Information
+                        </h2>
+
+                        <dl class="mt-5 divide-y divide-slate-200">
+
+                            @foreach (var productAttribute in Model.Attributes)
+                            {
+                                <div class="grid grid-cols-1 gap-2 py-4 sm:grid-cols-2 sm:gap-4">
+
+                                    <dt class="font-semibold text-slate-700">
+                                        @productAttribute.AttributeName
+                                    </dt>
+
+                                    <dd class="text-slate-600">
+                                        @productAttribute.Value
+                                    </dd>
+
+                                </div>
+                            }
+
+                        </dl>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>

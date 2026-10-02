@@ -1,0 +1,142 @@
+@model Dreamflykit.Web.Models.Info.ContactFormViewModel
+@{
+    ViewData["Title"] = "Contact Us & Student Help Desk — Dreamflykit";
+    Layout = "_Layout";
+}
+
+<div class="dk-page-container dk-info-page">
+    <!-- Top Header -->
+    <div class="dk-info-hero">
+        <div class="dk-info-hero-badge">💬 24/7 STUDENT SUPPORT</div>
+        <h1 class="dk-info-hero-title">We’re Here for Your Pre-Departure Needs</h1>
+        <p class="dk-info-hero-subtitle">
+            Have questions about kit dimensions, airline weight allowances, custom sizes, or delivery dates? Our advisors are ready to assist.
+        </p>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string success)
+    {
+        <div class="dk-alert dk-alert-success" style="margin-bottom: 24px;">
+            <strong>✓ Success:</strong> @success
+        </div>
+    }
+
+    <!-- Contact Grid -->
+    <div class="dk-contact-layout">
+        <!-- Left: Contact Form -->
+        <div class="dk-card dk-contact-form-card">
+            <h3 class="dk-card-title">Send Us a Message</h3>
+            <p class="dk-card-subtitle" style="margin-bottom: 20px; color: #64748b;">
+                Fill out the form below and an international student advisor will reply via email or phone.
+            </p>
+
+            <form asp-action="Contact" method="post" novalidate>
+                @Html.AntiForgeryToken()
+
+                <!-- Anti-spam Honeypot (hidden from human users) -->
+                <div style="display:none;" aria-hidden="true">
+                    <input type="text" asp-for="WebsiteUrlHoneypot" tabindex="-1" autocomplete="off" />
+                </div>
+
+                <div class="dk-form-row">
+                    <div class="dk-form-group">
+                        <label asp-for="FullName" class="dk-label">Full Name *</label>
+                        <input asp-for="FullName" class="dk-input" placeholder="e.g. Jagadeesh Reddy" />
+                        <span asp-validation-for="FullName" class="dk-error-text"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="Email" class="dk-label">Email Address *</label>
+                        <input asp-for="Email" type="email" class="dk-input" placeholder="you@university.edu" />
+                        <span asp-validation-for="Email" class="dk-error-text"></span>
+                    </div>
+                </div>
+
+                <div class="dk-form-row">
+                    <div class="dk-form-group">
+                        <label asp-for="PhoneNumber" class="dk-label">Phone / WhatsApp *</label>
+                        <input asp-for="PhoneNumber" class="dk-input" placeholder="+91 98765 43210" />
+                        <span asp-validation-for="PhoneNumber" class="dk-error-text"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="Subject" class="dk-label">Subject *</label>
+                        <select asp-for="Subject" class="dk-select">
+                            <option value="">-- Select inquiry topic --</option>
+                            <option value="Kit Selection & Sizing">Kit Selection & Sizing</option>
+                            <option value="Urgent Pre-Flight Delivery">Urgent Pre-Flight Delivery</option>
+                            <option value="Custom Cookware or Utensil Questions">Custom Cookware or Utensil Questions</option>
+                            <option value="Airline Baggage Regulation Inquiry">Airline Baggage Regulation Inquiry</option>
+                            <option value="Bulk / University Group Booking">Bulk / University Group Booking</option>
+                            <option value="Order Tracking & Returns">Order Tracking & Returns</option>
+                            <option value="Other">Other Inquiry</option>
+                        </select>
+                        <span asp-validation-for="Subject" class="dk-error-text"></span>
+                    </div>
+                </div>
+
+                <div class="dk-form-group" style="margin-bottom: 24px;">
+                    <label asp-for="Message" class="dk-label">Message Details *</label>
+                    <textarea asp-for="Message" rows="5" class="dk-input" placeholder="Please mention your flight departure date, destination country, or any specific requirements..."></textarea>
+                    <span asp-validation-for="Message" class="dk-error-text"></span>
+                </div>
+
+                <button type="submit" class="dk-btn dk-btn-primary dk-btn-lg">
+                    Send Message to Advisor
+                </button>
+            </form>
+        </div>
+
+        <!-- Right: Contact Direct Cards -->
+        <aside class="dk-contact-sidebar">
+            <!-- Fast Help Card -->
+            <div class="dk-card dk-contact-info-card">
+                <h4>⚡ Direct Channels</h4>
+
+                <div class="dk-contact-channel">
+                    <div class="dk-channel-icon">📞</div>
+                    <div>
+                        <span class="dk-channel-title">Student Support Hotline</span>
+                        <a href="tel:+919123456789" class="dk-channel-link">+91 91234 56789</a>
+                        <small>Mon – Sun: 8:00 AM – 10:00 PM IST</small>
+                    </div>
+                </div>
+
+                <div class="dk-contact-channel">
+                    <div class="dk-channel-icon">💬</div>
+                    <div>
+                        <span class="dk-channel-title">WhatsApp Express</span>
+                        <a href="https://wa.me/919123456789" target="_blank" rel="noopener" class="dk-channel-link">Chat on WhatsApp</a>
+                        <small>Fastest responses for departure queries</small>
+                    </div>
+                </div>
+
+                <div class="dk-contact-channel">
+                    <div class="dk-channel-icon">✉️</div>
+                    <div>
+                        <span class="dk-channel-title">Email Inquiries</span>
+                        <a href="mailto:support@dreamflykit.com" class="dk-channel-link">support@dreamflykit.com</a>
+                        <small>Replies within 4 business hours</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warehouse / Center Location -->
+            <div class="dk-card dk-contact-info-card">
+                <h4>🏢 Headquarters & Fulfillment</h4>
+                <p style="margin: 0 0 10px 0; font-size: 13px; color: #475569;">
+                    <strong>Dreamflykit India Central Logistics Center</strong><br />
+                    Plot 42, Aero Logistics Hub, Near Shamshabad RGIA,<br />
+                    Hyderabad, Telangana 500409, India.
+                </p>
+                <div style="font-size: 12px; color: #64748b;">
+                    ✈ Direct dispatch terminal adjacent to international departures.
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

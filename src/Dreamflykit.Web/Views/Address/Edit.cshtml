@@ -1,0 +1,110 @@
+@model Dreamflykit.Web.Models.Addressing.AddressFormViewModel
+@{
+    ViewData["Title"] = "Edit Address";
+    Layout = "_Layout";
+}
+
+<div class="dk-page-container dk-form-page">
+    <div class="dk-form-wrapper">
+        <div class="dk-form-card">
+            <div class="dk-form-header">
+                <h2>Edit Address</h2>
+                <p>Update your delivery details</p>
+            </div>
+
+            <form asp-action="Edit" asp-route-id="@Model.AddressId" method="post" class="dk-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="AddressId" />
+                <input type="hidden" asp-for="ReturnUrl" />
+
+                <div asp-validation-summary="ModelOnly" class="dk-validation-summary"></div>
+
+                <div class="dk-form-row dk-form-row-2">
+                    <div class="dk-form-group">
+                        <label asp-for="FullName" class="dk-label"></label>
+                        <input asp-for="FullName" class="dk-input" />
+                        <span asp-validation-for="FullName" class="dk-field-error"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="Phone" class="dk-label"></label>
+                        <input asp-for="Phone" class="dk-input" maxlength="10" />
+                        <span asp-validation-for="Phone" class="dk-field-error"></span>
+                    </div>
+                </div>
+
+                <div class="dk-form-group">
+                    <label asp-for="AddressLine1" class="dk-label"></label>
+                    <input asp-for="AddressLine1" class="dk-input" />
+                    <span asp-validation-for="AddressLine1" class="dk-field-error"></span>
+                </div>
+
+                <div class="dk-form-group">
+                    <label asp-for="AddressLine2" class="dk-label"></label>
+                    <input asp-for="AddressLine2" class="dk-input" />
+                    <span asp-validation-for="AddressLine2" class="dk-field-error"></span>
+                </div>
+
+                <div class="dk-form-row dk-form-row-3">
+                    <div class="dk-form-group">
+                        <label asp-for="PostalCode" class="dk-label"></label>
+                        <input asp-for="PostalCode" class="dk-input" maxlength="6" />
+                        <span asp-validation-for="PostalCode" class="dk-field-error"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="City" class="dk-label"></label>
+                        <input asp-for="City" class="dk-input" />
+                        <span asp-validation-for="City" class="dk-field-error"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="State" class="dk-label"></label>
+                        <input asp-for="State" class="dk-input" />
+                        <span asp-validation-for="State" class="dk-field-error"></span>
+                    </div>
+                </div>
+
+                <div class="dk-form-row dk-form-row-2">
+                    <div class="dk-form-group">
+                        <label asp-for="Country" class="dk-label"></label>
+                        <input asp-for="Country" class="dk-input" readonly />
+                        <span asp-validation-for="Country" class="dk-field-error"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="AddressType" class="dk-label"></label>
+                        <select asp-for="AddressType" class="dk-select">
+                            <option value="1">Shipping (Delivery)</option>
+                            <option value="2">Billing</option>
+                        </select>
+                        <span asp-validation-for="AddressType" class="dk-field-error"></span>
+                    </div>
+                </div>
+
+                <div class="dk-checkbox-group">
+                    <label class="dk-checkbox-label">
+                        <input type="checkbox" asp-for="SetAsDefault" />
+                        <span>Make this my default address</span>
+                    </label>
+                </div>
+
+                <div class="dk-form-actions">
+                    <button type="submit" class="dk-btn dk-btn-primary">Update Address</button>
+                    @if (!string.IsNullOrWhiteSpace(Model.ReturnUrl))
+                    {
+                        <a href="@Model.ReturnUrl" class="dk-btn dk-btn-secondary">Cancel</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Index" class="dk-btn dk-btn-secondary">Cancel</a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

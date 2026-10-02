@@ -1,9 +1,32 @@
-﻿using Dreamflykit.Application.Geography;
+using Dreamflykit.Application.Addressing.Interfaces;
+using Dreamflykit.Application.Addressing.Services;
+using Dreamflykit.Application.Cart.Interfaces;
+using Dreamflykit.Application.Cart.Services;
+using Dreamflykit.Application.Catalog.Interfaces;
+using Dreamflykit.Application.Catalog.Services;
+using Dreamflykit.Application.Categories.Interfaces;
+using Dreamflykit.Application.Categories.Services;
+using Dreamflykit.Application.Geography;
 using Dreamflykit.Application.Kits.Interfaces;
 using Dreamflykit.Application.Kits.Services;
+using Dreamflykit.Application.Orders.Interfaces;
+using Dreamflykit.Application.Orders.Services;
+using Dreamflykit.Application.Payments.Interfaces;
+using Dreamflykit.Application.Wishlist.Interfaces;
+using Dreamflykit.Application.Wishlist.Services;
+using Dreamflykit.Infrastructure.Addressing;
+using Dreamflykit.Infrastructure.Cart;
+using Dreamflykit.Infrastructure.Categories;
 using Dreamflykit.Infrastructure.Geography;
 using Dreamflykit.Infrastructure.Identity;
 using Dreamflykit.Infrastructure.Kits;
+using Dreamflykit.Infrastructure.Orders;
+using Dreamflykit.Infrastructure.Payments;
+using Dreamflykit.Infrastructure.Wishlist;
+using Dreamflykit.Infrastructure.Catalog;
+using Dreamflykit.Application.Media.Interfaces;
+using Dreamflykit.Application.Media.Options;
+using Dreamflykit.Infrastructure.Media;
 using Dreamflykit.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +50,7 @@ public static class InfrastructureServiceCollectionExtensions
 
         RegisterIdentity(services);
 
-        RegisterApplicationServices(services);
+        RegisterApplicationServices(services, configuration);
 
         return services;
     }
@@ -110,8 +133,11 @@ public static class InfrastructureServiceCollectionExtensions
     }
 
     private static void RegisterApplicationServices(
-     IServiceCollection services)
+        IServiceCollection services,
+        IConfiguration configuration)
     {
+        // Find My Kit
+
         services.AddScoped<
             IFindMyKitRepository,
             FindMyKitRepository>();
@@ -119,6 +145,9 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<
             IFindMyKitService,
             FindMyKitService>();
+
+
+        // Geography
 
         services.AddScoped<
             ICountryRepository,
@@ -128,6 +157,9 @@ public static class InfrastructureServiceCollectionExtensions
             ICountryService,
             CountryService>();
 
+
+        // Kits
+
         services.AddScoped<
             IKitRepository,
             KitRepository>();
@@ -135,5 +167,106 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<
             IKitService,
             KitService>();
+
+
+        // Catalog / Products
+
+        services.AddScoped<
+            IProductRepository,
+            ProductRepository>();
+
+        services.AddScoped<
+            IProductService,
+            ProductService>();
+
+
+        // Categories
+
+        services.AddScoped<
+            ICategoryRepository,
+            CategoryRepository>();
+
+        services.AddScoped<
+            ICategoryService,
+            CategoryService>();
+
+
+        // Cart
+
+        services.AddScoped<
+            ICartRepository,
+            CartRepository>();
+
+        services.AddScoped<
+            ICartService,
+            CartService>();
+
+
+        // Addressing
+
+        services.AddScoped<
+            IAddressRepository,
+            AddressRepository>();
+
+        services.AddScoped<
+            IAddressService,
+            AddressService>();
+
+
+        // Orders
+
+        services.AddScoped<
+            IOrderRepository,
+            OrderRepository>();
+
+        services.AddScoped<
+            IOrderService,
+            OrderService>();
+
+
+        // Wishlist
+
+        services.AddScoped<
+            IWishlistRepository,
+            WishlistRepository>();
+
+        services.AddScoped<
+            IWishlistService,
+            WishlistService>();
+
+
+        // Payment Gateway (Cashfree)
+
+        services.Configure<CashfreePaymentOptions>(
+            configuration.GetSection(CashfreePaymentOptions.SectionName));
+
+        services.AddHttpClient<IPaymentService, CashfreePaymentService>();
+
+
+        // Inventory & Concurrency Management
+
+        services.AddScoped<
+            Dreamflykit.Application.Inventory.Interfaces.IInventoryRepository,
+            Dreamflykit.Infrastructure.Inventory.InventoryRepository>();
+
+        services.AddScoped<
+            Dreamflykit.Application.Inventory.Interfaces.IInventoryService,
+            Dreamflykit.Application.Inventory.Services.InventoryService>();
+
+
+        // Media Management System
+
+        services.Configure<MediaOptions>(
+            configuration.GetSection(MediaOptions.SectionName));
+
+        services.Configure<S3Options>(
+            configuration.GetSection(S3Options.SectionName));
+
+        services.AddScoped<IMediaStorageService, S3MediaStorageService>();
+        services.AddScoped<MediaValidationService>();
+        services.AddScoped<IMediaUrlService, MediaUrlService>();
+        services.AddScoped<IMediaService, MediaService>();
+        services.AddScoped<IMediaPermissionService, MediaPermissionService>();
+        services.AddHostedService<MediaCleanupBackgroundService>();
     }
 }

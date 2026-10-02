@@ -1,0 +1,181 @@
+@model Dreamflykit.Web.Areas.Admin.Models.MediaPermissionMatrixViewModel
+@{
+    ViewData["Title"] = "Role-Based Media & Content Permissions";
+}
+
+<div class="dk-admin-card" style="margin-bottom: 24px;">
+    <div class="dk-admin-card-header" style="margin-bottom: 1.5rem; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <h2 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0;">🔐 Staff & Admin Media Permissions</h2>
+                <span class="dk-admin-role-tag dk-admin-role-super">SUPER ADMIN MASTER CONTROL</span>
+            </div>
+            <p style="color: #64748b; font-size: 0.875rem; margin: 0.5rem 0 0; max-width: 800px; line-height: 1.5;">
+                As <strong>Super Admin</strong>, you can configure granular permissions for <strong>Admins</strong> and staff to create, upload, edit, publish, and delete media across all store modules: <em>Products, Categories, Subcategories, Hero Banners, Homepage Sections, and Landing Pages</em>. SuperAdmin always possesses full system privileges.
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+            <a href="/Admin/Users" class="dk-btn dk-btn-secondary" style="font-size: 12px; text-decoration: none;">
+                👥 Manage Users & Roles
+            </a>
+            <a href="/Admin" class="dk-btn dk-btn-outline" style="font-size: 12px; text-decoration: none;">
+                ← Dashboard
+            </a>
+        </div>
+    </div>
+
+    @Html.AntiForgeryToken()
+
+    <div class="dk-table-responsive" style="overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+        <table class="dk-admin-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; background: #f8fafc; text-align: left;">
+                    <th style="padding: 0.85rem 1rem; min-width: 220px;">Staff Member</th>
+                    <th style="padding: 0.85rem 1rem; width: 130px;">Assigned Role</th>
+                    <th style="padding: 0.85rem 1rem; width: 140px;">Quick Actions</th>
+                    @foreach (var type in Model.MediaTypes)
+                    {
+                        <th style="padding: 0.75rem 0.5rem; text-align: center; border-left: 1px solid #e2e8f0;" colspan="@Model.PermissionTypes.Count">
+                            <span style="font-weight: 800; color: #075bc8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">@type</span>
+                            <div style="display: flex; justify-content: space-around; font-size: 0.7rem; font-weight: 600; color: #64748b; margin-top: 0.35rem;">
+                                @foreach (var perm in Model.PermissionTypes)
+                                {
+                                    <span style="width: 38px; text-align: center;" title="@perm">@perm.ToString().Substring(0, Math.Min(3, perm.ToString().Length))</span>
+                                }
+                            </div>
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Users)
+                {
+                    var isSuper = user.Role == "SuperAdmin";
+                    <tr id="row-@user.UserId" style="border-bottom: 1px solid #e2e8f0; background: @(isSuper ? "#f5f3ff" : "transparent");">
+                        <td style="padding: 0.85rem 1rem;">
+                            <div style="font-weight: 700; color: #0f172a;">@user.Email</div>
+                            <div style="font-size: 11px; color: #64748b;">ID: @user.UserId.ToString().Substring(0, 8)...</div>
+                        </td>
+                        <td style="padding: 0.85rem 1rem;">
+                            @if (isSuper)
+                            {
+                                <span style="font-size: 0.75rem; padding: 3px 8px; border-radius: 9999px; background: #ede9fe; color: #6d28d9; font-weight: 800;">
+                                    ★ SuperAdmin
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="font-size: 0.75rem; padding: 3px 8px; border-radius: 9999px; background: #e0f2fe; color: #0369a1; font-weight: 700;">
+                                    @user.Role
+                                </span>
+                            }
+                        </td>
+                        <td style="padding: 0.85rem 1rem; white-space: nowrap;">
+                            @if (isSuper)
+                            {
+                                <span style="font-size: 11px; color: #6b21a8; font-weight: 600;">Full Access</span>
+                            }
+                            else
+                            {
+                                <div style="display: flex; gap: 4px;">
+                                    <button type="button" class="dk-btn dk-btn-secondary" style="padding: 2px 7px; font-size: 10px; font-weight: 700;" onclick="toggleAllForUser('@user.UserId', true)">
+                                        Grant All
+                                    </button>
+                                    <button type="button" class="dk-btn dk-btn-outline" style="padding: 2px 7px; font-size: 10px;" onclick="toggleAllForUser('@user.UserId', false)">
+                                        Revoke All
+                                    </button>
+                                </div>
+                            }
+                        </td>
+
+                        @foreach (var type in Model.MediaTypes)
+                        {
+                            <td colspan="@Model.PermissionTypes.Count" style="padding: 0.5rem; text-align: center; border-left: 1px solid #e2e8f0;">
+                                <div style="display: flex; justify-content: space-around;">
+                                    @foreach (var perm in Model.PermissionTypes)
+                                    {
+                                        var key = $"{type}_{perm}";
+                                        var isChecked = isSuper || (user.GrantedPermissions.TryGetValue(key, out var granted) && granted);
+
+                                        <div style="width: 38px; text-align: center;">
+                                            <input type="checkbox"
+                                                   class="perm-checkbox-@user.UserId"
+                                                   data-userid="@user.UserId"
+                                                   data-mediatype="@type"
+                                                   data-permtype="@perm"
+                                                   style="cursor: @(isSuper ? "not-allowed" : "pointer"); width: 16px; height: 16px; accent-color: #075bc8;"
+                                                   @(isChecked ? "checked" : "")
+                                                   @(isSuper ? "disabled" : "")
+                                                   title="@user.Email: @type - @perm"
+                                                   onchange="togglePermission('@user.UserId', '@type', '@perm', this.checked, this)" />
+                                        </div>
+                                    }
+                                </div>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="toastMessage" style="display: none; position: fixed; bottom: 24px; right: 24px; padding: 0.85rem 1.4rem; background: #0f172a; color: #ffffff; border-radius: 8px; font-size: 0.85rem; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.25); z-index: 9999; border-left: 4px solid #22c55e;">
+    Permission updated
+</div>
+
+<script>
+    function togglePermission(userId, mediaType, permissionType, isGranted, checkbox) {
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        const formData = new FormData();
+        formData.append('UserId', userId);
+        formData.append('MediaType', mediaType);
+        formData.append('PermissionType', permissionType);
+        formData.append('IsGranted', isGranted);
+        formData.append('__RequestVerificationToken', token);
+
+        return fetch('/Admin/MediaPermissions/Toggle', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast(`✓ Updated ${mediaType} → ${permissionType}: ${isGranted ? "Granted" : "Revoked"}`);
+            } else {
+                if (checkbox) checkbox.checked = !isGranted;
+                alert('Failed to update permission.');
+            }
+        })
+        .catch(err => {
+            if (checkbox) checkbox.checked = !isGranted;
+            alert('Error communicating with server.');
+        });
+    }
+
+    async function toggleAllForUser(userId, shouldGrant) {
+        const checkboxes = document.querySelectorAll(`.perm-checkbox-${userId}`);
+        if (!confirm(`Are you sure you want to ${shouldGrant ? 'GRANT ALL' : 'REVOKE ALL'} permissions for this administrator?`)) {
+            return;
+        }
+
+        for (const cb of checkboxes) {
+            if (cb.checked !== shouldGrant) {
+                cb.checked = shouldGrant;
+                const mType = cb.dataset.mediatype;
+                const pType = cb.dataset.permtype;
+                await togglePermission(userId, mType, pType, shouldGrant, cb);
+            }
+        }
+        showToast(`✓ Successfully ${shouldGrant ? 'granted' : 'revoked'} all permissions.`);
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toastMessage');
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+</script>

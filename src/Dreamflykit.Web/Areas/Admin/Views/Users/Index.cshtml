@@ -1,0 +1,137 @@
+@model IReadOnlyList<Dreamflykit.Web.Areas.Admin.Models.AdminUserListItemViewModel>
+
+@{
+    ViewData["Title"] = "Super Admin — User & Role Control";
+}
+
+<div class="dk-admin-card">
+    <div class="dk-admin-card-header">
+        <div>
+            <h3 class="dk-admin-card-title">Platform Users & Access Roles</h3>
+            <small style="color: #64748b;">Super Administrator Access: Control role assignments, staff privileges, and account security.</small>
+        </div>
+
+        <form method="get" action="/Admin/Users" style="display: flex; gap: 8px;">
+            <input type="text"
+                   name="search"
+                   value="@Context.Request.Query["search"]"
+                   placeholder="Search user, email or phone..."
+                   class="dk-input"
+                   style="width: 250px; padding: 6px 12px; font-size: 13px;" />
+            <button type="submit" class="dk-btn dk-btn-secondary" style="padding: 6px 12px; font-size: 13px;">Search</button>
+            @if (!string.IsNullOrWhiteSpace(Context.Request.Query["search"]))
+            {
+                <a href="/Admin/Users" class="dk-btn dk-btn-outline" style="padding: 6px 12px; font-size: 13px;">Clear</a>
+            }
+        </form>
+    </div>
+
+    <div class="dk-admin-table-wrap">
+        <table class="dk-admin-table">
+            <thead>
+                <tr>
+                    <th>User / Email</th>
+                    <th>Phone</th>
+                    <th>Assigned Roles</th>
+                    <th>Status</th>
+                    <th>Role Actions</th>
+                    <th>Account Security</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    var isSuper = user.Roles.Contains("SuperAdmin");
+                    var isAdmin = user.Roles.Contains("Admin");
+
+                    <tr>
+                        <td>
+                            <strong>@user.FullName</strong>
+                            <div style="font-size: 12px; color: #64748b;">@user.Email</div>
+                        </td>
+                        <td>@user.PhoneNumber</td>
+                        <td>
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                @foreach (var role in user.Roles)
+                                {
+                                    if (role == "SuperAdmin")
+                                    {
+                                        <span class="dk-admin-role-tag dk-admin-role-super">SuperAdmin</span>
+                                    }
+                                    else if (role == "Admin")
+                                    {
+                                        <span class="dk-admin-role-tag">Admin</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="dk-status-badge dk-status-confirmed">@role</span>
+                                    }
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            @if (user.IsLockedOut)
+                            {
+                                <span class="dk-status-badge dk-status-cancelled">Locked</span>
+                            }
+                            else
+                            {
+                                <span class="dk-status-badge dk-status-delivered">Active</span>
+                            }
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 6px;">
+                                <!-- Toggle Admin Role -->
+                                <form method="post" action="/Admin/Users/AssignRole" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="userId" value="@user.UserId" />
+                                    <input type="hidden" name="roleName" value="Admin" />
+                                    <input type="hidden" name="assign" value="@(!isAdmin ? "true" : "false")" />
+                                    <button type="submit"
+                                            class="dk-btn @(isAdmin ? "dk-btn-outline" : "dk-btn-secondary")"
+                                            style="padding: 4px 8px; font-size: 11px;">
+                                        @(isAdmin ? "Revoke Admin" : "Make Admin")
+                                    </button>
+                                </form>
+
+                                <!-- Toggle SuperAdmin Role -->
+                                @if (user.Email != "superadmin@dreamflykit.com")
+                                {
+                                    <form method="post" action="/Admin/Users/AssignRole" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="userId" value="@user.UserId" />
+                                        <input type="hidden" name="roleName" value="SuperAdmin" />
+                                        <input type="hidden" name="assign" value="@(!isSuper ? "true" : "false")" />
+                                        <button type="submit"
+                                                class="dk-btn @(isSuper ? "dk-btn-outline" : "dk-btn-primary")"
+                                                style="padding: 4px 8px; font-size: 11px;">
+                                            @(isSuper ? "Demote" : "Promote SuperAdmin")
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            @if (user.Email != "superadmin@dreamflykit.com")
+                            {
+                                <form method="post" action="/Admin/Users/ToggleLock" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="userId" value="@user.UserId" />
+                                    <button type="submit"
+                                            class="dk-btn @(user.IsLockedOut ? "dk-btn-secondary" : "dk-btn-outline")"
+                                            style="padding: 4px 8px; font-size: 11px; color: @(user.IsLockedOut ? "#16a34a" : "#dc2626");">
+                                        @(user.IsLockedOut ? "Unlock User" : "Lock Account")
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span style="font-size: 11px; color: #64748b;">Root Account</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

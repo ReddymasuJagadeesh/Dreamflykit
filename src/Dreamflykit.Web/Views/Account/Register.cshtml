@@ -1,0 +1,169 @@
+@model Dreamflykit.Web.Models.Account.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Create Account — Dreamflykit";
+    Layout = "_Layout";
+}
+
+<div class="dk-auth-page-wrapper">
+
+    <div class="dk-auth-card-container">
+
+        <!-- Brand Panel (Left) -->
+        <div class="dk-auth-brand-panel">
+
+            <div class="dk-auth-brand-badge">
+                <img src="~/images/branding/dreamflykit-logo.webp"
+                     alt="Dreamflykit"
+                     class="dk-auth-logo-img" />
+            </div>
+
+            <h2 class="dk-auth-tagline">
+                Start Your<br />Journey Today.
+            </h2>
+
+            <p class="dk-auth-subtitle">
+                Join thousands of students who trust Dreamflykit for their travel &amp; study abroad kits.
+            </p>
+
+            <div class="dk-auth-perks">
+                <div class="dk-perk-item">
+                    <span class="dk-perk-check">✓</span>
+                    <span>100% Genuine Certified Kits</span>
+                </div>
+                <div class="dk-perk-item">
+                    <span class="dk-perk-check">✓</span>
+                    <span>Exclusive Student Discounts &amp; Deals</span>
+                </div>
+                <div class="dk-perk-item">
+                    <span class="dk-perk-check">✓</span>
+                    <span>3 Days Hassle-Free Returns</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Form Panel (Right) -->
+        <div class="dk-auth-form-panel">
+
+            <div class="dk-auth-form-inner">
+
+                <h1 class="dk-auth-title">Create Account</h1>
+
+                <p class="dk-auth-desc">
+                    Sign up to track orders, save kits, and enjoy faster checkout.
+                </p>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="All" class="dk-form-errors" role="alert"></div>
+                }
+
+                <form asp-controller="Account"
+                      asp-action="Register"
+                      asp-route-returnUrl="@Model.ReturnUrl"
+                      method="post"
+                      novalidate
+                      class="dk-auth-form">
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="dk-form-row dk-form-row-2">
+                        <div class="dk-form-group">
+                            <label asp-for="FirstName" class="dk-label">First Name</label>
+                            <input asp-for="FirstName"
+                                   class="dk-input"
+                                   placeholder="First Name"
+                                   autocomplete="given-name" />
+                            <span asp-validation-for="FirstName" class="dk-field-error"></span>
+                        </div>
+
+                        <div class="dk-form-group">
+                            <label asp-for="LastName" class="dk-label">Last Name</label>
+                            <input asp-for="LastName"
+                                   class="dk-input"
+                                   placeholder="Last Name"
+                                   autocomplete="family-name" />
+                            <span asp-validation-for="LastName" class="dk-field-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="Email" class="dk-label">Email Address</label>
+                        <input asp-for="Email"
+                               type="email"
+                               class="dk-input"
+                               placeholder="you@example.com"
+                               autocomplete="email" />
+                        <span asp-validation-for="Email" class="dk-field-error"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="PhoneNumber" class="dk-label">Phone Number</label>
+                        <div class="dk-phone-input-group">
+                            <span class="dk-phone-prefix">+91</span>
+                            <input asp-for="PhoneNumber"
+                                   type="tel"
+                                   class="dk-input dk-phone-input"
+                                   placeholder="10-digit mobile number (e.g. 9876543210)"
+                                   autocomplete="tel-national" />
+                        </div>
+                        <span asp-validation-for="PhoneNumber" class="dk-field-error"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="Password" class="dk-label">Password</label>
+                        <input asp-for="Password"
+                               type="password"
+                               class="dk-input"
+                               placeholder="Create a strong password (min 12 chars)"
+                               autocomplete="new-password" />
+                        <span asp-validation-for="Password" class="dk-field-error"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="ConfirmPassword" class="dk-label">Confirm Password</label>
+                        <input asp-for="ConfirmPassword"
+                               type="password"
+                               class="dk-input"
+                               placeholder="Repeat password"
+                               autocomplete="new-password" />
+                        <span asp-validation-for="ConfirmPassword" class="dk-field-error"></span>
+                    </div>
+
+                    <button type="submit"
+                            id="registerSubmitBtn"
+                            class="dk-btn dk-btn-primary dk-btn-full">
+                        Create Account
+                    </button>
+
+                </form>
+
+                <div class="dk-auth-divider">
+                    <span>Already have an account?</span>
+                </div>
+
+                <a asp-controller="Account"
+                   asp-action="Login"
+                   asp-route-returnUrl="@Model.ReturnUrl"
+                   class="dk-btn dk-btn-secondary dk-btn-full">
+                    Sign In
+                </a>
+
+                <p class="dk-auth-terms">
+                    By registering, you agree to Dreamflykit's
+                    <a href="/Terms">Terms of Service</a> and
+                    <a href="/Privacy">Privacy Policy</a>.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,166 @@
+﻿@model Dreamflykit.Web.Models.Categories.CategoryDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<main class="min-h-screen bg-slate-50">
+
+    <!-- Breadcrumb -->
+
+    <section class="border-b border-slate-200 bg-white">
+
+        <div class="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
+
+            <nav class="text-sm text-slate-500">
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="transition hover:text-blue-700">
+                    Home
+                </a>
+
+                <span class="mx-2">/</span>
+
+                <a asp-controller="Categories"
+                   asp-action="Index"
+                   class="transition hover:text-blue-700">
+                    Categories
+                </a>
+
+                <span class="mx-2">/</span>
+
+                <span class="font-semibold text-slate-800">
+                    @Model.Name
+                </span>
+
+            </nav>
+
+        </div>
+
+    </section>
+
+
+    <!-- Category Header -->
+
+    <section class="bg-white">
+
+        <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+
+            <div class="max-w-3xl">
+
+                <p class="text-sm font-bold uppercase tracking-wider text-orange-500">
+                    Dreamflykit Store
+                </p>
+
+                <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-blue-950 sm:text-5xl">
+                    @Model.Name
+                </h1>
+
+                <p class="mt-4 text-lg leading-8 text-slate-600">
+                    Explore products available in this category.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Subcategories -->
+
+    <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+
+        <div class="mb-8">
+
+            <h2 class="text-2xl font-extrabold text-blue-950">
+                Explore @Model.Name
+            </h2>
+
+            <p class="mt-2 text-slate-500">
+                Choose a subcategory to browse products.
+            </p>
+
+        </div>
+
+
+        @if (Model.Subcategories.Count == 0)
+        {
+            <div class="rounded-2xl border border-slate-200 bg-white p-12 text-center">
+
+                <h3 class="text-lg font-bold text-slate-900">
+                    No subcategories available
+                </h3>
+
+                <p class="mt-2 text-sm text-slate-500">
+                    Products will be available here soon.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+                @foreach (var subcategory in Model.Subcategories)
+                {
+                    <a asp-controller="Categories"
+                       asp-action="Subcategory"
+                       asp-route-categorySlug="@Model.Slug"
+                       asp-route-subcategorySlug="@subcategory.Slug"
+                       class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-xl">
+
+                        <div class="flex items-start justify-between gap-4">
+
+                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-6 w-6"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor"
+                                     stroke-width="1.8">
+
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          d="M4 6.75A2.75 2.75 0 0 1 6.75 4h10.5A2.75 2.75 0 0 1 20 6.75v10.5A2.75 2.75 0 0 1 17.25 20H6.75A2.75 2.75 0 0 1 4 17.25V6.75Z" />
+
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          d="M8 8h8M8 12h8M8 16h5" />
+
+                                </svg>
+
+                            </div>
+
+                            <span class="text-xl font-bold text-slate-300 transition group-hover:text-blue-600">
+                                →
+                            </span>
+
+                        </div>
+
+
+                        <h3 class="mt-5 text-lg font-bold text-slate-900 transition group-hover:text-blue-700">
+                            @subcategory.Name
+                        </h3>
+
+
+                        <p class="mt-2 text-sm text-slate-500">
+                            @subcategory.ProductCount products
+                        </p>
+
+
+                        <div class="mt-5 text-sm font-bold text-blue-700">
+                            Browse products →
+                        </div>
+
+                    </a>
+                }
+
+            </div>
+        }
+
+    </section>
+
+</main>

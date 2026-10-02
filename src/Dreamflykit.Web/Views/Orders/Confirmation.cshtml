@@ -1,0 +1,64 @@
+@model Dreamflykit.Web.Models.Orders.OrderConfirmationViewModel
+@{
+    ViewData["Title"] = "Order Confirmed — Dreamflykit";
+    Layout = "_Layout";
+}
+
+<div class="dk-page-container dk-confirmation-page">
+    <div class="dk-confirmation-card">
+        <div class="dk-celebration-badge">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M20 6L9 17l-5-5"/>
+            </svg>
+        </div>
+
+        <h1 class="dk-confirm-title">Order Placed Successfully!</h1>
+        <p class="dk-confirm-subtitle">
+            Thank you for shopping with Dreamflykit. We've received your order and started preparing your kits.
+        </p>
+
+        <div class="dk-order-highlight-box">
+            <div class="dk-highlight-col">
+                <span class="dk-highlight-label">Order Number</span>
+                <strong class="dk-highlight-value dk-text-mono">@Model.Order.OrderNumber</strong>
+            </div>
+            <div class="dk-highlight-col">
+                <span class="dk-highlight-label">Order Total</span>
+                <strong class="dk-highlight-value">₹@Model.Order.GrandTotal.ToString("N0")</strong>
+            </div>
+            <div class="dk-highlight-col">
+                <span class="dk-highlight-label">Items</span>
+                <strong class="dk-highlight-value">@Model.Order.Items.Sum(i => i.Quantity) kit(s)</strong>
+            </div>
+            <div class="dk-highlight-col">
+                <span class="dk-highlight-label">Status</span>
+                <span class="dk-badge dk-badge-accent">@Model.Order.StatusDisplay</span>
+            </div>
+        </div>
+
+        <div class="dk-confirm-delivery-info">
+            <div class="dk-delivery-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+            </div>
+            <div class="dk-delivery-text">
+                <h4>Delivery to @Model.Order.ShippingAddress.FullName</h4>
+                <p>@Model.Order.ShippingAddress.DisplayString</p>
+                <p class="dk-est-time">Estimated Delivery: <strong>3 – 5 Business Days</strong></p>
+            </div>
+        </div>
+
+        <div class="dk-confirmation-actions">
+            <a asp-controller="Orders" asp-action="Details" asp-route-orderNumber="@Model.Order.OrderNumber" class="dk-btn dk-btn-primary">
+                Track Order
+            </a>
+            <a asp-controller="Orders" asp-action="Index" class="dk-btn dk-btn-secondary">
+                View All Orders
+            </a>
+            <a asp-controller="Home" asp-action="Index" class="dk-btn dk-btn-outline">
+                Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>

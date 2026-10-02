@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -9,5 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Dreamflykit.Domain\Dreamflykit.Domain.csproj" />
   </ItemGroup>
+
 
 </Project>

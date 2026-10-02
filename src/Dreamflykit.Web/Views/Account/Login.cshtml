@@ -1,0 +1,129 @@
+@model Dreamflykit.Web.Models.Account.LoginViewModel
+
+@{
+    ViewData["Title"] = "Sign In — Dreamflykit";
+    Layout = "_Layout";
+}
+
+<div class="dk-auth-page-wrapper">
+
+    <div class="dk-auth-card-container">
+
+        <!-- Brand Panel (Left) -->
+        <div class="dk-auth-brand-panel">
+
+            <div class="dk-auth-brand-badge">
+                <img src="~/images/branding/dreamflykit-logo.webp"
+                     alt="Dreamflykit"
+                     class="dk-auth-logo-img" />
+            </div>
+
+            <h2 class="dk-auth-tagline">
+                Your Journey.<br />Our Kit.
+            </h2>
+
+            <p class="dk-auth-subtitle">
+                Curated travel kits &amp; essentials for students heading abroad.
+            </p>
+
+            <div class="dk-auth-perks">
+                <div class="dk-perk-item">
+                    <span class="dk-perk-check">✓</span>
+                    <span>100% Genuine Certified Kits</span>
+                </div>
+                <div class="dk-perk-item">
+                    <span class="dk-perk-check">✓</span>
+                    <span>Doorstep Delivery Across 50+ Countries</span>
+                </div>
+                <div class="dk-perk-item">
+                    <span class="dk-perk-check">✓</span>
+                    <span>Dedicated 24/7 Student Support</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Form Panel (Right) -->
+        <div class="dk-auth-form-panel">
+
+            <div class="dk-auth-form-inner">
+
+                <h1 class="dk-auth-title">Welcome Back</h1>
+
+                <p class="dk-auth-desc">
+                    Sign in to your Dreamflykit account.
+                </p>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div asp-validation-summary="All" class="dk-form-errors" role="alert"></div>
+                }
+
+                <form asp-controller="Account"
+                      asp-action="Login"
+                      asp-route-returnUrl="@Model.ReturnUrl"
+                      method="post"
+                      novalidate
+                      class="dk-auth-form">
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="dk-form-group">
+                        <label asp-for="Email" class="dk-label">Email Address</label>
+                        <input asp-for="Email"
+                               type="email"
+                               class="dk-input"
+                               placeholder="you@example.com"
+                               autocomplete="email"
+                               autofocus />
+                        <span asp-validation-for="Email" class="dk-field-error"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="Password" class="dk-label">Password</label>
+                        <input asp-for="Password"
+                               type="password"
+                               class="dk-input"
+                               placeholder="Enter your password"
+                               autocomplete="current-password" />
+                        <span asp-validation-for="Password" class="dk-field-error"></span>
+                    </div>
+
+                    <div class="dk-form-remember">
+                        <label class="dk-checkbox-label">
+                            <input asp-for="RememberMe" type="checkbox" />
+                            <span>Remember me on this device</span>
+                        </label>
+                    </div>
+
+                    <button type="submit"
+                            id="loginSubmitBtn"
+                            class="dk-btn dk-btn-primary dk-btn-full">
+                        Sign In
+                    </button>
+
+                </form>
+
+                <div class="dk-auth-divider">
+                    <span>New to Dreamflykit?</span>
+                </div>
+
+                <a asp-controller="Account"
+                   asp-action="Register"
+                   asp-route-returnUrl="@Model.ReturnUrl"
+                   id="createAccountLink"
+                   class="dk-btn dk-btn-secondary dk-btn-full">
+                    Create Account
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

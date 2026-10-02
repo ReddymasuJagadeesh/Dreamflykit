@@ -1,0 +1,209 @@
+@model Dreamflykit.Web.Models.Orders.PaymentGatewayViewModel
+@{
+    ViewData["Title"] = $"Complete Payment - {Model.OrderNumber}";
+}
+
+<div class="dk-checkout-container dk-payment-container">
+    <div class="dk-payment-header-row">
+        <div>
+            <h1 class="dk-checkout-main-title">Complete Payment</h1>
+            <p class="dk-payment-order-sub">Order ID: <strong>@Model.OrderNumber</strong> &bull; @Model.ItemCount items</p>
+        </div>
+        <div class="dk-payment-amount-box">
+            <span class="dk-amount-label">Amount Payable:</span>
+            <span class="dk-amount-val">₹@Model.GrandTotal.ToString("N0")</span>
+        </div>
+    </div>
+
+    @if (TempData["PaymentError"] != null)
+    {
+        <div class="dk-alert dk-alert-danger" style="margin-bottom: 20px;">
+            ⚠️ @TempData["PaymentError"]
+        </div>
+    }
+
+    <div class="dk-checkout-grid">
+        <!-- LEFT: PAYMENT METHOD SELECTION -->
+        <div class="dk-checkout-steps-col">
+            <div class="dk-checkout-step-card is-active">
+                <div class="dk-step-header">
+                    <span class="dk-step-number">💳</span>
+                    <h2 class="dk-step-title">SELECT PAYMENT METHOD</h2>
+                    <span class="dk-badge dk-badge-accent" style="margin-left: auto;">🔒 256-Bit Encrypted</span>
+                </div>
+
+                <div class="dk-step-body">
+                    <!-- PAYMENT METHOD TABS -->
+                    <div class="dk-pay-tabs">
+                        <button type="button" class="dk-pay-tab is-active" onclick="switchPayTab(this, 'tab-upi')">
+                            📱 UPI / QR Code
+                        </button>
+                        <button type="button" class="dk-pay-tab" onclick="switchPayTab(this, 'tab-card')">
+                            💳 Credit / Debit Card
+                        </button>
+                        <button type="button" class="dk-pay-tab" onclick="switchPayTab(this, 'tab-netbanking')">
+                            🏦 Net Banking
+                        </button>
+                    </div>
+
+                    <!-- TAB 1: UPI -->
+                    <div id="tab-upi" class="dk-pay-tab-panel is-active">
+                        <div class="dk-upi-content">
+                            <div class="dk-upi-qr-card">
+                                <div class="dk-upi-qr-box">
+                                    <div class="dk-qr-mock">
+                                        <svg viewBox="0 0 100 100" class="dk-qr-svg">
+                                            <rect width="100" height="100" fill="#fff"/>
+                                            <rect x="10" y="10" width="25" height="25" fill="#2874f0"/>
+                                            <rect x="15" y="15" width="15" height="15" fill="#fff"/>
+                                            <rect x="19" y="19" width="7" height="7" fill="#2874f0"/>
+                                            <rect x="65" y="10" width="25" height="25" fill="#2874f0"/>
+                                            <rect x="70" y="15" width="15" height="15" fill="#fff"/>
+                                            <rect x="74" y="19" width="7" height="7" fill="#2874f0"/>
+                                            <rect x="10" y="65" width="25" height="25" fill="#2874f0"/>
+                                            <rect x="15" y="70" width="15" height="15" fill="#fff"/>
+                                            <rect x="19" y="74" width="7" height="7" fill="#2874f0"/>
+                                            <circle cx="50" cy="50" r="10" fill="#2874f0"/>
+                                        </svg>
+                                    </div>
+                                    <span class="dk-qr-text">Scan with any UPI App</span>
+                                </div>
+                                <div class="dk-upi-apps">
+                                    <span class="dk-app-badge">GPay</span>
+                                    <span class="dk-app-badge">PhonePe</span>
+                                    <span class="dk-app-badge">Paytm</span>
+                                    <span class="dk-app-badge">BHIM</span>
+                                </div>
+                            </div>
+
+                            <form method="post" action="/Checkout/VerifyPayment" class="dk-pay-action-form">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="orderNumber" value="@Model.OrderNumber" />
+                                <input type="hidden" name="paymentMethod" value="UPI" />
+                                <input type="hidden" name="transactionRef" value="UPI-@(DateTime.UtcNow.Ticks.ToString()[^8..])" />
+
+                                <div class="dk-form-group">
+                                    <label class="dk-label" for="upiId">Or Enter UPI ID / VPA</label>
+                                    <input type="text" id="upiId" class="dk-input" placeholder="e.g. mobile@upi / username@okhdfcbank" value="customer@upi" />
+                                </div>
+
+                                <button type="submit" class="dk-btn dk-btn-primary dk-btn-full dk-btn-lg">
+                                    Pay ₹@Model.GrandTotal.ToString("N0") via UPI
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: CREDIT / DEBIT CARD -->
+                    <div id="tab-card" class="dk-pay-tab-panel">
+                        <form method="post" action="/Checkout/VerifyPayment" class="dk-pay-action-form">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="orderNumber" value="@Model.OrderNumber" />
+                            <input type="hidden" name="paymentMethod" value="CARD" />
+                            <input type="hidden" name="transactionRef" value="CARD-@(DateTime.UtcNow.Ticks.ToString()[^8..])" />
+
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="cardNumber">Card Number</label>
+                                <input type="text" id="cardNumber" class="dk-input" placeholder="xxxx xxxx xxxx xxxx" maxlength="19" value="4532 •••• •••• 8892" />
+                            </div>
+
+                            <div class="dk-form-row dk-form-row-2">
+                                <div class="dk-form-group">
+                                    <label class="dk-label" for="cardExpiry">Valid Thru (MM/YY)</label>
+                                    <input type="text" id="cardExpiry" class="dk-input" placeholder="MM/YY" maxlength="5" value="12/28" />
+                                </div>
+                                <div class="dk-form-group">
+                                    <label class="dk-label" for="cardCvv">CVV</label>
+                                    <input type="password" id="cardCvv" class="dk-input" placeholder="•••" maxlength="4" value="888" />
+                                </div>
+                            </div>
+
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="cardName">Name on Card</label>
+                                <input type="text" id="cardName" class="dk-input" placeholder="Name as displayed on card" value="Dreamflykit Cardholder" />
+                            </div>
+
+                            <button type="submit" class="dk-btn dk-btn-primary dk-btn-full dk-btn-lg">
+                                Pay ₹@Model.GrandTotal.ToString("N0")
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- TAB 3: NET BANKING -->
+                    <div id="tab-netbanking" class="dk-pay-tab-panel">
+                        <form method="post" action="/Checkout/VerifyPayment" class="dk-pay-action-form">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="orderNumber" value="@Model.OrderNumber" />
+                            <input type="hidden" name="paymentMethod" value="NETBANKING" />
+                            <input type="hidden" name="transactionRef" value="NB-@(DateTime.UtcNow.Ticks.ToString()[^8..])" />
+
+                            <div class="dk-form-group">
+                                <label class="dk-label">Popular Banks</label>
+                                <div class="dk-bank-grid">
+                                    <label class="dk-bank-pill">
+                                        <input type="radio" name="bank" value="HDFC" checked />
+                                        <span>HDFC Bank</span>
+                                    </label>
+                                    <label class="dk-bank-pill">
+                                        <input type="radio" name="bank" value="SBI" />
+                                        <span>State Bank of India</span>
+                                    </label>
+                                    <label class="dk-bank-pill">
+                                        <input type="radio" name="bank" value="ICICI" />
+                                        <span>ICICI Bank</span>
+                                    </label>
+                                    <label class="dk-bank-pill">
+                                        <input type="radio" name="bank" value="AXIS" />
+                                        <span>Axis Bank</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="dk-btn dk-btn-primary dk-btn-full dk-btn-lg">
+                                Proceed to NetBanking (₹@Model.GrandTotal.ToString("N0"))
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: SUMMARY -->
+        <div class="dk-checkout-summary-col">
+            <div class="dk-price-card">
+                <h3 class="dk-price-card-title">PRICE DETAILS</h3>
+                <div class="dk-price-row">
+                    <span>Order Subtotal</span>
+                    <span>₹@Model.Subtotal.ToString("N0")</span>
+                </div>
+                <div class="dk-price-row">
+                    <span>Delivery Charges</span>
+                    <span class="dk-text-green">FREE</span>
+                </div>
+                <div class="dk-price-row">
+                    <span>Payment Gateway Fee</span>
+                    <span class="dk-text-green">₹0</span>
+                </div>
+                <hr class="dk-price-divider" />
+                <div class="dk-price-row dk-price-total">
+                    <strong>Total Amount</strong>
+                    <strong class="dk-price-final">₹@Model.GrandTotal.ToString("N0")</strong>
+                </div>
+
+                <div class="dk-safety-badge" style="margin-top: 20px;">
+                    <span>🛡️ 100% Safe & Secure Payments via Cashfree</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchPayTab(btn, tabId) {
+        document.querySelectorAll('.dk-pay-tab').forEach(b => b.classList.remove('is-active'));
+        document.querySelectorAll('.dk-pay-tab-panel').forEach(p => p.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        const target = document.getElementById(tabId);
+        if (target) target.classList.add('is-active');
+    }
+</script>

@@ -1,0 +1,62 @@
+@model Dreamflykit.Web.Areas.Admin.Models.MediaEditViewModel
+@{
+    ViewData["Title"] = "Edit Media Asset";
+    var asset = ViewData["Asset"] as Dreamflykit.Application.Media.Models.MediaAssetDto;
+}
+
+<div class="dk-admin-content-card" style="max-width: 650px; margin: 0 auto;">
+    <div class="dk-admin-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div>
+            <h1 class="dk-admin-card-title" style="font-size: 1.5rem; margin: 0;">Edit Media Metadata</h1>
+            <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0.25rem 0 0;">
+                Update alt text, title, and descriptive captions for SEO and accessibility.
+            </p>
+        </div>
+        <a href="/Admin/Media/Detail/@Model.Id" class="dk-btn dk-btn-ghost">Back</a>
+    </div>
+
+    @if (asset != null)
+    {
+        <div style="display: flex; gap: 1rem; align-items: center; padding: 1rem; background: var(--bg-alt, #f9fafb); border-radius: 8px; margin-bottom: 1.5rem;">
+            <img src="@asset.ThumbnailUrl" alt="@asset.AltText" style="width: 80px; height: 80px; object-fit: contain; background: #fff; border-radius: 6px; border: 1px solid #e5e7eb;" />
+            <div>
+                <p style="font-weight: 600; margin: 0;">@asset.OriginalFileName</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.25rem 0 0;">
+                    @asset.Width × @asset.Height px • @(asset.FileSize / 1024) KB • @asset.MediaType
+                </p>
+            </div>
+        </div>
+    }
+
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div style="margin-bottom: 1.25rem;">
+            <label asp-for="AltText" style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem;">
+                Alt Text <span style="color: #ef4444;">*</span>
+            </label>
+            <input asp-for="AltText" class="dk-input" style="width: 100%;" required />
+            <span asp-validation-for="AltText" style="color: #ef4444; font-size: 0.8rem;"></span>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <label asp-for="Title" style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem;">
+                Title (Optional)
+            </label>
+            <input asp-for="Title" class="dk-input" style="width: 100%;" />
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label asp-for="Caption" style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem;">
+                Caption / Notes (Optional)
+            </label>
+            <textarea asp-for="Caption" class="dk-input" style="width: 100%; height: 90px; resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+            <a href="/Admin/Media/Detail/@Model.Id" class="dk-btn dk-btn-ghost">Cancel</a>
+            <button type="submit" class="dk-btn dk-btn-primary">Save Changes</button>
+        </div>
+    </form>
+</div>

@@ -48,8 +48,16 @@ builder.Services
     .AddDefaultTokenProviders();
 
 // ------------------------------------------------------------
-// Authentication cookie
+// Authentication cookie & schemes
 // ------------------------------------------------------------
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+})
+.AddIdentityCookies();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -66,8 +74,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 
     options.Cookie.HttpOnly = true;
 
-    options.Cookie.SecurePolicy =
-        CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+        ? CookieSecurePolicy.SameAsRequest
+        : CookieSecurePolicy.Always;
 
     options.Cookie.SameSite =
         SameSiteMode.Lax;
@@ -80,6 +89,21 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+// ------------------------------------------------------------
+// Database Seeding
+// ------------------------------------------------------------
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<DreamflykitDbContext>();
+    await DatabaseSeeder.SeedCatalogIfEmptyAsync(dbContext);
+
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+    await DatabaseSeeder.SeedRolesAndSuperAdminAsync(userManager, roleManager);
+    await DatabaseSeeder.SeedMediaAndSectionsIfEmptyAsync(dbContext, userManager);
+}
 
 // ------------------------------------------------------------
 // HTTP request pipeline

@@ -1,0 +1,134 @@
+@model Dreamflykit.Application.Orders.Models.OrderListResult
+@{
+    ViewData["Title"] = "My Orders — Dreamflykit";
+    Layout = "_Layout";
+}
+
+<div class="dk-page-container dk-orders-page">
+    <div class="dk-profile-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="dk-profile-sidebar">
+            <div class="dk-user-brief">
+                <div class="dk-avatar-circle">
+                    @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
+                </div>
+                <div>
+                    <span class="dk-user-greeting">Hello,</span>
+                    <h3 class="dk-user-display-name">@User.Identity?.Name</h3>
+                </div>
+            </div>
+
+            <nav class="dk-profile-menu">
+                <a asp-controller="Orders" asp-action="Index" class="dk-menu-item active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span>My Orders</span>
+                </a>
+                <a asp-controller="Address" asp-action="Index" class="dk-menu-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span>Manage Addresses</span>
+                </a>
+                <a asp-controller="Cart" asp-action="Index" class="dk-menu-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+                    </svg>
+                    <span>My Cart</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Orders Main List -->
+        <main class="dk-profile-content">
+            <div class="dk-content-header">
+                <div>
+                    <h1 class="dk-section-title">My Orders</h1>
+                    <p class="dk-section-subtitle">Track, view details, cancel, or return items from past orders</p>
+                </div>
+            </div>
+
+            @if (TempData["SuccessMessage"] is string success)
+            {
+                <div class="dk-alert dk-alert-success">@success</div>
+            }
+            @if (TempData["ErrorMessage"] is string error)
+            {
+                <div class="dk-alert dk-alert-danger">@error</div>
+            }
+
+            @if (Model.Orders.Count == 0)
+            {
+                <div class="dk-empty-state">
+                    <div class="dk-empty-icon">🛍️</div>
+                    <h3>No Orders Placed Yet</h3>
+                    <p>Looks like you haven't placed any orders yet. Discover our curated kits for your upcoming travel!</p>
+                    <a asp-controller="Home" asp-action="Index" class="dk-btn dk-btn-primary">Explore Kits Now</a>
+                </div>
+            }
+            else
+            {
+                <div class="dk-orders-list">
+                    @foreach (var order in Model.Orders)
+                    {
+                        var statusClass = order.Status switch
+                        {
+                            Dreamflykit.Domain.Orders.OrderStatus.Delivered => "dk-status-delivered",
+                            Dreamflykit.Domain.Orders.OrderStatus.Cancelled => "dk-status-cancelled",
+                            Dreamflykit.Domain.Orders.OrderStatus.ReturnRequested or Dreamflykit.Domain.Orders.OrderStatus.ReturnApproved or Dreamflykit.Domain.Orders.OrderStatus.Refunded => "dk-status-return",
+                            _ => "dk-status-active"
+                        };
+
+                        <div class="dk-order-card">
+                            <div class="dk-order-card-header">
+                                <div class="dk-order-meta">
+                                    <span class="dk-order-num-label">ORDER #</span>
+                                    <strong class="dk-order-num dk-text-mono">@order.OrderNumber</strong>
+                                    <span class="dk-order-date">Placed on @order.PlacedAtUtc.ToString("dd MMM yyyy, hh:mm tt") UTC</span>
+                                </div>
+                                <div class="dk-order-header-right">
+                                    <span class="dk-order-status-badge @statusClass">
+                                        <span class="dk-status-dot"></span>
+                                        @order.StatusDisplay
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="dk-order-card-body">
+                                <div class="dk-order-body-left">
+                                    <p class="dk-order-items-info">
+                                        <strong>@order.ItemCount item(s)</strong> in this order
+                                    </p>
+                                    <p class="dk-order-total-price">
+                                        Total: <span>₹@order.GrandTotal.ToString("N0")</span>
+                                    </p>
+                                </div>
+                                <div class="dk-order-body-right">
+                                    <a asp-action="Details" asp-route-orderNumber="@order.OrderNumber" class="dk-btn dk-btn-primary dk-btn-sm">
+                                        View Details &amp; Track
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                @if (Model.TotalPages > 1)
+                {
+                    <div class="dk-pagination-row">
+                        @if (Model.HasPreviousPage)
+                        {
+                            <a asp-action="Index" asp-route-page="@(Model.Page - 1)" class="dk-btn-sm dk-btn-outline">&larr; Previous</a>
+                        }
+                        <span class="dk-page-indicator">Page @Model.Page of @Model.TotalPages</span>
+                        @if (Model.HasNextPage)
+                        {
+                            <a asp-action="Index" asp-route-page="@(Model.Page + 1)" class="dk-btn-sm dk-btn-outline">Next &rarr;</a>
+                        }
+                    </div>
+                }
+            }
+        </main>
+    </div>
+</div>

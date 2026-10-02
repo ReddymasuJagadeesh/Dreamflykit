@@ -1,0 +1,294 @@
+@model Dreamflykit.Application.Orders.Models.OrderDetails
+@{
+    ViewData["Title"] = $"Order {Model.OrderNumber} Details — Dreamflykit";
+    Layout = "_Layout";
+
+    // Map order status to progress step (0 to 5)
+    var stepIndex = Model.Status switch
+    {
+        Dreamflykit.Domain.Orders.OrderStatus.Pending => 0,
+        Dreamflykit.Domain.Orders.OrderStatus.Confirmed or Dreamflykit.Domain.Orders.OrderStatus.Processing => 1,
+        Dreamflykit.Domain.Orders.OrderStatus.Packed => 2,
+        Dreamflykit.Domain.Orders.OrderStatus.Shipped => 3,
+        Dreamflykit.Domain.Orders.OrderStatus.OutForDelivery => 4,
+        Dreamflykit.Domain.Orders.OrderStatus.Delivered => 5,
+        _ => -1
+    };
+    var isCancelled = Model.Status == Dreamflykit.Domain.Orders.OrderStatus.Cancelled;
+    var isReturn = Model.Status is Dreamflykit.Domain.Orders.OrderStatus.ReturnRequested 
+                    or Dreamflykit.Domain.Orders.OrderStatus.ReturnApproved 
+                    or Dreamflykit.Domain.Orders.OrderStatus.Refunded;
+}
+
+<div class="dk-page-container dk-order-details-page">
+    <div class="dk-details-top-bar">
+        <a asp-action="Index" class="dk-back-link">
+            &larr; Back to My Orders
+        </a>
+        <div class="dk-top-actions">
+            @if (Model.CanCancel)
+            {
+                <button type="button" class="dk-btn-sm dk-btn-outline-danger" onclick="document.getElementById('cancel-modal').classList.add('is-open');">
+                    Cancel Order
+                </button>
+            }
+            @if (Model.CanReturn)
+            {
+                <button type="button" class="dk-btn-sm dk-btn-outline" onclick="document.getElementById('return-modal').classList.add('is-open');">
+                    Request Return (Within 3 Days)
+                </button>
+            }
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string success)
+    {
+        <div class="dk-alert dk-alert-success">@success</div>
+    }
+    @if (TempData["ErrorMessage"] is string error)
+    {
+        <div class="dk-alert dk-alert-danger">@error</div>
+    }
+
+    <!-- ORDER TRACKING TIMELINE -->
+    <div class="dk-tracking-card">
+        <div class="dk-tracking-header">
+            <div>
+                <span class="dk-tracking-subtitle">ORDER ID</span>
+                <h2 class="dk-tracking-order-num dk-text-mono">@Model.OrderNumber</h2>
+                <span class="dk-tracking-date">Placed on @Model.PlacedAtUtc.ToString("dd MMMM yyyy, hh:mm tt") UTC</span>
+            </div>
+            <div>
+                <span class="dk-badge dk-badge-accent dk-badge-lg">@Model.StatusDisplay</span>
+            </div>
+        </div>
+
+        @if (isCancelled)
+        {
+            <div class="dk-cancelled-banner">
+                <div class="dk-cancelled-icon">⚠️</div>
+                <div>
+                    <h4>Order Cancelled</h4>
+                    <p>This order was cancelled. Any online payment debited will be refunded to the original payment method within 5-7 business days.</p>
+                </div>
+            </div>
+        }
+        else if (isReturn)
+        {
+            <div class="dk-return-banner">
+                <div class="dk-return-icon">🔄</div>
+                <div>
+                    <h4>Return Status: @Model.StatusDisplay</h4>
+                    <p>Our team is processing your return request. Keep the product tags and original packaging intact for inspection upon pickup.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Flipkart-style Horizontal Step Progress -->
+            <div class="dk-stepper">
+                <div class="dk-step-node @(stepIndex >= 0 ? "completed" : "") @(stepIndex == 0 ? "active" : "")">
+                    <div class="dk-node-circle">✓</div>
+                    <span class="dk-node-label">Order Placed</span>
+                </div>
+                <div class="dk-step-line @(stepIndex >= 1 ? "completed" : "")"></div>
+
+                <div class="dk-step-node @(stepIndex >= 1 ? "completed" : "") @(stepIndex == 1 ? "active" : "")">
+                    <div class="dk-node-circle">✓</div>
+                    <span class="dk-node-label">Confirmed</span>
+                </div>
+                <div class="dk-step-line @(stepIndex >= 2 ? "completed" : "")"></div>
+
+                <div class="dk-step-node @(stepIndex >= 2 ? "completed" : "") @(stepIndex == 2 ? "active" : "")">
+                    <div class="dk-node-circle">✓</div>
+                    <span class="dk-node-label">Packed</span>
+                </div>
+                <div class="dk-step-line @(stepIndex >= 3 ? "completed" : "")"></div>
+
+                <div class="dk-step-node @(stepIndex >= 3 ? "completed" : "") @(stepIndex == 3 ? "active" : "")">
+                    <div class="dk-node-circle">✓</div>
+                    <span class="dk-node-label">Shipped</span>
+                </div>
+                <div class="dk-step-line @(stepIndex >= 4 ? "completed" : "")"></div>
+
+                <div class="dk-step-node @(stepIndex >= 4 ? "completed" : "") @(stepIndex == 4 ? "active" : "")">
+                    <div class="dk-node-circle">✓</div>
+                    <span class="dk-node-label">Out for Delivery</span>
+                </div>
+                <div class="dk-step-line @(stepIndex >= 5 ? "completed" : "")"></div>
+
+                <div class="dk-step-node @(stepIndex >= 5 ? "completed" : "") @(stepIndex == 5 ? "active" : "")">
+                    <div class="dk-node-circle">✓</div>
+                    <span class="dk-node-label">Delivered</span>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- 2-COLUMN DETAILS LAYOUT -->
+    <div class="dk-details-grid">
+        <!-- Left: Items & Delivery Address -->
+        <div class="dk-details-main">
+            <!-- Items Card -->
+            <div class="dk-card">
+                <h3 class="dk-card-title">Items in this Order (@Model.Items.Sum(i => i.Quantity))</h3>
+                <div class="dk-details-items-list">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="dk-detail-item-row">
+                            <div class="dk-item-thumb">
+                                @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl" alt="@item.ProductName" />
+                                }
+                                else
+                                {
+                                    <div class="dk-thumb-placeholder">📦</div>
+                                }
+                            </div>
+                            <div class="dk-item-meta">
+                                <h4 class="dk-item-name">@item.ProductName</h4>
+                                <p class="dk-item-sub">Variant: <strong>@item.VariantName</strong> &bull; SKU: @item.Sku</p>
+                                <p class="dk-item-qty-row">Quantity: <strong>@item.Quantity</strong></p>
+                            </div>
+                            <div class="dk-item-pricing">
+                                <span class="dk-item-line-total">₹@item.LineTotal.ToString("N0")</span>
+                                @if (item.Mrp > item.UnitPrice)
+                                {
+                                    <span class="dk-item-line-mrp">₹@((item.Mrp * item.Quantity).ToString("N0"))</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Delivery Address Card -->
+            <div class="dk-card">
+                <h3 class="dk-card-title">Delivery Address</h3>
+                <div class="dk-address-snapshot">
+                    <h4 class="dk-snapshot-name">@Model.ShippingAddress.FullName</h4>
+                    <p class="dk-snapshot-phone">Phone: @Model.ShippingAddress.Phone</p>
+                    <p class="dk-snapshot-text">@Model.ShippingAddress.DisplayString</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Price Breakdown Sidebar -->
+        <aside class="dk-details-sidebar">
+            <div class="dk-price-card">
+                <h3 class="dk-price-card-title">PRICE DETAILS</h3>
+                
+                <div class="dk-price-row">
+                    <span>List Price (MRP)</span>
+                    <span>₹@Model.TotalMrp.ToString("N0")</span>
+                </div>
+
+                <div class="dk-price-row dk-discount-text">
+                    <span>Special Discount</span>
+                    <span>− ₹@Model.TotalDiscount.ToString("N0")</span>
+                </div>
+
+                <div class="dk-price-row">
+                    <span>Delivery Charges</span>
+                    <span class="dk-free-badge">FREE</span>
+                </div>
+
+                <div class="dk-price-divider"></div>
+
+                <div class="dk-price-row dk-total-row">
+                    <strong>Total Amount Paid</strong>
+                    <strong>₹@Model.GrandTotal.ToString("N0")</strong>
+                </div>
+
+                @if (Model.TotalDiscount > 0)
+                {
+                    <div class="dk-savings-callout">
+                        🎉 Total Savings: ₹@Model.TotalDiscount.ToString("N0")
+                    </div>
+                }
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- CANCEL ORDER MODAL -->
+@if (Model.CanCancel)
+{
+    <div class="dk-modal" id="cancel-modal">
+        <div class="dk-modal-backdrop" onclick="document.getElementById('cancel-modal').classList.remove('is-open');"></div>
+        <div class="dk-modal-dialog">
+            <div class="dk-modal-header">
+                <h3>Cancel Order</h3>
+                <button type="button" class="dk-close-btn" onclick="document.getElementById('cancel-modal').classList.remove('is-open');">&times;</button>
+            </div>
+            <form asp-action="Cancel" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="OrderNumber" value="@Model.OrderNumber" />
+
+                <div class="dk-modal-body">
+                    <p class="dk-modal-desc">
+                        Are you sure you want to cancel order <strong>@Model.OrderNumber</strong>? 
+                        This action cannot be undone.
+                    </p>
+                    <div class="dk-form-group">
+                        <label class="dk-label" for="cancel-reason">Reason for cancellation *</label>
+                        <select name="Reason" id="cancel-reason" class="dk-select" required>
+                            <option value="">-- Select a reason --</option>
+                            <option value="Changed my mind">Changed my mind</option>
+                            <option value="Found a better price elsewhere">Found a better price elsewhere</option>
+                            <option value="Ordered by mistake">Ordered by mistake</option>
+                            <option value="Delivery time is too long">Delivery time is too long</option>
+                            <option value="Need to change shipping address">Need to change shipping address</option>
+                            <option value="Other">Other reason</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="dk-modal-footer">
+                    <button type="button" class="dk-btn dk-btn-secondary" onclick="document.getElementById('cancel-modal').classList.remove('is-open');">Keep Order</button>
+                    <button type="submit" class="dk-btn dk-btn-danger">Confirm Cancellation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+<!-- RETURN ORDER MODAL -->
+@if (Model.CanReturn)
+{
+    <div class="dk-modal" id="return-modal">
+        <div class="dk-modal-backdrop" onclick="document.getElementById('return-modal').classList.remove('is-open');"></div>
+        <div class="dk-modal-dialog">
+            <div class="dk-modal-header">
+                <h3>Request Return (3-Day Policy)</h3>
+                <button type="button" class="dk-close-btn" onclick="document.getElementById('return-modal').classList.remove('is-open');">&times;</button>
+            </div>
+            <form asp-action="Return" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="OrderNumber" value="@Model.OrderNumber" />
+
+                <div class="dk-modal-body">
+                    <p class="dk-modal-desc">
+                        Dreamflykit offers a 3-day hassle-free return policy. Please provide the reason for returning order <strong>@Model.OrderNumber</strong>.
+                    </p>
+                    <div class="dk-form-group">
+                        <label class="dk-label" for="return-reason">Reason for return *</label>
+                        <select name="Reason" id="return-reason" class="dk-select" required>
+                            <option value="">-- Select a reason --</option>
+                            <option value="Size does not fit properly">Size does not fit properly</option>
+                            <option value="Quality or fabric not as expected">Quality or fabric not as expected</option>
+                            <option value="Damaged or defective item received">Damaged or defective item received</option>
+                            <option value="Received wrong item or variant">Received wrong item or variant</option>
+                            <option value="Trip cancelled or no longer needed">Trip cancelled or no longer needed</option>
+                            <option value="Other">Other reason</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="dk-modal-footer">
+                    <button type="button" class="dk-btn dk-btn-secondary" onclick="document.getElementById('return-modal').classList.remove('is-open');">Close</button>
+                    <button type="submit" class="dk-btn dk-btn-primary">Submit Return Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}

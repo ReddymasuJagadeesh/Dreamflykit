@@ -1,0 +1,186 @@
+@model Dreamflykit.Web.Areas.Admin.Models.MediaDetailViewModel
+@{
+    ViewData["Title"] = "Media Asset Details";
+    var asset = Model.Asset;
+}
+
+<div class="dk-admin-content-card">
+    <div class="dk-admin-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <h1 class="dk-admin-card-title" style="font-size: 1.5rem; margin: 0;">
+                    @(string.IsNullOrWhiteSpace(asset.AltText) ? asset.OriginalFileName : asset.AltText)
+                </h1>
+                <span style="font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; background: @(asset.Status == "Published" ? "#10b981" : "#6b7280"); color: #fff; font-weight: 600;">
+                    @asset.Status
+                </span>
+                <span style="font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; background: #e0e7ff; color: #3730a3; font-weight: 600;">
+                    @asset.MediaType
+                </span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0.25rem 0 0;">
+                Asset ID: <code>@asset.Id</code> • Uploaded @asset.CreatedAtUtc.ToString("MMM dd, yyyy HH:mm") UTC
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <a href="/Admin/Media/Edit/@asset.Id" class="dk-btn dk-btn-secondary dk-btn-sm">Edit Metadata</a>
+            
+            @if (asset.Status != "Published")
+            {
+                <form method="post" action="/Admin/Media/Publish/@asset.Id" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="dk-btn dk-btn-primary dk-btn-sm">Publish</button>
+                </form>
+            }
+            else
+            {
+                <form method="post" action="/Admin/Media/Unpublish/@asset.Id" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="dk-btn dk-btn-secondary dk-btn-sm">Unpublish</button>
+                </form>
+            }
+
+            <form method="post" action="/Admin/Media/Delete/@asset.Id" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this media asset?');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="dk-btn dk-btn-danger dk-btn-sm">Delete</button>
+            </form>
+
+            <a href="/Admin/Media" class="dk-btn dk-btn-ghost dk-btn-sm">Back</a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string msg)
+    {
+        <div class="dk-alert dk-alert-success" style="margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: #ecfdf5; border-left: 4px solid #10b981; color: #065f46; border-radius: 4px;">
+            @msg
+        </div>
+    }
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <!-- Left: Image Preview -->
+        <div>
+            <div style="background: #f9fafb; border: 1px solid var(--border-color, #e5e7eb); border-radius: 8px; padding: 1rem; text-align: center;">
+                <img src="@asset.CardUrl" alt="@asset.AltText" style="max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 4px;" />
+            </div>
+
+            <!-- CDN Delivery URLs -->
+            <div style="margin-top: 1.5rem;">
+                <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem;">CDN Image URLs</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">
+                            Thumbnail (200px)
+                        </label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" readonly value="@asset.ThumbnailUrl" class="dk-input" style="font-size: 0.8rem; font-family: monospace; flex: 1;" />
+                            <button type="button" class="dk-btn dk-btn-secondary dk-btn-sm" onclick="copyText('@asset.ThumbnailUrl', this)">Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">
+                            Card / Catalog Grid (500px)
+                        </label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" readonly value="@asset.CardUrl" class="dk-input" style="font-size: 0.8rem; font-family: monospace; flex: 1;" />
+                            <button type="button" class="dk-btn dk-btn-secondary dk-btn-sm" onclick="copyText('@asset.CardUrl', this)">Copy</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">
+                            Full / Detail (1200px)
+                        </label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" readonly value="@asset.Url" class="dk-input" style="font-size: 0.8rem; font-family: monospace; flex: 1;" />
+                            <button type="button" class="dk-btn dk-btn-secondary dk-btn-sm" onclick="copyText('@asset.Url', this)">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Technical Metadata & Usages -->
+        <div>
+            <div style="background: var(--bg-alt, #f9fafb); border: 1px solid var(--border-color, #e5e7eb); border-radius: 8px; padding: 1.25rem;">
+                <h3 style="font-size: 1rem; font-weight: 600; margin: 0 0 1rem;">Asset Information</h3>
+
+                <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse;">
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 0.5rem 0; font-weight: 600; color: var(--text-muted); width: 40%;">Original File</td>
+                        <td style="padding: 0.5rem 0;">@asset.OriginalFileName</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 0.5rem 0; font-weight: 600; color: var(--text-muted);">S3 Object Key</td>
+                        <td style="padding: 0.5rem 0; font-family: monospace; word-break: break-all; font-size: 0.75rem;">@asset.ObjectKey</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 0.5rem 0; font-weight: 600; color: var(--text-muted);">Content Type</td>
+                        <td style="padding: 0.5rem 0;">@asset.ContentType</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 0.5rem 0; font-weight: 600; color: var(--text-muted);">Dimensions</td>
+                        <td style="padding: 0.5rem 0;">@asset.Width × @asset.Height px</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 0.5rem 0; font-weight: 600; color: var(--text-muted);">File Size</td>
+                        <td style="padding: 0.5rem 0;">@(asset.FileSize / 1024) KB (@asset.FileSize bytes)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 0.5rem 0; font-weight: 600; color: var(--text-muted);">Alt Text</td>
+                        <td style="padding: 0.5rem 0;">@asset.AltText</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 0.5rem 0; font-weight: 600; color: var(--text-muted);">Title</td>
+                        <td style="padding: 0.5rem 0;">@(string.IsNullOrWhiteSpace(asset.Title) ? "—" : asset.Title)</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5rem 0; font-weight: 600; color: var(--text-muted);">Caption</td>
+                        <td style="padding: 0.5rem 0;">@(string.IsNullOrWhiteSpace(asset.Caption) ? "—" : asset.Caption)</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Resource References / Usage -->
+            <div style="margin-top: 1.5rem;">
+                <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem;">
+                    Referenced In (@Model.Usages.Count)
+                </h3>
+
+                @if (!Model.Usages.Any())
+                {
+                    <div style="padding: 1rem; background: var(--bg-alt, #f9fafb); border-radius: 6px; font-size: 0.85rem; color: var(--text-muted);">
+                        This asset is currently not linked to any product, category, banner, or page.
+                    </div>
+                }
+                else
+                {
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        @foreach (var usage in Model.Usages)
+                        {
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid var(--border-color, #e5e7eb); border-radius: 6px; background: #fff;">
+                                <div>
+                                    <span style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">@usage.ResourceType</span>
+                                    <p style="font-weight: 600; font-size: 0.9rem; margin: 0.25rem 0 0;">@usage.ResourceTitle</p>
+                                </div>
+                                <a href="@usage.ResourceUrl" class="dk-btn dk-btn-secondary dk-btn-sm">View Item</a>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyText(val, btn) {
+        navigator.clipboard.writeText(val).then(() => {
+            const old = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = old; }, 1500);
+        });
+    }
+</script>

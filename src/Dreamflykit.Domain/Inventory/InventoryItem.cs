@@ -1,4 +1,4 @@
-﻿using Dreamflykit.Domain.Common;
+using Dreamflykit.Domain.Common;
 
 namespace Dreamflykit.Domain.Inventory;
 
@@ -107,6 +107,25 @@ public sealed class InventoryItem : AuditableEntity
 
         ReservedQuantity -= quantity;
         AvailableQuantity += quantity;
+
+        MarkUpdated();
+    }
+
+    public void CommitReservation(int quantity)
+    {
+        if (quantity <= 0)
+        {
+            throw new DomainException(
+                "Commit quantity must be greater than zero.");
+        }
+
+        if (ReservedQuantity < quantity)
+        {
+            throw new DomainException(
+                "Reserved stock is insufficient to commit.");
+        }
+
+        ReservedQuantity -= quantity;
 
         MarkUpdated();
     }

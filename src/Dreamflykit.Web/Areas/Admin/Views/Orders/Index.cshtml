@@ -1,0 +1,96 @@
+@model Dreamflykit.Web.Areas.Admin.Models.AdminOrderListViewModel
+
+@{
+    ViewData["Title"] = "Manage Customer Orders";
+}
+
+<div class="dk-admin-card">
+    <div class="dk-admin-card-header">
+        <h3 class="dk-admin-card-title">All Orders (@Model.TotalCount)</h3>
+
+        <!-- Search Form -->
+        <form method="get" action="/Admin/Orders" style="display: flex; gap: 8px;">
+            @if (Model.SelectedStatus.HasValue)
+            {
+                <input type="hidden" name="status" value="@Model.SelectedStatus.Value" />
+            }
+            <input type="text"
+                   name="search"
+                   value="@Model.SearchTerm"
+                   placeholder="Search Order #..."
+                   class="dk-input"
+                   style="width: 200px; padding: 6px 12px; font-size: 13px;" />
+            <button type="submit" class="dk-btn dk-btn-secondary" style="padding: 6px 12px; font-size: 13px;">Search</button>
+            @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+            {
+                <a href="/Admin/Orders" class="dk-btn dk-btn-outline" style="padding: 6px 12px; font-size: 13px;">Clear</a>
+            }
+        </form>
+    </div>
+
+    <!-- Status Filters -->
+    <div style="padding: 12px 24px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 8px; flex-wrap: wrap;">
+        <a href="/Admin/Orders@(string.IsNullOrWhiteSpace(Model.SearchTerm) ? "" : $"?search={Model.SearchTerm}")"
+           class="dk-price-pill @(!Model.SelectedStatus.HasValue ? "active" : "")">
+            All Statuses
+        </a>
+        @foreach (OrderStatus status in Enum.GetValues(typeof(OrderStatus)))
+        {
+            <a href="/Admin/Orders?status=@status@(string.IsNullOrWhiteSpace(Model.SearchTerm) ? "" : $"&search={Model.SearchTerm}")"
+               class="dk-price-pill @(Model.SelectedStatus == status ? "active" : "")">
+                @status
+            </a>
+        }
+    </div>
+
+    <div class="dk-admin-table-wrap">
+        <table class="dk-admin-table">
+            <thead>
+                <tr>
+                    <th>Order Number</th>
+                    <th>Customer</th>
+                    <th>Date Placed</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Orders.Count == 0)
+                {
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 36px; color: #64748b;">
+                            No orders found matching the filter criteria.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var order in Model.Orders)
+                    {
+                        var statusClass = order.Status.ToString().ToLowerInvariant();
+                        <tr>
+                            <td><strong>@order.OrderNumber</strong></td>
+                            <td>
+                                <div>@order.CustomerName</div>
+                                <small style="color: #64748b;">@order.CustomerEmail</small>
+                            </td>
+                            <td>@order.CreatedAtUtc.ToString("dd MMM yyyy, HH:mm")</td>
+                            <td>@order.ItemCount @(order.ItemCount == 1 ? "item" : "items")</td>
+                            <td><strong>₹@order.TotalAmount.ToString("N0")</strong></td>
+                            <td>
+                                <span class="dk-status-badge dk-status-@statusClass">@order.StatusLabel</span>
+                            </td>
+                            <td>
+                                <a href="/Admin/Orders/Details/@order.OrderId" class="dk-btn dk-btn-primary" style="padding: 4px 10px; font-size: 11px;">
+                                    View / Update Status →
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

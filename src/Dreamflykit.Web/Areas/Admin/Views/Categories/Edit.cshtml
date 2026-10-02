@@ -1,0 +1,136 @@
+@model Dreamflykit.Web.Areas.Admin.Models.AdminCategoryEditViewModel
+
+@{
+    ViewData["Title"] = $"Edit Category: {Model.Name}";
+}
+
+<div class="dk-admin-card" style="max-width: 800px; margin: 0 auto 30px;">
+    <div class="dk-admin-card-header" style="border-bottom: 1px solid #f1f5f9; padding-bottom: 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h3 class="dk-admin-card-title" style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">
+                Edit Category
+            </h3>
+            <p style="margin: 4px 0 0; font-size: 13px; color: #64748b;">
+                Modify category name, slug, ordering, and icon/banner image.
+            </p>
+        </div>
+
+        <a href="/Admin/Categories" class="dk-btn dk-btn-secondary" style="font-size: 12px; text-decoration: none;">
+            ← Back to List
+        </a>
+    </div>
+
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+        {
+            <div style="margin-bottom: 20px; padding: 12px 16px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #b91c1c; font-size: 13px;">
+                <div asp-validation-summary="All" style="margin: 0; padding-left: 20px;"></div>
+            </div>
+        }
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label asp-for="Name" style="display: block; font-weight: 700; font-size: 13px; color: #334155; margin-bottom: 6px;">Category Name *</label>
+                <input asp-for="Name" class="dk-input" id="categoryName" style="width: 100%;" required />
+                <span asp-validation-for="Name" style="color: #dc2626; font-size: 12px;"></span>
+            </div>
+
+            <div>
+                <label asp-for="Slug" style="display: block; font-weight: 700; font-size: 13px; color: #334155; margin-bottom: 6px;">URL Slug *</label>
+                <input asp-for="Slug" class="dk-input" id="categorySlug" style="width: 100%;" required />
+                <span asp-validation-for="Slug" style="color: #dc2626; font-size: 12px;"></span>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 24px; align-items: center; margin-bottom: 16px;">
+            <div>
+                <label asp-for="DisplayOrder" style="display: block; font-weight: 700; font-size: 13px; color: #334155; margin-bottom: 6px;">Display Order</label>
+                <input asp-for="DisplayOrder" type="number" class="dk-input" style="width: 140px;" min="0" />
+            </div>
+
+            <div style="margin-top: 22px;">
+                <label style="display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; color: #334155; cursor: pointer;">
+                    <input asp-for="IsActive" type="checkbox" style="width: 16px; height: 16px;" />
+                    <span>Active (Visible on website)</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Media Asset Picker for Category Icon/Banner -->
+        <div style="margin-bottom: 24px; padding: 16px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px;">
+            <label style="display: block; font-weight: 700; font-size: 13px; color: #334155; margin-bottom: 8px;">
+                Category Banner / Thumbnail Image (S3)
+            </label>
+
+            <input type="hidden" asp-for="ImageMediaAssetId" id="mediaAssetId" />
+
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div id="imagePreviewContainer" style="width: 80px; height: 80px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <img id="imagePreview" src="@(Model.ImagePreviewUrl ?? "")" alt="Selected Preview" style="@(string.IsNullOrWhiteSpace(Model.ImagePreviewUrl) ? "display: none;" : "display: block;") width: 100%; height: 100%; object-fit: cover;" />
+                    <span id="noImagePrompt" style="@(string.IsNullOrWhiteSpace(Model.ImagePreviewUrl) ? "display: block;" : "display: none;") color: #94a3b8; font-size: 11px; text-align: center; padding: 4px;">No image</span>
+                </div>
+
+                <div>
+                    <button type="button" class="dk-btn dk-btn-secondary" onclick="openMediaPicker()" style="padding: 6px 14px; font-size: 12px; font-weight: 700;">
+                        📁 Change Image
+                    </button>
+                    <button type="button" class="dk-btn dk-btn-outline" onclick="clearSelectedMedia()" style="padding: 6px 14px; font-size: 12px; margin-left: 8px;">
+                        Remove
+                    </button>
+                    <small style="display: block; margin-top: 6px; color: #64748b; font-size: 11px;">
+                        Select an existing optimized asset or upload a new image to S3.
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 16px;">
+            <a href="/Admin/Categories" class="dk-btn dk-btn-outline" style="text-decoration: none;">Cancel</a>
+            <button type="submit" class="dk-btn dk-btn-primary" style="padding: 8px 24px; font-weight: 700;">Save Changes</button>
+        </div>
+    </form>
+</div>
+
+<!-- Modal Picker Dialog -->
+<div id="mediaPickerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="width: 90%; max-width: 1000px; height: 85%; background: #ffffff; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);">
+        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #0f172a;">Select Category Media from S3</h3>
+            <button type="button" class="dk-btn dk-btn-secondary" style="padding: 4px 10px; font-size: 12px;" onclick="closeMediaPicker()">✕ Close</button>
+        </div>
+        <iframe id="pickerIframe" src="" style="flex: 1; border: none; width: 100%; height: 100%;"></iframe>
+    </div>
+</div>
+
+<script>
+    function openMediaPicker() {
+        document.getElementById('pickerIframe').src = '/Admin/Media?picker=true';
+        document.getElementById('mediaPickerModal').style.display = 'flex';
+    }
+
+    function closeMediaPicker() {
+        document.getElementById('mediaPickerModal').style.display = 'none';
+    }
+
+    function clearSelectedMedia() {
+        document.getElementById('mediaAssetId').value = '';
+        const preview = document.getElementById('imagePreview');
+        preview.src = '';
+        preview.style.display = 'none';
+        document.getElementById('noImagePrompt').style.display = 'block';
+    }
+
+    window.addEventListener('message', function (e) {
+        if (e.data && e.data.type === 'MEDIA_SELECTED') {
+            document.getElementById('mediaAssetId').value = e.data.id;
+            const preview = document.getElementById('imagePreview');
+            preview.src = e.data.thumb || e.data.full;
+            preview.style.display = 'block';
+            document.getElementById('noImagePrompt').style.display = 'none';
+            closeMediaPicker();
+        }
+    });
+</script>

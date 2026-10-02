@@ -1,0 +1,130 @@
+@model Dreamflykit.Application.Wishlist.Models.WishlistSummary
+@{
+    ViewData["Title"] = "My Wishlist — Dreamflykit";
+    Layout = "_Layout";
+}
+
+<div class="dk-page-container dk-wishlist-page">
+    <div class="dk-profile-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="dk-profile-sidebar">
+            <div class="dk-user-brief">
+                <div class="dk-avatar-circle">
+                    @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
+                </div>
+                <div>
+                    <span class="dk-user-greeting">Hello,</span>
+                    <h3 class="dk-user-display-name">@User.Identity?.Name</h3>
+                </div>
+            </div>
+
+            <nav class="dk-profile-menu">
+                <a asp-controller="Orders" asp-action="Index" class="dk-menu-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span>My Orders</span>
+                </a>
+                <a asp-controller="Wishlist" asp-action="Index" class="dk-menu-item active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                    </svg>
+                    <span>My Wishlist (@Model.TotalItems)</span>
+                </a>
+                <a asp-controller="Address" asp-action="Index" class="dk-menu-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span>Manage Addresses</span>
+                </a>
+                <a asp-controller="Cart" asp-action="Index" class="dk-menu-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+                    </svg>
+                    <span>My Cart</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Wishlist Content -->
+        <main class="dk-profile-content">
+            <div class="dk-content-header">
+                <div>
+                    <h1 class="dk-section-title">My Wishlist (@Model.TotalItems)</h1>
+                    <p class="dk-section-subtitle">Items you've saved to buy later</p>
+                </div>
+            </div>
+
+            @if (TempData["SuccessMessage"] is string success)
+            {
+                <div class="dk-alert dk-alert-success">@success</div>
+            }
+            @if (TempData["ErrorMessage"] is string error)
+            {
+                <div class="dk-alert dk-alert-danger">@error</div>
+            }
+
+            @if (Model.IsEmpty)
+            {
+                <div class="dk-empty-state">
+                    <div class="dk-empty-icon">🤍</div>
+                    <h3>Your Wishlist is Empty</h3>
+                    <p>Save items you love by tapping the heart icon on any product card, and find them all right here!</p>
+                    <a asp-controller="Home" asp-action="Index" class="dk-btn dk-btn-primary">Explore Products</a>
+                </div>
+            }
+            else
+            {
+                <div class="dk-wishlist-grid">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="dk-wishlist-card">
+                            <div class="dk-wishlist-img-wrap">
+                                @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl" alt="@item.ProductName" />
+                                }
+                                else
+                                {
+                                    <div class="dk-thumb-placeholder">📦</div>
+                                }
+                                
+                                <form asp-action="Remove" method="post" class="dk-wishlist-remove-form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="productVariantId" value="@item.ProductVariantId" />
+                                    <button type="submit" class="dk-wishlist-remove-btn" title="Remove from Wishlist" aria-label="Remove">
+                                        &times;
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="dk-wishlist-details">
+                                <h4 class="dk-wishlist-title">@item.ProductName</h4>
+                                <p class="dk-wishlist-variant">Variant: @item.VariantName &bull; SKU: @item.Sku</p>
+
+                                <div class="dk-wishlist-price-row">
+                                    <span class="dk-wishlist-price">₹@item.UnitPrice.ToString("N0")</span>
+                                    @if (item.Mrp > item.UnitPrice)
+                                    {
+                                        <span class="dk-wishlist-mrp">₹@item.Mrp.ToString("N0")</span>
+                                        <span class="dk-wishlist-discount">@item.DiscountPercentage% off</span>
+                                    }
+                                </div>
+
+                                <div class="dk-wishlist-actions">
+                                    <form asp-action="MoveToCart" method="post" class="dk-w-100">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="productVariantId" value="@item.ProductVariantId" />
+                                        <button type="submit" class="dk-btn dk-btn-primary dk-btn-sm dk-w-100">
+                                            🛒 Move to Cart
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </main>
+    </div>
+</div>

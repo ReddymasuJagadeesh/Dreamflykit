@@ -1,0 +1,185 @@
+@model Dreamflykit.Web.Areas.Admin.Models.MediaLibraryViewModel
+@{
+    ViewData["Title"] = "Media Library";
+    var isPicker = (ViewData["IsPicker"] as bool?) ?? false;
+}
+
+<div class="dk-admin-content-card">
+    <div class="dk-admin-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 class="dk-admin-card-title" style="font-size: 1.5rem; margin: 0;">Media Library</h1>
+            <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0.25rem 0 0;">
+                Centralized CDN-backed digital assets for catalog, promotional banners, and CMS sections.
+            </p>
+        </div>
+        <div>
+            <a href="/Admin/Media/Upload" class="dk-btn dk-btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>Upload Media</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <form method="get" class="dk-admin-filters-bar" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.5rem; padding: 1rem; background: var(--bg-alt, #f8f9fa); border-radius: 8px;">
+        <input type="hidden" name="picker" value="@(isPicker ? "true" : "false")" />
+        
+        <div style="flex: 1; min-width: 200px;">
+            <input type="text" name="search" value="@Model.Search" placeholder="Search by alt text, filename, title..." class="dk-input" style="width: 100%;" />
+        </div>
+
+        <div style="min-width: 150px;">
+            <select name="mediaType" class="dk-select" style="width: 100%;">
+                <option value="">All Media Types</option>
+                @foreach (var type in Enum.GetValues<MediaType>())
+                {
+                    <option value="@type" selected="@(Model.MediaType == type)">@type</option>
+                }
+            </select>
+        </div>
+
+        <div style="min-width: 140px;">
+            <select name="status" class="dk-select" style="width: 100%;">
+                <option value="">All Statuses</option>
+                @foreach (var s in Enum.GetValues<MediaAssetStatus>())
+                {
+                    if (s != MediaAssetStatus.Deleted)
+                    {
+                        <option value="@s" selected="@(Model.Status == s)">@s</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <button type="submit" class="dk-btn dk-btn-secondary">Filter</button>
+        @if (Model.MediaType.HasValue || Model.Status.HasValue || !string.IsNullOrWhiteSpace(Model.Search))
+        {
+            <a href="/Admin/Media@(isPicker ? "?picker=true" : "")" class="dk-btn dk-btn-ghost">Reset</a>
+        }
+    </form>
+
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] is string msg)
+    {
+        <div class="dk-alert dk-alert-success" style="margin-top: 1rem; padding: 0.75rem 1rem; background: #ecfdf5; border-left: 4px solid #10b981; color: #065f46; border-radius: 4px;">
+            @msg
+        </div>
+    }
+
+    <!-- Grid of Media Assets -->
+    @if (!Model.Assets.Items.Any())
+    {
+        <div style="text-align: center; padding: 4rem 1rem;">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--text-muted); margin-bottom: 1rem;">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">No media assets found</h3>
+            <p style="color: var(--text-muted); max-width: 400px; margin: 0 auto 1.5rem;">
+                Get started by uploading your product photos, marketing banners, or category imagery.
+            </p>
+            <a href="/Admin/Media/Upload" class="dk-btn dk-btn-primary">Upload First Asset</a>
+        </div>
+    }
+    else
+    {
+        <div class="dk-media-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 1.5rem;">
+            @foreach (var item in Model.Assets.Items)
+            {
+                <div class="dk-media-card" style="border: 1px solid var(--border-color, #e5e7eb); border-radius: 8px; overflow: hidden; background: #fff; display: flex; flex-direction: column; transition: transform 0.15s ease, box-shadow 0.15s ease;">
+                    <div style="position: relative; padding-top: 75%; background: #f3f4f6; overflow: hidden;">
+                        <img src="@item.ThumbnailUrl" 
+                             alt="@item.AltText" 
+                             loading="lazy"
+                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 0.25rem;" />
+                        <span style="position: absolute; top: 8px; left: 8px; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.65); color: #fff; font-weight: 600;">
+                            @item.MediaType
+                        </span>
+                        <span style="position: absolute; top: 8px; right: 8px; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: @(item.Status == "Published" ? "#10b981" : "#6b7280"); color: #fff; font-weight: 600;">
+                            @item.Status
+                        </span>
+                    </div>
+
+                    <div style="padding: 0.75rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <p style="font-size: 0.85rem; font-weight: 600; margin: 0 0 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="@item.AltText">
+                                @(string.IsNullOrWhiteSpace(item.AltText) ? item.OriginalFileName : item.AltText)
+                            </p>
+                            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">
+                                @item.Width × @item.Height px • @(item.FileSize / 1024) KB
+                            </p>
+                        </div>
+
+                        <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; align-items: center; justify-content: space-between;">
+                            @if (isPicker)
+                            {
+                                <button type="button" 
+                                        class="dk-btn dk-btn-primary dk-btn-sm" 
+                                        style="width: 100%; font-size: 0.75rem; padding: 0.25rem 0.5rem;"
+                                        onclick="selectMedia('@item.Id', '@item.ThumbnailUrl', '@item.CardUrl', '@item.Url', '@Html.Raw(JavaScriptEncoder.Default.Encode(item.AltText))')">
+                                    Select
+                                </button>
+                            }
+                            else
+                            {
+                                <a href="/Admin/Media/Detail/@item.Id" class="dk-btn dk-btn-secondary dk-btn-sm" style="flex: 1; text-align: center; font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                    View / Edit
+                                </a>
+                                <button type="button" 
+                                        class="dk-btn dk-btn-ghost dk-btn-sm" 
+                                        title="Copy CDN URL" 
+                                        style="padding: 0.25rem 0.5rem;"
+                                        onclick="copyToClipboard('@item.Url', this)">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.Assets.TotalPages > 1)
+        {
+            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+                @for (int p = 1; p <= Model.Assets.TotalPages; p++)
+                {
+                    <a href="?page=@p&mediaType=@Model.MediaType&status=@Model.Status&search=@Model.Search&picker=@(isPicker ? "true" : "false")" 
+                       class="dk-btn @(p == Model.Assets.Page ? "dk-btn-primary" : "dk-btn-secondary") dk-btn-sm">
+                        @p
+                    </a>
+                }
+            </div>
+        }
+    }
+</div>
+
+@using System.Text.Encodings.Web
+
+<script>
+    function copyToClipboard(text, btn) {
+        navigator.clipboard.writeText(text).then(() => {
+            var oldHtml = btn.innerHTML;
+            btn.innerHTML = '✓';
+            setTimeout(() => { btn.innerHTML = oldHtml; }, 1500);
+        });
+    }
+
+    function selectMedia(id, thumb, card, full, alt) {
+        if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({ type: 'MEDIA_SELECTED', id, thumb, card, full, alt }, '*');
+            window.close();
+        } else if (window.parent) {
+            window.parent.postMessage({ type: 'MEDIA_SELECTED', id, thumb, card, full, alt }, '*');
+        }
+    }
+</script>

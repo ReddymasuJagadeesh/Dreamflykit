@@ -1,4 +1,5 @@
-﻿using Dreamflykit.Domain.Common;
+using Dreamflykit.Domain.Common;
+using Dreamflykit.Domain.Media;
 
 namespace Dreamflykit.Domain.Catalog;
 
@@ -54,6 +55,29 @@ public sealed class Subcategory : AuditableEntity
     public bool IsActive { get; private set; }
 
     public int DisplayOrder { get; private set; }
+
+    /// <summary>
+    /// Reference to the centralized MediaAsset for this subcategory's image.
+    /// Null means no image has been assigned yet.
+    /// </summary>
+    public Guid? ImageMediaAssetId { get; private set; }
+
+    public void SetImage(Guid mediaAssetId)
+    {
+        if (mediaAssetId == Guid.Empty)
+        {
+            throw new DomainException("Media asset ID cannot be empty.");
+        }
+
+        ImageMediaAssetId = mediaAssetId;
+        MarkUpdated();
+    }
+
+    public void RemoveImage()
+    {
+        ImageMediaAssetId = null;
+        MarkUpdated();
+    }
 
     public void Update(
         string name,

@@ -1,0 +1,139 @@
+@model Dreamflykit.Web.Models.Info.ConsultancyBookingViewModel
+@{
+    ViewData["Title"] = "Free 1-on-1 Student Pre-Departure Kit Consultation — Dreamflykit";
+    Layout = "_Layout";
+}
+
+<div class="dk-page-container dk-info-page">
+    <div class="dk-info-hero">
+        <div class="dk-info-hero-badge">🎓 COMPLIMENTARY 1-ON-1 ADVISORY</div>
+        <h1 class="dk-info-hero-title">Book Your Free Pre-Departure Kit Session</h1>
+        <p class="dk-info-hero-subtitle">
+            Speak directly with an alumni mentor who studied in your target country. We review your airline baggage allowances, university dorm mattress sizes, and weather clothing checklist.
+        </p>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string success)
+    {
+        <div class="dk-alert dk-alert-success" style="margin-bottom: 24px;">
+            <strong>✓ Confirmed:</strong> @success
+        </div>
+    }
+
+    <div class="dk-contact-layout">
+        <!-- Booking Form -->
+        <div class="dk-card dk-contact-form-card">
+            <h3 class="dk-card-title">Schedule Your 30-Minute Consultation</h3>
+            <p class="dk-card-subtitle" style="color: #64748b; margin-bottom: 20px;">
+                Sessions are conducted via Google Meet or WhatsApp Video Call. Free of cost.
+            </p>
+
+            <form asp-action="Consultancy" method="post" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div style="display:none;" aria-hidden="true">
+                    <input type="text" asp-for="Honeypot" tabindex="-1" autocomplete="off" />
+                </div>
+
+                <div class="dk-form-row">
+                    <div class="dk-form-group">
+                        <label asp-for="FullName" class="dk-label">Student Name *</label>
+                        <input asp-for="FullName" class="dk-input" placeholder="e.g. Rahul Sharma" />
+                        <span asp-validation-for="FullName" class="dk-error-text"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="Email" class="dk-label">Email Address *</label>
+                        <input asp-for="Email" type="email" class="dk-input" placeholder="rahul@example.com" />
+                        <span asp-validation-for="Email" class="dk-error-text"></span>
+                    </div>
+                </div>
+
+                <div class="dk-form-row">
+                    <div class="dk-form-group">
+                        <label asp-for="PhoneNumber" class="dk-label">WhatsApp Number *</label>
+                        <input asp-for="PhoneNumber" class="dk-input" placeholder="+91 98765 43210" />
+                        <span asp-validation-for="PhoneNumber" class="dk-error-text"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="DestinationCountry" class="dk-label">Destination Country *</label>
+                        <select asp-for="DestinationCountry" class="dk-select">
+                            <option value="">-- Select Country --</option>
+                            <option value="USA">United States (USA)</option>
+                            <option value="UK">United Kingdom (UK)</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Germany">Germany & Europe</option>
+                            <option value="Ireland">Ireland</option>
+                        </select>
+                        <span asp-validation-for="DestinationCountry" class="dk-error-text"></span>
+                    </div>
+                </div>
+
+                <div class="dk-form-row">
+                    <div class="dk-form-group">
+                        <label asp-for="TargetUniversity" class="dk-label">Target University / City *</label>
+                        <input asp-for="TargetUniversity" class="dk-input" placeholder="e.g. University of Texas at Dallas" />
+                        <span asp-validation-for="TargetUniversity" class="dk-error-text"></span>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label asp-for="IntakeTerm" class="dk-label">Intake Term *</label>
+                        <select asp-for="IntakeTerm" class="dk-select">
+                            <option value="">-- Select Intake --</option>
+                            <option value="Fall 2026">Fall 2026</option>
+                            <option value="Spring 2027">Spring 2027</option>
+                            <option value="Summer 2027">Summer 2027</option>
+                            <option value="Fall 2027">Fall 2027</option>
+                        </select>
+                        <span asp-validation-for="IntakeTerm" class="dk-error-text"></span>
+                    </div>
+                </div>
+
+                <div class="dk-form-group" style="margin-bottom: 20px;">
+                    <label asp-for="PreferredDate" class="dk-label">Preferred Date for Consultation *</label>
+                    <input asp-for="PreferredDate" type="date" class="dk-input" min="@DateTime.UtcNow.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="PreferredDate" class="dk-error-text"></span>
+                </div>
+
+                <div class="dk-form-group" style="margin-bottom: 24px;">
+                    <label asp-for="Notes" class="dk-label">Any specific questions or concerns?</label>
+                    <textarea asp-for="Notes" rows="3" class="dk-input" placeholder="e.g. I need guidance on whether to buy pressure cooker in India or abroad, and USA Twin XL bedding sizes..."></textarea>
+                    <span asp-validation-for="Notes" class="dk-error-text"></span>
+                </div>
+
+                <button type="submit" class="dk-btn dk-btn-primary dk-btn-lg">
+                    Confirm Consultation Request
+                </button>
+            </form>
+        </div>
+
+        <!-- Consultation Perks Sidebar -->
+        <aside class="dk-contact-sidebar">
+            <div class="dk-card dk-contact-info-card">
+                <h4>🎯 What We Cover in 30 Mins</h4>
+                <ul class="dk-feature-list" style="margin-top: 12px;">
+                    <li><strong>Dorm Mattress Sizing:</strong> Twin XL (US), Single (UK), or Double bed specifications.</li>
+                    <li><strong>Kitchen & Induction Rules:</strong> Which pans work with US 110V magnetic induction stoves.</li>
+                    <li><strong>Weight Budget Optimization:</strong> How to fit your full kit within the 46kg airline limit.</li>
+                    <li><strong>Winter Wardrobe Advice:</strong> When to buy thermals vs buying a heavy snow parka post-arrival.</li>
+                </ul>
+            </div>
+
+            <div class="dk-card dk-contact-info-card" style="background: #f8fafc;">
+                <h4>⭐ Student Reviews</h4>
+                <blockquote style="margin: 0; font-size: 13px; font-style: italic; color: #475569;">
+                    "The consultation cleared all confusion about UT Dallas dorm rules and prevented me from carrying wrong cookware. The kit was waiting at my home 4 days before my Emirates flight!"
+                </blockquote>
+                <div style="margin-top: 8px; font-weight: 700; font-size: 12px; color: #075bc8;">
+                    — Sneha K., MS CS Student, Texas
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

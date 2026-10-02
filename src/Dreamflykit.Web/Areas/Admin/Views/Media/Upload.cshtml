@@ -1,0 +1,134 @@
+@model Dreamflykit.Web.Areas.Admin.Models.MediaUploadViewModel
+@{
+    ViewData["Title"] = "Upload Media Asset";
+}
+
+<div class="dk-admin-content-card" style="max-width: 800px; margin: 0 auto;">
+    <div class="dk-admin-card-header" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 class="dk-admin-card-title" style="font-size: 1.5rem; margin: 0;">Upload Media Asset</h1>
+            <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0.25rem 0 0;">
+                Files are validated, converted to WebP variants (Thumbnail, Card, Detail), and stored securely in AWS S3.
+            </p>
+        </div>
+        <a href="/Admin/Media" class="dk-btn dk-btn-ghost">Back to Library</a>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="dk-alert dk-alert-danger" style="margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b; border-radius: 4px;">
+            <div asp-validation-summary="All"></div>
+        </div>
+    }
+
+    <form method="post" enctype="multipart/form-data" id="uploadForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="OwnerId" />
+
+        <!-- Drag & Drop Zone -->
+        <div id="dropZone" style="border: 2px dashed var(--border-color, #d1d5db); border-radius: 12px; padding: 2.5rem 1.5rem; text-align: center; background: var(--bg-alt, #fafafa); cursor: pointer; transition: border-color 0.2s, background-color 0.2s; position: relative;">
+            <input type="file" id="fileInput" name="File" accept=".jpg,.jpeg,.png,.webp" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" required />
+            
+            <div id="dropPrompt">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" style="color: #6366f1; margin-bottom: 0.75rem;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <p style="font-weight: 600; margin: 0 0 0.25rem; font-size: 1rem;">Click to browse or drag and drop image here</p>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">Supports JPEG, PNG, WebP up to 5 MB</p>
+            </div>
+
+            <div id="previewContainer" style="display: none; flex-direction: column; align-items: center; gap: 0.75rem;">
+                <img id="imagePreview" src="" alt="Preview" style="max-height: 220px; max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
+                <span id="fileDetails" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;"></span>
+                <span style="color: #6366f1; font-size: 0.8rem; text-decoration: underline;">Click or drop another image to replace</span>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+            <div>
+                <label asp-for="MediaType" style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem;">Media Type</label>
+                <select asp-for="MediaType" class="dk-select" style="width: 100%;">
+                    @foreach (var type in Enum.GetValues<MediaType>())
+                    {
+                        <option value="@type">@type</option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label asp-for="AltText" style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem;">
+                    Alt Text <span style="color: #ef4444;">*</span> (Accessibility & SEO)
+                </label>
+                <input asp-for="AltText" class="dk-input" style="width: 100%;" placeholder="e.g. FPV Drone Brushless Motor 2207 Gold Edition" required />
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+            <div>
+                <label asp-for="Title" style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem;">Title (Optional)</label>
+                <input asp-for="Title" class="dk-input" style="width: 100%;" placeholder="e.g. Hero Banner 2026 Q4" />
+            </div>
+
+            <div>
+                <label asp-for="Caption" style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem;">Caption / Notes (Optional)</label>
+                <input asp-for="Caption" class="dk-input" style="width: 100%;" placeholder="Internal notes or customer caption" />
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+            <a href="/Admin/Media" class="dk-btn dk-btn-ghost">Cancel</a>
+            <button type="submit" class="dk-btn dk-btn-primary" id="submitBtn">Upload & Process</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const dropPrompt = document.getElementById('dropPrompt');
+    const previewContainer = document.getElementById('previewContainer');
+    const imagePreview = document.getElementById('imagePreview');
+    const fileDetails = document.getElementById('fileDetails');
+    const altInput = document.getElementById('AltText');
+
+    ['dragenter', 'dragover'].forEach(name => {
+        dropZone.addEventListener(name, (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#6366f1';
+            dropZone.style.backgroundColor = '#eef2ff';
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(name => {
+        dropZone.addEventListener(name, (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--border-color, #d1d5db)';
+            dropZone.style.backgroundColor = 'var(--bg-alt, #fafafa)';
+        });
+    });
+
+    fileInput.addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                fileDetails.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                dropPrompt.style.display = 'none';
+                previewContainer.style.display = 'flex';
+                
+                // Auto-fill alt text if blank
+                if (!altInput.value.trim()) {
+                    const cleanName = file.name.substring(0, file.name.lastIndexOf('.'))
+                                              .replace(/[-_]/g, ' ')
+                                              .replace(/\b\w/g, l => l.toUpperCase());
+                    altInput.value = cleanName;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

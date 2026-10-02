@@ -1,0 +1,116 @@
+@model Dreamflykit.Web.Areas.Admin.Models.LandingPageEditViewModel
+@{
+    ViewData["Title"] = $"Edit Landing Page: {Model.Title}";
+}
+
+<div class="dk-admin-content-card" style="max-width: 700px; margin: 0 auto;">
+    <div class="dk-admin-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div>
+            <h1 class="dk-admin-card-title" style="font-size: 1.5rem; margin: 0;">Edit Landing Page</h1>
+            <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0.25rem 0 0;">
+                Update slug, hero banner graphic, or publication status.
+            </p>
+        </div>
+        <a href="/Admin/LandingPages" class="dk-btn dk-btn-ghost">Back</a>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="dk-alert dk-alert-danger" style="margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b; border-radius: 4px;">
+            <div asp-validation-summary="All"></div>
+        </div>
+    }
+
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="HeroMediaAssetId" id="mediaAssetId" />
+
+        <!-- Hero Image Selector -->
+        <div style="margin-bottom: 1.5rem; padding: 1.25rem; border: 1px solid var(--border-color, #e5e7eb); border-radius: 8px; background: var(--bg-alt, #f9fafb);">
+            <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.5rem;">Hero Header Graphic</label>
+
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div id="imagePreviewWrapper" style="width: 160px; height: 90px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <img id="imagePreview" src="@Model.CurrentHeroImageUrl" alt="Selected Preview" style="@(string.IsNullOrEmpty(Model.CurrentHeroImageUrl) ? "display: none;" : "") width: 100%; height: 100%; object-fit: cover;" />
+                    <span id="noImagePrompt" style="@(string.IsNullOrEmpty(Model.CurrentHeroImageUrl) ? "" : "display: none;") font-size: 0.75rem; color: var(--text-muted); text-align: center; padding: 0.5rem;">No hero image</span>
+                </div>
+
+                <div>
+                    <button type="button" class="dk-btn dk-btn-secondary dk-btn-sm" onclick="openMediaPicker()">
+                        Select from Media Library
+                    </button>
+                    <a href="/Admin/Media/Upload?mediaType=LandingPage" target="_blank" class="dk-btn dk-btn-ghost dk-btn-sm" style="margin-left: 0.5rem;">
+                        Upload New Image ↗
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <label asp-for="Title" style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem;">
+                Page Title <span style="color: #ef4444;">*</span>
+            </label>
+            <input asp-for="Title" class="dk-input" style="width: 100%;" required />
+            <span asp-validation-for="Title" style="color: #ef4444; font-size: 0.8rem;"></span>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <label asp-for="Slug" style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem;">
+                URL Slug <span style="color: #ef4444;">*</span>
+            </label>
+            <div style="display: flex; align-items: center;">
+                <span style="padding: 0.5rem 0.75rem; background: #f3f4f6; border: 1px solid #d1d5db; border-right: none; border-radius: 6px 0 0 6px; color: var(--text-muted); font-size: 0.85rem;">/pages/</span>
+                <input asp-for="Slug" class="dk-input" style="flex: 1; border-radius: 0 6px 6px 0;" required />
+            </div>
+            <span asp-validation-for="Slug" style="color: #ef4444; font-size: 0.8rem;"></span>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label asp-for="Status" style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem;">Status</label>
+            <select asp-for="Status" class="dk-select" style="width: 100%;">
+                <option value="Draft" selected="@(Model.Status == "Draft")">Draft</option>
+                <option value="Published" selected="@(Model.Status == "Published")">Published</option>
+                <option value="Archived" selected="@(Model.Status == "Archived")">Archived</option>
+            </select>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+            <a href="/Admin/LandingPages" class="dk-btn dk-btn-ghost">Cancel</a>
+            <button type="submit" class="dk-btn dk-btn-primary">Save Changes</button>
+        </div>
+    </form>
+</div>
+
+<!-- Modal Picker Dialog -->
+<div id="mediaPickerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="width: 90%; max-width: 1000px; height: 85%; background: #fff; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.125rem;">Select from Media Library</h3>
+            <button type="button" class="dk-btn dk-btn-ghost dk-btn-sm" onclick="closeMediaPicker()">✕</button>
+        </div>
+        <iframe id="pickerIframe" src="" style="flex: 1; border: none; width: 100%; height: 100%;"></iframe>
+    </div>
+</div>
+
+<script>
+    function openMediaPicker() {
+        document.getElementById('pickerIframe').src = '/Admin/Media?picker=true';
+        document.getElementById('mediaPickerModal').style.display = 'flex';
+    }
+
+    function closeMediaPicker() {
+        document.getElementById('mediaPickerModal').style.display = 'none';
+    }
+
+    window.addEventListener('message', function (e) {
+        if (e.data && e.data.type === 'MEDIA_SELECTED') {
+            document.getElementById('mediaAssetId').value = e.data.id;
+            const preview = document.getElementById('imagePreview');
+            preview.src = e.data.thumb || e.data.full;
+            preview.style.display = 'block';
+            document.getElementById('noImagePrompt').style.display = 'none';
+            closeMediaPicker();
+        }
+    });
+</script>
