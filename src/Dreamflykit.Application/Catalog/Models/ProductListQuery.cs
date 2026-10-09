@@ -21,6 +21,8 @@ public sealed class ProductListQuery
 
     public string? CategorySlug { get; init; }
 
+    public string? SubcategorySlug { get; init; }
+
     public bool? InStockOnly { get; init; }
 
     public int? MinDiscount { get; init; }

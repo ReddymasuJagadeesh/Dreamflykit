@@ -138,6 +138,15 @@ public sealed class ProductMedia : AuditableEntity
 
     public bool IsActive { get; private set; }
 
+    /// <summary>
+    /// Explicitly updates the resolved media URL.
+    /// </summary>
+    public void SetMediaUrl(string mediaUrl)
+    {
+        MediaUrl = mediaUrl ?? string.Empty;
+        MarkUpdated();
+    }
+
     /// <summary>Update alt text and display order for an S3-backed media record.</summary>
     public void Update(
         string altText,

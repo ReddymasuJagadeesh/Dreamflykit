@@ -1,6 +1,7 @@
 using Dreamflykit.Application.Catalog.Interfaces;
 using Dreamflykit.Application.Catalog.Models;
 using Dreamflykit.Application.Common;
+using Dreamflykit.Application.Media.Interfaces;
 using Dreamflykit.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,22 +10,53 @@ namespace Dreamflykit.Infrastructure.Catalog;
 public sealed class ProductRepository : IProductRepository
 {
     private readonly DreamflykitDbContext _dbContext;
+    private readonly IMediaUrlService _urlService;
 
     public ProductRepository(
-        DreamflykitDbContext dbContext)
+        DreamflykitDbContext dbContext,
+        IMediaUrlService urlService)
     {
         _dbContext = dbContext;
+        _urlService = urlService;
+    }
+
+    private async Task<Dictionary<Guid, string>> GetAssetKeysAsync(
+        IEnumerable<Guid?> assetIds,
+        CancellationToken cancellationToken)
+    {
+        var validIds = assetIds.Where(id => id.HasValue).Select(id => id!.Value).Distinct().ToList();
+        if (validIds.Count == 0) return new Dictionary<Guid, string>();
+
+        return await _dbContext.MediaAssets
+            .AsNoTracking()
+            .Where(a => validIds.Contains(a.Id))
+            .ToDictionaryAsync(a => a.Id, a => a.ObjectKey, cancellationToken);
+    }
+
+    private string ResolveProductImageUrl(string? mediaUrl, Guid? mediaAssetId, IReadOnlyDictionary<Guid, string> assetMap)
+    {
+        if (mediaAssetId.HasValue && assetMap.TryGetValue(mediaAssetId.Value, out var objKey))
+        {
+            return _urlService.GetCardUrl(objKey);
+        }
+
+        if (!string.IsNullOrWhiteSpace(mediaUrl))
+        {
+            return mediaUrl;
+        }
+
+        return "/images/products/product-placeholder.webp";
     }
 
     public async Task<IReadOnlyList<ProductListItem>>
         GetActiveProductsAsync(
             CancellationToken cancellationToken)
     {
-        return await _dbContext.Products
+        var rawItems = await _dbContext.Products
             .AsNoTracking()
             .Where(product => product.IsActive)
             .OrderBy(product => product.Name)
-            .Select(product => new ProductListItem
+            .Select(product => new
             {
                 ProductId = product.Id,
                 DefaultVariantId = _dbContext.ProductVariants
@@ -37,33 +69,47 @@ public sealed class ProductRepository : IProductRepository
                 Name = product.Name,
                 Slug = product.Slug,
                 Description = product.Description,
-
-                ImageUrl = _dbContext.ProductMedia
-                    .Where(media =>
-                        media.ProductId == product.Id)
-                    .OrderBy(media => media.DisplayOrder)
-                    .Select(media => media.MediaUrl)
+                MediaInfo = _dbContext.ProductMedia
+                    .Where(media => media.ProductId == product.Id && media.IsActive)
+                    .OrderBy(media => media.IsPrimary ? 0 : 1)
+                    .ThenBy(media => media.DisplayOrder)
+                    .Select(media => new { media.MediaUrl, media.MediaAssetId })
                     .FirstOrDefault(),
-
                 MRP = _dbContext.ProductVariants
-                    .Where(variant =>
-                        variant.ProductId == product.Id &&
-                        variant.IsActive)
+                    .Where(variant => variant.ProductId == product.Id && variant.IsActive)
                     .OrderBy(variant => variant.SellingPrice)
                     .Select(variant => variant.Mrp)
                     .FirstOrDefault(),
-
                 SellingPrice = _dbContext.ProductVariants
-                    .Where(variant =>
-                        variant.ProductId == product.Id &&
-                        variant.IsActive)
+                    .Where(variant => variant.ProductId == product.Id && variant.IsActive)
                     .OrderBy(variant => variant.SellingPrice)
                     .Select(variant => variant.SellingPrice)
                     .FirstOrDefault(),
-
                 IsActive = product.IsActive
             })
             .ToListAsync(cancellationToken);
+
+        var assetMap = await GetAssetKeysAsync(rawItems.Select(x => x.MediaInfo?.MediaAssetId), cancellationToken);
+
+        return rawItems.Select(product =>
+        {
+            var imgUrl = ResolveProductImageUrl(product.MediaInfo?.MediaUrl, product.MediaInfo?.MediaAssetId, assetMap);
+            return new ProductListItem
+            {
+                ProductId = product.ProductId,
+                DefaultVariantId = product.DefaultVariantId,
+                CategoryId = product.CategoryId,
+                SubcategoryId = product.SubcategoryId,
+                Name = product.Name,
+                Slug = product.Slug,
+                Description = product.Description,
+                PrimaryImageUrl = imgUrl,
+                ImageUrl = imgUrl,
+                MRP = product.MRP,
+                SellingPrice = product.SellingPrice,
+                IsActive = product.IsActive
+            };
+        }).ToList();
     }
 
 
@@ -79,82 +125,93 @@ public sealed class ProductRepository : IProductRepository
 
         slug = slug.Trim().ToLowerInvariant();
 
-        return await _dbContext.Products
+        var rawDetails = await _dbContext.Products
             .AsNoTracking()
-            .Where(product =>
-                product.IsActive &&
-                product.Slug == slug)
-            .Select(product => new ProductDetails
+            .Where(product => product.IsActive && product.Slug == slug)
+            .Select(product => new
             {
                 ProductId = product.Id,
-
                 Name = product.Name,
-
                 Slug = product.Slug,
-
                 Description = product.Description,
-
                 ShortDescription = product.ShortDescription,
-
-                CategoryName = string.Empty,
-
-                CategorySlug = string.Empty,
-
-                SubcategoryName = null,
-
-                SubcategorySlug = null,
-
+                CategoryName = _dbContext.Categories
+                    .Where(c => c.Id == product.CategoryId)
+                    .Select(c => c.Name)
+                    .FirstOrDefault() ?? string.Empty,
+                CategorySlug = _dbContext.Categories
+                    .Where(c => c.Id == product.CategoryId)
+                    .Select(c => c.Slug)
+                    .FirstOrDefault() ?? string.Empty,
+                SubcategoryName = product.SubcategoryId.HasValue
+                    ? _dbContext.Subcategories.Where(s => s.Id == product.SubcategoryId.Value).Select(s => s.Name).FirstOrDefault()
+                    : null,
+                SubcategorySlug = product.SubcategoryId.HasValue
+                    ? _dbContext.Subcategories.Where(s => s.Id == product.SubcategoryId.Value).Select(s => s.Slug).FirstOrDefault()
+                    : null,
                 Variants = _dbContext.ProductVariants
-                    .Where(variant =>
-                        variant.ProductId == product.Id &&
-                        variant.IsActive)
+                    .Where(variant => variant.ProductId == product.Id && variant.IsActive)
                     .OrderBy(variant => variant.SellingPrice)
                     .Select(variant => new ProductVariantItem
                     {
                         VariantId = variant.Id,
-
                         Sku = variant.Sku,
-
                         Mrp = variant.Mrp,
-
-                        SellingPrice =
-                            variant.SellingPrice,
-
-                        IsActive =
-                            variant.IsActive,
-
+                        SellingPrice = variant.SellingPrice,
+                        IsActive = variant.IsActive,
                         IsInStock = true
                     })
                     .ToList(),
-
-                Media = _dbContext.ProductMedia
-                    .Where(media =>
-                        media.ProductId == product.Id)
+                RawMedia = _dbContext.ProductMedia
+                    .Where(media => media.ProductId == product.Id && media.IsActive)
                     .OrderBy(media => media.DisplayOrder)
-                    .Select(media => new ProductMediaItem
+                    .Select(media => new
                     {
                         MediaId = media.Id,
-
-                        Url = media.MediaUrl,
-
+                        MediaUrl = media.MediaUrl,
+                        MediaAssetId = media.MediaAssetId,
                         AltText = media.AltText,
-
-                        DisplayOrder =
-                            media.DisplayOrder,
-
-                        IsPrimary =
-                            media.IsPrimary
+                        DisplayOrder = media.DisplayOrder,
+                        IsPrimary = media.IsPrimary
                     })
                     .ToList(),
-
-                Attributes = Array.Empty<ProductAttributeItem>(),
-
                 IsActive = product.IsActive,
-
                 IsFeatured = product.IsFeatured
             })
-            .FirstOrDefaultAsync(
-                cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (rawDetails is null) return null;
+
+        var assetMap = await GetAssetKeysAsync(rawDetails.RawMedia.Select(m => m.MediaAssetId), cancellationToken);
+
+        var mediaItems = rawDetails.RawMedia.Select(m => new ProductMediaItem
+        {
+            MediaId = m.MediaId,
+            Url = m.MediaAssetId.HasValue && assetMap.TryGetValue(m.MediaAssetId.Value, out var objKey)
+                ? _urlService.GetDetailUrl(objKey)
+                : (!string.IsNullOrWhiteSpace(m.MediaUrl) ? m.MediaUrl : "/images/products/product-placeholder.webp"),
+            AltText = m.AltText,
+            DisplayOrder = m.DisplayOrder,
+            IsPrimary = m.IsPrimary
+        }).ToList();
+
+        return new ProductDetails
+        {
+            ProductId = rawDetails.ProductId,
+            Name = rawDetails.Name,
+            Slug = rawDetails.Slug,
+            Description = rawDetails.Description,
+            ShortDescription = rawDetails.ShortDescription,
+            CategoryName = rawDetails.CategoryName,
+            CategorySlug = rawDetails.CategorySlug,
+            SubcategoryName = rawDetails.SubcategoryName,
+            SubcategorySlug = rawDetails.SubcategorySlug,
+            Variants = rawDetails.Variants,
+            Media = mediaItems,
+            Attributes = Array.Empty<ProductAttributeItem>(),
+            IsActive = rawDetails.IsActive,
+            IsFeatured = rawDetails.IsFeatured
+        };
     }
 
     public async Task<PagedResult<ProductListItem>> GetProductsAsync(
@@ -199,10 +256,10 @@ public sealed class ProductRepository : IProductRepository
 
         var totalCount = await orderedProducts.CountAsync(cancellationToken);
 
-        var pagedProducts = await orderedProducts
+        var rawPagedProducts = await orderedProducts
             .Skip(query.Skip)
             .Take(query.NormalizedPageSize)
-            .Select(product => new ProductListItem
+            .Select(product => new
             {
                 ProductId = product.Id,
                 DefaultVariantId = _dbContext.ProductVariants
@@ -215,37 +272,50 @@ public sealed class ProductRepository : IProductRepository
                 Name = product.Name,
                 Slug = product.Slug,
                 Description = product.Description,
-                PrimaryImageUrl = _dbContext.ProductMedia
-                    .Where(media =>
-                        media.ProductId == product.Id &&
-                        media.IsPrimary)
-                    .Select(media => media.MediaUrl)
-                    .FirstOrDefault(),
-                ImageUrl = _dbContext.ProductMedia
-                    .Where(media =>
-                        media.ProductId == product.Id)
-                    .OrderBy(media => media.DisplayOrder)
-                    .Select(media => media.MediaUrl)
+                MediaInfo = _dbContext.ProductMedia
+                    .Where(media => media.ProductId == product.Id && media.IsActive)
+                    .OrderBy(media => media.IsPrimary ? 0 : 1)
+                    .ThenBy(media => media.DisplayOrder)
+                    .Select(media => new { media.MediaUrl, media.MediaAssetId })
                     .FirstOrDefault(),
                 MRP = _dbContext.ProductVariants
-                    .Where(variant =>
-                        variant.ProductId == product.Id &&
-                        variant.IsActive)
+                    .Where(variant => variant.ProductId == product.Id && variant.IsActive)
                     .OrderBy(variant => variant.SellingPrice)
                     .Select(variant => variant.Mrp)
                     .FirstOrDefault(),
                 SellingPrice = _dbContext.ProductVariants
-                    .Where(variant =>
-                        variant.ProductId == product.Id &&
-                        variant.IsActive)
+                    .Where(variant => variant.ProductId == product.Id && variant.IsActive)
                     .OrderBy(variant => variant.SellingPrice)
                     .Select(variant => variant.SellingPrice)
                     .FirstOrDefault(),
                 IsActive = product.IsActive,
-                IsFeatured = product.IsFeatured,
-                IsInStock = true
+                IsFeatured = product.IsFeatured
             })
             .ToListAsync(cancellationToken);
+
+        var assetMap = await GetAssetKeysAsync(rawPagedProducts.Select(x => x.MediaInfo?.MediaAssetId), cancellationToken);
+
+        var pagedProducts = rawPagedProducts.Select(product =>
+        {
+            var imgUrl = ResolveProductImageUrl(product.MediaInfo?.MediaUrl, product.MediaInfo?.MediaAssetId, assetMap);
+            return new ProductListItem
+            {
+                ProductId = product.ProductId,
+                DefaultVariantId = product.DefaultVariantId,
+                CategoryId = product.CategoryId,
+                SubcategoryId = product.SubcategoryId,
+                Name = product.Name,
+                Slug = product.Slug,
+                Description = product.Description,
+                PrimaryImageUrl = imgUrl,
+                ImageUrl = imgUrl,
+                MRP = product.MRP,
+                SellingPrice = product.SellingPrice,
+                IsActive = product.IsActive,
+                IsFeatured = product.IsFeatured,
+                IsInStock = true
+            };
+        }).ToList();
 
         return new PagedResult<ProductListItem>
         {
@@ -343,9 +413,22 @@ public sealed class ProductRepository : IProductRepository
             baseQuery = baseQuery.Where(p => p.CategoryId == categoryId.Value);
         }
 
-        if (query.SubcategoryId.HasValue)
+        Guid? subcategoryId = query.SubcategoryId;
+        if (!subcategoryId.HasValue && !string.IsNullOrWhiteSpace(query.SubcategorySlug))
         {
-            baseQuery = baseQuery.Where(p => p.SubcategoryId == query.SubcategoryId.Value);
+            var subSlug = query.SubcategorySlug.ToLowerInvariant().Trim();
+            var sub = await _dbContext.Subcategories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Slug == subSlug && (!categoryId.HasValue || s.CategoryId == categoryId.Value), cancellationToken);
+            if (sub != null)
+            {
+                subcategoryId = sub.Id;
+            }
+        }
+
+        if (subcategoryId.HasValue)
+        {
+            baseQuery = baseQuery.Where(p => p.SubcategoryId == subcategoryId.Value);
         }
 
         if (!string.IsNullOrWhiteSpace(query.SearchTerm))
@@ -401,10 +484,10 @@ public sealed class ProductRepository : IProductRepository
 
         var totalCount = await orderedQuery.CountAsync(cancellationToken);
 
-        var pagedItems = await orderedQuery
+        var rawPagedItems = await orderedQuery
             .Skip(query.Skip)
             .Take(query.NormalizedPageSize)
-            .Select(product => new ProductListItem
+            .Select(product => new
             {
                 ProductId = product.Id,
                 DefaultVariantId = _dbContext.ProductVariants
@@ -417,19 +500,11 @@ public sealed class ProductRepository : IProductRepository
                 Name = product.Name,
                 Slug = product.Slug,
                 Description = product.Description,
-                PrimaryImageUrl = _dbContext.ProductMedia
-                    .Where(media => media.ProductId == product.Id && media.IsPrimary)
-                    .Select(media => media.MediaUrl)
-                    .FirstOrDefault() ??
-                    _dbContext.ProductMedia
-                        .Where(media => media.ProductId == product.Id)
-                        .OrderBy(media => media.DisplayOrder)
-                        .Select(media => media.MediaUrl)
-                        .FirstOrDefault(),
-                ImageUrl = _dbContext.ProductMedia
-                    .Where(media => media.ProductId == product.Id)
-                    .OrderBy(media => media.DisplayOrder)
-                    .Select(media => media.MediaUrl)
+                MediaInfo = _dbContext.ProductMedia
+                    .Where(media => media.ProductId == product.Id && media.IsActive)
+                    .OrderBy(media => media.IsPrimary ? 0 : 1)
+                    .ThenBy(media => media.DisplayOrder)
+                    .Select(media => new { media.MediaUrl, media.MediaAssetId })
                     .FirstOrDefault(),
                 MRP = _dbContext.ProductVariants
                     .Where(variant => variant.ProductId == product.Id && variant.IsActive)
@@ -446,6 +521,30 @@ public sealed class ProductRepository : IProductRepository
                 IsInStock = true
             })
             .ToListAsync(cancellationToken);
+
+        var assetMap = await GetAssetKeysAsync(rawPagedItems.Select(x => x.MediaInfo?.MediaAssetId), cancellationToken);
+
+        var pagedItems = rawPagedItems.Select(product =>
+        {
+            var imgUrl = ResolveProductImageUrl(product.MediaInfo?.MediaUrl, product.MediaInfo?.MediaAssetId, assetMap);
+            return new ProductListItem
+            {
+                ProductId = product.ProductId,
+                DefaultVariantId = product.DefaultVariantId,
+                CategoryId = product.CategoryId,
+                SubcategoryId = product.SubcategoryId,
+                Name = product.Name,
+                Slug = product.Slug,
+                Description = product.Description,
+                PrimaryImageUrl = imgUrl,
+                ImageUrl = imgUrl,
+                MRP = product.MRP,
+                SellingPrice = product.SellingPrice,
+                IsActive = product.IsActive,
+                IsFeatured = product.IsFeatured,
+                IsInStock = product.IsInStock
+            };
+        }).ToList();
 
         // Build Category Facets
         var categoryCountsQuery = _dbContext.Products

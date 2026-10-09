@@ -9,6 +9,16 @@ public sealed class HomeViewModel
     public string? HeroBannerAlt { get; init; }
     public string? HeroBannerLink { get; init; }
     public IReadOnlyList<HomeBannerDto> Banners { get; init; } = Array.Empty<HomeBannerDto>();
+    public IReadOnlyList<HomeCategoryDto> Categories { get; init; } = Array.Empty<HomeCategoryDto>();
+}
+
+public sealed class HomeCategoryDto
+{
+    public Guid Id { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public string Slug { get; init; } = string.Empty;
+    public string? ImageUrl { get; init; }
+    public int DisplayOrder { get; init; }
 }
 
 public sealed class HomeCountryKitViewModel

@@ -36,6 +36,17 @@ public sealed class ProductListViewModel
 
     public string? CategoryName { get; init; }
 
+    public string? CategoryImageUrl { get; init; }
+
+    public string? CategoryDescription { get; init; }
+
+    public string? CurrentSubcategoryName { get; init; }
+
+    public string? CurrentSubcategorySlug { get; init; }
+
+    public IReadOnlyList<Dreamflykit.Application.Categories.Models.SubcategoryListItem> Subcategories { get; init; }
+        = Array.Empty<Dreamflykit.Application.Categories.Models.SubcategoryListItem>();
+
     public bool? InStockOnly { get; init; }
 
     public int? MinDiscount { get; init; }
@@ -51,8 +62,7 @@ public sealed class ProductListViewModel
 
     public bool HasActiveFilters =>
         !string.IsNullOrWhiteSpace(SearchTerm) ||
-        CategoryId.HasValue ||
-        !string.IsNullOrWhiteSpace(CategorySlug) ||
+        SubcategoryId.HasValue ||
         MinPrice.HasValue ||
         MaxPrice.HasValue ||
         (MinDiscount.HasValue && MinDiscount.Value > 0) ||

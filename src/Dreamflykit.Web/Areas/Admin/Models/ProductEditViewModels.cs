@@ -45,6 +45,7 @@ public sealed class AdminProductCreateViewModel
 
     public Guid? PrimaryMediaAssetId { get; set; }
     public string? PrimaryImagePreviewUrl { get; set; }
+    public IFormFile? ImageFile { get; set; }
 }
 
 public sealed class AdminProductEditViewModel
@@ -94,4 +95,5 @@ public sealed class AdminProductEditViewModel
 
     public Guid? PrimaryMediaAssetId { get; set; }
     public string? PrimaryImagePreviewUrl { get; set; }
+    public IFormFile? ImageFile { get; set; }
 }

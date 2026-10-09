@@ -9,23 +9,56 @@
     string BuildFilterUrl(
         Guid? catId = null,
         string? catSlug = null,
+        Guid? subcatId = null,
+        string? subcatSlug = null,
         decimal? minP = null,
         decimal? maxP = null,
         int? discount = null,
         bool? inStock = null,
         ProductSortOption? sortOpt = null,
-        int? pageNum = 1)
+        int? pageNum = 1,
+        bool clearCategory = false,
+        bool clearSubcategory = false,
+        string? search = null,
+        bool clearSearch = false)
     {
         var parameters = new Dictionary<string, string?>();
 
-        var s = Model.SearchTerm;
+        var s = clearSearch ? null : (search ?? Model.SearchTerm);
         if (!string.IsNullOrWhiteSpace(s)) parameters["q"] = s;
 
-        var cId = catId ?? Model.CategoryId;
-        if (cId.HasValue && cId.Value != Guid.Empty) parameters["categoryId"] = cId.Value.ToString();
+        var effectiveCatSlug = clearCategory ? null : (catSlug ?? Model.CategorySlug);
+        var effectiveCatId = clearCategory ? null : (catId ?? Model.CategoryId);
+        var effectiveSubcatId = (clearCategory || clearSubcategory) ? null : (subcatId ?? Model.SubcategoryId);
+        var effectiveSubcatSlug = (clearCategory || clearSubcategory) ? null : (subcatSlug ?? Model.CurrentSubcategorySlug);
 
-        var cSlug = catSlug ?? Model.CategorySlug;
-        if (!string.IsNullOrWhiteSpace(cSlug)) parameters["category"] = cSlug;
+        string basePath = "/products";
+        if (!string.IsNullOrWhiteSpace(effectiveCatSlug))
+        {
+            if (!string.IsNullOrWhiteSpace(effectiveSubcatSlug))
+            {
+                basePath = $"/category/{effectiveCatSlug}/{effectiveSubcatSlug}";
+            }
+            else
+            {
+                basePath = $"/category/{effectiveCatSlug}";
+                if (effectiveSubcatId.HasValue)
+                {
+                    parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
+                }
+            }
+        }
+        else
+        {
+            if (effectiveCatId.HasValue && effectiveCatId.Value != Guid.Empty)
+            {
+                parameters["categoryId"] = effectiveCatId.Value.ToString();
+            }
+            if (effectiveSubcatId.HasValue && effectiveSubcatId.Value != Guid.Empty)
+            {
+                parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
+            }
+        }
 
         var mn = minP ?? Model.MinPrice;
         if (mn.HasValue) parameters["minPrice"] = mn.Value.ToString();
@@ -46,27 +79,68 @@
         if (p > 1) parameters["page"] = p.ToString();
 
         var queryString = string.Join("&", parameters.Where(kvp => !string.IsNullOrEmpty(kvp.Value)).Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value!)}"));
-        return string.IsNullOrEmpty(queryString) ? "/products" : $"/products?{queryString}";
+        return string.IsNullOrEmpty(queryString) ? basePath : $"{basePath}?{queryString}";
     }
 
     string ClearParamUrl(string paramToRemove)
     {
         var parameters = new Dictionary<string, string?>();
 
-        if (paramToRemove != "q" && !string.IsNullOrWhiteSpace(Model.SearchTerm)) parameters["q"] = Model.SearchTerm;
-        if (paramToRemove != "category" && Model.CategoryId.HasValue) parameters["categoryId"] = Model.CategoryId.Value.ToString();
-        if (paramToRemove != "category" && !string.IsNullOrWhiteSpace(Model.CategorySlug)) parameters["category"] = Model.CategorySlug;
+        var s = paramToRemove == "q" ? null : Model.SearchTerm;
+        if (!string.IsNullOrWhiteSpace(s)) parameters["q"] = s;
+
+        var clearCat = paramToRemove == "category";
+        var clearSub = paramToRemove == "subcategory" || clearCat;
+
+        var effectiveCatSlug = clearCat ? null : Model.CategorySlug;
+        var effectiveCatId = clearCat ? null : Model.CategoryId;
+        var effectiveSubcatId = clearSub ? null : Model.SubcategoryId;
+        var effectiveSubcatSlug = clearSub ? null : Model.CurrentSubcategorySlug;
+
+        string basePath = "/products";
+        if (!string.IsNullOrWhiteSpace(effectiveCatSlug))
+        {
+            if (!string.IsNullOrWhiteSpace(effectiveSubcatSlug))
+            {
+                basePath = $"/category/{effectiveCatSlug}/{effectiveSubcatSlug}";
+            }
+            else
+            {
+                basePath = $"/category/{effectiveCatSlug}";
+                if (effectiveSubcatId.HasValue)
+                {
+                    parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
+                }
+            }
+        }
+        else
+        {
+            if (effectiveCatId.HasValue && effectiveCatId.Value != Guid.Empty)
+            {
+                parameters["categoryId"] = effectiveCatId.Value.ToString();
+            }
+        }
+
         if (paramToRemove != "price")
         {
             if (Model.MinPrice.HasValue) parameters["minPrice"] = Model.MinPrice.Value.ToString();
             if (Model.MaxPrice.HasValue) parameters["maxPrice"] = Model.MaxPrice.Value.ToString();
         }
-        if (paramToRemove != "discount" && Model.MinDiscount.HasValue) parameters["minDiscount"] = Model.MinDiscount.Value.ToString();
-        if (paramToRemove != "inStock" && Model.InStockOnly.HasValue) parameters["inStockOnly"] = "true";
-        if (Model.Sort != ProductSortOption.Relevance) parameters["sort"] = Model.Sort.ToString();
+        if (paramToRemove != "discount" && Model.MinDiscount.HasValue)
+        {
+            parameters["minDiscount"] = Model.MinDiscount.Value.ToString();
+        }
+        if (paramToRemove != "inStock" && Model.InStockOnly.HasValue && Model.InStockOnly.Value)
+        {
+            parameters["inStockOnly"] = "true";
+        }
+        if (Model.Sort != ProductSortOption.Relevance)
+        {
+            parameters["sort"] = Model.Sort.ToString();
+        }
 
         var queryString = string.Join("&", parameters.Where(kvp => !string.IsNullOrEmpty(kvp.Value)).Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value!)}"));
-        return string.IsNullOrEmpty(queryString) ? "/products" : $"/products?{queryString}";
+        return string.IsNullOrEmpty(queryString) ? basePath : $"{basePath}?{queryString}";
     }
 }
 
@@ -79,7 +153,18 @@
             <span class="dk-breadcrumb-separator">›</span>
             @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
             {
-                <span class="dk-breadcrumb-current">@Model.CategoryName</span>
+                <a href="/categories" class="dk-breadcrumb-item">Categories</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                @if (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName))
+                {
+                    <a href="/category/@Model.CategorySlug" class="dk-breadcrumb-item">@Model.CategoryName</a>
+                    <span class="dk-breadcrumb-separator">›</span>
+                    <span class="dk-breadcrumb-current">@Model.CurrentSubcategoryName</span>
+                }
+                else
+                {
+                    <span class="dk-breadcrumb-current">@Model.CategoryName</span>
+                }
             }
             else if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
             {
@@ -147,6 +232,37 @@
                                         @if (cat.Count > 0)
                                         {
                                             <span class="dk-filter-count">(@cat.Count)</span>
+                                        }
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <!-- SUBCATEGORIES FACET -->
+                @if (Model.Subcategories.Any())
+                {
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">SUBCATEGORIES</h4>
+                        <ul class="dk-filter-list">
+                            <li>
+                                <a href="@BuildFilterUrl(catSlug: Model.CategorySlug, clearSubcategory: true)"
+                                   class="dk-filter-item @(!Model.SubcategoryId.HasValue && string.IsNullOrEmpty(Model.CurrentSubcategorySlug) ? "active" : "")">
+                                    <span class="dk-filter-text">All @Model.CategoryName</span>
+                                </a>
+                            </li>
+                            @foreach (var sub in Model.Subcategories)
+                            {
+                                var isSubActive = (Model.SubcategoryId.HasValue && Model.SubcategoryId.Value == sub.SubcategoryId) ||
+                                                  (!string.IsNullOrEmpty(Model.CurrentSubcategorySlug) && string.Equals(Model.CurrentSubcategorySlug, sub.Slug, StringComparison.OrdinalIgnoreCase));
+                                <li>
+                                    <a href="@BuildFilterUrl(catSlug: Model.CategorySlug, subcatSlug: sub.Slug, subcatId: sub.SubcategoryId, pageNum: 1)"
+                                       class="dk-filter-item @(isSubActive ? "active" : "")">
+                                        <span class="dk-filter-text">@sub.Name</span>
+                                        @if (sub.ProductCount > 0)
+                                        {
+                                            <span class="dk-filter-count">(@sub.ProductCount)</span>
                                         }
                                     </a>
                                 </li>
@@ -237,6 +353,179 @@
                     </a>
                 </div>
 
+                @{
+                    var currentCat = Model.CategorySlug?.ToLowerInvariant() ?? "";
+                }
+
+                @if (currentCat == "electronics")
+                {
+                    <!-- ELECTRONICS SPECIFIC FILTERS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">BRAND</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var brand in new[] { "Apple", "Dell", "HP", "Lenovo", "Asus", "Samsung", "Sony", "Boat" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@brand</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">RAM / STORAGE</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var spec in new[] { "16 GB", "8 GB", "32 GB", "512 GB SSD", "1 TB SSD" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, spec, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: spec, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@spec</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (currentCat == "lifestyle" || currentCat == "fashion" || currentCat == "clothing")
+                {
+                    <!-- LIFESTYLE / FASHION FILTERS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">BRAND</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var brand in new[] { "Nike", "Puma", "Adidas", "Wildcraft", "Dreamflykit" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@brand</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">SIZE</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var size in new[] { "S", "M", "L", "XL", "XXL", "Free Size" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, size, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: size, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@size</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (currentCat == "travel-gear" || currentCat == "luggage-bags" || currentCat == "luggage")
+                {
+                    <!-- TRAVEL GEAR FILTERS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">BRAND</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var brand in new[] { "American Tourister", "Samsonite", "Wildcraft", "Safari" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@brand</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">LUGGAGE SIZE</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var size in new[] { "Cabin (Up to 55 cm)", "Medium Check-in (65 cm)", "Large Check-in (75+ cm)", "Backpack 30L" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, size, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: size, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@size</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (currentCat == "study-essentials" || currentCat == "stationery")
+                {
+                    <!-- STUDY ESSENTIALS FILTERS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">ESSENTIALS TYPE</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var item in new[] { "Scientific Calculators", "Notebooks & Planners", "Desk Organizers", "Complete Student Kits" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, item, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: item, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@item</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (currentCat == "adapters-sim" || currentCat == "adapters")
+                {
+                    <!-- ADAPTERS & SIM FILTERS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">DESTINATION REGION</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var region in new[] { "USA / Canada", "United Kingdom (UK)", "Europe (EU)", "Australia & NZ", "Universal All-in-One" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, region, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: region, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@region</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- GENERAL POPULAR BRANDS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">POPULAR BRANDS</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var brand in new[] { "Apple", "Dell", "American Tourister", "Wildcraft", "Nike", "Samsung" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@brand</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- CUSTOMER RATINGS -->
+                <div class="dk-filter-group">
+                    <h4 class="dk-filter-group-title">CUSTOMER RATINGS</h4>
+                    <div class="dk-discount-options">
+                        <a href="@BuildFilterUrl(pageNum: 1)" class="dk-radio-filter active">
+                            <span class="dk-radio-circle"></span>
+                            <span class="dk-radio-label">4★ &amp; above</span>
+                        </a>
+                        <a href="@BuildFilterUrl(pageNum: 1)" class="dk-radio-filter">
+                            <span class="dk-radio-circle"></span>
+                            <span class="dk-radio-label">3★ &amp; above</span>
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </aside>
 
@@ -244,6 +533,78 @@
              RIGHT MAIN AREA: PRODUCTS CATALOG
         ========================================================= -->
         <main class="dk-catalog-content">
+
+            <!-- ========================================================
+                 FLIPKART CATEGORY HERO BANNER & SUBCATEGORY STRIP
+            ========================================================= -->
+            @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
+            {
+                <div class="dk-category-hero-card">
+                    <div class="dk-category-hero-text">
+                        <div class="dk-category-hero-badge">
+                            <span class="dk-badge-dot"></span>
+                            <span>STUDENT ESSENTIALS • 100% GENUINE</span>
+                        </div>
+                        <h2 class="dk-category-hero-title">@Model.CategoryName</h2>
+                        <p class="dk-category-hero-subtitle">
+                            @if (!string.IsNullOrWhiteSpace(Model.CategoryDescription))
+                            {
+                                @Model.CategoryDescription
+                            }
+                            else
+                            {
+                                <span>Discover top-rated @Model.CategoryName verified for college students and international travelers. Best prices with express global delivery.</span>
+                            }
+                        </p>
+                        <div class="dk-category-hero-meta">
+                            <span class="dk-hero-meta-item"><strong>@Model.TotalCount</strong> @(Model.TotalCount == 1 ? "Product" : "Products")</span>
+                            <span class="dk-hero-meta-dot">•</span>
+                            <span class="dk-hero-meta-item">✈ Global Delivery Ready</span>
+                            <span class="dk-hero-meta-dot">•</span>
+                            <span class="dk-hero-meta-item">★ Student Trusted</span>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(Model.CategoryImageUrl))
+                    {
+                        <div class="dk-category-hero-media">
+                            <img src="@Model.CategoryImageUrl"
+                                 alt="@Model.CategoryName"
+                                 class="dk-category-hero-img"
+                                 onerror="this.onerror=null;this.closest('.dk-category-hero-media').style.display='none';" />
+                        </div>
+                    }
+                </div>
+            }
+
+            @if (Model.Subcategories.Any())
+            {
+                <div class="dk-subcat-nav-strip">
+                    <span class="dk-subcat-strip-label">Categories:</span>
+                    <div class="dk-subcat-pills-wrap">
+                        <a href="@BuildFilterUrl(catSlug: Model.CategorySlug, clearSubcategory: true)"
+                           class="dk-subcat-pill @(!Model.SubcategoryId.HasValue && string.IsNullOrEmpty(Model.CurrentSubcategorySlug) ? "active" : "")">
+                            <span class="dk-pill-text">All @Model.CategoryName</span>
+                        </a>
+                        @foreach (var sub in Model.Subcategories)
+                        {
+                            var isSubActive = (Model.SubcategoryId.HasValue && Model.SubcategoryId.Value == sub.SubcategoryId) ||
+                                              (!string.IsNullOrEmpty(Model.CurrentSubcategorySlug) && string.Equals(Model.CurrentSubcategorySlug, sub.Slug, StringComparison.OrdinalIgnoreCase));
+                            <a href="@BuildFilterUrl(catSlug: Model.CategorySlug, subcatSlug: sub.Slug, subcatId: sub.SubcategoryId, pageNum: 1)"
+                               class="dk-subcat-pill @(isSubActive ? "active" : "")">
+                                @if (!string.IsNullOrWhiteSpace(sub.ImageUrl))
+                                {
+                                    <img src="@sub.ImageUrl" alt="@sub.Name" class="dk-subcat-pill-thumb" onerror="this.style.display='none';" />
+                                }
+                                <span class="dk-pill-text">@sub.Name</span>
+                                @if (sub.ProductCount > 0)
+                                {
+                                    <span class="dk-subcat-count">(@sub.ProductCount)</span>
+                                }
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
 
             <!-- Result Header & Sort Tabs -->
             <div class="dk-catalog-header-card">
@@ -253,6 +614,10 @@
                         @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
                         {
                             <span>Showing results for "<strong>@Model.SearchTerm</strong>"</span>
+                        }
+                        else if (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName))
+                        {
+                            <span>@Model.CategoryName › <strong>@Model.CurrentSubcategoryName</strong></span>
                         }
                         else if (!string.IsNullOrWhiteSpace(Model.CategoryName))
                         {
@@ -333,6 +698,13 @@
                             var catName = Model.CategoryName ?? "Category";
                             <a href="@ClearParamUrl("category")" class="dk-filter-chip" title="Remove category filter">
                                 @catName <span class="dk-chip-x">✕</span>
+                            </a>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName))
+                        {
+                            <a href="@ClearParamUrl("subcategory")" class="dk-filter-chip" title="Remove subcategory filter">
+                                Subcategory: @Model.CurrentSubcategoryName <span class="dk-chip-x">✕</span>
                             </a>
                         }
 

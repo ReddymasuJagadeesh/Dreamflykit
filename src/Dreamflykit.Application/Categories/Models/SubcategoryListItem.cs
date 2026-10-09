@@ -1,4 +1,4 @@
-﻿namespace Dreamflykit.Application.Categories.Models;
+namespace Dreamflykit.Application.Categories.Models;
 
 public sealed class SubcategoryListItem
 {
@@ -13,4 +13,6 @@ public sealed class SubcategoryListItem
     public int DisplayOrder { get; init; }
 
     public int ProductCount { get; init; }
+
+    public string? ImageUrl { get; init; }
 }

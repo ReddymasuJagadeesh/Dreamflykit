@@ -12,13 +12,36 @@ public sealed class CategoriesController : AdminBaseController
 {
     private readonly DreamflykitDbContext _dbContext;
     private readonly IMediaUrlService _urlService;
+    private readonly IMediaService _mediaService;
 
     public CategoriesController(
         DreamflykitDbContext dbContext,
-        IMediaUrlService urlService)
+        IMediaUrlService urlService,
+        IMediaService mediaService)
     {
         _dbContext = dbContext;
         _urlService = urlService;
+        _mediaService = mediaService;
+    }
+
+    private async Task<Guid?> UploadMediaFileAsync(IFormFile? file, Guid ownerId, string altText, CancellationToken cancellationToken)
+    {
+        if (file is null || file.Length == 0) return null;
+
+        await using var stream = file.OpenReadStream();
+        var request = new Dreamflykit.Application.Media.Models.MediaUploadRequest
+        {
+            FileStream = stream,
+            OriginalFileName = file.FileName,
+            ContentType = file.ContentType,
+            MediaType = Dreamflykit.Domain.Media.MediaType.Category,
+            OwnerId = ownerId,
+            AltText = altText,
+            UploadedBy = CurrentUserId
+        };
+
+        var result = await _mediaService.UploadAsync(request, cancellationToken);
+        return result.IsSuccess ? result.Asset?.Id : null;
     }
 
     [HttpGet("")]
@@ -121,7 +144,15 @@ public sealed class CategoriesController : AdminBaseController
             model.Slug.Trim().ToLowerInvariant(),
             model.DisplayOrder);
 
-        if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value != Guid.Empty)
+        if (model.ImageFile != null && model.ImageFile.Length > 0)
+        {
+            var uploadedAssetId = await UploadMediaFileAsync(model.ImageFile, category.Id, model.Name.Trim(), cancellationToken);
+            if (uploadedAssetId.HasValue)
+            {
+                category.SetImage(uploadedAssetId.Value);
+            }
+        }
+        else if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value != Guid.Empty)
         {
             category.SetImage(model.ImageMediaAssetId.Value);
         }
@@ -201,7 +232,15 @@ public sealed class CategoriesController : AdminBaseController
 
         category.Update(model.Name.Trim(), model.Slug.Trim().ToLowerInvariant(), model.DisplayOrder);
 
-        if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value != Guid.Empty)
+        if (model.ImageFile != null && model.ImageFile.Length > 0)
+        {
+            var uploadedAssetId = await UploadMediaFileAsync(model.ImageFile, category.Id, model.Name.Trim(), cancellationToken);
+            if (uploadedAssetId.HasValue)
+            {
+                category.SetImage(uploadedAssetId.Value);
+            }
+        }
+        else if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value != Guid.Empty)
         {
             category.SetImage(model.ImageMediaAssetId.Value);
         }
@@ -291,7 +330,15 @@ public sealed class CategoriesController : AdminBaseController
             model.Slug.Trim().ToLowerInvariant(),
             model.DisplayOrder);
 
-        if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value != Guid.Empty)
+        if (model.ImageFile != null && model.ImageFile.Length > 0)
+        {
+            var uploadedAssetId = await UploadMediaFileAsync(model.ImageFile, subcategory.Id, model.Name.Trim(), cancellationToken);
+            if (uploadedAssetId.HasValue)
+            {
+                subcategory.SetImage(uploadedAssetId.Value);
+            }
+        }
+        else if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value != Guid.Empty)
         {
             subcategory.SetImage(model.ImageMediaAssetId.Value);
         }
@@ -384,7 +431,15 @@ public sealed class CategoriesController : AdminBaseController
 
         subcategory.Update(model.Name.Trim(), model.Slug.Trim().ToLowerInvariant(), model.DisplayOrder);
 
-        if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value != Guid.Empty)
+        if (model.ImageFile != null && model.ImageFile.Length > 0)
+        {
+            var uploadedAssetId = await UploadMediaFileAsync(model.ImageFile, subcategory.Id, model.Name.Trim(), cancellationToken);
+            if (uploadedAssetId.HasValue)
+            {
+                subcategory.SetImage(uploadedAssetId.Value);
+            }
+        }
+        else if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value != Guid.Empty)
         {
             subcategory.SetImage(model.ImageMediaAssetId.Value);
         }

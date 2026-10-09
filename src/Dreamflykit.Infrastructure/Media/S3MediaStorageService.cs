@@ -19,6 +19,9 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
     private readonly string _bucketName;
     private readonly ILogger<S3MediaStorageService> _logger;
 
+    /// <inheritdoc />
+    public string? LastError { get; private set; }
+
     public S3MediaStorageService(
         IOptions<S3Options> options,
         ILogger<S3MediaStorageService> logger)
@@ -31,15 +34,25 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
             ? RegionEndpoint.GetBySystemName(s3Opts.Region)
             : RegionEndpoint.APSouth1;
 
+        var hasValidSessionToken = !string.IsNullOrWhiteSpace(s3Opts.SessionToken)
+            && !s3Opts.SessionToken.Contains("YOUR_SESSION_TOKEN", StringComparison.OrdinalIgnoreCase);
+
         if (!string.IsNullOrWhiteSpace(s3Opts.AccessKeyId) && !string.IsNullOrWhiteSpace(s3Opts.SecretAccessKey))
         {
-            var credentials = new BasicAWSCredentials(s3Opts.AccessKeyId, s3Opts.SecretAccessKey);
+            AWSCredentials credentials = hasValidSessionToken
+                ? new SessionAWSCredentials(s3Opts.AccessKeyId, s3Opts.SecretAccessKey, s3Opts.SessionToken)
+                : new BasicAWSCredentials(s3Opts.AccessKeyId, s3Opts.SecretAccessKey);
+
             _s3Client = new AmazonS3Client(credentials, region);
+            _logger.LogInformation("Initialized S3 client with explicit AWS credentials for bucket '{Bucket}' in region '{Region}'",
+                _bucketName, region.SystemName);
         }
         else
         {
             // Fallback to standard AWS SDK credential chain (env vars, IAM role, or ~/.aws credentials)
             _s3Client = new AmazonS3Client(region);
+            _logger.LogInformation("Initialized S3 client with default AWS credential chain for bucket '{Bucket}' in region '{Region}'",
+                _bucketName, region.SystemName);
         }
     }
 
@@ -50,6 +63,7 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
         string contentType,
         CancellationToken cancellationToken = default)
     {
+        LastError = null;
         try
         {
             var request = new PutObjectRequest
@@ -58,8 +72,8 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
                 Key = objectKey,
                 InputStream = stream,
                 ContentType = contentType,
-                // Enforce private — never use CannedACL.PublicRead
-                CannedACL = S3CannedACL.Private,
+                // Do not specify CannedACL. Modern S3 buckets have Object Ownership set to
+                // "Bucket owner enforced" (ACLs disabled). Specifying CannedACL causes AccessControlListNotSupported.
                 ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256
             };
 
@@ -74,6 +88,7 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
                 return true;
             }
 
+            LastError = $"S3 returned unexpected HTTP status {(int)response.HttpStatusCode} ({response.HttpStatusCode})";
             _logger.LogWarning(
                 "S3 PutObject returned unexpected status {StatusCode} for key {ObjectKey}",
                 response.HttpStatusCode, objectKey);
@@ -82,14 +97,16 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
         }
         catch (AmazonS3Exception ex)
         {
+            LastError = $"[{ex.ErrorCode}] {ex.Message}";
             _logger.LogError(ex,
-                "S3 error uploading object {ObjectKey}: {ErrorCode} - {Message}",
-                objectKey, ex.ErrorCode, ex.Message);
+                "S3 error uploading object {ObjectKey} to bucket {BucketName}: {ErrorCode} - {Message}",
+                objectKey, _bucketName, ex.ErrorCode, ex.Message);
 
             return false;
         }
         catch (Exception ex)
         {
+            LastError = ex.Message;
             _logger.LogError(ex,
                 "Unexpected error uploading object {ObjectKey} to S3",
                 objectKey);
@@ -192,6 +209,37 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
             objectKey, expirySeconds);
 
         return Task.FromResult(url);
+    }
+
+    /// <inheritdoc />
+    public async Task<Dreamflykit.Application.Media.Models.StorageObjectResult?> GetObjectAsync(
+        string objectKey,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var request = new GetObjectRequest
+            {
+                BucketName = _bucketName,
+                Key = objectKey
+            };
+
+            var response = await _s3Client.GetObjectAsync(request, cancellationToken);
+            return new Dreamflykit.Application.Media.Models.StorageObjectResult(
+                response.ResponseStream,
+                response.Headers.ContentType ?? "image/webp",
+                response.ETag,
+                response.Headers.ContentLength);
+        }
+        catch (AmazonS3Exception ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound || ex.ErrorCode == "NoSuchKey")
+        {
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting S3 object {ObjectKey} from bucket {Bucket}", objectKey, _bucketName);
+            return null;
+        }
     }
 
     public void Dispose()
