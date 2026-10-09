@@ -32,4 +32,9 @@ public sealed class S3Options
     /// dotnet user-secrets set "AwsS3:SecretAccessKey" "YOUR_SECRET"
     /// </summary>
     public string SecretAccessKey { get; set; } = string.Empty;
+
+    /// <summary>
+    /// AWS Session Token (required when using temporary credentials such as AWS Learner Lab, STS, or SSO).
+    /// </summary>
+    public string? SessionToken { get; set; }
 }

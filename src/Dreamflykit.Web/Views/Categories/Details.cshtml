@@ -1,4 +1,4 @@
-﻿@model Dreamflykit.Web.Models.Categories.CategoryDetailsViewModel
+@model Dreamflykit.Web.Models.Categories.CategoryDetailsViewModel
 
 @{
     ViewData["Title"] = Model.Name;
@@ -43,25 +43,32 @@
 
     <!-- Category Header -->
 
-    <section class="bg-white">
+    <section class="bg-white border-b border-slate-100">
 
-        <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
 
-            <div class="max-w-3xl">
+            <div class="max-w-2xl">
 
                 <p class="text-sm font-bold uppercase tracking-wider text-orange-500">
                     Dreamflykit Store
                 </p>
 
-                <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-blue-950 sm:text-5xl">
+                <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-blue-950 sm:text-4xl">
                     @Model.Name
                 </h1>
 
-                <p class="mt-4 text-lg leading-8 text-slate-600">
-                    Explore products available in this category.
+                <p class="mt-3 text-base text-slate-600">
+                    Explore products and essential kits available in this category.
                 </p>
 
             </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+            {
+                <div class="w-28 h-28 md:w-36 md:h-36 rounded-2xl overflow-hidden border border-slate-200 shadow-sm shrink-0 bg-slate-50 flex items-center justify-center">
+                    <img src="@Model.ImageUrl" alt="@Model.Name" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='/images/categories/category-placeholder.webp';" />
+                </div>
+            }
 
         </div>
 
@@ -113,25 +120,30 @@
 
                         <div class="flex items-start justify-between gap-4">
 
-                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                     class="h-6 w-6"
-                                     fill="none"
-                                     viewBox="0 0 24 24"
-                                     stroke="currentColor"
-                                     stroke-width="1.8">
-
-                                    <path stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                          d="M4 6.75A2.75 2.75 0 0 1 6.75 4h10.5A2.75 2.75 0 0 1 20 6.75v10.5A2.75 2.75 0 0 1 17.25 20H6.75A2.75 2.75 0 0 1 4 17.25V6.75Z" />
-
-                                    <path stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                          d="M8 8h8M8 12h8M8 16h5" />
-
-                                </svg>
-
+                            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 overflow-hidden">
+                                @if (!string.IsNullOrWhiteSpace(subcategory.ImageUrl))
+                                {
+                                    <img src="@subcategory.ImageUrl"
+                                         alt="@subcategory.Name"
+                                         class="h-full w-full object-cover rounded-xl"
+                                         onerror="this.onerror=null;this.src='/images/categories/category-placeholder.webp';" />
+                                }
+                                else
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         class="h-6 w-6"
+                                         fill="none"
+                                         viewBox="0 0 24 24"
+                                         stroke="currentColor"
+                                         stroke-width="1.8">
+                                        <path stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              d="M4 6.75A2.75 2.75 0 0 1 6.75 4h10.5A2.75 2.75 0 0 1 20 6.75v10.5A2.75 2.75 0 0 1 17.25 20H6.75A2.75 2.75 0 0 1 4 17.25V6.75Z" />
+                                        <path stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              d="M8 8h8M8 12h8M8 16h5" />
+                                    </svg>
+                                }
                             </div>
 
                             <span class="text-xl font-bold text-slate-300 transition group-hover:text-blue-600">

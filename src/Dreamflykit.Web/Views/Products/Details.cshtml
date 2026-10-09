@@ -1,7 +1,7 @@
-﻿@model Dreamflykit.Web.Models.Products.ProductDetailsViewModel
+@model Dreamflykit.Web.Models.Products.ProductDetailsViewModel
 
 @{
-    ViewData["Title"] = Model.Name;
+    ViewData["Title"] = $"{Model.Name} - Buy Online at Best Price in Dreamflykit Store";
 
     var primaryImage =
         Model.Media.FirstOrDefault(x => x.IsPrimary)
@@ -10,265 +10,610 @@
     var activeVariant =
         Model.Variants.FirstOrDefault(x => x.IsActive)
         ?? Model.Variants.FirstOrDefault();
+
+    var discountPercent = activeVariant != null && activeVariant.Mrp > activeVariant.SellingPrice && activeVariant.Mrp > 0
+        ? Math.Round(((activeVariant.Mrp - activeVariant.SellingPrice) / activeVariant.Mrp) * 100, 0)
+        : 0;
+
+    var allMedia = Model.Media.Any()
+        ? Model.Media.ToList()
+        : new List<Dreamflykit.Web.Models.Products.ProductMediaViewModel>
+        {
+            new Dreamflykit.Web.Models.Products.ProductMediaViewModel
+            {
+                Url = "/images/products/product-placeholder.webp",
+                AltText = Model.Name,
+                IsPrimary = true
+            }
+        };
+
+    var defaultImageUrl = !string.IsNullOrWhiteSpace(primaryImage?.Url)
+        ? primaryImage.Url
+        : "/images/products/product-placeholder.webp";
 }
 
-<main class="min-h-screen bg-white">
+<div class="dk-pdp-page">
 
-    <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <!-- Top Breadcrumbs Bar -->
+    <div class="dk-shell dk-pdp-breadcrumb-bar">
+        <nav class="dk-pdp-breadcrumb" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <span class="dk-pdp-breadcrumb-sep">›</span>
 
-        <!-- Breadcrumb -->
-
-        <nav class="mb-8 text-sm text-slate-500"
-             aria-label="Breadcrumb">
-
-            <a asp-controller="Home"
-               asp-action="Index"
-               class="transition hover:text-blue-700">
-                Home
-            </a>
-
-            <span class="mx-2">/</span>
-
-            <span>
-                @Model.CategoryName
-            </span>
+            @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
+            {
+                <a href="/category/@(Model.CategorySlug ?? Model.CategoryName.ToLower().Replace(" ", "-"))">@Model.CategoryName</a>
+                <span class="dk-pdp-breadcrumb-sep">›</span>
+            }
 
             @if (!string.IsNullOrWhiteSpace(Model.SubcategoryName))
             {
-                <span class="mx-2">/</span>
-
-                <span>
-                    @Model.SubcategoryName
-                </span>
+                <a href="/category/@(Model.CategorySlug ?? "all")/@(Model.SubcategorySlug ?? Model.SubcategoryName.ToLower().Replace(" ", "-"))">@Model.SubcategoryName</a>
+                <span class="dk-pdp-breadcrumb-sep">›</span>
             }
 
-            <span class="mx-2">/</span>
-
-            <span class="font-semibold text-slate-800">
-                @Model.Name
-            </span>
-
+            <span class="dk-pdp-breadcrumb-current">@Model.Name</span>
         </nav>
+    </div>
 
+    <!-- Main Two-Column Flipkart PDP Card -->
+    <div class="dk-shell">
+        <div class="dk-pdp-container">
 
-        <!-- Product -->
+            <!-- ========================================================
+                 LEFT COLUMN: GALLERY + ICONIC ACTION BUTTONS
+            ========================================================= -->
+            <div class="dk-pdp-left">
 
-        <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
+                <div class="dk-pdp-gallery-wrap">
 
-            <!-- Product Media -->
-
-            <div>
-
-                <div class="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50">
-
-                    @if (primaryImage is not null &&
-                         !string.IsNullOrWhiteSpace(primaryImage.Url))
+                    <!-- Thumbnail Strip (Flipkart Left Vertical Strip) -->
+                    @if (allMedia.Count > 1)
                     {
-                        <img src="@primaryImage.Url"
-                             alt="@(primaryImage.AltText ?? Model.Name)"
-                             decoding="async"
-                             fetchpriority="high"
-                             class="aspect-square h-full w-full object-cover" />
-                    }
-                    else
-                    {
-                        <div class="flex aspect-square items-center justify-center bg-slate-100 text-slate-400">
-                            <span>
-                                Product image unavailable
-                            </span>
+                        <div class="dk-pdp-thumb-list" id="pdpThumbList">
+                            @for (int i = 0; i < allMedia.Count; i++)
+                            {
+                                var item = allMedia[i];
+                                var isActive = (item.Url == defaultImageUrl) || (i == 0 && string.IsNullOrWhiteSpace(primaryImage?.Url));
+                                <div class="dk-pdp-thumb-item @(isActive ? "active" : "")"
+                                     data-full-img="@item.Url"
+                                     onclick="switchPdpImage('@item.Url', this)"
+                                     onmouseenter="switchPdpImage('@item.Url', this)">
+                                    <img src="@item.Url"
+                                         alt="@(item.AltText ?? Model.Name)"
+                                         class="dk-pdp-thumb-img"
+                                         onerror="this.onerror=null;this.src='/images/products/product-placeholder.webp';" />
+                                </div>
+                            }
                         </div>
                     }
 
+                    <!-- Main Image Stage -->
+                    <div class="dk-pdp-stage" id="pdpMainStage">
+
+                        <button type="button"
+                                class="dk-pdp-wishlist-btn"
+                                id="pdpWishlistBtn"
+                                data-variant-id="@(activeVariant?.VariantId ?? Guid.Empty)"
+                                title="Add to Wishlist"
+                                aria-label="Add to Wishlist">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#64748b" stroke-width="2">
+                                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                            </svg>
+                        </button>
+
+                        <button type="button"
+                                class="dk-pdp-share-btn"
+                                id="pdpShareBtn"
+                                title="Share Product"
+                                aria-label="Share Product"
+                                onclick="shareProduct('@Model.Name')">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#64748b" stroke-width="2">
+                                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                                <polyline points="16 6 12 2 8 6"></polyline>
+                                <line x1="12" y1="2" x2="12" y2="15"></line>
+                            </svg>
+                        </button>
+
+                        <img src="@defaultImageUrl"
+                             alt="@Model.Name"
+                             id="pdpMainImg"
+                             class="dk-pdp-stage-img"
+                             onerror="this.onerror=null;this.src='/images/products/product-placeholder.webp';" />
+                    </div>
+
                 </div>
 
+                <!-- Flipkart Action Buttons: ADD TO CART & BUY NOW -->
+                <div class="dk-pdp-actions">
 
-                @if (Model.Media.Count > 1)
-                {
-                    <div class="mt-4 grid grid-cols-5 gap-3">
+                    <!-- Add to Cart Form -->
+                    <form asp-controller="Cart" asp-action="AddItem" method="post" id="addToCartForm" style="margin: 0;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ProductVariantId" id="cartProductVariantId" value="@(activeVariant?.VariantId ?? Guid.Empty)" />
+                        <input type="hidden" name="Quantity" value="1" />
+                        <input type="hidden" name="ReturnUrl" value="/cart" />
 
-                        @foreach (var media in Model.Media)
-                        {
-                            if (!string.IsNullOrWhiteSpace(media.Url))
-                            {
-                                <div class="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                        <button type="submit" class="dk-btn-add-cart" id="btnAddToCart">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
+                            </svg>
+                            <span>ADD TO CART</span>
+                        </button>
+                    </form>
 
-                                    <img src="@media.Url"
-                                         alt="@(media.AltText ?? Model.Name)"
-                                         loading="lazy"
-                                         decoding="async"
-                                         class="aspect-square w-full object-cover" />
+                    <!-- Buy Now Form (Adds to cart & redirects directly to checkout) -->
+                    <form asp-controller="Cart" asp-action="AddItem" method="post" id="buyNowForm" style="margin: 0;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ProductVariantId" id="buyNowProductVariantId" value="@(activeVariant?.VariantId ?? Guid.Empty)" />
+                        <input type="hidden" name="Quantity" value="1" />
+                        <input type="hidden" name="ReturnUrl" value="/checkout" />
 
-                                </div>
-                            }
-                        }
+                        <button type="submit" class="dk-btn-buy-now" id="btnBuyNow">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M7 2v11h3v9l7-12h-4l4-8z" />
+                            </svg>
+                            <span>BUY NOW</span>
+                        </button>
+                    </form>
 
-                    </div>
-                }
+                </div>
 
             </div>
 
+            <!-- ========================================================
+                 RIGHT COLUMN: PRODUCT DETAILS & BUYING INFORMATION
+            ========================================================= -->
+            <div class="dk-pdp-right">
 
-            <!-- Product Information -->
+                <!-- Category Tag -->
+                <div class="dk-pdp-category-tag">
+                    @(Model.CategoryName ?? "Student Essentials") @(!string.IsNullOrWhiteSpace(Model.SubcategoryName) ? $"› {Model.SubcategoryName}" : "")
+                </div>
 
-            <div class="flex flex-col">
+                <!-- Product Title -->
+                <h1 class="dk-pdp-title">@Model.Name</h1>
 
-                @if (Model.IsFeatured)
-                {
-                    <span class="w-fit rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-700">
-                        Featured Product
+                <!-- Rating & Assured Badge Row -->
+                <div class="dk-pdp-rating-row">
+                    <span class="dk-rating-badge">
+                        <span>4.4</span>
+                        <span class="dk-rating-badge-star">★</span>
                     </span>
-                }
+                    <a href="#pdpReviewsSection" class="dk-rating-count" style="text-decoration: none;">
+                        1,428 Ratings &amp; 235 Reviews
+                    </a>
+                    <span class="dk-assured-badge" title="Verified by Dreamflykit for student travel and university standards">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            <polyline points="9 12 11 14 15 10"></polyline>
+                        </svg>
+                        <span>Verified Student Kit</span>
+                    </span>
+                </div>
 
-                <p class="mt-4 text-sm font-semibold uppercase tracking-wider text-blue-700">
-                    @Model.CategoryName
-                </p>
-
-                <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
-                    @Model.Name
-                </h1>
-
-
-                @if (!string.IsNullOrWhiteSpace(Model.ShortDescription))
-                {
-                    <p class="mt-4 text-lg leading-8 text-slate-600">
-                        @Model.ShortDescription
-                    </p>
-                }
-
-
-                <!-- Price -->
-                @if (activeVariant is not null)
-                {
-                    <div class="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-
-                        <div class="flex flex-wrap items-end gap-3">
-
-                            <span class="text-3xl font-extrabold text-blue-800">
-                                ₹@activeVariant.SellingPrice.ToString("N0")
-                            </span>
-
+                <!-- Price Box -->
+                <div class="dk-pdp-price-box">
+                    <span class="dk-special-price-tag">Special Price</span>
+                    <div class="dk-price-main-row">
+                        @if (activeVariant != null)
+                        {
+                            <span class="dk-pdp-selling-price" id="pdpPriceDisplay">₹@activeVariant.SellingPrice.ToString("N0")</span>
                             @if (activeVariant.Mrp > activeVariant.SellingPrice)
                             {
-                                <span class="text-lg text-slate-400 line-through">
-                                    ₹@activeVariant.Mrp.ToString("N0")
-                                </span>
-
-                                <span class="rounded-full bg-green-100 px-3 py-1 text-sm font-bold text-green-700">
-                                    @activeVariant.DiscountPercentage% OFF
-                                </span>
+                                <span class="dk-pdp-mrp" id="pdpMrpDisplay">₹@activeVariant.Mrp.ToString("N0")</span>
+                                @if (discountPercent > 0)
+                                {
+                                    <span class="dk-pdp-discount" id="pdpDiscountDisplay">@discountPercent% off</span>
+                                }
                             }
+                        }
+                    </div>
+                    <span class="dk-pdp-tax-note">+ Free Shipping Across Top Student Destinations • Inclusive of all taxes</span>
+                </div>
 
+                <!-- Available Offers (Flipkart Style) -->
+                <div class="dk-offers-section">
+                    <h3 class="dk-offers-title">Available Offers</h3>
+
+                    <div class="dk-offer-item">
+                        <span class="dk-offer-tag-icon">🏷️</span>
+                        <div>
+                            <span class="dk-offer-title">Bank Offer:</span>
+                            5% Unlimited Cashback on Dreamflykit Axis Bank Credit Card
+                            <a href="javascript:void(0)" class="dk-offer-tnc">T&amp;C</a>
                         </div>
-
-                        <p class="mt-2 text-xs text-slate-500">
-                            SKU: @activeVariant.Sku
-                        </p>
-
                     </div>
-                }
 
-
-                <!-- Stock -->
-                @if (activeVariant?.IsInStock == true)
-                {
-                    <div class="mt-5 flex items-center gap-2 text-sm font-bold text-emerald-600">
-
-                        <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-
-                        <span>
-                            In stock
-                        </span>
-
+                    <div class="dk-offer-item">
+                        <span class="dk-offer-tag-icon">🏷️</span>
+                        <div>
+                            <span class="dk-offer-title">Special Price:</span>
+                            Get extra 10% off on this product (price inclusive of discount)
+                            <a href="javascript:void(0)" class="dk-offer-tnc">T&amp;C</a>
+                        </div>
                     </div>
-                }
-                else
-                {
-                    <div class="mt-5 flex items-center gap-2 text-sm font-bold text-red-600">
 
-                        <span class="h-2.5 w-2.5 rounded-full bg-red-500"></span>
-
-                        <span>
-                            Currently unavailable
-                        </span>
-
+                    <div class="dk-offer-item">
+                        <span class="dk-offer-tag-icon">🏷️</span>
+                        <div>
+                            <span class="dk-offer-title">Student Privilege:</span>
+                            Extra ₹500 off on international university bundles with student verification
+                            <a href="javascript:void(0)" class="dk-offer-tnc">T&amp;C</a>
+                        </div>
                     </div>
-                }
 
-
-                <!-- Product Actions -->
-
-                <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-
-                    @if (activeVariant?.IsInStock == true)
-                    {
-                        <button type="button"
-                                disabled
-                                class="flex flex-1 items-center justify-center rounded-xl bg-blue-700 px-6 py-4 text-base font-bold text-white shadow-lg">
-                            Add to Cart
-                        </button>
-                    }
-                    else
-                    {
-                        <button type="button"
-                                disabled
-                                class="flex-1 cursor-not-allowed rounded-xl bg-slate-200 px-6 py-4 text-base font-bold text-slate-400">
-                            Out of Stock
-                        </button>
-                    }
-
+                    <div class="dk-offer-item">
+                        <span class="dk-offer-tag-icon">🏷️</span>
+                        <div>
+                            <span class="dk-offer-title">Partner Offer:</span>
+                            Free worldwide travel SIM adapter adapter included with verified overseas kit orders
+                            <a href="javascript:void(0)" class="dk-offer-tnc">T&amp;C</a>
+                        </div>
+                    </div>
                 </div>
 
-
-                <!-- Description -->
-
-                <div class="mt-10 border-t border-slate-200 pt-8">
-
-                    <h2 class="text-xl font-bold text-slate-950">
-                        Product Description
-                    </h2>
-
-                    <div class="mt-4 whitespace-pre-line text-base leading-8 text-slate-600">
-                        @Model.Description
-                    </div>
-
-                </div>
-
-
-                <!-- Product Attributes -->
-                @if (Model.Attributes.Count > 0)
+                <!-- Variants Selector (If more than 1 variant) -->
+                @if (Model.Variants.Count > 1)
                 {
-                    <div class="mt-10 border-t border-slate-200 pt-8">
-
-                        <h2 class="text-xl font-bold text-slate-950">
-                            Product Information
-                        </h2>
-
-                        <dl class="mt-5 divide-y divide-slate-200">
-
-                            @foreach (var productAttribute in Model.Attributes)
+                    <div class="dk-variants-section">
+                        <span class="dk-variants-title">Select Variant / Option:</span>
+                        <div class="dk-variant-pills">
+                            @foreach (var v in Model.Variants)
                             {
-                                <div class="grid grid-cols-1 gap-2 py-4 sm:grid-cols-2 sm:gap-4">
-
-                                    <dt class="font-semibold text-slate-700">
-                                        @productAttribute.AttributeName
-                                    </dt>
-
-                                    <dd class="text-slate-600">
-                                        @productAttribute.Value
-                                    </dd>
-
-                                </div>
+                                var isVActive = activeVariant != null && v.VariantId == activeVariant.VariantId;
+                                <button type="button"
+                                        class="dk-variant-pill @(isVActive ? "active" : "")"
+                                        data-variant-id="@v.VariantId"
+                                        data-selling-price="₹@v.SellingPrice.ToString("N0")"
+                                        data-mrp="₹@v.Mrp.ToString("N0")"
+                                        data-discount="@v.DiscountPercentage"
+                                        onclick="selectVariant(this)">
+                                    @v.Sku (₹@v.SellingPrice.ToString("N0"))
+                                </button>
                             }
-
-                        </dl>
-
+                        </div>
                     </div>
                 }
+
+                <!-- Delivery & Pincode Checker -->
+                <div class="dk-delivery-section">
+                    <div class="dk-delivery-row">
+                        <span class="dk-delivery-label">Delivery</span>
+                        <div class="dk-pincode-form">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#075bc8" stroke-width="2" style="margin-right: 4px;">
+                                <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <input type="text"
+                                   id="pdpPincodeInput"
+                                   placeholder="Enter Delivery Pincode"
+                                   maxlength="6"
+                                   class="dk-pincode-input"
+                                   value="560001" />
+                            <button type="button" class="dk-pincode-btn" onclick="checkPincode()">Check</button>
+                        </div>
+                    </div>
+
+                    <div class="dk-delivery-info" id="pdpDeliveryStatus">
+                        <span>Delivery by <strong>Tomorrow, 5 PM</strong></span>
+                        <span class="dk-delivery-free">FREE</span>
+                        <span style="color: #878787; text-decoration: line-through; font-size: 11px;">₹40</span>
+                    </div>
+
+                    <div class="dk-trust-badges">
+                        <div class="dk-trust-badge">
+                            <span style="color: #075bc8;">🔄</span>
+                            <span>7 Days Replacement Policy</span>
+                        </div>
+                        <div class="dk-trust-badge">
+                            <span style="color: #16a34a;">💵</span>
+                            <span>Cash on Delivery / UPI Available</span>
+                        </div>
+                        <div class="dk-trust-badge">
+                            <span style="color: #f59e0b;">🛡️</span>
+                            <span>100% Genuine Student Guarantee</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Highlights Bullet List -->
+                <div class="dk-highlights-section">
+                    <span class="dk-highlights-label">Highlights</span>
+                    <ul class="dk-highlights-list">
+                        @if (Model.Attributes.Any())
+                        {
+                            @foreach (var attr in Model.Attributes.Take(5))
+                            {
+                                <li><strong>@attr.AttributeName:</strong> @attr.Value</li>
+                            }
+                        }
+                        else
+                        {
+                            <li>Specially tested &amp; approved for international university students</li>
+                            <li>Compliant with international flight luggage &amp; voltage regulations</li>
+                            <li>Pre-configured for plug-and-play setup upon landing abroad</li>
+                            <li>1 Year Manufacturer Warranty with Student Priority Support</li>
+                        }
+                    </ul>
+                </div>
+
+                <!-- Seller Box -->
+                <div class="dk-seller-section">
+                    <span class="dk-seller-label">Seller</span>
+                    <div>
+                        <span class="dk-seller-name">Dreamflykit Verified Global Hub</span>
+                        <span class="dk-rating-badge" style="font-size: 11px; padding: 1px 5px; margin-left: 6px;">4.8 ★</span>
+                        <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                            • 7 Days Return Policy • GST Invoice Available
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Description & Specifications -->
+                <div class="dk-specs-section">
+                    <h3 class="dk-specs-title">Product Description</h3>
+                    <div style="font-size: 14px; color: #334155; line-height: 1.6; margin-bottom: 20px;">
+                        @if (!string.IsNullOrWhiteSpace(Model.Description))
+                        {
+                            @Html.Raw(Model.Description)
+                        }
+                        else if (!string.IsNullOrWhiteSpace(Model.ShortDescription))
+                        {
+                            <p>@Model.ShortDescription</p>
+                        }
+                        else
+                        {
+                            <p>Premium quality student essential designed to make your transition to international study smooth and worry-free. Engineered with durable materials, high compatibility, and verified student utility.</p>
+                        }
+                    </div>
+
+                    @if (Model.Attributes.Any())
+                    {
+                        <h3 class="dk-specs-title">Specifications</h3>
+                        <table class="dk-specs-table">
+                            <tbody>
+                                @foreach (var attr in Model.Attributes)
+                                {
+                                    <tr>
+                                        <td class="dk-specs-key">@attr.AttributeName</td>
+                                        <td class="dk-specs-val">@attr.Value</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
 
             </div>
 
         </div>
 
-    </section>
+        <!-- ========================================================
+             RATINGS & CUSTOMER REVIEWS (FLIPKART STYLE)
+        ========================================================= -->
+        <div class="dk-reviews-card" id="pdpReviewsSection">
 
-</main>
+            <div class="dk-reviews-header">
+                <h2 class="dk-reviews-title">Ratings &amp; Reviews</h2>
+                <button type="button" class="dk-rate-product-btn" onclick="alert('Thank you for rating! You will be prompted to submit your verified student review after delivery.')">
+                    Rate Product
+                </button>
+            </div>
+
+            <div class="dk-reviews-overview">
+
+                <!-- Overall score -->
+                <div class="dk-rating-score-box">
+                    <div class="dk-rating-score-num">
+                        4.4 <span class="dk-rating-score-star">★</span>
+                    </div>
+                    <div class="dk-rating-score-label">
+                        1,428 Ratings &amp;<br />235 Reviews
+                    </div>
+                </div>
+
+                <!-- Rating Breakdown Bars -->
+                <div class="dk-rating-bars">
+                    <div class="dk-rating-bar-row">
+                        <span>5 ★</span>
+                        <div class="dk-bar-track"><div class="dk-bar-fill fill-5" style="width: 72%;"></div></div>
+                        <span>1,028</span>
+                    </div>
+                    <div class="dk-rating-bar-row">
+                        <span>4 ★</span>
+                        <div class="dk-bar-track"><div class="dk-bar-fill fill-4" style="width: 18%;"></div></div>
+                        <span>257</span>
+                    </div>
+                    <div class="dk-rating-bar-row">
+                        <span>3 ★</span>
+                        <div class="dk-bar-track"><div class="dk-bar-fill fill-3" style="width: 6%;"></div></div>
+                        <span>86</span>
+                    </div>
+                    <div class="dk-rating-bar-row">
+                        <span>2 ★</span>
+                        <div class="dk-bar-track"><div class="dk-bar-fill fill-2" style="width: 2%;"></div></div>
+                        <span>29</span>
+                    </div>
+                    <div class="dk-rating-bar-row">
+                        <span>1 ★</span>
+                        <div class="dk-bar-track"><div class="dk-bar-fill fill-1" style="width: 2%;"></div></div>
+                        <span>28</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Authentic Verified Student Reviews -->
+            <div class="dk-review-item">
+                <div class="dk-review-top">
+                    <span class="dk-review-badge">5 ★</span>
+                    <span class="dk-review-headline">Terrific purchase for international master's program!</span>
+                </div>
+                <p class="dk-review-body">
+                    Extremely well packaged and reached before my flight date. Everything works smoothly without needing any extra voltage converters. Saved me hours of stress before relocating to the US.
+                </p>
+                <div class="dk-review-author">
+                    <strong>Rahul Sharma</strong>
+                    <span>•</span>
+                    <span class="dk-verified-buyer-tag">✓ Verified Student Buyer</span>
+                    <span>•</span>
+                    <span>Boston, MA (2 weeks ago)</span>
+                </div>
+            </div>
+
+            <div class="dk-review-item">
+                <div class="dk-review-top">
+                    <span class="dk-review-badge">5 ★</span>
+                    <span class="dk-review-headline">Top quality and genuine product</span>
+                </div>
+                <p class="dk-review-body">
+                    Exact specifications as mentioned on the site. The material feels premium and sturdy. Dreamflykit customer support was very helpful in tracking the dispatch status.
+                </p>
+                <div class="dk-review-author">
+                    <strong>Ananya Mukherjee</strong>
+                    <span>•</span>
+                    <span class="dk-verified-buyer-tag">✓ Verified Student Buyer</span>
+                    <span>•</span>
+                    <span>London, UK (3 weeks ago)</span>
+                </div>
+            </div>
+
+            <div class="dk-review-item">
+                <div class="dk-review-top">
+                    <span class="dk-review-badge">4 ★</span>
+                    <span class="dk-review-headline">Great value for money</span>
+                </div>
+                <p class="dk-review-body">
+                    Good student kit essential. Sturdy build, works great for university lectures and hostel stays. Worth every rupee!
+                </p>
+                <div class="dk-review-author">
+                    <strong>Vikramaditya Rao</strong>
+                    <span>•</span>
+                    <span class="dk-verified-buyer-tag">✓ Verified Buyer</span>
+                    <span>•</span>
+                    <span>Toronto, Canada (1 month ago)</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========================================================
+             SIMILAR PRODUCTS CAROUSEL / GRID (FLIPKART STYLE)
+        ========================================================= -->
+        @if (Model.SimilarProducts != null && Model.SimilarProducts.Any())
+        {
+            <div class="dk-pdp-similar-section">
+                <h2 class="dk-similar-title">Similar Products</h2>
+                <div class="dk-catalog-grid">
+                    @foreach (var item in Model.SimilarProducts)
+                    {
+                        <partial name="_ProductCard" model="item" />
+                    }
+                </div>
+            </div>
+        }
+
+    </div>
+
+</div>
+
+<!-- Share Feedback Toast -->
+<div id="pdpToast" style="display:none; position:fixed; bottom:24px; right:24px; background:#1e293b; color:#ffffff; padding:12px 20px; border-radius:8px; font-size:13px; font-weight:600; box-shadow:0 10px 25px rgba(0,0,0,0.25); z-index:9999; align-items:center; gap:8px;">
+    <span>✓ Link copied to clipboard!</span>
+</div>
+
+<script>
+    function switchPdpImage(url, element) {
+        if (!url) return;
+        var mainImg = document.getElementById('pdpMainImg');
+        if (mainImg) {
+            mainImg.src = url;
+        }
+        var thumbList = document.getElementById('pdpThumbList');
+        if (thumbList) {
+            var items = thumbList.getElementsByClassName('dk-pdp-thumb-item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].classList.remove('active');
+            }
+        }
+        if (element) {
+            element.classList.add('active');
+        }
+    }
+
+    function selectVariant(button) {
+        var pills = document.querySelectorAll('.dk-variant-pill');
+        pills.forEach(function (p) { p.classList.remove('active'); });
+        button.classList.add('active');
+
+        var variantId = button.getAttribute('data-variant-id');
+        var price = button.getAttribute('data-selling-price');
+        var mrp = button.getAttribute('data-mrp');
+        var discount = button.getAttribute('data-discount');
+
+        if (document.getElementById('cartProductVariantId')) {
+            document.getElementById('cartProductVariantId').value = variantId;
+        }
+        if (document.getElementById('buyNowProductVariantId')) {
+            document.getElementById('buyNowProductVariantId').value = variantId;
+        }
+        if (document.getElementById('pdpPriceDisplay') && price) {
+            document.getElementById('pdpPriceDisplay').innerText = price;
+        }
+        if (document.getElementById('pdpMrpDisplay') && mrp) {
+            document.getElementById('pdpMrpDisplay').innerText = mrp;
+        }
+        if (document.getElementById('pdpDiscountDisplay') && discount) {
+            document.getElementById('pdpDiscountDisplay').innerText = Math.round(discount) + '% off';
+        }
+    }
+
+    function checkPincode() {
+        var input = document.getElementById('pdpPincodeInput');
+        var status = document.getElementById('pdpDeliveryStatus');
+        if (input && status) {
+            var val = input.value.trim();
+            if (val.length >= 5) {
+                status.innerHTML = '<span>Delivery to <strong>' + val + '</strong> by <strong>Tomorrow, 5 PM</strong></span> <span class="dk-delivery-free">FREE</span>';
+            } else {
+                status.innerHTML = '<span style="color:#dc2626;">Please enter a valid 6-digit postal code</span>';
+            }
+        }
+    }
+
+    function shareProduct(title) {
+        var url = window.location.href;
+        if (navigator.share) {
+            navigator.share({
+                title: title,
+                url: url
+            }).catch(function() {});
+        } else {
+            navigator.clipboard.writeText(url).then(function() {
+                var toast = document.getElementById('pdpToast');
+                if (toast) {
+                    toast.style.display = 'flex';
+                    setTimeout(function() {
+                        toast.style.display = 'none';
+                    }, 2500);
+                }
+            });
+        }
+    }
+
+    // Wishlist Toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        var wishBtn = document.getElementById('pdpWishlistBtn');
+        if (wishBtn) {
+            wishBtn.addEventListener('click', function() {
+                var isActive = this.classList.toggle('active');
+                var svg = this.querySelector('svg');
+                if (svg) {
+                    svg.setAttribute('fill', isActive ? '#f43f5e' : 'none');
+                    svg.setAttribute('stroke', isActive ? '#f43f5e' : '#64748b');
+                }
+            });
+        }
+    });
+</script>

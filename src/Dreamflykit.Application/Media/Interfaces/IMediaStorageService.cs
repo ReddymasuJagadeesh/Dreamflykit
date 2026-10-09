@@ -8,6 +8,11 @@ namespace Dreamflykit.Application.Media.Interfaces;
 public interface IMediaStorageService
 {
     /// <summary>
+    /// The last error message encountered during a storage operation, if any.
+    /// </summary>
+    string? LastError { get; }
+
+    /// <summary>
     /// Uploads a file stream to S3 at the given object key.
     /// </summary>
     /// <param name="objectKey">S3 key (e.g., media/products/{ownerId}/{mediaId}.webp)</param>
@@ -47,5 +52,12 @@ public interface IMediaStorageService
         string objectKey,
         string contentType,
         int expirySeconds,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a file stream from S3.
+    /// </summary>
+    Task<Dreamflykit.Application.Media.Models.StorageObjectResult?> GetObjectAsync(
+        string objectKey,
         CancellationToken cancellationToken = default);
 }

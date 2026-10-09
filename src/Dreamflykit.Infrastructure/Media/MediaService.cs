@@ -88,7 +88,10 @@ public sealed class MediaService : IMediaService
 
         if (!uploadSuccess)
         {
-            return MediaUploadResult.Failure("Failed to upload file to storage. Please try again.");
+            var errorMessage = !string.IsNullOrWhiteSpace(_storage.LastError)
+                ? $"Failed to upload file to storage: {_storage.LastError}"
+                : "Failed to upload file to storage. Please verify S3 bucket configuration and permissions.";
+            return MediaUploadResult.Failure(errorMessage);
         }
 
         // 5. Generate and upload thumbnail variant
@@ -482,6 +485,7 @@ public sealed class MediaService : IMediaService
         if (asset is null) return false;
 
         var productMedia = new ProductMedia(productId, mediaAssetId, asset.AltText, displayOrder, isPrimary);
+        productMedia.SetMediaUrl(_urlService.GetCardUrl(asset.ObjectKey));
 
         if (isPrimary)
         {

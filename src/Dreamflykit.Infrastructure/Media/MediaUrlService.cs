@@ -18,24 +18,36 @@ public sealed class MediaUrlService : IMediaUrlService
 
     public MediaUrlService(IOptions<MediaOptions> options)
     {
-        var url = options.Value.CdnBaseUrl.TrimEnd('/');
+        var mediaOpts = options.Value;
+        var url = mediaOpts.CdnBaseUrl?.TrimEnd('/');
 
-        if (string.IsNullOrWhiteSpace(url))
+        // If CdnBaseUrl is not configured, contains placeholders, or directly points to a raw S3 bucket endpoint
+        // (which is private and returns 403 Forbidden to anonymous public requests without AWS credentials):
+        if (string.IsNullOrWhiteSpace(url) ||
+            url.Contains("YOUR_CLOUDFRONT_DOMAIN", StringComparison.OrdinalIgnoreCase) ||
+            url.Contains(".s3.", StringComparison.OrdinalIgnoreCase) ||
+            url.Contains("s3.amazonaws.com", StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException(
-                "Media:CdnBaseUrl is not configured. " +
-                "Set it in appsettings.json to your CloudFront domain.");
+            // Route through the web application's secure media delivery endpoint (/media/...)
+            _cdnBaseUrl = string.Empty;
         }
-
-        _cdnBaseUrl = url;
+        else
+        {
+            _cdnBaseUrl = url;
+        }
     }
 
     /// <summary>
-    /// Builds the CDN URL for an original/full-size image.
+    /// Builds the CDN or application URL for an original/full-size image.
     /// </summary>
     /// <param name="objectKey">S3 object key (e.g., media/products/{id}/{assetId}.webp)</param>
-    public string GetUrl(string objectKey) =>
-        $"{_cdnBaseUrl}/{objectKey.TrimStart('/')}";
+    public string GetUrl(string objectKey)
+    {
+        var cleanKey = objectKey.TrimStart('/');
+        return string.IsNullOrEmpty(_cdnBaseUrl)
+            ? $"/{cleanKey}"
+            : $"{_cdnBaseUrl}/{cleanKey}";
+    }
 
     /// <summary>
     /// Builds the CDN URL for the thumbnail variant (200px max dimension).

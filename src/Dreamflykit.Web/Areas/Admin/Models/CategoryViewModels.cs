@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace Dreamflykit.Web.Areas.Admin.Models;
 
@@ -49,6 +50,7 @@ public sealed class AdminCategoryCreateViewModel
 
     public Guid? ImageMediaAssetId { get; set; }
     public string? ImagePreviewUrl { get; set; }
+    public IFormFile? ImageFile { get; set; }
 }
 
 public sealed class AdminCategoryEditViewModel
@@ -70,6 +72,7 @@ public sealed class AdminCategoryEditViewModel
 
     public Guid? ImageMediaAssetId { get; set; }
     public string? ImagePreviewUrl { get; set; }
+    public IFormFile? ImageFile { get; set; }
 }
 
 public sealed class AdminSubcategoryCreateViewModel
@@ -90,6 +93,7 @@ public sealed class AdminSubcategoryCreateViewModel
 
     public Guid? ImageMediaAssetId { get; set; }
     public string? ImagePreviewUrl { get; set; }
+    public IFormFile? ImageFile { get; set; }
 }
 
 public sealed class AdminSubcategoryEditViewModel
@@ -114,4 +118,5 @@ public sealed class AdminSubcategoryEditViewModel
 
     public Guid? ImageMediaAssetId { get; set; }
     public string? ImagePreviewUrl { get; set; }
+    public IFormFile? ImageFile { get; set; }
 }

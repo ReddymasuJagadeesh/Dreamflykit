@@ -1,4 +1,4 @@
-﻿namespace Dreamflykit.Application.Categories.Models;
+namespace Dreamflykit.Application.Categories.Models;
 
 public sealed class CategoryListItem
 {
@@ -11,4 +11,6 @@ public sealed class CategoryListItem
     public int DisplayOrder { get; init; }
 
     public int ProductCount { get; init; }
+
+    public string? ImageUrl { get; init; }
 }

@@ -1,5 +1,7 @@
 using Dreamflykit.Application.Catalog.Interfaces;
 using Dreamflykit.Application.Catalog.Models;
+using Dreamflykit.Application.Categories.Interfaces;
+using Dreamflykit.Application.Categories.Models;
 using Dreamflykit.Web.Models.Products;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,20 +10,29 @@ namespace Dreamflykit.Web.Controllers;
 public sealed class ProductsController : Controller
 {
     private readonly IProductService _productService;
+    private readonly ICategoryService _categoryService;
 
     public ProductsController(
-        IProductService productService)
+        IProductService productService,
+        ICategoryService categoryService)
     {
         _productService = productService;
+        _categoryService = categoryService;
     }
 
     [HttpGet("/products")]
     [HttpGet("/products/search")]
+    [HttpGet("/category/{category}")]
+    [HttpGet("/category/{category}/{subcategorySlug}")]
+    [HttpGet("/categories/{category}")]
+    [HttpGet("/categories/{category}/{subcategorySlug}")]
     public async Task<IActionResult> Index(
         [FromQuery(Name = "q")] string? q,
         [FromQuery] string? search,
         [FromQuery] Guid? categoryId,
-        [FromQuery] string? category,
+        [FromRoute] string? category,
+        [FromQuery(Name = "category")] string? queryCategory,
+        [FromRoute] string? subcategorySlug,
         [FromQuery] Guid? subcategoryId,
         [FromQuery] decimal? minPrice,
         [FromQuery] decimal? maxPrice,
@@ -32,13 +43,53 @@ public sealed class ProductsController : Controller
         [FromQuery] int pageSize = 24,
         CancellationToken cancellationToken = default)
     {
-        var effectiveSearch = !string.IsNullOrWhiteSpace(q) ? q.Trim() : (!string.IsNullOrWhiteSpace(search) ? search.Trim() : null);
+        var effectiveCategory = !string.IsNullOrWhiteSpace(category)
+            ? category.Trim().ToLowerInvariant()
+            : (!string.IsNullOrWhiteSpace(queryCategory) ? queryCategory.Trim().ToLowerInvariant() : null);
+
+        CategoryDetails? catDetails = null;
+        string? currentSubcategoryName = null;
+        string? currentSubcategorySlug = subcategorySlug;
+
+        if (!string.IsNullOrWhiteSpace(effectiveCategory))
+        {
+            catDetails = await _categoryService.GetCategoryDetailsAsync(effectiveCategory, cancellationToken);
+            if (catDetails != null)
+            {
+                categoryId = catDetails.CategoryId;
+
+                if (!string.IsNullOrWhiteSpace(subcategorySlug))
+                {
+                    var matchingSub = catDetails.Subcategories
+                        .FirstOrDefault(s => s.Slug.Equals(subcategorySlug, StringComparison.OrdinalIgnoreCase));
+                    if (matchingSub != null)
+                    {
+                        subcategoryId = matchingSub.SubcategoryId;
+                        currentSubcategoryName = matchingSub.Name;
+                    }
+                }
+            }
+        }
+
+        if (subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategoryName) && catDetails != null)
+        {
+            var matchingSub = catDetails.Subcategories.FirstOrDefault(s => s.SubcategoryId == subcategoryId.Value);
+            if (matchingSub != null)
+            {
+                currentSubcategoryName = matchingSub.Name;
+                currentSubcategorySlug = matchingSub.Slug;
+            }
+        }
+
+        var effectiveSearch = !string.IsNullOrWhiteSpace(q)
+            ? q.Trim()
+            : (!string.IsNullOrWhiteSpace(search) ? search.Trim() : null);
 
         var query = new ProductListQuery
         {
             SearchTerm = effectiveSearch,
             CategoryId = categoryId,
-            CategorySlug = category,
+            CategorySlug = effectiveCategory,
             SubcategoryId = subcategoryId,
             MinPrice = minPrice,
             MaxPrice = maxPrice,
@@ -64,9 +115,16 @@ public sealed class ProductsController : Controller
             HasNextPage = result.HasNextPage,
             SearchTerm = effectiveSearch,
             CategoryId = categoryId,
-            CategorySlug = result.CurrentCategorySlug ?? category,
-            CategoryName = result.CurrentCategoryName,
+            CategorySlug = result.CurrentCategorySlug ?? effectiveCategory,
+            CategoryName = result.CurrentCategoryName ?? catDetails?.Name,
+            CategoryImageUrl = catDetails?.ImageUrl,
+            CategoryDescription = !string.IsNullOrWhiteSpace(catDetails?.Name)
+                ? $"Explore premium {catDetails.Name} student essentials, verified university supplies, and travel-ready gear curated for international students."
+                : null,
             SubcategoryId = subcategoryId,
+            CurrentSubcategoryName = currentSubcategoryName,
+            CurrentSubcategorySlug = currentSubcategorySlug,
+            Subcategories = catDetails?.Subcategories ?? Array.Empty<SubcategoryListItem>(),
             MinPrice = minPrice,
             MaxPrice = maxPrice,
             InStockOnly = inStockOnly,
@@ -118,9 +176,43 @@ public sealed class ProductsController : Controller
             return NotFound();
         }
 
+        var similarResult = await _productService.SearchProductsAsync(
+            new ProductListQuery
+            {
+                CategorySlug = product.CategorySlug,
+                SubcategorySlug = product.SubcategorySlug,
+                Page = 1,
+                PageSize = 8
+            },
+            cancellationToken);
+
+        var similarItems = similarResult.Items
+            .Where(p => p.ProductId != product.ProductId)
+            .Take(5)
+            .ToList();
+
+        if (similarItems.Count < 4 && !string.IsNullOrWhiteSpace(product.CategorySlug))
+        {
+            var fallbackResult = await _productService.SearchProductsAsync(
+                new ProductListQuery
+                {
+                    CategorySlug = product.CategorySlug,
+                    Page = 1,
+                    PageSize = 8
+                },
+                cancellationToken);
+
+            var fallbackItems = fallbackResult.Items
+                .Where(p => p.ProductId != product.ProductId && !similarItems.Any(s => s.ProductId == p.ProductId))
+                .Take(5 - similarItems.Count);
+
+            similarItems.AddRange(fallbackItems);
+        }
+
         var model = new ProductDetailsViewModel
         {
             ProductId = product.ProductId,
+            SimilarProducts = similarItems,
             Name = product.Name,
             Slug = product.Slug,
             Description = product.Description,

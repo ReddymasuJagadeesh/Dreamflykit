@@ -1,4 +1,4 @@
-﻿using Dreamflykit.Application.Catalog.Models;
+using Dreamflykit.Application.Catalog.Models;
 
 namespace Dreamflykit.Web.Models.Products;
 
@@ -34,6 +34,9 @@ public sealed class ProductDetailsViewModel
     public bool IsActive { get; init; }
 
     public bool IsFeatured { get; init; }
+
+    public IReadOnlyList<ProductListItem> SimilarProducts { get; init; }
+        = Array.Empty<ProductListItem>();
 }
 
 public sealed class ProductVariantViewModel

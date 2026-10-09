@@ -1,5 +1,7 @@
 using Dreamflykit.Application.Media.Interfaces;
+using Dreamflykit.Application.Media.Models;
 using Dreamflykit.Domain.Catalog;
+using Dreamflykit.Domain.Media;
 using Dreamflykit.Infrastructure.Persistence;
 using Dreamflykit.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +24,26 @@ public sealed class ProductsController : AdminBaseController
         _dbContext = dbContext;
         _mediaService = mediaService;
         _urlService = urlService;
+    }
+
+    private async Task<Guid?> UploadProductMediaFileAsync(IFormFile? file, Guid productId, string altText, CancellationToken cancellationToken)
+    {
+        if (file is null || file.Length == 0) return null;
+
+        await using var stream = file.OpenReadStream();
+        var request = new Dreamflykit.Application.Media.Models.MediaUploadRequest
+        {
+            FileStream = stream,
+            OriginalFileName = file.FileName,
+            ContentType = file.ContentType,
+            MediaType = Dreamflykit.Domain.Media.MediaType.Product,
+            OwnerId = productId,
+            AltText = altText,
+            UploadedBy = CurrentUserId
+        };
+
+        var result = await _mediaService.UploadAsync(request, cancellationToken);
+        return result.IsSuccess ? result.Asset?.Id : null;
     }
 
     [HttpGet("")]
@@ -225,6 +247,15 @@ public sealed class ProductsController : AdminBaseController
 
         _dbContext.ProductVariants.Add(variant);
 
+        if (model.ImageFile != null && model.ImageFile.Length > 0)
+        {
+            var uploadedAssetId = await UploadProductMediaFileAsync(model.ImageFile, product.Id, product.Name, cancellationToken);
+            if (uploadedAssetId.HasValue)
+            {
+                model.PrimaryMediaAssetId = uploadedAssetId.Value;
+            }
+        }
+
         if (model.PrimaryMediaAssetId.HasValue && model.PrimaryMediaAssetId.Value != Guid.Empty)
         {
             var media = new ProductMedia(
@@ -233,6 +264,14 @@ public sealed class ProductsController : AdminBaseController
                 model.Name.Trim(),
                 displayOrder: 0,
                 isPrimary: true);
+
+            var asset = await _dbContext.MediaAssets
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == model.PrimaryMediaAssetId.Value, cancellationToken);
+            if (asset != null)
+            {
+                media.SetMediaUrl(_urlService.GetCardUrl(asset.ObjectKey));
+            }
 
             _dbContext.ProductMedia.Add(media);
         }
@@ -415,6 +454,16 @@ public sealed class ProductsController : AdminBaseController
             _dbContext.ProductVariants.Add(newVariant);
         }
 
+        // Handle direct image file upload or picker selection
+        if (model.ImageFile != null && model.ImageFile.Length > 0)
+        {
+            var uploadedAssetId = await UploadProductMediaFileAsync(model.ImageFile, product.Id, product.Name, cancellationToken);
+            if (uploadedAssetId.HasValue)
+            {
+                model.PrimaryMediaAssetId = uploadedAssetId.Value;
+            }
+        }
+
         // Handle primary image update if chosen
         if (model.PrimaryMediaAssetId.HasValue && model.PrimaryMediaAssetId.Value != Guid.Empty)
         {
@@ -441,6 +490,13 @@ public sealed class ProductsController : AdminBaseController
                 }
 
                 var newMedia = new ProductMedia(product.Id, model.PrimaryMediaAssetId.Value, model.Name.Trim(), displayOrder: 0, isPrimary: true);
+                var asset = await _dbContext.MediaAssets
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(a => a.Id == model.PrimaryMediaAssetId.Value, cancellationToken);
+                if (asset != null)
+                {
+                    newMedia.SetMediaUrl(_urlService.GetCardUrl(asset.ObjectKey));
+                }
                 _dbContext.ProductMedia.Add(newMedia);
             }
         }
@@ -562,6 +618,45 @@ public sealed class ProductsController : AdminBaseController
             TempData["SuccessMessage"] = "Image removed from product.";
         }
 
+        return RedirectToAction(nameof(Media), new { id = productId });
+    }
+
+    [HttpPost("UploadDirectMedia")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UploadDirectMedia(
+        [FromForm] Guid productId,
+        [FromForm] IFormFile? file,
+        [FromForm] bool isPrimary,
+        CancellationToken cancellationToken)
+    {
+        if (file != null && file.Length > 0)
+        {
+            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId, cancellationToken);
+            if (product != null)
+            {
+                var assetId = await UploadProductMediaFileAsync(file, productId, product.Name, cancellationToken);
+                if (assetId.HasValue)
+                {
+                    var maxOrder = await _dbContext.ProductMedia
+                        .Where(m => m.ProductId == productId)
+                        .Select(m => (int?)m.DisplayOrder)
+                        .MaxAsync(cancellationToken) ?? 0;
+
+                    await _mediaService.AssignToProductAsync(
+                        productId,
+                        assetId.Value,
+                        isPrimary,
+                        maxOrder + 1,
+                        CurrentUserId,
+                        cancellationToken);
+
+                    TempData["SuccessMessage"] = "Photo uploaded and attached to product gallery successfully.";
+                    return RedirectToAction(nameof(Media), new { id = productId });
+                }
+            }
+        }
+
+        TempData["ErrorMessage"] = "Please select a valid image file to upload.";
         return RedirectToAction(nameof(Media), new { id = productId });
     }
 

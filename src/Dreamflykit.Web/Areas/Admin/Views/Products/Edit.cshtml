@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="editProductForm">
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="editProductForm" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
         <input type="hidden" asp-for="VariantId" />
@@ -146,31 +146,37 @@
         <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; margin-bottom: 24px;">
             <h4 style="margin: 0 0 16px; font-size: 15px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 6px;">
                 <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #db2777;"></span>
-                4. Primary Product Image (S3 + CloudFront CDN)
+                4. Primary Product Image (S3 + Local Streaming Proxy)
             </h4>
 
             <input type="hidden" asp-for="PrimaryMediaAssetId" id="mediaAssetId" />
 
-            <div style="display: flex; align-items: center; gap: 20px; background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px dashed #cbd5e1;">
-                <div id="imagePreviewContainer" style="width: 90px; height: 90px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+            <div style="display: flex; gap: 20px; align-items: flex-start; background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px dashed #cbd5e1;">
+                <div id="imagePreviewContainer" style="width: 100px; height: 100px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
                     <img id="imagePreview" src="@(Model.PrimaryImagePreviewUrl ?? "")" alt="Selected Preview" style="@(string.IsNullOrWhiteSpace(Model.PrimaryImagePreviewUrl) ? "display: none;" : "display: block;") width: 100%; height: 100%; object-fit: cover;" />
                     <span id="noImagePrompt" style="@(string.IsNullOrWhiteSpace(Model.PrimaryImagePreviewUrl) ? "display: block;" : "display: none;") color: #94a3b8; font-size: 11px; text-align: center; padding: 4px;">No image selected</span>
                 </div>
 
-                <div>
-                    <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="flex: 1;">
+                    <div style="margin-bottom: 12px;">
+                        <label asp-for="ImageFile" style="display: block; font-weight: 700; font-size: 13px; color: #334155; margin-bottom: 4px;">Upload New Primary Image:</label>
+                        <input type="file" asp-for="ImageFile" id="imageFileInput" accept="image/*" class="dk-input" style="width: 100%; font-size: 13px;" onchange="previewDirectUpload(this)" />
+                        <span asp-validation-for="ImageFile" style="color: #dc2626; font-size: 12px;"></span>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                         <button type="button" class="dk-btn dk-btn-secondary" onclick="openMediaPicker()" style="padding: 7px 16px; font-size: 12px; font-weight: 700;">
-                            📁 Change Primary Image
+                            📁 Select from Media Library
                         </button>
                         <button type="button" class="dk-btn dk-btn-outline" onclick="clearSelectedMedia()" style="padding: 7px 14px; font-size: 12px;">
                             Clear Image
                         </button>
-                        <a href="/Admin/Products/Media/@Model.Id" class="dk-btn dk-btn-primary" style="padding: 7px 16px; font-size: 12px; font-weight: 700; text-decoration: none; margin-left: 8px;">
+                        <a href="/Admin/Products/Media/@Model.Id" class="dk-btn dk-btn-primary" style="padding: 7px 16px; font-size: 12px; font-weight: 700; text-decoration: none; margin-left: auto;">
                             📸 Manage Full S3 Gallery (@Model.Name) →
                         </a>
                     </div>
                     <small style="display: block; margin-top: 8px; color: #64748b; font-size: 12px;">
-                        Manage multiple gallery images, angles, and zoom views in the dedicated Gallery manager.
+                        Upload a new photo directly or choose from library. Manage multiple gallery images and angles in the dedicated Gallery manager.
                     </small>
                 </div>
             </div>
@@ -291,8 +297,24 @@
         document.getElementById('mediaPickerModal').style.display = 'none';
     }
 
+    function previewDirectUpload(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const preview = document.getElementById('imagePreview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                document.getElementById('noImagePrompt').style.display = 'none';
+                document.getElementById('mediaAssetId').value = '';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
     function clearSelectedMedia() {
         document.getElementById('mediaAssetId').value = '';
+        const fileInput = document.getElementById('imageFileInput');
+        if (fileInput) fileInput.value = '';
         const preview = document.getElementById('imagePreview');
         preview.src = '';
         preview.style.display = 'none';

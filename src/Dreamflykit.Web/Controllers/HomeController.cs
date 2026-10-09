@@ -94,6 +94,39 @@ public sealed class HomeController : Controller
             }
         }
 
+        // 3. Load active categories with S3 images
+        var activeCategories = await _db.Categories
+            .AsNoTracking()
+            .Where(c => c.IsActive)
+            .OrderBy(c => c.DisplayOrder)
+            .ThenBy(c => c.Name)
+            .Take(12)
+            .ToListAsync(cancellationToken);
+
+        var catMediaIds = activeCategories
+            .Where(c => c.ImageMediaAssetId.HasValue)
+            .Select(c => c.ImageMediaAssetId!.Value)
+            .Distinct()
+            .ToList();
+
+        var catMediaMap = catMediaIds.Count > 0
+            ? await _db.MediaAssets
+                .AsNoTracking()
+                .Where(m => catMediaIds.Contains(m.Id))
+                .ToDictionaryAsync(m => m.Id, m => _urlService.GetThumbnailUrl(m.ObjectKey), cancellationToken)
+            : new Dictionary<Guid, string>();
+
+        var categoryDtos = activeCategories.Select(c => new HomeCategoryDto
+        {
+            Id = c.Id,
+            Name = c.Name,
+            Slug = c.Slug,
+            DisplayOrder = c.DisplayOrder,
+            ImageUrl = c.ImageMediaAssetId.HasValue && catMediaMap.TryGetValue(c.ImageMediaAssetId.Value, out var url)
+                ? url
+                : null
+        }).ToList();
+
         var model =
             new HomeViewModel
             {
@@ -108,7 +141,8 @@ public sealed class HomeController : Controller
                 HeroBannerUrl = heroBannerUrl,
                 HeroBannerAlt = heroBannerAlt,
                 HeroBannerLink = heroBannerLink,
-                Banners = bannerDtos
+                Banners = bannerDtos,
+                Categories = categoryDtos
             };
 
         return View(model);
