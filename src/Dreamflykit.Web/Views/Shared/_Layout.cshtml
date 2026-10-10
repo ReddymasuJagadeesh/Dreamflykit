@@ -1,3 +1,4 @@
+@inject Dreamflykit.Application.Theme.IThemeSettingService ThemeSettingService
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,6 +19,8 @@
     <link rel="stylesheet"
           href="~/css/app.css"
           asp-append-version="true" />
+
+    @Html.Raw(await ThemeSettingService.RenderDynamicThemeHtmlAsync())
 
     @await RenderSectionAsync("Styles", required: false)
 

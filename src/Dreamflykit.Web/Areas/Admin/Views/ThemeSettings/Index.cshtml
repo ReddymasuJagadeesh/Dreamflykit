@@ -1,0 +1,396 @@
+@model Dreamflykit.Web.Areas.Admin.Models.ThemeSettingsViewModel
+@{
+    ViewData["Title"] = "Typography & Text Theme";
+}
+
+<div class="dk-admin-content-card" style="max-width: 1100px; margin: 0 auto;">
+
+    <!-- HEADER -->
+    <div class="dk-admin-card-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--dk-border, #e2e8f0); padding-bottom: 1.5rem;">
+        <div>
+            <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="display: inline-block; padding: 3px 10px; background: linear-gradient(135deg, #075bc8, #054190); color: #fff; border-radius: 9999px; font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;">
+                    ⚡ Super Admin Only
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; border-radius: 9999px; font-size: 11px; font-weight: 700;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></span>
+                    UI Layout Guard Active
+                </span>
+            </div>
+            <h1 class="dk-admin-card-title" style="font-size: 1.75rem; margin: 0; color: #0f172a; font-weight: 800;">
+                Application Typography & Text Theme
+            </h1>
+            <p style="color: var(--dk-muted, #64748b); font-size: 0.925rem; margin: 0.4rem 0 0; max-width: 680px; line-height: 1.5;">
+                Dynamically customize the font family and global text scale across the entire storefront and admin portal. Changes are securely validated, cached, and applied instantly without breaking navigation bars, buttons, or product grids.
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="/Admin" class="dk-btn dk-btn-ghost" style="padding: 9px 16px; font-weight: 600; text-decoration: none; border: 1px solid #cbd5e1; border-radius: 8px; color: #334155;">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string msg)
+    {
+        <div style="margin-bottom: 2rem; padding: 1rem 1.25rem; background: #ecfdf5; border-left: 4px solid #10b981; color: #065f46; border-radius: 8px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span style="font-weight: 600;">@msg</span>
+        </div>
+    }
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div style="margin-bottom: 2rem; padding: 1rem 1.25rem; background: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b; border-radius: 8px;">
+            <div asp-validation-summary="All" style="font-weight: 600;"></div>
+        </div>
+    }
+
+    <form method="post" id="typographyThemeForm">
+        @Html.AntiForgeryToken()
+
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: start;">
+
+            <!-- LEFT COLUMN: CONTROLS -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+
+                <!-- 1. PRIMARY FONT FAMILY -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <label asp-for="FontFamily" style="font-weight: 700; font-size: 1rem; color: #0f172a;">
+                            Primary Application Font
+                        </label>
+                        <span style="font-size: 0.8rem; color: #64748b;">Applied to all body, menus, and buttons</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 0.5rem;">
+                        @foreach (var font in Model.SupportedFonts)
+                        {
+                            var isChecked = string.Equals(Model.FontFamily, font.Name, StringComparison.OrdinalIgnoreCase);
+                            <label class="dk-font-option-card @(isChecked ? "is-selected" : "")" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 2px solid @(isChecked ? "#075bc8" : "#e2e8f0"); border-radius: 10px; cursor: pointer; transition: all 0.2s ease; background: @(isChecked ? "#f0f7ff" : "#fff");">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <input type="radio" 
+                                           name="FontFamily" 
+                                           value="@font.Name" 
+                                           @(isChecked ? "checked" : "")
+                                           class="dk-font-radio" 
+                                           style="width: 18px; height: 18px; accent-color: #075bc8; cursor: pointer;" />
+                                    <div>
+                                        <div style="font-weight: 700; font-size: 1rem; color: #0f172a; font-family: @font.CssFamily;">
+                                            @font.Name
+                                        </div>
+                                        <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">
+                                            @font.Description
+                                        </div>
+                                    </div>
+                                </div>
+                                <span style="font-size: 0.75rem; font-weight: 700; color: #475569; background: #e2e8f0; padding: 2px 8px; border-radius: 9999px;">
+                                    @font.Category
+                                </span>
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                <!-- 2. FONT SIZE & ROOT SCALE CONTROL -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label style="font-weight: 700; font-size: 1rem; color: #0f172a;">
+                            Global Font Size & Proportional Scale
+                        </label>
+                        <div style="display: inline-flex; align-items: center; gap: 6px; font-weight: 800; color: #075bc8; background: #eff6ff; padding: 4px 12px; border-radius: 9999px; font-size: 0.95rem;">
+                            <span id="scalePercentageDisplay">@(Math.Round(Model.FontScale * 100))%</span>
+                            <span style="color: #94a3b8; font-weight: 400;">|</span>
+                            <span id="computedPxDisplay">@Model.ComputedFontSizePx px</span>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 0.825rem; color: #64748b; margin: 0 0 1.25rem; line-height: 1.45;">
+                        Controls the root rem/px scale across the entire application. Strictly bounded between <strong>85%</strong> and <strong>115%</strong> to eliminate visual breakage, header overflowing, or button text wrapping.
+                    </p>
+
+                    <!-- QUICK SCALE PRESETS -->
+                    <div style="margin-bottom: 1.25rem;">
+                        <span style="display: block; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #475569; margin-bottom: 0.5rem; letter-spacing: 0.05em;">
+                            Safety Presets
+                        </span>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem;">
+                            <button type="button" class="dk-preset-btn" data-scale="0.92" data-base="15" style="padding: 9px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #f8fafc; font-size: 0.85rem; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.2s;">
+                                Compact (92%)
+                            </button>
+                            <button type="button" class="dk-preset-btn" data-scale="1.00" data-base="15" style="padding: 9px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #f8fafc; font-size: 0.85rem; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.2s;">
+                                Default (100%)
+                            </button>
+                            <button type="button" class="dk-preset-btn" data-scale="1.06" data-base="15" style="padding: 9px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #f8fafc; font-size: 0.85rem; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.2s;">
+                                Medium (106%)
+                            </button>
+                            <button type="button" class="dk-preset-btn" data-scale="1.12" data-base="15" style="padding: 9px 8px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #f8fafc; font-size: 0.85rem; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.2s;">
+                                Large (112%)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SLIDER -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; margin-bottom: 0.25rem;">
+                            <span>85% (Min Safe)</span>
+                            <span>100% (Standard)</span>
+                            <span>115% (Max Safe)</span>
+                        </div>
+                        <input type="range" 
+                               id="fontScaleSlider" 
+                               asp-for="FontScale" 
+                               min="0.85" 
+                               max="1.15" 
+                               step="0.01" 
+                               style="width: 100%; height: 8px; border-radius: 4px; accent-color: #075bc8; cursor: pointer;" />
+                    </div>
+
+                    <!-- BASE PIXEL SIZE -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px dashed #e2e8f0;">
+                        <div>
+                            <strong style="font-size: 0.9rem; color: #1e293b;">Root Base Size (px)</strong>
+                            <div style="font-size: 0.75rem; color: #64748b;">Baseline pixel height used for scale calculation</div>
+                        </div>
+                        <select asp-for="FontSizeBasePx" id="fontSizeBaseSelect" style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 600; color: #1e293b; background: #fff;">
+                            <option value="14">14 px (Dense)</option>
+                            <option value="15" selected="@(Model.FontSizeBasePx == 15 ? "selected" : null)">15 px (Standard E-Commerce)</option>
+                            <option value="16" selected="@(Model.FontSizeBasePx == 16 ? "selected" : null)">16 px (Browser Default)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 3. HEADINGS FONT PAIRING -->
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                    <div style="margin-bottom: 0.75rem;">
+                        <label asp-for="HeadingFontFamily" style="font-weight: 700; font-size: 1rem; color: #0f172a;">
+                            Headings Font Pairing (Optional)
+                        </label>
+                        <p style="font-size: 0.8rem; color: #64748b; margin: 0.25rem 0 0;">
+                            Optionally choose a distinct font for headings (`h1` through `h6`, product titles, banners). Leave as "Same as Primary Font" for clean uniform branding.
+                        </p>
+                    </div>
+
+                    <select asp-for="HeadingFontFamily" id="headingFontSelect" style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; font-weight: 600; color: #0f172a; background: #fff;">
+                        <option value="">— Same as Primary Font (Harmonious & Unified) —</option>
+                        @foreach (var font in Model.SupportedFonts)
+                        {
+                            <option value="@font.Name" selected="@(string.Equals(Model.HeadingFontFamily, font.Name, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">
+                                @font.Name (@font.Category)
+                            </option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: REAL-TIME INTERACTIVE SANDBOX PREVIEW -->
+            <div style="position: sticky; top: 20px;">
+
+                <div style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 14px; padding: 1.75rem; box-shadow: 0 4px 16px rgba(0,0,0,0.04);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.1rem;">👁️</span>
+                            <strong style="font-size: 0.95rem; color: #0f172a; text-transform: uppercase; letter-spacing: 0.05em;">
+                                Live Sandbox Preview
+                            </strong>
+                        </div>
+                        <span style="font-size: 0.75rem; color: #059669; font-weight: 700; background: #d1fae5; padding: 2px 8px; border-radius: 9999px;">
+                            Updates in Real-Time
+                        </span>
+                    </div>
+
+                    <!-- PREVIEW CONTAINER WITH INLINE DYNAMIC STYLES -->
+                    <div id="livePreviewContainer" style="background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+
+                        <!-- MOCK NAVBAR STRIP -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9;">
+                            <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #075bc8; font-size: 1.15rem;">
+                                <span>✈️</span> Dreamflykit
+                            </div>
+                            <div style="display: flex; gap: 12px; font-size: 0.85rem; font-weight: 600; color: #475569;">
+                                <span>Study Essentials</span>
+                                <span>Electronics</span>
+                                <span style="color: #ea580c; font-weight: 700;">Offers ★</span>
+                            </div>
+                        </div>
+
+                        <!-- MOCK HERO CARD -->
+                        <div style="background: linear-gradient(135deg, #eff6ff, #f8fafc); border-radius: 10px; padding: 1.25rem; border: 1px solid #dbeafe;">
+                            <span style="display: inline-block; font-size: 0.7rem; font-weight: 800; background: #075bc8; color: #fff; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: 0.5rem;">
+                                STUDENT ABROAD KIT
+                            </span>
+                            <h2 id="previewHeading" style="margin: 0 0 0.5rem; font-size: 1.45rem; color: #0f172a; font-weight: 800; line-height: 1.25;">
+                                Your Journey. Our Kit.
+                            </h2>
+                            <p id="previewText" style="margin: 0 0 1rem; color: #475569; font-size: 0.925rem; line-height: 1.5;">
+                                Handpicked essential luggage, international 5G adapters, and university gear. Delivered worldwide to 50+ countries.
+                            </p>
+                            <div style="display: flex; gap: 0.75rem; align-items: center;">
+                                <button type="button" style="background: #ff7900; color: #fff; border: none; padding: 8px 18px; border-radius: 8px; font-weight: 700; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 6px;">
+                                    <span>Find My Kit</span>
+                                    <span>→</span>
+                                </button>
+                                <span style="font-size: 0.85rem; color: #059669; font-weight: 700;">
+                                    ✓ 100% Genuine
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- MOCK PRODUCT ITEM ROW -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #f8fafc; border-radius: 8px; border: 1px solid #f1f5f9;">
+                            <div>
+                                <strong style="display: block; font-size: 0.925rem; color: #0f172a;">Universal 5G Travel Adapter</strong>
+                                <small style="color: #64748b; font-size: 0.8rem;">Works in USA, UK, Canada & 150+ Countries</small>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 800; font-size: 1rem; color: #0f172a;">₹1,499</div>
+                                <small style="color: #16a34a; font-weight: 700; font-size: 0.75rem;">25% OFF</small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- SECURITY NOTICE -->
+                    <div style="margin-top: 1.25rem; padding: 12px; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 0.8rem; color: #475569; line-height: 1.45;">
+                        <strong style="color: #0f172a; display: block; margin-bottom: 2px;">🔒 Industry Standard Implementation</strong>
+                        Font family is strictly validated against safe webfont stacks. Size scaling utilizes root <code>rem/px</code> tokens ensuring all interactive headers, badges, tables, and dropdowns remain proportional and stable.
+                    </div>
+
+                </div>
+
+                <!-- SUBMIT ACTIONS -->
+                <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <button type="submit" class="dk-btn dk-btn-primary" style="width: 100%; padding: 14px; font-size: 1rem; font-weight: 800; background: linear-gradient(135deg, #075bc8, #054190); color: #fff; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 14px rgba(7,91,200,0.3); transition: transform 0.15s ease;">
+                        💾 Save & Apply Globally
+                    </button>
+                    <button type="button" id="resetDefaultsBtn" style="width: 100%; padding: 10px; font-size: 0.875rem; font-weight: 700; background: transparent; color: #64748b; border: 1px dashed #cbd5e1; border-radius: 8px; cursor: pointer;">
+                        ↺ Reset to Recommended Defaults (Plus Jakarta Sans, 100%)
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+@section Scripts {
+<script>
+(function() {
+    // Fonts metadata
+    const fontsMap = {
+        @foreach (var f in Model.SupportedFonts)
+        {
+            @:"@f.Name": { css: "@Html.Raw(f.CssFamily)", url: "@f.GoogleFontUrl" },
+        }
+    };
+
+    const slider = document.getElementById('fontScaleSlider');
+    const baseSelect = document.getElementById('fontSizeBaseSelect');
+    const scaleDisplay = document.getElementById('scalePercentageDisplay');
+    const pxDisplay = document.getElementById('computedPxDisplay');
+    const previewContainer = document.getElementById('livePreviewContainer');
+    const previewHeading = document.getElementById('previewHeading');
+    const radioInputs = document.querySelectorAll('.dk-font-radio');
+    const headingSelect = document.getElementById('headingFontSelect');
+    const resetBtn = document.getElementById('resetDefaultsBtn');
+    const presetButtons = document.querySelectorAll('.dk-preset-btn');
+
+    // Preload all Google Fonts in background for instantaneous preview
+    Object.values(fontsMap).forEach(font => {
+        if (font.url) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = font.url;
+            document.head.appendChild(link);
+        }
+    });
+
+    function getSelectedPrimaryFont() {
+        const checked = document.querySelector('.dk-font-radio:checked');
+        return checked ? checked.value : "Plus Jakarta Sans";
+    }
+
+    function updateLivePreview() {
+        const primaryFont = getSelectedPrimaryFont();
+        const headingFont = headingSelect.value || primaryFont;
+        const scale = parseFloat(slider.value) || 1.0;
+        const basePx = parseInt(baseSelect.value, 10) || 15;
+        const computedPx = (basePx * scale).toFixed(1);
+
+        // Update readouts
+        scaleDisplay.textContent = Math.round(scale * 100) + '%';
+        pxDisplay.textContent = computedPx + ' px';
+
+        // Apply to live sandbox container
+        const primaryMeta = fontsMap[primaryFont] || fontsMap["Plus Jakarta Sans"];
+        const headingMeta = fontsMap[headingFont] || primaryMeta;
+
+        if (previewContainer) {
+            previewContainer.style.fontFamily = primaryMeta.css;
+            previewContainer.style.fontSize = (scale * 100) + '%';
+        }
+
+        if (previewHeading) {
+            previewHeading.style.fontFamily = headingMeta.css;
+        }
+
+        // Highlight selected radio card
+        document.querySelectorAll('.dk-font-option-card').forEach(card => {
+            const radio = card.querySelector('.dk-font-radio');
+            if (radio && radio.checked) {
+                card.style.borderColor = '#075bc8';
+                card.style.background = '#f0f7ff';
+            } else {
+                card.style.borderColor = '#e2e8f0';
+                card.style.background = '#ffffff';
+            }
+        });
+    }
+
+    // Radio change
+    radioInputs.forEach(radio => {
+        radio.addEventListener('change', updateLivePreview);
+    });
+
+    // Slider change
+    slider.addEventListener('input', updateLivePreview);
+
+    // Base size change
+    baseSelect.addEventListener('change', updateLivePreview);
+
+    // Heading font change
+    headingSelect.addEventListener('change', updateLivePreview);
+
+    // Preset buttons
+    presetButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetScale = this.getAttribute('data-scale');
+            const targetBase = this.getAttribute('data-base');
+            slider.value = targetScale;
+            baseSelect.value = targetBase;
+            updateLivePreview();
+        });
+    });
+
+    // Reset Defaults
+    resetBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const defaultRadio = document.querySelector('.dk-font-radio[value="Plus Jakarta Sans"]');
+        if (defaultRadio) defaultRadio.checked = true;
+        headingSelect.value = '';
+        slider.value = '1.00';
+        baseSelect.value = '15';
+        updateLivePreview();
+    });
+
+    // Initial run
+    updateLivePreview();
+})();
+</script>
+}

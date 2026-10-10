@@ -269,5 +269,9 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<IMediaPermissionService, MediaPermissionService>();
         services.AddScoped<IHeaderAdService, HeaderAdService>();
         services.AddHostedService<MediaCleanupBackgroundService>();
+
+        // Theme & Typography Management
+        services.AddMemoryCache();
+        services.AddScoped<Dreamflykit.Application.Theme.IThemeSettingService, Dreamflykit.Infrastructure.Theme.ThemeSettingService>();
     }
 }

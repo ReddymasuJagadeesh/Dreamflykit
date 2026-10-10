@@ -486,6 +486,42 @@ namespace Dreamflykit.Infrastructure.Migrations
                     b.ToTable("Subcategories", "public");
                 });
 
+            modelBuilder.Entity("Dreamflykit.Domain.Common.SystemThemeSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FontFamily")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<double>("FontScale")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("FontSizeBasePx")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("HeadingFontFamily")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SystemThemeSettings", "public");
+                });
+
             modelBuilder.Entity("Dreamflykit.Domain.Geography.Country", b =>
                 {
                     b.Property<Guid>("Id")

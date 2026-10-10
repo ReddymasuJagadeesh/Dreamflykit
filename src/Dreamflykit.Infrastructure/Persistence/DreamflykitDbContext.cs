@@ -79,6 +79,7 @@ public sealed class DreamflykitDbContext
     public DbSet<HomepageSection> HomepageSections => Set<HomepageSection>();
 
     public DbSet<LandingPage> LandingPages => Set<LandingPage>();
+    public DbSet<Dreamflykit.Domain.Common.SystemThemeSetting> SystemThemeSettings => Set<Dreamflykit.Domain.Common.SystemThemeSetting>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -1156,6 +1157,17 @@ public sealed class DreamflykitDbContext
                 .HasForeignKey(x => x.HeroMediaAssetId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .IsRequired(false);
+        });
+
+        builder.Entity<Dreamflykit.Domain.Common.SystemThemeSetting>(entity =>
+        {
+            entity.ToTable("SystemThemeSettings");
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.FontFamily).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.HeadingFontFamily).HasMaxLength(100);
+            entity.Property(x => x.FontScale).HasPrecision(5, 2);
+            entity.Property(x => x.FontSizeBasePx).IsRequired();
+            entity.Property(x => x.CreatedAtUtc).IsRequired();
         });
     }
 }

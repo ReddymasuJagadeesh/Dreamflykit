@@ -6,6 +6,10 @@
 
 
 :root {
+    --dk-font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --dk-heading-font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --dk-font-scale: 1;
+    --dk-font-size-base: 15px;
     --dk-blue: #063f91;
     --dk-blue-2: #075bc8;
     --dk-blue-dark: #052b68;
@@ -58,6 +62,10 @@ body {
     max-width: 100%;
     margin: 0;
     overflow-x: clip;
+    font-family: var(--dk-font-family);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
     body::-webkit-scrollbar {
@@ -74,13 +82,20 @@ a {
 
 
 button,
-input {
-    font: inherit;
+input,
+select,
+textarea {
+    font-family: inherit;
 }
 
 
 button {
     cursor: pointer;
+}
+
+
+h1, h2, h3, h4, h5, h6, .dk-heading {
+    font-family: var(--dk-heading-font-family, var(--dk-font-family));
 }
 
 
