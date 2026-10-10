@@ -163,6 +163,77 @@ public sealed class HomeController : Controller
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.SectionKey == HomepageSectionKey.FeaturedProducts, cancellationToken);
 
+        // 2b. Build dynamic hero slider slides (Admin Banners + Curated Slides)
+        var heroSlides = new List<HomeHeroSlideDto>();
+
+        foreach (var b in bannerDtos)
+        {
+            heroSlides.Add(new HomeHeroSlideDto
+            {
+                ImageUrl = b.ImageUrl,
+                Title = b.Title,
+                Subtitle = b.Subtitle,
+                CtaText = b.CtaText,
+                CtaUrl = b.CtaUrl,
+                AltText = b.Title
+            });
+        }
+
+        if (!string.IsNullOrEmpty(heroBannerUrl) && !heroSlides.Any(s => s.ImageUrl == heroBannerUrl))
+        {
+            heroSlides.Insert(0, new HomeHeroSlideDto
+            {
+                ImageUrl = heroBannerUrl,
+                Title = heroSection?.Title ?? "Your Journey. Our Kit.",
+                Subtitle = heroSection?.Subtitle ?? "Everything you need for your study abroad and travel journey",
+                CtaText = "Find My Kit",
+                CtaUrl = heroBannerLink,
+                AltText = heroBannerAlt ?? "Dreamflykit Hero"
+            });
+        }
+
+        if (heroSlides.Count < 2)
+        {
+            var defaultSlides = new List<HomeHeroSlideDto>
+            {
+                new()
+                {
+                    ImageUrl = "/images/hero/hero.webp",
+                    Title = "Your Journey. Our Kit.",
+                    Subtitle = "Everything you need for your study abroad and travel journey",
+                    CtaText = "Find My Kit",
+                    CtaUrl = "/Kits/FindMyKit",
+                    AltText = "Dreamflykit - Your Journey. Our Kit."
+                },
+                new()
+                {
+                    ImageUrl = "/images/hero/hero-electronics.webp",
+                    Title = "International Tech & Power Adapters",
+                    Subtitle = "Universal travel adapters, global 5G SIM kits, and heavy-duty power banks",
+                    CtaText = "Explore Electronics",
+                    CtaUrl = "/category/adapters-sim",
+                    AltText = "Dreamflykit Electronics & Power Adapters"
+                },
+                new()
+                {
+                    ImageUrl = "/images/hero/hero-travel-gear.webp",
+                    Title = "Curated Study Abroad Luggage & Kits",
+                    Subtitle = "Durable luggage, packing cubes, and university stationery ready for flight",
+                    CtaText = "Shop Travel Gear",
+                    CtaUrl = "/category/travel-gear",
+                    AltText = "Dreamflykit Study Abroad Travel Gear"
+                }
+            };
+
+            foreach (var def in defaultSlides)
+            {
+                if (!heroSlides.Any(s => s.ImageUrl == def.ImageUrl))
+                {
+                    heroSlides.Add(def);
+                }
+            }
+        }
+
         var model =
             new HomeViewModel
             {
@@ -177,6 +248,7 @@ public sealed class HomeController : Controller
                 HeroBannerUrl = heroBannerUrl,
                 HeroBannerAlt = heroBannerAlt,
                 HeroBannerLink = heroBannerLink,
+                HeroSlides = heroSlides,
                 Banners = bannerDtos,
                 Categories = categoryDtos,
                 TrendingDeals = trendingDeals,

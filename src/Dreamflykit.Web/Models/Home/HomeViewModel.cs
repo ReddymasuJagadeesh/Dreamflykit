@@ -8,6 +8,7 @@ public sealed class HomeViewModel
     public string? HeroBannerUrl { get; init; }
     public string? HeroBannerAlt { get; init; }
     public string? HeroBannerLink { get; init; }
+    public IReadOnlyList<HomeHeroSlideDto> HeroSlides { get; init; } = Array.Empty<HomeHeroSlideDto>();
     public IReadOnlyList<HomeBannerDto> Banners { get; init; } = Array.Empty<HomeBannerDto>();
     public IReadOnlyList<HomeCategoryDto> Categories { get; init; } = Array.Empty<HomeCategoryDto>();
 
@@ -45,4 +46,14 @@ public sealed class HomeBannerDto
     public string? Subtitle { get; init; }
     public string? CtaText { get; init; }
     public string? CtaUrl { get; init; }
+}
+
+public sealed class HomeHeroSlideDto
+{
+    public string ImageUrl { get; init; } = string.Empty;
+    public string? Title { get; init; }
+    public string? Subtitle { get; init; }
+    public string? CtaText { get; init; }
+    public string? CtaUrl { get; init; }
+    public string? AltText { get; init; }
 }

@@ -100,7 +100,8 @@
 
     <!-- =====================================================
          MAIN HEADER
-    ==========================    <div class="dk-main-header">
+    ====================================================== -->
+    <div class="dk-main-header">
 
         <div class="dk-shell dk-main-header-inner">
 
@@ -122,11 +123,12 @@
                 <div class="dk-header-ads-strip">
                     @if (adSlot1 != null && adSlot1.IsActive)
                     {
+                        var target1 = adSlot1.RedirectUrl?.StartsWith("http", StringComparison.OrdinalIgnoreCase) == true ? "_blank" : "_self";
                         <a href="@adSlot1.RedirectUrl"
-                           target="_blank"
+                           target="@target1"
                            rel="noopener noreferrer"
                            class="dk-header-ad-banner"
-                           title="@adSlot1.Title (Click to open website)"
+                           title="@adSlot1.Title (Click to visit website)"
                            aria-label="@adSlot1.Title">
                             @if (!string.IsNullOrWhiteSpace(adSlot1.ImageUrl))
                             {
@@ -152,11 +154,12 @@
 
                     @if (adSlot2 != null && adSlot2.IsActive)
                     {
+                        var target2 = adSlot2.RedirectUrl?.StartsWith("http", StringComparison.OrdinalIgnoreCase) == true ? "_blank" : "_self";
                         <a href="@adSlot2.RedirectUrl"
-                           target="_blank"
+                           target="@target2"
                            rel="noopener noreferrer"
                            class="dk-header-ad-banner"
-                           title="@adSlot2.Title (Click to open website)"
+                           title="@adSlot2.Title (Click to visit website)"
                            aria-label="@adSlot2.Title">
                             @if (!string.IsNullOrWhiteSpace(adSlot2.ImageUrl))
                             {
@@ -179,16 +182,26 @@
                             }
                         </a>
                     }
+
+                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                    {
+                        <a href="/Admin/HeaderAds"
+                           class="dk-admin-ad-quick-btn"
+                           title="Super Admin: Replace or configure header ads and destination URLs">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <span>Replace Ads</span>
+                        </a>
+                    }
                 </div>
 
             </div>
 
             <!-- =====================================================
-                 ROW 2: SEARCH BAR + BESIDE SEARCH (SHOW AS IT IS)
+                 ROW 2: SEARCH BAR (LEFT) + ACTIONS (RIGHT)
             ====================================================== -->
             <div class="dk-header-bottom-row">
 
-                <!-- SEARCH -->
+                <!-- SEARCH BAR - ON LEFT SIDE -->
                 <div class="dk-search-box-wrapper">
                     <form action="/Products/Search"
                           method="get"
@@ -226,7 +239,7 @@
                     <div id="dk-search-autocomplete" class="dk-autocomplete-dropdown" style="display: none;" role="listbox" aria-label="Search suggestions"></div>
                 </div>
 
-                <!-- BESIDE SEARCH: SHOW AS IT IS (ACCOUNT, WISHLIST, CART, MENU, ADMIN) -->
+                <!-- ACTIONS (ACCOUNT, MENU, WISHLIST, CART, ADMIN) - ON RIGHT SIDE -->
                 <div class="dk-header-actions-group">
 
                     <!-- ADMIN DIRECT SHORTCUT BUTTON -->
@@ -290,6 +303,12 @@
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><circle cx="12" cy="14" r="3"></circle><line x1="2" y1="10" x2="22" y2="10"></line></svg>
                                         </span>
                                         <span class="dk-menu-label">Header Ads</span>
+                                    </a>
+                                    <a href="/Admin/Banners" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                                        </span>
+                                        <span class="dk-menu-label">Hero & Promo Banners</span>
                                     </a>
                                     <a href="/Admin/Categories" class="dk-account-menu-item">
                                         <span class="dk-menu-icon-wrap">
@@ -478,10 +497,10 @@
 
         <div class="dk-shell dk-category-nav-inner">
 
-            <a href="/products"
-               class="dk-category-link @(isForYou ? "dk-category-active" : "")">
-                <span>🛍️</span>
-                For You
+            <a href="/"
+               class="dk-category-link @(currentReqPath == "/" ? "dk-category-active" : "")">
+                <span>🏠</span>
+                Home
             </a>
 
             @if (navCategories != null && navCategories.Count > 0)
