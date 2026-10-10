@@ -1,6 +1,11 @@
 @inject Dreamflykit.Application.Categories.Interfaces.ICategoryService CategoryNavService
+@inject Dreamflykit.Application.Media.Interfaces.IHeaderAdService HeaderAdService
 @{
     var navCategories = await CategoryNavService.GetActiveCategoriesAsync(Context.RequestAborted);
+    var headerAds = await HeaderAdService.GetActiveHeaderAdsAsync(Context.RequestAborted);
+    var adSlot1 = headerAds.FirstOrDefault(a => a.SlotNumber == 1);
+    var adSlot2 = headerAds.FirstOrDefault(a => a.SlotNumber == 2);
+
     var routeCategory = ViewContext.RouteData.Values["category"]?.ToString();
     var queryCategory = Context.Request.Query["category"].ToString();
     var activeCatSlug = !string.IsNullOrWhiteSpace(routeCategory)
@@ -29,59 +34,62 @@
 <header class="dk-header">
 
     <!-- =====================================================
-         TOP UTILITY BAR
+         TOP UTILITY BAR - 100% WHITE TEXT ON BRAND BLUE
     ====================================================== -->
 
     <div class="dk-utility">
 
         <div class="dk-shell dk-utility-inner">
 
-            <div class="dk-utility-item">
-                <span class="dk-icon">✈</span>
-                Delivering Across USA, UK, Canada, Australia & More
+            <div class="dk-utility-item" style="color: #ffffff;">
+                <span class="dk-icon" style="color: #ffffff;">✈</span>
+                <span style="color: #ffffff; font-weight: 500;">Delivering Across USA, UK, Canada, Australia & More</span>
             </div>
 
-            <div class="dk-utility-divider"></div>
+            <div class="dk-utility-divider" style="background: rgba(255, 255, 255, 0.35);"></div>
 
-            <div class="dk-utility-item">
-                <span class="dk-icon">✓</span>
-                100% Genuine Products
+            <div class="dk-utility-item" style="color: #ffffff;">
+                <span class="dk-icon" style="color: #ffffff;">✓</span>
+                <span style="color: #ffffff; font-weight: 600;">100% Genuine Products</span>
             </div>
 
-            <div class="dk-utility-divider"></div>
+            <div class="dk-utility-divider" style="background: rgba(255, 255, 255, 0.35);"></div>
 
-            <div class="dk-utility-item">
-                <span class="dk-icon">★</span>
-                Student Trusted
+            <div class="dk-utility-item" style="color: #ffffff;">
+                <span class="dk-icon" style="color: #ffffff;">★</span>
+                <span style="color: #ffffff; font-weight: 600;">Student Trusted</span>
             </div>
 
             <div class="dk-utility-spacer"></div>
 
             @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
             {
-                <a href="/Admin" class="dk-utility-link" style="color: #fffa65; font-weight: 800; background: rgba(0,0,0,0.3); padding: 3px 12px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255, 250, 101, 0.4);">
+                <a href="/Admin" class="dk-utility-link" style="color: #fffa65 !important; font-weight: 800; background: rgba(0,0,0,0.3); padding: 3px 12px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255, 250, 101, 0.4);">
                     <span style="display:inline-block; width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px #22c55e;"></span>
                     @(User.IsInRole("SuperAdmin") ? "⚡ Super Admin Console" : "⚡ Admin Console")
                 </a>
-                <div class="dk-utility-divider"></div>
+                <div class="dk-utility-divider" style="background: rgba(255, 255, 255, 0.35);"></div>
             }
 
             <a href="/Help"
-               class="dk-utility-link">
+               class="dk-utility-link"
+               style="color: #ffffff !important;">
                 Help & FAQs
             </a>
 
-            <div class="dk-utility-divider"></div>
+            <div class="dk-utility-divider" style="background: rgba(255, 255, 255, 0.35);"></div>
 
             <a href="tel:+919123456789"
-               class="dk-utility-link">
+               class="dk-utility-link"
+               style="color: #ffffff !important;">
                 +91 91234 56789
             </a>
 
-            <div class="dk-utility-divider"></div>
+            <div class="dk-utility-divider" style="background: rgba(255, 255, 255, 0.35);"></div>
 
             <a href="/Orders"
-               class="dk-utility-link">
+               class="dk-utility-link"
+               style="color: #ffffff !important;">
                 Track Order
             </a>
 
@@ -92,319 +100,370 @@
 
     <!-- =====================================================
          MAIN HEADER
-    ====================================================== -->
-
-    <div class="dk-main-header">
+    ==========================    <div class="dk-main-header">
 
         <div class="dk-shell dk-main-header-inner">
 
+            <!-- =====================================================
+                 ROW 1: LOGO (SOME UP) + 2 HEADER ADS BESIDE LOGO
+            ====================================================== -->
+            <div class="dk-header-top-row">
 
-            <!-- LOGO -->
+                <!-- LOGO -->
+                <a href="/"
+                   class="dk-brand"
+                   aria-label="Dreamflykit Home">
+                    <img src="~/images/branding/dreamflykit-logo.webp"
+                         alt="Dreamflykit"
+                         class="dk-brand-image" />
+                </a>
 
-            <a href="/"
-               class="dk-brand"
-               aria-label="Dreamflykit Home">
+                <!-- TWO ADS BESIDE LOGO (REDIRECT TO WEBSITES) -->
+                <div class="dk-header-ads-strip">
+                    @if (adSlot1 != null && adSlot1.IsActive)
+                    {
+                        <a href="@adSlot1.RedirectUrl"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="dk-header-ad-banner"
+                           title="@adSlot1.Title (Click to open website)"
+                           aria-label="@adSlot1.Title">
+                            @if (!string.IsNullOrWhiteSpace(adSlot1.ImageUrl))
+                            {
+                                <img src="@adSlot1.ImageUrl" alt="@adSlot1.Title" class="dk-header-ad-img" />
+                            }
+                            else
+                            {
+                                <div class="dk-header-ad-content ad-slot-blue">
+                                    <span class="dk-ad-icon-badge">✈️</span>
+                                    <div class="dk-ad-text-block">
+                                        <span class="dk-ad-tag">STUDENT DEAL</span>
+                                        <strong class="dk-ad-headline">@adSlot1.Title</strong>
+                                        @if (!string.IsNullOrWhiteSpace(adSlot1.Subtitle))
+                                        {
+                                            <small class="dk-ad-subtext">@adSlot1.Subtitle</small>
+                                        }
+                                    </div>
+                                    <span class="dk-ad-arrow-icon">↗</span>
+                                </div>
+                            }
+                        </a>
+                    }
 
-                <img src="~/images/branding/dreamflykit-logo.webp"
-                     alt="Dreamflykit"
-                     class="dk-brand-image" />
+                    @if (adSlot2 != null && adSlot2.IsActive)
+                    {
+                        <a href="@adSlot2.RedirectUrl"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="dk-header-ad-banner"
+                           title="@adSlot2.Title (Click to open website)"
+                           aria-label="@adSlot2.Title">
+                            @if (!string.IsNullOrWhiteSpace(adSlot2.ImageUrl))
+                            {
+                                <img src="@adSlot2.ImageUrl" alt="@adSlot2.Title" class="dk-header-ad-img" />
+                            }
+                            else
+                            {
+                                <div class="dk-header-ad-content ad-slot-orange">
+                                    <span class="dk-ad-icon-badge">⚡</span>
+                                    <div class="dk-ad-text-block">
+                                        <span class="dk-ad-tag dk-ad-tag-orange">SPECIAL OFFER</span>
+                                        <strong class="dk-ad-headline">@adSlot2.Title</strong>
+                                        @if (!string.IsNullOrWhiteSpace(adSlot2.Subtitle))
+                                        {
+                                            <small class="dk-ad-subtext">@adSlot2.Subtitle</small>
+                                        }
+                                    </div>
+                                    <span class="dk-ad-arrow-icon">↗</span>
+                                </div>
+                            }
+                        </a>
+                    }
+                </div>
 
-            </a>
-
-
-            <!-- SEARCH -->
-
-            <div class="dk-search-box-wrapper">
-                <form action="/Products/Search"
-                      method="get"
-                      id="dk-search-form"
-                      class="dk-search">
-
-                    <span class="dk-search-icon">
-                        <svg viewBox="0 0 24 24"
-                             aria-hidden="true">
-                            <circle cx="11"
-                                    cy="11"
-                                    r="7"></circle>
-                            <path d="m20 20-4-4"></path>
-                        </svg>
-                    </span>
-
-                    <input type="search"
-                           id="dk-search-input"
-                           name="q"
-                           placeholder="Search for products, brands and more"
-                           autocomplete="off" />
-
-                    <button type="submit"
-                            aria-label="Search">
-                        <svg viewBox="0 0 24 24"
-                             aria-hidden="true">
-                            <circle cx="11"
-                                    cy="11"
-                                    r="7"></circle>
-                            <path d="m20 20-4-4"></path>
-                        </svg>
-                    </button>
-                </form>
-
-                <div id="dk-search-autocomplete" class="dk-autocomplete-dropdown" style="display: none;" role="listbox" aria-label="Search suggestions"></div>
             </div>
 
+            <!-- =====================================================
+                 ROW 2: SEARCH BAR + BESIDE SEARCH (SHOW AS IT IS)
+            ====================================================== -->
+            <div class="dk-header-bottom-row">
 
-            <!-- ADMIN DIRECT SHORTCUT BUTTON -->
-            @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
-            {
-                <a href="/Admin" class="dk-admin-header-btn" title="Open Admin Control Center" style="display: inline-flex; align-items: center; gap: 7px; background: linear-gradient(135deg, #075bc8, #054190); color: #ffffff; padding: 9px 15px; border-radius: 9px; font-weight: 700; font-size: 13px; text-decoration: none; box-shadow: 0 3px 10px rgba(7,91,200,0.3); border: 1px solid rgba(255,255,255,0.25); white-space: nowrap;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    <span>@(User.IsInRole("SuperAdmin") ? "Super Admin" : "Admin Panel")</span>
-                </a>
-            }
+                <!-- SEARCH -->
+                <div class="dk-search-box-wrapper">
+                    <form action="/Products/Search"
+                          method="get"
+                          id="dk-search-form"
+                          class="dk-search">
 
-            <!-- ACCOUNT -->
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <div class="dk-account-dropdown-wrapper">
-                    <a href="/Orders" class="dk-account" aria-haspopup="true" aria-expanded="false" id="headerUserAccountTrigger">
-                        <span class="dk-account-icon">
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                                <circle cx="12" cy="8" r="3.5"></circle>
-                                <path d="M5 21c.8-4 3.2-6 7-6s6.2 2 7 6"></path>
+                        <span class="dk-search-icon">
+                            <svg viewBox="0 0 24 24"
+                                 aria-hidden="true">
+                                <circle cx="11"
+                                        cy="11"
+                                        r="7"></circle>
+                                <path d="m20 20-4-4"></path>
                             </svg>
                         </span>
-                        <span class="dk-account-text">
-                            <small>Hello, @(User.Identity.Name?.Split('@')[0])</small>
-                            <span class="dk-account-title-wrap">
-                                <strong>My Account</strong>
-                                <svg class="dk-account-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
-                                </svg>
-                            </span>
-                        </span>
-                    </a>
-                    <div class="dk-account-menu" aria-labelledby="headerUserAccountTrigger">
-                        <div class="dk-account-popover-user">
-                            <div class="dk-user-avatar">
-                                @(User.Identity.Name?.Substring(0, 1).ToUpper() ?? "U")
-                            </div>
-                            <div class="dk-user-info">
-                                <span class="dk-user-name">@(User.Identity.Name?.Split('@')[0])</span>
-                                <span class="dk-user-email">@User.Identity.Name</span>
-                            </div>
-                        </div>
-                        <div class="dk-popover-divider"></div>
-                        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
-                        {
-                            <div class="dk-menu-section-label">Store Management</div>
-                            <a href="/Admin" class="dk-account-menu-item dk-menu-item-admin">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+
+                        <input type="search"
+                               id="dk-search-input"
+                               name="q"
+                               placeholder="Search for products, brands and more"
+                               autocomplete="off" />
+
+                        <button type="submit"
+                                aria-label="Search">
+                            <svg viewBox="0 0 24 24"
+                                 aria-hidden="true">
+                                <circle cx="11"
+                                        cy="11"
+                                        r="7"></circle>
+                                <path d="m20 20-4-4"></path>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <div id="dk-search-autocomplete" class="dk-autocomplete-dropdown" style="display: none;" role="listbox" aria-label="Search suggestions"></div>
+                </div>
+
+                <!-- BESIDE SEARCH: SHOW AS IT IS (ACCOUNT, WISHLIST, CART, MENU, ADMIN) -->
+                <div class="dk-header-actions-group">
+
+                    <!-- ADMIN DIRECT SHORTCUT BUTTON -->
+                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                    {
+                        <a href="/Admin" class="dk-admin-header-btn" title="Open Admin Control Center" style="display: inline-flex; align-items: center; gap: 7px; background: linear-gradient(135deg, #075bc8, #054190); color: #ffffff; padding: 9px 15px; border-radius: 9px; font-weight: 700; font-size: 13px; text-decoration: none; box-shadow: 0 3px 10px rgba(7,91,200,0.3); border: 1px solid rgba(255,255,255,0.25); white-space: nowrap;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                            <span>@(User.IsInRole("SuperAdmin") ? "Super Admin" : "Admin Panel")</span>
+                        </a>
+                    }
+
+                    <!-- ACCOUNT -->
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="dk-account-dropdown-wrapper">
+                            <a href="/Orders" class="dk-account" aria-haspopup="true" aria-expanded="false" id="headerUserAccountTrigger">
+                                <span class="dk-account-icon">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <circle cx="12" cy="8" r="3.5"></circle>
+                                        <path d="M5 21c.8-4 3.2-6 7-6s6.2 2 7 6"></path>
+                                    </svg>
                                 </span>
-                                <span class="dk-menu-label">@(User.IsInRole("SuperAdmin") ? "Super Admin Dashboard" : "Admin Dashboard")</span>
-                            </a>
-                            <a href="/Admin/Products/Create" class="dk-account-menu-item">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-                                </span>
-                                <span class="dk-menu-label">Add Product</span>
-                            </a>
-                            <a href="/Admin/Categories" class="dk-account-menu-item">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-                                </span>
-                                <span class="dk-menu-label">Categories & Subcategories</span>
-                            </a>
-                            <a href="/Admin/Media" class="dk-account-menu-item">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                                </span>
-                                <span class="dk-menu-label">Media & Banners</span>
-                            </a>
-                            @if (User.IsInRole("SuperAdmin"))
-                            {
-                                <a href="/Admin/MediaPermissions" class="dk-account-menu-item dk-menu-item-permissions">
-                                    <span class="dk-menu-icon-wrap">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <span class="dk-account-text">
+                                    <small>Hello, @(User.Identity.Name?.Split('@')[0])</small>
+                                    <span class="dk-account-title-wrap">
+                                        <strong>My Account</strong>
+                                        <svg class="dk-account-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
                                     </span>
-                                    <span class="dk-menu-label">Admin Permissions</span>
-                                </a>
-                            }
-                            <div class="dk-popover-divider"></div>
-                        }
-                        <div class="dk-account-menu-list">
-                            <a href="/Orders" class="dk-account-menu-item">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                                 </span>
-                                <span class="dk-menu-label">My Orders</span>
                             </a>
-                            <a href="/Address" class="dk-account-menu-item">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                                </span>
-                                <span class="dk-menu-label">Saved Addresses</span>
-                            </a>
-                            <a href="/Wishlist" class="dk-account-menu-item">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-                                </span>
-                                <span class="dk-menu-label">Wishlist</span>
-                            </a>
+                            <div class="dk-account-menu" aria-labelledby="headerUserAccountTrigger">
+                                <div class="dk-account-popover-user">
+                                    <div class="dk-user-avatar">
+                                        @(User.Identity.Name?.Substring(0, 1).ToUpper() ?? "U")
+                                    </div>
+                                    <div class="dk-user-info">
+                                        <span class="dk-user-name">@(User.Identity.Name?.Split('@')[0])</span>
+                                        <span class="dk-user-email">@User.Identity.Name</span>
+                                    </div>
+                                </div>
+                                <div class="dk-popover-divider"></div>
+                                @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                                {
+                                    <div class="dk-menu-section-label">Store Management</div>
+                                    <a href="/Admin" class="dk-account-menu-item dk-menu-item-admin">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                        </span>
+                                        <span class="dk-menu-label">@(User.IsInRole("SuperAdmin") ? "Super Admin Dashboard" : "Admin Dashboard")</span>
+                                    </a>
+                                    <a href="/Admin/Products/Create" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                                        </span>
+                                        <span class="dk-menu-label">Add Product</span>
+                                    </a>
+                                    <a href="/Admin/HeaderAds" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><circle cx="12" cy="14" r="3"></circle><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                                        </span>
+                                        <span class="dk-menu-label">Header Ads</span>
+                                    </a>
+                                    <a href="/Admin/Categories" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                                        </span>
+                                        <span class="dk-menu-label">Categories & Subcategories</span>
+                                    </a>
+                                    <a href="/Admin/Media" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                        </span>
+                                        <span class="dk-menu-label">Media & Banners</span>
+                                    </a>
+                                    @if (User.IsInRole("SuperAdmin"))
+                                    {
+                                        <a href="/Admin/MediaPermissions" class="dk-account-menu-item dk-menu-item-permissions">
+                                            <span class="dk-menu-icon-wrap">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                            </span>
+                                            <span class="dk-menu-label">Admin Permissions</span>
+                                        </a>
+                                    }
+                                    <div class="dk-popover-divider"></div>
+                                }
+                                <div class="dk-account-menu-list">
+                                    <a href="/Orders" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                        </span>
+                                        <span class="dk-menu-label">My Orders</span>
+                                    </a>
+                                    <a href="/Address" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                        </span>
+                                        <span class="dk-menu-label">Saved Addresses</span>
+                                    </a>
+                                    <a href="/Wishlist" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                                        </span>
+                                        <span class="dk-menu-label">Wishlist</span>
+                                    </a>
+                                </div>
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="dk-account-menu-form">
+                                    <button type="submit" class="dk-account-menu-item dk-logout-btn">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                        </span>
+                                        <span class="dk-menu-label">Log Out</span>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                        <form asp-controller="Account" asp-action="Logout" method="post" class="dk-account-menu-form">
-                            <button type="submit" class="dk-account-menu-item dk-logout-btn">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    }
+                    else
+                    {
+                        <div class="dk-account-dropdown-wrapper">
+                            <a href="/Account/Login" class="dk-account" aria-haspopup="true" aria-expanded="false" id="headerGuestAccountTrigger">
+                                <span class="dk-account-icon">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <circle cx="12" cy="8" r="3.5"></circle>
+                                        <path d="M5 21c.8-4 3.2-6 7-6s6.2 2 7 6"></path>
+                                    </svg>
                                 </span>
-                                <span class="dk-menu-label">Log Out</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <div class="dk-account-dropdown-wrapper">
-                    <a href="/Account/Login" class="dk-account" aria-haspopup="true" aria-expanded="false" id="headerGuestAccountTrigger">
-                        <span class="dk-account-icon">
+                                <span class="dk-account-text">
+                                    <small>Login / Sign Up</small>
+                                    <span class="dk-account-title-wrap">
+                                        <strong>My Account</strong>
+                                        <svg class="dk-account-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </span>
+                                </span>
+                            </a>
+
+                            <!-- FLIPKART STYLE LOGIN POPUP -->
+                            <div class="dk-account-menu dk-guest-account-menu" aria-labelledby="headerGuestAccountTrigger">
+                                <div class="dk-popover-header">
+                                    <div class="dk-popover-header-row">
+                                        <span class="dk-popover-new-txt">New customer?</span>
+                                        <a href="/Account/Register" class="dk-popover-signup-link">Sign Up</a>
+                                    </div>
+                                    <a href="/Account/Login" class="dk-popover-login-btn">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                            <polyline points="10 17 15 12 10 7"></polyline>
+                                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                                        </svg>
+                                        <span>Login</span>
+                                    </a>
+                                </div>
+                                <div class="dk-popover-divider"></div>
+                                <div class="dk-account-menu-list">
+                                    <a href="/Account/Login?returnUrl=/Orders" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+                                        </span>
+                                        <span class="dk-menu-label">My Profile</span>
+                                    </a>
+                                    <a href="/Orders" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                        </span>
+                                        <span class="dk-menu-label">Orders</span>
+                                    </a>
+                                    <a href="/Wishlist" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                                        </span>
+                                        <span class="dk-menu-label">Wishlist</span>
+                                    </a>
+                                    <a href="/#offers" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                        </span>
+                                        <span class="dk-menu-label">Rewards & Offers</span>
+                                        <span class="dk-popover-tag">Special</span>
+                                    </a>
+                                    <a href="/Info/Help" class="dk-account-menu-item">
+                                        <span class="dk-menu-icon-wrap">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                        </span>
+                                        <span class="dk-menu-label">24x7 Customer Care</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- MENU -->
+                    <button type="button"
+                            class="dk-menu-button"
+                            id="mobileMenuButton"
+                            aria-label="Open menu"
+                            aria-expanded="false">
+                        <svg viewBox="0 0 24 24"
+                             aria-hidden="true">
+                            <path d="M4 6h16"></path>
+                            <path d="M4 12h16"></path>
+                            <path d="M4 18h16"></path>
+                        </svg>
+                        <span>
+                            More<br />Menu
+                        </span>
+                    </button>
+
+                    <!-- WISHLIST -->
+                    <a href="/Wishlist" class="dk-wishlist" title="My Wishlist">
+                        <span class="dk-wishlist-icon">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
-                                <circle cx="12" cy="8" r="3.5"></circle>
-                                <path d="M5 21c.8-4 3.2-6 7-6s6.2 2 7 6"></path>
+                                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
                             </svg>
+                            <span class="dk-wishlist-count" id="headerWishlistCount">0</span>
                         </span>
-                        <span class="dk-account-text">
-                            <small>Login / Sign Up</small>
-                            <span class="dk-account-title-wrap">
-                                <strong>My Account</strong>
-                                <svg class="dk-account-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
-                                </svg>
-                            </span>
-                        </span>
+                        <strong>Wishlist</strong>
                     </a>
 
-                    <!-- FLIPKART STYLE LOGIN POPUP -->
-                    <div class="dk-account-menu dk-guest-account-menu" aria-labelledby="headerGuestAccountTrigger">
-                        <div class="dk-popover-header">
-                            <div class="dk-popover-header-row">
-                                <span class="dk-popover-new-txt">New customer?</span>
-                                <a href="/Account/Register" class="dk-popover-signup-link">Sign Up</a>
-                            </div>
-                            <a href="/Account/Login" class="dk-popover-login-btn">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                                    <polyline points="10 17 15 12 10 7"></polyline>
-                                    <line x1="15" y1="12" x2="3" y2="12"></line>
-                                </svg>
-                                <span>Login</span>
-                            </a>
-                        </div>
-                        <div class="dk-popover-divider"></div>
-                        <div class="dk-account-menu-list">
-                            <a href="/Account/Login?returnUrl=/Orders" class="dk-account-menu-item">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
-                                </span>
-                                <span class="dk-menu-label">My Profile</span>
-                            </a>
-                            <a href="/Orders" class="dk-account-menu-item">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                                </span>
-                                <span class="dk-menu-label">Orders</span>
-                            </a>
-                            <a href="/Wishlist" class="dk-account-menu-item">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-                                </span>
-                                <span class="dk-menu-label">Wishlist</span>
-                            </a>
-                            <a href="/#offers" class="dk-account-menu-item">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                                </span>
-                                <span class="dk-menu-label">Rewards & Offers</span>
-                                <span class="dk-popover-tag">Special</span>
-                            </a>
-                            <a href="/Info/Help" class="dk-account-menu-item">
-                                <span class="dk-menu-icon-wrap">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                </span>
-                                <span class="dk-menu-label">24x7 Customer Care</span>
-                            </a>
-                        </div>
-                    </div>
+                    <!-- CART -->
+                    <a href="/Cart" class="dk-cart">
+                        <span class="dk-cart-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M3 4h2l2 12h11l2-8H6"></path>
+                                <circle cx="9" cy="20" r="1.5"></circle>
+                                <circle cx="18" cy="20" r="1.5"></circle>
+                            </svg>
+                            <span class="dk-cart-count">0</span>
+                        </span>
+                        <strong>Cart</strong>
+                    </a>
+
                 </div>
-            }
 
-
-            <!-- MENU -->
-
-            <button type="button"
-                    class="dk-menu-button"
-                    id="mobileMenuButton"
-                    aria-label="Open menu"
-                    aria-expanded="false">
-
-                <svg viewBox="0 0 24 24"
-                     aria-hidden="true">
-
-                    <path d="M4 6h16"></path>
-                    <path d="M4 12h16"></path>
-                    <path d="M4 18h16"></path>
-
-                </svg>
-
-                <span>
-                    More<br />Menu
-                </span>
-
-            </button>
-
-
-            <!-- WISHLIST -->
-            <a href="/Wishlist" class="dk-wishlist" title="My Wishlist">
-                <span class="dk-wishlist-icon">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                    </svg>
-                    <span class="dk-wishlist-count" id="headerWishlistCount">0</span>
-                </span>
-                <strong>Wishlist</strong>
-            </a>
-
-            <!-- CART -->
-            <a href="/Cart"
-               class="dk-cart">
-
-                <span class="dk-cart-icon">
-
-                    <svg viewBox="0 0 24 24"
-                         aria-hidden="true">
-
-                        <path d="M3 4h2l2 12h11l2-8H6"></path>
-
-                        <circle cx="9"
-                                cy="20"
-                                r="1.5"></circle>
-
-                        <circle cx="18"
-                                cy="20"
-                                r="1.5"></circle>
-
-                    </svg>
-
-                    <span class="dk-cart-count">
-                        0
-                    </span>
-
-                </span>
-
-                <strong>
-                    Cart
-                </strong>
-
-            </a>
+            </div>
 
         </div>
 

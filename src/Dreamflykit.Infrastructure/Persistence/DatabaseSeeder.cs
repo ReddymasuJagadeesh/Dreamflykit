@@ -414,5 +414,30 @@ public static class DatabaseSeeder
             context.HomepageSections.AddRange(sections);
             await context.SaveChangesAsync(cancellationToken);
         }
+        else
+        {
+            var adminUser = await userManager.FindByEmailAsync("superadmin@dreamflykit.com");
+            var adminId = adminUser?.Id ?? Guid.NewGuid();
+
+            if (!await context.HomepageSections.AnyAsync(s => s.SectionKey == HomepageSectionKey.HeaderAdSlot1, cancellationToken))
+            {
+                var ad1 = new HomepageSection(HomepageSectionKey.HeaderAdSlot1, "Flight & Study Abroad Special", 8, adminId);
+                ad1.Update("Flight & Study Abroad Special", "Flat 25% Off Complete Travel Kits", "/Kits/FindMyKit", 8, null, null, null, adminId);
+                ad1.Activate();
+                ad1.Publish(adminId);
+                context.HomepageSections.Add(ad1);
+            }
+
+            if (!await context.HomepageSections.AnyAsync(s => s.SectionKey == HomepageSectionKey.HeaderAdSlot2, cancellationToken))
+            {
+                var ad2 = new HomepageSection(HomepageSectionKey.HeaderAdSlot2, "International SIM & Adapters", 9, adminId);
+                ad2.Update("International SIM & Adapters", "Pre-activated 5G data & global plugs", "/category/adapters-sim", 9, null, null, null, adminId);
+                ad2.Activate();
+                ad2.Publish(adminId);
+                context.HomepageSections.Add(ad2);
+            }
+
+            await context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

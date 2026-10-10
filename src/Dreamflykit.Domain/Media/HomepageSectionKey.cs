@@ -11,5 +11,9 @@ public enum HomepageSectionKey
     ProductCollectionBanner = 4,
     BrandSection = 5,
     OfferSection = 6,
-    FooterBanner = 7
+    FooterBanner = 7,
+    HeaderAdSlot1 = 8,
+    HeaderAdSlot2 = 9,
+    TrendingDeals = 10,
+    FeaturedProducts = 11
 }

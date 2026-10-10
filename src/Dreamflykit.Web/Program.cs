@@ -2,6 +2,7 @@ using Dreamflykit.Infrastructure.DependencyInjection;
 using Dreamflykit.Infrastructure.Identity;
 using Dreamflykit.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args); 
 builder.Services.AddSingleton(TimeProvider.System);
@@ -87,6 +88,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 // ------------------------------------------------------------
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -97,6 +99,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<DreamflykitDbContext>();
+    await dbContext.Database.MigrateAsync();
     await DatabaseSeeder.SeedCatalogIfEmptyAsync(dbContext);
 
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -124,6 +127,8 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.MapHealthChecks("/health");
 
 // ------------------------------------------------------------
 // Area routes

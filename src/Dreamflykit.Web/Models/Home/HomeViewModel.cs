@@ -10,6 +10,17 @@ public sealed class HomeViewModel
     public string? HeroBannerLink { get; init; }
     public IReadOnlyList<HomeBannerDto> Banners { get; init; } = Array.Empty<HomeBannerDto>();
     public IReadOnlyList<HomeCategoryDto> Categories { get; init; } = Array.Empty<HomeCategoryDto>();
+
+    public IReadOnlyList<Dreamflykit.Application.Catalog.Models.ProductListItem> TrendingDeals { get; init; }
+        = Array.Empty<Dreamflykit.Application.Catalog.Models.ProductListItem>();
+
+    public IReadOnlyList<Dreamflykit.Application.Catalog.Models.ProductListItem> FeaturedProducts { get; init; }
+        = Array.Empty<Dreamflykit.Application.Catalog.Models.ProductListItem>();
+
+    public string TrendingDealsTitle { get; init; } = "Top Deals of the Day";
+    public string TrendingDealsSubtitle { get; init; } = "Exclusive student abroad discounts & special offers";
+    public string FeaturedProductsTitle { get; init; } = "Best of Study & Travel Essentials";
+    public string FeaturedProductsSubtitle { get; init; } = "Student-curated essentials trusted worldwide";
 }
 
 public sealed class HomeCategoryDto

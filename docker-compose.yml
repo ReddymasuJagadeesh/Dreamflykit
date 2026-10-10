@@ -1,0 +1,75 @@
+services:
+  # ============================================================================
+  # Dreamflykit Web Application (.NET 8 Production Service)
+  # ============================================================================
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dreamflykit-web
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
+      - Media__CdnBaseUrl=${Media__CdnBaseUrl}
+      - Media__BucketName=${Media__BucketName}
+      - Media__AwsRegion=${Media__AwsRegion}
+      - AwsS3__BucketName=${AwsS3__BucketName}
+      - AwsS3__Region=${AwsS3__Region}
+      - AwsS3__AccessKeyId=${AwsS3__AccessKeyId}
+      - AwsS3__SecretAccessKey=${AwsS3__SecretAccessKey}
+      - AwsS3__SessionToken=${AwsS3__SessionToken}
+    depends_on:
+      db:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+    networks:
+      - dreamflykit-net
+
+  # ============================================================================
+  # PostgreSQL Database Service
+  # ============================================================================
+  db:
+    image: postgres:16-alpine
+    container_name: dreamflykit-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-dreamflykit}
+      POSTGRES_USER: ${POSTGRES_USER:-dreamfly_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-replace_with_strong_password_in_production}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+    networks:
+      - dreamflykit-net
+
+# ==============================================================================
+# Persistent Storage Volumes & Networks
+# ==============================================================================
+volumes:
+  postgres_data:
+    name: dreamflykit_pgdata
+
+networks:
+  dreamflykit-net:
+    driver: bridge

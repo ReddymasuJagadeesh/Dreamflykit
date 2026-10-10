@@ -13,15 +13,18 @@ public sealed class HomeController : Controller
     private readonly ICountryService _countryService;
     private readonly DreamflykitDbContext _db;
     private readonly IMediaUrlService _urlService;
+    private readonly Dreamflykit.Application.Catalog.Interfaces.IProductRepository _productRepository;
 
     public HomeController(
         ICountryService countryService,
         DreamflykitDbContext db,
-        IMediaUrlService urlService)
+        IMediaUrlService urlService,
+        Dreamflykit.Application.Catalog.Interfaces.IProductRepository productRepository)
     {
         _countryService = countryService;
         _db = db;
         _urlService = urlService;
+        _productRepository = productRepository;
     }
 
     [HttpGet]
@@ -127,6 +130,39 @@ public sealed class HomeController : Controller
                 : null
         }).ToList();
 
+        // 4. Load Active Products for Flipkart-style Homepage Showcases
+        var allActiveProducts = await _productRepository.GetActiveProductsAsync(cancellationToken);
+
+        // Trending Deals: Ordered by highest discount percentage
+        var trendingDeals = allActiveProducts
+            .OrderByDescending(p => p.DiscountPercentage)
+            .ThenByDescending(p => p.MRP)
+            .Take(10)
+            .ToList();
+
+        // Featured Products: Prioritize IsFeatured, then top active products
+        var featuredProducts = allActiveProducts
+            .Where(p => p.IsFeatured)
+            .Take(10)
+            .ToList();
+
+        if (featuredProducts.Count < 6)
+        {
+            var fallbackPool = allActiveProducts
+                .Where(p => !featuredProducts.Any(fp => fp.ProductId == p.ProductId))
+                .Take(10 - featuredProducts.Count);
+            featuredProducts.AddRange(fallbackPool);
+        }
+
+        // 5. Check dynamic section configuration from HomepageSections
+        var trendingSec = await _db.HomepageSections
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.SectionKey == HomepageSectionKey.TrendingDeals, cancellationToken);
+
+        var featuredSec = await _db.HomepageSections
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.SectionKey == HomepageSectionKey.FeaturedProducts, cancellationToken);
+
         var model =
             new HomeViewModel
             {
@@ -142,7 +178,13 @@ public sealed class HomeController : Controller
                 HeroBannerAlt = heroBannerAlt,
                 HeroBannerLink = heroBannerLink,
                 Banners = bannerDtos,
-                Categories = categoryDtos
+                Categories = categoryDtos,
+                TrendingDeals = trendingDeals,
+                FeaturedProducts = featuredProducts,
+                TrendingDealsTitle = trendingSec?.Title ?? "Top Deals of the Day",
+                TrendingDealsSubtitle = trendingSec?.Subtitle ?? "Exclusive student abroad discounts & special offers",
+                FeaturedProductsTitle = featuredSec?.Title ?? "Best of Study & Travel Essentials",
+                FeaturedProductsSubtitle = featuredSec?.Subtitle ?? "Student-curated essentials trusted worldwide"
             };
 
         return View(model);

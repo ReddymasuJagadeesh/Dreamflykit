@@ -684,4 +684,21 @@ public sealed class ProductsController : AdminBaseController
 
         return RedirectToAction("Index");
     }
+
+    [HttpPost("ToggleFeatured/{id:guid}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ToggleFeatured(Guid id, CancellationToken cancellationToken)
+    {
+        var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        product.SetFeatured(!product.IsFeatured);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        TempData["SuccessMessage"] = $"Product '{product.Name}' is {(product.IsFeatured ? "now Featured on Homepage showcase" : "removed from Featured showcase")}.";
+
+        return RedirectToAction("Index");
+    }
 }

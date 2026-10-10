@@ -1,0 +1,52 @@
+# ==============================================================================
+# .dockerignore - Dreamflykit Production Docker Ignore Rules
+# Excludes local developer files, build artifacts, secrets, and caches
+# ==============================================================================
+
+# Git files and history
+.git
+.gitignore
+.gitattributes
+
+# IDE & Editor specific caches
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# .NET build output directories
+**/bin/
+**/obj/
+**/out/
+**/Release/
+**/Debug/
+
+# Node.js dependencies and logs
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test results and coverage reports
+**/TestResults/
+**/coverage/
+
+# Secrets and local environment files
+.env
+.env.*
+!.env.example
+**/*.local.json
+**/appsettings.Development.json
+
+# Operating System temporary files
+.DS_Store
+Thumbs.db
+0
+
+# Docker files
+Dockerfile*
+docker-compose*
+README*.md

@@ -111,6 +111,12 @@
                                 <a href="/Admin/Products/Media/@p.ProductId" class="dk-btn dk-btn-secondary" style="padding: 4px 8px; font-size: 11px; margin-right: 4px; text-decoration: none;" title="Manage S3 Gallery Images">
                                     Gallery
                                 </a>
+                                <form method="post" action="/Admin/Products/ToggleFeatured/@p.ProductId" style="display:inline; margin-right: 4px;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dk-btn" style="padding: 4px 8px; font-size: 11px; background: @(p.IsFeatured ? "#fef3c7" : "#f1f5f9"); color: @(p.IsFeatured ? "#b45309" : "#475569"); border: 1px solid @(p.IsFeatured ? "#fcd34d" : "#cbd5e1");" title="@(p.IsFeatured ? "Remove from Homepage Showcase" : "Feature on Homepage Showcase")">
+                                        @(p.IsFeatured ? "★ Featured" : "☆ Feature")
+                                    </button>
+                                </form>
                                 <form method="post" action="/Admin/Products/ToggleStatus/@p.ProductId" style="display:inline;">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="dk-btn @(p.IsActive ? "dk-btn-outline" : "dk-btn-primary")" style="padding: 4px 8px; font-size: 11px;">

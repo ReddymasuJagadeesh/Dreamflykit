@@ -267,6 +267,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<IMediaUrlService, MediaUrlService>();
         services.AddScoped<IMediaService, MediaService>();
         services.AddScoped<IMediaPermissionService, MediaPermissionService>();
+        services.AddScoped<IHeaderAdService, HeaderAdService>();
         services.AddHostedService<MediaCleanupBackgroundService>();
     }
 }
