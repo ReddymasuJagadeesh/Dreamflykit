@@ -34,33 +34,30 @@
 html {
     width: 100%;
     max-width: 100%;
-    overflow-x: clip;
-    overflow-y: auto;
-    /* Firefox */
-    scrollbar-width: none;
-    scroll-behavior: smooth;
-}
-
-
-html {
-    width: 100%;
-    max-width: 100%;
+    overflow-x: hidden;
     overflow-x: clip;
     overflow-y: auto;
     scrollbar-width: none;
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    box-sizing: border-box;
 }
 
-    html::-webkit-scrollbar {
-        width: 0;
-        height: 0;
-        display: none;
-    }
+html::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
 
 body {
     width: 100%;
     max-width: 100%;
     margin: 0;
+    overflow-x: hidden;
     overflow-x: clip;
     font-family: var(--dk-font-family);
     line-height: 1.5;
@@ -266,6 +263,31 @@ img {
     margin-left: auto;
     margin-right: 0;
     flex-shrink: 0;
+}
+
+.dk-admin-header-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: linear-gradient(135deg, #075bc8, #054190);
+    color: #ffffff !important;
+    padding: 8px 14px;
+    border-radius: 9px;
+    font-weight: 700;
+    font-size: 13px;
+    text-decoration: none;
+    box-shadow: 0 3px 10px rgba(7, 91, 200, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+}
+
+.dk-admin-header-btn:hover {
+    background: linear-gradient(135deg, #054190, #032b60);
+    color: #ffffff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(7, 91, 200, 0.35);
 }
 
 .dk-admin-ad-quick-btn {
@@ -1505,18 +1527,23 @@ img {
     }
 }
 
-@media (max-width: 700px) {
+/* ============================================================
+   RESPONSIVE DESIGN FOR SMARTPHONES, TABLETS & COMPACT DEVICES
+============================================================ */
+
+@media (max-width: 768px) {
 
     .dk-shell {
         width: 100%;
         max-width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+        box-sizing: border-box;
     }
-
 
     .dk-utility {
-        display: none;
+        display: none; /* Hide dense utility text on mobile */
     }
-
 
     .dk-main-header {
         min-height: auto;
@@ -1524,161 +1551,482 @@ img {
         width: 100%;
         max-width: 100%;
         padding: 8px 0;
+        border-bottom: 1px solid var(--dk-border);
     }
 
+    /* FLATTEN 2-ROW WRAPPERS ON MOBILE SO CSS GRID CONTROLS ORDER */
+    .dk-header-top-row,
+    .dk-header-bottom-row {
+        display: contents;
+    }
 
     .dk-main-header-inner {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+            "brand actions"
+            "search search"
+            "ads ads";
+        row-gap: 8px;
+        column-gap: 8px;
+        align-items: center;
         width: 100%;
         max-width: 100%;
-        gap: 10px;
+        padding: 0 12px;
+        box-sizing: border-box;
     }
 
-
+    /* ROW 1 (LEFT): BRAND LOGO */
     .dk-brand {
-        width: 145px;
-        flex: 0 0 145px;
+        grid-area: brand;
+        width: auto;
+        max-width: 140px;
+        flex: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
     }
-
 
     .dk-brand-image {
-        width: 140px;
-        height: 50px;
+        width: 130px;
+        height: 38px;
+        object-fit: contain;
+        object-position: left center;
+        display: block;
     }
 
-
-    .dk-account-dropdown-wrapper,
-    .dk-account {
-        margin-left: auto;
-    }
-
-
-    .dk-menu-button {
+    /* ROW 1 (RIGHT): COMPACT ACTION BUTTONS */
+    .dk-header-actions-group {
+        grid-area: actions;
         display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        width: auto;
+        flex-shrink: 0;
     }
 
+    /* Hide textual labels on mobile action buttons to keep icons neat & aligned */
+    .dk-account-text,
+    .dk-menu-button span,
+    .dk-wishlist strong,
+    .dk-cart strong,
+    .dk-admin-header-btn span {
+        display: none !important;
+    }
 
-    .dk-category-nav {
+    .dk-account,
+    .dk-menu-button,
+    .dk-wishlist,
+    .dk-cart {
+        padding: 4px;
+        min-width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: transparent;
+        box-sizing: border-box;
+    }
+
+    .dk-admin-header-btn {
+        padding: 6px !important;
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+    }
+
+    .dk-account-icon,
+    .dk-wishlist-icon,
+    .dk-cart-icon {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        margin: 0;
+    }
+
+    .dk-account-icon svg,
+    .dk-wishlist-icon svg,
+    .dk-cart-icon svg,
+    .dk-menu-button svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .dk-wishlist-count,
+    .dk-cart-count {
+        top: -3px;
+        right: -3px;
+        min-width: 16px;
+        height: 16px;
+        font-size: 10px;
+        line-height: 16px;
+    }
+
+    .dk-account-dropdown-wrapper {
+        position: relative;
+    }
+
+    .dk-account-menu {
+        max-width: min(290px, calc(100vw - 24px));
+        right: 0;
+    }
+
+    /* ROW 2: SEARCH BAR ACROSS FULL WIDTH */
+    .dk-search-box-wrapper {
+        grid-area: search;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        position: relative;
+    }
+
+    .dk-search {
+        height: 42px;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 8px;
+        border: 1.5px solid #dce3ed;
+    }
+
+    .dk-search-icon {
+        width: 42px;
+    }
+
+    .dk-search-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .dk-search input {
+        font-size: 13.5px;
+    }
+
+    .dk-search button {
+        width: 48px;
+    }
+
+    .dk-search button svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* ROW 3: COMPACT PROMO DEALS STRIP */
+    .dk-header-ads-strip {
+        grid-area: ads;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 2px 0;
+        box-sizing: border-box;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .dk-header-ads-strip::-webkit-scrollbar {
         display: none;
     }
 
+    .dk-header-ad-banner {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 140px;
+        max-width: 100%;
+        height: 42px;
+        border-radius: 8px;
+        margin: 0;
+        box-shadow: 0 1px 4px rgba(7, 91, 200, 0.04);
+    }
+
+    .dk-header-ad-content {
+        padding: 4px 8px;
+        gap: 6px;
+        height: 100%;
+    }
+
+    .dk-ad-icon-badge {
+        font-size: 16px;
+    }
+
+    .dk-ad-tag {
+        font-size: 8px;
+        letter-spacing: 0.02em;
+    }
+
+    .dk-ad-headline {
+        font-size: 11px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .dk-ad-subtext {
+        display: none; /* Hide multi-line subtext on compact mobile pill */
+    }
+
+    .dk-ad-arrow-icon {
+        font-size: 11px;
+    }
+
+    .dk-admin-ad-quick-btn {
+        display: none; /* Hide admin edit button on mobile */
+    }
+
+    /* ROW 4: INTERACTIVE HORIZONTAL CATEGORY NAVIGATION BAR */
+    .dk-category-nav {
+        display: block !important;
+        width: 100%;
+        background: #ffffff;
+        border-bottom: 1px solid var(--dk-border);
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        -webkit-overflow-scrolling: touch;
+        padding: 5px 0;
+    }
+
+    .dk-category-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .dk-category-nav-inner {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 12px;
+        width: max-content;
+        min-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .dk-category-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 9999px;
+        background: #f1f5f9;
+        color: #1e293b;
+        border: 1px solid #e2e8f0;
+        white-space: nowrap;
+        flex-shrink: 0;
+        text-decoration: none;
+        transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .dk-category-link.dk-category-active {
+        background: #075bc8;
+        color: #ffffff;
+        border-color: #075bc8;
+    }
+
+    .dk-find-kit {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 14px;
+        font-size: 12px;
+        font-weight: 700;
+        border-radius: 9999px;
+        background: linear-gradient(135deg, #ff7900, #ff9f1c);
+        color: #ffffff;
+        flex-shrink: 0;
+        border: none;
+        box-shadow: 0 2px 6px rgba(255, 121, 0, 0.25);
+    }
 
     .dk-mobile-navigation.is-open {
         display: block;
     }
 
-
+    /* HERO SLIDER ON MOBILE */
     .dk-hero {
         width: 100%;
         max-width: 100%;
-        margin-top: 12px;
+        margin-top: 8px;
         border-radius: 12px;
     }
 
+    .dk-hero-track-viewport {
+        border-radius: 12px;
+    }
 
+    .dk-hero-slide-img {
+        aspect-ratio: 16 / 9;
+        min-height: 160px;
+        max-height: 240px;
+        object-fit: cover;
+    }
+
+    .dk-hero-arrow {
+        width: 32px;
+        height: 32px;
+    }
+
+    .dk-hero-arrow-prev {
+        left: 8px;
+    }
+
+    .dk-hero-arrow-next {
+        right: 8px;
+    }
+
+    .dk-hero-dots-nav {
+        bottom: 8px;
+        padding: 3px 8px;
+    }
+
+    /* HOMEPAGE SECTIONS ON MOBILE */
+    .dk-section {
+        width: 100%;
+        max-width: 100%;
+        margin: 20px 0 0;
+    }
+
+    .dk-section-title {
+        font-size: 18px;
+    }
+
+    .dk-country-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .dk-category-grid-home {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .dk-category-card-home {
+        min-height: 120px;
+        padding: 8px;
+    }
+
+    .dk-category-image,
+    .dk-category-placeholder {
+        width: 56px;
+        height: 56px;
+        font-size: 22px;
+        margin-bottom: 6px;
+    }
+
+    .dk-category-card-home h3 {
+        font-size: 11px;
+    }
+
+    /* BENEFITS ON MOBILE */
     .dk-benefits {
         width: 100%;
         max-width: 100%;
     }
 
-
     .dk-benefits-grid {
         grid-template-columns: 1fr;
     }
 
-
     .dk-benefit {
         border-right: 0;
         border-bottom: 1px solid var(--dk-border);
+        padding: 12px 10px;
     }
 
-
-        .dk-benefit:last-child {
-            border-bottom: 0;
-        }
-
-
-    .dk-section {
-        width: 100%;
-        max-width: 100%;
+    .dk-benefit:last-child {
+        border-bottom: 0;
     }
 
-
-    .dk-country-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-
-    .dk-category-grid-home {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-
+    /* BOTTOM BENEFITS STRIP ON MOBILE */
     .dk-bottom-benefits {
         width: 100%;
         max-width: 100%;
         grid-template-columns: 1fr;
+        padding: 10px 14px;
+        gap: 4px;
+        margin: 20px 0 16px;
     }
-
 
     .dk-bottom-benefit {
         justify-content: flex-start;
-        padding: 9px 12px;
+        padding: 8px 6px;
         border-right: 0;
-        border-bottom: 1px solid rgba(255,255,255,.15);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     }
 
+    .dk-bottom-benefit:last-child {
+        border-bottom: 0;
+    }
 
-        .dk-bottom-benefit:last-child {
-            border-bottom: 0;
-        }
+    /* FOOTER ON MOBILE */
+    .dk-footer {
+        margin-top: 28px;
+    }
 
+    .dk-footer-inner {
+        padding: 28px 14px 16px;
+    }
 
     .dk-footer-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+
+    .dk-footer-logo {
+        width: 160px;
+    }
+
+    .dk-footer-bottom {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+        align-items: center;
     }
 }
+
 @media (max-width: 480px) {
 
     .dk-brand {
-        width: 125px;
-        flex: 0 0 125px;
+        max-width: 125px;
     }
-
 
     .dk-brand-image {
-        width: 120px;
+        width: 115px;
+        height: 34px;
     }
 
-
-    .dk-account-icon {
-        width: 36px;
-        height: 36px;
+    .dk-account-icon,
+    .dk-wishlist-icon,
+    .dk-cart-icon {
+        width: 32px;
+        height: 32px;
     }
-
-
-    .dk-country-grid {
-        grid-template-columns: 1fr;
-    }
-
 
     .dk-category-grid-home {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .dk-country-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 
     .dk-footer-grid {
         grid-template-columns: 1fr;
-    }
-
-
-    .dk-footer-grid {
-        grid-template-columns: 1fr;
-    }
-
-
-    .dk-footer-bottom {
-        flex-direction: column;
-        gap: 8px;
     }
 }
 
@@ -7912,85 +8260,266 @@ img {
 }
 
 /* ============================================================
-   RESPONSIVE DESIGN FOR HEADER & SHOWCASE ACROSS ALL DEVICES
+   RESPONSIVE DESIGN FOR TABLETS, DESKTOP MODE ON MOBILE & SMARTWATCH
 ============================================================ */
 
-@media (max-width: 1024px) {
+/* TABLETS & MOBILE IN "DESKTOP SITE" MODE (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
     .dk-header-top-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        width: 100%;
     }
 
     .dk-brand {
-        margin: 0 auto;
+        width: 180px;
+        flex: 0 0 180px;
+        margin: 0;
+    }
+
+    .dk-brand-image {
+        width: 170px;
+        height: 52px;
     }
 
     .dk-header-ads-strip {
-        justify-content: center;
-        margin: 0 auto;
-        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+        flex-wrap: nowrap;
     }
 
     .dk-header-ad-banner {
-        width: 100%;
-        max-width: 340px;
+        width: 235px;
+        max-width: 245px;
+        height: 48px;
+        flex-shrink: 0;
     }
 
     .dk-header-bottom-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        width: 100%;
     }
 
     .dk-search-box-wrapper {
-        max-width: 100%;
+        max-width: 480px;
         width: 100%;
+        flex: 1 1 360px;
         margin-left: 0;
-        margin-right: 0;
+        margin-right: auto;
     }
 
     .dk-header-actions-group {
-        justify-content: center;
-        margin: 0 auto;
-        width: 100%;
-        flex-wrap: wrap;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
+        margin-right: 0;
+        flex-shrink: 0;
+    }
+
+    .dk-account {
+        padding: 4px 6px;
+        gap: 6px;
+    }
+
+    .dk-account-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .dk-account-text small {
+        display: none;
+    }
+
+    .dk-account-text strong {
+        font-size: 12px;
+    }
+
+    .dk-wishlist strong,
+    .dk-cart strong {
+        font-size: 12px;
     }
 }
 
-@media (max-width: 640px) {
+/* SMARTPHONES SHOWCASE & GRIDS (<= 768px) */
+@media (max-width: 768px) {
     .dk-fk-products-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
-        padding: 12px;
+        padding: 10px;
+    }
+
+    .dk-fk-card {
+        padding: 8px;
+        border-radius: 8px;
     }
 
     .dk-fk-img-box {
-        height: 140px;
+        height: 135px;
+        margin-bottom: 8px;
     }
 
     .dk-fk-name {
         font-size: 12px;
         min-height: 32px;
+        line-height: 1.3;
+        margin-bottom: 4px;
+    }
+
+    .dk-fk-rating-row {
+        gap: 4px;
+        margin-bottom: 4px;
+    }
+
+    .dk-fk-stars {
+        font-size: 10px;
+    }
+
+    .dk-fk-rating-count {
+        font-size: 10px;
+    }
+
+    .dk-fk-assured-tag {
+        font-size: 9px;
+    }
+
+    .dk-fk-price-row {
+        gap: 5px;
+        margin-bottom: 8px;
     }
 
     .dk-fk-selling-price {
-        font-size: 15px;
+        font-size: 14.5px;
     }
 
-    .dk-fk-cart-btn span {
+    .dk-fk-mrp {
         font-size: 11px;
     }
 
+    .dk-fk-discount-txt {
+        font-size: 10.5px;
+    }
+
+    .dk-fk-cart-btn {
+        padding: 8px;
+        font-size: 11.5px;
+        border-radius: 6px;
+    }
+
+    .dk-fk-cart-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
     .dk-fk-showcase-header {
-        padding: 12px 14px;
+        padding: 10px 12px;
     }
 
     .dk-fk-title {
-        font-size: 16px;
+        font-size: 15px;
+    }
+}
+
+/* ULTRA-COMPACT MOBILE & SMARTWATCH (<= 359px) */
+@media (max-width: 359px) {
+    .dk-main-header-inner {
+        padding: 0 6px;
+        row-gap: 6px;
+    }
+
+    .dk-brand {
+        max-width: 105px;
+    }
+
+    .dk-brand-image {
+        width: 100px;
+        height: 30px;
+    }
+
+    .dk-header-actions-group {
+        gap: 3px;
+    }
+
+    .dk-account,
+    .dk-menu-button,
+    .dk-wishlist,
+    .dk-cart,
+    .dk-admin-header-btn {
+        min-width: 30px !important;
+        height: 30px !important;
+        width: 30px !important;
+        padding: 2px !important;
+    }
+
+    .dk-account-icon,
+    .dk-wishlist-icon,
+    .dk-cart-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .dk-account-icon svg,
+    .dk-wishlist-icon svg,
+    .dk-cart-icon svg,
+    .dk-menu-button svg,
+    .dk-admin-header-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .dk-search {
+        height: 38px;
+    }
+
+    .dk-search input {
+        font-size: 12px;
+    }
+
+    .dk-header-ads-strip {
+        gap: 6px;
     }
 
     .dk-header-ad-banner {
-        max-width: 100%;
+        min-width: 130px;
+        height: 38px;
+    }
+
+    .dk-fk-products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dk-category-grid-home {
+        grid-template-columns: 1fr;
+    }
+
+    .dk-country-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* SMARTWATCH (< 320px) */
+@media (max-width: 319px) {
+    html, body {
+        font-size: 11px;
+    }
+
+    .dk-brand-image {
+        width: 85px;
+        height: 26px;
+    }
+
+    .dk-search {
+        height: 34px;
+    }
+
+    .dk-search button {
+        width: 38px;
     }
 }

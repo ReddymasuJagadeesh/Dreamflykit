@@ -245,7 +245,7 @@
                     <!-- ADMIN DIRECT SHORTCUT BUTTON -->
                     @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                     {
-                        <a href="/Admin" class="dk-admin-header-btn" title="Open Admin Control Center" style="display: inline-flex; align-items: center; gap: 7px; background: linear-gradient(135deg, #075bc8, #054190); color: #ffffff; padding: 9px 15px; border-radius: 9px; font-weight: 700; font-size: 13px; text-decoration: none; box-shadow: 0 3px 10px rgba(7,91,200,0.3); border: 1px solid rgba(255,255,255,0.25); white-space: nowrap;">
+                        <a href="/Admin" class="dk-admin-header-btn" title="Open Admin Control Center">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                             <span>@(User.IsInRole("SuperAdmin") ? "Super Admin" : "Admin Panel")</span>
                         </a>
