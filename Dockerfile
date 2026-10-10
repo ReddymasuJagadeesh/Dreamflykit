@@ -2,35 +2,17 @@
 # Dreamflykit Production Dockerfile (.NET 8 MVC / Architecture Standard)
 # 
 # Security & Best-Practice Highlights:
-# 1. Multi-stage build (Separate Node.js client builder, .NET SDK, and minimal runtime)
+# 1. Multi-stage build (Separate .NET SDK build stage and minimal runtime)
 # 2. Strict non-root execution (Runs as built-in non-root user 'app', UID 1654)
 # 3. Layer cache optimization (Restores NuGet packages prior to copying full source)
 # 4. Container Health Check probe configured against /health endpoint
 # 5. Diagnostic and telemetry ports disabled for reduced attack surface
-# 6. Forwarded headers middleware enabled for reverse-proxy / ALB / ingress setups
+# 6. Preserves complete standalone static assets in wwwroot (CSS, JS, images)
+# 7. Pre-configures writable directories for cache/uploads with non-root ownership
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Stage 1: Build client static assets (Tailwind CSS, frontend scripts)
-# ------------------------------------------------------------------------------
-FROM node:20-alpine AS client-builder
-WORKDIR /build
-
-# Copy client manifests first for npm layer caching
-COPY src/Dreamflykit.Web/package*.json ./
-RUN npm ci --no-audit --prefer-offline
-
-# Copy source templates required for Tailwind CSS class scanning
-COPY src/Dreamflykit.Web/src ./src
-COPY src/Dreamflykit.Web/Views ./Views
-COPY src/Dreamflykit.Web/Areas ./Areas
-COPY src/Dreamflykit.Web/tsconfig.json ./
-
-# Compile production CSS
-RUN npm run css:build
-
-# ------------------------------------------------------------------------------
-# Stage 2: Build & Publish .NET application
+# Stage 1: Build & Publish .NET application
 # ------------------------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim AS build
 WORKDIR /src
@@ -50,15 +32,12 @@ COPY src/Dreamflykit.Web/Dreamflykit.Web.csproj src/Dreamflykit.Web/
 # Restore dependencies
 RUN dotnet restore src/Dreamflykit.Web/Dreamflykit.Web.csproj
 
-# Copy remaining source code
+# Copy remaining source code (including authentic wwwroot styles, scripts, and images)
 COPY src/Dreamflykit.Domain/ src/Dreamflykit.Domain/
 COPY src/Dreamflykit.Contracts/ src/Dreamflykit.Contracts/
 COPY src/Dreamflykit.Application/ src/Dreamflykit.Application/
 COPY src/Dreamflykit.Infrastructure/ src/Dreamflykit.Infrastructure/
 COPY src/Dreamflykit.Web/ src/Dreamflykit.Web/
-
-# Copy compiled Tailwind stylesheet from frontend build stage
-COPY --from=client-builder /build/wwwroot/css/app.css src/Dreamflykit.Web/wwwroot/css/app.css
 
 # Publish compiled binaries in Release configuration
 RUN dotnet publish src/Dreamflykit.Web/Dreamflykit.Web.csproj \
@@ -68,7 +47,7 @@ RUN dotnet publish src/Dreamflykit.Web/Dreamflykit.Web.csproj \
     /p:UseAppHost=false
 
 # ------------------------------------------------------------------------------
-# Stage 3: Minimal, Hardened Production Runtime
+# Stage 2: Minimal, Hardened Production Runtime
 # ------------------------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim AS final
 WORKDIR /app
@@ -78,8 +57,12 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy published application artifacts with non-root user permissions
-COPY --from=build --chown=$APP_UID:$APP_UID /app/publish .
+# Copy published application artifacts
+COPY --from=build /app/publish .
+
+# Create writable runtime directories for media cache and uploads with non-root ownership
+RUN mkdir -p /app/App_Data/MediaCache /app/wwwroot/uploads \
+    && chown -R $APP_UID:$APP_UID /app
 
 # Configure production environment variables
 ENV ASPNETCORE_HTTP_PORTS=8080 \

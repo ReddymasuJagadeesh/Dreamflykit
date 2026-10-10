@@ -1,11 +1,19 @@
 using Dreamflykit.Infrastructure.DependencyInjection;
 using Dreamflykit.Infrastructure.Identity;
 using Dreamflykit.Infrastructure.Persistence;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args); 
 builder.Services.AddSingleton(TimeProvider.System);
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 // ------------------------------------------------------------
 // Infrastructure
@@ -111,6 +119,8 @@ using (var scope = app.Services.CreateScope())
 // ------------------------------------------------------------
 // HTTP request pipeline
 // ------------------------------------------------------------
+
+app.UseForwardedHeaders();
 
 if (!app.Environment.IsDevelopment())
 {

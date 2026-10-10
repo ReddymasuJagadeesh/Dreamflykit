@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "css:build": "npx @tailwindcss/cli -i ./src/input.css -o ./wwwroot/css/app.css",
-    "css:watch": "npx @tailwindcss/cli -i ./src/input.css -o ./wwwroot/css/app.css --watch"
+    "css:build": "npx @tailwindcss/cli -i ./src/input.css -o ./wwwroot/css/tailwind.css",
+    "css:watch": "npx @tailwindcss/cli -i ./src/input.css -o ./wwwroot/css/tailwind.css --watch"
   },
   "devDependencies": {
     "@tailwindcss/cli": "latest",
