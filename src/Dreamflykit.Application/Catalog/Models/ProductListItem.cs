@@ -40,5 +40,11 @@ public sealed class ProductListItem
 
     public bool IsFeatured { get; init; }
 
+    public bool IsPromoted { get; init; }
+
+    public Dreamflykit.Domain.Catalog.ProductApprovalStatus ApprovalStatus { get; init; } = Dreamflykit.Domain.Catalog.ProductApprovalStatus.Approved;
+
+    public Guid? SellerId { get; init; }
+
     public bool IsInStock { get; init; }
 }

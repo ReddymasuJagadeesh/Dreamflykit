@@ -79,6 +79,11 @@ public sealed class DashboardController : AdminBaseController
             };
         }).ToList();
 
+        var pendingSellerApprovals = await _dbContext.Products
+            .CountAsync(p => p.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.PendingApproval, cancellationToken);
+        var sellerUsers = await _userManager.GetUsersInRoleAsync("Seller");
+        var totalSellers = sellerUsers.Count;
+
         var model = new AdminDashboardViewModel
         {
             TotalOrders = totalOrders,
@@ -87,6 +92,8 @@ public sealed class DashboardController : AdminBaseController
             TotalCustomers = totalCustomers,
             PendingOrders = pendingOrders,
             DeliveredOrders = deliveredOrders,
+            PendingSellerApprovals = pendingSellerApprovals,
+            TotalSellers = totalSellers,
             RecentOrders = recentOrderVms,
             IsSuperAdmin = User.IsInRole("SuperAdmin")
         };

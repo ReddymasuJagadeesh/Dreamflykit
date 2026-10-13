@@ -314,7 +314,7 @@ public static class DatabaseSeeder
         RoleManager<IdentityRole<Guid>> roleManager)
     {
         // 1. Roles
-        string[] roles = ["SuperAdmin", "Admin", "Customer"];
+        string[] roles = ["SuperAdmin", "Admin", "Customer", "Seller"];
         foreach (var roleName in roles)
         {
             if (!await roleManager.RoleExistsAsync(roleName))

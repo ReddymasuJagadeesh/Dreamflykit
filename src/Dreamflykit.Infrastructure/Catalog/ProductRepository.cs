@@ -54,7 +54,7 @@ public sealed class ProductRepository : IProductRepository
     {
         var rawItems = await _dbContext.Products
             .AsNoTracking()
-            .Where(product => product.IsActive)
+            .Where(product => product.IsActive && product.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.Approved)
             .OrderBy(product => product.Name)
             .Select(product => new
             {
@@ -85,7 +85,10 @@ public sealed class ProductRepository : IProductRepository
                     .OrderBy(variant => variant.SellingPrice)
                     .Select(variant => variant.SellingPrice)
                     .FirstOrDefault(),
-                IsActive = product.IsActive
+                IsActive = product.IsActive,
+                IsPromoted = product.IsPromoted,
+                ApprovalStatus = product.ApprovalStatus,
+                SellerId = product.SellerId
             })
             .ToListAsync(cancellationToken);
 
@@ -107,7 +110,10 @@ public sealed class ProductRepository : IProductRepository
                 ImageUrl = imgUrl,
                 MRP = product.MRP,
                 SellingPrice = product.SellingPrice,
-                IsActive = product.IsActive
+                IsActive = product.IsActive,
+                IsPromoted = product.IsPromoted,
+                ApprovalStatus = product.ApprovalStatus,
+                SellerId = product.SellerId
             };
         }).ToList();
     }
@@ -127,7 +133,7 @@ public sealed class ProductRepository : IProductRepository
 
         var rawDetails = await _dbContext.Products
             .AsNoTracking()
-            .Where(product => product.IsActive && product.Slug == slug)
+            .Where(product => product.IsActive && product.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.Approved && product.Slug == slug)
             .Select(product => new
             {
                 ProductId = product.Id,
@@ -176,7 +182,10 @@ public sealed class ProductRepository : IProductRepository
                     })
                     .ToList(),
                 IsActive = product.IsActive,
-                IsFeatured = product.IsFeatured
+                IsFeatured = product.IsFeatured,
+                IsPromoted = product.IsPromoted,
+                ApprovalStatus = product.ApprovalStatus,
+                SellerId = product.SellerId
             })
             .FirstOrDefaultAsync(cancellationToken);
 
@@ -210,7 +219,10 @@ public sealed class ProductRepository : IProductRepository
             Media = mediaItems,
             Attributes = Array.Empty<ProductAttributeItem>(),
             IsActive = rawDetails.IsActive,
-            IsFeatured = rawDetails.IsFeatured
+            IsFeatured = rawDetails.IsFeatured,
+            IsPromoted = rawDetails.IsPromoted,
+            ApprovalStatus = rawDetails.ApprovalStatus,
+            SellerId = rawDetails.SellerId
         };
     }
 
@@ -222,7 +234,7 @@ public sealed class ProductRepository : IProductRepository
 
         var products = _dbContext.Products
             .AsNoTracking()
-            .Where(product => product.IsActive);
+            .Where(product => product.IsActive && product.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.Approved);
 
         if (query.CategoryId.HasValue)
         {
@@ -289,7 +301,10 @@ public sealed class ProductRepository : IProductRepository
                     .Select(variant => variant.SellingPrice)
                     .FirstOrDefault(),
                 IsActive = product.IsActive,
-                IsFeatured = product.IsFeatured
+                IsFeatured = product.IsFeatured,
+                IsPromoted = product.IsPromoted,
+                ApprovalStatus = product.ApprovalStatus,
+                SellerId = product.SellerId
             })
             .ToListAsync(cancellationToken);
 
@@ -313,6 +328,9 @@ public sealed class ProductRepository : IProductRepository
                 SellingPrice = product.SellingPrice,
                 IsActive = product.IsActive,
                 IsFeatured = product.IsFeatured,
+                IsPromoted = product.IsPromoted,
+                ApprovalStatus = product.ApprovalStatus,
+                SellerId = product.SellerId,
                 IsInStock = true
             };
         }).ToList();
@@ -406,7 +424,7 @@ public sealed class ProductRepository : IProductRepository
 
         var baseQuery = _dbContext.Products
             .AsNoTracking()
-            .Where(product => product.IsActive);
+            .Where(product => product.IsActive && product.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.Approved);
 
         if (categoryId.HasValue)
         {
@@ -518,6 +536,9 @@ public sealed class ProductRepository : IProductRepository
                     .FirstOrDefault(),
                 IsActive = product.IsActive,
                 IsFeatured = product.IsFeatured,
+                IsPromoted = product.IsPromoted,
+                ApprovalStatus = product.ApprovalStatus,
+                SellerId = product.SellerId,
                 IsInStock = true
             })
             .ToListAsync(cancellationToken);
@@ -542,6 +563,9 @@ public sealed class ProductRepository : IProductRepository
                 SellingPrice = product.SellingPrice,
                 IsActive = product.IsActive,
                 IsFeatured = product.IsFeatured,
+                IsPromoted = product.IsPromoted,
+                ApprovalStatus = product.ApprovalStatus,
+                SellerId = product.SellerId,
                 IsInStock = product.IsInStock
             };
         }).ToList();
@@ -549,7 +573,7 @@ public sealed class ProductRepository : IProductRepository
         // Build Category Facets
         var categoryCountsQuery = _dbContext.Products
             .AsNoTracking()
-            .Where(p => p.IsActive);
+            .Where(p => p.IsActive && p.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.Approved);
 
         if (!string.IsNullOrWhiteSpace(query.SearchTerm))
         {
@@ -615,7 +639,7 @@ public sealed class ProductRepository : IProductRepository
 
         var products = await _dbContext.Products
             .AsNoTracking()
-            .Where(p => p.IsActive && (p.Name.ToLower().Contains(term) || p.Slug.Contains(term)))
+            .Where(p => p.IsActive && p.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.Approved && (p.Name.ToLower().Contains(term) || p.Slug.Contains(term)))
             .OrderBy(p => p.DisplayOrder)
             .ThenBy(p => p.Name)
             .Take(5)

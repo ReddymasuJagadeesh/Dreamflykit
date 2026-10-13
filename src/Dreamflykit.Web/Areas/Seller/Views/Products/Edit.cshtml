@@ -1,0 +1,286 @@
+@model Dreamflykit.Web.Areas.Seller.Models.SellerProductEditViewModel
+@{
+    ViewData["Title"] = $"Edit Product — {Model.Name}";
+    Layout = "_SellerLayout";
+    var categories = ViewBag.Categories as IEnumerable<Dreamflykit.Domain.Catalog.Category> ?? Enumerable.Empty<Dreamflykit.Domain.Catalog.Category>();
+    var categoryList = categories.ToList();
+
+    var nameError = ViewData.ModelState[nameof(Model.Name)]?.Errors.FirstOrDefault()?.ErrorMessage;
+    var slugError = ViewData.ModelState[nameof(Model.Slug)]?.Errors.FirstOrDefault()?.ErrorMessage;
+    var categoryError = ViewData.ModelState[nameof(Model.CategoryId)]?.Errors.FirstOrDefault()?.ErrorMessage;
+    var descError = ViewData.ModelState[nameof(Model.Description)]?.Errors.FirstOrDefault()?.ErrorMessage;
+}
+
+<div style="max-width: 880px; margin: 0 auto;">
+    <div style="margin-bottom: 1.5rem;">
+        <a asp-action="Index" style="color: #94a3b8; font-size: 0.875rem; text-decoration: none; display:inline-flex; align-items:center; gap:0.4rem; margin-bottom: 0.5rem;">
+            ← Back to All Products
+        </a>
+        <h1 style="font-size: 1.75rem; font-weight: 800; color: #f8fafc; margin: 0;">
+            Edit: @Model.Name
+        </h1>
+        <p style="color: #94a3b8; font-size: 0.875rem; margin: 0.35rem 0 0;">
+            Update specifications, authorized category, and photos. Prices are decided and approved by Super Admin.
+        </p>
+    </div>
+
+    <!-- STATUS BANNER -->
+    @if (Model.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.Rejected)
+    {
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1.5px solid #ef4444; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.75rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; color:#f87171; font-weight:800; font-size:1rem; margin-bottom:0.25rem;">
+                <span>❌</span>
+                <span>Super Admin Feedback (Action Required)</span>
+            </div>
+            <p style="color:#fca5a5; font-size:0.9rem; margin:0 0 0.5rem; line-height:1.5;">
+                @Model.RejectionReason
+            </p>
+            <div style="font-size:0.8rem; color:#f1f5f9; font-weight:600;">
+                ℹ️ Make the requested corrections below and click Save. Your product will automatically be resubmitted for Super Admin review.
+            </div>
+        </div>
+    }
+    else if (Model.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.PendingApproval)
+    {
+        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.75rem; display:flex; align-items:center; gap:0.75rem;">
+            <span style="font-size:1.25rem;">⏳</span>
+            <span style="color:#fbbf24; font-size:0.9rem; font-weight:600;">
+                This product is currently pending Super Admin pricing and approval.
+            </span>
+        </div>
+    }
+    else
+    {
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+                <span style="font-size:1.25rem;">✓</span>
+                <div>
+                    <div style="color:#34d399; font-size:0.9rem; font-weight:700;">Live &amp; Approved</div>
+                    <div style="color:#94a3b8; font-size:0.8rem;">Official Price set by Super Admin: ₹@Model.CurrentSellingPrice.ToString("N0") (MRP: ₹@Model.CurrentMrp.ToString("N0"))</div>
+                </div>
+            </div>
+            <a href="/Products/@Model.Slug" target="_blank" style="color:#38bdf8; font-size:0.85rem; font-weight:600; text-decoration:none;">
+                View on Live Store ↗
+            </a>
+        </div>
+    }
+
+    <!-- CLEAR, HIGH-VISIBILITY VALIDATION ALERT SUMMARY -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div id="formValidationAlert" style="background: rgba(239, 68, 68, 0.15); border: 1.5px solid #ef4444; color: #fca5a5; padding: 1.25rem 1.5rem; border-radius: 12px; margin-bottom: 1.75rem; box-shadow: 0 4px 20px rgba(239, 68, 68, 0.25);">
+            <div style="font-weight: 800; font-size: 1rem; color: #fee2e2; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
+                <span style="font-size: 1.25rem;">⚠️</span>
+                <span>Please correct the following before saving:</span>
+            </div>
+            <ul style="margin: 0; padding-left: 1.5rem; color: #fecaca; font-size: 0.875rem; line-height: 1.7;">
+                @if (!string.IsNullOrEmpty(nameError))
+                {
+                    <li><strong>Product Title:</strong> @nameError <a href="#productNameInput" style="color: #60a5fa; text-decoration: underline; margin-left: 0.5rem;">[Go to Field]</a></li>
+                }
+                @if (!string.IsNullOrEmpty(slugError))
+                {
+                    <li><strong>URL Slug:</strong> @slugError <a href="#productSlugInput" style="color: #60a5fa; text-decoration: underline; margin-left: 0.5rem;">[Go to Field]</a></li>
+                }
+                @if (!string.IsNullOrEmpty(categoryError))
+                {
+                    <li><strong>Category:</strong> @categoryError <a href="#productCategorySelect" style="color: #60a5fa; text-decoration: underline; margin-left: 0.5rem;">[Go to Field]</a></li>
+                }
+                @if (!string.IsNullOrEmpty(descError))
+                {
+                    <li><strong>Description:</strong> @descError <a href="#productDescriptionInput" style="color: #60a5fa; text-decoration: underline; margin-left: 0.5rem;">[Go to Field]</a></li>
+                }
+                @foreach (var key in ViewData.ModelState.Keys)
+                {
+                    if (key != nameof(Model.Name) && key != nameof(Model.Slug) && key != nameof(Model.CategoryId) && key != nameof(Model.Description))
+                    {
+                        foreach (var err in ViewData.ModelState[key]!.Errors)
+                        {
+                            <li><strong>@key:</strong> @err.ErrorMessage</li>
+                        }
+                    }
+                }
+            </ul>
+        </div>
+    }
+
+    <div style="background: #1e293b; border-radius: 14px; border: 1px solid #334155; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <form asp-action="Edit" asp-route-id="@Model.ProductId" method="post" enctype="multipart/form-data" id="sellerProductEditForm" novalidate>
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ProductId" />
+
+            <div style="margin-bottom: 1.5rem;">
+                <label asp-for="Name" style="display:block; font-size: 0.875rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.4rem;">
+                    Product Title / Name <span style="color:#ef4444;">*</span>
+                </label>
+                <input asp-for="Name"
+                       id="productNameInput"
+                       required
+                       style="width: 100%; padding: 0.75rem 1rem; background: #0f172a; border: @(!string.IsNullOrEmpty(nameError) ? "2px solid #ef4444" : "1px solid #334155"); border-radius: 8px; color: #f8fafc; font-size: 1rem; font-weight: 600;" />
+                @if (!string.IsNullOrEmpty(nameError))
+                {
+                    <div style="color: #f87171; font-size: 0.8rem; font-weight: 600; margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                        <span>⚠️</span> <span>@nameError</span>
+                    </div>
+                }
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label asp-for="Slug" style="display:block; font-size: 0.875rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.4rem;">
+                    URL Slug <span style="color:#ef4444;">*</span>
+                </label>
+                <input asp-for="Slug"
+                       id="productSlugInput"
+                       required
+                       style="width: 100%; padding: 0.7rem 1rem; background: #0f172a; border: @(!string.IsNullOrEmpty(slugError) ? "2px solid #ef4444" : "1px solid #334155"); border-radius: 8px; color: #38bdf8; font-size: 0.9rem; font-family: monospace;" />
+                @if (!string.IsNullOrEmpty(slugError))
+                {
+                    <div style="color: #f87171; font-size: 0.8rem; font-weight: 600; margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                        <span>⚠️</span> <span>@slugError</span>
+                    </div>
+                }
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label asp-for="CategoryId" style="display:block; font-size: 0.875rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.4rem;">
+                    Category <span style="color:#ef4444;">*</span>
+                </label>
+                <select asp-for="CategoryId"
+                        id="productCategorySelect"
+                        required
+                        style="width: 100%; padding: 0.75rem 1rem; background: #0f172a; border: @(!string.IsNullOrEmpty(categoryError) ? "2px solid #ef4444" : "1px solid #334155"); border-radius: 8px; color: #f8fafc; font-size: 0.95rem;">
+                    <option value="">-- Choose Category --</option>
+                    @foreach (var c in categoryList)
+                    {
+                        <option value="@c.Id" selected="@(c.Id == Model.CategoryId ? "selected" : null)">@c.Name</option>
+                    }
+                </select>
+                @if (categoryList.Count > 0)
+                {
+                    <small style="color: #94a3b8; font-size: 0.78rem; display: block; margin-top: 0.35rem;">
+                        Showing only categories authorized for your seller store by Super Admin (@categoryList.Count available).
+                    </small>
+                }
+                @if (!string.IsNullOrEmpty(categoryError))
+                {
+                    <div style="color: #f87171; font-size: 0.8rem; font-weight: 600; margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                        <span>⚠️</span> <span>@categoryError</span>
+                    </div>
+                }
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label asp-for="ShortDescription" style="display:block; font-size: 0.875rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.4rem;">
+                    Short Summary (Optional)
+                </label>
+                <input asp-for="ShortDescription"
+                       placeholder="Brief summary..."
+                       style="width: 100%; padding: 0.75rem 1rem; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #f8fafc; font-size: 0.95rem;" />
+            </div>
+
+            <div style="margin-bottom: 1.75rem;">
+                <label asp-for="Description" style="display:block; font-size: 0.875rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.4rem;">
+                    Detailed Product Description &amp; Specs <span style="color:#ef4444;">*</span>
+                </label>
+                <textarea asp-for="Description"
+                          id="productDescriptionInput"
+                          rows="6"
+                          required
+                          style="width: 100%; padding: 0.85rem 1rem; background: #0f172a; border: @(!string.IsNullOrEmpty(descError) ? "2px solid #ef4444" : "1px solid #334155"); border-radius: 8px; color: #f8fafc; font-size: 0.95rem; resize:vertical; line-height: 1.5;"></textarea>
+                @if (!string.IsNullOrEmpty(descError))
+                {
+                    <div style="color: #f87171; font-size: 0.8rem; font-weight: 600; margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                        <span>⚠️</span> <span>@descError</span>
+                    </div>
+                }
+            </div>
+
+            <!-- PRIMARY IMAGE -->
+            <div style="background: #0f172a; border: 1px dashed #38bdf8; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+                <h3 style="font-size: 0.95rem; font-weight: 800; color: #38bdf8; margin: 0 0 0.5rem; display:flex; align-items:center; gap:0.4rem;">
+                    <span>📸</span> Primary Product Image
+                </h3>
+
+                <div style="display:flex; gap: 1.5rem; align-items:center; flex-wrap:wrap;">
+                    @if (!string.IsNullOrWhiteSpace(Model.ExistingImageUrl))
+                    {
+                        <div style="width: 100px; height: 100px; border-radius: 8px; overflow:hidden; border: 1px solid #334155; background: #1e293b;">
+                            <img src="@Model.ExistingImageUrl" alt="Current image" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='/images/products/product-placeholder.webp';" />
+                        </div>
+                    }
+
+                    <div style="flex:1; min-width: 240px;">
+                        <label style="display:block; font-size: 0.8rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.25rem;">
+                            Upload New Image (Replaces current primary image)
+                        </label>
+                        <input asp-for="NewImageFile"
+                               type="file"
+                               accept="image/jpeg,image/png,image/webp"
+                               style="width: 100%; padding: 0.65rem; background: #1e293b; border: 1px solid #334155; border-radius: 8px; color: #cbd5e1; font-size: 0.85rem;" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- BUTTONS -->
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top: 1px solid #334155; padding-top: 1.5rem;">
+                <a asp-action="Index" style="padding: 0.75rem 1.25rem; background: #334155; color: #f1f5f9; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                    Cancel
+                </a>
+
+                <button type="submit" style="padding: 0.75rem 1.75rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border:none; border-radius: 8px; font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+                    @(Model.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.Rejected ? "Save & Resubmit for Approval →" : "Save Changes")
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const editForm = document.getElementById('sellerProductEditForm');
+    const nameInput = document.getElementById('productNameInput');
+    const slugInput = document.getElementById('productSlugInput');
+    const categorySelect = document.getElementById('productCategorySelect');
+    const descInput = document.getElementById('productDescriptionInput');
+
+    if (editForm) {
+        editForm.addEventListener('submit', (e) => {
+            let hasError = false;
+            let firstInvalid = null;
+
+            [nameInput, slugInput, categorySelect, descInput].forEach(el => {
+                if (el) el.style.border = '1px solid #334155';
+            });
+
+            if (!nameInput.value.trim()) {
+                nameInput.style.border = '2px solid #ef4444';
+                hasError = true;
+                if (!firstInvalid) firstInvalid = nameInput;
+            }
+            if (!slugInput.value.trim()) {
+                slugInput.style.border = '2px solid #ef4444';
+                hasError = true;
+                if (!firstInvalid) firstInvalid = slugInput;
+            }
+            if (!categorySelect.value) {
+                categorySelect.style.border = '2px solid #ef4444';
+                hasError = true;
+                if (!firstInvalid) firstInvalid = categorySelect;
+            }
+            if (!descInput.value.trim()) {
+                descInput.style.border = '2px solid #ef4444';
+                hasError = true;
+                if (!firstInvalid) firstInvalid = descInput;
+            }
+
+            if (hasError) {
+                e.preventDefault();
+                if (firstInvalid) {
+                    firstInvalid.focus();
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+    }
+</script>
+}

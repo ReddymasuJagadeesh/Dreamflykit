@@ -1,0 +1,347 @@
+@model Dreamflykit.Web.Areas.Seller.Models.SellerProductCreateViewModel
+@{
+    ViewData["Title"] = "Add Product (Submit to Super Admin)";
+    Layout = "_SellerLayout";
+    var categories = ViewBag.Categories as IEnumerable<Dreamflykit.Domain.Catalog.Category> ?? Enumerable.Empty<Dreamflykit.Domain.Catalog.Category>();
+    var categoryList = categories.ToList();
+
+    var nameError = ViewData.ModelState[nameof(Model.Name)]?.Errors.FirstOrDefault()?.ErrorMessage;
+    var slugError = ViewData.ModelState[nameof(Model.Slug)]?.Errors.FirstOrDefault()?.ErrorMessage;
+    var categoryError = ViewData.ModelState[nameof(Model.CategoryId)]?.Errors.FirstOrDefault()?.ErrorMessage;
+    var descError = ViewData.ModelState[nameof(Model.Description)]?.Errors.FirstOrDefault()?.ErrorMessage;
+}
+
+<div style="max-width: 880px; margin: 0 auto;">
+    <div style="margin-bottom: 1.5rem;">
+        <a asp-action="Index" style="color: #94a3b8; font-size: 0.875rem; text-decoration: none; display:inline-flex; align-items:center; gap:0.4rem; margin-bottom: 0.5rem;">
+            ← Back to All Products
+        </a>
+        <h1 style="font-size: 1.75rem; font-weight: 800; color: #f8fafc; margin: 0;">
+            Add Product to Dreamflykit
+        </h1>
+        <p style="color: #94a3b8; font-size: 0.875rem; margin: 0.35rem 0 0;">
+            Submit your product specifications, authorized category, and photos. Prices are decided and approved by Super Admin.
+        </p>
+    </div>
+
+    <!-- IMPORTANT PRICING POLICY CALLOUT -->
+    <div style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid #10b981; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: flex-start;">
+        <div style="font-size: 1.75rem; line-height: 1;">💡</div>
+        <div>
+            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: #34d399;">
+                Marketplace Pricing Policy: Super Admin Sets Product Price
+            </h4>
+            <p style="margin: 0.35rem 0 0; font-size: 0.85rem; color: #cbd5e1; line-height: 1.5;">
+                As a seller partner, you supply product specifications, descriptions, and high-quality product images. 
+                <strong>You do not provide prices</strong>. As soon as you submit, your product immediately appears in the Super Admin review queue. 
+                Super Admin will evaluate the product, assign official MRP &amp; Selling Price, and approve it to go live across Dreamflykit.
+            </p>
+        </div>
+    </div>
+
+    <!-- CLEAR, HIGH-VISIBILITY VALIDATION ALERT SUMMARY -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div id="formValidationAlert" style="background: rgba(239, 68, 68, 0.15); border: 1.5px solid #ef4444; color: #fca5a5; padding: 1.25rem 1.5rem; border-radius: 12px; margin-bottom: 1.75rem; box-shadow: 0 4px 20px rgba(239, 68, 68, 0.25);">
+            <div style="font-weight: 800; font-size: 1rem; color: #fee2e2; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
+                <span style="font-size: 1.25rem;">⚠️</span>
+                <span>Please correct the following before submitting:</span>
+            </div>
+            <ul style="margin: 0; padding-left: 1.5rem; color: #fecaca; font-size: 0.875rem; line-height: 1.7;">
+                @if (!string.IsNullOrEmpty(nameError))
+                {
+                    <li><strong>Product Title:</strong> @nameError <a href="#productNameInput" style="color: #60a5fa; text-decoration: underline; margin-left: 0.5rem;">[Go to Field]</a></li>
+                }
+                @if (!string.IsNullOrEmpty(slugError))
+                {
+                    <li><strong>URL Slug:</strong> @slugError <a href="#productSlugInput" style="color: #60a5fa; text-decoration: underline; margin-left: 0.5rem;">[Go to Field]</a></li>
+                }
+                @if (!string.IsNullOrEmpty(categoryError))
+                {
+                    <li><strong>Category:</strong> @categoryError <a href="#productCategorySelect" style="color: #60a5fa; text-decoration: underline; margin-left: 0.5rem;">[Go to Field]</a></li>
+                }
+                @if (!string.IsNullOrEmpty(descError))
+                {
+                    <li><strong>Description:</strong> @descError <a href="#productDescriptionInput" style="color: #60a5fa; text-decoration: underline; margin-left: 0.5rem;">[Go to Field]</a></li>
+                }
+                @foreach (var key in ViewData.ModelState.Keys)
+                {
+                    if (key != nameof(Model.Name) && key != nameof(Model.Slug) && key != nameof(Model.CategoryId) && key != nameof(Model.Description))
+                    {
+                        foreach (var err in ViewData.ModelState[key]!.Errors)
+                        {
+                            <li><strong>@key:</strong> @err.ErrorMessage</li>
+                        }
+                    }
+                }
+            </ul>
+        </div>
+    }
+
+    <div style="background: #1e293b; border-radius: 14px; border: 1px solid #334155; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <form asp-action="Create" method="post" enctype="multipart/form-data" id="sellerProductCreateForm" novalidate>
+            @Html.AntiForgeryToken()
+
+            <!-- TITLE & SLUG -->
+            <div style="margin-bottom: 1.5rem;">
+                <label asp-for="Name" style="display:block; font-size: 0.875rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.4rem;">
+                    Product Title / Name <span style="color:#ef4444;">*</span>
+                </label>
+                <input asp-for="Name"
+                       id="productNameInput"
+                       placeholder="e.g. Universal Multi-Plug Travel Adapter 65W PD"
+                       required
+                       style="width: 100%; padding: 0.75rem 1rem; background: #0f172a; border: @(!string.IsNullOrEmpty(nameError) ? "2px solid #ef4444" : "1px solid #334155"); border-radius: 8px; color: #f8fafc; font-size: 1rem; font-weight: 600; outline: none; transition: border 0.2s;" />
+                @if (!string.IsNullOrEmpty(nameError))
+                {
+                    <div style="color: #f87171; font-size: 0.8rem; font-weight: 600; margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                        <span>⚠️</span> <span>@nameError</span>
+                    </div>
+                }
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label asp-for="Slug" style="display:block; font-size: 0.875rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.4rem;">
+                    URL Slug <span style="color:#ef4444;">*</span>
+                </label>
+                <div style="position:relative;">
+                    <input asp-for="Slug"
+                           id="productSlugInput"
+                           placeholder="universal-multi-plug-travel-adapter-65w"
+                           required
+                           style="width: 100%; padding: 0.7rem 1rem; background: #0f172a; border: @(!string.IsNullOrEmpty(slugError) ? "2px solid #ef4444" : "1px solid #334155"); border-radius: 8px; color: #38bdf8; font-size: 0.9rem; font-family: monospace;" />
+                </div>
+                <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;">
+                    Must be unique, lowercase letters and hyphens only (auto-generated from title).
+                </div>
+                @if (!string.IsNullOrEmpty(slugError))
+                {
+                    <div style="color: #f87171; font-size: 0.8rem; font-weight: 600; margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                        <span>⚠️</span> <span>@slugError</span>
+                    </div>
+                }
+            </div>
+
+            <!-- CATEGORY & SUBCATEGORY -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label asp-for="CategoryId" style="display:block; font-size: 0.875rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.4rem;">
+                        Category <span style="color:#ef4444;">*</span>
+                    </label>
+                    <select asp-for="CategoryId"
+                            id="productCategorySelect"
+                            required
+                            style="width: 100%; padding: 0.75rem 1rem; background: #0f172a; border: @(!string.IsNullOrEmpty(categoryError) ? "2px solid #ef4444" : "1px solid #334155"); border-radius: 8px; color: #f8fafc; font-size: 0.95rem;">
+                        <option value="">-- Choose Category --</option>
+                        @foreach (var c in categoryList)
+                        {
+                            <option value="@c.Id">@c.Name</option>
+                        }
+                    </select>
+                    @if (categoryList.Count > 0)
+                    {
+                        <small style="color: #94a3b8; font-size: 0.78rem; display: block; margin-top: 0.35rem;">
+                            Showing only categories authorized for your seller store by Super Admin (@categoryList.Count available).
+                        </small>
+                    }
+                    else
+                    {
+                        <small style="color: #f59e0b; font-size: 0.78rem; display: block; margin-top: 0.35rem;">
+                            ⚠️ No categories have been authorized for your store yet. Please contact Super Admin.
+                        </small>
+                    }
+                    @if (!string.IsNullOrEmpty(categoryError))
+                    {
+                        <div style="color: #f87171; font-size: 0.8rem; font-weight: 600; margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                            <span>⚠️</span> <span>@categoryError</span>
+                        </div>
+                    }
+                </div>
+
+                <div>
+                    <label asp-for="SubcategoryId" style="display:block; font-size: 0.875rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.4rem;">
+                        Subcategory (Optional)
+                    </label>
+                    <input asp-for="SubcategoryId" type="hidden" />
+                    <div style="padding: 0.75rem 1rem; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #94a3b8; font-size: 0.9rem;">
+                        Auto-assigned by administration
+                    </div>
+                </div>
+            </div>
+
+            <!-- SHORT SUMMARY (OPTIONAL) -->
+            <div style="margin-bottom: 1.5rem;">
+                <label asp-for="ShortDescription" style="display:block; font-size: 0.875rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.4rem;">
+                    Short Summary (Optional)
+                </label>
+                <input asp-for="ShortDescription"
+                       id="productShortDescInput"
+                       placeholder="Brief 1-line headline (if left blank, automatically generated from description)..."
+                       style="width: 100%; padding: 0.75rem 1rem; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #f8fafc; font-size: 0.95rem;" />
+                <span asp-validation-for="ShortDescription" style="color:#f87171; font-size: 0.8rem;"></span>
+            </div>
+
+            <!-- FULL DESCRIPTION -->
+            <div style="margin-bottom: 1.75rem;">
+                <label asp-for="Description" style="display:block; font-size: 0.875rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.4rem;">
+                    Detailed Product Description &amp; Specifications <span style="color:#ef4444;">*</span>
+                </label>
+                <textarea asp-for="Description"
+                          id="productDescriptionInput"
+                          rows="6"
+                          required
+                          placeholder="Include all features, technical specifications, material, dimensions, package contents, compatibility, and student travel benefits..."
+                          style="width: 100%; padding: 0.85rem 1rem; background: #0f172a; border: @(!string.IsNullOrEmpty(descError) ? "2px solid #ef4444" : "1px solid #334155"); border-radius: 8px; color: #f8fafc; font-size: 0.95rem; resize:vertical; line-height: 1.5;"></textarea>
+                @if (!string.IsNullOrEmpty(descError))
+                {
+                    <div style="color: #f87171; font-size: 0.8rem; font-weight: 600; margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                        <span>⚠️</span> <span>@descError</span>
+                    </div>
+                }
+            </div>
+
+            <!-- PRODUCT IMAGE UPLOAD -->
+            <div style="background: #0f172a; border: 1px dashed #38bdf8; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+                <h3 style="font-size: 0.95rem; font-weight: 800; color: #38bdf8; margin: 0 0 0.5rem; display:flex; align-items:center; gap:0.4rem;">
+                    <span>📸</span> Primary Product Image
+                </h3>
+                <p style="color: #94a3b8; font-size: 0.8rem; margin: 0 0 1rem;">
+                    Upload high-resolution image (JPG, PNG, or WebP). Additional gallery photos can be uploaded after saving.
+                </p>
+
+                <div style="display:flex; gap: 1.5rem; align-items:center; flex-wrap:wrap;">
+                    <div style="flex:1; min-width: 260px;">
+                        <input asp-for="ImageFile"
+                               type="file"
+                               accept="image/jpeg,image/png,image/webp"
+                               id="productImageInput"
+                               style="width: 100%; padding: 0.65rem; background: #1e293b; border: 1px solid #334155; border-radius: 8px; color: #cbd5e1; font-size: 0.85rem;" />
+                    </div>
+
+                    <div style="width: 100px; height: 100px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; display:flex; align-items:center; justify-content:center; overflow:hidden;" id="imagePreviewContainer">
+                        <span style="color:#64748b; font-size:0.75rem;">Preview</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <label asp-for="AltText" style="display:block; font-size: 0.8rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.25rem;">
+                        Image Alt Text (Accessibility)
+                    </label>
+                    <input asp-for="AltText"
+                           placeholder="Descriptive text for this image..."
+                           style="width: 100%; padding: 0.55rem 0.85rem; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: #f8fafc; font-size: 0.85rem;" />
+                </div>
+            </div>
+
+            <!-- BUTTONS -->
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top: 1px solid #334155; padding-top: 1.5rem; flex-wrap:wrap; gap:1rem;">
+                <div style="font-size: 0.8rem; color: #94a3b8;">
+                    ⏳ Immediate submission to Super Admin review queue
+                </div>
+
+                <div style="display:flex; gap:0.75rem; align-items:center;">
+                    <a asp-action="Index" style="padding: 0.75rem 1.25rem; background: #334155; color: #f1f5f9; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
+                        Cancel
+                    </a>
+                    <button type="submit" id="submitProductBtn" style="padding: 0.75rem 1.75rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border:none; border-radius: 8px; font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+                        Submit Product for Super Admin Approval →
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Auto-generate slug from name if slug not typed manually
+    const nameInput = document.getElementById('productNameInput');
+    const slugInput = document.getElementById('productSlugInput');
+    const categorySelect = document.getElementById('productCategorySelect');
+    const descInput = document.getElementById('productDescriptionInput');
+    const createForm = document.getElementById('sellerProductCreateForm');
+    let userEditedSlug = false;
+
+    if (slugInput) {
+        slugInput.addEventListener('input', () => { userEditedSlug = true; });
+    }
+
+    if (nameInput && slugInput) {
+        nameInput.addEventListener('input', () => {
+            if (!userEditedSlug) {
+                slugInput.value = nameInput.value
+                    .toLowerCase()
+                    .trim()
+                    .replace(/[^\w\s-]/g, '')
+                    .replace(/[\s_-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+            }
+        });
+    }
+
+    // Client-side validation to provide clear, immediate guidance
+    if (createForm) {
+        createForm.addEventListener('submit', (e) => {
+            let hasError = false;
+            let firstInvalidElem = null;
+
+            // Clear previous inline errors
+            [nameInput, slugInput, categorySelect, descInput].forEach(el => {
+                if (el) el.style.border = '1px solid #334155';
+            });
+
+            // Validate Name
+            if (!nameInput.value.trim()) {
+                nameInput.style.border = '2px solid #ef4444';
+                hasError = true;
+                if (!firstInvalidElem) firstInvalidElem = nameInput;
+            }
+
+            // Validate Slug
+            if (!slugInput.value.trim()) {
+                slugInput.style.border = '2px solid #ef4444';
+                hasError = true;
+                if (!firstInvalidElem) firstInvalidElem = slugInput;
+            }
+
+            // Validate Category
+            if (!categorySelect.value) {
+                categorySelect.style.border = '2px solid #ef4444';
+                hasError = true;
+                if (!firstInvalidElem) firstInvalidElem = categorySelect;
+            }
+
+            // Validate Description
+            if (!descInput.value.trim()) {
+                descInput.style.border = '2px solid #ef4444';
+                hasError = true;
+                if (!firstInvalidElem) firstInvalidElem = descInput;
+            }
+
+            if (hasError) {
+                e.preventDefault();
+                if (firstInvalidElem) {
+                    firstInvalidElem.focus();
+                    firstInvalidElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+    }
+
+    // Image preview
+    const imageInput = document.getElementById('productImageInput');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    if (imageInput && previewContainer) {
+        imageInput.addEventListener('change', () => {
+            const file = imageInput.files && imageInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewContainer.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;" />`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+</script>
+}

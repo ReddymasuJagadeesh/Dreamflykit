@@ -7,6 +7,9 @@ using Dreamflykit.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+using Dreamflykit.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
+
 namespace Dreamflykit.Web.Areas.Admin.Controllers;
 
 [Route("Admin/[controller]")]
@@ -15,15 +18,18 @@ public sealed class ProductsController : AdminBaseController
     private readonly DreamflykitDbContext _dbContext;
     private readonly IMediaService _mediaService;
     private readonly IMediaUrlService _urlService;
+    private readonly UserManager<ApplicationUser> _userManager;
 
     public ProductsController(
         DreamflykitDbContext dbContext,
         IMediaService mediaService,
-        IMediaUrlService urlService)
+        IMediaUrlService urlService,
+        UserManager<ApplicationUser> userManager)
     {
         _dbContext = dbContext;
         _mediaService = mediaService;
         _urlService = urlService;
+        _userManager = userManager;
     }
 
     private async Task<Guid?> UploadProductMediaFileAsync(IFormFile? file, Guid productId, string altText, CancellationToken cancellationToken)
@@ -50,13 +56,43 @@ public sealed class ProductsController : AdminBaseController
     public async Task<IActionResult> Index(
         [FromQuery] string? search,
         [FromQuery] Guid? categoryId,
+        [FromQuery] string? status,
+        [FromQuery] Guid? sellerId,
         CancellationToken cancellationToken)
     {
+        var pendingApprovalCount = await _dbContext.Products
+            .CountAsync(p => p.ApprovalStatus == ProductApprovalStatus.PendingApproval, cancellationToken);
+
         var query = _dbContext.Products.AsNoTracking().AsQueryable();
 
         if (categoryId.HasValue)
         {
             query = query.Where(p => p.CategoryId == categoryId.Value);
+        }
+
+        if (sellerId.HasValue)
+        {
+            query = query.Where(p => p.SellerId == sellerId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            if (status.Equals("PendingApproval", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(p => p.ApprovalStatus == ProductApprovalStatus.PendingApproval);
+            }
+            else if (status.Equals("Approved", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(p => p.ApprovalStatus == ProductApprovalStatus.Approved);
+            }
+            else if (status.Equals("Rejected", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(p => p.ApprovalStatus == ProductApprovalStatus.Rejected);
+            }
+            else if (status.Equals("SellerOnly", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(p => p.SellerId != null);
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(search))
@@ -68,7 +104,8 @@ public sealed class ProductsController : AdminBaseController
         var totalCount = await query.CountAsync(cancellationToken);
 
         var rawProducts = await query
-            .OrderBy(p => p.DisplayOrder)
+            .OrderByDescending(p => p.ApprovalStatus == ProductApprovalStatus.PendingApproval)
+            .ThenBy(p => p.DisplayOrder)
             .ThenBy(p => p.Name)
             .Take(100)
             .Select(p => new
@@ -76,6 +113,10 @@ public sealed class ProductsController : AdminBaseController
                 ProductId = p.Id,
                 Name = p.Name,
                 Slug = p.Slug,
+                SellerId = p.SellerId,
+                ApprovalStatus = p.ApprovalStatus,
+                IsPromoted = p.IsPromoted,
+                RejectionReason = p.RejectionReason,
                 CategoryName = _dbContext.Categories
                     .Where(c => c.Id == p.CategoryId)
                     .Select(c => c.Name)
@@ -112,6 +153,17 @@ public sealed class ProductsController : AdminBaseController
             .Where(a => assetIds.Contains(a.Id))
             .ToDictionaryAsync(a => a.Id, a => _urlService.GetThumbnailUrl(a.ObjectKey), cancellationToken);
 
+        // Fetch seller names if any products have sellerId
+        var rawSellerIds = rawProducts.Where(p => p.SellerId.HasValue).Select(p => p.SellerId!.Value).Distinct().ToList();
+        var sellerMap = new Dictionary<Guid, string>();
+        if (rawSellerIds.Count > 0)
+        {
+            sellerMap = await _dbContext.Users
+                .AsNoTracking()
+                .Where(u => rawSellerIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => $"{u.FirstName} {u.LastName}".Trim(), cancellationToken);
+        }
+
         var products = rawProducts.Select(p =>
         {
             string? imageUrl = null;
@@ -127,6 +179,12 @@ public sealed class ProductsController : AdminBaseController
                 }
             }
 
+            string? sellerName = null;
+            if (p.SellerId.HasValue && sellerMap.TryGetValue(p.SellerId.Value, out var sName))
+            {
+                sellerName = sName;
+            }
+
             return new AdminProductListItemViewModel
             {
                 ProductId = p.ProductId,
@@ -137,7 +195,12 @@ public sealed class ProductsController : AdminBaseController
                 Mrp = p.Mrp,
                 ImageUrl = imageUrl,
                 IsActive = p.IsActive,
-                IsFeatured = p.IsFeatured
+                IsFeatured = p.IsFeatured,
+                IsPromoted = p.IsPromoted,
+                ApprovalStatus = p.ApprovalStatus,
+                SellerId = p.SellerId,
+                SellerName = sellerName,
+                RejectionReason = p.RejectionReason
             };
         }).ToList();
 
@@ -146,7 +209,9 @@ public sealed class ProductsController : AdminBaseController
             Products = products,
             SearchTerm = search,
             CategoryId = categoryId,
-            TotalCount = totalCount
+            StatusFilter = status,
+            TotalCount = totalCount,
+            PendingApprovalCount = pendingApprovalCount
         };
 
         return View(model);
@@ -700,5 +765,231 @@ public sealed class ProductsController : AdminBaseController
         TempData["SuccessMessage"] = $"Product '{product.Name}' is {(product.IsFeatured ? "now Featured on Homepage showcase" : "removed from Featured showcase")}.";
 
         return RedirectToAction("Index");
+    }
+
+    [HttpGet("Review/{id:guid}")]
+    public async Task<IActionResult> Review(Guid id, CancellationToken cancellationToken)
+    {
+        var product = await _dbContext.Products
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        var categoryName = await _dbContext.Categories
+            .Where(c => c.Id == product.CategoryId)
+            .Select(c => c.Name)
+            .FirstOrDefaultAsync(cancellationToken) ?? "Uncategorized";
+
+        string? subcategoryName = null;
+        if (product.SubcategoryId.HasValue)
+        {
+            subcategoryName = await _dbContext.Subcategories
+                .Where(s => s.Id == product.SubcategoryId.Value)
+                .Select(s => s.Name)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
+        string? sellerName = null;
+        string? sellerEmail = null;
+        string? sellerPhone = null;
+
+        if (product.SellerId.HasValue)
+        {
+            var sellerUser = await _userManager.FindByIdAsync(product.SellerId.Value.ToString());
+            if (sellerUser != null)
+            {
+                sellerName = $"{sellerUser.FirstName} {sellerUser.LastName}".Trim();
+                sellerEmail = sellerUser.Email;
+                sellerPhone = sellerUser.PhoneNumber;
+            }
+        }
+
+        var existingVariant = await _dbContext.ProductVariants
+            .AsNoTracking()
+            .Where(v => v.ProductId == id)
+            .OrderByDescending(v => v.IsDefault)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        // Fetch product media
+        var mediaList = await _dbContext.ProductMedia
+            .AsNoTracking()
+            .Where(m => m.ProductId == id && m.IsActive)
+            .OrderBy(m => m.IsPrimary ? 0 : 1)
+            .ThenBy(m => m.DisplayOrder)
+            .ToListAsync(cancellationToken);
+
+        var assetIds = mediaList.Where(m => m.MediaAssetId.HasValue).Select(m => m.MediaAssetId!.Value).Distinct().ToList();
+        var assetMap = await _dbContext.MediaAssets
+            .AsNoTracking()
+            .Where(a => assetIds.Contains(a.Id))
+            .ToDictionaryAsync(a => a.Id, a => _urlService.GetCardUrl(a.ObjectKey), cancellationToken);
+
+        string? primaryImageUrl = null;
+        var additionalImages = new List<string>();
+
+        foreach (var m in mediaList)
+        {
+            string url = "";
+            if (m.MediaAssetId.HasValue && assetMap.TryGetValue(m.MediaAssetId.Value, out var cdnUrl))
+            {
+                url = cdnUrl;
+            }
+            else if (!string.IsNullOrWhiteSpace(m.MediaUrl))
+            {
+                url = m.MediaUrl;
+            }
+
+            if (!string.IsNullOrEmpty(url))
+            {
+                if (m.IsPrimary && primaryImageUrl == null)
+                {
+                    primaryImageUrl = url;
+                }
+                else
+                {
+                    additionalImages.Add(url);
+                }
+            }
+        }
+
+        if (primaryImageUrl == null && additionalImages.Count > 0)
+        {
+            primaryImageUrl = additionalImages[0];
+            additionalImages.RemoveAt(0);
+        }
+
+        var suggestedSku = existingVariant?.Sku ?? $"DFK-{DateTime.UtcNow:yyMMdd}-{Random.Shared.Next(1000, 9999)}";
+
+        var model = new AdminReviewProductViewModel
+        {
+            ProductId = product.Id,
+            Name = product.Name,
+            Slug = product.Slug,
+            CategoryName = categoryName,
+            SubcategoryName = subcategoryName,
+            ShortDescription = product.ShortDescription,
+            Description = product.Description,
+            SellerId = product.SellerId,
+            SellerName = sellerName,
+            SellerEmail = sellerEmail,
+            SellerPhone = sellerPhone,
+            ApprovalStatus = product.ApprovalStatus,
+            RejectionReason = product.RejectionReason,
+            ImageUrl = primaryImageUrl,
+            AdditionalImages = additionalImages,
+            CreatedAtUtc = product.CreatedAtUtc,
+            Mrp = existingVariant?.Mrp ?? 0,
+            SellingPrice = existingVariant?.SellingPrice ?? 0,
+            Sku = suggestedSku,
+            IsFeatured = product.IsFeatured
+        };
+
+        return View(model);
+    }
+
+    [HttpPost("ApprovePrice")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ApprovePrice(AdminReviewProductViewModel model, CancellationToken cancellationToken)
+    {
+        if (model.SellingPrice <= 0)
+        {
+            ModelState.AddModelError(nameof(model.SellingPrice), "Selling price must be greater than zero.");
+        }
+
+        if (model.Mrp <= 0)
+        {
+            ModelState.AddModelError(nameof(model.Mrp), "MRP must be greater than zero.");
+        }
+
+        if (model.SellingPrice > model.Mrp)
+        {
+            ModelState.AddModelError(nameof(model.SellingPrice), "Selling price cannot exceed MRP.");
+        }
+
+        var product = await _dbContext.Products
+            .FirstOrDefaultAsync(p => p.Id == model.ProductId, cancellationToken);
+
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            TempData["ErrorMessage"] = "Please check the price inputs: MRP and Selling Price must be positive, and Selling Price cannot exceed MRP.";
+            return RedirectToAction(nameof(Review), new { id = model.ProductId });
+        }
+
+        var sku = !string.IsNullOrWhiteSpace(model.Sku)
+            ? model.Sku.Trim().ToUpperInvariant()
+            : $"DFK-{DateTime.UtcNow:yyMMdd}-{Random.Shared.Next(1000, 9999)}";
+
+        // Check if SKU already exists for another variant
+        var existingVariant = await _dbContext.ProductVariants
+            .FirstOrDefaultAsync(v => v.ProductId == product.Id, cancellationToken);
+
+        if (existingVariant != null)
+        {
+            existingVariant.Update(
+                existingVariant.Name,
+                sku,
+                model.Mrp,
+                model.SellingPrice,
+                existingVariant.IsDefault);
+            existingVariant.Activate();
+        }
+        else
+        {
+            existingVariant = new ProductVariant(
+                product.Id,
+                "Default",
+                sku,
+                model.Mrp,
+                model.SellingPrice,
+                isDefault: true);
+            _dbContext.ProductVariants.Add(existingVariant);
+        }
+
+        if (model.IsFeatured)
+        {
+            product.SetFeatured(true);
+        }
+
+        // Approve and activate product (GO LIVE!)
+        product.Approve(CurrentUserId, DateTimeOffset.UtcNow);
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        TempData["SuccessMessage"] = $"Product '{product.Name}' has been approved with price ₹{model.SellingPrice:N0} (MRP: ₹{model.Mrp:N0}) and is now LIVE on Dreamflykit!";
+        return RedirectToAction(nameof(Index), new { status = "PendingApproval" });
+    }
+
+    [HttpPost("Reject")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Reject([FromForm] Guid productId, [FromForm] string reason, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            TempData["ErrorMessage"] = "Please provide a reason when rejecting a seller submission.";
+            return RedirectToAction(nameof(Review), new { id = productId });
+        }
+
+        var product = await _dbContext.Products
+            .FirstOrDefaultAsync(p => p.Id == productId, cancellationToken);
+
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        product.Reject(reason);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        TempData["WarningMessage"] = $"Product '{product.Name}' was rejected. The seller has been notified with the feedback reason.";
+        return RedirectToAction(nameof(Index));
     }
 }

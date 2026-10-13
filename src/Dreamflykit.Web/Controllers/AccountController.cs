@@ -35,17 +35,37 @@ public sealed class AccountController : Controller
 
     [HttpGet("/Account/Login")]
     [AllowAnonymous]
-    public IActionResult Login(string? returnUrl = null)
+    public async Task<IActionResult> Login(string? returnUrl = null)
     {
         if (User.Identity?.IsAuthenticated == true)
         {
-            return RedirectToLocal(returnUrl);
+            var user = await _userManager.GetUserAsync(User);
+            return await RedirectToLocalAsync(returnUrl, user);
         }
 
         return View(new LoginViewModel { ReturnUrl = returnUrl });
     }
 
+    [HttpGet("/Seller/Login")]
+    [AllowAnonymous]
+    public async Task<IActionResult> SellerLogin(string? returnUrl = null)
+    {
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null && await _userManager.IsInRoleAsync(user, "Seller"))
+            {
+                return Redirect("/Seller/Products");
+            }
+
+            return await RedirectToLocalAsync(returnUrl, user);
+        }
+
+        return View("~/Views/Account/SellerLogin.cshtml", new LoginViewModel { ReturnUrl = returnUrl ?? "/Seller/Products" });
+    }
+
     [HttpPost("/Account/Login")]
+    [HttpPost("/Seller/Login")]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(
@@ -54,6 +74,10 @@ public sealed class AccountController : Controller
     {
         if (!ModelState.IsValid)
         {
+            if (Request.Path.Value?.Contains("/Seller/Login", StringComparison.OrdinalIgnoreCase) == true)
+            {
+                return View("~/Views/Account/SellerLogin.cshtml", model);
+            }
             return View(model);
         }
 
@@ -65,7 +89,8 @@ public sealed class AccountController : Controller
 
         if (result.Succeeded)
         {
-            return RedirectToLocal(model.ReturnUrl);
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            return await RedirectToLocalAsync(model.ReturnUrl, user);
         }
 
         if (result.IsLockedOut)
@@ -74,6 +99,10 @@ public sealed class AccountController : Controller
                 string.Empty,
                 "Your account has been temporarily locked. Please try again in 15 minutes.");
 
+            if (Request.Path.Value?.Contains("/Seller/Login", StringComparison.OrdinalIgnoreCase) == true)
+            {
+                return View("~/Views/Account/SellerLogin.cshtml", model);
+            }
             return View(model);
         }
 
@@ -82,6 +111,10 @@ public sealed class AccountController : Controller
             string.Empty,
             "Invalid email or password.");
 
+        if (Request.Path.Value?.Contains("/Seller/Login", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return View("~/Views/Account/SellerLogin.cshtml", model);
+        }
         return View(model);
     }
 
@@ -148,11 +181,19 @@ public sealed class AccountController : Controller
     // ============================================================
 
     [HttpPost("/Account/Logout")]
-    [Authorize]
-    [ValidateAntiForgeryToken]
+    [HttpPost("/Seller/Logout")]
+    [HttpGet("/Account/Logout")]
+    [HttpGet("/Seller/Logout")]
+    [IgnoreAntiforgeryToken]
     public async Task<IActionResult> Logout()
     {
+        var wasSeller = User.IsInRole("Seller");
         await _signInManager.SignOutAsync();
+
+        if (wasSeller || Request.Path.Value?.Contains("/Seller", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return Redirect("/Seller/Login");
+        }
 
         return RedirectToAction("Index", "Home");
     }
@@ -189,6 +230,31 @@ public sealed class AccountController : Controller
     // ============================================================
     // PRIVATE HELPERS
     // ============================================================
+
+    private async Task<IActionResult> RedirectToLocalAsync(string? returnUrl, ApplicationUser? user)
+    {
+        if (user != null)
+        {
+            if (await _userManager.IsInRoleAsync(user, "SuperAdmin") ||
+                await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                return Redirect("/Admin");
+            }
+
+            if (await _userManager.IsInRoleAsync(user, "Seller"))
+            {
+                return Redirect("/Seller/Products");
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(returnUrl) &&
+            Url.IsLocalUrl(returnUrl))
+        {
+            return Redirect(returnUrl);
+        }
+
+        return RedirectToAction("Index", "Home");
+    }
 
     private IActionResult RedirectToLocal(string? returnUrl)
     {

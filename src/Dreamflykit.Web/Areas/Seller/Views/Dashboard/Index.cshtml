@@ -1,0 +1,226 @@
+@model Dreamflykit.Web.Areas.Seller.Models.SellerDashboardViewModel
+@{
+    ViewData["Title"] = "Seller Dashboard";
+    Layout = "_SellerLayout";
+}
+
+<!-- WELCOME BANNER -->
+<div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155; border-radius: 14px; padding: 1.75rem 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+    <div>
+        <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #10b981; letter-spacing: 0.05em; margin-bottom: 0.35rem;">
+            Dreamflykit Partner Workspace
+        </div>
+        <h1 style="font-size: 1.75rem; font-weight: 800; color: #f8fafc; margin: 0;">
+            Welcome back, @Model.SellerName
+        </h1>
+        <p style="color: #94a3b8; font-size: 0.9rem; margin: 0.35rem 0 0;">
+            Add products with images and descriptions. Super Admin prices and approves them for the live store.
+        </p>
+    </div>
+
+    <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+        <form asp-controller="Products" asp-action="PromoteAll" method="post" style="display:inline;" onsubmit="return confirm('Promote all your products across Dreamflykit storefront?');">
+            @Html.AntiForgeryToken()
+            <button type="submit" style="padding: 0.7rem 1.25rem; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border:none; border-radius: 8px; font-weight: 800; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4); display:flex; align-items:center; gap:0.4rem;">
+                <span>⚡</span>
+                <span>Promote All Products At Once</span>
+            </button>
+        </form>
+
+        <a href="/Seller/Products/Create" style="padding: 0.7rem 1.25rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border-radius: 8px; font-weight: 800; font-size: 0.9rem; text-decoration: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); display:flex; align-items:center; gap:0.4rem;">
+            <span>+</span>
+            <span>Add New Product</span>
+        </a>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #6ee7b7; padding: 0.85rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; display:flex; align-items:center; gap:0.75rem;">
+        <span>✓</span>
+        <span>@TempData["SuccessMessage"]</span>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 0.85rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; display:flex; align-items:center; gap:0.75rem;">
+        <span>⚠️</span>
+        <span>@TempData["ErrorMessage"]</span>
+    </div>
+}
+
+<!-- KPI METRIC CARDS -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+    <!-- Total Products -->
+    <div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.25rem 1.5rem;">
+        <div style="color: #94a3b8; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Total Catalog</div>
+        <div style="font-size: 2rem; font-weight: 800; color: #f8fafc; margin: 0.35rem 0;">@Model.TotalProducts</div>
+        <div style="font-size: 0.75rem; color: #64748b;">Products in your store</div>
+    </div>
+
+    <!-- Pending Pricing & Approval -->
+    <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 1.25rem 1.5rem;">
+        <div style="color: #fbbf24; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">⏳ Pending Pricing</div>
+        <div style="font-size: 2rem; font-weight: 800; color: #fbbf24; margin: 0.35rem 0;">@Model.PendingCount</div>
+        <div style="font-size: 0.75rem; color: #d97706;">Awaiting Super Admin review</div>
+    </div>
+
+    <!-- Live & Approved -->
+    <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 12px; padding: 1.25rem 1.5rem;">
+        <div style="color: #34d399; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">✓ Live &amp; Approved</div>
+        <div style="font-size: 2rem; font-weight: 800; color: #34d399; margin: 0.35rem 0;">@Model.ApprovedCount</div>
+        <div style="font-size: 0.75rem; color: #059669;">Active in customer store</div>
+    </div>
+
+    <!-- Promoted -->
+    <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 12px; padding: 1.25rem 1.5rem;">
+        <div style="color: #f87171; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">⚡ Promoted</div>
+        <div style="font-size: 2rem; font-weight: 800; color: #f87171; margin: 0.35rem 0;">@Model.PromotedCount</div>
+        <div style="font-size: 0.75rem; color: #dc2626;">Featured promotional showcase</div>
+    </div>
+</div>
+
+<!-- HOW IT WORKS INFOGRAPHIC STRIP -->
+<div style="background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 1.5rem; margin-bottom: 2rem;">
+    <h3 style="font-size: 0.95rem; font-weight: 800; color: #f8fafc; margin: 0 0 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+        How Seller Product Approval Works
+    </h3>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+        <div style="background: #0f172a; padding: 1rem; border-radius: 8px; border: 1px solid #334155;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📝 1. Add Product</div>
+            <div style="font-weight: 700; color: #f8fafc; font-size: 0.85rem; margin-bottom: 0.25rem;">No Price Input Needed</div>
+            <div style="color: #94a3b8; font-size: 0.8rem; line-height: 1.4;">Submit your product title, descriptions, category, and quality photos.</div>
+        </div>
+
+        <div style="background: #0f172a; padding: 1rem; border-radius: 8px; border: 1px solid #334155;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚖️ 2. Admin Sets Price</div>
+            <div style="font-weight: 700; color: #f8fafc; font-size: 0.85rem; margin-bottom: 0.25rem;">Super Admin Pricing</div>
+            <div style="color: #94a3b8; font-size: 0.8rem; line-height: 1.4;">Super Admin reviews your item immediately, verifies standards, and assigns official MRP &amp; Selling Price.</div>
+        </div>
+
+        <div style="background: #0f172a; padding: 1rem; border-radius: 8px; border: 1px solid #334155;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🚀 3. Goes Live</div>
+            <div style="font-weight: 700; color: #f8fafc; font-size: 0.85rem; margin-bottom: 0.25rem;">Instant Publishing</div>
+            <div style="color: #94a3b8; font-size: 0.8rem; line-height: 1.4;">Upon Super Admin approval, product immediately goes live for students &amp; travelers.</div>
+        </div>
+
+        <div style="background: #0f172a; padding: 1rem; border-radius: 8px; border: 1px solid #334155;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚡ 4. Promote All</div>
+            <div style="font-weight: 700; color: #f8fafc; font-size: 0.85rem; margin-bottom: 0.25rem;">One-Click Promotion</div>
+            <div style="color: #94a3b8; font-size: 0.8rem; line-height: 1.4;">Promote all your products at once with one click to boost catalog visibility!</div>
+        </div>
+    </div>
+</div>
+
+<!-- RECENT PRODUCTS TABLE -->
+<div style="background: #1e293b; border-radius: 12px; border: 1px solid #334155; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.25);">
+    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: #f8fafc; margin: 0;">
+                Recent Product Submissions
+            </h3>
+        </div>
+        <div>
+            <a href="/Seller/Products" style="color: #38bdf8; font-size: 0.85rem; font-weight: 700; text-decoration: none;">
+                View All Products (@Model.TotalProducts) →
+            </a>
+        </div>
+    </div>
+
+    @if (Model.RecentProducts.Count == 0)
+    {
+        <div style="padding: 3rem; text-align: center; color: #94a3b8;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📦</div>
+            <h4 style="color:#f1f5f9; font-size:1.1rem; margin-bottom:0.4rem;">No products submitted yet</h4>
+            <p style="font-size:0.85rem; margin-bottom:1rem;">Start by adding your first product with photos and description.</p>
+            <a href="/Seller/Products/Create" style="display:inline-block; padding:0.6rem 1.25rem; background:#10b981; color:#fff; border-radius:6px; text-decoration:none; font-weight:700;">
+                + Add First Product
+            </a>
+        </div>
+    }
+    else
+    {
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem;">
+                <thead>
+                    <tr style="background: #0f172a; border-bottom: 1px solid #334155; color: #94a3b8; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;">
+                        <th style="padding: 0.85rem 1.25rem;">Image</th>
+                        <th style="padding: 0.85rem 1rem;">Product Name</th>
+                        <th style="padding: 0.85rem 1rem;">Category</th>
+                        <th style="padding: 0.85rem 1rem;">Official Price</th>
+                        <th style="padding: 0.85rem 1rem;">Approval Status</th>
+                        <th style="padding: 0.85rem 1.25rem; text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.RecentProducts)
+                    {
+                        <tr style="border-bottom: 1px solid #334155;">
+                            <td style="padding: 0.85rem 1.25rem; width: 60px;">
+                                <img src="@p.ImageUrl" alt="@p.Name" style="width: 44px; height: 44px; object-fit: cover; border-radius: 6px; border: 1px solid #334155; background: #0f172a;" onerror="this.src='/images/products/product-placeholder.webp';" />
+                            </td>
+                            <td style="padding: 0.85rem 1rem;">
+                                <div style="font-weight: 700; color: #f8fafc;">
+                                    @p.Name
+                                    @if (p.IsPromoted)
+                                    {
+                                        <span style="font-size: 10px; background: #fef3c7; color: #b45309; padding: 1px 6px; border-radius: 4px; font-weight: 800; margin-left: 4px;">⚡ PROMOTED</span>
+                                    }
+                                </div>
+                                <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">
+                                    Submitted: @p.CreatedAtUtc.ToString("dd MMM yyyy")
+                                </div>
+                            </td>
+                            <td style="padding: 0.85rem 1rem; color: #cbd5e1;">
+                                @p.CategoryName
+                            </td>
+                            <td style="padding: 0.85rem 1rem;">
+                                @if (p.SellingPrice > 0)
+                                {
+                                    <div style="font-weight: 800; color: #34d399;">₹@p.SellingPrice.ToString("N0")</div>
+                                    @if (p.Mrp > p.SellingPrice)
+                                    {
+                                        <div style="font-size: 0.75rem; color: #94a3b8; text-decoration: line-through;">MRP: ₹@p.Mrp.ToString("N0")</div>
+                                    }
+                                }
+                                else
+                                {
+                                    <span style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">
+                                        ⏳ Awaiting Price
+                                    </span>
+                                }
+                            </td>
+                            <td style="padding: 0.85rem 1rem;">
+                                @if (p.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.PendingApproval)
+                                {
+                                    <span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); padding: 3px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                                        ⏳ In Review
+                                    </span>
+                                }
+                                else if (p.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.Approved)
+                                {
+                                    <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 3px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                                        ✓ Live &amp; Approved
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 3px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;" title="@p.RejectionReason">
+                                        ✕ Rejected
+                                    </span>
+                                }
+                            </td>
+                            <td style="padding: 0.85rem 1.25rem; text-align: right;">
+                                <a href="/Seller/Products/Edit/@p.ProductId" style="padding: 0.35rem 0.75rem; background: #334155; color: #38bdf8; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none;">
+                                    Edit Details
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

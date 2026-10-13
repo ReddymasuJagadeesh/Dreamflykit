@@ -1,4 +1,4 @@
-﻿using Dreamflykit.Domain.Common;
+using Dreamflykit.Domain.Common;
 
 namespace Dreamflykit.Domain.Catalog;
 
@@ -80,6 +80,18 @@ public sealed class Product : AuditableEntity
     public bool IsFeatured { get; private set; }
 
     public int DisplayOrder { get; private set; }
+
+    public Guid? SellerId { get; private set; }
+
+    public ProductApprovalStatus ApprovalStatus { get; private set; } = ProductApprovalStatus.Approved;
+
+    public string? RejectionReason { get; private set; }
+
+    public DateTimeOffset? ApprovedAtUtc { get; private set; }
+
+    public Guid? ApprovedBy { get; private set; }
+
+    public bool IsPromoted { get; private set; }
 
     public void SetSubcategory(Guid? subcategoryId)
     {
@@ -172,6 +184,66 @@ public sealed class Product : AuditableEntity
     public void Deactivate()
     {
         IsActive = false;
+
+        MarkUpdated();
+    }
+
+    public void AssignSeller(Guid sellerId)
+    {
+        if (sellerId == Guid.Empty)
+        {
+            throw new DomainException("Seller ID cannot be empty.");
+        }
+
+        SellerId = sellerId;
+        ApprovalStatus = ProductApprovalStatus.PendingApproval;
+        IsActive = false; // Never active until approved by Super Admin
+
+        MarkUpdated();
+    }
+
+    public void Approve(Guid approvedBy, DateTimeOffset approvedAtUtc)
+    {
+        if (approvedBy == Guid.Empty)
+        {
+            throw new DomainException("Approver ID cannot be empty.");
+        }
+
+        ApprovalStatus = ProductApprovalStatus.Approved;
+        ApprovedBy = approvedBy;
+        ApprovedAtUtc = approvedAtUtc;
+        RejectionReason = null;
+        IsActive = true; // Product is now LIVE
+
+        MarkUpdated();
+    }
+
+    public void Reject(string reason)
+    {
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            throw new DomainException("Rejection reason is required.");
+        }
+
+        ApprovalStatus = ProductApprovalStatus.Rejected;
+        RejectionReason = reason.Trim();
+        IsActive = false;
+
+        MarkUpdated();
+    }
+
+    public void ResubmitForApproval()
+    {
+        ApprovalStatus = ProductApprovalStatus.PendingApproval;
+        RejectionReason = null;
+        IsActive = false;
+
+        MarkUpdated();
+    }
+
+    public void SetPromoted(bool isPromoted)
+    {
+        IsPromoted = isPromoted;
 
         MarkUpdated();
     }

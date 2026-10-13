@@ -31,6 +31,8 @@ public sealed class DreamflykitDbContext
 
     public DbSet<Subcategory> Subcategories => Set<Subcategory>();
 
+    public DbSet<SellerCategoryAssignment> SellerCategoryAssignments => Set<SellerCategoryAssignment>();
+
     public DbSet<Product> Products => Set<Product>();
 
     public DbSet<ProductVariant> ProductVariants =>Set<ProductVariant>();
@@ -201,6 +203,36 @@ public sealed class DreamflykitDbContext
         });
 
         // ------------------------------------------------------------
+        // SellerCategoryAssignment
+        // ------------------------------------------------------------
+
+        builder.Entity<SellerCategoryAssignment>(entity =>
+        {
+            entity.ToTable("SellerCategoryAssignments");
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.SellerId)
+                .IsRequired();
+
+            entity.Property(x => x.CategoryId)
+                .IsRequired();
+
+            entity.Property(x => x.AssignedAtUtc)
+                .IsRequired();
+
+            entity.HasIndex(x => new { x.SellerId, x.CategoryId })
+                .IsUnique();
+
+            entity.HasIndex(x => x.SellerId);
+
+            entity.HasOne<Category>()
+                .WithMany()
+                .HasForeignKey(x => x.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ------------------------------------------------------------
         // Product
         // ------------------------------------------------------------
 
@@ -235,6 +267,25 @@ public sealed class DreamflykitDbContext
             entity.Property(x => x.DisplayOrder)
                 .IsRequired();
 
+            entity.Property(x => x.SellerId)
+                .IsRequired(false);
+
+            entity.Property(x => x.ApprovalStatus)
+                .HasConversion<int>()
+                .IsRequired()
+                .HasDefaultValue(ProductApprovalStatus.Approved);
+
+            entity.Property(x => x.RejectionReason)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.ApprovedAtUtc);
+
+            entity.Property(x => x.ApprovedBy);
+
+            entity.Property(x => x.IsPromoted)
+                .IsRequired()
+                .HasDefaultValue(false);
+
             entity.Property(x => x.CreatedAtUtc)
                 .IsRequired();
 
@@ -248,6 +299,12 @@ public sealed class DreamflykitDbContext
             });
 
             entity.HasIndex(x => x.SubcategoryId);
+
+            entity.HasIndex(x => x.SellerId);
+
+            entity.HasIndex(x => x.ApprovalStatus);
+
+            entity.HasIndex(x => x.IsPromoted);
 
             entity.HasOne<Category>()
                 .WithMany()

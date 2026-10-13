@@ -12,7 +12,11 @@
 <article class="dk-product-card" data-variant-id="@Model.DefaultVariantId">
     <!-- Card Header / Badges -->
     <div class="dk-card-top">
-        @if (Model.IsFeatured)
+        @if (Model.IsPromoted)
+        {
+            <span class="dk-tag" style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; font-weight: 800; letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35);">⚡ PROMOTED</span>
+        }
+        else if (Model.IsFeatured)
         {
             <span class="dk-tag dk-tag-featured">TRENDING</span>
         }

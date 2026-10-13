@@ -1,0 +1,112 @@
+@model Dreamflykit.Web.Areas.Seller.Models.SellerProductMediaViewModel
+@{
+    ViewData["Title"] = $"Gallery Photos — {Model.ProductName}";
+    Layout = "_SellerLayout";
+}
+
+<div style="max-width: 900px; margin: 0 auto;">
+    <div style="margin-bottom: 1.5rem;">
+        <a asp-action="Index" style="color: #94a3b8; font-size: 0.875rem; text-decoration: none; display:inline-flex; align-items:center; gap:0.4rem; margin-bottom: 0.5rem;">
+            ← Back to All Products
+        </a>
+        <h1 style="font-size: 1.75rem; font-weight: 800; color: #f8fafc; margin: 0;">
+            Photo Gallery: @Model.ProductName
+        </h1>
+        <p style="color: #94a3b8; font-size: 0.875rem; margin: 0.35rem 0 0;">
+            Add multiple high-resolution photos showcasing different angles, specifications, packaging, and details.
+        </p>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #6ee7b7; padding: 0.85rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem;">
+            ✓ @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 0.85rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem;">
+            ⚠️ @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- UPLOAD NEW PHOTO CARD -->
+    <div style="background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <h3 style="font-size: 1rem; font-weight: 700; color: #f8fafc; margin: 0 0 1rem; display:flex; align-items:center; gap:0.5rem;">
+            <span>📤</span> Upload Additional Gallery Photo
+        </h3>
+
+        <form asp-action="UploadMedia" asp-route-id="@Model.ProductId" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display:block; font-size: 0.8rem; font-weight: 600; color: #cbd5e1; margin-bottom: 0.35rem;">
+                        Select Image File (JPG, PNG, WebP)
+                    </label>
+                    <input type="file"
+                           name="file"
+                           accept="image/jpeg,image/png,image/webp"
+                           required
+                           style="width: 100%; padding: 0.6rem; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #cbd5e1; font-size: 0.85rem;" />
+                </div>
+
+                <div>
+                    <label style="display:block; font-size: 0.8rem; font-weight: 600; color: #cbd5e1; margin-bottom: 0.35rem;">
+                        Alt Text (Optional description)
+                    </label>
+                    <input type="text"
+                           name="altText"
+                           placeholder="e.g. Side view with ports and dimensions"
+                           style="width: 100%; padding: 0.65rem 0.85rem; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #f8fafc; font-size: 0.85rem;" />
+                </div>
+            </div>
+
+            <button type="submit" style="padding: 0.65rem 1.35rem; background: #3b82f6; color: #fff; border:none; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer;">
+                Upload &amp; Attach Photo
+            </button>
+        </form>
+    </div>
+
+    <!-- CURRENT PHOTOS GRID -->
+    <div style="background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 1.5rem;">
+        <h3 style="font-size: 1rem; font-weight: 700; color: #f8fafc; margin: 0 0 1rem;">
+            Current Product Gallery Photos (@Model.MediaItems.Count)
+        </h3>
+
+        @if (Model.MediaItems.Count == 0)
+        {
+            <div style="padding: 2.5rem; text-align: center; color: #94a3b8;">
+                <p>No photos attached to this product yet. Upload photos above.</p>
+            </div>
+        }
+        else
+        {
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.25rem;">
+                @foreach (var item in Model.MediaItems)
+                {
+                    <div style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; overflow: hidden; position: relative;">
+                        <div style="height: 150px; overflow: hidden; background: #0b1329;">
+                            <img src="@item.Url" alt="@item.AltText" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/products/product-placeholder.webp';" />
+                        </div>
+                        <div style="padding: 0.65rem 0.85rem;">
+                            @if (item.IsPrimary)
+                            {
+                                <span style="background: #38bdf8; color: #0f172a; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 4px;">
+                                    PRIMARY
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="color: #94a3b8; font-size: 0.75rem;">
+                                    Gallery Photo
+                                </span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

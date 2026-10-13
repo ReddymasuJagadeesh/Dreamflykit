@@ -54,11 +54,19 @@
                     Catalog Management
                 </div>
 
-                <a href="/Admin/Products" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" && ViewContext.RouteData.Values["action"]?.ToString() != "Create" ? "active" : "")">
+                <a href="/Admin/Products" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" && ViewContext.RouteData.Values["action"]?.ToString() != "Create" && string.IsNullOrEmpty(ViewContext.HttpContext.Request.Query["status"]) ? "active" : "")">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                     </svg>
                     <span>All Products</span>
+                </a>
+
+                <a href="/Admin/Products?status=PendingApproval" class="dk-admin-nav-item @(ViewContext.HttpContext.Request.Query["status"] == "PendingApproval" ? "active" : "")" style="color: #fbbf24;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>Seller Submissions (Needs Price)</span>
                 </a>
 
                 <a href="/Admin/Products/Create" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" && ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active" : "")" style="padding-left: 28px; font-size: 12px; color: #38bdf8;">
@@ -135,6 +143,14 @@
                     <div style="padding: 0.75rem 1rem 0.25rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.05em;">
                         Administration
                     </div>
+
+                    <a href="/Admin/Sellers" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Sellers" ? "active" : "")" style="color: #6ee7b7;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        <span>Seller Accounts (Stores)</span>
+                    </a>
 
                     <a href="/Admin/Users" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "active" : "")">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

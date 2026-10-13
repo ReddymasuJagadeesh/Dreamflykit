@@ -220,6 +220,17 @@ namespace Dreamflykit.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("ApprovalStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTimeOffset?>("ApprovedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ApprovedBy")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
@@ -240,10 +251,22 @@ namespace Dreamflykit.Infrastructure.Migrations
                     b.Property<bool>("IsFeatured")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsPromoted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid?>("SellerId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ShortDescription")
                         .IsRequired()
@@ -262,6 +285,12 @@ namespace Dreamflykit.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApprovalStatus");
+
+                    b.HasIndex("IsPromoted");
+
+                    b.HasIndex("SellerId");
 
                     b.HasIndex("Slug")
                         .IsUnique();
@@ -438,6 +467,33 @@ namespace Dreamflykit.Infrastructure.Migrations
                     b.HasIndex("ProductId", "IsActive");
 
                     b.ToTable("ProductVariants", "public");
+                });
+
+            modelBuilder.Entity("Dreamflykit.Domain.Catalog.SellerCategoryAssignment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AssignedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SellerId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("SellerId");
+
+                    b.HasIndex("SellerId", "CategoryId")
+                        .IsUnique();
+
+                    b.ToTable("SellerCategoryAssignments", "public");
                 });
 
             modelBuilder.Entity("Dreamflykit.Domain.Catalog.Subcategory", b =>
@@ -1694,6 +1750,15 @@ namespace Dreamflykit.Infrastructure.Migrations
                     b.HasOne("Dreamflykit.Domain.Catalog.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Dreamflykit.Domain.Catalog.SellerCategoryAssignment", b =>
+                {
+                    b.HasOne("Dreamflykit.Domain.Catalog.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -32,6 +32,12 @@ public sealed class ProductDetails
     public bool IsActive { get; init; }
 
     public bool IsFeatured { get; init; }
+
+    public bool IsPromoted { get; init; }
+
+    public Dreamflykit.Domain.Catalog.ProductApprovalStatus ApprovalStatus { get; init; } = Dreamflykit.Domain.Catalog.ProductApprovalStatus.Approved;
+
+    public Guid? SellerId { get; init; }
 }
 
 public sealed class ProductVariantItem

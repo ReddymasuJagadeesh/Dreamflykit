@@ -4,6 +4,30 @@
     ViewData["Title"] = "Admin Overview Dashboard";
 }
 
+@if (Model.PendingSellerApprovals > 0)
+{
+    <div style="background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #f59e0b; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);">
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: #fef3c7; border: 2px solid #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                ⏳
+            </div>
+            <div>
+                <h4 style="margin: 0; font-size: 16px; font-weight: 800; color: #92400e;">
+                    @Model.PendingSellerApprovals Product@(Model.PendingSellerApprovals == 1 ? "" : "s") Awaiting Super Admin Pricing &amp; Approval
+                </h4>
+                <p style="margin: 3px 0 0; font-size: 13px; color: #78350f;">
+                    Seller partners have submitted product photos and details without price. Review them now to set official MRP &amp; Selling Price and publish live.
+                </p>
+            </div>
+        </div>
+        <div>
+            <a href="/Admin/Products?status=PendingApproval" class="dk-btn" style="background: #059669; color: #fff; padding: 8px 18px; font-weight: 800; font-size: 13px; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 8px rgba(5, 150, 105, 0.35);">
+                Review &amp; Set Price Now →
+            </a>
+        </div>
+    </div>
+}
+
 <!-- KPI Metric Cards -->
 <div class="dk-kpi-grid">
     <div class="dk-kpi-card">

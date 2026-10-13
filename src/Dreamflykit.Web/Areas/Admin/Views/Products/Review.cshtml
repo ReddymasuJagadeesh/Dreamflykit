@@ -1,0 +1,275 @@
+@model Dreamflykit.Web.Areas.Admin.Models.AdminReviewProductViewModel
+@{
+    ViewData["Title"] = $"Review & Price — {Model.Name}";
+    Layout = "_AdminLayout";
+}
+
+<div style="max-width: 1100px; margin: 0 auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+            <a asp-action="Index" style="color: #94a3b8; font-size: 0.875rem; text-decoration: none; display:inline-flex; align-items:center; gap:0.4rem; margin-bottom: 0.5rem;">
+                ← Back to Products List
+            </a>
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: #f8fafc; margin: 0; display:flex; align-items:center; gap:0.6rem;">
+                <span>⚖️</span> Review &amp; Set Price: @Model.Name
+            </h1>
+            <p style="color: #94a3b8; font-size: 0.875rem; margin: 0.35rem 0 0;">
+                Sellers submit product specifications and photos without price. Super Admin sets the official MRP &amp; Selling Price to approve and publish live.
+            </p>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+            @if (Model.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.PendingApproval)
+            {
+                <span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); padding: 0.4rem 0.85rem; border-radius: 9999px; font-weight: 700; font-size: 0.85rem; display:inline-flex; align-items:center; gap:0.4rem;">
+                    <span>⏳</span> Awaiting Price &amp; Approval
+                </span>
+            }
+            else if (Model.ApprovalStatus == Dreamflykit.Domain.Catalog.ProductApprovalStatus.Approved)
+            {
+                <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.5); padding: 0.4rem 0.85rem; border-radius: 9999px; font-weight: 700; font-size: 0.85rem;">
+                    ✓ Approved &amp; Live
+                </span>
+            }
+            else
+            {
+                <span style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.5); padding: 0.4rem 0.85rem; border-radius: 9999px; font-weight: 700; font-size: 0.85rem;">
+                    ✕ Rejected
+                </span>
+            }
+        </div>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 0.85rem 1.25rem; border-radius: 8px; margin-bottom: 1.25rem;">
+            ⚠️ @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- SELLER INFORMATION BANNER -->
+    @if (Model.SellerId.HasValue)
+    {
+        <div style="background: #1e293b; border-left: 4px solid #38bdf8; border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div>
+                <div style="font-size: 0.75rem; text-transform: uppercase; color: #38bdf8; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                    Seller Information
+                </div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: #f8fafc;">
+                    @(Model.SellerName ?? "Partner Seller")
+                </div>
+                <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.2rem;">
+                    Email: <span style="color:#cbd5e1;">@(Model.SellerEmail ?? "N/A")</span> &nbsp;•&nbsp; 
+                    Phone: <span style="color:#cbd5e1;">@(Model.SellerPhone ?? "N/A")</span> &nbsp;•&nbsp;
+                    Submitted: <span style="color:#cbd5e1;">@Model.CreatedAtUtc.ToString("dd MMM yyyy, HH:mm") UTC</span>
+                </div>
+            </div>
+
+            <div>
+                <a asp-action="Index" asp-route-sellerId="@Model.SellerId" style="padding: 0.45rem 0.9rem; background: #334155; color: #38bdf8; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none;">
+                    View All Products by this Seller →
+                </a>
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.RejectionReason))
+    {
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+            <div style="color: #f87171; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.25rem;">
+                Previous Rejection Feedback:
+            </div>
+            <div style="color: #cbd5e1; font-size: 0.9rem;">
+                @Model.RejectionReason
+            </div>
+        </div>
+    }
+
+    <!-- TWO-COLUMN LAYOUT -->
+    <div style="display:grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start;">
+        
+        <!-- LEFT: PRODUCT DETAILS & IMAGES -->
+        <div style="display:flex; flex-direction:column; gap: 1.5rem;">
+            
+            <!-- IMAGES GALLERY -->
+            <div style="background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 1.5rem;">
+                <h3 style="font-size: 1rem; font-weight: 700; color: #f8fafc; margin: 0 0 1rem;">
+                    Product Images Submitted by Seller
+                </h3>
+
+                <div style="display:flex; gap: 1rem; flex-wrap:wrap; align-items:flex-start;">
+                    @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                    {
+                        <div style="position:relative; width: 220px; height: 220px; border-radius: 8px; overflow:hidden; border: 2px solid #38bdf8; background:#0f172a;">
+                            <img src="@Model.ImageUrl" alt="@Model.Name" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='/images/products/product-placeholder.webp';" />
+                            <span style="position:absolute; bottom:6px; left:6px; background:rgba(15,23,42,0.9); color:#38bdf8; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:4px;">
+                                Primary Image
+                            </span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="width: 220px; height: 220px; border-radius: 8px; border: 2px dashed #475569; display:flex; align-items:center; justify-content:center; color:#64748b; font-size:0.85rem;">
+                            No Primary Image
+                        </div>
+                    }
+
+                    @foreach (var extraImg in Model.AdditionalImages)
+                    {
+                        <div style="width: 100px; height: 100px; border-radius: 8px; overflow:hidden; border: 1px solid #334155; background:#0f172a;">
+                            <img src="@extraImg" alt="Gallery photo" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='/images/products/product-placeholder.webp';" />
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- PRODUCT INFORMATION -->
+            <div style="background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 1.5rem;">
+                <h3 style="font-size: 1rem; font-weight: 700; color: #f8fafc; margin: 0 0 1rem;">
+                    Product Information &amp; Description
+                </h3>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Product Title</div>
+                    <div style="font-size: 1.2rem; font-weight: 700; color: #f8fafc; margin-top: 0.2rem;">@Model.Name</div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Category</div>
+                        <div style="font-weight: 600; color: #38bdf8; margin-top: 0.2rem;">@Model.CategoryName</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Subcategory</div>
+                        <div style="font-weight: 600; color: #cbd5e1; margin-top: 0.2rem;">@(Model.SubcategoryName ?? "None")</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Slug</div>
+                    <div style="font-family: monospace; color: #94a3b8; font-size: 0.85rem; margin-top: 0.2rem;">/products/@Model.Slug</div>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Short Summary</div>
+                    <div style="color: #e2e8f0; font-size: 0.95rem; margin-top: 0.2rem; line-height: 1.5;">@Model.ShortDescription</div>
+                </div>
+
+                <div>
+                    <div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Full Description</div>
+                    <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.4rem; line-height: 1.6; white-space: pre-line; background: #0f172a; padding: 1rem; border-radius: 8px; border: 1px solid #334155;">
+                        @Model.Description
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: PRICING & SUPER ADMIN DECISION -->
+        <div style="display:flex; flex-direction:column; gap: 1.5rem;">
+            
+            <!-- PRICING & APPROVAL CARD -->
+            <div style="background: #1e293b; border-radius: 12px; border: 2px solid #10b981; padding: 1.5rem; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);">
+                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom: 1rem;">
+                    <span style="font-size: 1.25rem;">💰</span>
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: #f8fafc; margin: 0;">
+                        Set Official Price &amp; Publish
+                    </h3>
+                </div>
+
+                <p style="color: #94a3b8; font-size: 0.8rem; margin: 0 0 1.25rem; line-height: 1.4;">
+                    Assign the Maximum Retail Price (MRP) and the active Selling Price. Once approved, the product immediately goes LIVE in the store.
+                </p>
+
+                <form asp-action="ApprovePrice" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="ProductId" value="@Model.ProductId" />
+
+                    <div style="margin-bottom: 1rem;">
+                        <label asp-for="Mrp" style="display:block; font-size: 0.8rem; font-weight: 700; text-transform:uppercase; color: #94a3b8; margin-bottom: 0.35rem;">
+                            MRP (Original Price ₹) <span style="color:#ef4444;">*</span>
+                        </label>
+                        <div style="position:relative;">
+                            <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#94a3b8; font-weight:700;">₹</span>
+                            <input asp-for="Mrp"
+                                   type="number"
+                                   step="1"
+                                   placeholder="e.g. 1999"
+                                   style="width: 100%; padding: 0.7rem 1rem 0.7rem 2rem; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #f8fafc; font-size: 1rem; font-weight: 700;" />
+                        </div>
+                        <span asp-validation-for="Mrp" style="color:#f87171; font-size: 0.8rem;"></span>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label asp-for="SellingPrice" style="display:block; font-size: 0.8rem; font-weight: 700; text-transform:uppercase; color: #10b981; margin-bottom: 0.35rem;">
+                            Selling Price (Store Offer ₹) <span style="color:#ef4444;">*</span>
+                        </label>
+                        <div style="position:relative;">
+                            <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#10b981; font-weight:700;">₹</span>
+                            <input asp-for="SellingPrice"
+                                   type="number"
+                                   step="1"
+                                   placeholder="e.g. 1299"
+                                   style="width: 100%; padding: 0.7rem 1rem 0.7rem 2rem; background: #0f172a; border: 1px solid #10b981; border-radius: 8px; color: #34d399; font-size: 1.15rem; font-weight: 800;" />
+                        </div>
+                        <span asp-validation-for="SellingPrice" style="color:#f87171; font-size: 0.8rem;"></span>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label asp-for="Sku" style="display:block; font-size: 0.8rem; font-weight: 600; color: #94a3b8; margin-bottom: 0.35rem;">
+                            SKU Code
+                        </label>
+                        <input asp-for="Sku"
+                               style="width: 100%; padding: 0.65rem 1rem; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #f8fafc; font-size: 0.9rem; font-family: monospace;" />
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input asp-for="IsFeatured" type="checkbox" style="width: 16px; height: 16px; accent-color: #f59e0b;" />
+                            <span style="font-size: 0.85rem; color: #f1f5f9; font-weight: 500;">
+                                Feature in Trending / Homepage Showcase
+                            </span>
+                        </label>
+                    </div>
+
+                    <button type="submit" style="width: 100%; padding: 0.85rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border:none; border-radius: 8px; font-weight: 800; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+                        <span>✓</span>
+                        <span>Approve &amp; Publish Live</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- REJECTION CARD -->
+            <div style="background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 1.5rem;">
+                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom: 0.75rem;">
+                    <span style="font-size: 1.1rem;">❌</span>
+                    <h3 style="font-size: 0.95rem; font-weight: 700; color: #f87171; margin: 0;">
+                        Reject Submission / Request Revisions
+                    </h3>
+                </div>
+
+                <p style="color: #94a3b8; font-size: 0.8rem; margin: 0 0 1rem; line-height: 1.4;">
+                    If images or descriptions don't meet guidelines, reject with comments so the seller can revise and resubmit.
+                </p>
+
+                <form asp-action="Reject" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@Model.ProductId" />
+
+                    <div style="margin-bottom: 1rem;">
+                        <textarea name="reason"
+                                  rows="3"
+                                  placeholder="Provide feedback for the seller (e.g. Please provide high-resolution white background images or refine description)..."
+                                  style="width: 100%; padding: 0.65rem 0.85rem; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #f8fafc; font-size: 0.85rem; resize:vertical;"></textarea>
+                    </div>
+
+                    <button type="submit" style="width: 100%; padding: 0.65rem; background: #dc2626; color: #fff; border:none; border-radius: 8px; font-weight: 700; font-size: 0.875rem; cursor: pointer;">
+                        Reject Product
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>
