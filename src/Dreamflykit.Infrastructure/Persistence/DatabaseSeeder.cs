@@ -419,22 +419,22 @@ public static class DatabaseSeeder
             var adminUser = await userManager.FindByEmailAsync("superadmin@dreamflykit.com");
             var adminId = adminUser?.Id ?? Guid.NewGuid();
 
-            if (!await context.HomepageSections.AnyAsync(s => s.SectionKey == HomepageSectionKey.HeaderAdSlot1, cancellationToken))
+            // Purge old 2-slot ads completely from database
+            var oldAds = await context.HomepageSections
+                .Where(s => s.SectionKey == HomepageSectionKey.HeaderAdSlot1 || s.SectionKey == HomepageSectionKey.HeaderAdSlot2)
+                .ToListAsync(cancellationToken);
+            if (oldAds.Count > 0)
             {
-                var ad1 = new HomepageSection(HomepageSectionKey.HeaderAdSlot1, "Flight & Study Abroad Special", 8, adminId);
-                ad1.Update("Flight & Study Abroad Special", "Flat 25% Off Complete Travel Kits", "/Kits/FindMyKit", 8, null, null, null, adminId);
-                ad1.Activate();
-                ad1.Publish(adminId);
-                context.HomepageSections.Add(ad1);
+                context.HomepageSections.RemoveRange(oldAds);
             }
 
-            if (!await context.HomepageSections.AnyAsync(s => s.SectionKey == HomepageSectionKey.HeaderAdSlot2, cancellationToken))
+            if (!await context.HomepageSections.AnyAsync(s => s.SectionKey == HomepageSectionKey.HeaderAdSpace, cancellationToken))
             {
-                var ad2 = new HomepageSection(HomepageSectionKey.HeaderAdSlot2, "International SIM & Adapters", 9, adminId);
-                ad2.Update("International SIM & Adapters", "Pre-activated 5G data & global plugs", "/category/adapters-sim", 9, null, null, null, adminId);
-                ad2.Activate();
-                ad2.Publish(adminId);
-                context.HomepageSections.Add(ad2);
+                var adSpace = new HomepageSection(HomepageSectionKey.HeaderAdSpace, "Dreamflykit Special Offers", 8, adminId);
+                adSpace.Update("Dreamflykit Special Offers", "{\"sub\":\"Exclusive student travel deals & partner perks\",\"badge\":\"SPECIAL OFFER\",\"mode\":\"Hybrid\",\"blank\":false}", "/SpecialOffer", 8, null, null, null, adminId);
+                adSpace.Activate();
+                adSpace.Publish(adminId);
+                context.HomepageSections.Add(adSpace);
             }
 
             await context.SaveChangesAsync(cancellationToken);
