@@ -229,11 +229,11 @@ img {
     min-width: 0;
 }
 
-/* ROW 1: LOGO + 2 ADS BESIDE LOGO */
+/* ROW 1: LOGO + AD IMMEDIATELY BESIDE LOGO */
 .dk-header-top-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 20px;
     width: 100%;
 }
@@ -318,87 +318,97 @@ img {
    HEADER ADS BESIDE LOGO
 ============================================================ */
 
-.dk-header-ads-strip {
+/* ============================================================
+   HEADER AD SPACE BESIDE LOGO
+============================================================ */
+
+.dk-header-ad-space-container {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-left: auto;
-    flex-wrap: wrap;
+    gap: 12px;
+    margin-left: 0;
+    flex-wrap: nowrap;
+    position: relative;
 }
 
-.dk-header-ad-banner {
-    display: block;
-    width: 330px;
-    height: 52px;
-    border-radius: 9px;
-    overflow: hidden;
+.dk-header-ad-space-banner {
+    display: inline-flex;
+    align-items: center;
+    min-height: 52px;
+    max-height: 56px;
+    width: auto;
+    min-width: 340px;
+    max-width: 540px;
+    padding: 6px 14px;
+    gap: 12px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f0f7ff 0%, #e0effe 100%);
+    border: 1.5px solid #075bc8;
     text-decoration: none;
-    border: 1px solid #dce4f0;
-    background: #ffffff;
-    box-shadow: 0 2px 8px rgba(7, 91, 200, 0.05);
+    box-shadow: 0 2px 10px rgba(7, 91, 200, 0.08);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    box-sizing: border-box;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+    .dk-header-ad-space-banner:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(7, 91, 200, 0.16);
+        border-color: #2563eb;
+    }
+
+.dk-ad-space-media {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #bfdbfe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
     flex-shrink: 0;
 }
 
-    .dk-header-ad-banner:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(7, 91, 200, 0.12);
-        border-color: #93c5fd;
-    }
-
-.dk-header-ad-img {
+.dk-ad-space-img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    padding: 2px;
     display: block;
 }
 
-.dk-header-ad-content {
-    width: 100%;
-    height: 100%;
+.dk-ad-space-media-fallback {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: #dbeafe;
     display: flex;
     align-items: center;
-    padding: 6px 12px;
-    gap: 10px;
-    box-sizing: border-box;
-}
-
-.ad-slot-blue {
-    background: linear-gradient(135deg, #f0f7ff 0%, #e0effe 100%);
-    border-left: 4px solid #075bc8;
-}
-
-.ad-slot-orange {
-    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
-    border-left: 4px solid #ff7900;
-}
-
-.dk-ad-icon-badge {
+    justify-content: center;
     font-size: 20px;
     flex-shrink: 0;
 }
 
-.dk-ad-text-block {
+.dk-ad-space-content {
     flex: 1;
     min-width: 0;
-    line-height: 1.22;
+    line-height: 1.25;
 }
 
-.dk-ad-tag {
+.dk-ad-badge-tag {
     font-size: 9px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     color: #075bc8;
     display: block;
+    margin-bottom: 1px;
 }
 
-.dk-ad-tag-orange {
-    color: #ea580c;
-}
-
-.dk-ad-headline {
-    font-size: 12.5px;
+.dk-ad-space-title {
+    font-size: 13px;
     font-weight: 700;
     color: #0f172a;
     white-space: nowrap;
@@ -407,21 +417,77 @@ img {
     display: block;
 }
 
-.dk-ad-subtext {
-    font-size: 10.5px;
-    color: #64748b;
+.dk-ad-space-sub {
+    font-size: 11px;
+    color: #475569;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
 }
 
-.dk-ad-arrow-icon {
-    color: #94a3b8;
+.dk-ad-space-arrow {
+    color: #075bc8;
     font-size: 14px;
     font-weight: 800;
     margin-left: auto;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
 }
+
+.dk-header-ad-space-banner:hover .dk-ad-space-arrow {
+    transform: translate(2px, -2px);
+}
+
+.dk-header-ad-space-banner.mode-imageonly {
+    padding: 4px;
+    min-width: 220px;
+    max-width: 440px;
+}
+
+    .dk-header-ad-space-banner.mode-imageonly .dk-ad-space-media {
+        width: 100%;
+        height: 44px;
+        border: none;
+        background: transparent;
+    }
+
+    .dk-header-ad-space-banner.mode-imageonly .dk-ad-space-img {
+        object-fit: cover;
+        padding: 0;
+        border-radius: 6px;
+    }
+
+.dk-header-ad-space-banner.mode-textonly {
+    min-width: 280px;
+    max-width: 480px;
+    border-left: 4px solid #075bc8;
+}
+
+.dk-header-ad-space-empty-admin {
+    display: flex;
+    align-items: center;
+}
+
+.dk-admin-ad-empty-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1.5px dashed #93c5fd;
+    border-radius: 8px;
+    background: #f0f7ff;
+    color: #1e40af;
+    font-size: 12px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+    .dk-admin-ad-empty-link:hover {
+        background: #dbeafe;
+        border-color: #2563eb;
+        color: #1e3a8a;
+    }
 
 /* ============================================================
    BRAND
@@ -8268,7 +8334,7 @@ img {
     .dk-header-top-row {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-start;
         gap: 16px;
         width: 100%;
     }
@@ -8284,19 +8350,23 @@ img {
         height: 52px;
     }
 
-    .dk-header-ads-strip {
+    .dk-header-ads-strip,
+    .dk-header-ad-space-container {
         display: flex;
         align-items: center;
         gap: 8px;
-        margin-left: auto;
+        margin-left: 0;
         flex-wrap: nowrap;
     }
 
-    .dk-header-ad-banner {
-        width: 235px;
-        max-width: 245px;
+    .dk-header-ad-banner,
+    .dk-header-ad-space-banner {
+        min-width: 240px;
+        max-width: 380px;
         height: 48px;
+        min-height: 48px;
         flex-shrink: 0;
+        padding: 4px 10px;
     }
 
     .dk-header-bottom-row {

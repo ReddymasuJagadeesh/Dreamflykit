@@ -2,9 +2,7 @@
 @inject Dreamflykit.Application.Media.Interfaces.IHeaderAdService HeaderAdService
 @{
     var navCategories = await CategoryNavService.GetActiveCategoriesAsync(Context.RequestAborted);
-    var headerAds = await HeaderAdService.GetActiveHeaderAdsAsync(Context.RequestAborted);
-    var adSlot1 = headerAds.FirstOrDefault(a => a.SlotNumber == 1);
-    var adSlot2 = headerAds.FirstOrDefault(a => a.SlotNumber == 2);
+    var headerAd = await HeaderAdService.GetActiveHeaderAdSpaceAsync(Context.RequestAborted);
 
     var routeCategory = ViewContext.RouteData.Values["category"]?.ToString();
     var queryCategory = Context.Request.Query["category"].ToString();
@@ -138,77 +136,66 @@
                          class="dk-brand-image" />
                 </a>
 
-                <!-- TWO ADS BESIDE LOGO (REDIRECT TO WEBSITES) -->
-                <div class="dk-header-ads-strip">
-                    @if (adSlot1 != null && adSlot1.IsActive)
+                <!-- AD SPACE BESIDE LOGO (REDIRECTS TO DESTINATION PAGE) -->
+                <div class="dk-header-ad-space-container">
+                    @if (headerAd != null && headerAd.IsActive)
                     {
-                        var target1 = adSlot1.RedirectUrl?.StartsWith("http", StringComparison.OrdinalIgnoreCase) == true ? "_blank" : "_self";
-                        <a href="@adSlot1.RedirectUrl"
-                           target="@target1"
+                        var target = headerAd.OpenInNewTab ? "_blank" : "_self";
+                        <a href="@headerAd.RedirectUrl"
+                           target="@target"
                            rel="noopener noreferrer"
-                           class="dk-header-ad-banner"
-                           title="@adSlot1.Title (Click to visit website)"
-                           aria-label="@adSlot1.Title">
-                            @if (!string.IsNullOrWhiteSpace(adSlot1.ImageUrl))
+                           class="dk-header-ad-space-banner mode-@(headerAd.DisplayMode?.ToLowerInvariant() ?? "hybrid")"
+                           title="@headerAd.Title (Click to open page)"
+                           aria-label="@headerAd.Title">
+
+                            @if (headerAd.DisplayMode != "TextOnly" && !string.IsNullOrWhiteSpace(headerAd.ImageUrl))
                             {
-                                <img src="@adSlot1.ImageUrl" alt="@adSlot1.Title" class="dk-header-ad-img" />
-                            }
-                            else
-                            {
-                                <div class="dk-header-ad-content ad-slot-blue">
-                                    <span class="dk-ad-icon-badge">✈️</span>
-                                    <div class="dk-ad-text-block">
-                                        <span class="dk-ad-tag">STUDENT DEAL</span>
-                                        <strong class="dk-ad-headline">@adSlot1.Title</strong>
-                                        @if (!string.IsNullOrWhiteSpace(adSlot1.Subtitle))
-                                        {
-                                            <small class="dk-ad-subtext">@adSlot1.Subtitle</small>
-                                        }
-                                    </div>
-                                    <span class="dk-ad-arrow-icon">↗</span>
+                                <div class="dk-ad-space-media">
+                                    <img src="@headerAd.ImageUrl" alt="@headerAd.Title" class="dk-ad-space-img" />
                                 </div>
                             }
+                            else if (headerAd.DisplayMode == "Hybrid")
+                            {
+                                <div class="dk-ad-space-media-fallback">
+                                    <span class="dk-ad-icon-badge">✈️</span>
+                                </div>
+                            }
+
+                            @if (headerAd.DisplayMode != "ImageOnly")
+                            {
+                                <div class="dk-ad-space-content">
+                                    @if (!string.IsNullOrWhiteSpace(headerAd.BadgeText))
+                                    {
+                                        <span class="dk-ad-badge-tag">@headerAd.BadgeText</span>
+                                    }
+                                    <strong class="dk-ad-space-title">@headerAd.Title</strong>
+                                    @if (!string.IsNullOrWhiteSpace(headerAd.Subtitle))
+                                    {
+                                        <small class="dk-ad-space-sub">@headerAd.Subtitle</small>
+                                    }
+                                </div>
+                            }
+
+                            <span class="dk-ad-space-arrow" aria-hidden="true">↗</span>
                         </a>
                     }
-
-                    @if (adSlot2 != null && adSlot2.IsActive)
+                    else if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                     {
-                        var target2 = adSlot2.RedirectUrl?.StartsWith("http", StringComparison.OrdinalIgnoreCase) == true ? "_blank" : "_self";
-                        <a href="@adSlot2.RedirectUrl"
-                           target="@target2"
-                           rel="noopener noreferrer"
-                           class="dk-header-ad-banner"
-                           title="@adSlot2.Title (Click to visit website)"
-                           aria-label="@adSlot2.Title">
-                            @if (!string.IsNullOrWhiteSpace(adSlot2.ImageUrl))
-                            {
-                                <img src="@adSlot2.ImageUrl" alt="@adSlot2.Title" class="dk-header-ad-img" />
-                            }
-                            else
-                            {
-                                <div class="dk-header-ad-content ad-slot-orange">
-                                    <span class="dk-ad-icon-badge">⚡</span>
-                                    <div class="dk-ad-text-block">
-                                        <span class="dk-ad-tag dk-ad-tag-orange">SPECIAL OFFER</span>
-                                        <strong class="dk-ad-headline">@adSlot2.Title</strong>
-                                        @if (!string.IsNullOrWhiteSpace(adSlot2.Subtitle))
-                                        {
-                                            <small class="dk-ad-subtext">@adSlot2.Subtitle</small>
-                                        }
-                                    </div>
-                                    <span class="dk-ad-arrow-icon">↗</span>
-                                </div>
-                            }
-                        </a>
+                        <div class="dk-header-ad-space-empty-admin">
+                            <a href="/Admin/HeaderAds" class="dk-admin-ad-empty-link">
+                                <span class="dk-ad-empty-icon">📢</span>
+                                <span><strong>Ad Space (Inactive)</strong> — Click to configure ad &amp; redirect link</span>
+                            </a>
+                        </div>
                     }
 
                     @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                     {
                         <a href="/Admin/HeaderAds"
                            class="dk-admin-ad-quick-btn"
-                           title="Super Admin: Replace or configure header ads and destination URLs">
+                           title="Admin Console: Replace or configure header ad space and destination URL">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                            <span>Replace Ads</span>
+                            <span>Replace Ad</span>
                         </a>
                     }
                 </div>
@@ -343,7 +330,7 @@
                                         <span class="dk-menu-icon-wrap">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><circle cx="12" cy="14" r="3"></circle><line x1="2" y1="10" x2="22" y2="10"></line></svg>
                                         </span>
-                                        <span class="dk-menu-label">Header Ads</span>
+                                        <span class="dk-menu-label">Header Ad Space</span>
                                     </a>
                                     <a href="/Admin/Banners" class="dk-account-menu-item">
                                         <span class="dk-menu-icon-wrap">

@@ -15,5 +15,6 @@ public enum HomepageSectionKey
     HeaderAdSlot1 = 8,
     HeaderAdSlot2 = 9,
     TrendingDeals = 10,
-    FeaturedProducts = 11
+    FeaturedProducts = 11,
+    HeaderAdSpace = 12
 }

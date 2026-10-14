@@ -1,253 +1,367 @@
-@model Dreamflykit.Web.Areas.Admin.Models.HeaderAdsManagementViewModel
+@model Dreamflykit.Web.Areas.Admin.Models.HeaderAdSpaceViewModel
 @{
-    ViewData["Title"] = "Manage Header Ads (Beside Logo)";
+    ViewData["Title"] = "Manage Header Ad Space (Beside Logo)";
 }
 
-<div class="dk-admin-content-card" style="max-width: 1100px; margin: 0 auto;">
-    <div class="dk-admin-card-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+<div class="dk-admin-content-card" style="max-width: 1050px; margin: 0 auto; padding: 2rem;">
+
+    <!-- Top Page Header -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem;">
         <div>
-            <h1 class="dk-admin-card-title" style="font-size: 1.6rem; font-weight: 800; margin: 0; color: #0f172a; display: flex; align-items: center; gap: 10px;">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#075bc8" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                Header Advertisements Management
+            <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #075bc8; background: #eff6ff; padding: 4px 10px; border-radius: 9999px; margin-bottom: 8px;">
+                <span>⚡ Storefront Header Configuration</span>
+            </div>
+            <h1 style="font-size: 1.65rem; font-weight: 800; margin: 0; color: #0f172a; display: flex; align-items: center; gap: 10px;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#075bc8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+                Header Ad Space Management
             </h1>
-            <p style="color: #64748b; font-size: 0.9rem; margin: 0.35rem 0 0;">
-                Configure the two promotional advertisement slots displayed directly beside the Dreamflykit logo in the top header. When users click an ad, they are redirected to the specified destination website URL.
+            <p style="color: #64748b; font-size: 0.92rem; margin: 0.4rem 0 0; max-width: 650px;">
+                Configure the promotional ad banner displayed directly beside the <strong>Dreamflykit logo</strong>. You can add a brand logo, custom promotional text, and set its destination redirect page.
             </p>
         </div>
-        <div>
-            <a href="/" target="_blank" class="dk-btn dk-btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px;">
-                <span>View Live Storefront ↗</span>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="/SpecialOffer" target="_blank" class="dk-btn dk-btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; text-decoration: none; padding: 7px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #ffffff; color: #334155; font-weight: 600;">
+                <span>View Offer Page ↗</span>
+            </a>
+            <a href="/" target="_blank" class="dk-btn dk-btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; text-decoration: none; padding: 7px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #ffffff; color: #334155; font-weight: 600;">
+                <span>View Live Header ↗</span>
             </a>
         </div>
     </div>
 
     @if (TempData["SuccessMessage"] is string msg)
     {
-        <div class="dk-alert dk-alert-success" style="margin-bottom: 1.5rem; padding: 0.85rem 1.25rem; background: #ecfdf5; border-left: 4px solid #10b981; color: #065f46; border-radius: 8px; font-weight: 600;">
-            ✓ @msg
+        <div style="margin-bottom: 2rem; padding: 1rem 1.25rem; background: #ecfdf5; border-left: 4px solid #10b981; color: #065f46; border-radius: 8px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>@msg</span>
         </div>
     }
 
-    <!-- Live Header Preview Simulation -->
-    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 2rem;">
-        <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.75rem;">
-            Live Header Preview
+    <!-- Live Header Interactive Preview Simulation -->
+    <div style="background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #cbd5e1; border-radius: 14px; padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #475569; display: flex; align-items: center; gap: 6px;">
+                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+                Live Header Bar Preview (Interactive)
+            </div>
+            <div id="previewStatusBadge" style="font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 9999px; background: @(Model.IsActive ? "#dcfce7" : "#fee2e2"); color: @(Model.IsActive ? "#15803d" : "#991b1b");">
+                @(Model.IsActive ? "Status: Active & Visible" : "Status: Inactive (Hidden)")
+            </div>
         </div>
-        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 20px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
-            <div style="width: 180px; flex-shrink: 0;">
-                <img src="/images/branding/dreamflykit-logo.webp" alt="Logo" style="width: 160px; height: auto; display: block;" />
+
+        <!-- Simulated Header Top Bar -->
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); flex-wrap: wrap;">
+            <!-- Brand Logo -->
+            <div style="flex-shrink: 0;">
+                <img src="/images/branding/dreamflykit-logo.webp" alt="Dreamflykit Logo" style="width: 175px; height: auto; display: block;" />
             </div>
 
-            <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; min-width: 320px;">
-                <!-- Slot 1 Preview Card -->
-                <div style="border: 1.5px dashed @(Model.Slot1.IsActive ? "#3b82f6" : "#94a3b8"); border-radius: 8px; padding: 10px 14px; background: @(Model.Slot1.IsActive ? "#eff6ff" : "#f1f5f9"); display: flex; align-items: center; gap: 12px; position: relative; overflow: hidden;">
-                    <span style="position: absolute; top: 4px; right: 6px; font-size: 9px; font-weight: 800; background: #2563eb; color: #fff; padding: 1px 5px; border-radius: 3px;">AD 1</span>
-                    @if (!string.IsNullOrWhiteSpace(Model.Slot1.CurrentImageUrl))
-                    {
-                        <img src="@Model.Slot1.CurrentImageUrl" alt="@Model.Slot1.Title" style="width: 50px; height: 38px; object-fit: cover; border-radius: 6px;" />
-                    }
-                    else
-                    {
-                        <div style="width: 44px; height: 38px; background: #dbeafe; border-radius: 6px; display: grid; place-items: center; font-size: 20px;">✈️</div>
-                    }
-                    <div style="overflow: hidden;">
-                        <strong style="display: block; font-size: 12px; color: #1e3a8a; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">@Model.Slot1.Title</strong>
-                        <span style="font-size: 11px; color: #475569; display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Target: <code>@Model.Slot1.RedirectUrl</code></span>
+            <!-- Ad Space Preview Immediately Beside Logo -->
+            <div style="display: flex; align-items: center;">
+                <div id="adSpaceLivePreview" style="display: inline-flex; align-items: center; width: 100%; max-width: 480px; min-height: 54px; border-radius: 10px; border: 1.5px solid #075bc8; background: linear-gradient(135deg, #f0f7ff 0%, #e0effe 100%); padding: 6px 14px; gap: 14px; box-shadow: 0 2px 8px rgba(7, 91, 200, 0.08); transition: all 0.2s ease;">
+                    
+                    <!-- Preview Image/Logo -->
+                    <div id="previewLogoWrapper" style="display: @(Model.DisplayMode == "TextOnly" ? "none" : "flex"); align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 8px; background: #ffffff; border: 1px solid #bfdbfe; overflow: hidden; flex-shrink: 0;">
+                        @if (!string.IsNullOrWhiteSpace(Model.CurrentImageUrl))
+                        {
+                            <img id="previewLogoImg" src="@Model.CurrentImageUrl" alt="Ad Logo" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;" />
+                        }
+                        else
+                        {
+                            <span id="previewLogoFallback" style="font-size: 22px;">🏷️</span>
+                            <img id="previewLogoImg" src="" alt="Ad Logo" style="display: none; width: 100%; height: 100%; object-fit: contain; padding: 2px;" />
+                        }
                     </div>
-                </div>
 
-                <!-- Slot 2 Preview Card -->
-                <div style="border: 1.5px dashed @(Model.Slot2.IsActive ? "#3b82f6" : "#94a3b8"); border-radius: 8px; padding: 10px 14px; background: @(Model.Slot2.IsActive ? "#eff6ff" : "#f1f5f9"); display: flex; align-items: center; gap: 12px; position: relative; overflow: hidden;">
-                    <span style="position: absolute; top: 4px; right: 6px; font-size: 9px; font-weight: 800; background: #2563eb; color: #fff; padding: 1px 5px; border-radius: 3px;">AD 2</span>
-                    @if (!string.IsNullOrWhiteSpace(Model.Slot2.CurrentImageUrl))
-                    {
-                        <img src="@Model.Slot2.CurrentImageUrl" alt="@Model.Slot2.Title" style="width: 50px; height: 38px; object-fit: cover; border-radius: 6px;" />
-                    }
-                    else
-                    {
-                        <div style="width: 44px; height: 38px; background: #dbeafe; border-radius: 6px; display: grid; place-items: center; font-size: 20px;">⚡</div>
-                    }
-                    <div style="overflow: hidden;">
-                        <strong style="display: block; font-size: 12px; color: #1e3a8a; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">@Model.Slot2.Title</strong>
-                        <span style="font-size: 11px; color: #475569; display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Target: <code>@Model.Slot2.RedirectUrl</code></span>
+                    <!-- Preview Text Block -->
+                    <div id="previewTextBlock" style="display: @(Model.DisplayMode == "ImageOnly" ? "none" : "block"); flex: 1; min-width: 0; line-height: 1.25;">
+                        <span id="previewBadge" style="display: inline-block; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #075bc8; margin-bottom: 2px;">
+                            @(string.IsNullOrWhiteSpace(Model.BadgeText) ? "SPECIAL OFFER" : Model.BadgeText)
+                        </span>
+                        <strong id="previewTitle" style="display: block; font-size: 13.5px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            @Model.Title
+                        </strong>
+                        <small id="previewSubtitle" style="display: block; font-size: 11px; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            @(string.IsNullOrWhiteSpace(Model.Subtitle) ? "Click to view exclusive campaign deals" : Model.Subtitle)
+                        </small>
+                    </div>
+
+                    <!-- Arrow icon -->
+                    <div style="flex-shrink: 0; color: #075bc8; font-weight: 800; font-size: 14px;">
+                        ↗
                     </div>
                 </div>
             </div>
+        </div>
+        <div style="font-size: 11px; color: #64748b; margin-top: 8px; text-align: right;">
+            Destination Target: <code id="previewRedirectTarget" style="background: #ffffff; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1; color: #075bc8;">@Model.RedirectUrl</code>
         </div>
     </div>
 
-    <!-- Ad Forms Grid -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem;">
+    <!-- Configuration Form -->
+    <form method="post" action="/Admin/HeaderAds/Save" enctype="multipart/form-data" id="headerAdForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="MediaAssetId" />
+        <input type="hidden" asp-for="CurrentImageUrl" />
 
-        <!-- SLOT 1 FORM -->
-        <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9;">
-                <div>
-                    <span style="display: inline-block; background: #075bc8; color: #fff; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px; margin-bottom: 4px;">SECTION 1</span>
-                    <h2 style="font-size: 1.15rem; font-weight: 700; margin: 0; color: #0f172a;">Header Ad Slot 1</h2>
-                </div>
-                <div>
-                    @if (Model.Slot1.IsActive)
-                    {
-                        <span style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px;">Active</span>
-                    }
-                    else
-                    {
-                        <span style="background: #fee2e2; color: #b91c1c; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px;">Disabled</span>
-                    }
-                </div>
-            </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
 
-            <form method="post" action="/Admin/HeaderAds/SaveSlot" enctype="multipart/form-data">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="SlotNumber" value="1" />
-                <input type="hidden" name="Id" value="@Model.Slot1.Id" />
-                <input type="hidden" name="MediaAssetId" value="@Model.Slot1.MediaAssetId" />
+            <!-- LEFT COLUMN: Ad Mode & Image/Logo Upload -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: #0f172a; margin: 0 0 1.25rem; display: flex; align-items: center; gap: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#075bc8" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    1. Ad Presentation & Logo
+                </h3>
 
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #334155;">
-                        Ad Graphic / Banner Image
+                <!-- Display Mode Selection -->
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px;">
+                        Display Mode
                     </label>
-                    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
-                        <div style="width: 100px; height: 50px; border: 1px dashed #cbd5e1; border-radius: 6px; background: #f8fafc; display: grid; place-items: center; overflow: hidden;">
-                            @if (!string.IsNullOrWhiteSpace(Model.Slot1.CurrentImageUrl))
-                            {
-                                <img src="@Model.Slot1.CurrentImageUrl" alt="Current Ad" style="width: 100%; height: 100%; object-fit: cover;" />
-                            }
-                            else
-                            {
-                                <span style="font-size: 10px; color: #94a3b8; text-align: center;">Default Banner</span>
-                            }
-                        </div>
-                        <div style="flex: 1;">
-                            <input type="file" name="ImageFile" accept="image/png,image/jpeg,image/webp,image/gif" class="dk-input" style="font-size: 12px; padding: 6px;" />
-                            <span style="font-size: 11px; color: #64748b; display: block; margin-top: 3px;">Format: PNG, JPG, or WEBP (rec. 360x60px)</span>
-                        </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                        <label style="border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 8px; text-align: center; cursor: pointer; display: block; transition: all 0.15s ease;" class="mode-choice">
+                            <input type="radio" asp-for="DisplayMode" value="Hybrid" style="display: inline-block; margin-right: 4px;" onchange="updateLivePreview()" />
+                            <strong style="display: block; font-size: 12px; color: #0f172a; margin-top: 2px;">Logo + Text</strong>
+                            <small style="font-size: 10px; color: #64748b;">(Recommended)</small>
+                        </label>
+                        <label style="border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 8px; text-align: center; cursor: pointer; display: block; transition: all 0.15s ease;" class="mode-choice">
+                            <input type="radio" asp-for="DisplayMode" value="ImageOnly" style="display: inline-block; margin-right: 4px;" onchange="updateLivePreview()" />
+                            <strong style="display: block; font-size: 12px; color: #0f172a; margin-top: 2px;">Image Only</strong>
+                            <small style="font-size: 10px; color: #64748b;">(Banner Graphic)</small>
+                        </label>
+                        <label style="border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 8px; text-align: center; cursor: pointer; display: block; transition: all 0.15s ease;" class="mode-choice">
+                            <input type="radio" asp-for="DisplayMode" value="TextOnly" style="display: inline-block; margin-right: 4px;" onchange="updateLivePreview()" />
+                            <strong style="display: block; font-size: 12px; color: #0f172a; margin-top: 2px;">Text Only</strong>
+                            <small style="font-size: 10px; color: #64748b;">(Headline & Badge)</small>
+                        </label>
                     </div>
                 </div>
 
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #334155;">
-                        Headline / Title <span style="color: #ef4444;">*</span>
+                <!-- Logo / Image Upload -->
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px;">
+                        Upload Logo or Ad Graphic
                     </label>
-                    <input type="text" name="Title" value="@Model.Slot1.Title" class="dk-input" style="width: 100%; font-size: 13px;" placeholder="e.g. Flight & Travel Kits - 25% Off" required />
-                </div>
-
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #334155;">
-                        Subtitle / Tagline (Optional)
-                    </label>
-                    <input type="text" name="Subtitle" value="@Model.Slot1.Subtitle" class="dk-input" style="width: 100%; font-size: 13px;" placeholder="e.g. Complete Student Abroad Essentials" />
-                </div>
-
-                <div style="margin-bottom: 1.25rem;">
-                    <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #334155;">
-                        Redirect Website URL <span style="color: #ef4444;">*</span>
-                    </label>
-                    <input type="text" name="RedirectUrl" value="@Model.Slot1.RedirectUrl" class="dk-input" style="width: 100%; font-size: 13px;" placeholder="e.g. https://partner-site.com or /Kits/FindMyKit" required />
-                    <span style="font-size: 11px; color: #64748b; display: block; margin-top: 3px;">
-                        When anyone clicks this ad, they will be redirected to this website.
-                    </span>
-                </div>
-
-                <div style="margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px;">
-                    <input type="checkbox" id="slot1Active" name="IsActive" value="true" @(Model.Slot1.IsActive ? "checked" : "") style="width: 16px; height: 16px; cursor: pointer;" />
-                    <input type="hidden" name="IsActive" value="false" />
-                    <label for="slot1Active" style="font-size: 13px; font-weight: 600; color: #334155; cursor: pointer;">
-                        Display Ad Slot 1 in Header
-                    </label>
-                </div>
-
-                <button type="submit" class="dk-btn dk-btn-primary" style="width: 100%; padding: 10px; font-size: 13px; font-weight: 700;">
-                    Save Header Ad Slot 1
-                </button>
-            </form>
-        </div>
-
-        <!-- SLOT 2 FORM -->
-        <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9;">
-                <div>
-                    <span style="display: inline-block; background: #075bc8; color: #fff; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px; margin-bottom: 4px;">SECTION 2</span>
-                    <h2 style="font-size: 1.15rem; font-weight: 700; margin: 0; color: #0f172a;">Header Ad Slot 2</h2>
-                </div>
-                <div>
-                    @if (Model.Slot2.IsActive)
-                    {
-                        <span style="background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px;">Active</span>
-                    }
-                    else
-                    {
-                        <span style="background: #fee2e2; color: #b91c1c; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px;">Disabled</span>
-                    }
-                </div>
-            </div>
-
-            <form method="post" action="/Admin/HeaderAds/SaveSlot" enctype="multipart/form-data">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="SlotNumber" value="2" />
-                <input type="hidden" name="Id" value="@Model.Slot2.Id" />
-                <input type="hidden" name="MediaAssetId" value="@Model.Slot2.MediaAssetId" />
-
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #334155;">
-                        Ad Graphic / Banner Image
-                    </label>
-                    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
-                        <div style="width: 100px; height: 50px; border: 1px dashed #cbd5e1; border-radius: 6px; background: #f8fafc; display: grid; place-items: center; overflow: hidden;">
-                            @if (!string.IsNullOrWhiteSpace(Model.Slot2.CurrentImageUrl))
+                    <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 10px;">
+                        <div style="width: 80px; height: 60px; border: 1.5px dashed #cbd5e1; border-radius: 8px; background: #f8fafc; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                            @if (!string.IsNullOrWhiteSpace(Model.CurrentImageUrl))
                             {
-                                <img src="@Model.Slot2.CurrentImageUrl" alt="Current Ad" style="width: 100%; height: 100%; object-fit: cover;" />
+                                <img id="formThumbnailPreview" src="@Model.CurrentImageUrl" alt="Current Ad Image" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;" />
                             }
                             else
                             {
-                                <span style="font-size: 10px; color: #94a3b8; text-align: center;">Default Banner</span>
+                                <span id="formThumbnailPreviewFallback" style="font-size: 10px; color: #94a3b8; text-align: center;">No Image</span>
+                                <img id="formThumbnailPreview" src="" alt="Ad Image" style="display: none; width: 100%; height: 100%; object-fit: contain; padding: 2px;" />
                             }
                         </div>
                         <div style="flex: 1;">
-                            <input type="file" name="ImageFile" accept="image/png,image/jpeg,image/webp,image/gif" class="dk-input" style="font-size: 12px; padding: 6px;" />
-                            <span style="font-size: 11px; color: #64748b; display: block; margin-top: 3px;">Format: PNG, JPG, or WEBP (rec. 360x60px)</span>
+                            <input type="file" asp-for="ImageFile" id="imageFileInput" accept=".png,.jpg,.jpeg,.webp,.svg,.gif" style="display: block; width: 100%; font-size: 12px; color: #475569;" onchange="handleFileSelected(event)" />
+                            <span style="display: block; font-size: 11px; color: #94a3b8; margin-top: 4px;">PNG, JPG, WEBP, or SVG (Max 5MB)</span>
                         </div>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(Model.CurrentImageUrl))
+                    {
+                        <div style="margin-top: 6px;">
+                            <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #dc2626; cursor: pointer;">
+                                <input type="checkbox" asp-for="RemoveExistingImage" id="removeImgCheckbox" onchange="toggleRemoveImage(this)" />
+                                <span>Remove current image and use text only</span>
+                            </label>
+                        </div>
+                    }
+                    <span asp-validation-for="ImageFile" style="color: #dc2626; font-size: 12px; font-weight: 600;"></span>
+                </div>
+
+                <!-- Visibility / Active Toggle -->
+                <div style="border-top: 1px solid #f1f5f9; padding-top: 1.25rem;">
+                    <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                        <div>
+                            <strong style="display: block; font-size: 13px; color: #0f172a;">Enable Ad Space</strong>
+                            <small style="color: #64748b; font-size: 11px;">When disabled, the ad space is hidden from customers</small>
+                        </div>
+                        <input type="checkbox" asp-for="IsActive" id="isActiveInput" style="width: 20px; height: 20px; cursor: pointer;" onchange="updateLivePreview()" />
+                    </label>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Text & Destination URL -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: #0f172a; margin: 0 0 1.25rem; display: flex; align-items: center; gap: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#075bc8" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    2. Ad Text & Destination URL
+                </h3>
+
+                <!-- Ad Headline / Title -->
+                <div style="margin-bottom: 1.25rem;">
+                    <label asp-for="Title" style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+                        Ad Title / Main Headline <span style="color: #dc2626;">*</span>
+                    </label>
+                    <input type="text" asp-for="Title" id="titleInput" class="dk-admin-form-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px;" placeholder="e.g. Student Exclusive Flight Perks" required maxlength="150" oninput="updateLivePreview()" />
+                    <span asp-validation-for="Title" style="color: #dc2626; font-size: 12px; font-weight: 600;"></span>
+                </div>
+
+                <!-- Subtitle / Tagline -->
+                <div style="margin-bottom: 1.25rem;">
+                    <label asp-for="Subtitle" style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+                        Subtitle / Offer Description
+                    </label>
+                    <input type="text" asp-for="Subtitle" id="subtitleInput" class="dk-admin-form-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px;" placeholder="e.g. Save up to 25% on luggage & kits" maxlength="200" oninput="updateLivePreview()" />
+                    <span asp-validation-for="Subtitle" style="color: #dc2626; font-size: 12px; font-weight: 600;"></span>
+                </div>
+
+                <!-- Badge Tag Text -->
+                <div style="margin-bottom: 1.25rem;">
+                    <label asp-for="BadgeText" style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+                        Badge Label Tag
+                    </label>
+                    <input type="text" asp-for="BadgeText" id="badgeInput" class="dk-admin-form-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px;" placeholder="e.g. SPECIAL OFFER" maxlength="50" oninput="updateLivePreview()" />
+                    <!-- Quick Tag Chips -->
+                    <div style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
+                        <button type="button" onclick="setBadge('SPECIAL OFFER')" style="font-size: 10px; font-weight: 700; background: #eff6ff; color: #075bc8; border: 1px solid #bfdbfe; border-radius: 4px; padding: 2px 7px; cursor: pointer;">SPECIAL OFFER</button>
+                        <button type="button" onclick="setBadge('STUDENT DEAL')" style="font-size: 10px; font-weight: 700; background: #eff6ff; color: #075bc8; border: 1px solid #bfdbfe; border-radius: 4px; padding: 2px 7px; cursor: pointer;">STUDENT DEAL</button>
+                        <button type="button" onclick="setBadge('FEATURED')" style="font-size: 10px; font-weight: 700; background: #eff6ff; color: #075bc8; border: 1px solid #bfdbfe; border-radius: 4px; padding: 2px 7px; cursor: pointer;">FEATURED</button>
+                        <button type="button" onclick="setBadge('PARTNER AD')" style="font-size: 10px; font-weight: 700; background: #eff6ff; color: #075bc8; border: 1px solid #bfdbfe; border-radius: 4px; padding: 2px 7px; cursor: pointer;">PARTNER AD</button>
                     </div>
                 </div>
 
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #334155;">
-                        Headline / Title <span style="color: #ef4444;">*</span>
-                    </label>
-                    <input type="text" name="Title" value="@Model.Slot2.Title" class="dk-input" style="width: 100%; font-size: 13px;" placeholder="e.g. Global SIM & Universal Plugs" required />
-                </div>
-
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #334155;">
-                        Subtitle / Tagline (Optional)
-                    </label>
-                    <input type="text" name="Subtitle" value="@Model.Slot2.Subtitle" class="dk-input" style="width: 100%; font-size: 13px;" placeholder="e.g. 150+ Country Coverage with 5G Data" />
-                </div>
-
+                <!-- Redirect URL -->
                 <div style="margin-bottom: 1.25rem;">
-                    <label style="display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #334155;">
-                        Redirect Website URL <span style="color: #ef4444;">*</span>
+                    <label asp-for="RedirectUrl" style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 4px;">
+                        Destination Redirect URL <span style="color: #dc2626;">*</span>
                     </label>
-                    <input type="text" name="RedirectUrl" value="@Model.Slot2.RedirectUrl" class="dk-input" style="width: 100%; font-size: 13px;" placeholder="e.g. https://telecom-partner.com or /category/adapters-sim" required />
-                    <span style="font-size: 11px; color: #64748b; display: block; margin-top: 3px;">
-                        When anyone clicks this ad, they will be redirected to this website.
-                    </span>
+                    <input type="text" asp-for="RedirectUrl" id="redirectInput" class="dk-admin-form-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px;" placeholder="/SpecialOffer" required maxlength="500" oninput="updateLivePreview()" />
+                    <span asp-validation-for="RedirectUrl" style="color: #dc2626; font-size: 12px; font-weight: 600;"></span>
+
+                    <!-- Preset Target Buttons -->
+                    <div style="display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
+                        <button type="button" onclick="setRedirect('/SpecialOffer')" style="font-size: 11px; font-weight: 600; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 8px; cursor: pointer;">
+                            📌 Default Empty Landing Page (/SpecialOffer)
+                        </button>
+                        <button type="button" onclick="setRedirect('/Kits/FindMyKit')" style="font-size: 11px; font-weight: 600; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 8px; cursor: pointer;">
+                            Find My Kit
+                        </button>
+                    </div>
                 </div>
 
-                <div style="margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px;">
-                    <input type="checkbox" id="slot2Active" name="IsActive" value="true" @(Model.Slot2.IsActive ? "checked" : "") style="width: 16px; height: 16px; cursor: pointer;" />
-                    <input type="hidden" name="IsActive" value="false" />
-                    <label for="slot2Active" style="font-size: 13px; font-weight: 600; color: #334155; cursor: pointer;">
-                        Display Ad Slot 2 in Header
+                <!-- Open in New Tab -->
+                <div style="border-top: 1px solid #f1f5f9; padding-top: 1rem;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #334155; cursor: pointer;">
+                        <input type="checkbox" asp-for="OpenInNewTab" id="openInNewTabInput" />
+                        <span>Open redirect page in a new browser tab (<code>_blank</code>)</span>
                     </label>
                 </div>
 
-                <button type="submit" class="dk-btn dk-btn-primary" style="width: 100%; padding: 10px; font-size: 13px; font-weight: 700;">
-                    Save Header Ad Slot 2
-                </button>
-            </form>
+            </div>
+
         </div>
 
-    </div>
+        <!-- Submit Bar -->
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px;">
+            <a href="/Admin" class="dk-btn dk-btn-secondary" style="padding: 10px 20px; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 8px; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1;">
+                Cancel
+            </a>
+            <button type="submit" class="dk-btn dk-btn-primary" style="padding: 10px 26px; font-size: 14px; font-weight: 700; border-radius: 8px; background: #075bc8; color: #ffffff; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(7, 91, 200, 0.25);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <span>Save &amp; Publish Ad Space</span>
+            </button>
+        </div>
+
+    </form>
+
 </div>
+
+<script>
+    function updateLivePreview() {
+        const title = document.getElementById('titleInput').value || 'Dreamflykit Special Offers';
+        const subtitle = document.getElementById('subtitleInput').value || 'Exclusive student travel deals & partner perks';
+        const badge = document.getElementById('badgeInput').value || 'SPECIAL OFFER';
+        const redirect = document.getElementById('redirectInput').value || '/SpecialOffer';
+        const isActive = document.getElementById('isActiveInput').checked;
+
+        // Mode
+        const selectedMode = document.querySelector('input[name="DisplayMode"]:checked')?.value || 'Hybrid';
+
+        document.getElementById('previewTitle').textContent = title;
+        document.getElementById('previewSubtitle').textContent = subtitle;
+        document.getElementById('previewBadge').textContent = badge;
+        document.getElementById('previewRedirectTarget').textContent = redirect;
+
+        const logoWrapper = document.getElementById('previewLogoWrapper');
+        const textBlock = document.getElementById('previewTextBlock');
+
+        if (selectedMode === 'TextOnly') {
+            logoWrapper.style.display = 'none';
+            textBlock.style.display = 'block';
+        } else if (selectedMode === 'ImageOnly') {
+            logoWrapper.style.display = 'flex';
+            textBlock.style.display = 'none';
+        } else {
+            logoWrapper.style.display = 'flex';
+            textBlock.style.display = 'block';
+        }
+
+        const statusBadge = document.getElementById('previewStatusBadge');
+        const liveCard = document.getElementById('adSpaceLivePreview');
+        if (isActive) {
+            statusBadge.style.background = '#dcfce7';
+            statusBadge.style.color = '#15803d';
+            statusBadge.textContent = 'Status: Active & Visible';
+            liveCard.style.opacity = '1';
+            liveCard.style.borderStyle = 'solid';
+        } else {
+            statusBadge.style.background = '#fee2e2';
+            statusBadge.style.color = '#991b1b';
+            statusBadge.textContent = 'Status: Inactive (Hidden)';
+            liveCard.style.opacity = '0.45';
+            liveCard.style.borderStyle = 'dashed';
+        }
+    }
+
+    function setBadge(tag) {
+        document.getElementById('badgeInput').value = tag;
+        updateLivePreview();
+    }
+
+    function setRedirect(url) {
+        document.getElementById('redirectInput').value = url;
+        updateLivePreview();
+    }
+
+    function handleFileSelected(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('previewLogoImg');
+                img.src = e.target.result;
+                img.style.display = 'block';
+                const fallback = document.getElementById('previewLogoFallback');
+                if (fallback) fallback.style.display = 'none';
+
+                const thumb = document.getElementById('formThumbnailPreview');
+                thumb.src = e.target.result;
+                thumb.style.display = 'block';
+                const thumbFallback = document.getElementById('formThumbnailPreviewFallback');
+                if (thumbFallback) thumbFallback.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function toggleRemoveImage(checkbox) {
+        if (checkbox.checked) {
+            const img = document.getElementById('previewLogoImg');
+            if (img) img.style.display = 'none';
+            const fallback = document.getElementById('previewLogoFallback');
+            if (fallback) fallback.style.display = 'inline';
+        } else {
+            updateLivePreview();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', updateLivePreview);
+</script>
