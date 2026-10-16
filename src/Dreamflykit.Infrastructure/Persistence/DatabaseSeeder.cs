@@ -8,32 +8,88 @@ namespace Dreamflykit.Infrastructure.Persistence;
 
 public static class DatabaseSeeder
 {
+    public static readonly (string Name, string Slug, int Order)[] FinalCategories =
+    [
+        ("Study Essentials", "study-essentials", 1),
+        ("Fashion", "fashion", 2),
+        ("Travel Gear", "travel-gear", 3),
+        ("Mobiles", "mobiles", 4),
+        ("Electronics", "electronics", 5),
+        ("Appliances", "appliances", 6),
+        ("Beauty", "beauty", 7),
+        ("Health Care", "health-care", 8),
+        ("Food", "food", 9),
+        ("Room & Living", "room-living", 10),
+        ("Kitchen Appliances", "kitchen-appliances", 11),
+        ("Story Books", "story-books", 12),
+        ("Premium Hub", "premium-hub", 13),
+        ("Gaming Hub", "gaming-hub", 14),
+        ("Sports Hub", "sports-hub", 15)
+    ];
+
     public static async Task SeedCatalogIfEmptyAsync(
         DreamflykitDbContext context,
         CancellationToken cancellationToken = default)
     {
-        // 1. Ensure Categories
-        var categories = await context.Categories.ToListAsync(cancellationToken);
-        if (categories.Count == 0)
+        // 1. Ensure and Sync Final 15 Categories
+        var existingCategories = await context.Categories.ToListAsync(cancellationToken);
+        var finalSlugs = FinalCategories.Select(f => f.Slug).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        // A. Upsert the 15 final categories
+        foreach (var (name, slug, order) in FinalCategories)
         {
-            var catList = new List<Category>
+            var existing = existingCategories.FirstOrDefault(c => string.Equals(c.Slug, slug, StringComparison.OrdinalIgnoreCase));
+            if (existing != null)
             {
-                new("Study Essentials", "study-essentials", 1),
-                new("Electronics", "electronics", 2),
-                new("Travel Gear", "travel-gear", 3),
-                new("Adapters & SIM", "adapters-sim", 4),
-                new("Lifestyle", "lifestyle", 5),
-                new("Health & Care", "health-care", 6),
-                new("Luggage & Bags", "luggage-bags", 7),
-                new("Fashion", "fashion", 8)
-            };
-
-            context.Categories.AddRange(catList);
-            await context.SaveChangesAsync(cancellationToken);
-            categories = catList;
+                existing.Update(name, slug, order);
+                existing.Activate();
+            }
+            else
+            {
+                var newCat = new Category(name, slug, order);
+                context.Categories.Add(newCat);
+            }
         }
+        await context.SaveChangesAsync(cancellationToken);
 
-        var catMap = categories.ToDictionary(c => c.Slug, c => c.Id);
+        // Reload to have all current IDs
+        var currentCategories = await context.Categories.ToListAsync(cancellationToken);
+        var catMap = currentCategories.ToDictionary(c => c.Slug, c => c.Id, StringComparer.OrdinalIgnoreCase);
+
+        // B. Reassign products from obsolete categories & remove obsolete categories
+        var obsoleteCategories = currentCategories.Where(c => !finalSlugs.Contains(c.Slug)).ToList();
+        if (obsoleteCategories.Count > 0)
+        {
+            var defaultFallbackId = catMap["study-essentials"];
+            foreach (var obs in obsoleteCategories)
+            {
+                // Determine best target category for existing products
+                Guid targetCategoryId = obs.Slug switch
+                {
+                    "adapters-sim" or "adapters" or "sim" => catMap.GetValueOrDefault("electronics", defaultFallbackId),
+                    "luggage-bags" or "luggage" or "bags" => catMap.GetValueOrDefault("travel-gear", defaultFallbackId),
+                    "lifestyle" => catMap.GetValueOrDefault("room-living", defaultFallbackId),
+                    "stationery" => catMap.GetValueOrDefault("study-essentials", defaultFallbackId),
+                    _ => defaultFallbackId
+                };
+
+                var productsToReassign = await context.Products.Where(p => p.CategoryId == obs.Id).ToListAsync(cancellationToken);
+                foreach (var prod in productsToReassign)
+                {
+                    prod.Update(targetCategoryId, prod.Name, prod.Slug, prod.ShortDescription, prod.Description, prod.DisplayOrder);
+                    prod.RemoveSubcategory();
+                }
+
+                var subsToRemove = await context.Subcategories.Where(s => s.CategoryId == obs.Id).ToListAsync(cancellationToken);
+                if (subsToRemove.Count > 0)
+                {
+                    context.Subcategories.RemoveRange(subsToRemove);
+                }
+
+                context.Categories.Remove(obs);
+            }
+            await context.SaveChangesAsync(cancellationToken);
+        }
 
         // 2. Ensure Products
         if (await context.Products.AnyAsync(cancellationToken))
@@ -165,7 +221,7 @@ public static class DatabaseSeeder
             },
             new
             {
-                Cat = "adapters-sim",
+                Cat = "electronics",
                 Name = "All-in-One Universal Travel Adapter",
                 Slug = "universal-travel-adapter",
                 Short = "Worldwide power adapter covering USA, UK, EU, AU plugs with 4x USB & Type-C.",
@@ -180,7 +236,7 @@ public static class DatabaseSeeder
             },
             new
             {
-                Cat = "adapters-sim",
+                Cat = "mobiles",
                 Name = "International Student SIM Card - USA/UK",
                 Slug = "international-student-sim",
                 Short = "Pre-activated high-speed 5G data & local calling SIM card with free incoming.",
@@ -195,7 +251,7 @@ public static class DatabaseSeeder
             },
             new
             {
-                Cat = "luggage-bags",
+                Cat = "travel-gear",
                 Name = "Anti-Theft Laptop Backpack (35L)",
                 Slug = "anti-theft-laptop-backpack-35l",
                 Short = "Waterproof TSA-friendly carry-on backpack with dedicated 16-inch laptop compartment.",
@@ -240,7 +296,7 @@ public static class DatabaseSeeder
             },
             new
             {
-                Cat = "lifestyle",
+                Cat = "appliances",
                 Name = "Compact Steam Travel Iron (Dual Voltage)",
                 Slug = "dual-voltage-travel-steam-iron",
                 Short = "Foldable dual voltage 110V/220V steam iron for crisp interview and campus wear.",
