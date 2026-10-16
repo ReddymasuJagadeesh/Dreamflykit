@@ -34,7 +34,17 @@
         @RenderBody()
     </main>
 
-    <partial name="_Footer" />
+    @{
+        var reqPath = Context.Request.Path.Value ?? "";
+        var isAbroad = reqPath.StartsWith("/study-abroad-hub", StringComparison.OrdinalIgnoreCase) ||
+                       reqPath.StartsWith("/StudyAbroadHub", StringComparison.OrdinalIgnoreCase) ||
+                       reqPath.StartsWith("/SpecialOffer", StringComparison.OrdinalIgnoreCase) ||
+                       reqPath.StartsWith("/AbroadHub", StringComparison.OrdinalIgnoreCase);
+    }
+    @if (!isAbroad)
+    {
+        <partial name="_Footer" />
+    }
 
     @Html.AntiForgeryToken()
 

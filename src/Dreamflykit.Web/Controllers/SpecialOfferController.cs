@@ -9,7 +9,6 @@ public sealed class SpecialOfferController : Controller
     [HttpGet("")]
     public IActionResult Index()
     {
-        ViewData["Title"] = "Special Promotion — Dreamflykit";
-        return View();
+        return RedirectPermanent("/study-abroad-hub");
     }
 }

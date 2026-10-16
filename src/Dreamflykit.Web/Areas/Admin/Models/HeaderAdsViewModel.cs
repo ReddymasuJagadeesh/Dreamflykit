@@ -27,7 +27,7 @@ public sealed class HeaderAdSpaceViewModel
     [Required(ErrorMessage = "Redirect URL is required.")]
     [MaxLength(500, ErrorMessage = "Redirect URL cannot exceed 500 characters.")]
     [Display(Name = "Click Redirect URL")]
-    public string RedirectUrl { get; set; } = "/SpecialOffer";
+    public string RedirectUrl { get; set; } = "/study-abroad-hub";
 
     [Display(Name = "Display Mode")]
     public string DisplayMode { get; set; } = "Hybrid"; // "Hybrid", "ImageOnly", "TextOnly"
