@@ -26,13 +26,20 @@
     Func<string, string> getCatEmoji = slug => slug?.ToLowerInvariant() switch
     {
         "study-essentials" or "study" => "🎓",
-        "electronics" => "💻",
+        "fashion" => "👗",
         "travel-gear" or "travel" => "✈",
-        "adapters-sim" or "adapters" or "sim" => "🔌",
-        "lifestyle" => "⌚",
+        "mobiles" or "mobile" => "📱",
+        "electronics" => "💻",
+        "appliances" => "🔌",
+        "beauty" => "💄",
         "health-care" or "health" => "💊",
-        "stationery" => "✎",
-        "luggage-bags" or "luggage" or "bags" => "🧳",
+        "food" => "🍫",
+        "room-living" or "room" => "🛋️",
+        "kitchen-appliances" or "kitchen" => "🍳",
+        "story-books" or "books" => "📚",
+        "premium-hub" or "premium" => "⭐",
+        "gaming-hub" or "gaming" => "🎮",
+        "sports-hub" or "sports" => "⚽",
         _ => "🏷️"
     };
 }
@@ -520,26 +527,47 @@
                 <a href="/category/study-essentials" class="dk-category-link @(activeCatSlug == "study-essentials" ? "dk-category-active" : "")">
                     <span>🎓</span> Study Essentials
                 </a>
-                <a href="/category/electronics" class="dk-category-link @(activeCatSlug == "electronics" ? "dk-category-active" : "")">
-                    <span>💻</span> Electronics
+                <a href="/category/fashion" class="dk-category-link @(activeCatSlug == "fashion" ? "dk-category-active" : "")">
+                    <span>👗</span> Fashion
                 </a>
                 <a href="/category/travel-gear" class="dk-category-link @(activeCatSlug == "travel-gear" ? "dk-category-active" : "")">
                     <span>✈</span> Travel Gear
                 </a>
-                <a href="/category/adapters-sim" class="dk-category-link @(activeCatSlug == "adapters-sim" ? "dk-category-active" : "")">
-                    <span>🔌</span> Adapters & SIM
+                <a href="/category/mobiles" class="dk-category-link @(activeCatSlug == "mobiles" ? "dk-category-active" : "")">
+                    <span>📱</span> Mobiles
                 </a>
-                <a href="/category/lifestyle" class="dk-category-link @(activeCatSlug == "lifestyle" ? "dk-category-active" : "")">
-                    <span>⌚</span> Lifestyle
+                <a href="/category/electronics" class="dk-category-link @(activeCatSlug == "electronics" ? "dk-category-active" : "")">
+                    <span>💻</span> Electronics
+                </a>
+                <a href="/category/appliances" class="dk-category-link @(activeCatSlug == "appliances" ? "dk-category-active" : "")">
+                    <span>🔌</span> Appliances
+                </a>
+                <a href="/category/beauty" class="dk-category-link @(activeCatSlug == "beauty" ? "dk-category-active" : "")">
+                    <span>💄</span> Beauty
                 </a>
                 <a href="/category/health-care" class="dk-category-link @(activeCatSlug == "health-care" ? "dk-category-active" : "")">
-                    <span>💊</span> Health & Care
+                    <span>💊</span> Health Care
                 </a>
-                <a href="/category/stationery" class="dk-category-link @(activeCatSlug == "stationery" ? "dk-category-active" : "")">
-                    <span>✎</span> Stationery
+                <a href="/category/food" class="dk-category-link @(activeCatSlug == "food" ? "dk-category-active" : "")">
+                    <span>🍫</span> Food
                 </a>
-                <a href="/category/luggage-bags" class="dk-category-link @(activeCatSlug == "luggage-bags" ? "dk-category-active" : "")">
-                    <span>🧳</span> Luggage & Bags
+                <a href="/category/room-living" class="dk-category-link @(activeCatSlug == "room-living" ? "dk-category-active" : "")">
+                    <span>🛋️</span> Room & Living
+                </a>
+                <a href="/category/kitchen-appliances" class="dk-category-link @(activeCatSlug == "kitchen-appliances" ? "dk-category-active" : "")">
+                    <span>🍳</span> Kitchen Appliances
+                </a>
+                <a href="/category/story-books" class="dk-category-link @(activeCatSlug == "story-books" ? "dk-category-active" : "")">
+                    <span>📚</span> Story Books
+                </a>
+                <a href="/category/premium-hub" class="dk-category-link @(activeCatSlug == "premium-hub" ? "dk-category-active" : "")">
+                    <span>⭐</span> Premium Hub
+                </a>
+                <a href="/category/gaming-hub" class="dk-category-link @(activeCatSlug == "gaming-hub" ? "dk-category-active" : "")">
+                    <span>🎮</span> Gaming Hub
+                </a>
+                <a href="/category/sports-hub" class="dk-category-link @(activeCatSlug == "sports-hub" ? "dk-category-active" : "")">
+                    <span>⚽</span> Sports Hub
                 </a>
             }
 
@@ -572,7 +600,7 @@
 
         @if (navCategories != null && navCategories.Count > 0)
         {
-            @foreach (var cat in navCategories.OrderBy(c => c.DisplayOrder).Take(6))
+            @foreach (var cat in navCategories.OrderBy(c => c.DisplayOrder))
             {
                 <a href="/category/@cat.Slug">@getCatEmoji(cat.Slug) @cat.Name</a>
             }

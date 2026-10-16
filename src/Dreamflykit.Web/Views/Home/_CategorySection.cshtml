@@ -1,4 +1,4 @@
-﻿<section class="dfk-section bg-[#f8fafc]">
+<section class="dfk-section bg-[#f8fafc]">
 
     <div class="dfk-container">
 
@@ -32,29 +32,32 @@
             @{
                 var categories = new[]
                 {
-                    ("Study Essentials", "🎓"),
-                    ("Electronics & Accessories", "💻"),
-                    ("Travel Essentials", "🧳"),
-                    ("Documents & Organizers", "📁"),
-                    ("Health & Wellness", "🩺"),
-                    ("Clothing & Footwear", "👕"),
-                    ("Room & Living", "🛏"),
-                    ("Kitchen & Dining", "🍳"),
-                    ("Electricals & Adapters", "🔌"),
-                    ("Personal Care", "🧴"),
-                    ("Food & Snacks", "🍪"),
-                    ("Gifts & Accessories", "🎁")
+                    ("Study Essentials", "study-essentials", "🎓"),
+                    ("Fashion", "fashion", "👗"),
+                    ("Travel Gear", "travel-gear", "✈️"),
+                    ("Mobiles", "mobiles", "📱"),
+                    ("Electronics", "electronics", "💻"),
+                    ("Appliances", "appliances", "🔌"),
+                    ("Beauty", "beauty", "💄"),
+                    ("Health Care", "health-care", "💊"),
+                    ("Food", "food", "🍫"),
+                    ("Room & Living", "room-living", "🛋️"),
+                    ("Kitchen Appliances", "kitchen-appliances", "🍳"),
+                    ("Story Books", "story-books", "📚"),
+                    ("Premium Hub", "premium-hub", "⭐"),
+                    ("Gaming Hub", "gaming-hub", "🎮"),
+                    ("Sports Hub", "sports-hub", "⚽")
                 };
             }
 
             @foreach (var category in categories)
             {
                 <a
-                    href="#"
+                    href="/category/@category.Item2"
                     class="dfk-card group p-4 text-center">
 
                     <div class="mx-auto flex aspect-square max-w-[110px] items-center justify-center rounded-full bg-blue-50 text-4xl transition-transform duration-300 group-hover:scale-110">
-                        @category.Item2
+                        @category.Item3
                     </div>
 
                     <h3 class="mt-4 text-sm font-bold leading-5 text-[#06265f]">

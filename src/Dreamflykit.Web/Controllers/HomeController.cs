@@ -103,7 +103,7 @@ public sealed class HomeController : Controller
             .Where(c => c.IsActive)
             .OrderBy(c => c.DisplayOrder)
             .ThenBy(c => c.Name)
-            .Take(12)
+            .Take(15)
             .ToListAsync(cancellationToken);
 
         var catMediaIds = activeCategories
@@ -211,7 +211,7 @@ public sealed class HomeController : Controller
                     Title = "International Tech & Power Adapters",
                     Subtitle = "Universal travel adapters, global 5G SIM kits, and heavy-duty power banks",
                     CtaText = "Explore Electronics",
-                    CtaUrl = "/category/adapters-sim",
+                    CtaUrl = "/category/electronics",
                     AltText = "Dreamflykit Electronics & Power Adapters"
                 },
                 new()

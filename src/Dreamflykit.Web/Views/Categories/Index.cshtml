@@ -4,6 +4,28 @@
     ViewData["Title"] = "All Categories - Dreamflykit Store";
 }
 
+@{
+    Func<string, string> getCatEmoji = slug => slug?.ToLowerInvariant() switch
+    {
+        "study-essentials" or "study" => "🎓",
+        "fashion" => "👗",
+        "travel-gear" or "travel" => "✈️",
+        "mobiles" or "mobile" => "📱",
+        "electronics" => "💻",
+        "appliances" => "🔌",
+        "beauty" => "💄",
+        "health-care" or "health" => "💊",
+        "food" => "🍫",
+        "room-living" or "room" => "🛋️",
+        "kitchen-appliances" or "kitchen" => "🍳",
+        "story-books" or "books" => "📚",
+        "premium-hub" or "premium" => "⭐",
+        "gaming-hub" or "gaming" => "🎮",
+        "sports-hub" or "sports" => "⚽",
+        _ => "🏷️"
+    };
+}
+
 <div class="dk-catalog-page">
 
     <!-- Top Breadcrumb -->
@@ -68,7 +90,7 @@
                             }
                             else
                             {
-                                <span style="font-size: 36px;">🏷️</span>
+                                <span style="font-size: 36px;">@getCatEmoji(category.Slug)</span>
                             }
                         </div>
 

@@ -277,13 +277,73 @@ public sealed class CategoriesController : AdminBaseController
         if (category.IsActive)
         {
             category.Deactivate();
+            TempData["SuccessMessage"] = $"Category '{category.Name}' deactivated.";
         }
         else
         {
             category.Activate();
+            TempData["SuccessMessage"] = $"Category '{category.Name}' activated.";
         }
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost("Delete/{id:guid}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    {
+        var category = await _dbContext.Categories.FindAsync(new object[] { id }, cancellationToken);
+        if (category is null)
+        {
+            return NotFound();
+        }
+
+        // Safety Guard: Check if products belong to this category
+        var productCount = await _dbContext.Products.CountAsync(p => p.CategoryId == id, cancellationToken);
+        if (productCount > 0)
+        {
+            TempData["ErrorMessage"] = $"Cannot delete category '{category.Name}' because it contains {productCount} product(s). Please reassign or delete these products first.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Remove any subcategories under this category
+        var subcategories = await _dbContext.Subcategories
+            .Where(s => s.CategoryId == id)
+            .ToListAsync(cancellationToken);
+
+        if (subcategories.Count > 0)
+        {
+            _dbContext.Subcategories.RemoveRange(subcategories);
+        }
+
+        _dbContext.Categories.Remove(category);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        TempData["SuccessMessage"] = $"Category '{category.Name}' was deleted successfully.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost("UpdateDisplayOrder")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateDisplayOrder([FromForm] Guid id, [FromForm] int displayOrder, CancellationToken cancellationToken)
+    {
+        if (displayOrder < 0)
+        {
+            TempData["ErrorMessage"] = "Display order cannot be negative.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var category = await _dbContext.Categories.FindAsync(new object[] { id }, cancellationToken);
+        if (category is null)
+        {
+            return NotFound();
+        }
+
+        category.Update(category.Name, category.Slug, displayOrder);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        TempData["SuccessMessage"] = $"Display order for '{category.Name}' updated to {displayOrder}.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -476,13 +536,39 @@ public sealed class CategoriesController : AdminBaseController
         if (subcategory.IsActive)
         {
             subcategory.Deactivate();
+            TempData["SuccessMessage"] = $"Subcategory '{subcategory.Name}' deactivated.";
         }
         else
         {
             subcategory.Activate();
+            TempData["SuccessMessage"] = $"Subcategory '{subcategory.Name}' activated.";
         }
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost("DeleteSubcategory/{id:guid}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteSubcategory(Guid id, CancellationToken cancellationToken)
+    {
+        var subcategory = await _dbContext.Subcategories.FindAsync(new object[] { id }, cancellationToken);
+        if (subcategory is null)
+        {
+            return NotFound();
+        }
+
+        var productCount = await _dbContext.Products.CountAsync(p => p.SubcategoryId == id, cancellationToken);
+        if (productCount > 0)
+        {
+            TempData["ErrorMessage"] = $"Cannot delete subcategory '{subcategory.Name}' because it is assigned to {productCount} product(s).";
+            return RedirectToAction(nameof(Index));
+        }
+
+        _dbContext.Subcategories.Remove(subcategory);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        TempData["SuccessMessage"] = $"Subcategory '{subcategory.Name}' was deleted successfully.";
         return RedirectToAction(nameof(Index));
     }
 
