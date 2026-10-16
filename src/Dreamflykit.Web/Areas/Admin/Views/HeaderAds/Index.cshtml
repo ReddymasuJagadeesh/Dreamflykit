@@ -23,8 +23,8 @@
             </p>
         </div>
         <div style="display: flex; gap: 10px; align-items: center;">
-            <a href="/SpecialOffer" target="_blank" class="dk-btn dk-btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; text-decoration: none; padding: 7px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #ffffff; color: #334155; font-weight: 600;">
-                <span>View Offer Page ↗</span>
+            <a href="/study-abroad-hub" target="_blank" class="dk-btn dk-btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; text-decoration: none; padding: 7px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #ffffff; color: #334155; font-weight: 600;">
+                <span>View Study Abroad Hub ↗</span>
             </a>
             <a href="/" target="_blank" class="dk-btn dk-btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; text-decoration: none; padding: 7px 14px; border: 1px solid #cbd5e1; border-radius: 8px; background: #ffffff; color: #334155; font-weight: 600;">
                 <span>View Live Header ↗</span>
@@ -233,13 +233,13 @@
                     <label asp-for="RedirectUrl" style="display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 4px;">
                         Destination Redirect URL <span style="color: #dc2626;">*</span>
                     </label>
-                    <input type="text" asp-for="RedirectUrl" id="redirectInput" class="dk-admin-form-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px;" placeholder="/SpecialOffer" required maxlength="500" oninput="updateLivePreview()" />
+                    <input type="text" asp-for="RedirectUrl" id="redirectInput" class="dk-admin-form-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px;" placeholder="/study-abroad-hub" required maxlength="500" oninput="updateLivePreview()" />
                     <span asp-validation-for="RedirectUrl" style="color: #dc2626; font-size: 12px; font-weight: 600;"></span>
 
                     <!-- Preset Target Buttons -->
                     <div style="display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
-                        <button type="button" onclick="setRedirect('/SpecialOffer')" style="font-size: 11px; font-weight: 600; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 8px; cursor: pointer;">
-                            📌 Default Empty Landing Page (/SpecialOffer)
+                        <button type="button" onclick="setRedirect('/study-abroad-hub')" style="font-size: 11px; font-weight: 600; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 8px; cursor: pointer;">
+                            📌 Study Abroad Hub (/study-abroad-hub)
                         </button>
                         <button type="button" onclick="setRedirect('/Kits/FindMyKit')" style="font-size: 11px; font-weight: 600; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 8px; cursor: pointer;">
                             Find My Kit

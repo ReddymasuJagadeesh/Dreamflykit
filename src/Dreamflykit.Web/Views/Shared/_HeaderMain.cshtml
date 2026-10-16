@@ -11,6 +11,13 @@
         : (!string.IsNullOrWhiteSpace(queryCategory) ? queryCategory.Trim().ToLowerInvariant() : null);
 
     var currentReqPath = Context.Request.Path.Value ?? "";
+    var isAbroadHub = currentReqPath.StartsWith("/study-abroad-hub", StringComparison.OrdinalIgnoreCase) ||
+                      currentReqPath.StartsWith("/StudyAbroadHub", StringComparison.OrdinalIgnoreCase) ||
+                      currentReqPath.StartsWith("/SpecialOffer", StringComparison.OrdinalIgnoreCase) ||
+                      currentReqPath.StartsWith("/AbroadHub", StringComparison.OrdinalIgnoreCase) ||
+                      currentReqPath.StartsWith("/Offer", StringComparison.OrdinalIgnoreCase);
+    var isDreamflykit = !isAbroadHub;
+
     var isOffersZone = Context.Request.Query.ContainsKey("minDiscount") ||
                        string.Equals(Context.Request.Query["sort"], "DiscountHighToLow", StringComparison.OrdinalIgnoreCase);
     var isForYou = !isOffersZone && string.IsNullOrEmpty(activeCatSlug) &&
@@ -31,114 +38,59 @@
 }
 <header class="dk-header">
 
-    <!-- =====================================================
-         TOP UTILITY BAR - 100% WHITE TEXT ON BRAND BLUE
-    ====================================================== -->
-
-    <div class="dk-utility">
-
-        <div class="dk-shell dk-utility-inner">
-
-            <div class="dk-utility-item" style="color: #ffffff;">
-                <span class="dk-icon" style="color: #ffffff;">✈</span>
-                <span style="color: #ffffff; font-weight: 500;">Delivering Across USA, UK, Canada, Australia & More</span>
-            </div>
-
-            <div class="dk-utility-divider" style="background: rgba(255, 255, 255, 0.35);"></div>
-
-            <div class="dk-utility-item" style="color: #ffffff;">
-                <span class="dk-icon" style="color: #ffffff;">✓</span>
-                <span style="color: #ffffff; font-weight: 600;">100% Genuine Products</span>
-            </div>
-
-            <div class="dk-utility-divider" style="background: rgba(255, 255, 255, 0.35);"></div>
-
-            <div class="dk-utility-item" style="color: #ffffff;">
-                <span class="dk-icon" style="color: #ffffff;">★</span>
-                <span style="color: #ffffff; font-weight: 600;">Student Trusted</span>
-            </div>
-
-            <div class="dk-utility-spacer"></div>
-
-            @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
-            {
-                <a href="/Admin" class="dk-utility-link" style="color: #fffa65 !important; font-weight: 800; background: rgba(0,0,0,0.3); padding: 3px 12px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255, 250, 101, 0.4);">
-                    <span style="display:inline-block; width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px #22c55e;"></span>
-                    @(User.IsInRole("SuperAdmin") ? "⚡ Super Admin Console" : "⚡ Admin Console")
-                </a>
-                <div class="dk-utility-divider" style="background: rgba(255, 255, 255, 0.35);"></div>
-            }
-
-            @if (User.IsInRole("Seller"))
-            {
-                <a href="/Seller/Products" class="dk-utility-link" style="color: #a7f3d0 !important; font-weight: 800; background: rgba(0,0,0,0.3); padding: 3px 12px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(167, 243, 208, 0.4);">
-                    <span style="display:inline-block; width: 7px; height: 7px; border-radius: 50%; background: #34d399; box-shadow: 0 0 6px #34d399;"></span>
-                    🏪 Seller Portal
-                </a>
-                <div class="dk-utility-divider" style="background: rgba(255, 255, 255, 0.35);"></div>
-            }
-
-            @if (User.Identity?.IsAuthenticated != true)
-            {
-                <a href="/Seller/Login"
-                   class="dk-utility-link"
-                   style="color: #ffffff !important; opacity: 0.95;">
-                    🏪 Seller Login
-                </a>
-                <div class="dk-utility-divider" style="background: rgba(255, 255, 255, 0.35);"></div>
-            }
-
-            <a href="/Help"
-               class="dk-utility-link"
-               style="color: #ffffff !important;">
-                Help & FAQs
-            </a>
-
-            <div class="dk-utility-divider" style="background: rgba(255, 255, 255, 0.35);"></div>
-
-            <a href="tel:+919123456789"
-               class="dk-utility-link"
-               style="color: #ffffff !important;">
-                +91 91234 56789
-            </a>
-
-            <div class="dk-utility-divider" style="background: rgba(255, 255, 255, 0.35);"></div>
-
-            <a href="/Orders"
-               class="dk-utility-link"
-               style="color: #ffffff !important;">
-                Track Order
-            </a>
-
-        </div>
-
-    </div>
-
 
     <!-- =====================================================
          MAIN HEADER
     ====================================================== -->
-    <div class="dk-main-header">
+    <div class="dk-main-header @(isAbroadHub ? "dk-main-header-abroad" : "")">
 
         <div class="dk-shell dk-main-header-inner">
 
             <!-- =====================================================
-                 ROW 1: LOGO (SOME UP) + 2 HEADER ADS BESIDE LOGO
+                 ROW 1: FLIPKART-STYLE DUAL PROFILE SWITCHER (DREAMFLYKIT & STUDY ABROAD HUB)
             ====================================================== -->
             <div class="dk-header-top-row">
 
-                <!-- LOGO -->
-                <a href="/"
-                   class="dk-brand"
-                   aria-label="Dreamflykit Home">
-                    <img src="~/images/branding/dreamflykit-logo.webp"
-                         alt="Dreamflykit"
-                         class="dk-brand-image" />
-                </a>
+                <!-- DUAL PROFILE SWITCHER CONTAINER -->
+                <div class="dk-profile-switcher-wrapper" role="tablist" aria-label="Brand Profile Switcher">
 
-                <!-- AD SPACE BESIDE LOGO (REDIRECTS TO DESTINATION PAGE) -->
-                <div class="dk-header-ad-space-container">
-                    @if (headerAd != null && headerAd.IsActive)
+                    <!-- PROFILE 1: DREAMFLYKIT STORE -->
+                    <a href="/"
+                       class="dk-profile-pill dk-profile-pill-store @(isDreamflykit ? "is-active" : "is-inactive")"
+                       role="tab"
+                       aria-selected="@(isDreamflykit ? "true" : "false")"
+                       aria-label="Dreamflykit Shopping Profile"
+                       title="Dreamflykit — Travel & Study Abroad E-Commerce Store">
+                        <span class="dk-profile-brand-logo-wrap">
+                            <img src="~/images/branding/dreamflykit-logo.webp"
+                                 alt="Dreamflykit"
+                                 class="dk-profile-brand-logo-img" />
+                        </span>
+                    </a>
+
+                    <!-- PROFILE 2: STUDY ABROAD HUB -->
+                    <a href="/study-abroad-hub"
+                       class="dk-profile-pill dk-profile-pill-abroad @(isAbroadHub ? "is-active" : "is-inactive")"
+                       role="tab"
+                       aria-selected="@(isAbroadHub ? "true" : "false")"
+                       aria-label="Study Abroad Hub Profile"
+                       title="Study Abroad Hub">
+                        <span class="dk-profile-pill-icon-wrap dk-pill-abroad-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="dk-profile-svg-abroad">
+                                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+                                <path d="M3.6 9h16.8M3.6 15h16.8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                                <path d="M12 3c2.4 2.5 3.8 5.5 3.8 9s-1.4 6.5-3.8 9c-2.4-2.5-3.8-5.5-3.8-9s1.4-6.5 3.8-9z" stroke="currentColor" stroke-width="1.3"/>
+                                <path d="M14.5 5.5l4-1.5-1.2 4 3.5 1-4.8 2.2-.8 2.2-1.2-1.5-.8 1.5-.6-2.2 1.9-5.7z" fill="currentColor"/>
+                            </svg>
+                        </span>
+                        <span class="dk-profile-abroad-title">Study Abroad Hub</span>
+                    </a>
+
+                </div>
+
+                <!-- RIGHT UTILITY (DELIVERY LOCATION / AD SPACE) -->
+                <div class="dk-header-top-utility-right">
+                    @if (headerAd != null && headerAd.IsActive && !string.Equals(headerAd.Title, "Study abroad hub", StringComparison.OrdinalIgnoreCase) && !string.Equals(headerAd.Title, "Dreamflykit Special Offers", StringComparison.OrdinalIgnoreCase))
                     {
                         var target = headerAd.OpenInNewTab ? "_blank" : "_self";
                         <a href="@headerAd.RedirectUrl"
@@ -179,15 +131,6 @@
                             <span class="dk-ad-space-arrow" aria-hidden="true">↗</span>
                         </a>
                     }
-                    else if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
-                    {
-                        <div class="dk-header-ad-space-empty-admin">
-                            <a href="/Admin/HeaderAds" class="dk-admin-ad-empty-link">
-                                <span class="dk-ad-empty-icon">📢</span>
-                                <span><strong>Ad Space (Inactive)</strong> — Click to configure ad &amp; redirect link</span>
-                            </a>
-                        </div>
-                    }
 
                     @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
                     {
@@ -195,17 +138,19 @@
                            class="dk-admin-ad-quick-btn"
                            title="Admin Console: Replace or configure header ad space and destination URL">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                            <span>Replace Ad</span>
+                            <span>Ad Console</span>
                         </a>
                     }
                 </div>
 
             </div>
 
-            <!-- =====================================================
-                 ROW 2: SEARCH BAR (LEFT) + ACTIONS (RIGHT)
-            ====================================================== -->
-            <div class="dk-header-bottom-row">
+            @if (!isAbroadHub)
+            {
+                <!-- =====================================================
+                     ROW 2: SEARCH BAR (LEFT) + ACTIONS (RIGHT)
+                ====================================================== -->
+                <div class="dk-header-bottom-row">
 
                 <!-- SEARCH BAR - ON LEFT SIDE -->
                 <div class="dk-search-box-wrapper">
@@ -227,7 +172,7 @@
                         <input type="search"
                                id="dk-search-input"
                                name="q"
-                               placeholder="Search for products, brands and more"
+                               placeholder="@(isAbroadHub ? "Search student flight perks, abroad kits, forex deals..." : "Search for products, brands and more")"
                                autocomplete="off" />
 
                         <button type="submit"
@@ -534,6 +479,7 @@
                 </div>
 
             </div>
+            }
 
         </div>
 
@@ -541,9 +487,10 @@
 
 
     <!-- =====================================================
-         CATEGORY NAVIGATION
+         CATEGORY NAVIGATION (DREAMFLYKIT STORE ONLY)
     ====================================================== -->
-
+    @if (!isAbroadHub)
+    {
     <nav class="dk-category-nav">
 
         <div class="dk-shell dk-category-nav-inner">
@@ -611,6 +558,7 @@
         </div>
 
     </nav>
+    }
 
 
     <!-- MOBILE MENU -->

@@ -107,7 +107,7 @@ public sealed class HeaderAdsController : AdminBaseController
             Title = string.IsNullOrWhiteSpace(section?.Title) ? "Dreamflykit Special Offers" : section.Title,
             Subtitle = subtitle ?? "Exclusive student travel deals & partner perks",
             BadgeText = badgeText,
-            RedirectUrl = string.IsNullOrWhiteSpace(section?.LinkUrl) ? "/SpecialOffer" : section.LinkUrl,
+            RedirectUrl = string.IsNullOrWhiteSpace(section?.LinkUrl) ? "/study-abroad-hub" : section.LinkUrl,
             DisplayMode = displayMode,
             OpenInNewTab = openInNewTab,
             IsActive = section?.IsActive ?? true
@@ -127,7 +127,7 @@ public sealed class HeaderAdsController : AdminBaseController
         var cleanUrl = SanitizeUrl(model.RedirectUrl);
         if (string.IsNullOrWhiteSpace(cleanUrl))
         {
-            ModelState.AddModelError(nameof(model.RedirectUrl), "Please enter a valid, safe URL (e.g. /SpecialOffer or https://...).");
+            ModelState.AddModelError(nameof(model.RedirectUrl), "Please enter a valid, safe URL (e.g. /study-abroad-hub or https://...).");
         }
 
         // 2. Validate file upload if provided
@@ -220,7 +220,7 @@ public sealed class HeaderAdsController : AdminBaseController
         };
         var encodedMetadata = JsonSerializer.Serialize(metadataObj);
 
-        var finalRedirect = cleanUrl ?? "/SpecialOffer";
+        var finalRedirect = cleanUrl ?? "/study-abroad-hub";
 
         if (section == null)
         {

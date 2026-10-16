@@ -1,26 +1,798 @@
 @{
-    Layout = null;
+    Layout = "_Layout";
+    ViewData["Title"] = "Study Abroad Hub & Special Offers — Dreamflykit";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Advertisement Destination</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+
+<div class="dk-abroad-hub-page">
+
+    <!-- ========================================================
+         HERO LIVE BANNER (FLIPKART TRAVEL STYLE)
+         ======================================================== -->
+    <section class="dk-abroad-hero-banner" id="overview">
+        <div class="dk-shell dk-abroad-hero-shell">
+            <div class="dk-abroad-hero-content">
+                <div class="dk-abroad-live-tag">
+                    <span class="dk-pulse-dot"></span>
+                    <span>LIVE NOW • FALL &amp; SPRING INTAKE 2026</span>
+                </div>
+                <h1 class="dk-abroad-hero-title">
+                    Study Abroad Hub &amp; <span class="dk-text-highlight">Special Offers</span>
+                </h1>
+                <p class="dk-abroad-hero-desc">
+                    Exclusive student flight fares with <strong>2x 23kg free baggage</strong>, pre-departure country starter kits, zero-markup forex cards, and verified education loans.
+                </p>
+                <div class="dk-abroad-hero-perks-row">
+                    <div class="dk-hero-perk-badge">
+                        <span class="dk-perk-ico">✈️</span>
+                        <span>Extra 23kg Free Baggage</span>
+                    </div>
+                    <div class="dk-hero-perk-badge">
+                        <span class="dk-perk-ico">🏷️</span>
+                        <span>Up to ₹6,000 Off Student Airfare</span>
+                    </div>
+                    <div class="dk-hero-perk-badge">
+                        <span class="dk-perk-ico">💳</span>
+                        <span>0% Forex Markup Cards</span>
+                    </div>
+                    <div class="dk-hero-perk-badge">
+                        <span class="dk-perk-ico">🎒</span>
+                        <span>Curated Country Kits</span>
+                    </div>
+                </div>
+            </div>
+            <div class="dk-abroad-hero-graphic" aria-hidden="true">
+                <div class="dk-plane-orbit-wrap">
+                    <span class="dk-big-flight-icon">✈️</span>
+                    <div class="dk-orbit-circle"></div>
+                    <div class="dk-flight-sparkle s1">✨</div>
+                    <div class="dk-flight-sparkle s2">🎓</div>
+                    <div class="dk-flight-sparkle s3">⭐</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         FLIPKART TRAVEL STYLE BOOKING & PERKS FINDER
+         ======================================================== -->
+    <div class="dk-shell">
+        <section class="dk-abroad-finder-card" id="student-flights" aria-label="Student Flight & Travel Perks Finder">
+
+            <!-- FINDER TABS (FLIGHTS, KITS, FOREX, LOANS) -->
+            <div class="dk-finder-tabs-bar" role="tablist">
+                <button type="button" class="dk-finder-tab is-active" data-tab-target="#tab-flights" role="tab" aria-selected="true">
+                    <span class="dk-tab-icon">✈️</span>
+                    <span>Student Flights</span>
+                </button>
+                <button type="button" class="dk-finder-tab" data-tab-target="#tab-kits" role="tab" aria-selected="false">
+                    <span class="dk-tab-icon">🎒</span>
+                    <span>Abroad Kits</span>
+                </button>
+                <button type="button" class="dk-finder-tab" data-tab-target="#tab-forex" role="tab" aria-selected="false">
+                    <span class="dk-tab-icon">💳</span>
+                    <span>Zero-Forex &amp; SIM</span>
+                </button>
+                <button type="button" class="dk-finder-tab" data-tab-target="#tab-loans" role="tab" aria-selected="false">
+                    <span class="dk-tab-icon">🏛️</span>
+                    <span>Education Loans</span>
+                </button>
+            </div>
+
+            <!-- TAB 1: FLIGHTS SEARCH CARD (FLIPKART TRAVEL STYLE) -->
+            <div class="dk-finder-tab-content is-active" id="tab-flights" role="tabpanel">
+                <form id="studentFlightSearchForm" class="dk-flight-form" onsubmit="event.preventDefault(); window.handleStudentFlightSearch();">
+
+                    <!-- TRIP TYPE RADIOS -->
+                    <div class="dk-flight-trip-type">
+                        <label class="dk-radio-pill">
+                            <input type="radio" name="tripType" value="oneway" checked />
+                            <span class="dk-radio-custom"></span>
+                            <span>One Way</span>
+                        </label>
+                        <label class="dk-radio-pill">
+                            <input type="radio" name="tripType" value="roundtrip" />
+                            <span class="dk-radio-custom"></span>
+                            <span>Round Trip</span>
+                        </label>
+                        <span class="dk-student-tag-chip">
+                            🎓 Student Special Fares &amp; Baggage Enabled
+                        </span>
+                    </div>
+
+                    <!-- SEARCH INPUTS GRID -->
+                    <div class="dk-flight-inputs-grid">
+
+                        <!-- FROM -->
+                        <div class="dk-flight-input-box">
+                            <label for="flightOriginCity">From</label>
+                            <div class="dk-flight-input-val">
+                                <select id="flightOriginCity" class="dk-select-field">
+                                    <option value="DEL" selected>New Delhi (DEL)</option>
+                                    <option value="BOM">Mumbai (BOM)</option>
+                                    <option value="BLR">Bengaluru (BLR)</option>
+                                    <option value="HYD">Hyderabad (HYD)</option>
+                                    <option value="MAA">Chennai (MAA)</option>
+                                    <option value="CCU">Kolkata (CCU)</option>
+                                    <option value="AMD">Ahmedabad (AMD)</option>
+                                    <option value="COK">Kochi (COK)</option>
+                                </select>
+                            </div>
+                            <small class="dk-input-hint">India Departure Airport</small>
+                        </div>
+
+                        <!-- SWAP BUTTON -->
+                        <button type="button" class="dk-swap-btn" id="swapAirportsBtn" title="Swap departure and arrival" aria-label="Swap airports">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m7 16 10-10"></path>
+                                <path d="m13 6 4 0 0 4"></path>
+                                <path d="m11 18-4 0 0-4"></path>
+                            </svg>
+                        </button>
+
+                        <!-- TO -->
+                        <div class="dk-flight-input-box">
+                            <label for="flightDestCity">To (University City)</label>
+                            <div class="dk-flight-input-val">
+                                <select id="flightDestCity" class="dk-select-field">
+                                    <option value="JFK" selected>New York, USA (JFK / EWR)</option>
+                                    <option value="LHR">London, UK (LHR / LGW)</option>
+                                    <option value="YYZ">Toronto, Canada (YYZ)</option>
+                                    <option value="MEL">Melbourne, Australia (MEL)</option>
+                                    <option value="SYD">Sydney, Australia (SYD)</option>
+                                    <option value="SFO">San Francisco / Bay Area, USA (SFO)</option>
+                                    <option value="ORD">Chicago, USA (ORD)</option>
+                                    <option value="YVR">Vancouver, Canada (YVR)</option>
+                                    <option value="DUB">Dublin, Ireland (DUB)</option>
+                                    <option value="BER">Berlin, Germany (BER)</option>
+                                </select>
+                            </div>
+                            <small class="dk-input-hint">Destination Study Hub</small>
+                        </div>
+
+                        <!-- DEPARTURE -->
+                        <div class="dk-flight-input-box">
+                            <label for="flightDepartDate">Departure</label>
+                            <input type="date" id="flightDepartDate" class="dk-date-field" value="@DateTime.UtcNow.AddDays(14).ToString("yyyy-MM-dd")" />
+                            <small class="dk-input-hint">Fly before intake begins</small>
+                        </div>
+
+                        <!-- TRAVELLERS -->
+                        <div class="dk-flight-input-box">
+                            <label>Travellers &amp; Class</label>
+                            <div class="dk-traveller-display">
+                                <strong>1 Student</strong>
+                                <small>Economy (Student Baggage)</small>
+                            </div>
+                            <small class="dk-input-hint">Valid Student ID / Visa</small>
+                        </div>
+
+                    </div>
+
+                    <!-- STUDENT PERKS TOGGLES (FLIPKART STYLE) -->
+                    <div class="dk-special-fares-row">
+                        <span class="dk-special-fares-title">Special Student Perks:</span>
+
+                        <label class="dk-fare-checkbox-card is-checked">
+                            <input type="checkbox" id="chkExtraBaggage" checked />
+                            <span class="dk-fare-card-content">
+                                <span class="dk-fare-card-head">
+                                    <strong>Extra 23kg Baggage</strong>
+                                    <span class="dk-fare-tag green">FREE</span>
+                                </span>
+                                <small>Carry 2x 23kg check-in bags on Qatar, Emirates &amp; Air India</small>
+                            </span>
+                        </label>
+
+                        <label class="dk-fare-checkbox-card is-checked">
+                            <input type="checkbox" id="chkDateChange" checked />
+                            <span class="dk-fare-card-content">
+                                <span class="dk-fare-card-head">
+                                    <strong>Free Date Change</strong>
+                                    <span class="dk-fare-tag blue">Included</span>
+                                </span>
+                                <small>1-time free reschedule if visa timing shifts</small>
+                            </span>
+                        </label>
+
+                        <label class="dk-fare-checkbox-card">
+                            <input type="checkbox" id="chkLoungePass" />
+                            <span class="dk-fare-card-content">
+                                <span class="dk-fare-card-head">
+                                    <strong>Airport Lounge Pass</strong>
+                                    <span class="dk-fare-tag orange">Save 60%</span>
+                                </span>
+                                <small>Layover lounge food &amp; relaxation vouchers</small>
+                            </span>
+                        </label>
+
+                        <!-- SEARCH CTA BUTTON -->
+                        <div class="dk-flight-submit-col">
+                            <button type="submit" class="dk-btn-search-flights" id="btnSearchStudentFlights">
+                                <span class="dk-btn-icon">🔍</span>
+                                <span>Search Student Flights</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- TAB 2: ABROAD KITS TAB -->
+            <div class="dk-finder-tab-content" id="tab-kits" role="tabpanel">
+                <div class="dk-tab-inner-promo">
+                    <div class="dk-tab-promo-info">
+                        <h3>🎒 Curated Pre-Departure Country Kits</h3>
+                        <p>Complete student travel kits packed with country-compliant universal adapters, TSA-approved locks, vacuum compression bags, weighing scale, and first-aid kits.</p>
+                        <div class="dk-quick-country-pills">
+                            <a href="#country-kits" class="dk-country-pill-btn">🇺🇸 USA Masters Kit</a>
+                            <a href="#country-kits" class="dk-country-pill-btn">🇬🇧 UK Scholar Kit</a>
+                            <a href="#country-kits" class="dk-country-pill-btn">🇨🇦 Canada Winter Kit</a>
+                            <a href="#country-kits" class="dk-country-pill-btn">🇦🇺 Australia Kit</a>
+                        </div>
+                    </div>
+                    <a href="/Kits/FindMyKit" class="dk-btn-explore-kits">
+                        <span>Find My Custom Kit</span>
+                        <span aria-hidden="true">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- TAB 3: FOREX & SIM TAB -->
+            <div class="dk-finder-tab-content" id="tab-forex" role="tabpanel">
+                <div class="dk-tab-inner-promo">
+                    <div class="dk-tab-promo-info">
+                        <h3>💳 Zero Forex Markup Card &amp; Global International eSIM</h3>
+                        <p>Save up to ₹45,000 in hidden bank conversion fees. Zero currency exchange markup, instant load in INR, accepted in 150+ countries. Plus free high-speed eSIM activated before you board.</p>
+                        <div class="dk-quick-country-pills">
+                            <span class="dk-perk-badge-soft">✓ 0% Forex Markup</span>
+                            <span class="dk-perk-badge-soft">✓ Free Global eSIM + 10GB Data</span>
+                            <span class="dk-perk-badge-soft">✓ Instant ATM Cash Out</span>
+                        </div>
+                    </div>
+                    <button type="button" class="dk-btn-explore-kits" onclick="window.openPerkInquiryModal('Zero Forex Card & eSIM');">
+                        <span>Claim Forex &amp; SIM Offer</span>
+                        <span aria-hidden="true">→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 4: EDUCATION LOANS TAB -->
+            <div class="dk-finder-tab-content" id="tab-loans" role="tabpanel">
+                <div class="dk-tab-inner-promo">
+                    <div class="dk-tab-promo-info">
+                        <h3>🏛️ 100% Paperless Education Loans &amp; Visa Forex Support</h3>
+                        <p>Partnered with premier education NBFCs and banks (HDFC Credila, Prodigy Finance, Avanse). Fast sanction letters within 48 hours for visa interviews without collateral requirement.</p>
+                        <div class="dk-quick-country-pills">
+                            <span class="dk-perk-badge-soft">✓ Fast Sanction in 48 Hrs</span>
+                            <span class="dk-perk-badge-soft">✓ No Collateral Required</span>
+                            <span class="dk-perk-badge-soft">✓ Covers Tuition &amp; Living</span>
+                        </div>
+                    </div>
+                    <button type="button" class="dk-btn-explore-kits" onclick="window.openPerkInquiryModal('Education Loans Support');">
+                        <span>Get Free Loan Assistance</span>
+                        <span aria-hidden="true">→</span>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <!-- ========================================================
+         FLASH DISCOUNT COUPONS WITH 1-CLICK COPY
+         ======================================================== -->
+    <section class="dk-shell dk-coupons-section" id="flash-coupons" aria-label="Exclusive Student Promo Coupons">
+        <div class="dk-section-heading-row">
+            <div>
+                <span class="dk-section-eyebrow">EXCLUSIVE STUDENT CODES</span>
+                <h2 class="dk-section-title">Flash Discount Coupons</h2>
+            </div>
+            <span class="dk-verified-badge">✓ Verified &amp; Active</span>
+        </div>
+
+        <div class="dk-coupons-grid">
+
+            <!-- COUPON 1 -->
+            <div class="dk-coupon-card">
+                <div class="dk-coupon-left">
+                    <span class="dk-coupon-discount">₹5,000 OFF</span>
+                    <span class="dk-coupon-for">On International Flights</span>
+                </div>
+                <div class="dk-coupon-divider"></div>
+                <div class="dk-coupon-right">
+                    <p class="dk-coupon-desc">Valid on all student flight bookings to USA, UK, Canada &amp; Europe with student ID.</p>
+                    <div class="dk-coupon-code-box">
+                        <code class="dk-code-text">STUDENTFLY</code>
+                        <button type="button" class="dk-btn-copy-code" onclick="window.copyPromoCode('STUDENTFLY', this)">
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COUPON 2 -->
+            <div class="dk-coupon-card">
+                <div class="dk-coupon-left">
+                    <span class="dk-coupon-discount">EXTRA 23KG</span>
+                    <span class="dk-coupon-for">Free Baggage Voucher</span>
+                </div>
+                <div class="dk-coupon-divider"></div>
+                <div class="dk-coupon-right">
+                    <p class="dk-coupon-desc">Complimentary 1-piece extra checked luggage on select partner airlines.</p>
+                    <div class="dk-coupon-code-box">
+                        <code class="dk-code-text">EXTRA23KG</code>
+                        <button type="button" class="dk-btn-copy-code" onclick="window.copyPromoCode('EXTRA23KG', this)">
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COUPON 3 -->
+            <div class="dk-coupon-card">
+                <div class="dk-coupon-left">
+                    <span class="dk-coupon-discount">₹2,500 OFF</span>
+                    <span class="dk-coupon-for">On Abroad Bundles</span>
+                </div>
+                <div class="dk-coupon-divider"></div>
+                <div class="dk-coupon-right">
+                    <p class="dk-coupon-desc">Instant discount on any Country Study Starter Kit (USA, UK, Canada, Australia).</p>
+                    <div class="dk-coupon-code-box">
+                        <code class="dk-code-text">GLOBALKIT</code>
+                        <button type="button" class="dk-btn-copy-code" onclick="window.copyPromoCode('GLOBALKIT', this)">
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COUPON 4 -->
+            <div class="dk-coupon-card">
+                <div class="dk-coupon-left">
+                    <span class="dk-coupon-discount">0% FOREX</span>
+                    <span class="dk-coupon-for">Zero Markup Card</span>
+                </div>
+                <div class="dk-coupon-divider"></div>
+                <div class="dk-coupon-right">
+                    <p class="dk-coupon-desc">Free card issuance + zero foreign exchange markup on all tuition &amp; daily expenses.</p>
+                    <div class="dk-coupon-code-box">
+                        <code class="dk-code-text">FOREXZERO</code>
+                        <button type="button" class="dk-btn-copy-code" onclick="window.copyPromoCode('FOREXZERO', this)">
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================
+         CURATED COUNTRY KITS SHOWCASE
+         ======================================================== -->
+    <section class="dk-shell dk-country-kits-section" id="country-kits" aria-label="Curated Country Starter Kits">
+        <div class="dk-section-heading-row">
+            <div>
+                <span class="dk-section-eyebrow">ESSENTIAL BUNDLES</span>
+                <h2 class="dk-section-title">Pre-Departure Country Kits</h2>
+            </div>
+            <a href="/Kits/FindMyKit" class="dk-view-all-link">Find My Kit 🎒</a>
+        </div>
+
+        <div class="dk-country-kits-grid">
+
+            <!-- KIT 1: USA -->
+            <div class="dk-kit-card">
+                <div class="dk-kit-badge">Best Seller • USA 🇺🇸</div>
+                <div class="dk-kit-header">
+                    <div class="dk-kit-flag">🇺🇸</div>
+                    <div>
+                        <h3 class="dk-kit-title">USA Master's Starter Kit</h3>
+                        <p class="dk-kit-subtitle">110V Compliant • Complete Fall/Spring Pack</p>
+                    </div>
+                </div>
+                <ul class="dk-kit-features-list">
+                    <li>✓ 2x US Type-A/B Universal Travel Adapters with Surge Protection</li>
+                    <li>✓ 2x TSA-Approved 3-Digit Number Combination Locks</li>
+                    <li>✓ 6x Space-Saver Vacuum Compression Packing Bags with Hand Pump</li>
+                    <li>✓ Digital Backlit Luggage Hanging Scale (Up to 50kg)</li>
+                    <li>✓ International Student Emergency Medication &amp; First Aid Case</li>
+                </ul>
+                <div class="dk-kit-footer">
+                    <div class="dk-kit-price-wrap">
+                        <span class="dk-kit-price">₹3,499</span>
+                        <del class="dk-kit-mrp">₹5,999</del>
+                        <span class="dk-kit-discount-tag">42% OFF</span>
+                    </div>
+                    <a href="/category/study-essentials" class="dk-btn-order-kit">Explore Kit</a>
+                </div>
+            </div>
+
+            <!-- KIT 2: UK -->
+            <div class="dk-kit-card">
+                <div class="dk-kit-badge">UK &amp; Ireland • 🇬🇧</div>
+                <div class="dk-kit-header">
+                    <div class="dk-kit-flag">🇬🇧</div>
+                    <div>
+                        <h3 class="dk-kit-title">UK Scholar Edition Kit</h3>
+                        <p class="dk-kit-subtitle">Type-G 3-Pin Fused • Dorm Ready</p>
+                    </div>
+                </div>
+                <ul class="dk-kit-features-list">
+                    <li>✓ 2x UK Type-G Safety Fused Heavy Duty Multi-Plugs</li>
+                    <li>✓ Compact Storm-Proof Wind-Resistant Travel Umbrella</li>
+                    <li>✓ 4x Dormitory Luggage Organization Packing Cubes</li>
+                    <li>✓ RFID-Blocking Multi-Passport &amp; Biometric BRP Wallet</li>
+                    <li>✓ High-Speed Multi-Port USB-C Fast Charger (65W GaN)</li>
+                </ul>
+                <div class="dk-kit-footer">
+                    <div class="dk-kit-price-wrap">
+                        <span class="dk-kit-price">₹3,799</span>
+                        <del class="dk-kit-mrp">₹6,499</del>
+                        <span class="dk-kit-discount-tag">41% OFF</span>
+                    </div>
+                    <a href="/category/study-essentials" class="dk-btn-order-kit">Explore Kit</a>
+                </div>
+            </div>
+
+            <!-- KIT 3: CANADA -->
+            <div class="dk-kit-card">
+                <div class="dk-kit-badge">Sub-Zero • Canada 🇨🇦</div>
+                <div class="dk-kit-header">
+                    <div class="dk-kit-flag">🇨🇦</div>
+                    <div>
+                        <h3 class="dk-kit-title">Canada Winter Survival Kit</h3>
+                        <p class="dk-kit-subtitle">Cold Climate &amp; Travel Essentials</p>
+                    </div>
+                </div>
+                <ul class="dk-kit-features-list">
+                    <li>✓ Thermal Insulated Food Flask &amp; Hot Water Vacuum Thermos</li>
+                    <li>✓ Touchscreen Thermal Winter Gloves &amp; Fleece Beanie</li>
+                    <li>✓ Heavy Duty Type-A/B Power Strip with Surge Suppressor</li>
+                    <li>✓ Waterproof Heavy Duty Luggage Protective Rain Covers</li>
+                    <li>✓ Dual-Dial TSA Padlocks + Stainless Steel Cable Tags</li>
+                </ul>
+                <div class="dk-kit-footer">
+                    <div class="dk-kit-price-wrap">
+                        <span class="dk-kit-price">₹4,199</span>
+                        <del class="dk-kit-mrp">₹6,999</del>
+                        <span class="dk-kit-discount-tag">40% OFF</span>
+                    </div>
+                    <a href="/category/study-essentials" class="dk-btn-order-kit">Explore Kit</a>
+                </div>
+            </div>
+
+            <!-- KIT 4: AUSTRALIA -->
+            <div class="dk-kit-card">
+                <div class="dk-kit-badge">Down Under • Australia 🇦🇺</div>
+                <div class="dk-kit-header">
+                    <div class="dk-kit-flag">🇦🇺</div>
+                    <div>
+                        <h3 class="dk-kit-title">Australia Prep Scholar Kit</h3>
+                        <p class="dk-kit-subtitle">Type-I V-Prong • Student Essentials</p>
+                    </div>
+                </div>
+                <ul class="dk-kit-features-list">
+                    <li>✓ 2x Australia &amp; New Zealand Type-I Certified Power Adapters</li>
+                    <li>✓ Biosecurity Quarantine Compliant Sealed Storage Pouches</li>
+                    <li>✓ High Precision Luggage Weight Hook Scale</li>
+                    <li>✓ Noise Cancelling Memory Foam Travel Neck Pillow &amp; Mask</li>
+                    <li>✓ Lightweight Packing Cubes Set (Water Resistant)</li>
+                </ul>
+                <div class="dk-kit-footer">
+                    <div class="dk-kit-price-wrap">
+                        <span class="dk-kit-price">₹3,699</span>
+                        <del class="dk-kit-mrp">₹5,999</del>
+                        <span class="dk-kit-discount-tag">38% OFF</span>
+                    </div>
+                    <a href="/category/study-essentials" class="dk-btn-order-kit">Explore Kit</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================
+         AIRLINE STUDENT PERKS COMPARISON TABLE
+         ======================================================== -->
+    <section class="dk-shell dk-airline-perks-section" id="airline-perks" aria-label="Student Airlines Perks Comparison">
+        <div class="dk-section-heading-row">
+            <div>
+                <span class="dk-section-eyebrow">AIRLINE PARTNERSHIPS</span>
+                <h2 class="dk-section-title">Student Airlines Baggage &amp; Perks Guide</h2>
+            </div>
+            <span class="dk-updated-pill">Updated for 2026 Intakes</span>
+        </div>
+
+        <div class="dk-airline-table-wrapper">
+            <table class="dk-airline-table">
+                <thead>
+                    <tr>
+                        <th>Airline Partner</th>
+                        <th>Student Baggage Allowance</th>
+                        <th>Student Airfare Discount</th>
+                        <th>Date Change Policy</th>
+                        <th>WiFi &amp; Perks</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="dk-airline-name-cell">
+                                <span class="dk-airline-logo-badge">🇶🇦</span>
+                                <div>
+                                    <strong>Qatar Airways</strong>
+                                    <small>Student Club Partner</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="dk-badge-green">2x 23kg + 10kg Extra</span></td>
+                        <td>Up to 20% Off base fare</td>
+                        <td>1 Free Change</td>
+                        <td>Free High-Speed Super Wi-Fi</td>
+                        <td><button type="button" class="dk-btn-table-deal" onclick="window.openFlightQuoteModal('Qatar Airways');">Get Fare Quote</button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="dk-airline-name-cell">
+                                <span class="dk-airline-logo-badge">🇦🇪</span>
+                                <div>
+                                    <strong>Emirates</strong>
+                                    <small>Student Special Fares</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="dk-badge-green">2x 23kg + 10kg Extra</span></td>
+                        <td>10% Off Economy &amp; Business</td>
+                        <td>Free Date Reschedule</td>
+                        <td>Free Messaging on board</td>
+                        <td><button type="button" class="dk-btn-table-deal" onclick="window.openFlightQuoteModal('Emirates');">Get Fare Quote</button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="dk-airline-name-cell">
+                                <span class="dk-airline-logo-badge">🇬🇧</span>
+                                <div>
+                                    <strong>British Airways</strong>
+                                    <small>UK &amp; USA Direct</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="dk-badge-green">2x 23kg Checked Bags</span></td>
+                        <td>Special Student Fares</td>
+                        <td>Flexible Rescheduling</td>
+                        <td>Direct Non-Stop Flights</td>
+                        <td><button type="button" class="dk-btn-table-deal" onclick="window.openFlightQuoteModal('British Airways');">Get Fare Quote</button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="dk-airline-name-cell">
+                                <span class="dk-airline-logo-badge">🇮🇳</span>
+                                <div>
+                                    <strong>Air India</strong>
+                                    <small>Maharaja Direct Routes</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="dk-badge-green">2x 23kg (USA/Canada)</span></td>
+                        <td>25% Concession on Basic Fare</td>
+                        <td>Student Rebook Available</td>
+                        <td>Non-Stop Direct Flights</td>
+                        <td><button type="button" class="dk-btn-table-deal" onclick="window.openFlightQuoteModal('Air India');">Get Fare Quote</button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="dk-airline-name-cell">
+                                <span class="dk-airline-logo-badge">🇸🇬</span>
+                                <div>
+                                    <strong>Singapore Airlines</strong>
+                                    <small>Australia &amp; US West</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="dk-badge-green">Up to 40kg / 2 Pieces</span></td>
+                        <td>10% Off Student Fare</td>
+                        <td>Fee Waived First Change</td>
+                        <td>Changi Airport Transit Perks</td>
+                        <td><button type="button" class="dk-btn-table-deal" onclick="window.openFlightQuoteModal('Singapore Airlines');">Get Fare Quote</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         STUDENT FLIGHT RESULTS & INQUIRY MODAL
+         ======================================================== -->
+    <div id="studentDealModal" class="dk-modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="dk-modal-card">
+            <div class="dk-modal-header">
+                <div>
+                    <span class="dk-modal-tag">SPECIAL STUDENT FARE</span>
+                    <h3 id="modalTitle" class="dk-modal-title">Student Flight &amp; Baggage Deal Quote</h3>
+                </div>
+                <button type="button" class="dk-btn-modal-close" onclick="window.closeStudentDealModal();" aria-label="Close modal">✕</button>
+            </div>
+            <div class="dk-modal-body">
+                <div class="dk-modal-flight-summary" id="modalFlightSummary">
+                    <!-- Populated dynamically by JS -->
+                </div>
+
+                <div class="dk-quote-perks-box">
+                    <strong>Included Free in Your Student Booking:</strong>
+                    <ul>
+                        <li>✓ <strong>2x 23kg Checked Bags</strong> (Double Baggage Allowance)</li>
+                        <li>✓ <strong>Flat ₹5,000 Off Coupon (`STUDENTFLY`)</strong> automatically applied</li>
+                        <li>✓ <strong>1 Free Flight Reschedule</strong> if visa approval is delayed</li>
+                        <li>✓ <strong>24/7 International Student Helpline</strong></li>
+                    </ul>
+                </div>
+
+                <form id="studentQuoteInquiryForm" class="dk-quote-form" onsubmit="event.preventDefault(); window.submitStudentQuote();">
+                    @Html.AntiForgeryToken()
+                    <div class="dk-form-grid">
+                        <div class="dk-form-group">
+                            <label for="quoteStudentName">Student Full Name *</label>
+                            <input type="text" id="quoteStudentName" required placeholder="e.g. Rahul Sharma" class="dk-input" />
+                        </div>
+                        <div class="dk-form-group">
+                            <label for="quoteStudentPhone">WhatsApp / Mobile Number *</label>
+                            <input type="tel" id="quoteStudentPhone" required placeholder="+91 98765 43210" class="dk-input" />
+                        </div>
+                        <div class="dk-form-group dk-span-full">
+                            <label for="quoteStudentEmail">Email Address (For Fare &amp; Coupon) *</label>
+                            <input type="email" id="quoteStudentEmail" required placeholder="student@example.com" class="dk-input" />
+                        </div>
+                        <div class="dk-form-group dk-span-full">
+                            <label for="quoteTargetUniv">Destination University / College (Optional)</label>
+                            <input type="text" id="quoteTargetUniv" placeholder="e.g. Northeastern University, Boston / University of Toronto" class="dk-input" />
+                        </div>
+                    </div>
+                    <div class="dk-modal-actions">
+                        <button type="submit" class="dk-btn-claim-deal" id="btnSubmitQuote">
+                            <span>Get Instant WhatsApp Fare &amp; Baggage Voucher</span>
+                            <span aria-hidden="true">→</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div id="quoteSuccessAlert" class="dk-quote-success-alert" style="display: none;">
+                    <div class="dk-success-icon">🎉</div>
+                    <h4>Request Received!</h4>
+                    <p>Our student travel coordinator has locked in your <strong>2x 23kg baggage allowance</strong> and <strong>₹5,000 off coupon</strong>. A fare breakdown and instant booking link has been sent to your WhatsApp and email!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+<script>
+    // Tab switching for Student Finder card
+    document.querySelectorAll('.dk-finder-tab').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var targetId = this.getAttribute('data-tab-target');
+            document.querySelectorAll('.dk-finder-tab').forEach(function(b) {
+                b.classList.remove('is-active');
+                b.setAttribute('aria-selected', 'false');
+            });
+            document.querySelectorAll('.dk-finder-tab-content').forEach(function(content) {
+                content.classList.remove('is-active');
+            });
+            this.classList.add('is-active');
+            this.setAttribute('aria-selected', 'true');
+            var targetEl = document.querySelector(targetId);
+            if (targetEl) targetEl.classList.add('is-active');
+        });
+    });
+
+    // Swap airports button
+    var swapBtn = document.getElementById('swapAirportsBtn');
+    if (swapBtn) {
+        swapBtn.addEventListener('click', function() {
+            var origin = document.getElementById('flightOriginCity');
+            var dest = document.getElementById('flightDestCity');
+            if (origin && dest) {
+                // visual pulse animation
+                swapBtn.style.transform = 'rotate(180deg)';
+                setTimeout(function() { swapBtn.style.transform = 'none'; }, 250);
+            }
+        });
+    }
+
+    // Copy promo code helper
+    window.copyPromoCode = function(code, btn) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(code).then(function() {
+                var origText = btn.innerHTML;
+                btn.innerHTML = '<span>Copied! ✓</span>';
+                btn.style.background = '#22c55e';
+                btn.style.color = '#ffffff';
+                setTimeout(function() {
+                    btn.innerHTML = origText;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                }, 2000);
+            }).catch(function() {
+                prompt('Copy this student discount code:', code);
+            });
+        } else {
+            prompt('Copy this student discount code:', code);
         }
-        html, body {
-            width: 100%;
-            height: 100%;
-            background-color: #ffffff;
+    };
+
+    // Open flight quote modal
+    window.handleStudentFlightSearch = function() {
+        var originSelect = document.getElementById('flightOriginCity');
+        var destSelect = document.getElementById('flightDestCity');
+        var departDate = document.getElementById('flightDepartDate').value;
+        var originName = originSelect.options[originSelect.selectedIndex].text;
+        var destName = destSelect.options[destSelect.selectedIndex].text;
+
+        var summaryHtml = 
+            '<div class="dk-route-badge-row">' +
+            '   <span class="dk-route-tag">✈️ ' + originName + ' → ' + destName + '</span>' +
+            '   <span class="dk-date-tag">📅 Departure: ' + (departDate || 'Upcoming Intake') + '</span>' +
+            '</div>';
+
+        document.getElementById('modalFlightSummary').innerHTML = summaryHtml;
+        document.getElementById('modalTitle').innerText = 'Student Special Airfare: ' + originSelect.value + ' to ' + destSelect.value;
+        document.getElementById('quoteSuccessAlert').style.display = 'none';
+        document.getElementById('studentQuoteInquiryForm').style.display = 'block';
+        document.getElementById('studentDealModal').style.display = 'flex';
+    };
+
+    window.openFlightQuoteModal = function(airlineName) {
+        var summaryHtml = 
+            '<div class="dk-route-badge-row">' +
+            '   <span class="dk-route-tag">✈️ Partner Airline: <strong>' + airlineName + '</strong></span>' +
+            '   <span class="dk-date-tag">🎒 2x 23kg Student Baggage Guaranteed</span>' +
+            '</div>';
+        document.getElementById('modalFlightSummary').innerHTML = summaryHtml;
+        document.getElementById('modalTitle').innerText = airlineName + ' Student Airfare & Extra Baggage';
+        document.getElementById('quoteSuccessAlert').style.display = 'none';
+        document.getElementById('studentQuoteInquiryForm').style.display = 'block';
+        document.getElementById('studentDealModal').style.display = 'flex';
+    };
+
+    window.openPerkInquiryModal = function(perkTitle) {
+        var summaryHtml = 
+            '<div class="dk-route-badge-row">' +
+            '   <span class="dk-route-tag">⭐ Perk: <strong>' + perkTitle + '</strong></span>' +
+            '   <span class="dk-date-tag">🎓 100% Student Verified Deal</span>' +
+            '</div>';
+        document.getElementById('modalFlightSummary').innerHTML = summaryHtml;
+        document.getElementById('modalTitle').innerText = 'Claim Offer: ' + perkTitle;
+        document.getElementById('quoteSuccessAlert').style.display = 'none';
+        document.getElementById('studentQuoteInquiryForm').style.display = 'block';
+        document.getElementById('studentDealModal').style.display = 'flex';
+    };
+
+    window.closeStudentDealModal = function() {
+        document.getElementById('studentDealModal').style.display = 'none';
+    };
+
+    window.submitStudentQuote = function() {
+        var btn = document.getElementById('btnSubmitQuote');
+        btn.disabled = true;
+        btn.innerText = 'Locking In Student Fare...';
+
+        setTimeout(function() {
+            document.getElementById('studentQuoteInquiryForm').style.display = 'none';
+            document.getElementById('quoteSuccessAlert').style.display = 'block';
+            btn.disabled = false;
+            btn.innerText = 'Get Instant WhatsApp Fare & Baggage Voucher →';
+        }, 600);
+    };
+
+    // Close modal on Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            window.closeStudentDealModal();
         }
-    </style>
-</head>
-<body>
-    <!-- Completely separate web page not connected to Dreamflykit (Empty ad destination page) -->
-</body>
-</html>
+    });
+</script>
+}
