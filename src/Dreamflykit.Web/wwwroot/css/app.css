@@ -8619,10 +8619,10 @@ img {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    height: 40px;
-    padding: 0 16px;
+    height: 44px;
+    padding: 0 18px;
     border-radius: 9999px;
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 700;
     text-decoration: none !important;
     transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
@@ -8666,29 +8666,31 @@ img {
 }
 
 .dk-profile-pill-store.is-active {
-    padding: 0 8px;
+    padding: 3px;
 }
 
 .dk-profile-pill-store.is-active .dk-profile-brand-logo-wrap {
     background: #ffffff;
-    padding: 3px 12px;
+    padding: 4px 18px;
     border-radius: 9999px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    height: 100%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .dk-profile-pill-store.is-active .dk-profile-brand-logo-img {
-    height: 22px;
+    height: 28px;
     width: auto;
-    max-width: 130px;
+    max-width: 160px;
     display: block;
     object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
 }
 
 .dk-profile-pill-store.is-inactive {
-    padding: 0 16px;
+    padding: 0 18px;
 }
 
 .dk-profile-pill-store.is-inactive .dk-profile-brand-logo-wrap {
@@ -8697,11 +8699,12 @@ img {
 }
 
 .dk-profile-pill-store.is-inactive .dk-profile-brand-logo-img {
-    height: 24px;
+    height: 28px;
     width: auto;
-    max-width: 140px;
+    max-width: 160px;
     display: block;
     object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
 }
 
 /* 3. STUDY ABROAD HUB PROFILE (ICON + TEXT ONLY) */
