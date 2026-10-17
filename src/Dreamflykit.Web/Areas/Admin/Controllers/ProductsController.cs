@@ -32,9 +32,9 @@ public sealed class ProductsController : AdminBaseController
         _userManager = userManager;
     }
 
-    private async Task<Guid?> UploadProductMediaFileAsync(IFormFile? file, Guid productId, string altText, CancellationToken cancellationToken)
+    private async Task<(Guid? AssetId, string? ErrorMessage)> UploadProductMediaFileAsync(IFormFile? file, Guid productId, string altText, CancellationToken cancellationToken)
     {
-        if (file is null || file.Length == 0) return null;
+        if (file is null || file.Length == 0) return (null, "No file selected.");
 
         await using var stream = file.OpenReadStream();
         var request = new Dreamflykit.Application.Media.Models.MediaUploadRequest
@@ -44,12 +44,12 @@ public sealed class ProductsController : AdminBaseController
             ContentType = file.ContentType,
             MediaType = Dreamflykit.Domain.Media.MediaType.Product,
             OwnerId = productId,
-            AltText = altText,
-            UploadedBy = CurrentUserId
+            AltText = !string.IsNullOrWhiteSpace(altText) ? altText : Path.GetFileNameWithoutExtension(file.FileName),
+            UploadedBy = CurrentUserId != Guid.Empty ? CurrentUserId : Guid.NewGuid()
         };
 
         var result = await _mediaService.UploadAsync(request, cancellationToken);
-        return result.IsSuccess ? result.Asset?.Id : null;
+        return result.IsSuccess ? (result.Asset?.Id, null) : (null, result.ErrorMessage);
     }
 
     [HttpGet("")]
@@ -314,10 +314,14 @@ public sealed class ProductsController : AdminBaseController
 
         if (model.ImageFile != null && model.ImageFile.Length > 0)
         {
-            var uploadedAssetId = await UploadProductMediaFileAsync(model.ImageFile, product.Id, product.Name, cancellationToken);
+            var (uploadedAssetId, uploadError) = await UploadProductMediaFileAsync(model.ImageFile, product.Id, product.Name, cancellationToken);
             if (uploadedAssetId.HasValue)
             {
                 model.PrimaryMediaAssetId = uploadedAssetId.Value;
+            }
+            else
+            {
+                TempData["WarningMessage"] = $"Product created, but image upload failed: {uploadError}";
             }
         }
 
@@ -522,10 +526,14 @@ public sealed class ProductsController : AdminBaseController
         // Handle direct image file upload or picker selection
         if (model.ImageFile != null && model.ImageFile.Length > 0)
         {
-            var uploadedAssetId = await UploadProductMediaFileAsync(model.ImageFile, product.Id, product.Name, cancellationToken);
+            var (uploadedAssetId, uploadError) = await UploadProductMediaFileAsync(model.ImageFile, product.Id, product.Name, cancellationToken);
             if (uploadedAssetId.HasValue)
             {
                 model.PrimaryMediaAssetId = uploadedAssetId.Value;
+            }
+            else
+            {
+                TempData["WarningMessage"] = $"Product updated, but image upload failed: {uploadError}";
             }
         }
 
@@ -699,7 +707,7 @@ public sealed class ProductsController : AdminBaseController
             var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId, cancellationToken);
             if (product != null)
             {
-                var assetId = await UploadProductMediaFileAsync(file, productId, product.Name, cancellationToken);
+                var (assetId, errorMessage) = await UploadProductMediaFileAsync(file, productId, product.Name, cancellationToken);
                 if (assetId.HasValue)
                 {
                     var maxOrder = await _dbContext.ProductMedia
@@ -716,6 +724,11 @@ public sealed class ProductsController : AdminBaseController
                         cancellationToken);
 
                     TempData["SuccessMessage"] = "Photo uploaded and attached to product gallery successfully.";
+                    return RedirectToAction(nameof(Media), new { id = productId });
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = $"Upload failed: {errorMessage ?? "Could not process image file."}";
                     return RedirectToAction(nameof(Media), new { id = productId });
                 }
             }

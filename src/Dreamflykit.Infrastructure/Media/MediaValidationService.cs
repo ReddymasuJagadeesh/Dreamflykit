@@ -38,21 +38,40 @@ public sealed class MediaValidationService
         string originalFileName,
         CancellationToken cancellationToken = default)
     {
-        // 1. File size
-        if (stream.Length > _options.MaxFileSizeBytes)
+        // 1. File size (allow up to at least 25 MB for high-resolution cameras)
+        var maxAllowedBytes = Math.Max(_options.MaxFileSizeBytes, 25 * 1024 * 1024);
+        if (stream.Length > maxAllowedBytes)
         {
-            return $"File exceeds maximum size of {_options.MaxFileSizeBytes / 1024 / 1024} MB.";
+            return $"File exceeds maximum size of {maxAllowedBytes / 1024 / 1024} MB.";
         }
 
-        // 2. Declared content type
-        if (!_options.AllowedContentTypes.Contains(contentType.ToLowerInvariant()))
+        // 2. Declared content type normalization (handle browsers sending application/octet-stream for webp/jpg)
+        var ext = Path.GetExtension(originalFileName).ToLowerInvariant();
+        var normalizedContentType = contentType?.ToLowerInvariant()?.Trim();
+        if (string.IsNullOrWhiteSpace(normalizedContentType) ||
+            normalizedContentType == "application/octet-stream" ||
+            normalizedContentType == "binary/octet-stream")
+        {
+            normalizedContentType = ext switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".webp" => "image/webp",
+                _ => normalizedContentType
+            };
+        }
+
+        if (normalizedContentType == "image/pjpeg") normalizedContentType = "image/jpeg";
+        if (normalizedContentType == "image/x-png") normalizedContentType = "image/png";
+
+        if (string.IsNullOrWhiteSpace(normalizedContentType) ||
+            !_options.AllowedContentTypes.Contains(normalizedContentType))
         {
             return $"Content type '{contentType}' is not allowed. " +
                    $"Allowed: {string.Join(", ", _options.AllowedContentTypes)}";
         }
 
         // 3. File extension
-        var ext = Path.GetExtension(originalFileName).ToLowerInvariant();
         if (!_options.AllowedExtensions.Contains(ext))
         {
             return $"File extension '{ext}' is not allowed. " +

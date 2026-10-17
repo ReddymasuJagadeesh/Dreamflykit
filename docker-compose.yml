@@ -23,6 +23,8 @@ services:
       - AwsS3__AccessKeyId=${AwsS3__AccessKeyId}
       - AwsS3__SecretAccessKey=${AwsS3__SecretAccessKey}
       - AwsS3__SessionToken=${AwsS3__SessionToken}
+    volumes:
+      - media_cache:/app/App_Data/MediaCache
     depends_on:
       db:
         condition: service_healthy
@@ -69,6 +71,8 @@ services:
 volumes:
   postgres_data:
     name: dreamflykit_pgdata
+  media_cache:
+    name: dreamflykit_media_cache
 
 networks:
   dreamflykit-net:
