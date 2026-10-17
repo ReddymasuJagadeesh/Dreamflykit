@@ -25,6 +25,11 @@ public sealed class MediaUrlService : IMediaUrlService
         // (which is private and returns 403 Forbidden to anonymous public requests without AWS credentials):
         if (string.IsNullOrWhiteSpace(url) ||
             url.Contains("YOUR_CLOUDFRONT_DOMAIN", StringComparison.OrdinalIgnoreCase) ||
+            url.Contains("your-cdn-id", StringComparison.OrdinalIgnoreCase) ||
+            url.Contains("your_cdn_id", StringComparison.OrdinalIgnoreCase) ||
+            url.Contains("your-domain", StringComparison.OrdinalIgnoreCase) ||
+            url.Contains("placeholder", StringComparison.OrdinalIgnoreCase) ||
+            url.Contains("example.com", StringComparison.OrdinalIgnoreCase) ||
             url.Contains(".s3.", StringComparison.OrdinalIgnoreCase) ||
             url.Contains("s3.amazonaws.com", StringComparison.OrdinalIgnoreCase))
         {
@@ -43,6 +48,11 @@ public sealed class MediaUrlService : IMediaUrlService
     /// <param name="objectKey">S3 object key (e.g., media/products/{id}/{assetId}.webp)</param>
     public string GetUrl(string objectKey)
     {
+        if (string.IsNullOrWhiteSpace(objectKey))
+        {
+            return "/images/products/product-placeholder.webp";
+        }
+
         var cleanKey = objectKey.TrimStart('/');
         return string.IsNullOrEmpty(_cdnBaseUrl)
             ? $"/{cleanKey}"
@@ -53,22 +63,52 @@ public sealed class MediaUrlService : IMediaUrlService
     /// Builds the CDN URL for the thumbnail variant (200px max dimension).
     /// Convention: object key has a _thumb suffix before the extension.
     /// </summary>
-    public string GetThumbnailUrl(string objectKey) =>
-        GetVariantUrl(objectKey, "thumb");
+    public string GetThumbnailUrl(string objectKey)
+    {
+        if (string.IsNullOrWhiteSpace(objectKey))
+        {
+            return "/images/products/product-placeholder.webp";
+        }
+        if (objectKey.Contains("_thumb.") || objectKey.Contains("_card.") || objectKey.Contains("_detail."))
+        {
+            return GetUrl(objectKey);
+        }
+        return GetVariantUrl(objectKey, "thumb");
+    }
 
     /// <summary>
     /// Builds the CDN URL for the card variant (500px max dimension).
     /// Used in product listing grids and category pages.
     /// </summary>
-    public string GetCardUrl(string objectKey) =>
-        GetVariantUrl(objectKey, "card");
+    public string GetCardUrl(string objectKey)
+    {
+        if (string.IsNullOrWhiteSpace(objectKey))
+        {
+            return "/images/products/product-placeholder.webp";
+        }
+        if (objectKey.Contains("_card.") || objectKey.Contains("_thumb.") || objectKey.Contains("_detail."))
+        {
+            return GetUrl(objectKey);
+        }
+        return GetVariantUrl(objectKey, "card");
+    }
 
     /// <summary>
     /// Builds the CDN URL for the detail variant (1200px max dimension).
     /// Used in product detail pages and full-size previews.
     /// </summary>
-    public string GetDetailUrl(string objectKey) =>
-        GetVariantUrl(objectKey, "detail");
+    public string GetDetailUrl(string objectKey)
+    {
+        if (string.IsNullOrWhiteSpace(objectKey))
+        {
+            return "/images/products/product-placeholder.webp";
+        }
+        if (objectKey.Contains("_detail.") || objectKey.Contains("_card.") || objectKey.Contains("_thumb."))
+        {
+            return GetUrl(objectKey);
+        }
+        return GetVariantUrl(objectKey, "detail");
+    }
 
     private string GetVariantUrl(string objectKey, string variantSuffix)
     {

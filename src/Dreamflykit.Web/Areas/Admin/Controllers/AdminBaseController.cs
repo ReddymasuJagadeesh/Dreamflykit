@@ -11,7 +11,10 @@ public abstract class AdminBaseController : Controller
     {
         get
         {
-            var idClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var idClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                ?? User.FindFirst("sub")?.Value
+                ?? User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
             return Guid.TryParse(idClaim, out var id) ? id : Guid.Empty;
         }
     }

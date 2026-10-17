@@ -77,12 +77,20 @@ public sealed class MediaService : IMediaService
             _options.Variants.Detail,
             cancellationToken);
 
-        // 4. Upload original (detail) to S3
+        // 4. Upload original (detail) to storage
         var uploadSuccess = await _storage.PutObjectAsync(
             objectKey,
             processedStream,
             "image/webp",
             cancellationToken);
+
+        // Also save explicit detailKey variant so calls to GetDetailUrl resolve directly
+        var detailKey = MediaUrlService.BuildVariantObjectKey(mediaTypeName, request.OwnerId, mediaAssetId, "detail");
+        if (processedStream.CanSeek)
+        {
+            processedStream.Position = 0;
+            await _storage.PutObjectAsync(detailKey, processedStream, "image/webp", cancellationToken);
+        }
 
         await processedStream.DisposeAsync();
 
@@ -117,6 +125,16 @@ public sealed class MediaService : IMediaService
         await cardStream.DisposeAsync();
 
         // 7. Persist MediaAsset to database
+        var effectiveAltText = !string.IsNullOrWhiteSpace(request.AltText)
+            ? request.AltText.Trim()
+            : (!string.IsNullOrWhiteSpace(request.OriginalFileName)
+                ? Path.GetFileNameWithoutExtension(request.OriginalFileName)
+                : "Image");
+
+        var effectiveUserId = request.UploadedBy != Guid.Empty
+            ? request.UploadedBy
+            : Guid.NewGuid();
+
         var asset = new MediaAsset(
             mediaType: request.MediaType,
             objectKey: objectKey,
@@ -126,15 +144,15 @@ public sealed class MediaService : IMediaService
             fileSize: request.FileStream.Length,
             width: width,
             height: height,
-            altText: request.AltText,
-            uploadedBy: request.UploadedBy);
+            altText: effectiveAltText,
+            uploadedBy: effectiveUserId);
 
         _db.MediaAssets.Add(asset);
         asset.SetReady();
 
         // 8. Audit log
         _db.MediaAuditLogs.Add(new MediaAuditLog(
-            userId: request.UploadedBy,
+            userId: effectiveUserId,
             action: "Uploaded",
             mediaAssetId: asset.Id,
             resourceType: mediaTypeName,
@@ -453,16 +471,17 @@ public sealed class MediaService : IMediaService
 
         await _db.SaveChangesAsync(cancellationToken);
 
-        // Then remove from S3 (fire-and-forget on failure — S3 cleanup service will retry)
+        // Then remove from storage and local cache
         await _storage.DeleteObjectAsync(objectKey, cancellationToken);
-        await _storage.DeleteObjectAsync(
-            MediaUrlService.BuildVariantObjectKey(
-                asset.MediaType.ToString(), deletedBy, mediaAssetId, "thumb"),
-            cancellationToken);
-        await _storage.DeleteObjectAsync(
-            MediaUrlService.BuildVariantObjectKey(
-                asset.MediaType.ToString(), deletedBy, mediaAssetId, "card"),
-            cancellationToken);
+        var lastDot = objectKey.LastIndexOf('.');
+        if (lastDot > 0)
+        {
+            var baseKey = objectKey[..lastDot];
+            var ext = objectKey[lastDot..];
+            await _storage.DeleteObjectAsync($"{baseKey}_thumb{ext}", cancellationToken);
+            await _storage.DeleteObjectAsync($"{baseKey}_card{ext}", cancellationToken);
+            await _storage.DeleteObjectAsync($"{baseKey}_detail{ext}", cancellationToken);
+        }
 
         return true;
     }

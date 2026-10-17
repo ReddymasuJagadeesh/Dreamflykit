@@ -38,8 +38,8 @@ public sealed class ProductsController : SellerBaseController
             ContentType = file.ContentType,
             MediaType = MediaType.Product,
             OwnerId = productId,
-            AltText = altText,
-            UploadedBy = CurrentUserId
+            AltText = !string.IsNullOrWhiteSpace(altText) ? altText : Path.GetFileNameWithoutExtension(file.FileName),
+            UploadedBy = CurrentUserId != Guid.Empty ? CurrentUserId : Guid.NewGuid()
         };
 
         var result = await _mediaService.UploadAsync(request, cancellationToken);

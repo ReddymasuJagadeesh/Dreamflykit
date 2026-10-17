@@ -24,9 +24,9 @@ public sealed class CategoriesController : AdminBaseController
         _mediaService = mediaService;
     }
 
-    private async Task<Guid?> UploadMediaFileAsync(IFormFile? file, Guid ownerId, string altText, CancellationToken cancellationToken)
+    private async Task<(Guid? AssetId, string? ErrorMessage)> UploadMediaFileAsync(IFormFile? file, Guid ownerId, string altText, CancellationToken cancellationToken)
     {
-        if (file is null || file.Length == 0) return null;
+        if (file is null || file.Length == 0) return (null, "No file selected.");
 
         await using var stream = file.OpenReadStream();
         var request = new Dreamflykit.Application.Media.Models.MediaUploadRequest
@@ -36,12 +36,12 @@ public sealed class CategoriesController : AdminBaseController
             ContentType = file.ContentType,
             MediaType = Dreamflykit.Domain.Media.MediaType.Category,
             OwnerId = ownerId,
-            AltText = altText,
-            UploadedBy = CurrentUserId
+            AltText = !string.IsNullOrWhiteSpace(altText) ? altText : Path.GetFileNameWithoutExtension(file.FileName),
+            UploadedBy = CurrentUserId != Guid.Empty ? CurrentUserId : Guid.NewGuid()
         };
 
         var result = await _mediaService.UploadAsync(request, cancellationToken);
-        return result.IsSuccess ? result.Asset?.Id : null;
+        return result.IsSuccess ? (result.Asset?.Id, null) : (null, result.ErrorMessage);
     }
 
     [HttpGet("")]
@@ -146,10 +146,14 @@ public sealed class CategoriesController : AdminBaseController
 
         if (model.ImageFile != null && model.ImageFile.Length > 0)
         {
-            var uploadedAssetId = await UploadMediaFileAsync(model.ImageFile, category.Id, model.Name.Trim(), cancellationToken);
+            var (uploadedAssetId, uploadError) = await UploadMediaFileAsync(model.ImageFile, category.Id, model.Name.Trim(), cancellationToken);
             if (uploadedAssetId.HasValue)
             {
                 category.SetImage(uploadedAssetId.Value);
+            }
+            else
+            {
+                TempData["WarningMessage"] = $"Category created, but image upload failed: {uploadError}";
             }
         }
         else if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value != Guid.Empty)
@@ -234,17 +238,21 @@ public sealed class CategoriesController : AdminBaseController
 
         if (model.ImageFile != null && model.ImageFile.Length > 0)
         {
-            var uploadedAssetId = await UploadMediaFileAsync(model.ImageFile, category.Id, model.Name.Trim(), cancellationToken);
+            var (uploadedAssetId, uploadError) = await UploadMediaFileAsync(model.ImageFile, category.Id, model.Name.Trim(), cancellationToken);
             if (uploadedAssetId.HasValue)
             {
                 category.SetImage(uploadedAssetId.Value);
+            }
+            else
+            {
+                TempData["WarningMessage"] = $"Category updated, but image upload failed: {uploadError}";
             }
         }
         else if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value != Guid.Empty)
         {
             category.SetImage(model.ImageMediaAssetId.Value);
         }
-        else
+        else if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value == Guid.Empty && model.ImageFile == null)
         {
             category.RemoveImage();
         }
@@ -392,10 +400,14 @@ public sealed class CategoriesController : AdminBaseController
 
         if (model.ImageFile != null && model.ImageFile.Length > 0)
         {
-            var uploadedAssetId = await UploadMediaFileAsync(model.ImageFile, subcategory.Id, model.Name.Trim(), cancellationToken);
+            var (uploadedAssetId, uploadError) = await UploadMediaFileAsync(model.ImageFile, subcategory.Id, model.Name.Trim(), cancellationToken);
             if (uploadedAssetId.HasValue)
             {
                 subcategory.SetImage(uploadedAssetId.Value);
+            }
+            else
+            {
+                TempData["WarningMessage"] = $"Subcategory created, but image upload failed: {uploadError}";
             }
         }
         else if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value != Guid.Empty)
@@ -493,17 +505,21 @@ public sealed class CategoriesController : AdminBaseController
 
         if (model.ImageFile != null && model.ImageFile.Length > 0)
         {
-            var uploadedAssetId = await UploadMediaFileAsync(model.ImageFile, subcategory.Id, model.Name.Trim(), cancellationToken);
+            var (uploadedAssetId, uploadError) = await UploadMediaFileAsync(model.ImageFile, subcategory.Id, model.Name.Trim(), cancellationToken);
             if (uploadedAssetId.HasValue)
             {
                 subcategory.SetImage(uploadedAssetId.Value);
+            }
+            else
+            {
+                TempData["WarningMessage"] = $"Subcategory updated, but image upload failed: {uploadError}";
             }
         }
         else if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value != Guid.Empty)
         {
             subcategory.SetImage(model.ImageMediaAssetId.Value);
         }
-        else
+        else if (model.ImageMediaAssetId.HasValue && model.ImageMediaAssetId.Value == Guid.Empty && model.ImageFile == null)
         {
             subcategory.RemoveImage();
         }

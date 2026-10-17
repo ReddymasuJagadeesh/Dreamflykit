@@ -54,18 +54,64 @@ public sealed class MediaDeliveryController : Controller
             return PhysicalFile(cachedFilePath, contentType);
         }
 
-        // 2. Fetch from S3 using authorized backend storage client
-        var s3Object = await _storage.GetObjectAsync(objectKey, cancellationToken);
-
-        // Fallback: if variant (_thumb or _card) was requested but doesn't exist, try original key
-        if (s3Object is null && (objectKey.Contains("_thumb.") || objectKey.Contains("_card.") || objectKey.Contains("_detail.")))
+        // 1b. Check local disk cache for un-suffixed base file if a variant was requested
+        string? fallbackKey = null;
+        if (objectKey.Contains("_thumb.") || objectKey.Contains("_card.") || objectKey.Contains("_detail."))
         {
-            var fallbackKey = objectKey
+            fallbackKey = objectKey
                 .Replace("_thumb.", ".")
                 .Replace("_card.", ".")
                 .Replace("_detail.", ".");
+            var fallbackCachedFilePath = Path.Combine(cacheRoot, fallbackKey.Replace('/', Path.DirectorySeparatorChar));
+            if (System.IO.File.Exists(fallbackCachedFilePath))
+            {
+                Response.Headers.CacheControl = "public, max-age=2592000, immutable";
+                return PhysicalFile(fallbackCachedFilePath, contentType);
+            }
+        }
 
+        // 1c. Check local disk cache for plural/singular alternate path (media/product/ vs media/products/)
+        string? altKey = null;
+        if (objectKey.StartsWith("media/products/", StringComparison.OrdinalIgnoreCase))
+        {
+            altKey = "media/product/" + objectKey["media/products/".Length..];
+        }
+        else if (objectKey.StartsWith("media/product/", StringComparison.OrdinalIgnoreCase))
+        {
+            altKey = "media/products/" + objectKey["media/product/".Length..];
+        }
+        else if (objectKey.StartsWith("media/categories/", StringComparison.OrdinalIgnoreCase))
+        {
+            altKey = "media/category/" + objectKey["media/categories/".Length..];
+        }
+        else if (objectKey.StartsWith("media/category/", StringComparison.OrdinalIgnoreCase))
+        {
+            altKey = "media/categories/" + objectKey["media/category/".Length..];
+        }
+
+        if (altKey != null)
+        {
+            var altCachedFilePath = Path.Combine(cacheRoot, altKey.Replace('/', Path.DirectorySeparatorChar));
+            if (System.IO.File.Exists(altCachedFilePath))
+            {
+                Response.Headers.CacheControl = "public, max-age=2592000, immutable";
+                return PhysicalFile(altCachedFilePath, contentType);
+            }
+        }
+
+        // 2. Fetch from backend storage service (checks S3 or persistent storage)
+        var s3Object = await _storage.GetObjectAsync(objectKey, cancellationToken);
+
+        // Fallback: if variant was requested but doesn't exist in storage, try original key
+        if (s3Object is null && fallbackKey != null)
+        {
             s3Object = await _storage.GetObjectAsync(fallbackKey, cancellationToken);
+        }
+
+        // Fallback: try alternate plural/singular key
+        if (s3Object is null && altKey != null)
+        {
+            s3Object = await _storage.GetObjectAsync(altKey, cancellationToken);
         }
 
         if (s3Object is null)

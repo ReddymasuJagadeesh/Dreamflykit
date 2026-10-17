@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# App_Data Media Cache
+**/App_Data/MediaCache/*
+!**/App_Data/MediaCache/.gitkeep
