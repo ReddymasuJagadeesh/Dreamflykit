@@ -1,8 +1,31 @@
+@model Dreamflykit.Application.StudyHub.Models.StudyHubDto
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "Study Abroad Hub — Dreamflykit";
+    ViewData["Title"] = "Study Essentials & Abroad Hub — Dreamflykit";
 }
 
-<div class="dk-study-abroad-hub-empty-page" id="studyAbroadHubProfile">
-    <!-- Study Abroad Hub Profile: Empty canvas ready for custom design -->
+<div class="dk-study-abroad-hub-page" style="padding: 16px 0 40px 0;">
+    <div class="dk-shell">
+        <!-- View Mode Switcher -->
+        <div class="dk-study-view-switcher" style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #e2e8f0; padding: 10px 18px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <span style="font-weight: 800; font-size: 13px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">Explore Mode:</span>
+                <a href="/study-abroad-hub"
+                   id="tabStudyAbroadHub"
+                   style="font-size: 13px; font-weight: 700; padding: 8px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s ease; background: #0284c7; color: #ffffff; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
+                    🎓 Study Abroad Hub (All 10 Sections)
+                </a>
+                <a href="/category/study-essentials?view=categories"
+                   id="tabShopByCategories"
+                   style="font-size: 13px; font-weight: 700; padding: 8px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s ease; background: #f1f5f9; color: #334155;">
+                    📚 Shop by Categories (8 Categories &amp; Filters)
+                </a>
+            </div>
+            <a href="/category/study-essentials?view=categories" style="font-size: 12.5px; font-weight: 700; color: #0284c7; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                Shop by Categories ↗
+            </a>
+        </div>
+
+        <partial name="_StudyEssentialsHub" model="Model" />
+    </div>
 </div>

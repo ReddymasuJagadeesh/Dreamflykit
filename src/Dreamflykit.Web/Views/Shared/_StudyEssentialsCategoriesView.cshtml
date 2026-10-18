@@ -1,0 +1,821 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.StudyHub ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefault();
+    var catPage = hub.CategoriesPage ?? new();
+    var currentSubSlug = Model.CurrentSubcategorySlug;
+    var hasSubcategorySelected = !string.IsNullOrWhiteSpace(currentSubSlug) || Model.SubcategoryId.HasValue;
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+
+    // The 8 Study Essentials categories specified by user
+    var studyCategories = catPage.Categories != null && catPage.Categories.Count > 0
+        ? catPage.Categories
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefault().CategoriesPage.Categories;
+}
+
+<div class="dk-study-cat-page-wrapper">
+
+    @if (canManage)
+    {
+        <div class="dk-study-hub-admin-bar">
+            <span class="dk-sh-admin-badge">Admin Controls</span>
+            <span class="dk-sh-admin-hint">Viewing Study Essentials Categories page. Super Admin can manage all 8 categories &amp; replace test pics.</span>
+            <a href="/Admin/StudyHub" class="dk-sh-admin-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Manage Categories &amp; Test Pics
+            </a>
+        </div>
+    }
+
+    <!-- ========================================================
+         HERO HEADER (IMAGE 4)
+    ========================================================= -->
+    <header class="dk-cat-hero-card">
+        <div class="dk-cat-hero-left">
+            <h1 class="dk-cat-hero-title">@catPage.HeroTitle</h1>
+            <p class="dk-cat-hero-sub">@catPage.HeroSubtitle</p>
+
+            <div class="dk-cat-hero-badges">
+                <div class="dk-cat-badge-item">
+                    <span class="dk-cat-badge-icon">🎓</span>
+                    <span>Student Trusted &bull; <strong>10K+ Happy Students</strong></span>
+                </div>
+                <div class="dk-cat-badge-item">
+                    <span class="dk-cat-badge-icon">🌐</span>
+                    <span>Curated for Abroad &bull; <strong>Universities Worldwide</strong></span>
+                </div>
+                <div class="dk-cat-badge-item">
+                    <span class="dk-cat-badge-icon">💡</span>
+                    <span>Smart &amp; Affordable &bull; <strong>Best Value Essentials</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dk-cat-hero-right">
+            <div class="dk-cat-hero-img-wrap">
+                <img src="@catPage.HeroImageUrl" alt="Study Essentials Hero" loading="eager" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================================
+         MAIN 2-COLUMN LAYOUT (SIDEBAR & CATEGORIES / PRODUCTS)
+    ========================================================= -->
+    <div class="dk-cat-main-layout">
+
+        <!-- LEFT SIDEBAR -->
+        <aside class="dk-cat-sidebar">
+            <div class="dk-cat-sidebar-card">
+                <h2 class="dk-cat-sidebar-title">Categories</h2>
+                <nav class="dk-cat-nav-list" aria-label="Study Essentials Subcategories">
+                    <a href="/category/study-essentials"
+                       class="dk-cat-nav-item @(string.IsNullOrWhiteSpace(currentSubSlug) ? "is-active" : "")">
+                        <span class="dk-cat-nav-icon">🎓</span>
+                        <span class="dk-cat-nav-text">All Study Essentials</span>
+                    </a>
+
+                    @foreach (var sc in studyCategories)
+                    {
+                        var isActive = string.Equals(currentSubSlug, sc.Slug, StringComparison.OrdinalIgnoreCase);
+                        <a href="/category/study-essentials/@sc.Slug"
+                           class="dk-cat-nav-item @(isActive ? "is-active" : "")">
+                            <span class="dk-cat-nav-icon">
+                                @if (sc.Icon == "laptop" || sc.Icon == "digital") { <text>💻</text> }
+                                else if (sc.Icon == "file" || sc.Icon == "passport") { <text>📁</text> }
+                                else if (sc.Icon == "lamp") { <text>🛋️</text> }
+                                else if (sc.Icon == "bag") { <text>🎒</text> }
+                                else if (sc.Icon == "monitor") { <text>🖥️</text> }
+                                else if (sc.Icon == "book") { <text>📝</text> }
+                                else if (sc.Icon == "bookmark") { <text>📚</text> }
+                                else { <text>✏️</text> }
+                            </span>
+                            <span class="dk-cat-nav-text">@sc.Name</span>
+                        </a>
+                    }
+                </nav>
+            </div>
+
+            <!-- Promo Box 1: Complete Study Kit -->
+            <div class="dk-cat-promo-box dk-promo-kit">
+                <div class="dk-cat-promo-badge">Bundle Offer</div>
+                <h3 class="dk-cat-promo-title">@catPage.Promo1Title</h3>
+                <p class="dk-cat-promo-sub">@catPage.Promo1Subtitle</p>
+                <div class="dk-cat-promo-img">
+                    <img src="@catPage.Promo1ImageUrl" alt="Study Kit" onerror="this.onerror=null;this.src='/images/study-hub/kit-premium.png';" />
+                </div>
+                <a href="@catPage.Promo1ButtonUrl" class="dk-cat-promo-btn">
+                    @catPage.Promo1ButtonText
+                </a>
+            </div>
+
+            <!-- Promo Box 2: Need Help Choosing -->
+            <div class="dk-cat-promo-box dk-promo-support">
+                <div class="dk-cat-support-icon">💬</div>
+                <h3 class="dk-cat-promo-title">@catPage.Promo2Title</h3>
+                <p class="dk-cat-promo-sub">@catPage.Promo2Subtitle</p>
+                <a href="@catPage.Promo2ButtonUrl" target="_blank" rel="noopener noreferrer" class="dk-cat-btn-chat">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    @catPage.Promo2ButtonText
+                </a>
+            </div>
+        </aside>
+
+        <!-- RIGHT CONTENT AREA -->
+        <main class="dk-cat-content">
+
+            <!-- Top Controls (Sorting & View Mode) -->
+            <div class="dk-cat-top-bar">
+                <div class="dk-cat-breadcrumb-trail">
+                    <a href="/category/study-essentials">Study Essentials</a>
+                    @if (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName))
+                    {
+                        <span class="dk-sep">›</span>
+                        <span class="dk-current">@Model.CurrentSubcategoryName</span>
+                    }
+                </div>
+
+                <div class="dk-cat-sort-wrap">
+                    <label for="dkCatSortSelect" class="dk-sort-lbl">Sort By:</label>
+                    <select id="dkCatSortSelect" class="dk-sort-select" onchange="handleSortChange(this.value)">
+                        <option value="Relevance" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.Relevance)">Featured</option>
+                        <option value="PriceLowToHigh" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.PriceLowToHigh)">Price: Low to High</option>
+                        <option value="PriceHighToLow" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.PriceHighToLow)">Price: High to Low</option>
+                        <option value="Newest" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.Newest)">Newest First</option>
+                        <option value="DiscountHighToLow" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.DiscountHighToLow)">Discount</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- IF NO SUBCATEGORY SELECTED: RENDER THE 8 CATEGORY CARDS GRID (IMAGE 4) -->
+            @if (!hasSubcategorySelected && (Model.Products == null || Model.Products.Count == 0 || !Model.HasActiveFilters))
+            {
+                <div class="dk-cat-cards-grid">
+                    @foreach (var sc in studyCategories)
+                    {
+                        <div class="dk-cat-grid-card">
+                            <div class="dk-cat-card-img-wrap">
+                                <img src="@sc.ImageUrl" alt="@sc.Name" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                            </div>
+                            <div class="dk-cat-card-body">
+                                <h3 class="dk-cat-card-name">@sc.Name</h3>
+                                <p class="dk-cat-card-desc">@sc.Description</p>
+                                <a href="/category/study-essentials/@sc.Slug" class="dk-cat-card-btn">
+                                    Shop Now
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <!-- FILTERED PRODUCTS LIST -->
+                <div class="dk-cat-products-view">
+                    @if (Model.Products != null && Model.Products.Count > 0)
+                    {
+                        <div class="dk-cat-products-grid">
+                            @foreach (var product in Model.Products)
+                            {
+                                var prodImg = !string.IsNullOrWhiteSpace(product.ImageUrl) ? product.ImageUrl : (product.PrimaryImageUrl ?? "/images/products/product-placeholder.webp");
+                                <div class="dk-cat-prod-card">
+                                    <a href="/products/@product.Slug" class="dk-cat-prod-img-wrap">
+                                        <img src="@prodImg" alt="@product.Name" loading="lazy" onerror="this.onerror=null;this.src='/images/products/product-placeholder.webp';" />
+                                        @if (product.DiscountPercentage > 0)
+                                        {
+                                            <span class="dk-cat-prod-discount">@product.DiscountPercentage.ToString("0")% OFF</span>
+                                        }
+                                    </a>
+                                    <div class="dk-cat-prod-body">
+                                        <a href="/products/@product.Slug" class="dk-cat-prod-title">@product.Name</a>
+                                        <div class="dk-cat-prod-rating">
+                                            <span class="dk-cat-stars">★★★★★</span>
+                                            <span class="dk-cat-rating-val">4.8</span>
+                                        </div>
+                                        <div class="dk-cat-prod-price-row">
+                                            <span class="dk-cat-price">₹@product.SellingPrice.ToString("N0")</span>
+                                            @if (product.Mrp > product.SellingPrice)
+                                            {
+                                                <span class="dk-cat-mrp">₹@product.Mrp.ToString("N0")</span>
+                                            }
+                                        </div>
+                                        <button type="button" class="dk-cat-btn-add" onclick="handleAddToCart('@product.ProductId')">
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="dk-cat-empty-state">
+                            <div class="dk-cat-empty-icon">📦</div>
+                            <h3>No items found in this section</h3>
+                            <p>Try resetting filters or explore all categories below.</p>
+                            <a href="/category/study-essentials" class="dk-sh-btn-primary">View All Study Categories</a>
+                        </div>
+                    }
+                </div>
+            }
+
+        </main>
+    </div>
+
+    <!-- ========================================================
+         FOOTER FEATURES BAR (IMAGE 4 BOTTOM)
+    ========================================================= -->
+    <div class="dk-cat-features-strip">
+        <div class="dk-cat-feature-item">
+            <span class="dk-cf-icon">🚚</span>
+            <div>
+                <strong>Fast &amp; Reliable Delivery</strong>
+                <span>On-time delivery worldwide</span>
+            </div>
+        </div>
+        <div class="dk-cat-feature-item">
+            <span class="dk-cf-icon">🛡️</span>
+            <div>
+                <strong>100% Secure Payments</strong>
+                <span>Multiple payment options</span>
+            </div>
+        </div>
+        <div class="dk-cat-feature-item">
+            <span class="dk-cf-icon">⭐</span>
+            <div>
+                <strong>Premium Quality Products</strong>
+                <span>Genuine &amp; durable</span>
+            </div>
+        </div>
+        <div class="dk-cat-feature-item">
+            <span class="dk-cf-icon">🎧</span>
+            <div>
+                <strong>24/7 Customer Support</strong>
+                <span>We're here to help</span>
+            </div>
+        </div>
+        <div class="dk-cat-feature-item">
+            <span class="dk-cf-icon">🔄</span>
+            <div>
+                <strong>Easy Returns</strong>
+                <span>Hassle-free returns</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         BOTTOM BANNER (IMAGE 4)
+    ========================================================= -->
+    <section class="dk-cat-bottom-cta">
+        <div class="dk-cat-bcta-content">
+            <div class="dk-cat-bcta-icon">🎓</div>
+            <div>
+                <h2 class="dk-cat-bcta-title">Prepare Better. Study Smarter. Go Further.</h2>
+                <p class="dk-cat-bcta-sub">Everything you need for a successful academic journey.</p>
+            </div>
+        </div>
+        <a href="/study-abroad-hub#kits-section" class="dk-cat-bcta-btn">
+            Explore Study Kits →
+        </a>
+    </section>
+
+</div>
+
+<!-- ========================================================
+     INLINE STYLING FOR STUDY CATEGORIES VIEW
+========================================================= -->
+<style>
+    .dk-study-cat-page-wrapper {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #1e293b;
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 10px 0 40px 0;
+    }
+
+    /* Hero Banner */
+    .dk-cat-hero-card {
+        background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #eff6ff 100%);
+        border: 1px solid #bae6fd;
+        border-radius: 20px;
+        padding: 32px 36px;
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 28px;
+        align-items: center;
+        margin-bottom: 28px;
+        box-shadow: 0 6px 24px rgba(2, 132, 199, 0.08);
+    }
+    @@media (max-width: 850px) {
+        .dk-cat-hero-card { grid-template-columns: 1fr; }
+    }
+    .dk-cat-hero-title {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+        letter-spacing: -0.025em;
+    }
+    .dk-cat-hero-sub {
+        font-size: 1.05rem;
+        color: #475569;
+        margin: 0 0 20px 0;
+        line-height: 1.45;
+    }
+    .dk-cat-hero-badges {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .dk-cat-badge-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: #334155;
+    }
+    .dk-cat-badge-icon {
+        font-size: 1.15rem;
+    }
+    .dk-cat-hero-img-wrap {
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 16/11;
+        background: #ffffff;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        border: 1px solid #e2e8f0;
+    }
+    .dk-cat-hero-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* 2-Column Layout */
+    .dk-cat-main-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+    @@media (max-width: 900px) {
+        .dk-cat-main-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Sidebar */
+    .dk-cat-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .dk-cat-sidebar-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px 16px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+    .dk-cat-sidebar-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 14px 0;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .dk-cat-nav-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .dk-cat-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        border-radius: 10px;
+        color: #334155;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.15s, color 0.15s;
+    }
+    .dk-cat-nav-item:hover {
+        background: #f1f5f9;
+        color: #0284c7;
+    }
+    .dk-cat-nav-item.is-active {
+        background: #e0f2fe;
+        color: #0369a1;
+        font-weight: 700;
+    }
+    .dk-cat-nav-icon {
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    /* Promo Boxes in Sidebar */
+    .dk-cat-promo-box {
+        border-radius: 16px;
+        padding: 20px;
+        position: relative;
+    }
+    .dk-promo-kit {
+        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+        border: 1px solid #bbf7d0;
+    }
+    .dk-promo-support {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid #cbd5e1;
+        text-align: center;
+    }
+    .dk-cat-promo-badge {
+        display: inline-block;
+        background: #16a34a;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+    .dk-cat-promo-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 4px 0;
+    }
+    .dk-cat-promo-sub {
+        font-size: 0.82rem;
+        color: #64748b;
+        margin: 0 0 14px 0;
+    }
+    .dk-cat-promo-img {
+        width: 100%;
+        height: 110px;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 12px;
+        background: #ffffff;
+    }
+    .dk-cat-promo-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    .dk-cat-promo-btn {
+        display: block;
+        text-align: center;
+        background: #0284c7;
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 8px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+    }
+    .dk-cat-support-icon {
+        font-size: 2rem;
+        margin-bottom: 6px;
+    }
+    .dk-cat-btn-chat {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: #25d366;
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 8px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+    }
+
+    /* Content Area & Top Bar */
+    .dk-cat-top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 16px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+    .dk-cat-breadcrumb-trail {
+        font-size: 0.88rem;
+        color: #64748b;
+    }
+    .dk-cat-breadcrumb-trail a {
+        color: #0284c7;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .dk-sep { margin: 0 6px; color: #94a3b8; }
+    .dk-current { color: #0f172a; font-weight: 700; }
+    .dk-cat-sort-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .dk-sort-lbl {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #64748b;
+    }
+    .dk-sort-select {
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #0f172a;
+        background: #ffffff;
+        cursor: pointer;
+    }
+
+    /* 8 Category Cards Grid (Image 4) */
+    .dk-cat-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    }
+    @@media (max-width: 1100px) {
+        .dk-cat-cards-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @@media (max-width: 768px) {
+        .dk-cat-cards-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @@media (max-width: 480px) {
+        .dk-cat-cards-grid { grid-template-columns: 1fr; }
+    }
+    .dk-cat-grid-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+    }
+    .dk-cat-grid-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+        border-color: #38bdf8;
+    }
+    .dk-cat-card-img-wrap {
+        aspect-ratio: 4/3;
+        background: #f8fafc;
+        overflow: hidden;
+    }
+    .dk-cat-card-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    .dk-cat-grid-card:hover .dk-cat-card-img-wrap img {
+        transform: scale(1.04);
+    }
+    .dk-cat-card-body {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .dk-cat-card-name {
+        font-size: 0.96rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+        line-height: 1.3;
+    }
+    .dk-cat-card-desc {
+        font-size: 0.8rem;
+        color: #64748b;
+        line-height: 1.4;
+        margin: 0 0 14px 0;
+        flex: 1;
+    }
+    .dk-cat-card-btn {
+        color: #0284c7;
+        font-weight: 700;
+        font-size: 0.86rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: gap 0.15s ease;
+    }
+    .dk-cat-card-btn:hover { gap: 8px; color: #0369a1; }
+
+    /* Products Grid */
+    .dk-cat-products-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    }
+    @@media (max-width: 1100px) {
+        .dk-cat-products-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @@media (max-width: 768px) {
+        .dk-cat-products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .dk-cat-prod-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.15s ease, box-shadow 0.15s;
+    }
+    .dk-cat-prod-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        border-color: #38bdf8;
+    }
+    .dk-cat-prod-img-wrap {
+        aspect-ratio: 1/1;
+        background: #f8fafc;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 10px;
+        position: relative;
+        display: block;
+    }
+    .dk-cat-prod-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dk-cat-prod-discount {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        background: #dc2626;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    .dk-cat-prod-body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .dk-cat-prod-title {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #0f172a;
+        text-decoration: none;
+        margin-bottom: 6px;
+        line-height: 1.3;
+    }
+    .dk-cat-prod-title:hover { color: #0284c7; }
+    .dk-cat-prod-rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        margin-bottom: 8px;
+    }
+    .dk-cat-stars { color: #f59e0b; }
+    .dk-cat-rating-val { font-weight: 700; color: #0f172a; }
+    .dk-cat-prod-price-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 10px;
+        margin-top: auto;
+    }
+    .dk-cat-price {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
+    .dk-cat-mrp {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        text-decoration: line-through;
+    }
+    .dk-cat-btn-add {
+        width: 100%;
+        background: #0284c7;
+        color: #ffffff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .dk-cat-btn-add:hover { background: #0369a1; }
+
+    /* Empty state */
+    .dk-cat-empty-state {
+        text-align: center;
+        padding: 48px 24px;
+        background: #ffffff;
+        border: 1px dashed #cbd5e1;
+        border-radius: 16px;
+    }
+    .dk-cat-empty-icon { font-size: 3rem; margin-bottom: 12px; }
+
+    /* Features Strip */
+    .dk-cat-features-strip {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px 24px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    @@media (max-width: 900px) {
+        .dk-cat-features-strip { grid-template-columns: repeat(2, 1fr); }
+    }
+    @@media (max-width: 500px) {
+        .dk-cat-features-strip { grid-template-columns: 1fr; }
+    }
+    .dk-cat-feature-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .dk-cf-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .dk-cat-feature-item strong {
+        display: block;
+        font-size: 0.86rem;
+        color: #0f172a;
+    }
+    .dk-cat-feature-item span {
+        font-size: 0.76rem;
+        color: #64748b;
+    }
+
+    /* Bottom CTA */
+    .dk-cat-bottom-cta {
+        background: linear-gradient(135deg, #0f172a 0%, #0369a1 100%);
+        border-radius: 16px;
+        padding: 28px 36px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #ffffff;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .dk-cat-bcta-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    .dk-cat-bcta-icon {
+        font-size: 2.2rem;
+    }
+    .dk-cat-bcta-title {
+        font-size: 1.45rem;
+        font-weight: 800;
+        margin: 0 0 4px 0;
+        color: #ffffff;
+    }
+    .dk-cat-bcta-sub {
+        font-size: 0.95rem;
+        color: #cbd5e1;
+        margin: 0;
+    }
+    .dk-cat-bcta-btn {
+        background: #38bdf8;
+        color: #0f172a;
+        font-weight: 800;
+        font-size: 0.92rem;
+        padding: 10px 22px;
+        border-radius: 8px;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: background 0.15s, transform 0.15s;
+    }
+    .dk-cat-bcta-btn:hover {
+        background: #7dd3fc;
+        transform: translateY(-1px);
+    }
+</style>
+
+<script>
+    function handleSortChange(sortVal) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("sort", sortVal);
+        window.location.href = url.toString();
+    }
+</script>

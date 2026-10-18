@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="100%" height="100%">
+  <defs>
+    <linearGradient id="tp-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <pattern id="tp-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#tp-grad)" rx="12" />
+  <rect width="100%" height="100%" fill="url(#tp-grid)" rx="12" />
+  <rect x="12" y="12" width="376" height="236" fill="none" stroke="rgba(56, 189, 248, 0.25)" stroke-width="1.5" stroke-dasharray="6 4" rx="8" />
+  
+  <!-- Camera / Image Icon -->
+  <g transform="translate(168, 55)" stroke="#38bdf8" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+    <circle cx="12" cy="13" r="4"/>
+  </g>
+
+  <!-- Badge Pill -->
+  <rect x="135" y="130" width="130" height="26" rx="13" fill="rgba(2, 132, 199, 0.35)" stroke="#38bdf8" stroke-width="1" />
+  <text x="200" y="147" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#e0f2fe" text-anchor="middle" letter-spacing="1">
+    📸 TEST PIC
+  </text>
+
+  <!-- Informative Subtitle -->
+  <text x="200" y="180" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" fill="#f8fafc" text-anchor="middle">
+    Super Admin Replaceable
+  </text>
+  <text x="200" y="202" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="400" fill="#94a3b8" text-anchor="middle">
+    Admin panel can upload/replace image anytime
+  </text>
+</svg>

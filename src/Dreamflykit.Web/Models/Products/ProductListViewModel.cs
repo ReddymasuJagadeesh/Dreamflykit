@@ -60,6 +60,14 @@ public sealed class ProductListViewModel
     public IReadOnlyList<DiscountFacet> Discounts { get; init; }
         = Array.Empty<DiscountFacet>();
 
+    public Dreamflykit.Application.StudyHub.Models.StudyHubDto? StudyHub { get; init; }
+
+    public string? ViewMode { get; init; }
+
+    public bool IsStudyEssentialsHub =>
+        string.Equals(CategorySlug, "study-essentials", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "study_essentials", StringComparison.OrdinalIgnoreCase);
+
     public bool HasActiveFilters =>
         !string.IsNullOrWhiteSpace(SearchTerm) ||
         SubcategoryId.HasValue ||
