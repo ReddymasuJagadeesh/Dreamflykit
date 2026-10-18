@@ -512,12 +512,9 @@
             {
                 @foreach (var cat in navCategories.OrderBy(c => c.DisplayOrder))
                 {
-                    var isStudy = string.Equals(cat.Slug, "study-essentials", StringComparison.OrdinalIgnoreCase);
-                    var isCatActive = (!string.IsNullOrEmpty(activeCatSlug) &&
-                                      string.Equals(activeCatSlug, cat.Slug, StringComparison.OrdinalIgnoreCase)) ||
-                                      (isStudy && isAbroadHub);
-                    var catHref = isStudy ? "/study-abroad-hub" : $"/category/{cat.Slug}";
-                    <a href="@catHref"
+                    var isCatActive = !string.IsNullOrEmpty(activeCatSlug) &&
+                                      string.Equals(activeCatSlug, cat.Slug, StringComparison.OrdinalIgnoreCase);
+                    <a href="/category/@cat.Slug"
                        class="dk-category-link @(isCatActive ? "dk-category-active" : "")"
                        title="@cat.Name">
                         <span>@getCatEmoji(cat.Slug)</span>
@@ -527,7 +524,7 @@
             }
             else
             {
-                <a href="/study-abroad-hub" class="dk-category-link @(activeCatSlug == "study-essentials" || isAbroadHub ? "dk-category-active" : "")">
+                <a href="/category/study-essentials" class="dk-category-link @(activeCatSlug == "study-essentials" ? "dk-category-active" : "")">
                     <span>🎓</span> Study Essentials
                 </a>
                 <a href="/category/fashion" class="dk-category-link @(activeCatSlug == "fashion" ? "dk-category-active" : "")">

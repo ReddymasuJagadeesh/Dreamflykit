@@ -56,15 +56,6 @@ public sealed class ProductsController : Controller
         var isStudyCategory = string.Equals(effectiveCategory, "study-essentials", StringComparison.OrdinalIgnoreCase) ||
                               string.Equals(effectiveCategory, "study_essentials", StringComparison.OrdinalIgnoreCase);
 
-        // When user clicks Study Essentials category, redirect to study abroad hub (not to shop by category)
-        if (isStudyCategory &&
-            string.IsNullOrWhiteSpace(subcategorySlug) &&
-            !subcategoryId.HasValue &&
-            !string.Equals(view, "categories", StringComparison.OrdinalIgnoreCase))
-        {
-            return Redirect("/study-abroad-hub");
-        }
-
         CategoryDetails? catDetails = null;
         string? currentSubcategoryName = null;
         string? currentSubcategorySlug = subcategorySlug;
@@ -151,9 +142,10 @@ public sealed class ProductsController : Controller
             Categories = result.Categories,
             PriceRanges = result.PriceRanges,
             Discounts = result.Discounts,
-            ViewMode = !string.IsNullOrWhiteSpace(view) ? view.Trim().ToLowerInvariant() : "categories",
-            StudyHub = (string.Equals(effectiveCategory, "study-essentials", StringComparison.OrdinalIgnoreCase) ||
-                        string.Equals(effectiveCategory, "study_essentials", StringComparison.OrdinalIgnoreCase))
+            ViewMode = !string.IsNullOrWhiteSpace(view)
+                ? view.Trim().ToLowerInvariant()
+                : (isStudyCategory && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"),
+            StudyHub = isStudyCategory
                         ? await _studyHubService.GetConfigAsync(cancellationToken)
                         : null
         };
