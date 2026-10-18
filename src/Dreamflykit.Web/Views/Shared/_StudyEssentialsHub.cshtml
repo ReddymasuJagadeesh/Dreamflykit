@@ -1,0 +1,1812 @@
+@model Dreamflykit.Application.StudyHub.Models.StudyHubDto
+@{
+    var hub = Model ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefault();
+    var hero = hub.HeroBanner ?? new();
+    var s1 = hub.Section1 ?? new();
+    var s2 = hub.Section2 ?? new();
+    var s3Detail = hub.Section3Detail ?? new();
+    var s4 = hub.Section4 ?? new();
+    var s5 = hub.Section5 ?? new();
+    var s6 = hub.Section6 ?? new();
+    var s7 = hub.Section7 ?? new();
+    var s8 = hub.Section8 ?? new();
+    var s9 = hub.Section9 ?? new();
+    var s10 = hub.Section10 ?? new();
+    var bottomBanner = hub.BottomBanner ?? new();
+
+    string GetTitleClass(string? size) => size?.ToLowerInvariant() switch
+    {
+        "normal" => "dk-sh-title-normal",
+        "xlarge" => "dk-sh-title-xlarge",
+        _ => "dk-sh-title-large"
+    };
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="dk-study-hub-wrapper" id="study-essentials-hub-root">
+
+    @if (canManage)
+    {
+        <div class="dk-study-hub-admin-bar">
+            <span class="dk-sh-admin-badge">Admin Controls</span>
+            <span class="dk-sh-admin-hint">Viewing Study Hub (All 10 Sections). Super Admin can edit all text &amp; replace test pics.</span>
+            <a href="/Admin/StudyHub" class="dk-sh-admin-btn" id="btnManageStudyHub">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Manage All 10 Sections &amp; Images
+            </a>
+        </div>
+    }
+
+    <!-- ========================================================
+         HERO BANNER & TRUST BAR
+    ========================================================= -->
+    <section class="dk-sh-hero-banner" aria-label="Study Essentials Hero">
+        <div class="dk-sh-hero-content">
+            <div class="dk-sh-hero-text">
+                <div class="dk-sh-hero-pill">@hero.PillText</div>
+                <h1 class="dk-sh-hero-title">@hero.Title</h1>
+                <p class="dk-sh-hero-sub">@hero.Subtitle</p>
+                <div class="dk-sh-hero-actions">
+                    <a href="@hero.ButtonUrl" class="dk-sh-btn-hero-primary">
+                        @hero.ButtonText
+                    </a>
+                    <a href="#custom-kit-section" class="dk-sh-btn-hero-secondary">
+                        Customize Your Kit
+                    </a>
+                </div>
+            </div>
+            <div class="dk-sh-hero-visual">
+                <div class="dk-sh-hero-img-wrap">
+                    <img src="@hero.ImageUrl" alt="@hero.Title" loading="eager" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                    <div class="dk-sh-hero-badge-float">
+                        <span>@hero.SecondaryBadge</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (hub.TrustItems != null && hub.TrustItems.Count > 0)
+        {
+            <div class="dk-sh-trust-bar">
+                @foreach (var item in hub.TrustItems)
+                {
+                    <div class="dk-sh-trust-item">
+                        <div class="dk-sh-trust-icon">
+                            @if (item.Icon == "quality")
+                            {
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                            }
+                            else if (item.Icon == "bundle")
+                            {
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                            }
+                            else if (item.Icon == "lock")
+                            {
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            }
+                            else
+                            {
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            }
+                        </div>
+                        <div>
+                            <div class="dk-sh-trust-title">@item.Title</div>
+                            <div class="dk-sh-trust-sub">@item.Subtitle</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </section>
+
+    <!-- ========================================================
+         SECTION 1: 1. SHOP BY CATEGORY
+    ========================================================= -->
+    <section class="dk-sh-section-wrap" aria-labelledby="sh-s1-title">
+        <div class="dk-sh-section-head">
+            <div>
+                <h2 id="sh-s1-title" class="dk-sh-title @GetTitleClass(s1.TitleFontSize)">@s1.Title</h2>
+                <p class="dk-sh-subtitle">@s1.Subtitle</p>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(s1.ViewAllLinkText))
+            {
+                <a href="@s1.ViewAllLinkUrl" class="dk-sh-view-all-link">
+                    @s1.ViewAllLinkText
+                </a>
+            }
+        </div>
+
+        <div class="dk-sh-cards-grid dk-sh-s1-grid">
+            @foreach (var card in s1.Cards)
+            {
+                <div class="dk-sh-card-item">
+                    <div class="dk-sh-card-img-wrap">
+                        <img src="@card.ImageUrl" alt="@card.Title" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                    </div>
+                    <div class="dk-sh-card-body">
+                        <h3 class="dk-sh-card-title">@card.Title</h3>
+                        <p class="dk-sh-card-desc">@card.Description</p>
+                        <a href="@card.LinkUrl" class="dk-sh-card-link">
+                            Shop Now
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 2: 2. OUR STUDY ESSENTIALS KITS
+    ========================================================= -->
+    <section class="dk-sh-section-wrap" id="kits-section" aria-labelledby="sh-s2-title">
+        <div class="dk-sh-section-head">
+            <div>
+                <h2 id="sh-s2-title" class="dk-sh-title @GetTitleClass(s2.TitleFontSize)">@s2.Title</h2>
+                <p class="dk-sh-subtitle">@s2.Subtitle</p>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(s2.ViewAllLinkText))
+            {
+                <a href="@s2.ViewAllLinkUrl" class="dk-sh-view-all-link">
+                    @s2.ViewAllLinkText
+                </a>
+            }
+        </div>
+
+        <div class="dk-sh-kits-grid">
+            @foreach (var kit in s2.Kits)
+            {
+                var badgeClass = kit.BadgeVariant?.ToLowerInvariant() switch
+                {
+                    "blue" => "dk-sh-badge-blue",
+                    "amber" => "dk-sh-badge-amber",
+                    "purple" => "dk-sh-badge-purple",
+                    _ => "dk-sh-badge-green"
+                };
+
+                <div class="dk-sh-kit-card">
+                    <div class="dk-sh-kit-img-wrap">
+                        <img src="@kit.ImageUrl" alt="@kit.Title" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                    </div>
+                    <div class="dk-sh-kit-body">
+                        <div class="dk-sh-kit-top-line">
+                            <h3 class="dk-sh-kit-title">@kit.Title</h3>
+                            @if (!string.IsNullOrWhiteSpace(kit.BadgeText))
+                            {
+                                <span class="dk-sh-pill-badge @badgeClass">@kit.BadgeText</span>
+                            }
+                        </div>
+                        <p class="dk-sh-kit-desc">@kit.Description</p>
+
+                        @if (kit.Features != null && kit.Features.Count > 0)
+                        {
+                            <ul class="dk-sh-features-list">
+                                @foreach (var feat in kit.Features)
+                                {
+                                    <li>
+                                        <span class="dk-sh-bullet" aria-hidden="true">•</span>
+                                        <span>@feat</span>
+                                    </li>
+                                }
+                            </ul>
+                        }
+
+                        <div class="dk-sh-kit-footer">
+                            <div class="dk-sh-kit-price">@kit.PriceDisplay</div>
+                            <button type="button"
+                                    class="dk-sh-btn-add-cart"
+                                    onclick="handleKitAddToCart('@kit.Title', @kit.Price, '@kit.ImageUrl')">
+                                @kit.ButtonText
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 3: 3. KEY STUDY ESSENTIALS - IN DETAIL
+    ========================================================= -->
+    <section class="dk-sh-section-wrap" aria-labelledby="sh-s3-detail-title">
+        <div class="dk-sh-section-head">
+            <div>
+                <h2 id="sh-s3-detail-title" class="dk-sh-title @GetTitleClass(s3Detail.TitleFontSize)">@s3Detail.Title</h2>
+                <p class="dk-sh-subtitle">@s3Detail.Subtitle</p>
+            </div>
+        </div>
+
+        <div class="dk-sh-detail-grid">
+            @foreach (var item in s3Detail.Cards)
+            {
+                <div class="dk-sh-detail-card">
+                    <div class="dk-sh-detail-icon-wrap" aria-hidden="true">
+                        @if (item.IconType == "laptop" || item.IconType == "digital")
+                        {
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                        }
+                        else if (item.IconType == "passport" || item.IconType == "file")
+                        {
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                        }
+                        else if (item.IconType == "lamp")
+                        {
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18h6M10 22h4M12 2v4M12 18V6"></path></svg>
+                        }
+                        else if (item.IconType == "bag")
+                        {
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                        }
+                        else if (item.IconType == "monitor")
+                        {
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                        }
+                        else
+                        {
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+                        }
+                    </div>
+                    <h3 class="dk-sh-detail-title">@item.Title</h3>
+                    <p class="dk-sh-detail-desc">@item.Description</p>
+                    <a href="@item.LinkUrl" class="dk-sh-detail-link">
+                        Explore
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 4: 4. ABROAD PACKING CHECKLIST
+    ========================================================= -->
+    <section class="dk-sh-section-wrap" aria-labelledby="sh-s4-title">
+        <div class="dk-sh-checklist-card">
+            <div class="dk-sh-checklist-left">
+                <div class="dk-sh-badge-line">
+                    <h2 id="sh-s4-title" class="dk-sh-title @GetTitleClass(s4.TitleFontSize)">@s4.Title</h2>
+                    @if (!string.IsNullOrWhiteSpace(s4.BadgeText))
+                    {
+                        <span class="dk-sh-pill-badge dk-sh-badge-green">@s4.BadgeText</span>
+                    }
+                </div>
+                <p class="dk-sh-subtitle" style="margin-top: 4px; margin-bottom: 20px;">@s4.Subtitle</p>
+
+                <div class="dk-sh-checklist-list">
+                    @foreach (var chk in s4.Items)
+                    {
+                        <label class="dk-sh-checklist-item" id="chk_label_@chk.Id">
+                            <input type="checkbox"
+                                   class="dk-sh-check-input"
+                                   id="chk_input_@chk.Id"
+                                   checked="@(chk.IsChecked ? "checked" : null)"
+                                   onchange="toggleChecklistItem('@chk.Id')" />
+                            <span class="dk-sh-check-custom"></span>
+                            <span class="dk-sh-check-text">@chk.Text</span>
+                        </label>
+                    }
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <a href="@s4.ButtonUrl" class="dk-sh-btn-primary">
+                        @s4.ButtonText
+                    </a>
+                </div>
+            </div>
+
+            <div class="dk-sh-checklist-right">
+                <div class="dk-sh-checklist-img-wrap">
+                    <img src="@s4.ImageUrl" alt="@s4.Title" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 5: 5. SHOP BY DESTINATION
+    ========================================================= -->
+    <section class="dk-sh-section-wrap" aria-labelledby="sh-s5-title">
+        <div class="dk-sh-section-head">
+            <div>
+                <h2 id="sh-s5-title" class="dk-sh-title @GetTitleClass(s5.TitleFontSize)">@s5.Title</h2>
+                <p class="dk-sh-subtitle">@s5.Subtitle</p>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(s5.ButtonText))
+            {
+                <a href="@s5.ButtonUrl" class="dk-sh-view-all-link">
+                    @s5.ButtonText
+                </a>
+            }
+        </div>
+
+        <div class="dk-sh-destinations-grid">
+            @foreach (var c in s5.Countries)
+            {
+                <a href="@c.LinkUrl" class="dk-sh-destination-card" title="Explore essentials for @c.Name">
+                    <div class="dk-sh-flag-wrap">
+                        <img src="@c.FlagUrl" alt="@c.Name Flag" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                    </div>
+                    <div class="dk-sh-dest-name">@c.Name</div>
+                </a>
+            }
+        </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 6: 6. BUILD YOUR OWN STUDY KIT
+    ========================================================= -->
+    <section class="dk-sh-section-wrap" id="custom-kit-section" aria-labelledby="sh-s6-title">
+        <div class="dk-sh-s3-card">
+            <div class="dk-sh-s3-header">
+                <div class="dk-sh-s3-title-wrap">
+                    @if (!string.IsNullOrWhiteSpace(s6.StepNumber))
+                    {
+                        <span class="dk-sh-step-num" aria-hidden="true">@s6.StepNumber</span>
+                    }
+                    <h2 id="sh-s6-title" class="dk-sh-title @GetTitleClass(s6.TitleFontSize)" style="margin: 0;">@s6.Title</h2>
+                    @if (!string.IsNullOrWhiteSpace(s6.BadgeText))
+                    {
+                        <span class="dk-sh-pill-badge dk-sh-badge-green">@s6.BadgeText</span>
+                    }
+                </div>
+                <p class="dk-sh-subtitle" style="margin: 6px 0 0 0;">@s6.Subtitle</p>
+            </div>
+
+            <div class="dk-sh-builder-layout">
+                <!-- Carousel / Selection Row -->
+                <div class="dk-sh-builder-carousel-wrap">
+                    <button type="button" class="dk-sh-arrow-btn dk-sh-arrow-left" onclick="scrollBuilderRow(-1)" aria-label="Previous items">
+                        ‹
+                    </button>
+
+                    <div class="dk-sh-builder-scroll" id="dkBuilderScrollTrack">
+                        @foreach (var item in s6.Items)
+                        {
+                            <div class="dk-sh-builder-item @(item.IsSelected ? "is-selected" : "")"
+                                 id="builder-card-@item.Id"
+                                 onclick="toggleBuilderItem('@item.Id', @item.Price)">
+                                <div class="dk-sh-checkbox-top-right">
+                                    <input type="checkbox"
+                                           class="dk-sh-item-chk"
+                                           id="chk-@item.Id"
+                                           data-id="@item.Id"
+                                           data-name="@item.Name"
+                                           data-price="@item.Price"
+                                           data-img="@item.ImageUrl"
+                                           @(item.IsSelected ? "checked" : "")
+                                           onclick="event.stopPropagation(); toggleBuilderItem('@item.Id', @item.Price);" />
+                                </div>
+                                <div class="dk-sh-b-img-wrap">
+                                    <img src="@item.ImageUrl" alt="@item.Name" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                </div>
+                                <div class="dk-sh-b-name">@item.Name</div>
+                                <div class="dk-sh-b-price">₹@item.Price.ToString("N0")</div>
+                            </div>
+                        }
+                    </div>
+
+                    <button type="button" class="dk-sh-arrow-btn dk-sh-arrow-right" onclick="scrollBuilderRow(1)" aria-label="Next items">
+                        ›
+                    </button>
+                </div>
+
+                <!-- Live Price / Action Card -->
+                <div class="dk-sh-builder-summary-card">
+                    <div class="dk-sh-sum-label">Total Price</div>
+                    <div class="dk-sh-sum-price" id="dkBuilderTotalPrice">₹0</div>
+                    <div class="dk-sh-sum-count" id="dkBuilderItemCount">0 items selected</div>
+                    <button type="button"
+                            class="dk-sh-btn-build-kit"
+                            id="btnBuildStudyKit"
+                            onclick="handleBuildMyKitSubmit('@s6.TargetUrl')">
+                        @s6.ButtonText
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 7: 7. BEST SELLERS & STUDENT FAVORITES
+    ========================================================= -->
+    <section class="dk-sh-section-wrap" aria-labelledby="sh-s7-title">
+        <div class="dk-sh-section-head">
+            <div>
+                <h2 id="sh-s7-title" class="dk-sh-title @GetTitleClass(s7.TitleFontSize)">@s7.Title</h2>
+                <p class="dk-sh-subtitle">@s7.Subtitle</p>
+            </div>
+        </div>
+
+        <div class="dk-sh-bestsellers-grid">
+            @foreach (var p in s7.Products)
+            {
+                <div class="dk-sh-bs-card">
+                    <div class="dk-sh-bs-img-wrap">
+                        <img src="@p.ImageUrl" alt="@p.Name" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                    </div>
+                    <div class="dk-sh-bs-body">
+                        <h3 class="dk-sh-bs-name">@p.Name</h3>
+                        <div class="dk-sh-bs-rating">
+                            <span class="dk-sh-stars">★★★★★</span>
+                            <span class="dk-sh-rating-num">@p.Rating</span>
+                            <span class="dk-sh-rating-count">(@p.ReviewsCount)</span>
+                        </div>
+                        <div class="dk-sh-bs-price-row">
+                            <span class="dk-sh-bs-price">₹@p.Price.ToString("N0")</span>
+                            @if (p.OriginalPrice > p.Price)
+                            {
+                                <span class="dk-sh-bs-orig-price">₹@p.OriginalPrice.ToString("N0")</span>
+                            }
+                        </div>
+                        <button type="button"
+                                class="dk-sh-btn-bs-cart"
+                                onclick="handleProductAddToCart('@p.Name', @p.Price, '@p.ImageUrl')">
+                            @p.ButtonText
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 8: 8. SMART STUDY SETUP
+    ========================================================= -->
+    <section class="dk-sh-section-wrap" aria-labelledby="sh-s8-title">
+        <div class="dk-sh-setup-card">
+            <div class="dk-sh-setup-left">
+                <div class="dk-sh-setup-img-wrap">
+                    <img src="@s8.ImageUrl" alt="@s8.Title" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                </div>
+            </div>
+            <div class="dk-sh-setup-right">
+                <h2 id="sh-s8-title" class="dk-sh-title @GetTitleClass(s8.TitleFontSize)">@s8.Title</h2>
+                <p class="dk-sh-subtitle" style="margin-bottom: 20px;">@s8.Subtitle</p>
+
+                <div class="dk-sh-setup-items-list">
+                    @foreach (var item in s8.Items)
+                    {
+                        <div class="dk-sh-setup-item-row">
+                            <div class="dk-sh-setup-item-name">
+                                <span class="dk-sh-setup-bullet">✓</span>
+                                <span>@item.Name</span>
+                            </div>
+                            <div class="dk-sh-setup-item-price">₹@item.Price.ToString("N0")</div>
+                        </div>
+                    }
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <a href="@s8.ButtonUrl" class="dk-sh-btn-primary">
+                        @s8.ButtonText
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 9: 9. WHY CHOOSE DREAMFLYKIT?
+    ========================================================= -->
+    <section class="dk-sh-section-wrap" aria-labelledby="sh-s9-title">
+        <div class="dk-sh-section-head">
+            <div>
+                <h2 id="sh-s9-title" class="dk-sh-title @GetTitleClass(s9.TitleFontSize)">@s9.Title</h2>
+                <p class="dk-sh-subtitle">@s9.Subtitle</p>
+            </div>
+        </div>
+
+        <div class="dk-sh-why-grid">
+            @foreach (var p in s9.Pillars)
+            {
+                <div class="dk-sh-why-card">
+                    <div class="dk-sh-why-icon-wrap" aria-hidden="true">
+                        @if (p.IconType == "gift")
+                        {
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+                        }
+                        else if (p.IconType == "globe")
+                        {
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        }
+                        else if (p.IconType == "truck")
+                        {
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                        }
+                        else
+                        {
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        }
+                    </div>
+                    <h3 class="dk-sh-why-title">@p.Title</h3>
+                    <p class="dk-sh-why-desc">@p.Description</p>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 10: 10. FREQUENTLY ASKED QUESTIONS
+    ========================================================= -->
+    <section class="dk-sh-section-wrap" aria-labelledby="sh-s10-title">
+        <div class="dk-sh-section-head">
+            <div>
+                <h2 id="sh-s10-title" class="dk-sh-title @GetTitleClass(s10.TitleFontSize)">@s10.Title</h2>
+                <p class="dk-sh-subtitle">@s10.Subtitle</p>
+            </div>
+        </div>
+
+        <div class="dk-sh-faq-accordion">
+            @for (int i = 0; i < s10.Faqs.Count; i++)
+            {
+                var faq = s10.Faqs[i];
+                <div class="dk-sh-faq-item" id="faq-item-@i">
+                    <button type="button"
+                            class="dk-sh-faq-trigger"
+                            onclick="toggleFaqAccordion(@i)"
+                            aria-expanded="false"
+                            aria-controls="faq-ans-@i">
+                        <span class="dk-sh-faq-question">@faq.Question</span>
+                        <span class="dk-sh-faq-toggle-icon" id="faq-icon-@i">+</span>
+                    </button>
+                    <div class="dk-sh-faq-content" id="faq-ans-@i" style="display: none;">
+                        <p>@faq.Answer</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ========================================================
+         BOTTOM BANNER: YOUR GLOBAL JOURNEY STARTS HERE
+    ========================================================= -->
+    <section class="dk-sh-bottom-cta-banner">
+        <div class="dk-sh-b-cta-left">
+            <h2 class="dk-sh-b-cta-title">@bottomBanner.Title</h2>
+            <p class="dk-sh-b-cta-sub">@bottomBanner.Subtitle</p>
+            <a href="@bottomBanner.ButtonUrl" class="dk-sh-btn-b-cta">
+                @bottomBanner.ButtonText
+            </a>
+        </div>
+        <div class="dk-sh-b-cta-right">
+            <img src="@bottomBanner.ImageUrl" alt="@bottomBanner.Title" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+        </div>
+    </section>
+
+</div>
+
+<!-- ========================================================
+     INLINE STYLING FOR ALL 10 STUDY HUB SECTIONS
+========================================================= -->
+<style>
+    .dk-study-hub-wrapper {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #1e293b;
+        max-width: 1280px;
+        margin: 0 auto;
+        padding-bottom: 40px;
+    }
+
+    /* Admin Bar */
+    .dk-study-hub-admin-bar {
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 10px 18px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 13px;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+    .dk-sh-admin-badge {
+        background: #0284c7;
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 700;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .dk-sh-admin-hint {
+        flex: 1;
+        color: #94a3b8;
+    }
+    .dk-sh-admin-btn {
+        background: #38bdf8;
+        color: #0f172a;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: transform 0.15s ease, background 0.15s;
+    }
+    .dk-sh-admin-btn:hover {
+        background: #7dd3fc;
+        transform: translateY(-1px);
+    }
+
+    /* Common Section Headings */
+    .dk-sh-section-wrap {
+        margin-bottom: 40px;
+    }
+    .dk-sh-section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 20px;
+        gap: 16px;
+    }
+    .dk-sh-title {
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+    }
+    .dk-sh-title-normal { font-size: 1.35rem; }
+    .dk-sh-title-large { font-size: 1.65rem; }
+    .dk-sh-title-xlarge { font-size: 1.95rem; }
+    .dk-sh-subtitle {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin: 4px 0 0 0;
+    }
+    .dk-sh-view-all-link {
+        color: #0284c7;
+        font-weight: 700;
+        font-size: 0.92rem;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: color 0.15s ease, transform 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .dk-sh-view-all-link:hover {
+        color: #0369a1;
+        transform: translateX(2px);
+    }
+
+    /* Hero Banner */
+    .dk-sh-hero-banner {
+        background: linear-gradient(135deg, #eff6ff 0%, #e0f2fe 50%, #f0fdf4 100%);
+        border: 1px solid #bae6fd;
+        border-radius: 20px;
+        padding: 36px 40px 24px 40px;
+        margin-bottom: 40px;
+        box-shadow: 0 8px 30px rgba(2, 132, 199, 0.08);
+    }
+    .dk-sh-hero-content {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 32px;
+        align-items: center;
+    }
+    .dk-sh-hero-pill {
+        display: inline-block;
+        background: #0284c7;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 4px 12px;
+        border-radius: 20px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+    .dk-sh-hero-title {
+        font-size: 2.3rem;
+        font-weight: 900;
+        color: #0f172a;
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+        margin: 0 0 12px 0;
+    }
+    .dk-sh-hero-sub {
+        font-size: 1.1rem;
+        color: #475569;
+        margin: 0 0 24px 0;
+        line-height: 1.45;
+    }
+    .dk-sh-hero-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .dk-sh-btn-hero-primary {
+        background: #0284c7;
+        color: #ffffff;
+        font-weight: 700;
+        padding: 12px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+        transition: background 0.15s, transform 0.15s;
+    }
+    .dk-sh-btn-hero-primary:hover {
+        background: #0369a1;
+        transform: translateY(-2px);
+    }
+    .dk-sh-btn-hero-secondary {
+        background: #ffffff;
+        color: #0f172a;
+        border: 1px solid #cbd5e1;
+        font-weight: 700;
+        padding: 12px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: background 0.15s, border-color 0.15s;
+    }
+    .dk-sh-btn-hero-secondary:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+    }
+    .dk-sh-hero-visual {
+        position: relative;
+    }
+    .dk-sh-hero-img-wrap {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 16/10;
+        background: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.1);
+    }
+    .dk-sh-hero-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dk-sh-hero-badge-float {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(8px);
+        color: #ffffff;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Trust Bar */
+    .dk-sh-trust-bar {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-top: 28px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(2, 132, 199, 0.18);
+    }
+    .dk-sh-trust-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .dk-sh-trust-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #ffffff;
+        color: #0284c7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.15);
+    }
+    .dk-sh-trust-title {
+        font-weight: 700;
+        font-size: 0.92rem;
+        color: #0f172a;
+    }
+    .dk-sh-trust-sub {
+        font-size: 0.78rem;
+        color: #64748b;
+    }
+
+    /* Section 1: Shop by Category Cards Grid */
+    .dk-sh-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    @@media (max-width: 992px) {
+        .dk-sh-cards-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @@media (max-width: 600px) {
+        .dk-sh-cards-grid { grid-template-columns: 1fr; }
+    }
+    .dk-sh-card-item {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+        display: flex;
+        flex-direction: column;
+    }
+    .dk-sh-card-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+        border-color: #38bdf8;
+    }
+    .dk-sh-card-img-wrap {
+        aspect-ratio: 16/9;
+        background: #f1f5f9;
+        overflow: hidden;
+    }
+    .dk-sh-card-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    .dk-sh-card-item:hover .dk-sh-card-img-wrap img {
+        transform: scale(1.04);
+    }
+    .dk-sh-card-body {
+        padding: 16px 18px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .dk-sh-card-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+    }
+    .dk-sh-card-desc {
+        font-size: 0.85rem;
+        color: #64748b;
+        line-height: 1.4;
+        margin: 0 0 14px 0;
+        flex: 1;
+    }
+    .dk-sh-card-link {
+        color: #0284c7;
+        font-weight: 700;
+        font-size: 0.88rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: gap 0.15s ease;
+    }
+    .dk-sh-card-link:hover {
+        gap: 9px;
+    }
+
+    /* Section 2: Study Kits Grid */
+    .dk-sh-kits-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+    @@media (max-width: 900px) {
+        .dk-sh-kits-grid { grid-template-columns: 1fr; }
+    }
+    .dk-sh-kit-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .dk-sh-kit-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 32px rgba(2, 132, 199, 0.12);
+        border-color: #7dd3fc;
+    }
+    .dk-sh-kit-img-wrap {
+        aspect-ratio: 16/10;
+        background: #f8fafc;
+        overflow: hidden;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .dk-sh-kit-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dk-sh-kit-body {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .dk-sh-kit-top-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+    .dk-sh-kit-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
+    }
+    .dk-sh-pill-badge {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+    }
+    .dk-sh-badge-green { background: #dcfce7; color: #15803d; }
+    .dk-sh-badge-blue { background: #e0f2fe; color: #0369a1; }
+    .dk-sh-badge-amber { background: #fef3c7; color: #b45309; }
+    .dk-sh-badge-purple { background: #f3e8ff; color: #7e22ce; }
+    .dk-sh-kit-desc {
+        font-size: 0.88rem;
+        color: #64748b;
+        margin: 0 0 14px 0;
+        line-height: 1.4;
+    }
+    .dk-sh-features-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 20px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 1;
+    }
+    .dk-sh-features-list li {
+        font-size: 0.84rem;
+        color: #334155;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .dk-sh-bullet {
+        color: #0284c7;
+        font-weight: 900;
+        font-size: 1.1rem;
+        line-height: 1;
+    }
+    .dk-sh-kit-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 14px;
+        border-top: 1px solid #f1f5f9;
+    }
+    .dk-sh-kit-price {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
+    .dk-sh-btn-add-cart {
+        background: #0284c7;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.88rem;
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.15s;
+    }
+    .dk-sh-btn-add-cart:hover {
+        background: #0369a1;
+        transform: translateY(-1px);
+    }
+
+    /* Section 3: Detail Grid (3x2) */
+    .dk-sh-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+    @@media (max-width: 900px) {
+        .dk-sh-detail-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @@media (max-width: 600px) {
+        .dk-sh-detail-grid { grid-template-columns: 1fr; }
+    }
+    .dk-sh-detail-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 20px;
+        transition: transform 0.15s ease, border-color 0.15s;
+    }
+    .dk-sh-detail-card:hover {
+        transform: translateY(-2px);
+        border-color: #38bdf8;
+        background: #ffffff;
+    }
+    .dk-sh-detail-icon-wrap {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #e0f2fe;
+        color: #0284c7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+    }
+    .dk-sh-detail-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+    }
+    .dk-sh-detail-desc {
+        font-size: 0.84rem;
+        color: #64748b;
+        margin: 0 0 12px 0;
+    }
+    .dk-sh-detail-link {
+        color: #0284c7;
+        font-size: 0.86rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .dk-sh-detail-link:hover {
+        color: #0369a1;
+    }
+
+    /* Section 4: Packing Checklist Card */
+    .dk-sh-checklist-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+        border: 1px solid #bbf7d0;
+        border-radius: 20px;
+        padding: 32px 36px;
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 32px;
+        align-items: center;
+        box-shadow: 0 8px 24px rgba(22, 101, 52, 0.05);
+    }
+    @@media (max-width: 850px) {
+        .dk-sh-checklist-card { grid-template-columns: 1fr; }
+    }
+    .dk-sh-badge-line {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .dk-sh-checklist-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .dk-sh-checklist-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        user-select: none;
+    }
+    .dk-sh-check-input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+    .dk-sh-check-custom {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        border: 2px solid #cbd5e1;
+        background: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease;
+    }
+    .dk-sh-check-input:checked + .dk-sh-check-custom {
+        background: #16a34a;
+        border-color: #16a34a;
+    }
+    .dk-sh-check-input:checked + .dk-sh-check-custom::after {
+        content: "✓";
+        color: #ffffff;
+        font-weight: 900;
+        font-size: 13px;
+    }
+    .dk-sh-check-text {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1e293b;
+    }
+    .dk-sh-checklist-right .dk-sh-checklist-img-wrap {
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 16/11;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+        background: #ffffff;
+    }
+    .dk-sh-checklist-right img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Common Buttons */
+    .dk-sh-btn-primary {
+        background: #0284c7;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.92rem;
+        padding: 10px 22px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        transition: background 0.15s, transform 0.15s;
+    }
+    .dk-sh-btn-primary:hover {
+        background: #0369a1;
+        transform: translateY(-1px);
+    }
+
+    /* Section 5: Destination Flags */
+    .dk-sh-destinations-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 16px;
+    }
+    @@media (max-width: 768px) {
+        .dk-sh-destinations-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @@media (max-width: 480px) {
+        .dk-sh-destinations-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .dk-sh-destination-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 16px 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        transition: transform 0.15s ease, border-color 0.15s, box-shadow 0.15s;
+    }
+    .dk-sh-destination-card:hover {
+        transform: translateY(-3px);
+        border-color: #38bdf8;
+        box-shadow: 0 8px 20px rgba(2, 132, 199, 0.1);
+    }
+    .dk-sh-flag-wrap {
+        width: 52px;
+        height: 38px;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+    }
+    .dk-sh-flag-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dk-sh-dest-name {
+        font-weight: 700;
+        font-size: 0.92rem;
+        color: #0f172a;
+    }
+
+    /* Section 6: Build Your Own Kit Card */
+    .dk-sh-s3-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 28px 32px;
+        box-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
+    }
+    .dk-sh-s3-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .dk-sh-step-num {
+        background: #0284c7;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 800;
+        padding: 3px 9px;
+        border-radius: 6px;
+    }
+    .dk-sh-builder-layout {
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        gap: 24px;
+        margin-top: 24px;
+        align-items: start;
+    }
+    @@media (max-width: 900px) {
+        .dk-sh-builder-layout { grid-template-columns: 1fr; }
+    }
+    .dk-sh-builder-carousel-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .dk-sh-arrow-btn {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 800;
+        cursor: pointer;
+        z-index: 2;
+        color: #475569;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        transition: background 0.15s;
+    }
+    .dk-sh-arrow-btn:hover { background: #f1f5f9; color: #0284c7; }
+    .dk-sh-builder-scroll {
+        display: flex;
+        gap: 14px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding: 6px 4px;
+        scrollbar-width: none;
+    }
+    .dk-sh-builder-scroll::-webkit-scrollbar { display: none; }
+    .dk-sh-builder-item {
+        flex: 0 0 135px;
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 12px;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        user-select: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .dk-sh-builder-item:hover {
+        border-color: #38bdf8;
+        background: #ffffff;
+    }
+    .dk-sh-builder-item.is-selected {
+        border-color: #0284c7;
+        background: #f0f9ff;
+        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+    }
+    .dk-sh-checkbox-top-right {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+    }
+    .dk-sh-item-chk {
+        width: 16px;
+        height: 16px;
+        accent-color: #0284c7;
+        cursor: pointer;
+    }
+    .dk-sh-b-img-wrap {
+        width: 76px;
+        height: 76px;
+        margin: 6px 0 10px 0;
+        background: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dk-sh-b-img-wrap img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    .dk-sh-b-name {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 4px;
+        line-height: 1.25;
+    }
+    .dk-sh-b-price {
+        font-size: 0.88rem;
+        font-weight: 800;
+        color: #0284c7;
+    }
+
+    /* Summary Card */
+    .dk-sh-builder-summary-card {
+        background: #f8fafc;
+        border: 1.5px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 22px 20px;
+        text-align: center;
+    }
+    .dk-sh-sum-label {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .dk-sh-sum-price {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 6px 0 4px 0;
+    }
+    .dk-sh-sum-count {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-bottom: 16px;
+    }
+    .dk-sh-btn-build-kit {
+        width: 100%;
+        background: #0284c7;
+        color: #ffffff;
+        border: none;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-weight: 800;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.15s;
+    }
+    .dk-sh-btn-build-kit:hover {
+        background: #0369a1;
+        transform: translateY(-1px);
+    }
+
+    /* Section 7: Best Sellers Grid (5 cols) */
+    .dk-sh-bestsellers-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 16px;
+    }
+    @@media (max-width: 1024px) {
+        .dk-sh-bestsellers-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @@media (max-width: 640px) {
+        .dk-sh-bestsellers-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .dk-sh-bs-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.15s ease, box-shadow 0.15s;
+    }
+    .dk-sh-bs-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        border-color: #38bdf8;
+    }
+    .dk-sh-bs-img-wrap {
+        aspect-ratio: 1/1;
+        background: #f8fafc;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+    .dk-sh-bs-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dk-sh-bs-name {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+        line-height: 1.3;
+    }
+    .dk-sh-bs-rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        margin-bottom: 8px;
+    }
+    .dk-sh-stars { color: #f59e0b; font-size: 12px; }
+    .dk-sh-rating-num { font-weight: 700; color: #0f172a; }
+    .dk-sh-rating-count { color: #94a3b8; }
+    .dk-sh-bs-price-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 12px;
+        margin-top: auto;
+    }
+    .dk-sh-bs-price {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
+    .dk-sh-bs-orig-price {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        text-decoration: line-through;
+    }
+    .dk-sh-btn-bs-cart {
+        width: 100%;
+        background: #0284c7;
+        color: #ffffff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .dk-sh-btn-bs-cart:hover {
+        background: #0369a1;
+    }
+
+    /* Section 8: Smart Study Setup */
+    .dk-sh-setup-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        padding: 32px;
+        align-items: center;
+        box-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
+    }
+    @@media (max-width: 850px) {
+        .dk-sh-setup-card { grid-template-columns: 1fr; }
+    }
+    .dk-sh-setup-img-wrap {
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 16/11;
+        background: #f8fafc;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+    .dk-sh-setup-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dk-sh-setup-items-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .dk-sh-setup-item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+    .dk-sh-setup-item-name {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #1e293b;
+    }
+    .dk-sh-setup-bullet { color: #16a34a; font-weight: 900; }
+    .dk-sh-setup-item-price {
+        font-weight: 800;
+        color: #0284c7;
+        font-size: 0.95rem;
+    }
+
+    /* Section 9: Why Choose Us (4 cols) */
+    .dk-sh-why-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    }
+    @@media (max-width: 900px) {
+        .dk-sh-why-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @@media (max-width: 500px) {
+        .dk-sh-why-grid { grid-template-columns: 1fr; }
+    }
+    .dk-sh-why-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 22px 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: transform 0.15s ease, border-color 0.15s;
+    }
+    .dk-sh-why-card:hover {
+        transform: translateY(-2px);
+        border-color: #38bdf8;
+    }
+    .dk-sh-why-icon-wrap {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: #e0f2fe;
+        color: #0284c7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+    }
+    .dk-sh-why-title {
+        font-size: 0.98rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+    }
+    .dk-sh-why-desc {
+        font-size: 0.84rem;
+        color: #64748b;
+        line-height: 1.4;
+        margin: 0;
+    }
+
+    /* Section 10: FAQ Accordion */
+    .dk-sh-faq-accordion {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .dk-sh-faq-item {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: border-color 0.15s ease;
+    }
+    .dk-sh-faq-item.is-open {
+        border-color: #0284c7;
+        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+    }
+    .dk-sh-faq-trigger {
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 16px 20px;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.98rem;
+        color: #0f172a;
+    }
+    .dk-sh-faq-toggle-icon {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #0284c7;
+        transition: transform 0.2s ease;
+    }
+    .dk-sh-faq-item.is-open .dk-sh-faq-toggle-icon {
+        transform: rotate(45deg);
+    }
+    .dk-sh-faq-content {
+        padding: 0 20px 16px 20px;
+        color: #475569;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    .dk-sh-faq-content p { margin: 0; }
+
+    /* Bottom CTA Banner */
+    .dk-sh-bottom-cta-banner {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+        border-radius: 20px;
+        padding: 40px 48px;
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 32px;
+        align-items: center;
+        color: #ffffff;
+        box-shadow: 0 12px 36px rgba(15, 23, 42, 0.15);
+    }
+    @@media (max-width: 800px) {
+        .dk-sh-bottom-cta-banner { grid-template-columns: 1fr; }
+    }
+    .dk-sh-b-cta-title {
+        font-size: 2rem;
+        font-weight: 900;
+        margin: 0 0 10px 0;
+        color: #ffffff;
+        letter-spacing: -0.02em;
+    }
+    .dk-sh-b-cta-sub {
+        font-size: 1.05rem;
+        color: #cbd5e1;
+        margin: 0 0 24px 0;
+        line-height: 1.45;
+    }
+    .dk-sh-btn-b-cta {
+        background: #38bdf8;
+        color: #0f172a;
+        font-weight: 800;
+        padding: 12px 26px;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-block;
+        transition: background 0.15s, transform 0.15s;
+    }
+    .dk-sh-btn-b-cta:hover {
+        background: #7dd3fc;
+        transform: translateY(-2px);
+    }
+    .dk-sh-b-cta-right img {
+        width: 100%;
+        max-height: 200px;
+        object-fit: contain;
+    }
+</style>
+
+<!-- ========================================================
+     CLIENT-SIDE LOGIC FOR INTERACTIVITY
+========================================================= -->
+<script>
+    // Checklist toggle
+    function toggleChecklistItem(id) {
+        const input = document.getElementById("chk_input_" + id);
+        const label = document.getElementById("chk_label_" + id);
+        if (input && label) {
+            if (input.checked) {
+                label.style.opacity = "1";
+            } else {
+                label.style.opacity = "0.7";
+            }
+        }
+    }
+
+    // Builder carousel scroll
+    function scrollBuilderRow(dir) {
+        const track = document.getElementById("dkBuilderScrollTrack");
+        if (track) {
+            track.scrollBy({ left: dir * 240, behavior: "smooth" });
+        }
+    }
+
+    // Builder selection & reactive sum
+    function toggleBuilderItem(id, price) {
+        const chk = document.getElementById("chk-" + id);
+        const card = document.getElementById("builder-card-" + id);
+        if (!chk) return;
+
+        chk.checked = !chk.checked;
+        if (card) {
+            if (chk.checked) {
+                card.classList.add("is-selected");
+            } else {
+                card.classList.remove("is-selected");
+            }
+        }
+        recalculateBuilderTotal();
+    }
+
+    function recalculateBuilderTotal() {
+        const chks = document.querySelectorAll(".dk-sh-item-chk:checked");
+        let total = 0;
+        chks.forEach(c => {
+            const p = parseFloat(c.getAttribute("data-price") || "0");
+            total += isNaN(p) ? 0 : p;
+        });
+
+        const totalEl = document.getElementById("dkBuilderTotalPrice");
+        const countEl = document.getElementById("dkBuilderItemCount");
+        if (totalEl) totalEl.textContent = "₹" + total.toLocaleString("en-IN");
+        if (countEl) countEl.textContent = chks.length + (chks.length === 1 ? " item selected" : " items selected");
+    }
+
+    // Build kit cart action
+    function handleBuildMyKitSubmit(targetUrl) {
+        const chks = document.querySelectorAll(".dk-sh-item-chk:checked");
+        if (chks.length === 0) {
+            alert("Please choose at least 1 item to build your customized kit.");
+            return;
+        }
+        let total = 0;
+        let names = [];
+        chks.forEach(c => {
+            total += parseFloat(c.getAttribute("data-price") || "0");
+            names.push(c.getAttribute("data-name"));
+        });
+
+        // Interactive feedback
+        showNotificationToast("Success: Customized Study Kit added with " + chks.length + " items (Total: ₹" + total.toLocaleString("en-IN") + ")");
+        setTimeout(() => {
+            window.location.href = targetUrl || "/cart";
+        }, 800);
+    }
+
+    function handleKitAddToCart(title, price, img) {
+        showNotificationToast("Added " + title + " to your cart! (₹" + price.toLocaleString("en-IN") + ")");
+    }
+
+    function handleProductAddToCart(name, price, img) {
+        showNotificationToast("Added " + name + " (₹" + price.toLocaleString("en-IN") + ") to cart!");
+    }
+
+    // FAQ Accordion
+    function toggleFaqAccordion(idx) {
+        const item = document.getElementById("faq-item-" + idx);
+        const content = document.getElementById("faq-ans-" + idx);
+        const btn = item ? item.querySelector(".dk-sh-faq-trigger") : null;
+        if (!item || !content) return;
+
+        const isOpen = item.classList.contains("is-open");
+        if (isOpen) {
+            item.classList.remove("is-open");
+            content.style.display = "none";
+            if (btn) btn.setAttribute("aria-expanded", "false");
+        } else {
+            item.classList.add("is-open");
+            content.style.display = "block";
+            if (btn) btn.setAttribute("aria-expanded", "true");
+        }
+    }
+
+    function showNotificationToast(msg) {
+        let toast = document.getElementById("dk-sh-toast");
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "dk-sh-toast";
+            toast.style.cssText = "position: fixed; bottom: 28px; right: 28px; background: #0f172a; color: #ffffff; padding: 12px 22px; border-radius: 10px; font-weight: 700; font-size: 13px; z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.25); border-left: 4px solid #38bdf8; transition: opacity 0.3s ease;";
+            document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.display = "block";
+        toast.style.opacity = "1";
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            setTimeout(() => { toast.style.display = "none"; }, 300);
+        }, 3000);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        recalculateBuilderTotal();
+    });
+</script>

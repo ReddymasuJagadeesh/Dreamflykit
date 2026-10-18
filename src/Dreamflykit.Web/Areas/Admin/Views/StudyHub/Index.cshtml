@@ -1,0 +1,1114 @@
+@model Dreamflykit.Application.StudyHub.Models.StudyHubDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Study Essentials Hub Management";
+
+    var hero = Model.HeroBanner ?? new();
+    var s1 = Model.Section1 ?? new();
+    var s2 = Model.Section2 ?? new();
+    var s3Detail = Model.Section3Detail ?? new();
+    var s4 = Model.Section4 ?? new();
+    var s5 = Model.Section5 ?? new();
+    var s6 = Model.Section6 ?? new();
+    var s7 = Model.Section7 ?? new();
+    var s8 = Model.Section8 ?? new();
+    var s9 = Model.Section9 ?? new();
+    var s10 = Model.Section10 ?? new();
+    var bBanner = Model.BottomBanner ?? new();
+    var catPage = Model.CategoriesPage ?? new();
+}
+
+<div class="dk-admin-card" style="margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <h1 class="dk-admin-card-title" style="font-size: 1.5rem; margin: 0 0 6px 0; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.6rem;">🎓</span>
+                Study Essentials &amp; Abroad Hub Management (All 10 Sections + Categories)
+            </h1>
+            <p style="margin: 0; color: #64748b; font-size: 0.9rem;">
+                Super Admin control panel for all 10 Hub sections and the Study Essentials 8 Categories page. Super Admin can edit text, prices, and upload/replace images anytime.
+            </p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <a href="/study-abroad-hub" target="_blank" class="dk-btn" style="background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                View Live 10-Section Hub
+            </a>
+            <a href="/category/study-essentials" target="_blank" class="dk-btn" style="background: #ffffff; color: #0284c7; border: 1px solid #bae6fd; font-size: 13px; font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                View Live Categories Page
+            </a>
+            <form asp-action="ResetDefaults" method="post" style="display: inline;" onsubmit="return confirm('Restore all 10 sections and categories to default content and test pics?');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="dk-btn" style="background: #f8fafc; color: #b91c1c; border: 1px solid #fca5a5; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 8px; cursor: pointer;">
+                    Reset to Defaults
+                </button>
+            </form>
+            <button type="button" class="dk-btn dk-btn-primary" id="btnSaveTop" onclick="saveAllChanges()" style="padding: 8px 20px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer;">
+                💾 Save All Changes
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+        <span>✓</span> @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+        <span>✕</span> @TempData["ErrorMessage"]
+    </div>
+}
+
+<!-- Hidden Global File Input for Instant Uploads -->
+<input type="file" id="globalImageUploader" style="display: none;" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
+
+<!-- TABS NAVIGATION -->
+<div class="dk-sh-admin-tabs">
+    <button type="button" class="dk-sh-tab-btn active" onclick="switchAdminTab('tab-hero')">Hero &amp; Trust</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s1')">1. Shop by Category</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s2')">2. Study Kits</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s3')">3. Key Essentials</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s4')">4. Packing Checklist</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s5')">5. Destinations</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s6')">6. Build Kit</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s7')">7. Best Sellers</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s8')">8. Study Setup</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s9')">9. Why Dreamflykit</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s10')">10. FAQs</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-cat')">📚 Categories Page (8 Categories)</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-bottom')">Bottom Banner</button>
+</div>
+
+<!-- ========================================================
+     TAB HERO: HERO BANNER & TRUST BAR
+========================================================= -->
+<div class="dk-sh-tab-pane active" id="tab-hero">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">Hero Banner Controls</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Hero Title</label>
+                <input type="text" id="hero_title" class="dk-admin-form-input" value="@hero.Title" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Hero Pill Badge</label>
+                <input type="text" id="hero_pill" class="dk-admin-form-input" value="@hero.PillText" />
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Hero Subtitle</label>
+                <input type="text" id="hero_sub" class="dk-admin-form-input" value="@hero.Subtitle" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Secondary Badge Text</label>
+                <input type="text" id="hero_sec_badge" class="dk-admin-form-input" value="@hero.SecondaryBadge" />
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Primary Button Text</label>
+                <input type="text" id="hero_btn_text" class="dk-admin-form-input" value="@hero.ButtonText" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Primary Button Link</label>
+                <input type="text" id="hero_btn_url" class="dk-admin-form-input" value="@hero.ButtonUrl" />
+            </div>
+        </div>
+
+        <!-- Hero Image Picker -->
+        <label class="dk-sh-form-label">Hero Image (Super Admin Replaceable)</label>
+        <div class="dk-sh-img-ctrl-row">
+            <div class="dk-sh-img-preview-box">
+                <img id="preview_hero_img" src="@hero.ImageUrl" alt="Hero Preview" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+            </div>
+            <div style="flex: 1;">
+                <input type="text" id="hero_img_url" class="dk-admin-form-input" value="@hero.ImageUrl" oninput="updateImgPreview('hero_img_url', 'preview_hero_img')" style="margin-bottom: 8px;" />
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="dk-btn dk-btn-primary" onclick="triggerUploadFor('hero_img_url', 'preview_hero_img')">
+                        📷 Upload New Hero Image
+                    </button>
+                    <button type="button" class="dk-btn" style="background: #f1f5f9;" onclick="setTestPic('hero_img_url', 'preview_hero_img')">
+                        Set as Test Pic
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB S1: 1. SHOP BY CATEGORY
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-s1">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">Section 1: Header Controls</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Section Title</label>
+                <input type="text" id="s1_title" class="dk-admin-form-input" value="@s1.Title" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">View All Link Text</label>
+                <input type="text" id="s1_view_all_text" class="dk-admin-form-input" value="@s1.ViewAllLinkText" />
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Section Subtitle</label>
+                <input type="text" id="s1_subtitle" class="dk-admin-form-input" value="@s1.Subtitle" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">View All Target URL</label>
+                <input type="text" id="s1_view_all_url" class="dk-admin-form-input" value="@s1.ViewAllLinkUrl" />
+            </div>
+        </div>
+    </div>
+
+    <div class="dk-admin-card">
+        <h3 class="dk-sh-tab-title">Section 1 Category Cards</h3>
+        <div class="dk-sh-cards-edit-grid">
+            @for (int i = 0; i < s1.Cards.Count; i++)
+            {
+                var card = s1.Cards[i];
+                <div class="dk-sh-edit-card" id="s1_card_wrap_@i">
+                    <div style="font-weight: 700; color: #0284c7; margin-bottom: 8px;">Card @(i + 1)</div>
+                    <label class="dk-sh-form-label">Title</label>
+                    <input type="text" id="s1_card_title_@i" class="dk-admin-form-input" value="@card.Title" style="margin-bottom: 8px;" />
+                    <label class="dk-sh-form-label">Description</label>
+                    <textarea id="s1_card_desc_@i" class="dk-admin-form-input" rows="2" style="margin-bottom: 8px;">@card.Description</textarea>
+                    <label class="dk-sh-form-label">Target Link URL</label>
+                    <input type="text" id="s1_card_link_@i" class="dk-admin-form-input" value="@card.LinkUrl" style="margin-bottom: 8px;" />
+
+                    <label class="dk-sh-form-label">Card Image</label>
+                    <div class="dk-sh-img-ctrl-row">
+                        <div class="dk-sh-img-preview-box">
+                            <img id="preview_s1_card_@i" src="@card.ImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="text" id="s1_card_img_@i" class="dk-admin-form-input" value="@card.ImageUrl" oninput="updateImgPreview('s1_card_img_@i', 'preview_s1_card_@i')" style="margin-bottom: 6px;" />
+                            <div style="display: flex; gap: 6px;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; padding: 4px 10px;" onclick="triggerUploadFor('s1_card_img_@i', 'preview_s1_card_@i')">Upload</button>
+                                <button type="button" class="dk-btn" style="font-size: 11px; padding: 4px 8px; background: #f1f5f9;" onclick="setTestPic('s1_card_img_@i', 'preview_s1_card_@i')">Test Pic</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB S2: 2. STUDY ESSENTIALS KITS
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-s2">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">Section 2: Curated Kits Header</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Title</label>
+                <input type="text" id="s2_title" class="dk-admin-form-input" value="@s2.Title" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Subtitle</label>
+                <input type="text" id="s2_subtitle" class="dk-admin-form-input" value="@s2.Subtitle" />
+            </div>
+        </div>
+    </div>
+
+    <div class="dk-admin-card">
+        <h3 class="dk-sh-tab-title">3 Study Kit Bundles</h3>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
+            @for (int i = 0; i < s2.Kits.Count; i++)
+            {
+                var kit = s2.Kits[i];
+                <div class="dk-sh-edit-card">
+                    <div style="font-weight: 700; color: #0284c7; margin-bottom: 8px;">Bundle Kit @(i + 1)</div>
+                    <label class="dk-sh-form-label">Kit Title</label>
+                    <input type="text" id="s2_kit_title_@i" class="dk-admin-form-input" value="@kit.Title" style="margin-bottom: 8px;" />
+                    <label class="dk-sh-form-label">Badge Text</label>
+                    <input type="text" id="s2_kit_badge_@i" class="dk-admin-form-input" value="@kit.BadgeText" style="margin-bottom: 8px;" />
+                    <label class="dk-sh-form-label">Price Display (e.g. ₹1,499 - ₹2,999)</label>
+                    <input type="text" id="s2_kit_price_disp_@i" class="dk-admin-form-input" value="@kit.PriceDisplay" style="margin-bottom: 8px;" />
+                    <label class="dk-sh-form-label">Numeric Price (₹)</label>
+                    <input type="number" id="s2_kit_price_num_@i" class="dk-admin-form-input" value="@kit.Price" style="margin-bottom: 8px;" />
+                    <label class="dk-sh-form-label">Features (1 item per line)</label>
+                    <textarea id="s2_kit_features_@i" class="dk-admin-form-input" rows="4" style="margin-bottom: 8px;">@string.Join("\n", kit.Features ?? new())</textarea>
+
+                    <label class="dk-sh-form-label">Kit Image</label>
+                    <div class="dk-sh-img-ctrl-row">
+                        <div class="dk-sh-img-preview-box">
+                            <img id="preview_s2_kit_@i" src="@kit.ImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="text" id="s2_kit_img_@i" class="dk-admin-form-input" value="@kit.ImageUrl" oninput="updateImgPreview('s2_kit_img_@i', 'preview_s2_kit_@i')" style="margin-bottom: 6px;" />
+                            <div style="display: flex; gap: 6px;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; padding: 4px 10px;" onclick="triggerUploadFor('s2_kit_img_@i', 'preview_s2_kit_@i')">Upload</button>
+                                <button type="button" class="dk-btn" style="font-size: 11px; padding: 4px 8px; background: #f1f5f9;" onclick="setTestPic('s2_kit_img_@i', 'preview_s2_kit_@i')">Test Pic</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB S3: 3. KEY ESSENTIALS - IN DETAIL
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-s3">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">Section 3: Key Essentials Header</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Title</label>
+                <input type="text" id="s3_title" class="dk-admin-form-input" value="@s3Detail.Title" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Subtitle</label>
+                <input type="text" id="s3_subtitle" class="dk-admin-form-input" value="@s3Detail.Subtitle" />
+            </div>
+        </div>
+    </div>
+
+    <div class="dk-admin-card">
+        <h3 class="dk-sh-tab-title">6 Detail Cards</h3>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            @for (int i = 0; i < s3Detail.Cards.Count; i++)
+            {
+                var card = s3Detail.Cards[i];
+                <div class="dk-sh-edit-card">
+                    <label class="dk-sh-form-label">Card Title</label>
+                    <input type="text" id="s3_card_title_@i" class="dk-admin-form-input" value="@card.Title" style="margin-bottom: 8px;" />
+                    <label class="dk-sh-form-label">Description / Item preview</label>
+                    <textarea id="s3_card_desc_@i" class="dk-admin-form-input" rows="2" style="margin-bottom: 8px;">@card.Description</textarea>
+                    <label class="dk-sh-form-label">Target Link</label>
+                    <input type="text" id="s3_card_link_@i" class="dk-admin-form-input" value="@card.LinkUrl" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB S4: 4. ABROAD PACKING CHECKLIST
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-s4">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">Section 4: Abroad Packing Checklist</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Title</label>
+                <input type="text" id="s4_title" class="dk-admin-form-input" value="@s4.Title" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Badge Text</label>
+                <input type="text" id="s4_badge" class="dk-admin-form-input" value="@s4.BadgeText" />
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Subtitle</label>
+                <input type="text" id="s4_sub" class="dk-admin-form-input" value="@s4.Subtitle" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Button Text</label>
+                <input type="text" id="s4_btn_text" class="dk-admin-form-input" value="@s4.ButtonText" />
+            </div>
+        </div>
+
+        <label class="dk-sh-form-label">Checklist Image (Super Admin Replaceable)</label>
+        <div class="dk-sh-img-ctrl-row">
+            <div class="dk-sh-img-preview-box">
+                <img id="preview_s4_img" src="@s4.ImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+            </div>
+            <div style="flex: 1;">
+                <input type="text" id="s4_img_url" class="dk-admin-form-input" value="@s4.ImageUrl" oninput="updateImgPreview('s4_img_url', 'preview_s4_img')" style="margin-bottom: 8px;" />
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="dk-btn dk-btn-primary" onclick="triggerUploadFor('s4_img_url', 'preview_s4_img')">Upload Checklist Image</button>
+                    <button type="button" class="dk-btn" style="background: #f1f5f9;" onclick="setTestPic('s4_img_url', 'preview_s4_img')">Set as Test Pic</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB S5: 5. SHOP BY DESTINATION
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-s5">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">Section 5: Destination Header</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Title</label>
+                <input type="text" id="s5_title" class="dk-admin-form-input" value="@s5.Title" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Subtitle</label>
+                <input type="text" id="s5_subtitle" class="dk-admin-form-input" value="@s5.Subtitle" />
+            </div>
+        </div>
+    </div>
+
+    <div class="dk-admin-card">
+        <h3 class="dk-sh-tab-title">5 Destination Countries</h3>
+        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;">
+            @for (int i = 0; i < s5.Countries.Count; i++)
+            {
+                var c = s5.Countries[i];
+                <div class="dk-sh-edit-card">
+                    <label class="dk-sh-form-label">Country Name</label>
+                    <input type="text" id="s5_c_name_@i" class="dk-admin-form-input" value="@c.Name" style="margin-bottom: 8px;" />
+                    <label class="dk-sh-form-label">Flag Image URL</label>
+                    <input type="text" id="s5_c_flag_@i" class="dk-admin-form-input" value="@c.FlagUrl" oninput="updateImgPreview('s5_c_flag_@i', 'preview_s5_c_@i')" style="margin-bottom: 8px;" />
+                    <div class="dk-sh-img-preview-box" style="width: 100%; height: 50px; margin-bottom: 8px;">
+                        <img id="preview_s5_c_@i" src="@c.FlagUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                    </div>
+                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; width: 100%;" onclick="triggerUploadFor('s5_c_flag_@i', 'preview_s5_c_@i')">Upload Flag</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB S6: 6. BUILD YOUR OWN STUDY KIT
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-s6">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">Section 6: Interactive Kit Builder Header</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Title</label>
+                <input type="text" id="s6_title" class="dk-admin-form-input" value="@s6.Title" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Step Number</label>
+                <input type="text" id="s6_step" class="dk-admin-form-input" value="@s6.StepNumber" />
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Subtitle</label>
+                <input type="text" id="s6_sub" class="dk-admin-form-input" value="@s6.Subtitle" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Button Text</label>
+                <input type="text" id="s6_btn_text" class="dk-admin-form-input" value="@s6.ButtonText" />
+            </div>
+        </div>
+    </div>
+
+    <div class="dk-admin-card">
+        <h3 class="dk-sh-tab-title">Selectable Custom Bundle Items</h3>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            @for (int i = 0; i < s6.Items.Count; i++)
+            {
+                var item = s6.Items[i];
+                <div class="dk-sh-edit-card">
+                    <label class="dk-sh-form-label">Item Name</label>
+                    <input type="text" id="s6_item_name_@i" class="dk-admin-form-input" value="@item.Name" style="margin-bottom: 8px;" />
+                    <label class="dk-sh-form-label">Price (₹)</label>
+                    <input type="number" id="s6_item_price_@i" class="dk-admin-form-input" value="@item.Price" style="margin-bottom: 8px;" />
+
+                    <label class="dk-sh-form-label">Item Image</label>
+                    <div class="dk-sh-img-ctrl-row">
+                        <div class="dk-sh-img-preview-box">
+                            <img id="preview_s6_item_@i" src="@item.ImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="text" id="s6_item_img_@i" class="dk-admin-form-input" value="@item.ImageUrl" oninput="updateImgPreview('s6_item_img_@i', 'preview_s6_item_@i')" style="margin-bottom: 6px;" />
+                            <div style="display: flex; gap: 6px;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; padding: 4px 10px;" onclick="triggerUploadFor('s6_item_img_@i', 'preview_s6_item_@i')">Upload</button>
+                                <button type="button" class="dk-btn" style="font-size: 11px; padding: 4px 8px; background: #f1f5f9;" onclick="setTestPic('s6_item_img_@i', 'preview_s6_item_@i')">Test Pic</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB S7: 7. BEST SELLERS
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-s7">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">Section 7: Best Sellers Header</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Title</label>
+                <input type="text" id="s7_title" class="dk-admin-form-input" value="@s7.Title" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Subtitle</label>
+                <input type="text" id="s7_sub" class="dk-admin-form-input" value="@s7.Subtitle" />
+            </div>
+        </div>
+    </div>
+
+    <div class="dk-admin-card">
+        <h3 class="dk-sh-tab-title">Best Seller Products</h3>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            @for (int i = 0; i < s7.Products.Count; i++)
+            {
+                var p = s7.Products[i];
+                <div class="dk-sh-edit-card">
+                    <label class="dk-sh-form-label">Product Name</label>
+                    <input type="text" id="s7_p_name_@i" class="dk-admin-form-input" value="@p.Name" style="margin-bottom: 8px;" />
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                        <div>
+                            <label class="dk-sh-form-label">Selling Price (₹)</label>
+                            <input type="number" id="s7_p_price_@i" class="dk-admin-form-input" value="@p.Price" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">MRP (₹)</label>
+                            <input type="number" id="s7_p_orig_@i" class="dk-admin-form-input" value="@p.OriginalPrice" />
+                        </div>
+                    </div>
+
+                    <label class="dk-sh-form-label">Product Image</label>
+                    <div class="dk-sh-img-ctrl-row">
+                        <div class="dk-sh-img-preview-box">
+                            <img id="preview_s7_p_@i" src="@p.ImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="text" id="s7_p_img_@i" class="dk-admin-form-input" value="@p.ImageUrl" oninput="updateImgPreview('s7_p_img_@i', 'preview_s7_p_@i')" style="margin-bottom: 6px;" />
+                            <div style="display: flex; gap: 6px;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; padding: 4px 10px;" onclick="triggerUploadFor('s7_p_img_@i', 'preview_s7_p_@i')">Upload</button>
+                                <button type="button" class="dk-btn" style="font-size: 11px; padding: 4px 8px; background: #f1f5f9;" onclick="setTestPic('s7_p_img_@i', 'preview_s7_p_@i')">Test Pic</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB S8: 8. SMART STUDY SETUP
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-s8">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">Section 8: Smart Study Setup</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Title</label>
+                <input type="text" id="s8_title" class="dk-admin-form-input" value="@s8.Title" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Subtitle</label>
+                <input type="text" id="s8_sub" class="dk-admin-form-input" value="@s8.Subtitle" />
+            </div>
+        </div>
+
+        <label class="dk-sh-form-label">Setup Showcase Image</label>
+        <div class="dk-sh-img-ctrl-row">
+            <div class="dk-sh-img-preview-box">
+                <img id="preview_s8_img" src="@s8.ImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+            </div>
+            <div style="flex: 1;">
+                <input type="text" id="s8_img_url" class="dk-admin-form-input" value="@s8.ImageUrl" oninput="updateImgPreview('s8_img_url', 'preview_s8_img')" style="margin-bottom: 8px;" />
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="dk-btn dk-btn-primary" onclick="triggerUploadFor('s8_img_url', 'preview_s8_img')">Upload Setup Image</button>
+                    <button type="button" class="dk-btn" style="background: #f1f5f9;" onclick="setTestPic('s8_img_url', 'preview_s8_img')">Set as Test Pic</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB S9: 9. WHY DREAMFLYKIT
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-s9">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">Section 9: Why Choose DreamFlyKit?</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Title</label>
+                <input type="text" id="s9_title" class="dk-admin-form-input" value="@s9.Title" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Subtitle</label>
+                <input type="text" id="s9_sub" class="dk-admin-form-input" value="@s9.Subtitle" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB S10: 10. FAQS
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-s10">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">Section 10: Frequently Asked Questions</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Title</label>
+                <input type="text" id="s10_title" class="dk-admin-form-input" value="@s10.Title" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Subtitle</label>
+                <input type="text" id="s10_sub" class="dk-admin-form-input" value="@s10.Subtitle" />
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+            @for (int i = 0; i < s10.Faqs.Count; i++)
+            {
+                var faq = s10.Faqs[i];
+                <div class="dk-sh-edit-card">
+                    <label class="dk-sh-form-label">Question @(i + 1)</label>
+                    <input type="text" id="s10_q_@i" class="dk-admin-form-input" value="@faq.Question" style="margin-bottom: 8px;" />
+                    <label class="dk-sh-form-label">Answer</label>
+                    <textarea id="s10_a_@i" class="dk-admin-form-input" rows="2">@faq.Answer</textarea>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB CAT: 📚 STUDY ESSENTIALS 8 CATEGORIES PAGE (IMAGE 4)
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-cat">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">Categories Page Hero (Image 4)</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Hero Title</label>
+                <input type="text" id="cat_hero_title" class="dk-admin-form-input" value="@catPage.HeroTitle" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Hero Subtitle</label>
+                <input type="text" id="cat_hero_sub" class="dk-admin-form-input" value="@catPage.HeroSubtitle" />
+            </div>
+        </div>
+
+        <label class="dk-sh-form-label">Hero Image (Super Admin Replaceable)</label>
+        <div class="dk-sh-img-ctrl-row">
+            <div class="dk-sh-img-preview-box">
+                <img id="preview_cat_hero_img" src="@catPage.HeroImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+            </div>
+            <div style="flex: 1;">
+                <input type="text" id="cat_hero_img_url" class="dk-admin-form-input" value="@catPage.HeroImageUrl" oninput="updateImgPreview('cat_hero_img_url', 'preview_cat_hero_img')" style="margin-bottom: 8px;" />
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="dk-btn dk-btn-primary" onclick="triggerUploadFor('cat_hero_img_url', 'preview_cat_hero_img')">Upload Hero Image</button>
+                    <button type="button" class="dk-btn" style="background: #f1f5f9;" onclick="setTestPic('cat_hero_img_url', 'preview_cat_hero_img')">Set as Test Pic</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dk-admin-card">
+        <h3 class="dk-sh-tab-title">The 8 Study Essentials Categories (Super Admin Image Replacement)</h3>
+        <p style="color: #64748b; font-size: 0.88rem; margin-top: -8px; margin-bottom: 16px;">
+            Manage each category card shown in Image 4. Click Upload to replace any test pic with a real university product image!
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;">
+            @for (int i = 0; i < catPage.Categories.Count; i++)
+            {
+                var cat = catPage.Categories[i];
+                <div class="dk-sh-edit-card" id="cat_card_wrap_@i">
+                    <div style="font-weight: 800; color: #0284c7; margin-bottom: 6px;">Category @(i + 1)</div>
+                    <label class="dk-sh-form-label">Name</label>
+                    <input type="text" id="cat_item_name_@i" class="dk-admin-form-input" value="@cat.Name" style="margin-bottom: 8px;" />
+                    <label class="dk-sh-form-label">Slug</label>
+                    <input type="text" id="cat_item_slug_@i" class="dk-admin-form-input" value="@cat.Slug" style="margin-bottom: 8px;" />
+                    <label class="dk-sh-form-label">Description</label>
+                    <textarea id="cat_item_desc_@i" class="dk-admin-form-input" rows="2" style="margin-bottom: 8px;">@cat.Description</textarea>
+
+                    <label class="dk-sh-form-label">Category Image (Super Admin Replaceable)</label>
+                    <div class="dk-sh-img-ctrl-row">
+                        <div class="dk-sh-img-preview-box">
+                            <img id="preview_cat_item_@i" src="@cat.ImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="text" id="cat_item_img_@i" class="dk-admin-form-input" value="@cat.ImageUrl" oninput="updateImgPreview('cat_item_img_@i', 'preview_cat_item_@i')" style="margin-bottom: 6px;" />
+                            <div style="display: flex; gap: 6px;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; padding: 4px 10px;" onclick="triggerUploadFor('cat_item_img_@i', 'preview_cat_item_@i')">📷 Upload Image</button>
+                                <button type="button" class="dk-btn" style="font-size: 11px; padding: 4px 8px; background: #f1f5f9;" onclick="setTestPic('cat_item_img_@i', 'preview_cat_item_@i')">Set Test Pic</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB BOTTOM: BOTTOM BANNER
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-bottom">
+    <div class="dk-admin-card">
+        <h3 class="dk-sh-tab-title">Bottom Call-to-Action Banner</h3>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Title</label>
+                <input type="text" id="b_title" class="dk-admin-form-input" value="@bBanner.Title" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Button Text</label>
+                <input type="text" id="b_btn_text" class="dk-admin-form-input" value="@bBanner.ButtonText" />
+            </div>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <label class="dk-sh-form-label">Subtitle</label>
+            <input type="text" id="b_sub" class="dk-admin-form-input" value="@bBanner.Subtitle" />
+        </div>
+
+        <label class="dk-sh-form-label">Banner Image (Super Admin Replaceable)</label>
+        <div class="dk-sh-img-ctrl-row">
+            <div class="dk-sh-img-preview-box">
+                <img id="preview_b_img" src="@bBanner.ImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+            </div>
+            <div style="flex: 1;">
+                <input type="text" id="b_img_url" class="dk-admin-form-input" value="@bBanner.ImageUrl" oninput="updateImgPreview('b_img_url', 'preview_b_img')" style="margin-bottom: 8px;" />
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="dk-btn dk-btn-primary" onclick="triggerUploadFor('b_img_url', 'preview_b_img')">Upload Banner Image</button>
+                    <button type="button" class="dk-btn" style="background: #f1f5f9;" onclick="setTestPic('b_img_url', 'preview_b_img')">Set as Test Pic</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Bottom Save Bar -->
+<div style="position: sticky; bottom: 20px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); padding: 14px 24px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 100; margin-top: 30px;">
+    <div style="font-size: 13.5px; font-weight: 600;">
+        Changes ready to save. All 10 sections &amp; categories will be updated live across the site.
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <button type="button" class="dk-btn dk-btn-primary" onclick="saveAllChanges()" style="padding: 10px 24px; font-size: 14px; font-weight: 800; border-radius: 8px; cursor: pointer;">
+            💾 Save All Changes Now
+        </button>
+    </div>
+</div>
+
+<!-- STYLES FOR ADMIN -->
+<style>
+    .dk-sh-admin-tabs {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .dk-sh-tab-btn {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 13px;
+        color: #475569;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+    }
+    .dk-sh-tab-btn:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+    }
+    .dk-sh-tab-btn.active {
+        background: #0284c7;
+        color: #ffffff;
+        border-color: #0284c7;
+        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+    }
+    .dk-sh-tab-pane {
+        display: none;
+    }
+    .dk-sh-tab-pane.active {
+        display: block;
+    }
+    .dk-sh-tab-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 16px 0;
+    }
+    .dk-sh-form-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .dk-sh-edit-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+    }
+    .dk-sh-cards-edit-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+    @@media (max-width: 1000px) {
+        .dk-sh-cards-edit-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @@media (max-width: 650px) {
+        .dk-sh-cards-edit-grid { grid-template-columns: 1fr; }
+    }
+    .dk-sh-img-ctrl-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+    .dk-sh-img-preview-box {
+        width: 80px;
+        height: 60px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #cbd5e1;
+        background: #0f172a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .dk-sh-img-preview-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+
+<!-- SCRIPT FOR UPLOADING, PREVIEW & SAVE -->
+<script>
+    let currentUploadTargetInputId = null;
+    let currentUploadPreviewImgId = null;
+
+    function switchAdminTab(tabId) {
+        document.querySelectorAll(".dk-sh-tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".dk-sh-tab-pane").forEach(p => p.classList.remove("active"));
+
+        event.currentTarget.classList.add("active");
+        const target = document.getElementById(tabId);
+        if (target) target.classList.add("active");
+    }
+
+    function updateImgPreview(inputId, imgId) {
+        const input = document.getElementById(inputId);
+        const img = document.getElementById(imgId);
+        if (input && img) {
+            img.src = input.value || "/images/study-hub/test-pic-placeholder.svg";
+        }
+    }
+
+    function setTestPic(inputId, imgId) {
+        const input = document.getElementById(inputId);
+        const img = document.getElementById(imgId);
+        const testPath = "/images/study-hub/test-pic-placeholder.svg";
+        if (input) input.value = testPath;
+        if (img) img.src = testPath;
+    }
+
+    function triggerUploadFor(inputId, imgId) {
+        currentUploadTargetInputId = inputId;
+        currentUploadPreviewImgId = imgId;
+        const uploader = document.getElementById("globalImageUploader");
+        if (uploader) {
+            uploader.value = "";
+            uploader.click();
+        }
+    }
+
+    document.getElementById("globalImageUploader")?.addEventListener("change", async function () {
+        if (!this.files || this.files.length === 0) return;
+        const file = this.files[0];
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        if (token) formData.append("__RequestVerificationToken", token);
+
+        try {
+            const res = await fetch("/Admin/StudyHub/UploadImage", {
+                method: "POST",
+                body: formData,
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            });
+            const data = await res.json();
+            if (data.success && data.url) {
+                if (currentUploadTargetInputId) {
+                    const input = document.getElementById(currentUploadTargetInputId);
+                    if (input) input.value = data.url;
+                }
+                if (currentUploadPreviewImgId) {
+                    const img = document.getElementById(currentUploadPreviewImgId);
+                    if (img) img.src = data.url;
+                }
+                showAdminToast("✓ Image uploaded and preview updated!");
+            } else {
+                alert("Upload failed: " + (data.message || "Unknown error"));
+            }
+        } catch (err) {
+            alert("Upload failed: " + err.message);
+        }
+    });
+
+    async function saveAllChanges() {
+        const btn = document.getElementById("btnSaveTop");
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = "Saving...";
+        }
+
+        // Build StudyHubDto JSON payload
+        const payload = {
+            HeroBanner: {
+                PillText: document.getElementById("hero_pill")?.value || "STUDY ESSENTIALS",
+                Title: document.getElementById("hero_title")?.value || "Everything You Need for Your Global Journey",
+                Subtitle: document.getElementById("hero_sub")?.value || "",
+                ButtonText: document.getElementById("hero_btn_text")?.value || "Explore Study Essentials →",
+                ButtonUrl: document.getElementById("hero_btn_url")?.value || "/category/study-essentials",
+                ImageUrl: document.getElementById("hero_img_url")?.value || "/images/study-hub/test-pic-placeholder.svg",
+                SecondaryBadge: document.getElementById("hero_sec_badge")?.value || ""
+            },
+            Section1: {
+                Title: document.getElementById("s1_title")?.value || "1. Shop by Category",
+                Subtitle: document.getElementById("s1_subtitle")?.value || "",
+                ViewAllLinkText: document.getElementById("s1_view_all_text")?.value || "View All Categories →",
+                ViewAllLinkUrl: document.getElementById("s1_view_all_url")?.value || "/category/study-essentials",
+                Cards: []
+            },
+            Section2: {
+                Title: document.getElementById("s2_title")?.value || "2. Our Study Essentials Kits",
+                Subtitle: document.getElementById("s2_subtitle")?.value || "",
+                Kits: []
+            },
+            Section3Detail: {
+                Title: document.getElementById("s3_title")?.value || "3. Key Study Essentials - In Detail",
+                Subtitle: document.getElementById("s3_subtitle")?.value || "",
+                Cards: []
+            },
+            Section4: {
+                Title: document.getElementById("s4_title")?.value || "4. Abroad Packing Checklist",
+                BadgeText: document.getElementById("s4_badge")?.value || "Highly Recommended",
+                Subtitle: document.getElementById("s4_sub")?.value || "",
+                ButtonText: document.getElementById("s4_btn_text")?.value || "View Missing Essentials →",
+                ButtonUrl: "/category/study-essentials",
+                ImageUrl: document.getElementById("s4_img_url")?.value || "/images/study-hub/test-pic-placeholder.svg",
+                Items: []
+            },
+            Section5: {
+                Title: document.getElementById("s5_title")?.value || "5. Shop by Destination",
+                Subtitle: document.getElementById("s5_subtitle")?.value || "",
+                ButtonText: "Explore Essentials by Country →",
+                ButtonUrl: "/category/study-essentials",
+                Countries: []
+            },
+            Section6: {
+                StepNumber: document.getElementById("s6_step")?.value || "6.",
+                Title: document.getElementById("s6_title")?.value || "Build Your Own Study Kit",
+                BadgeText: "Customize Your Perfect Kit",
+                Subtitle: document.getElementById("s6_sub")?.value || "",
+                ButtonText: document.getElementById("s6_btn_text")?.value || "Build My Study Kit →",
+                TargetUrl: "/cart",
+                Items: []
+            },
+            Section7: {
+                Title: document.getElementById("s7_title")?.value || "7. Best Sellers & Student Favorites",
+                Subtitle: document.getElementById("s7_sub")?.value || "",
+                Products: []
+            },
+            Section8: {
+                Title: document.getElementById("s8_title")?.value || "8. Smart Study Setup",
+                Subtitle: document.getElementById("s8_sub")?.value || "",
+                ImageUrl: document.getElementById("s8_img_url")?.value || "/images/study-hub/test-pic-placeholder.svg",
+                ButtonText: "Shop Study Setup →",
+                ButtonUrl: "/category/study-essentials",
+                Items: []
+            },
+            Section9: {
+                Title: document.getElementById("s9_title")?.value || "9. Why Choose DreamFlyKit?",
+                Subtitle: document.getElementById("s9_sub")?.value || "",
+                Pillars: []
+            },
+            Section10: {
+                Title: document.getElementById("s10_title")?.value || "10. Frequently Asked Questions",
+                Subtitle: document.getElementById("s10_sub")?.value || "",
+                Faqs: []
+            },
+            BottomBanner: {
+                Title: document.getElementById("b_title")?.value || "Your Global Journey Starts Here.",
+                Subtitle: document.getElementById("b_sub")?.value || "",
+                ButtonText: document.getElementById("b_btn_text")?.value || "Shop Study Essentials →",
+                ButtonUrl: "/category/study-essentials",
+                ImageUrl: document.getElementById("b_img_url")?.value || "/images/study-hub/test-pic-placeholder.svg"
+            },
+            CategoriesPage: {
+                HeroTitle: document.getElementById("cat_hero_title")?.value || "Study Essentials",
+                HeroSubtitle: document.getElementById("cat_hero_sub")?.value || "",
+                HeroImageUrl: document.getElementById("cat_hero_img_url")?.value || "/images/study-hub/test-pic-placeholder.svg",
+                Categories: []
+            }
+        };
+
+        // Section 1 Cards
+        for (let i = 0; i < 10; i++) {
+            const t = document.getElementById("s1_card_title_" + i);
+            if (!t) break;
+            payload.Section1.Cards.push({
+                Title: t.value,
+                Description: document.getElementById("s1_card_desc_" + i)?.value || "",
+                LinkUrl: document.getElementById("s1_card_link_" + i)?.value || "/category/study-essentials",
+                ImageUrl: document.getElementById("s1_card_img_" + i)?.value || "/images/study-hub/test-pic-placeholder.svg",
+                IconType: "academic"
+            });
+        }
+
+        // Section 2 Kits
+        for (let i = 0; i < 6; i++) {
+            const t = document.getElementById("s2_kit_title_" + i);
+            if (!t) break;
+            const featText = document.getElementById("s2_kit_features_" + i)?.value || "";
+            const feats = featText.split("\n").map(f => f.trim()).filter(f => f.length > 0);
+            payload.Section2.Kits.push({
+                Title: t.value,
+                BadgeText: document.getElementById("s2_kit_badge_" + i)?.value || "",
+                PriceDisplay: document.getElementById("s2_kit_price_disp_" + i)?.value || "₹499",
+                Price: parseFloat(document.getElementById("s2_kit_price_num_" + i)?.value || "499"),
+                ImageUrl: document.getElementById("s2_kit_img_" + i)?.value || "/images/study-hub/test-pic-placeholder.svg",
+                Features: feats,
+                ButtonText: "View Kit →",
+                TargetUrl: "/category/study-essentials"
+            });
+        }
+
+        // Section 3 Detail Cards
+        for (let i = 0; i < 10; i++) {
+            const t = document.getElementById("s3_card_title_" + i);
+            if (!t) break;
+            payload.Section3Detail.Cards.push({
+                Title: t.value,
+                Description: document.getElementById("s3_card_desc_" + i)?.value || "",
+                LinkUrl: document.getElementById("s3_card_link_" + i)?.value || "/category/study-essentials",
+                IconType: "pen"
+            });
+        }
+
+        // Section 5 Countries
+        for (let i = 0; i < 10; i++) {
+            const t = document.getElementById("s5_c_name_" + i);
+            if (!t) break;
+            payload.Section5.Countries.push({
+                Name: t.value,
+                Code: t.value.substring(0, 2).toUpperCase(),
+                FlagUrl: document.getElementById("s5_c_flag_" + i)?.value || "",
+                LinkUrl: "/category/study-essentials?country=" + encodeURIComponent(t.value.toLowerCase())
+            });
+        }
+
+        // Section 6 Builder items
+        for (let i = 0; i < 20; i++) {
+            const t = document.getElementById("s6_item_name_" + i);
+            if (!t) break;
+            payload.Section6.Items.push({
+                Name: t.value,
+                Price: parseFloat(document.getElementById("s6_item_price_" + i)?.value || "0"),
+                ImageUrl: document.getElementById("s6_item_img_" + i)?.value || "/images/study-hub/test-pic-placeholder.svg"
+            });
+        }
+
+        // Section 7 Best Sellers
+        for (let i = 0; i < 10; i++) {
+            const t = document.getElementById("s7_p_name_" + i);
+            if (!t) break;
+            payload.Section7.Products.push({
+                Name: t.value,
+                Price: parseFloat(document.getElementById("s7_p_price_" + i)?.value || "0"),
+                OriginalPrice: parseFloat(document.getElementById("s7_p_orig_" + i)?.value || "0"),
+                ImageUrl: document.getElementById("s7_p_img_" + i)?.value || "/images/study-hub/test-pic-placeholder.svg",
+                LinkUrl: "/category/study-essentials",
+                ButtonText: "Add to Cart"
+            });
+        }
+
+        // Section 10 FAQs
+        for (let i = 0; i < 15; i++) {
+            const q = document.getElementById("s10_q_" + i);
+            if (!q) break;
+            payload.Section10.Faqs.push({
+                Question: q.value,
+                Answer: document.getElementById("s10_a_" + i)?.value || ""
+            });
+        }
+
+        // Categories Page 8 Categories
+        for (let i = 0; i < 12; i++) {
+            const n = document.getElementById("cat_item_name_" + i);
+            if (!n) break;
+            payload.CategoriesPage.Categories.push({
+                Name: n.value,
+                Slug: document.getElementById("cat_item_slug_" + i)?.value || "",
+                Description: document.getElementById("cat_item_desc_" + i)?.value || "",
+                ImageUrl: document.getElementById("cat_item_img_" + i)?.value || "/images/study-hub/test-pic-placeholder.svg"
+            });
+        }
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+        try {
+            const res = await fetch("/Admin/StudyHub/Save", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "RequestVerificationToken": token || ""
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await res.json();
+            if (result.success) {
+                showAdminToast("✓ All 10 sections & categories saved successfully!");
+            } else {
+                alert("Failed to save: " + (result.message || "Unknown error"));
+            }
+        } catch (err) {
+            alert("Save failed: " + err.message);
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = "💾 Save All Changes";
+            }
+        }
+    }
+
+    function showAdminToast(msg) {
+        let toast = document.getElementById("dk-admin-save-toast");
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "dk-admin-save-toast";
+            toast.style.cssText = "position: fixed; top: 30px; right: 30px; background: #059669; color: #ffffff; padding: 14px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; z-index: 99999; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: opacity 0.3s;";
+            document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.display = "block";
+        toast.style.opacity = "1";
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            setTimeout(() => { toast.style.display = "none"; }, 300);
+        }, 3000);
+    }
+</script>

@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Dreamflykit.Application.StudyHub.Models;
 using Dreamflykit.Domain.Catalog;
 using Dreamflykit.Domain.Media;
 using Dreamflykit.Infrastructure.Identity;
@@ -55,6 +57,42 @@ public static class DatabaseSeeder
         // Reload to have all current IDs
         var currentCategories = await context.Categories.ToListAsync(cancellationToken);
         var catMap = currentCategories.ToDictionary(c => c.Slug, c => c.Id, StringComparer.OrdinalIgnoreCase);
+
+        // Ensure the 8 Study Essentials Subcategories
+        if (catMap.TryGetValue("study-essentials", out var studyCatId))
+        {
+            var existingSubs = await context.Subcategories
+                .Where(s => s.CategoryId == studyCatId)
+                .ToListAsync(cancellationToken);
+
+            var requiredSubs = new (string Name, string Slug, int Order)[]
+            {
+                ("Stationary & study supplies", "stationery-study-supplies", 1),
+                ("Tech for study", "tech-for-study", 2),
+                ("Document & organization", "document-organization", 3),
+                ("Desk & Room study essential", "desk-room-study-essential", 4),
+                ("College & Campus Essentials", "college-campus-essentials", 5),
+                ("Online Classes & Productivity", "online-classes-productivity", 6),
+                ("Exam preparation ( Gre ,tofel ,)", "exam-preparation", 7),
+                ("Books & references", "books-references", 8)
+            };
+
+            foreach (var (subName, subSlug, subOrder) in requiredSubs)
+            {
+                var existingSub = existingSubs.FirstOrDefault(s => string.Equals(s.Slug, subSlug, StringComparison.OrdinalIgnoreCase));
+                if (existingSub == null)
+                {
+                    var newSub = new Subcategory(studyCatId, subName, subSlug, subOrder);
+                    context.Subcategories.Add(newSub);
+                }
+                else
+                {
+                    existingSub.Update(subName, subSlug, subOrder);
+                    existingSub.Activate();
+                }
+            }
+            await context.SaveChangesAsync(cancellationToken);
+        }
 
         // B. Reassign products from obsolete categories & remove obsolete categories
         var obsoleteCategories = currentCategories.Where(c => !finalSlugs.Contains(c.Slug)).ToList();
@@ -491,6 +529,19 @@ public static class DatabaseSeeder
                 adSpace.Activate();
                 adSpace.Publish(adminId);
                 context.HomepageSections.Add(adSpace);
+            }
+
+            if (!await context.HomepageSections.AnyAsync(s => s.SectionKey == HomepageSectionKey.StudyEssentialsHub, cancellationToken))
+            {
+                var defaultHub = StudyHubDto.CreateDefault();
+                var hubSection = new HomepageSection(HomepageSectionKey.StudyEssentialsHub, defaultHub.Section1.Title, 13, adminId);
+                var safeSubtitle = defaultHub.Section1.Subtitle != null && defaultHub.Section1.Subtitle.Length > 290
+                    ? defaultHub.Section1.Subtitle[..290]
+                    : defaultHub.Section1.Subtitle;
+                hubSection.Update(defaultHub.Section1.Title, safeSubtitle, "/category/study-essentials", 13, null, null, null, adminId);
+                hubSection.Activate();
+                hubSection.Publish(adminId);
+                context.HomepageSections.Add(hubSection);
             }
 
             await context.SaveChangesAsync(cancellationToken);

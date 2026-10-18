@@ -273,5 +273,8 @@ public static class InfrastructureServiceCollectionExtensions
         // Theme & Typography Management
         services.AddMemoryCache();
         services.AddScoped<Dreamflykit.Application.Theme.IThemeSettingService, Dreamflykit.Infrastructure.Theme.ThemeSettingService>();
+
+        // Study Essentials Hub Service
+        services.AddScoped<Dreamflykit.Application.StudyHub.Interfaces.IStudyHubService, Dreamflykit.Infrastructure.StudyHub.StudyHubService>();
     }
 }
