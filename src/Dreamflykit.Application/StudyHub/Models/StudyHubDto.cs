@@ -43,7 +43,7 @@ public sealed class StudyHubDto
             },
             Section1 = new StudyHubSection1Dto
             {
-                Title = "1. Shop by Category",
+                Title = "Shop by Category",
                 Subtitle = "Find everything you need, all in one place.",
                 ViewAllLinkText = "View All Categories →",
                 ViewAllLinkUrl = "/category/study-essentials",
@@ -108,7 +108,7 @@ public sealed class StudyHubDto
             },
             Section2 = new StudyHubSection2Dto
             {
-                Title = "2. Our Study Essentials Kits",
+                Title = "Our Study Essentials Kits",
                 Subtitle = "Complete bundles for every student's journey.",
                 TitleFontSize = "large",
                 ViewAllLinkText = "View All Kits →",
@@ -187,7 +187,7 @@ public sealed class StudyHubDto
             },
             Section3Detail = new StudyHubSection3DetailDto
             {
-                Title = "3. Key Study Essentials - In Detail",
+                Title = "Key Study Essentials - In Detail",
                 Subtitle = "Everything you need, category-wise",
                 TitleFontSize = "large",
                 Cards = new List<StudyHubDetailCardDto>
@@ -250,7 +250,7 @@ public sealed class StudyHubDto
             },
             Section4 = new StudyHubSection4ChecklistDto
             {
-                Title = "4. Abroad Packing Checklist",
+                Title = "Abroad Packing Checklist",
                 BadgeText = "Highly Recommended",
                 Subtitle = "Make sure you don't forget anything important.",
                 ButtonText = "View Missing Essentials →",
@@ -267,7 +267,7 @@ public sealed class StudyHubDto
             },
             Section5 = new StudyHubSection5DestinationDto
             {
-                Title = "5. Shop by Destination",
+                Title = "Shop by Destination",
                 Subtitle = "Get country-specific essentials and travel adapters.",
                 ButtonText = "Explore Essentials by Country →",
                 ButtonUrl = "/category/study-essentials",
@@ -300,7 +300,7 @@ public sealed class StudyHubDto
             },
             Section7 = new StudyHubSection7BestSellersDto
             {
-                Title = "7. Best Sellers & Student Favorites",
+                Title = "Best Sellers & Student Favorites",
                 Subtitle = "Top products loved by students worldwide.",
                 Products = new List<StudyHubBestSellerDto>
                 {
@@ -313,7 +313,7 @@ public sealed class StudyHubDto
             },
             Section8 = new StudyHubSection8SetupDto
             {
-                Title = "8. Smart Study Setup",
+                Title = "Smart Study Setup",
                 Subtitle = "Create a productive and comfortable study space.",
                 ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
                 ButtonText = "Shop Study Setup →",
@@ -330,7 +330,7 @@ public sealed class StudyHubDto
             },
             Section9 = new StudyHubSection9WhyUsDto
             {
-                Title = "9. Why Choose DreamFlyKit?",
+                Title = "Why Choose DreamFlyKit?",
                 Subtitle = "More than a store — we're your study partner.",
                 Pillars = new List<StudyHubPillarDto>
                 {
@@ -342,7 +342,7 @@ public sealed class StudyHubDto
             },
             Section10 = new StudyHubSection10FaqDto
             {
-                Title = "10. Frequently Asked Questions",
+                Title = "Frequently Asked Questions",
                 Subtitle = "Quick answers to help you shop with confidence.",
                 Faqs = new List<StudyHubFaqItemDto>
                 {
@@ -540,7 +540,7 @@ public sealed class StudyHubTrustItemDto
 
 public sealed class StudyHubSection1Dto
 {
-    public string Title { get; set; } = "1. Shop by Category";
+    public string Title { get; set; } = "Shop by Category";
     public string Subtitle { get; set; } = "Find everything you need, all in one place.";
     public string ViewAllLinkText { get; set; } = "View All Categories →";
     public string ViewAllLinkUrl { get; set; } = "/category/study-essentials";
@@ -561,7 +561,7 @@ public sealed class StudyHubCardDto
 
 public sealed class StudyHubSection2Dto
 {
-    public string Title { get; set; } = "2. Our Study Essentials Kits";
+    public string Title { get; set; } = "Our Study Essentials Kits";
     public string Subtitle { get; set; } = "Complete bundles for every student's journey.";
     public string TitleFontSize { get; set; } = "large";
     public string ViewAllLinkText { get; set; } = "View All Kits →";
@@ -586,7 +586,7 @@ public sealed class StudyHubKitDto
 
 public sealed class StudyHubSection3DetailDto
 {
-    public string Title { get; set; } = "3. Key Study Essentials - In Detail";
+    public string Title { get; set; } = "Key Study Essentials - In Detail";
     public string Subtitle { get; set; } = "Everything you need, category-wise";
     public string TitleFontSize { get; set; } = "large";
     public List<StudyHubDetailCardDto> Cards { get; set; } = new();
@@ -626,7 +626,7 @@ public sealed class StudyHubCustomItemDto
 
 public sealed class StudyHubSection4ChecklistDto
 {
-    public string Title { get; set; } = "4. Abroad Packing Checklist";
+    public string Title { get; set; } = "Abroad Packing Checklist";
     public string BadgeText { get; set; } = "Highly Recommended";
     public string Subtitle { get; set; } = "Make sure you don't forget anything important.";
     public string TitleFontSize { get; set; } = "large";
@@ -646,7 +646,7 @@ public sealed class StudyHubChecklistItemDto
 
 public sealed class StudyHubSection5DestinationDto
 {
-    public string Title { get; set; } = "5. Shop by Destination";
+    public string Title { get; set; } = "Shop by Destination";
     public string Subtitle { get; set; } = "Get country-specific essentials and travel adapters.";
     public string TitleFontSize { get; set; } = "large";
     public string ButtonText { get; set; } = "Explore Essentials by Country →";
@@ -678,7 +678,7 @@ public sealed class StudyHubSection6BuilderDto
 
 public sealed class StudyHubSection7BestSellersDto
 {
-    public string Title { get; set; } = "7. Best Sellers & Student Favorites";
+    public string Title { get; set; } = "Best Sellers & Student Favorites";
     public string Subtitle { get; set; } = "Top products loved by students worldwide.";
     public string TitleFontSize { get; set; } = "large";
     public List<StudyHubBestSellerDto> Products { get; set; } = new();
@@ -699,7 +699,7 @@ public sealed class StudyHubBestSellerDto
 
 public sealed class StudyHubSection8SetupDto
 {
-    public string Title { get; set; } = "8. Smart Study Setup";
+    public string Title { get; set; } = "Smart Study Setup";
     public string Subtitle { get; set; } = "Create a productive and comfortable study space.";
     public string TitleFontSize { get; set; } = "large";
     public string ImageUrl { get; set; } = "/images/study-hub/test-pic-placeholder.svg";
@@ -718,7 +718,7 @@ public sealed class StudyHubSetupItemDto
 
 public sealed class StudyHubSection9WhyUsDto
 {
-    public string Title { get; set; } = "9. Why Choose DreamFlyKit?";
+    public string Title { get; set; } = "Why Choose DreamFlyKit?";
     public string Subtitle { get; set; } = "More than a store — we're your study partner.";
     public string TitleFontSize { get; set; } = "large";
     public List<StudyHubPillarDto> Pillars { get; set; } = new();
@@ -734,7 +734,7 @@ public sealed class StudyHubPillarDto
 
 public sealed class StudyHubSection10FaqDto
 {
-    public string Title { get; set; } = "10. Frequently Asked Questions";
+    public string Title { get; set; } = "Frequently Asked Questions";
     public string Subtitle { get; set; } = "Quick answers to help you shop with confidence.";
     public string TitleFontSize { get; set; } = "large";
     public List<StudyHubFaqItemDto> Faqs { get; set; } = new();

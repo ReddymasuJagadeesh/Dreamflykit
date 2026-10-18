@@ -293,9 +293,11 @@
     .dk-study-cat-page-wrapper {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         color: #1e293b;
-        max-width: 1280px;
+        width: 100%;
+        max-width: 100%;
         margin: 0 auto;
         padding: 10px 0 40px 0;
+        box-sizing: border-box;
     }
 
     /* Hero Banner */
@@ -312,7 +314,11 @@
         box-shadow: 0 6px 24px rgba(2, 132, 199, 0.08);
     }
     @@media (max-width: 850px) {
-        .dk-cat-hero-card { grid-template-columns: 1fr; }
+        .dk-cat-hero-card { 
+            grid-template-columns: 1fr; 
+            padding: 22px 18px;
+            gap: 20px;
+        }
     }
     .dk-cat-hero-title {
         font-size: 2.2rem;
@@ -321,11 +327,17 @@
         margin: 0 0 8px 0;
         letter-spacing: -0.025em;
     }
+    @@media (max-width: 600px) {
+        .dk-cat-hero-title { font-size: 1.7rem; }
+    }
     .dk-cat-hero-sub {
         font-size: 1.05rem;
         color: #475569;
         margin: 0 0 20px 0;
         line-height: 1.45;
+    }
+    @@media (max-width: 600px) {
+        .dk-cat-hero-sub { font-size: 0.92rem; margin-bottom: 14px; }
     }
     .dk-cat-hero-badges {
         display: flex;
@@ -362,6 +374,12 @@
         grid-template-columns: 280px 1fr;
         gap: 24px;
         margin-bottom: 40px;
+    }
+    @@media (min-width: 1400px) {
+        .dk-cat-main-layout {
+            grid-template-columns: 290px 1fr;
+            gap: 28px;
+        }
     }
     @@media (max-width: 900px) {
         .dk-cat-main-layout { grid-template-columns: 1fr; }
@@ -633,11 +651,23 @@
         grid-template-columns: repeat(4, 1fr);
         gap: 18px;
     }
+    @@media (min-width: 1400px) {
+        .dk-cat-products-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+    }
     @@media (max-width: 1100px) {
         .dk-cat-products-grid { grid-template-columns: repeat(3, 1fr); }
     }
     @@media (max-width: 768px) {
-        .dk-cat-products-grid { grid-template-columns: repeat(2, 1fr); }
+        .dk-cat-products-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    }
+    @@media (max-width: 480px) {
+        .dk-cat-products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    }
+    @@media (max-width: 360px) {
+        .dk-cat-products-grid { grid-template-columns: 1fr; }
     }
     .dk-cat-prod-card {
         background: #ffffff;
