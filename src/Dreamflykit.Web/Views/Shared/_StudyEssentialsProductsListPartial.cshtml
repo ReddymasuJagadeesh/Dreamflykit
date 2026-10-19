@@ -1,0 +1,148 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.StudyHub ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefault();
+    var catPage = hub.CategoriesPage ?? new();
+    var currentSubSlug = Model.CurrentSubcategorySlug;
+    var hasSubcategorySelected = !string.IsNullOrWhiteSpace(currentSubSlug) || Model.SubcategoryId.HasValue;
+    var studyCategories = catPage.Categories != null && catPage.Categories.Count > 0
+        ? catPage.Categories
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefault().CategoriesPage.Categories;
+}
+
+<div id="dkCatProductsInner" data-current-subslug="@(currentSubSlug ?? "")">
+    <!-- Top Controls (Sorting & Breadcrumbs) -->
+    <div class="dk-cat-top-bar">
+        <div class="dk-cat-breadcrumb-trail">
+            <a href="/category/study-essentials" class="dk-cat-crumb-link dk-cat-action-link" data-subslug="">Study Essentials</a>
+            @if (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName))
+            {
+                <span class="dk-sep">›</span>
+                <span class="dk-current">@Model.CurrentSubcategoryName</span>
+            }
+        </div>
+
+        <div class="dk-cat-sort-wrap">
+            <label for="dkCatSortSelect" class="dk-sort-lbl">Sort By:</label>
+            <select id="dkCatSortSelect" class="dk-sort-select" onchange="handleSortChange(this.value)">
+                <option value="Relevance" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.Relevance)">Featured</option>
+                <option value="PriceLowToHigh" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.PriceLowToHigh)">Price: Low to High</option>
+                <option value="PriceHighToLow" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.PriceHighToLow)">Price: High to Low</option>
+                <option value="Newest" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.Newest)">Newest First</option>
+                <option value="DiscountHighToLow" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.DiscountHighToLow)">Discount</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- IF NO SUBCATEGORY SELECTED: RENDER THE 8 CATEGORY CARDS GRID -->
+    @if (!hasSubcategorySelected && (Model.Products == null || Model.Products.Count == 0 || !Model.HasActiveFilters))
+    {
+        <div class="dk-cat-cards-grid">
+            @foreach (var sc in studyCategories)
+            {
+                <div class="dk-cat-grid-card">
+                    <div class="dk-cat-card-img-wrap">
+                        <img src="@sc.ImageUrl" alt="@sc.Name" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                    </div>
+                    <div class="dk-cat-card-body">
+                        <h3 class="dk-cat-card-name">@sc.Name</h3>
+                        <p class="dk-cat-card-desc">@sc.Description</p>
+                        <a href="/category/study-essentials/@sc.Slug" data-subslug="@sc.Slug" class="dk-cat-card-btn dk-cat-action-link">
+                            Shop Now
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- FILTERED PRODUCTS LIST -->
+        <div class="dk-cat-products-view">
+            @if (Model.Products != null && Model.Products.Count > 0)
+            {
+                <div class="dk-cat-products-grid">
+                    @foreach (var product in Model.Products)
+                    {
+                        var prodImg = !string.IsNullOrWhiteSpace(product.ImageUrl) ? product.ImageUrl : (product.PrimaryImageUrl ?? "/images/products/product-placeholder.webp");
+                        <div class="dk-cat-prod-card">
+                            <a href="/products/@product.Slug" class="dk-cat-prod-img-wrap">
+                                <img src="@prodImg" alt="@product.Name" loading="lazy" onerror="this.onerror=null;this.src='/images/products/product-placeholder.webp';" />
+                                @if (product.DiscountPercentage > 0)
+                                {
+                                    <span class="dk-cat-prod-discount">@product.DiscountPercentage.ToString("0")% OFF</span>
+                                }
+                            </a>
+                            <div class="dk-cat-prod-body">
+                                <a href="/products/@product.Slug" class="dk-cat-prod-title">@product.Name</a>
+                                <div class="dk-cat-prod-rating">
+                                    <span class="dk-cat-stars">★★★★★</span>
+                                    <span class="dk-cat-rating-val">4.8</span>
+                                </div>
+                                <div class="dk-cat-prod-price-row">
+                                    <span class="dk-cat-price">₹@product.SellingPrice.ToString("N0")</span>
+                                    @if (product.Mrp > product.SellingPrice)
+                                    {
+                                        <span class="dk-cat-mrp">₹@product.Mrp.ToString("N0")</span>
+                                    }
+                                </div>
+                                <button type="button" class="dk-cat-btn-add" onclick="handleAddToCart('@product.ProductId')">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Numbered Pagination for Study Essentials if > 1 page -->
+                @if (Model.TotalPages > 1)
+                {
+                    <nav class="dk-pagination" style="margin-top: 28px;" aria-label="Product pagination">
+                        @if (Model.HasPreviousPage)
+                        {
+                            var prevUrl = !string.IsNullOrWhiteSpace(currentSubSlug)
+                                ? $"/category/study-essentials/{currentSubSlug}?page={Model.Page - 1}&sort={Model.Sort}"
+                                : $"/category/study-essentials?page={Model.Page - 1}&sort={Model.Sort}";
+                            <a href="@prevUrl" class="dk-page-btn dk-cat-action-link">‹ PREVIOUS</a>
+                        }
+                        <div class="dk-page-numbers">
+                            @for (var p = 1; p <= Model.TotalPages; p++)
+                            {
+                                var pUrl = !string.IsNullOrWhiteSpace(currentSubSlug)
+                                    ? $"/category/study-essentials/{currentSubSlug}?page={p}&sort={Model.Sort}"
+                                    : $"/category/study-essentials?page={p}&sort={Model.Sort}";
+                                if (p == Model.Page)
+                                {
+                                    <span class="dk-page-num active">@p</span>
+                                }
+                                else
+                                {
+                                    <a href="@pUrl" class="dk-page-num dk-cat-action-link">@p</a>
+                                }
+                            }
+                        </div>
+                        @if (Model.HasNextPage)
+                        {
+                            var nextUrl = !string.IsNullOrWhiteSpace(currentSubSlug)
+                                ? $"/category/study-essentials/{currentSubSlug}?page={Model.Page + 1}&sort={Model.Sort}"
+                                : $"/category/study-essentials?page={Model.Page + 1}&sort={Model.Sort}";
+                            <a href="@nextUrl" class="dk-page-btn dk-cat-action-link">NEXT ›</a>
+                        }
+                    </nav>
+                }
+            }
+            else
+            {
+                <div class="dk-cat-empty-state">
+                    <div class="dk-cat-empty-icon">📦</div>
+                    <h3>No items found in this section</h3>
+                    <p>Try resetting filters or explore all categories below.</p>
+                    <a href="/category/study-essentials" data-subslug="" class="dk-sh-btn-primary dk-cat-action-link">View All Study Categories</a>
+                </div>
+            }
+        </div>
+    }
+</div>

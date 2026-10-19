@@ -78,7 +78,16 @@ public sealed class StudyHubService : IStudyHubService
                     {
                         var def = StudyHubDto.CreateDefault();
                         if (dto.HeroBanner == null || string.IsNullOrWhiteSpace(dto.HeroBanner.Title))
+                        {
                             dto.HeroBanner = def.HeroBanner;
+                        }
+                        else
+                        {
+                            if (dto.HeroBanner.AutoSlideIntervalSeconds <= 0)
+                                dto.HeroBanner.AutoSlideIntervalSeconds = 4;
+                            if (dto.HeroBanner.Slides == null || dto.HeroBanner.Slides.Count == 0)
+                                dto.HeroBanner.Slides = def.HeroBanner.Slides;
+                        }
                         if (dto.TrustItems == null || dto.TrustItems.Count == 0)
                             dto.TrustItems = def.TrustItems;
                         if (dto.Section1 == null || dto.Section1.Cards.Count == 0)
@@ -138,6 +147,20 @@ public sealed class StudyHubService : IStudyHubService
     public async Task UpdateConfigAsync(StudyHubDto dto, Guid updatedBy, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(dto);
+
+        if (dto.HeroBanner != null)
+        {
+            if (dto.HeroBanner.AutoSlideIntervalSeconds <= 0)
+                dto.HeroBanner.AutoSlideIntervalSeconds = 4;
+
+            if (dto.HeroBanner.Slides != null && dto.HeroBanner.Slides.Count > 0)
+            {
+                if (string.IsNullOrWhiteSpace(dto.HeroBanner.ImageUrl) || dto.HeroBanner.ImageUrl == "/images/study-hub/test-pic-placeholder.svg")
+                    dto.HeroBanner.ImageUrl = dto.HeroBanner.Slides[0].ImageUrl;
+                if (string.IsNullOrWhiteSpace(dto.HeroBanner.SecondaryBadge))
+                    dto.HeroBanner.SecondaryBadge = dto.HeroBanner.Slides[0].SecondaryBadge;
+            }
+        }
 
         // 1. Persist full configuration into JSON file
         try

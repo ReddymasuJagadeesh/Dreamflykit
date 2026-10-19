@@ -1,0 +1,466 @@
+@using Dreamflykit.Application.Catalog.Models
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+
+@{
+    string BuildFilterUrl(
+        Guid? catId = null,
+        string? catSlug = null,
+        Guid? subcatId = null,
+        string? subcatSlug = null,
+        decimal? minP = null,
+        decimal? maxP = null,
+        int? discount = null,
+        bool? inStock = null,
+        ProductSortOption? sortOpt = null,
+        int? pageNum = 1,
+        bool clearCategory = false,
+        bool clearSubcategory = false,
+        string? search = null,
+        bool clearSearch = false)
+    {
+        var parameters = new Dictionary<string, string?>();
+
+        var s = clearSearch ? null : (search ?? Model.SearchTerm);
+        if (!string.IsNullOrWhiteSpace(s)) parameters["q"] = s;
+
+        var effectiveCatSlug = clearCategory ? null : (catSlug ?? Model.CategorySlug);
+        var effectiveCatId = clearCategory ? null : (catId ?? Model.CategoryId);
+        var effectiveSubcatId = (clearCategory || clearSubcategory) ? null : (subcatId ?? Model.SubcategoryId);
+        var effectiveSubcatSlug = (clearCategory || clearSubcategory) ? null : (subcatSlug ?? Model.CurrentSubcategorySlug);
+
+        string basePath = "/products";
+        if (!string.IsNullOrWhiteSpace(effectiveCatSlug))
+        {
+            if (!string.IsNullOrWhiteSpace(effectiveSubcatSlug))
+            {
+                basePath = $"/category/{effectiveCatSlug}/{effectiveSubcatSlug}";
+            }
+            else
+            {
+                basePath = $"/category/{effectiveCatSlug}";
+                if (effectiveSubcatId.HasValue)
+                {
+                    parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
+                }
+            }
+        }
+        else
+        {
+            if (effectiveCatId.HasValue && effectiveCatId.Value != Guid.Empty)
+            {
+                parameters["categoryId"] = effectiveCatId.Value.ToString();
+            }
+            if (effectiveSubcatId.HasValue && effectiveSubcatId.Value != Guid.Empty)
+            {
+                parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
+            }
+        }
+
+        var mn = minP ?? Model.MinPrice;
+        if (mn.HasValue) parameters["minPrice"] = mn.Value.ToString();
+
+        var mx = maxP ?? Model.MaxPrice;
+        if (mx.HasValue) parameters["maxPrice"] = mx.Value.ToString();
+
+        var d = discount ?? Model.MinDiscount;
+        if (d.HasValue && d.Value > 0) parameters["minDiscount"] = d.Value.ToString();
+
+        var stk = inStock ?? Model.InStockOnly;
+        if (stk.HasValue && stk.Value) parameters["inStockOnly"] = "true";
+
+        var so = sortOpt ?? Model.Sort;
+        if (so != ProductSortOption.Relevance) parameters["sort"] = so.ToString();
+
+        var p = pageNum ?? Model.Page;
+        if (p > 1) parameters["page"] = p.ToString();
+
+        var queryString = string.Join("&", parameters.Where(kvp => !string.IsNullOrEmpty(kvp.Value)).Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value!)}"));
+        return string.IsNullOrEmpty(queryString) ? basePath : $"{basePath}?{queryString}";
+    }
+
+    string ClearParamUrl(string paramToRemove)
+    {
+        var parameters = new Dictionary<string, string?>();
+
+        var s = paramToRemove == "q" ? null : Model.SearchTerm;
+        if (!string.IsNullOrWhiteSpace(s)) parameters["q"] = s;
+
+        var clearCat = paramToRemove == "category";
+        var clearSub = paramToRemove == "subcategory" || clearCat;
+
+        var effectiveCatSlug = clearCat ? null : Model.CategorySlug;
+        var effectiveCatId = clearCat ? null : Model.CategoryId;
+        var effectiveSubcatId = clearSub ? null : Model.SubcategoryId;
+        var effectiveSubcatSlug = clearSub ? null : Model.CurrentSubcategorySlug;
+
+        string basePath = "/products";
+        if (!string.IsNullOrWhiteSpace(effectiveCatSlug))
+        {
+            if (!string.IsNullOrWhiteSpace(effectiveSubcatSlug))
+            {
+                basePath = $"/category/{effectiveCatSlug}/{effectiveSubcatSlug}";
+            }
+            else
+            {
+                basePath = $"/category/{effectiveCatSlug}";
+                if (effectiveSubcatId.HasValue)
+                {
+                    parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
+                }
+            }
+        }
+        else
+        {
+            if (effectiveCatId.HasValue && effectiveCatId.Value != Guid.Empty)
+            {
+                parameters["categoryId"] = effectiveCatId.Value.ToString();
+            }
+        }
+
+        if (paramToRemove != "price")
+        {
+            if (Model.MinPrice.HasValue) parameters["minPrice"] = Model.MinPrice.Value.ToString();
+            if (Model.MaxPrice.HasValue) parameters["maxPrice"] = Model.MaxPrice.Value.ToString();
+        }
+        if (paramToRemove != "discount" && Model.MinDiscount.HasValue)
+        {
+            parameters["minDiscount"] = Model.MinDiscount.Value.ToString();
+        }
+        if (paramToRemove != "inStock" && Model.InStockOnly.HasValue && Model.InStockOnly.Value)
+        {
+            parameters["inStockOnly"] = "true";
+        }
+        if (Model.Sort != ProductSortOption.Relevance)
+        {
+            parameters["sort"] = Model.Sort.ToString();
+        }
+
+        var queryString = string.Join("&", parameters.Where(kvp => !string.IsNullOrEmpty(kvp.Value)).Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value!)}"));
+        return string.IsNullOrEmpty(queryString) ? basePath : $"{basePath}?{queryString}";
+    }
+}
+
+<div id="dkCatalogInner">
+    <!-- Category Hero Banner & Subcategory Strip -->
+    @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
+    {
+        <div class="dk-category-hero-card">
+            <div class="dk-category-hero-text">
+                <div class="dk-category-hero-badge">
+                    <span class="dk-badge-dot"></span>
+                    <span>STUDENT ESSENTIALS • 100% GENUINE</span>
+                </div>
+                <h2 class="dk-category-hero-title">@Model.CategoryName</h2>
+                <p class="dk-category-hero-subtitle">
+                    @if (!string.IsNullOrWhiteSpace(Model.CategoryDescription))
+                    {
+                        @Model.CategoryDescription
+                    }
+                    else
+                    {
+                        <span>Discover top-rated @Model.CategoryName verified for college students and international travelers. Best prices with express global delivery.</span>
+                    }
+                </p>
+                <div class="dk-category-hero-meta">
+                    <span class="dk-hero-meta-item"><strong>@Model.TotalCount</strong> @(Model.TotalCount == 1 ? "Product" : "Products")</span>
+                    <span class="dk-hero-meta-dot">•</span>
+                    <span class="dk-hero-meta-item">✈ Global Delivery Ready</span>
+                    <span class="dk-hero-meta-dot">•</span>
+                    <span class="dk-hero-meta-item">★ Student Trusted</span>
+                </div>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Model.CategoryImageUrl))
+            {
+                <div class="dk-category-hero-media">
+                    <img src="@Model.CategoryImageUrl"
+                         alt="@Model.CategoryName"
+                         class="dk-category-hero-img"
+                         onerror="this.onerror=null;this.closest('.dk-category-hero-media').style.display='none';" />
+                </div>
+            }
+        </div>
+    }
+
+    @if (Model.Subcategories.Any())
+    {
+        <div class="dk-subcat-nav-strip">
+            <span class="dk-subcat-strip-label">Categories:</span>
+            <div class="dk-subcat-pills-wrap">
+                <a href="@BuildFilterUrl(catSlug: Model.CategorySlug, clearSubcategory: true)"
+                   class="dk-subcat-pill @(!Model.SubcategoryId.HasValue && string.IsNullOrEmpty(Model.CurrentSubcategorySlug) ? "active" : "")">
+                    <span class="dk-pill-text">All @Model.CategoryName</span>
+                </a>
+                @foreach (var sub in Model.Subcategories)
+                {
+                    var isSubActive = (Model.SubcategoryId.HasValue && Model.SubcategoryId.Value == sub.SubcategoryId) ||
+                                      (!string.IsNullOrEmpty(Model.CurrentSubcategorySlug) && string.Equals(Model.CurrentSubcategorySlug, sub.Slug, StringComparison.OrdinalIgnoreCase));
+                    <a href="@BuildFilterUrl(catSlug: Model.CategorySlug, subcatSlug: sub.Slug, subcatId: sub.SubcategoryId, pageNum: 1)"
+                       class="dk-subcat-pill @(isSubActive ? "active" : "")">
+                        @if (!string.IsNullOrWhiteSpace(sub.ImageUrl))
+                        {
+                            <img src="@sub.ImageUrl" alt="@sub.Name" class="dk-subcat-pill-thumb" onerror="this.style.display='none';" />
+                        }
+                        <span class="dk-pill-text">@sub.Name</span>
+                        @if (sub.ProductCount > 0)
+                        {
+                            <span class="dk-subcat-count">(@sub.ProductCount)</span>
+                        }
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Result Header & Sort Tabs -->
+    <div class="dk-catalog-header-card">
+
+        <div class="dk-catalog-title-row">
+            <h1 class="dk-catalog-heading">
+                @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+                {
+                    <span>Showing results for "<strong>@Model.SearchTerm</strong>"</span>
+                }
+                else if (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName))
+                {
+                    <span>@Model.CategoryName › <strong>@Model.CurrentSubcategoryName</strong></span>
+                }
+                else if (!string.IsNullOrWhiteSpace(Model.CategoryName))
+                {
+                    <span>@Model.CategoryName</span>
+                }
+                else
+                {
+                    <span>All Products</span>
+                }
+            </h1>
+
+            <span class="dk-catalog-count-pill">
+                @Model.TotalCount @(Model.TotalCount == 1 ? "product" : "products")
+            </span>
+
+            <!-- Mobile Filter Trigger -->
+            <button type="button" class="dk-mobile-filter-btn" id="dk-mobile-filter-open">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+                <span>Filter & Sort</span>
+            </button>
+        </div>
+
+        <!-- Flipkart-style Horizontal Sort Bar -->
+        <div class="dk-sort-bar">
+            <span class="dk-sort-label">Sort By</span>
+
+            <a href="@BuildFilterUrl(sortOpt: ProductSortOption.Relevance, pageNum: 1)"
+               class="dk-sort-tab @(Model.Sort == ProductSortOption.Relevance ? "active" : "")">
+                Relevance
+            </a>
+
+            <a href="@BuildFilterUrl(sortOpt: ProductSortOption.PriceLowToHigh, pageNum: 1)"
+               class="dk-sort-tab @(Model.Sort == ProductSortOption.PriceLowToHigh ? "active" : "")">
+                Price -- Low to High
+            </a>
+
+            <a href="@BuildFilterUrl(sortOpt: ProductSortOption.PriceHighToLow, pageNum: 1)"
+               class="dk-sort-tab @(Model.Sort == ProductSortOption.PriceHighToLow ? "active" : "")">
+                Price -- High to Low
+            </a>
+
+            <a href="@BuildFilterUrl(sortOpt: ProductSortOption.Newest, pageNum: 1)"
+               class="dk-sort-tab @(Model.Sort == ProductSortOption.Newest ? "active" : "")">
+                Newest First
+            </a>
+
+            <a href="@BuildFilterUrl(sortOpt: ProductSortOption.DiscountHighToLow, pageNum: 1)"
+               class="dk-sort-tab @(Model.Sort == ProductSortOption.DiscountHighToLow ? "active" : "")">
+                Discount
+            </a>
+        </div>
+
+        <!-- Active Filter Tags / Chips -->
+        @if (Model.HasActiveFilters)
+        {
+            <div class="dk-active-chips-bar">
+                <span class="dk-chips-label">Active Filters:</span>
+
+                @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+                {
+                    <a href="@ClearParamUrl("q")" class="dk-filter-chip" title="Remove search filter">
+                        Query: "@Model.SearchTerm" <span class="dk-chip-x">✕</span>
+                    </a>
+                }
+
+                @if (Model.CategoryId.HasValue || !string.IsNullOrWhiteSpace(Model.CategorySlug))
+                {
+                    var catName = Model.CategoryName ?? "Category";
+                    <a href="@ClearParamUrl("category")" class="dk-filter-chip" title="Remove category filter">
+                        @catName <span class="dk-chip-x">✕</span>
+                    </a>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName))
+                {
+                    <a href="@ClearParamUrl("subcategory")" class="dk-filter-chip" title="Remove subcategory filter">
+                        Subcategory: @Model.CurrentSubcategoryName <span class="dk-chip-x">✕</span>
+                    </a>
+                }
+
+                @if (Model.MinPrice.HasValue || Model.MaxPrice.HasValue)
+                {
+                    var priceLabel = (Model.MinPrice.HasValue && Model.MaxPrice.HasValue)
+                        ? $"₹{Model.MinPrice:N0} - ₹{Model.MaxPrice:N0}"
+                        : (Model.MinPrice.HasValue ? $"Above ₹{Model.MinPrice:N0}" : $"Under ₹{Model.MaxPrice:N0}");
+                    <a href="@ClearParamUrl("price")" class="dk-filter-chip" title="Remove price filter">
+                        Price: @priceLabel <span class="dk-chip-x">✕</span>
+                    </a>
+                }
+
+                @if (Model.MinDiscount.HasValue && Model.MinDiscount.Value > 0)
+                {
+                    <a href="@ClearParamUrl("discount")" class="dk-filter-chip" title="Remove discount filter">
+                        @Model.MinDiscount% OFF or more <span class="dk-chip-x">✕</span>
+                    </a>
+                }
+
+                @if (Model.InStockOnly == true)
+                {
+                    <a href="@ClearParamUrl("inStock")" class="dk-filter-chip" title="Remove in-stock filter">
+                        In Stock Only <span class="dk-chip-x">✕</span>
+                    </a>
+                }
+
+                <a href="/products" class="dk-filter-chip dk-chip-clear" title="Clear all filters">
+                    Clear All
+                </a>
+            </div>
+        }
+
+    </div>
+
+    <!-- Products Grid or Empty State -->
+    @if (Model.Products.Count == 0)
+    {
+        <div class="dk-catalog-empty-card">
+            <div class="dk-empty-icon-wrap">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                    <path d="M8 11h6"></path>
+                </svg>
+            </div>
+
+            <h2 class="dk-empty-title">No products found matching your search</h2>
+            <p class="dk-empty-desc">
+                Try checking your spelling, removing active filters, or exploring our popular student kit categories.
+            </p>
+
+            <div class="dk-empty-actions">
+                <a href="/products" class="dk-btn-primary">
+                    Browse All Products
+                </a>
+                <a href="/" class="dk-btn-secondary">
+                    Back to Home
+                </a>
+            </div>
+
+            <!-- Popular Category Shortcuts -->
+            <div class="dk-empty-suggestions">
+                <span class="dk-empty-sugg-title">Popular Categories:</span>
+                <div class="dk-sugg-tags">
+                    <a href="/category/study-essentials" class="dk-sugg-tag">Study Essentials</a>
+                    <a href="/category/fashion" class="dk-sugg-tag">Fashion</a>
+                    <a href="/category/travel-gear" class="dk-sugg-tag">Travel Gear</a>
+                    <a href="/category/mobiles" class="dk-sugg-tag">Mobiles</a>
+                    <a href="/category/electronics" class="dk-sugg-tag">Electronics</a>
+                    <a href="/category/appliances" class="dk-sugg-tag">Appliances</a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="dk-catalog-grid">
+            @foreach (var product in Model.Products)
+            {
+                <partial name="_ProductCard" model="product" />
+            }
+        </div>
+
+        <!-- Numbered Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="dk-pagination" aria-label="Product catalog pagination">
+                @if (Model.HasPreviousPage)
+                {
+                    <a href="@BuildFilterUrl(pageNum: Model.Page - 1)"
+                       class="dk-page-btn dk-page-prev"
+                       aria-label="Previous page">
+                        ‹ PREVIOUS
+                    </a>
+                }
+                else
+                {
+                    <span class="dk-page-btn dk-page-disabled">‹ PREVIOUS</span>
+                }
+
+                <div class="dk-page-numbers">
+                    @{
+                        var startPage = Math.Max(1, Model.Page - 2);
+                        var endPage = Math.Min(Model.TotalPages, Model.Page + 2);
+                    }
+
+                    @if (startPage > 1)
+                    {
+                        <a href="@BuildFilterUrl(pageNum: 1)" class="dk-page-num">1</a>
+                        @if (startPage > 2)
+                        {
+                            <span class="dk-page-ellipsis">…</span>
+                        }
+                    }
+
+                    @for (var p = startPage; p <= endPage; p++)
+                    {
+                        if (p == Model.Page)
+                        {
+                            <span class="dk-page-num active" aria-current="page">@p</span>
+                        }
+                        else
+                        {
+                            <a href="@BuildFilterUrl(pageNum: p)" class="dk-page-num">@p</a>
+                        }
+                    }
+
+                    @if (endPage < Model.TotalPages)
+                    {
+                        @if (endPage < Model.TotalPages - 1)
+                        {
+                            <span class="dk-page-ellipsis">…</span>
+                        }
+                        <a href="@BuildFilterUrl(pageNum: Model.TotalPages)" class="dk-page-num">@Model.TotalPages</a>
+                    }
+                </div>
+
+                @if (Model.HasNextPage)
+                {
+                    <a href="@BuildFilterUrl(pageNum: Model.Page + 1)"
+                       class="dk-page-btn dk-page-next"
+                       aria-label="Next page">
+                        NEXT ›
+                    </a>
+                }
+                else
+                {
+                    <span class="dk-page-btn dk-page-disabled">NEXT ›</span>
+                }
+            </nav>
+        }
+    }
+</div>

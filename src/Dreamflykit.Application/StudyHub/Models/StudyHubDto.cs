@@ -32,7 +32,35 @@ public sealed class StudyHubDto
                 ButtonText = "Explore Study Essentials →",
                 ButtonUrl = "/category/study-essentials",
                 ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                SecondaryBadge = "New Country New Opportunities Same You! ✈️"
+                SecondaryBadge = "New Country New Opportunities Same You! ✈️",
+                AutoSlideIntervalSeconds = 4,
+                Slides = new List<StudyHubHeroSlideDto>
+                {
+                    new()
+                    {
+                        Id = "hero-slide-1",
+                        ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
+                        SecondaryBadge = "New Country New Opportunities Same You! ✈️",
+                        LinkUrl = "/category/study-essentials",
+                        Title = "Study Essentials Global Journey"
+                    },
+                    new()
+                    {
+                        Id = "hero-slide-2",
+                        ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
+                        SecondaryBadge = "Curated Student Bundles & Starter Kits 🎓",
+                        LinkUrl = "/category/study-essentials",
+                        Title = "Curated Student Bundles"
+                    },
+                    new()
+                    {
+                        Id = "hero-slide-3",
+                        ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
+                        SecondaryBadge = "Campus Gear & International Luggage 🧳",
+                        LinkUrl = "/category/study-essentials",
+                        Title = "Campus & Travel Essentials"
+                    }
+                }
             },
             TrustItems = new List<StudyHubTrustItemDto>
             {
@@ -529,6 +557,17 @@ public sealed class StudyHubHeroDto
     public string ButtonUrl { get; set; } = "/category/study-essentials";
     public string ImageUrl { get; set; } = "/images/study-hub/test-pic-placeholder.svg";
     public string SecondaryBadge { get; set; } = "New Country New Opportunities Same You! ✈️";
+    public int AutoSlideIntervalSeconds { get; set; } = 4;
+    public List<StudyHubHeroSlideDto> Slides { get; set; } = new();
+}
+
+public sealed class StudyHubHeroSlideDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string ImageUrl { get; set; } = "/images/study-hub/test-pic-placeholder.svg";
+    public string SecondaryBadge { get; set; } = "New Country New Opportunities Same You! ✈️";
+    public string? LinkUrl { get; set; } = "/category/study-essentials";
+    public string? Title { get; set; }
 }
 
 public sealed class StudyHubTrustItemDto

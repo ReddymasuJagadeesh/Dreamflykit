@@ -276,5 +276,8 @@ public static class InfrastructureServiceCollectionExtensions
 
         // Study Essentials Hub Service
         services.AddScoped<Dreamflykit.Application.StudyHub.Interfaces.IStudyHubService, Dreamflykit.Infrastructure.StudyHub.StudyHubService>();
+
+        // Central Enterprise Audit Logging
+        services.AddScoped<Dreamflykit.Application.Audit.Interfaces.IAuditLogService, Dreamflykit.Infrastructure.Audit.AuditLogService>();
     }
 }

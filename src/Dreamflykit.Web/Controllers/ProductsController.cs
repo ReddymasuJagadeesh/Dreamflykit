@@ -150,6 +150,18 @@ public sealed class ProductsController : Controller
                         : null
         };
 
+        var isAjax = string.Equals(Request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(Request.Query["partial"], "true", StringComparison.OrdinalIgnoreCase);
+
+        if (isAjax)
+        {
+            if (isStudyCategory)
+            {
+                return PartialView("_StudyEssentialsProductsListPartial", model);
+            }
+            return PartialView("_CatalogProductsListPartial", model);
+        }
+
         return View(model);
     }
 
