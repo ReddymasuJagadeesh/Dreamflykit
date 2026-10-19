@@ -5,17 +5,36 @@
     "Subtitle": "Study smarter. Travel better. Build your future.",
     "ButtonText": "Explore Study Essentials →",
     "ButtonUrl": "/category/study-essentials",
-    "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
-    "SecondaryBadge": "New Country New Opportunities Same You! ✈️"
+    "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/5e1f74de1bbf4e74933c435daeca363f.webp",
+    "SecondaryBadge": "New Country New Opportunities Same You! ✈️",
+    "AutoSlideIntervalSeconds": 4,
+    "Slides": [
+      {
+        "Id": "hero-slide-1",
+        "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/5e1f74de1bbf4e74933c435daeca363f.webp",
+        "SecondaryBadge": "New Country New Opportunities Same You! ✈️",
+        "LinkUrl": "/category/study-essentials",
+        "Title": "Study Essentials Global Journey"
+      },
+      {
+        "Id": "hero-slide-2",
+        "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/07f4685206724a408e02a782e2703af9.webp",
+        "SecondaryBadge": "Curated Student Bundles & Starter Kits \uD83C\uDF93",
+        "LinkUrl": "/category/study-essentials",
+        "Title": "Curated Student Bundles"
+      },
+      {
+        "Id": "hero-slide-3",
+        "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/8b0475e836644b17a2f5554916b1667b.webp",
+        "SecondaryBadge": "Campus Gear & International Luggage \uD83E\uDDF3",
+        "LinkUrl": "/category/study-essentials",
+        "Title": "Campus & Travel Essentials"
+      }
+    ]
   },
-  "TrustItems": [
-    { "Title": "Quality Products", "Subtitle": "Handpicked for Students", "Icon": "quality" },
-    { "Title": "Affordable Bundles", "Subtitle": "Save More, Study More", "Icon": "bundle" },
-    { "Title": "Secure Checkout", "Subtitle": "Multiple Payment Options", "Icon": "lock" },
-    { "Title": "Fast & Reliable Delivery", "Subtitle": "To Your Doorstep", "Icon": "truck" }
-  ],
+  "TrustItems": [],
   "Section1": {
-    "Title": "1. Shop by Category",
+    "Title": "Shop by Category",
     "Subtitle": "Find everything you need, all in one place.",
     "ViewAllLinkText": "View All Categories →",
     "ViewAllLinkUrl": "/category/study-essentials",
@@ -23,7 +42,7 @@
     "TitleFontSize": "large",
     "Cards": [
       {
-        "Id": "cat-stationery",
+        "Id": "6a60305f",
         "Title": "Stationary & study supplies",
         "Description": "Notebooks, pens, highlighters and daily university study gear.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
@@ -31,31 +50,31 @@
         "IconType": "academic"
       },
       {
-        "Id": "cat-tech",
+        "Id": "6960bc9f",
         "Title": "Tech for study",
         "Description": "Calculators, headphones, hard drives, USB hubs & power accessories.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
         "LinkUrl": "/category/study-essentials/tech-for-study",
-        "IconType": "digital"
+        "IconType": "academic"
       },
       {
-        "Id": "cat-documents",
+        "Id": "f7cc806f",
         "Title": "Document & organization",
         "Description": "Passport wallets, secure visa files, portfolios & document vaults.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
         "LinkUrl": "/category/study-essentials/document-organization",
-        "IconType": "passport"
+        "IconType": "academic"
       },
       {
-        "Id": "cat-desk",
+        "Id": "78e0dcd7",
         "Title": "Desk & Room study essential",
         "Description": "Desk lamps, cable organizers, organizers & study room comfort.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
         "LinkUrl": "/category/study-essentials/desk-room-study-essential",
-        "IconType": "lifestyle"
+        "IconType": "academic"
       },
       {
-        "Id": "cat-campus",
+        "Id": "b9082fb3",
         "Title": "College & Campus Essentials",
         "Description": "Ergonomic student backpacks, water bottles, ID holders & locks.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
@@ -63,28 +82,28 @@
         "IconType": "academic"
       },
       {
-        "Id": "cat-online",
+        "Id": "4bebadf0",
         "Title": "Online Classes & Productivity",
         "Description": "HD webcams, noise-canceling mic headsets, planners & study timers.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
         "LinkUrl": "/category/study-essentials/online-classes-productivity",
-        "IconType": "digital"
+        "IconType": "academic"
       }
     ]
   },
   "Section2": {
-    "Title": "2. Our Study Essentials Kits",
+    "Title": "Our Study Essentials Kits",
     "Subtitle": "Complete bundles for every student's journey.",
     "TitleFontSize": "large",
     "ViewAllLinkText": "View All Kits →",
     "ViewAllLinkUrl": "#kits-section",
     "Kits": [
       {
-        "Id": "kit-basic",
+        "Id": "53c0f92f",
         "Title": "Basic Study Kit",
         "BadgeText": "Budget-friendly starter kit",
         "BadgeVariant": "green",
-        "Description": "Perfect for getting started with your studies abroad.",
+        "Description": "",
         "Features": [
           "2 Notebooks",
           "3-5 Pens",
@@ -100,11 +119,11 @@
         "TargetUrl": "/category/study-essentials"
       },
       {
-        "Id": "kit-premium",
+        "Id": "0397158f",
         "Title": "Premium Study Kit",
         "BadgeText": "Most Popular",
         "BadgeVariant": "green",
-        "Description": "Best for DreamFlyKit's main bundle.",
+        "Description": "",
         "Features": [
           "Basic Study Kit items",
           "Academic Planner",
@@ -121,11 +140,11 @@
         "TargetUrl": "/category/study-essentials"
       },
       {
-        "Id": "kit-complete",
+        "Id": "67406356",
         "Title": "Complete Abroad Student Kit",
         "BadgeText": "All-in-One",
-        "BadgeVariant": "blue",
-        "Description": "All-in-one study and travel bundle.",
+        "BadgeVariant": "green",
+        "Description": "",
         "Features": [
           "Premium Study Kit items",
           "Travel Adapter (destination specific)",
@@ -144,12 +163,12 @@
     ]
   },
   "Section3Detail": {
-    "Title": "3. Key Study Essentials - In Detail",
+    "Title": "Key Study Essentials - In Detail",
     "Subtitle": "Everything you need, category-wise",
     "TitleFontSize": "large",
     "Cards": [
       {
-        "Id": "detail-stationery",
+        "Id": "9c342ba8",
         "Title": "Stationery & Study Supplies",
         "Description": "Notebooks, pens, highlighters, more...",
         "IconType": "pen",
@@ -157,78 +176,48 @@
         "LinkUrl": "/category/study-essentials/stationery-study-supplies"
       },
       {
-        "Id": "detail-electronics",
+        "Id": "2ed6d3de",
         "Title": "Electronics & Digital Tools",
         "Description": "Laptops, mouse, headphones, USB hub...",
-        "IconType": "laptop",
+        "IconType": "pen",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
         "LinkUrl": "/category/study-essentials/tech-for-study"
       },
       {
-        "Id": "detail-documents",
+        "Id": "1a2a3aa6",
         "Title": "Documents & Organization",
         "Description": "Passport holder, folders, file organizers...",
-        "IconType": "file",
+        "IconType": "pen",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
         "LinkUrl": "/category/study-essentials/document-organization"
       },
       {
-        "Id": "detail-desk",
+        "Id": "82bb194b",
         "Title": "Desk & Room Essentials",
         "Description": "Planner, lamp, water bottle, organizers...",
-        "IconType": "lamp",
+        "IconType": "pen",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
         "LinkUrl": "/category/study-essentials/desk-room-study-essential"
       },
       {
-        "Id": "detail-campus",
+        "Id": "7d33e40b",
         "Title": "College & Campus Essentials",
         "Description": "Backpack, lunch box, ID holder...",
-        "IconType": "bag",
+        "IconType": "pen",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
         "LinkUrl": "/category/study-essentials/college-campus-essentials"
       },
       {
-        "Id": "detail-online",
+        "Id": "5213db3c",
         "Title": "Online Classes & Productivity",
         "Description": "Webcam, microphone, external drive...",
-        "IconType": "monitor",
+        "IconType": "pen",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
         "LinkUrl": "/category/study-essentials/online-classes-productivity"
       }
     ]
   },
-  "Section4": {
-    "Title": "4. Abroad Packing Checklist",
-    "BadgeText": "Highly Recommended",
-    "Subtitle": "Make sure you don't forget anything important.",
-    "TitleFontSize": "large",
-    "ButtonText": "View Missing Essentials →",
-    "ButtonUrl": "/category/study-essentials",
-    "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
-    "Items": [
-      { "Id": "chk-1", "Text": "Study Materials", "IsChecked": true, "TargetUrl": "/category/study-essentials/stationery-study-supplies" },
-      { "Id": "chk-2", "Text": "Electronics & Accessories", "IsChecked": true, "TargetUrl": "/category/study-essentials/tech-for-study" },
-      { "Id": "chk-3", "Text": "Travel Essentials", "IsChecked": false, "TargetUrl": "/category/travel-gear" },
-      { "Id": "chk-4", "Text": "Documents & Organizers", "IsChecked": false, "TargetUrl": "/category/study-essentials/document-organization" },
-      { "Id": "chk-5", "Text": "Personal Essentials", "IsChecked": false, "TargetUrl": "/category/room-living" }
-    ]
-  },
-  "Section5": {
-    "Title": "5. Shop by Destination",
-    "Subtitle": "Get country-specific essentials and travel adapters.",
-    "TitleFontSize": "large",
-    "ButtonText": "Explore Essentials by Country →",
-    "ButtonUrl": "/category/study-essentials",
-    "Countries": [
-      { "Id": "usa", "Name": "USA", "Code": "US", "FlagUrl": "/images/countries/usa.webp", "ImageUrl": "/images/study-hub/test-pic-placeholder.svg", "LinkUrl": "/category/study-essentials?country=usa" },
-      { "Id": "uk", "Name": "UK", "Code": "GB", "FlagUrl": "/images/countries/uk.webp", "ImageUrl": "/images/study-hub/test-pic-placeholder.svg", "LinkUrl": "/category/study-essentials?country=uk" },
-      { "Id": "canada", "Name": "Canada", "Code": "CA", "FlagUrl": "/images/countries/canada.webp", "ImageUrl": "/images/study-hub/test-pic-placeholder.svg", "LinkUrl": "/category/study-essentials?country=canada" },
-      { "Id": "australia", "Name": "Australia", "Code": "AU", "FlagUrl": "/images/countries/australia.webp", "ImageUrl": "/images/study-hub/test-pic-placeholder.svg", "LinkUrl": "/category/study-essentials?country=australia" },
-      { "Id": "france", "Name": "France", "Code": "FR", "FlagUrl": "/images/countries/france.webp", "ImageUrl": "/images/study-hub/test-pic-placeholder.svg", "LinkUrl": "/category/study-essentials?country=france" }
-    ]
-  },
-  "Section6": {
+  "Section3": {
     "StepNumber": "6.",
     "Title": "Build Your Own Study Kit",
     "BadgeText": "Customize Your Perfect Kit",
@@ -236,83 +225,237 @@
     "TitleFontSize": "large",
     "ButtonText": "Build My Study Kit →",
     "TargetUrl": "/cart",
+    "Items": []
+  },
+  "Section4": {
+    "Title": "Abroad Packing Checklist",
+    "BadgeText": "Highly Recommended",
+    "Subtitle": "Make sure you don't forget anything important.",
+    "TitleFontSize": "large",
+    "ButtonText": "View Missing Essentials →",
+    "ButtonUrl": "/category/study-essentials",
+    "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
+    "Items": []
+  },
+  "Section5": {
+    "Title": "Shop by Destination",
+    "Subtitle": "Get country-specific essentials and travel adapters.",
+    "TitleFontSize": "large",
+    "ButtonText": "Explore Essentials by Country →",
+    "ButtonUrl": "/category/study-essentials",
+    "Countries": [
+      {
+        "Id": "d084693c",
+        "Name": "USA",
+        "Code": "US",
+        "FlagUrl": "/images/countries/usa.webp",
+        "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
+        "LinkUrl": "/category/study-essentials?country=usa"
+      },
+      {
+        "Id": "6384d8d8",
+        "Name": "UK",
+        "Code": "UK",
+        "FlagUrl": "/images/countries/uk.webp",
+        "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
+        "LinkUrl": "/category/study-essentials?country=uk"
+      },
+      {
+        "Id": "9260b54c",
+        "Name": "Canada",
+        "Code": "CA",
+        "FlagUrl": "/images/countries/canada.webp",
+        "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
+        "LinkUrl": "/category/study-essentials?country=canada"
+      },
+      {
+        "Id": "9508dd32",
+        "Name": "Australia",
+        "Code": "AU",
+        "FlagUrl": "/images/countries/australia.webp",
+        "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
+        "LinkUrl": "/category/study-essentials?country=australia"
+      },
+      {
+        "Id": "30c5cbbb",
+        "Name": "France",
+        "Code": "FR",
+        "FlagUrl": "/images/countries/france.webp",
+        "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
+        "LinkUrl": "/category/study-essentials?country=france"
+      }
+    ]
+  },
+  "Section6": {
+    "StepNumber": "",
+    "Title": "Build Your Own Study Kit",
+    "BadgeText": "Customize Your Perfect Kit",
+    "Subtitle": "Choose what you need and create your own bundle.",
+    "TitleFontSize": "large",
+    "ButtonText": "Build My Study Kit →",
+    "TargetUrl": "/cart",
     "Items": [
-      { "Id": "item-notebook", "Name": "Notebook", "Price": 100, "ImageUrl": "/images/study-hub/item-notebook.png", "IsSelected": false, "SortOrder": 1 },
-      { "Id": "item-pens", "Name": "Pen Set", "Price": 150, "ImageUrl": "/images/study-hub/item-pens.png", "IsSelected": false, "SortOrder": 2 },
-      { "Id": "item-sleeve", "Name": "Laptop Sleeve", "Price": 499, "ImageUrl": "/images/study-hub/item-sleeve.png", "IsSelected": false, "SortOrder": 3 },
-      { "Id": "item-organizer", "Name": "Document Organizer", "Price": 199, "ImageUrl": "/images/study-hub/item-organizer.png", "IsSelected": false, "SortOrder": 4 },
-      { "Id": "item-planner", "Name": "Study Planner", "Price": 149, "ImageUrl": "/images/study-hub/item-planner.png", "IsSelected": false, "SortOrder": 5 },
-      { "Id": "item-adapter", "Name": "Universal Adapter", "Price": 799, "ImageUrl": "/images/study-hub/test-pic-placeholder.svg", "IsSelected": false, "SortOrder": 6 }
+      {
+        "Id": "c21d3026",
+        "Name": "Notebook",
+        "Price": 100,
+        "ImageUrl": "/images/study-hub/item-notebook.png",
+        "IsSelected": false,
+        "SortOrder": 0
+      },
+      {
+        "Id": "266e8577",
+        "Name": "Pen Set",
+        "Price": 150,
+        "ImageUrl": "/images/study-hub/item-pens.png",
+        "IsSelected": false,
+        "SortOrder": 0
+      },
+      {
+        "Id": "7bec2313",
+        "Name": "Laptop Sleeve",
+        "Price": 499,
+        "ImageUrl": "/images/study-hub/item-sleeve.png",
+        "IsSelected": false,
+        "SortOrder": 0
+      },
+      {
+        "Id": "517a78a4",
+        "Name": "Document Organizer",
+        "Price": 199,
+        "ImageUrl": "/images/study-hub/item-organizer.png",
+        "IsSelected": false,
+        "SortOrder": 0
+      },
+      {
+        "Id": "f8783045",
+        "Name": "Study Planner",
+        "Price": 149,
+        "ImageUrl": "/images/study-hub/item-planner.png",
+        "IsSelected": false,
+        "SortOrder": 0
+      },
+      {
+        "Id": "785905f7",
+        "Name": "Universal Adapter",
+        "Price": 799,
+        "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
+        "IsSelected": false,
+        "SortOrder": 0
+      }
     ]
   },
   "Section7": {
-    "Title": "7. Best Sellers & Student Favorites",
+    "Title": "Best Sellers & Student Favorites",
     "Subtitle": "Top products loved by students worldwide.",
     "TitleFontSize": "large",
     "Products": [
-      { "Id": "bs-sleeve", "Name": "Laptop Sleeve", "Price": 1299, "OriginalPrice": 1799, "Rating": 4.8, "ReviewsCount": 142, "ImageUrl": "/images/study-hub/item-sleeve.png", "LinkUrl": "/category/study-essentials", "ButtonText": "Add to Cart" },
-      { "Id": "bs-mouse", "Name": "Wireless Mouse", "Price": 899, "OriginalPrice": 1299, "Rating": 4.7, "ReviewsCount": 98, "ImageUrl": "/images/study-hub/test-pic-placeholder.svg", "LinkUrl": "/category/study-essentials", "ButtonText": "Add to Cart" },
-      { "Id": "bs-adapter", "Name": "Travel Adapter", "Price": 1499, "OriginalPrice": 1999, "Rating": 4.9, "ReviewsCount": 310, "ImageUrl": "/images/study-hub/test-pic-placeholder.svg", "LinkUrl": "/category/study-essentials", "ButtonText": "Add to Cart" },
-      { "Id": "bs-backpack", "Name": "Campus Backpack", "Price": 2499, "OriginalPrice": 3499, "Rating": 4.9, "ReviewsCount": 275, "ImageUrl": "/images/study-hub/test-pic-placeholder.svg", "LinkUrl": "/category/study-essentials", "ButtonText": "Add to Cart" },
-      { "Id": "bs-organizer", "Name": "Document Organizer", "Price": 799, "OriginalPrice": 1199, "Rating": 4.6, "ReviewsCount": 89, "ImageUrl": "/images/study-hub/item-organizer.png", "LinkUrl": "/category/study-essentials", "ButtonText": "Add to Cart" }
+      {
+        "Id": "d43a8499",
+        "Name": "Laptop Sleeve",
+        "Price": 1299,
+        "OriginalPrice": 1799,
+        "Rating": 4.8,
+        "ReviewsCount": 100,
+        "ImageUrl": "/images/study-hub/item-sleeve.png",
+        "LinkUrl": "/category/study-essentials",
+        "ButtonText": "Add to Cart"
+      },
+      {
+        "Id": "476a9fd8",
+        "Name": "Wireless Mouse",
+        "Price": 899,
+        "OriginalPrice": 1299,
+        "Rating": 4.8,
+        "ReviewsCount": 100,
+        "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
+        "LinkUrl": "/category/study-essentials",
+        "ButtonText": "Add to Cart"
+      },
+      {
+        "Id": "f1a7ece6",
+        "Name": "Travel Adapter",
+        "Price": 1499,
+        "OriginalPrice": 1999,
+        "Rating": 4.8,
+        "ReviewsCount": 100,
+        "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
+        "LinkUrl": "/category/study-essentials",
+        "ButtonText": "Add to Cart"
+      },
+      {
+        "Id": "2cff5ebb",
+        "Name": "Campus Backpack",
+        "Price": 2499,
+        "OriginalPrice": 3499,
+        "Rating": 4.8,
+        "ReviewsCount": 100,
+        "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
+        "LinkUrl": "/category/study-essentials",
+        "ButtonText": "Add to Cart"
+      },
+      {
+        "Id": "3248ec4c",
+        "Name": "Document Organizer",
+        "Price": 799,
+        "OriginalPrice": 1199,
+        "Rating": 4.8,
+        "ReviewsCount": 100,
+        "ImageUrl": "/images/study-hub/item-organizer.png",
+        "LinkUrl": "/category/study-essentials",
+        "ButtonText": "Add to Cart"
+      }
     ]
   },
   "Section8": {
-    "Title": "8. Smart Study Setup",
+    "Title": "Smart Study Setup",
     "Subtitle": "Create a productive and comfortable study space.",
     "TitleFontSize": "large",
     "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
     "ButtonText": "Shop Study Setup →",
     "ButtonUrl": "/category/study-essentials",
-    "Items": [
-      { "Id": "st-stand", "Name": "Laptop Stand", "Price": 1299, "IconType": "laptop" },
-      { "Id": "st-organizer", "Name": "Desk Organizer", "Price": 689, "IconType": "file" },
-      { "Id": "st-lamp", "Name": "Study Lamp", "Price": 1099, "IconType": "lamp" },
-      { "Id": "st-headphones", "Name": "Headphones", "Price": 1499, "IconType": "headphones" },
-      { "Id": "st-planner", "Name": "Notebook & Planner", "Price": 499, "IconType": "pen" },
-      { "Id": "st-cable", "Name": "Cable Organizer", "Price": 399, "IconType": "cable" }
-    ]
+    "Items": []
   },
   "Section9": {
-    "Title": "9. Why Choose DreamFlyKit?",
+    "Title": "Why Choose DreamFlyKit?",
     "Subtitle": "More than a store — we're your study partner.",
     "TitleFontSize": "large",
-    "Pillars": [
-      { "Id": "p-bundles", "Title": "Student-Friendly Bundles", "Description": "Curated specifically for international student needs with massive bundle discounts.", "IconType": "gift" },
-      { "Id": "p-easy", "Title": "Easy Shopping", "Description": "Everything in one place — avoid multiple shipments and missing university items.", "IconType": "check" },
-      { "Id": "p-destination", "Title": "Destination-Based Essentials", "Description": "Country-specific plug adapters, luggage specifications, and university-aligned kits.", "IconType": "globe" },
-      { "Id": "p-delivery", "Title": "Convenient Delivery", "Description": "On-time doorstep delivery right before your flight or directly to your campus dorm.", "IconType": "truck" }
-    ]
+    "Pillars": []
   },
   "Section10": {
-    "Title": "10. Frequently Asked Questions",
+    "Title": "Frequently Asked Questions",
     "Subtitle": "Quick answers to help you shop with confidence.",
     "TitleFontSize": "large",
     "Faqs": [
       {
-        "Id": "faq-1",
+        "Id": "d953297b",
         "Question": "What should I buy before studying abroad?",
-        "Answer": "Focus on university-specified stationery, universal destination power adapters, a reliable laptop sleeve, waterproof document portfolios for visa/passport files, and compact study room essentials."
+        "Answer": "Focus on university-specified stationery, universal destination power adapters, a reliable laptop sleeve, waterproof document portfolios for visa/passport files, and compact study room essentials.",
+        "IsOpen": false
       },
       {
-        "Id": "faq-2",
+        "Id": "217c5dc4",
         "Question": "Can I customize my study kit?",
-        "Answer": "Yes! Use our 'Build Your Own Study Kit' interactive builder in Section 6 to choose the exact components you need with live price calculation."
+        "Answer": "Yes! Use our 'Build Your Own Study Kit' interactive builder in Section 6 to choose the exact components you need with live price calculation.",
+        "IsOpen": false
       },
       {
-        "Id": "faq-3",
+        "Id": "7c580d6c",
         "Question": "Can I purchase products individually?",
-        "Answer": "Yes, all products featured in our kits and setups can be ordered individually directly from our Study Essentials catalog."
+        "Answer": "Yes, all products featured in our kits and setups can be ordered individually directly from our Study Essentials catalog.",
+        "IsOpen": false
       },
       {
-        "Id": "faq-4",
+        "Id": "bb49e0c7",
         "Question": "Do you deliver internationally?",
-        "Answer": "Yes, Dreamflykit delivers to dorms, apartments, and student residences across the USA, UK, Canada, Australia, Europe, and India."
+        "Answer": "Yes, Dreamflykit delivers to dorms, apartments, and student residences across the USA, UK, Canada, Australia, Europe, and India.",
+        "IsOpen": false
       },
       {
-        "Id": "faq-5",
+        "Id": "7c8d0223",
         "Question": "What are the return and refund policies?",
-        "Answer": "We offer a 30-day student satisfaction guarantee with no-hassle replacements or full refunds on any transit-damaged or unsuitable items."
+        "Answer": "We offer a 30-day student satisfaction guarantee with no-hassle replacements or full refunds on any transit-damaged or unsuitable items.",
+        "IsOpen": false
       }
     ]
   },
@@ -327,83 +470,79 @@
     "HeroTitle": "Study Essentials",
     "HeroSubtitle": "Everything you need to study smart, stay organized and ace your academic journey abroad.",
     "HeroImageUrl": "/images/study-hub/test-pic-placeholder.svg",
-    "Badges": [
-      "Student Trusted • 10K+ Happy Students",
-      "Curated for Abroad • Universities Worldwide",
-      "Smart & Affordable • Best Value Essentials"
-    ],
+    "Badges": [],
     "Categories": [
       {
-        "Id": "cat-1",
+        "Id": "94581503",
         "Name": "Stationary & study supplies",
         "Slug": "stationery-study-supplies",
         "Description": "Pens, pencils, highlighters, notebooks, sticky notes and more for everyday writing.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
         "Icon": "pen",
-        "ProductCount": 24
+        "ProductCount": 0
       },
       {
-        "Id": "cat-2",
+        "Id": "96e36593",
         "Name": "Tech for study",
         "Slug": "tech-for-study",
         "Description": "Calculators, headphones, USB drives, laptop stands, mice & digital study tools.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
-        "Icon": "laptop",
-        "ProductCount": 18
+        "Icon": "pen",
+        "ProductCount": 0
       },
       {
-        "Id": "cat-3",
+        "Id": "d8e4be69",
         "Name": "Document & organization",
         "Slug": "document-organization",
         "Description": "Folders, file organizers, passport holders, dividers and safe certificates storage.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
-        "Icon": "file",
-        "ProductCount": 15
+        "Icon": "pen",
+        "ProductCount": 0
       },
       {
-        "Id": "cat-4",
+        "Id": "3dd015dc",
         "Name": "Desk & Room study essential",
         "Slug": "desk-room-study-essential",
         "Description": "Lamps, desk organizers, whiteboards, study clocks and room desk must-haves.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
-        "Icon": "lamp",
-        "ProductCount": 22
+        "Icon": "pen",
+        "ProductCount": 0
       },
       {
-        "Id": "cat-5",
+        "Id": "8b2fbf69",
         "Name": "College & Campus Essentials",
         "Slug": "college-campus-essentials",
         "Description": "Backpacks, water bottles, lunch boxes, ID card holders and campus everyday gear.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
-        "Icon": "bag",
-        "ProductCount": 19
+        "Icon": "pen",
+        "ProductCount": 0
       },
       {
-        "Id": "cat-6",
+        "Id": "407d6149",
         "Name": "Online Classes & Productivity",
         "Slug": "online-classes-productivity",
         "Description": "Webcams, conference mics, semester planners, timers & study focus gear.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
-        "Icon": "monitor",
-        "ProductCount": 14
+        "Icon": "pen",
+        "ProductCount": 0
       },
       {
-        "Id": "cat-7",
+        "Id": "98e270d8",
         "Name": "Exam preparation ( Gre ,tofel ,)",
         "Slug": "exam-preparation",
         "Description": "GRE, TOEFL, IELTS test prep books, practice sets, vocab cards and guides.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
-        "Icon": "book",
-        "ProductCount": 16
+        "Icon": "pen",
+        "ProductCount": 0
       },
       {
-        "Id": "cat-8",
+        "Id": "e86467be",
         "Name": "Books & references",
         "Slug": "books-references",
         "Description": "Academic textbooks, reference guides, course literature, dictionaries and eBooks.",
         "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
-        "Icon": "bookmark",
-        "ProductCount": 21
+        "Icon": "pen",
+        "ProductCount": 0
       }
     ],
     "Promo1Title": "Need a Complete Study Kit?",
@@ -415,12 +554,6 @@
     "Promo2Subtitle": "We're here to help you pick the right essentials.",
     "Promo2ButtonText": "Chat with Us",
     "Promo2ButtonUrl": "https://wa.me/919123456789",
-    "FooterFeatures": [
-      "Fast & Reliable Delivery • On-time delivery worldwide",
-      "100% Secure Payments • Multiple payment options",
-      "Premium Quality Products • Genuine & durable",
-      "24/7 Customer Support • We're here to help",
-      "Easy Returns • Hassle-free returns"
-    ]
+    "FooterFeatures": []
   }
 }

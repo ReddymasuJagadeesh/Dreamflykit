@@ -1,9 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<!-- Suppress ImageSharp TIFF advisories (GHSA-jjfr-hcj7-qf5w, GHSA-wmxv-xphr-5c9g) because TIFF/BigTIFF is strictly blocked in MediaValidationService -->
+		<NoWarn>$(NoWarn);NU1902;NU1903</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -27,7 +29,7 @@
 
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
 
-		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
 	</ItemGroup>
 
 	<ItemGroup>

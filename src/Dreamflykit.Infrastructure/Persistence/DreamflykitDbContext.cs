@@ -1,4 +1,5 @@
 using Dreamflykit.Domain.Addressing;
+using Dreamflykit.Domain.Audit;
 using Dreamflykit.Domain.Catalog;
 using Dreamflykit.Domain.Geography;
 using Dreamflykit.Domain.Inventory;
@@ -82,6 +83,8 @@ public sealed class DreamflykitDbContext
 
     public DbSet<LandingPage> LandingPages => Set<LandingPage>();
     public DbSet<Dreamflykit.Domain.Common.SystemThemeSetting> SystemThemeSettings => Set<Dreamflykit.Domain.Common.SystemThemeSetting>();
+
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -323,7 +326,12 @@ public sealed class DreamflykitDbContext
 
         builder.Entity<ProductVariant>(entity =>
         {
-            entity.ToTable("ProductVariants");
+            entity.ToTable("ProductVariants", t =>
+            {
+                t.HasCheckConstraint("CK_ProductVariants_SellingPrice_NonNegative", "\"SellingPrice\" >= 0");
+                t.HasCheckConstraint("CK_ProductVariants_Mrp_NonNegative", "\"Mrp\" >= 0");
+                t.HasCheckConstraint("CK_ProductVariants_SellingPrice_Lte_Mrp", "\"SellingPrice\" <= \"Mrp\"");
+            });
 
             entity.HasKey(x => x.Id);
 
@@ -555,7 +563,11 @@ public sealed class DreamflykitDbContext
 
         builder.Entity<InventoryItem>(entity =>
         {
-            entity.ToTable("InventoryItems");
+            entity.ToTable("InventoryItems", t =>
+            {
+                t.HasCheckConstraint("CK_InventoryItems_AvailableQuantity_NonNegative", "\"AvailableQuantity\" >= 0");
+                t.HasCheckConstraint("CK_InventoryItems_ReservedQuantity_NonNegative", "\"ReservedQuantity\" >= 0");
+            });
 
             entity.HasKey(x => x.Id);
 
@@ -791,7 +803,11 @@ public sealed class DreamflykitDbContext
 
         builder.Entity<Domain.Cart.CartItem>(entity =>
         {
-            entity.ToTable("CartItems");
+            entity.ToTable("CartItems", t =>
+            {
+                t.HasCheckConstraint("CK_CartItems_Quantity_Positive", "\"Quantity\" > 0");
+                t.HasCheckConstraint("CK_CartItems_UnitPrice_NonNegative", "\"UnitPrice\" >= 0");
+            });
 
             entity.HasKey(x => x.Id);
 
@@ -973,7 +989,12 @@ public sealed class DreamflykitDbContext
         // --------------------------------------------------------
         builder.Entity<OrderItem>(entity =>
         {
-            entity.ToTable("OrderItems");
+            entity.ToTable("OrderItems", t =>
+            {
+                t.HasCheckConstraint("CK_OrderItems_Quantity_Positive", "\"Quantity\" > 0");
+                t.HasCheckConstraint("CK_OrderItems_UnitPrice_NonNegative", "\"UnitPrice\" >= 0");
+                t.HasCheckConstraint("CK_OrderItems_Mrp_NonNegative", "\"Mrp\" >= 0");
+            });
 
             entity.HasKey(x => x.Id);
 
@@ -1225,6 +1246,34 @@ public sealed class DreamflykitDbContext
             entity.Property(x => x.FontScale).HasPrecision(5, 2);
             entity.Property(x => x.FontSizeBasePx).IsRequired();
             entity.Property(x => x.CreatedAtUtc).IsRequired();
+        });
+
+        // ----------------------------------------------------------------
+        // Audit Logs
+        // ----------------------------------------------------------------
+        builder.Entity<AuditLog>(entity =>
+        {
+            entity.ToTable("AuditLogs");
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.ActorType).HasMaxLength(50).IsRequired();
+            entity.Property(x => x.Action).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.EntityName).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.TableName).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.RecordId).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.UserName).HasMaxLength(256);
+            entity.Property(x => x.AffectedColumns).HasMaxLength(500);
+            entity.Property(x => x.IpAddress).HasMaxLength(50);
+            entity.Property(x => x.UserAgent).HasMaxLength(500);
+            entity.Property(x => x.TraceId).HasMaxLength(100);
+            entity.Property(x => x.ErrorMessage).HasMaxLength(2000);
+            entity.Property(x => x.Notes).HasMaxLength(1000);
+            entity.Property(x => x.IsSuccess).IsRequired();
+            entity.Property(x => x.OccurredAtUtc).IsRequired();
+
+            entity.HasIndex(x => x.OccurredAtUtc);
+            entity.HasIndex(x => new { x.EntityName, x.RecordId });
+            entity.HasIndex(x => new { x.UserId, x.OccurredAtUtc });
+            entity.HasIndex(x => new { x.Action, x.OccurredAtUtc });
         });
     }
 }

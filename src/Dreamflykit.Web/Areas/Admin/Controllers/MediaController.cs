@@ -46,7 +46,7 @@ public sealed class MediaController : AdminBaseController
             MediaType = mediaType,
             Status = status,
             Search = search,
-            SortBy = sortBy,
+            SortBy = sortBy ?? "CreatedAtUtc",
             SortDescending = sortDescending,
             Page = page,
             PageSize = pageSize

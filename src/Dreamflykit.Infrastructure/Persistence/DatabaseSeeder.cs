@@ -92,6 +92,127 @@ public static class DatabaseSeeder
                 }
             }
             await context.SaveChangesAsync(cancellationToken);
+
+            // Ensure active inventory items for each Study Essentials subcategory
+            var subList = await context.Subcategories
+                .Where(s => s.CategoryId == studyCatId)
+                .ToListAsync(cancellationToken);
+
+            var studyProducts = new (string SubSlug, string Name, string Slug, string Short, string Desc, int Order, string Var, string Sku, decimal Mrp, decimal Price, string Media)[]
+            {
+                // 1. Stationery & study supplies
+                ("stationery-study-supplies", "Hardcover B5 Spiral Notebooks (Pack of 3)", "hardcover-b5-spiral-notebooks-pack-of-3",
+                 "Thick 100gsm grid and lined notebooks engineered for university lecture notes.",
+                 "Water-resistant hardcover with double-wire binding, lay-flat 180 degree design, and micro-perforated tear-out pages. Contains 160 pages per book.",
+                 1, "B5 / Pack of 3", "ST-NB-B5-3PK", 799m, 499m, "/images/study-hub/item-notebook.png"),
+                ("stationery-study-supplies", "Ergonomic Quick-Dry Gel Pens (Pack of 10)", "ergonomic-quick-dry-gel-pens-10pk",
+                 "Smudge-free 0.5mm Japanese ink pens with soft rubber comfort grip.",
+                 "Fast drying smooth ink formulation that prevents paper bleed. Ideal for exam halls, fast lecture notes, and study sessions.",
+                 2, "Black & Blue Assorted", "ST-PEN-QD-10PK", 399m, 249m, "/images/study-hub/item-pens.png"),
+                ("stationery-study-supplies", "Pastel Aesthetic Highlighters & Sticky Notes Set", "pastel-aesthetic-highlighters-sticky-notes-set",
+                 "6 soft pastel chisel tip highlighters plus translucent color-code tabs.",
+                 "No-bleed water-based pastel pigments that don't obscure text. Includes 200 translucent index tabs for textbook marking.",
+                 3, "6 Pastel Colors + Tabs", "ST-HL-PASTEL-SET", 499m, 299m, "/images/study-hub/test-pic-placeholder.svg"),
+
+                // 2. Tech for study
+                ("tech-for-study", "Universal 65W GaN Travel Adapter with Dual Type-C", "universal-65w-gan-travel-adapter-dual-type-c",
+                 "All-in-one worldwide plug adapter for US, UK, EU, AU with GaN fast charging.",
+                 "Powers laptops, phones, and tablets across 150+ countries. Features built-in safety fuse, surge protector, and 65W Power Delivery fast charging.",
+                 1, "Matte Black - 65W", "TC-ADP-GAN-65W", 2499m, 1499m, "/images/study-hub/test-pic-placeholder.svg"),
+                ("tech-for-study", "Shockproof Water-Resistant Laptop Sleeve 14-16 Inch", "shockproof-water-resistant-laptop-sleeve-14-16",
+                 "360-degree protective foam laptop case with front accessory organizer pocket.",
+                 "Ultra-soft flannel interior lining with reinforced corner bumpers. Front zippered compartment holds charger, mouse, and adapter.",
+                 2, "Heather Grey - 15.6 Inch", "TC-SLV-156-GRY", 1299m, 799m, "/images/study-hub/item-sleeve.png"),
+                ("tech-for-study", "Silent Ergonomic Dual-Mode Wireless Mouse", "silent-ergonomic-dual-mode-wireless-mouse",
+                 "Rechargeable Bluetooth 5.2 and 2.4G wireless mouse for library and study rooms.",
+                 "90% noise-reduced silent click switches with adjustable DPI up to 2400. Up to 60 days battery life per USB-C charge.",
+                 3, "Matte Navy", "TC-MSE-BT-NV", 1499m, 899m, "/images/study-hub/test-pic-placeholder.svg"),
+                ("tech-for-study", "7-in-1 Aluminum USB-C Hub with 4K HDMI & 100W PD", "7-in-1-aluminum-usb-c-hub-4k-hdmi",
+                 "Expand your laptop with HDMI, 3x USB 3.0, SD card reader, and 100W pass-through charging.",
+                 "Aircraft-grade aluminum casing with high heat dissipation. Plug and play compatibility for MacBook, Windows, iPad, and Chromebook.",
+                 4, "Space Grey", "TC-HUB-7IN1-AL", 2999m, 1799m, "/images/study-hub/test-pic-placeholder.svg"),
+
+                // 3. Document & organization
+                ("document-organization", "RFID-Blocking Multi-Passport & Travel Visa Wallet", "rfid-blocking-multi-passport-travel-visa-wallet",
+                 "Zippered security document organizer for passport, visa, tickets & cards.",
+                 "High-density nylon fabric with built-in RFID shielding material to protect against unauthorized digital scanning. Features pen loop and detachable wristlet.",
+                 1, "Charcoal Black", "DOC-WL-RFID-BLK", 1199m, 699m, "/images/study-hub/item-organizer.png"),
+                ("document-organization", "Waterproof 13-Pocket Expanding Accordion File Folder", "waterproof-13-pocket-expanding-file-folder",
+                 "Heavy-duty poly document file with color-coded index tabs for university certificates.",
+                 "Secure buckle closure with waterproof polypropylene body. Organizes I-20, offer letters, insurance papers, transcripts, and passport copies.",
+                 2, "Navy Blue - A4/Letter", "DOC-ACC-13P-NV", 899m, 499m, "/images/study-hub/item-organizer.png"),
+
+                // 4. Desk & Room study essential
+                ("desk-room-study-essential", "Dimmable LED Desk Lamp with USB Phone Charger", "dimmable-led-desk-lamp-usb-charger",
+                 "Foldable eye-care reading lamp with 5 color modes and touch brightness control.",
+                 "Flicker-free natural light with flexible gooseneck arm and integrated 5V/2A USB charging port. Auto-off 45-minute sleep timer.",
+                 1, "Pure White", "DK-LMP-LED-WHT", 2199m, 1299m, "/images/study-hub/test-pic-placeholder.svg"),
+                ("desk-room-study-essential", "Ergonomic Memory Foam Seat Cushion for Dorm Chairs", "ergonomic-memory-foam-seat-cushion",
+                 "Orthopedic coccyx cushion for long study sessions and back relief.",
+                 "High-density 100% memory foam with non-slip rubber bottom and breathable washable velour cover. Relieves pressure on hips and spine.",
+                 2, "Midnight Black", "DK-CSH-MEM-BLK", 1699m, 999m, "/images/study-hub/test-pic-placeholder.svg"),
+
+                // 5. College & Campus Essentials
+                ("college-campus-essentials", "Water-Resistant Campus Laptop Backpack 30L with USB Port", "water-resistant-campus-laptop-backpack-30l",
+                 "Durable campus daypack with padded 15.6 inch laptop sleeve and luggage strap.",
+                 "Multi-compartment storage with hidden anti-theft back pocket, reinforced top handle, and breathable mesh shoulder padding for campus commuting.",
+                 1, "Deep Navy - 30L", "CMP-BP-30L-NV", 3499m, 2199m, "/images/study-hub/test-pic-placeholder.svg"),
+                ("college-campus-essentials", "Vacuum Insulated Stainless Steel Bottle 1000ml", "vacuum-insulated-stainless-steel-bottle-1000ml",
+                 "24-hour cold and 12-hour hot double-wall flask with leakproof lid.",
+                 "Food-grade 18/8 stainless steel with sweat-proof powder coat finish. Wide mouth accommodates ice cubes and easy cleaning.",
+                 2, "Cobalt Blue - 1000ml", "CMP-BOT-SS-1L", 1099m, 649m, "/images/study-hub/test-pic-placeholder.svg"),
+
+                // 6. Online Classes & Productivity
+                ("online-classes-productivity", "Full HD 1080p Webcam with Noise-Cancelling Microphone", "full-hd-1080p-webcam-noise-cancelling-mic",
+                 "Wide-angle auto-focus webcam with physical privacy shutter for lectures & interviews.",
+                 "Sharp 1080p 30fps streaming with low-light auto correction and dual noise-cancelling mics. Universal tripod mount and monitor clamp.",
+                 1, "Matte Black", "PRD-CAM-1080P", 2899m, 1799m, "/images/study-hub/test-pic-placeholder.svg"),
+                ("online-classes-productivity", "USB Conference Headset with Noise-Cancelling Boom Mic", "usb-conference-headset-noise-cancelling-mic",
+                 "Lightweight on-ear headphones with in-line volume & mute controls.",
+                 "Crystal clear audio for Zoom, Teams, and online lectures. Padded leatherette ear cups and adjustable headband for all-day comfort.",
+                 2, "Black - USB/3.5mm", "PRD-HDS-USB-BLK", 2299m, 1399m, "/images/study-hub/test-pic-placeholder.svg"),
+
+                // 7. Exam preparation
+                ("exam-preparation", "Official GRE General Test Prep Super Power Pack 2026", "official-gre-prep-super-power-pack-2026",
+                 "Complete quantitative, verbal reasoning, and analytical writing preparation set.",
+                 "Comprehensive authentic practice questions with complete explanations, sample essay responses, and online scoring practice access.",
+                 1, "Paperback Edition", "EXM-GRE-PWR-26", 1999m, 1299m, "/images/study-hub/test-pic-placeholder.svg"),
+                ("exam-preparation", "TOEFL iBT Official Guide with Interactive Online Audio Practice", "toefl-ibt-official-guide-online-audio",
+                 "Full-length authentic practice tests covering Reading, Listening, Speaking & Writing.",
+                 "Real TOEFL practice questions with scoring rubrics and downloadable audio tracks. Crucial for university English proficiency requirements.",
+                 2, "Latest Edition", "EXM-TOEFL-IBT-GD", 1799m, 1199m, "/images/study-hub/test-pic-placeholder.svg"),
+
+                // 8. Books & references
+                ("books-references", "International Student's Guide to Thriving in Global Universities", "international-students-guide-to-thriving-in-global-universities",
+                 "Essential handbook on academic writing, cultural adaptation, and university life.",
+                 "Step-by-step guidance on thesis research, plagiarism rules, university networking, budgeting, and career pathways in the US, UK, and Canada.",
+                 1, "Paperback", "BK-INT-SURV-GD", 799m, 499m, "/images/study-hub/test-pic-placeholder.svg"),
+                ("books-references", "Academic Writing & Research Methodology for Graduate Students", "academic-writing-and-research-methodology",
+                 "Clear guidelines on literature reviews, citations (APA, MLA, Chicago), and thesis defense.",
+                 "Practical guide for term papers, literature synthesis, and publishing scholarly articles with confidence.",
+                 2, "Hardcover Edition", "BK-ACD-WRITE-GD", 1099m, 699m, "/images/study-hub/test-pic-placeholder.svg")
+            };
+
+            foreach (var sp in studyProducts)
+            {
+                var matchingSub = subList.FirstOrDefault(s => string.Equals(s.Slug, sp.SubSlug, StringComparison.OrdinalIgnoreCase));
+                if (matchingSub == null) continue;
+
+                var exists = await context.Products.AnyAsync(p => p.Slug == sp.Slug, cancellationToken);
+                if (!exists)
+                {
+                    var product = new Product(studyCatId, sp.Name, sp.Slug, sp.Short, sp.Desc, sp.Order);
+                    product.SetSubcategory(matchingSub.Id);
+                    context.Products.Add(product);
+                    await context.SaveChangesAsync(cancellationToken);
+
+                    var variant = new ProductVariant(product.Id, sp.Var, sp.Sku, sp.Mrp, sp.Price, true);
+                    var media = new ProductMedia(product.Id, sp.Media, sp.Name, 0, true);
+                    context.ProductVariants.Add(variant);
+                    context.ProductMedia.Add(media);
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            }
         }
 
         // B. Reassign products from obsolete categories & remove obsolete categories

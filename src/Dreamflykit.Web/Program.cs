@@ -95,8 +95,13 @@ builder.Services.ConfigureApplicationCookie(options =>
 // MVC
 // ------------------------------------------------------------
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddHealthChecks();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute());
+});
+
+builder.Services.AddHealthChecks()
+    .AddCheck<Dreamflykit.Web.Health.DatabaseHealthCheck>("database", tags: new[] { "ready", "db" });
 
 var app = builder.Build();
 
@@ -117,10 +122,19 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ------------------------------------------------------------
-// HTTP request pipeline
+// HTTP request pipeline & Security Headers
 // ------------------------------------------------------------
 
 app.UseForwardedHeaders();
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("X-Frame-Options", "SAMEORIGIN");
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+    await next();
+});
 
 if (!app.Environment.IsDevelopment())
 {
@@ -137,6 +151,17 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+// Observability & Orchestrator Probes
+app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = _ => false
+});
+
+app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready")
+});
 
 app.MapHealthChecks("/health");
 

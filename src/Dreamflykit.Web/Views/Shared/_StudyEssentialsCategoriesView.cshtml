@@ -71,7 +71,8 @@
                 <h2 class="dk-cat-sidebar-title">Categories</h2>
                 <nav class="dk-cat-nav-list" aria-label="Study Essentials Subcategories">
                     <a href="/category/study-essentials"
-                       class="dk-cat-nav-item @(string.IsNullOrWhiteSpace(currentSubSlug) ? "is-active" : "")">
+                       class="dk-cat-nav-item dk-cat-action-link @(string.IsNullOrWhiteSpace(currentSubSlug) ? "is-active" : "")"
+                       data-subslug="">
                         <span class="dk-cat-nav-icon">🎓</span>
                         <span class="dk-cat-nav-text">All Study Essentials</span>
                     </a>
@@ -80,7 +81,8 @@
                     {
                         var isActive = string.Equals(currentSubSlug, sc.Slug, StringComparison.OrdinalIgnoreCase);
                         <a href="/category/study-essentials/@sc.Slug"
-                           class="dk-cat-nav-item @(isActive ? "is-active" : "")">
+                           class="dk-cat-nav-item dk-cat-action-link @(isActive ? "is-active" : "")"
+                           data-subslug="@sc.Slug">
                             <span class="dk-cat-nav-icon">
                                 @if (sc.Icon == "laptop" || sc.Icon == "digital") { <text>💻</text> }
                                 else if (sc.Icon == "file" || sc.Icon == "passport") { <text>📁</text> }
@@ -122,108 +124,13 @@
             </div>
         </aside>
 
-        <!-- RIGHT CONTENT AREA -->
-        <main class="dk-cat-content">
-
-            <!-- Top Controls (Sorting & View Mode) -->
-            <div class="dk-cat-top-bar">
-                <div class="dk-cat-breadcrumb-trail">
-                    <a href="/category/study-essentials">Study Essentials</a>
-                    @if (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName))
-                    {
-                        <span class="dk-sep">›</span>
-                        <span class="dk-current">@Model.CurrentSubcategoryName</span>
-                    }
-                </div>
-
-                <div class="dk-cat-sort-wrap">
-                    <label for="dkCatSortSelect" class="dk-sort-lbl">Sort By:</label>
-                    <select id="dkCatSortSelect" class="dk-sort-select" onchange="handleSortChange(this.value)">
-                        <option value="Relevance" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.Relevance)">Featured</option>
-                        <option value="PriceLowToHigh" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.PriceLowToHigh)">Price: Low to High</option>
-                        <option value="PriceHighToLow" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.PriceHighToLow)">Price: High to Low</option>
-                        <option value="Newest" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.Newest)">Newest First</option>
-                        <option value="DiscountHighToLow" selected="@(Model.Sort == Dreamflykit.Application.Catalog.Models.ProductSortOption.DiscountHighToLow)">Discount</option>
-                    </select>
-                </div>
+        <!-- RIGHT CONTENT AREA (DYNAMICALLY UPDATED VIA AJAX WITHOUT FULL PAGE RELOAD) -->
+        <main class="dk-cat-content" id="dkCatContentArea" style="position: relative; min-height: 480px;">
+            <div id="dkCatLoadingOverlay" class="dk-cat-loading-overlay" style="display: none;" aria-hidden="true">
+                <div class="dk-cat-loading-spinner"></div>
+                <span class="dk-cat-loading-text">Loading products...</span>
             </div>
-
-            <!-- IF NO SUBCATEGORY SELECTED: RENDER THE 8 CATEGORY CARDS GRID (IMAGE 4) -->
-            @if (!hasSubcategorySelected && (Model.Products == null || Model.Products.Count == 0 || !Model.HasActiveFilters))
-            {
-                <div class="dk-cat-cards-grid">
-                    @foreach (var sc in studyCategories)
-                    {
-                        <div class="dk-cat-grid-card">
-                            <div class="dk-cat-card-img-wrap">
-                                <img src="@sc.ImageUrl" alt="@sc.Name" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
-                            </div>
-                            <div class="dk-cat-card-body">
-                                <h3 class="dk-cat-card-name">@sc.Name</h3>
-                                <p class="dk-cat-card-desc">@sc.Description</p>
-                                <a href="/category/study-essentials/@sc.Slug" class="dk-cat-card-btn">
-                                    Shop Now
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                        <polyline points="12 5 19 12 12 19"></polyline>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    }
-                </div>
-            }
-            else
-            {
-                <!-- FILTERED PRODUCTS LIST -->
-                <div class="dk-cat-products-view">
-                    @if (Model.Products != null && Model.Products.Count > 0)
-                    {
-                        <div class="dk-cat-products-grid">
-                            @foreach (var product in Model.Products)
-                            {
-                                var prodImg = !string.IsNullOrWhiteSpace(product.ImageUrl) ? product.ImageUrl : (product.PrimaryImageUrl ?? "/images/products/product-placeholder.webp");
-                                <div class="dk-cat-prod-card">
-                                    <a href="/products/@product.Slug" class="dk-cat-prod-img-wrap">
-                                        <img src="@prodImg" alt="@product.Name" loading="lazy" onerror="this.onerror=null;this.src='/images/products/product-placeholder.webp';" />
-                                        @if (product.DiscountPercentage > 0)
-                                        {
-                                            <span class="dk-cat-prod-discount">@product.DiscountPercentage.ToString("0")% OFF</span>
-                                        }
-                                    </a>
-                                    <div class="dk-cat-prod-body">
-                                        <a href="/products/@product.Slug" class="dk-cat-prod-title">@product.Name</a>
-                                        <div class="dk-cat-prod-rating">
-                                            <span class="dk-cat-stars">★★★★★</span>
-                                            <span class="dk-cat-rating-val">4.8</span>
-                                        </div>
-                                        <div class="dk-cat-prod-price-row">
-                                            <span class="dk-cat-price">₹@product.SellingPrice.ToString("N0")</span>
-                                            @if (product.Mrp > product.SellingPrice)
-                                            {
-                                                <span class="dk-cat-mrp">₹@product.Mrp.ToString("N0")</span>
-                                            }
-                                        </div>
-                                        <button type="button" class="dk-cat-btn-add" onclick="handleAddToCart('@product.ProductId')">
-                                            Add to Cart
-                                        </button>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="dk-cat-empty-state">
-                            <div class="dk-cat-empty-icon">📦</div>
-                            <h3>No items found in this section</h3>
-                            <p>Try resetting filters or explore all categories below.</p>
-                            <a href="/category/study-essentials" class="dk-sh-btn-primary">View All Study Categories</a>
-                        </div>
-                    }
-                </div>
-            }
-
+            <partial name="_StudyEssentialsProductsListPartial" model="Model" />
         </main>
     </div>
 
@@ -293,9 +200,11 @@
     .dk-study-cat-page-wrapper {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         color: #1e293b;
-        max-width: 1280px;
+        width: 100%;
+        max-width: 100%;
         margin: 0 auto;
         padding: 10px 0 40px 0;
+        box-sizing: border-box;
     }
 
     /* Hero Banner */
@@ -312,7 +221,11 @@
         box-shadow: 0 6px 24px rgba(2, 132, 199, 0.08);
     }
     @@media (max-width: 850px) {
-        .dk-cat-hero-card { grid-template-columns: 1fr; }
+        .dk-cat-hero-card { 
+            grid-template-columns: 1fr; 
+            padding: 22px 18px;
+            gap: 20px;
+        }
     }
     .dk-cat-hero-title {
         font-size: 2.2rem;
@@ -321,11 +234,17 @@
         margin: 0 0 8px 0;
         letter-spacing: -0.025em;
     }
+    @@media (max-width: 600px) {
+        .dk-cat-hero-title { font-size: 1.7rem; }
+    }
     .dk-cat-hero-sub {
         font-size: 1.05rem;
         color: #475569;
         margin: 0 0 20px 0;
         line-height: 1.45;
+    }
+    @@media (max-width: 600px) {
+        .dk-cat-hero-sub { font-size: 0.92rem; margin-bottom: 14px; }
     }
     .dk-cat-hero-badges {
         display: flex;
@@ -362,6 +281,12 @@
         grid-template-columns: 280px 1fr;
         gap: 24px;
         margin-bottom: 40px;
+    }
+    @@media (min-width: 1400px) {
+        .dk-cat-main-layout {
+            grid-template-columns: 290px 1fr;
+            gap: 28px;
+        }
     }
     @@media (max-width: 900px) {
         .dk-cat-main-layout { grid-template-columns: 1fr; }
@@ -633,11 +558,23 @@
         grid-template-columns: repeat(4, 1fr);
         gap: 18px;
     }
+    @@media (min-width: 1400px) {
+        .dk-cat-products-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+    }
     @@media (max-width: 1100px) {
         .dk-cat-products-grid { grid-template-columns: repeat(3, 1fr); }
     }
     @@media (max-width: 768px) {
-        .dk-cat-products-grid { grid-template-columns: repeat(2, 1fr); }
+        .dk-cat-products-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    }
+    @@media (max-width: 480px) {
+        .dk-cat-products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    }
+    @@media (max-width: 360px) {
+        .dk-cat-products-grid { grid-template-columns: 1fr; }
     }
     .dk-cat-prod-card {
         background: #ffffff;
@@ -828,12 +765,188 @@
         background: #7dd3fc;
         transform: translateY(-1px);
     }
+    /* Dynamic Loading Overlay */
+    .dk-cat-loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.78);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        z-index: 50;
+        border-radius: 16px;
+        transition: opacity 0.2s ease;
+    }
+    .dk-cat-loading-spinner {
+        width: 38px;
+        height: 38px;
+        border: 3.5px solid #e2e8f0;
+        border-top-color: #063f91;
+        border-right-color: #ff7900;
+        border-radius: 50%;
+        animation: dk-cat-spin 0.75s linear infinite;
+    }
+    .dk-cat-loading-text {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #063f91;
+        letter-spacing: -0.01em;
+    }
+    @@keyframes dk-cat-spin {
+        to { transform: rotate(360deg); }
+    }
 </style>
 
 <script>
-    function handleSortChange(sortVal) {
-        const url = new URL(window.location.href);
-        url.searchParams.set("sort", sortVal);
-        window.location.href = url.toString();
-    }
+    (function () {
+        let dkCatAbortController = null;
+
+        function showCatLoading() {
+            const overlay = document.getElementById("dkCatLoadingOverlay");
+            if (overlay) overlay.style.display = "flex";
+        }
+
+        function hideCatLoading() {
+            const overlay = document.getElementById("dkCatLoadingOverlay");
+            if (overlay) overlay.style.display = "none";
+        }
+
+        function updateSidebarActive(targetUrl) {
+            try {
+                const parsed = new URL(targetUrl, window.location.origin);
+                const pathParts = parsed.pathname.replace(/\/+$/, '').split('/');
+                // If path is /category/study-essentials, active subslug is ""
+                // If path is /category/study-essentials/tech-for-study, active subslug is "tech-for-study"
+                let targetSubslug = "";
+                if (pathParts.length >= 4 && pathParts[1] === "category" && (pathParts[2] === "study-essentials" || pathParts[2] === "study_essentials")) {
+                    targetSubslug = pathParts[3].toLowerCase();
+                }
+
+                document.querySelectorAll(".dk-cat-sidebar .dk-cat-nav-item").forEach(item => {
+                    const itemSlug = (item.getAttribute("data-subslug") || "").toLowerCase();
+                    if (itemSlug === targetSubslug) {
+                        item.classList.add("is-active");
+                    } else {
+                        item.classList.remove("is-active");
+                    }
+                });
+            } catch (e) {
+                console.warn("[StudyEssentials] Could not parse url for sidebar active state:", e);
+            }
+        }
+
+        async function loadStudyCategoryProducts(targetUrl, pushState = true) {
+            // Cancel any in-flight request to prevent race conditions & stale results
+            if (dkCatAbortController) {
+                dkCatAbortController.abort();
+            }
+            dkCatAbortController = new AbortController();
+
+            const contentArea = document.getElementById("dkCatContentArea");
+            if (!contentArea) return;
+
+            showCatLoading();
+            updateSidebarActive(targetUrl);
+
+            try {
+                // Append partial=true to URL so server returns partial view
+                const fetchUrl = new URL(targetUrl, window.location.origin);
+                fetchUrl.searchParams.set("partial", "true");
+
+                const response = await fetch(fetchUrl.toString(), {
+                    method: "GET",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "Accept": "text/html, application/xhtml+xml"
+                    },
+                    signal: dkCatAbortController.signal
+                });
+
+                if (!response.ok) {
+                    throw new Error("HTTP error " + response.status);
+                }
+
+                const html = await response.text();
+
+                // Re-inject the updated partial while keeping the loading overlay structure
+                contentArea.innerHTML = `
+                    <div id="dkCatLoadingOverlay" class="dk-cat-loading-overlay" style="display: none;" aria-hidden="true">
+                        <div class="dk-cat-loading-spinner"></div>
+                        <span class="dk-cat-loading-text">Loading products...</span>
+                    </div>
+                    ` + html;
+
+                if (pushState) {
+                    window.history.pushState({ studyEssentialsAjax: true, url: targetUrl }, "", targetUrl);
+                }
+
+                // If user is scrolled down, gently scroll back to top of products area
+                const rect = contentArea.getBoundingClientRect();
+                if (rect.top < 60) {
+                    contentArea.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            } catch (err) {
+                if (err.name === "AbortError") {
+                    // Superseded by newer click; ignore
+                    return;
+                }
+                console.error("[StudyEssentials] Failed to load products dynamically:", err);
+                contentArea.innerHTML = `
+                    <div class="dk-cat-empty-state" style="border-color: #ef4444; background: #fff5f5;">
+                        <div class="dk-cat-empty-icon" style="color: #ef4444;">⚠️</div>
+                        <h3 style="color: #b91c1c;">Unable to load products</h3>
+                        <p style="color: #7f1d1d;">A network or connection issue occurred while fetching items for this category.</p>
+                        <button type="button" class="dk-sh-btn-primary" onclick="window.retryLoadStudyCategory('${targetUrl.replace(/'/g, "\\'")}')">
+                            Try Again
+                        </button>
+                    </div>`;
+            } finally {
+                hideCatLoading();
+            }
+        }
+
+        window.retryLoadStudyCategory = function (url) {
+            loadStudyCategoryProducts(url, false);
+        };
+
+        window.handleSortChange = function (sortVal) {
+            const url = new URL(window.location.href);
+            url.searchParams.set("sort", sortVal);
+            loadStudyCategoryProducts(url.toString(), true);
+        };
+
+        // Event delegation for clicks on category links, card buttons, breadcrumbs, and pagination
+        document.addEventListener("click", function (e) {
+            const actionLink = e.target.closest(".dk-cat-action-link");
+            if (!actionLink) return;
+
+            // Don't intercept if ctrl/meta/shift key is pressed (let user open in new tab)
+            if (e.ctrlKey || e.metaKey || e.shiftKey || actionLink.target === "_blank") {
+                return;
+            }
+
+            const href = actionLink.getAttribute("href");
+            if (!href || href.startsWith("#") || href.startsWith("javascript:")) {
+                return;
+            }
+
+            e.preventDefault();
+            loadStudyCategoryProducts(href, true);
+        });
+
+        // Browser Back / Forward button support
+        window.addEventListener("popstate", function () {
+            if (window.location.pathname.includes("/category/study-essentials") ||
+                window.location.pathname.includes("/category/study_essentials")) {
+                loadStudyCategoryProducts(window.location.href, false);
+            }
+        });
+    })();
 </script>

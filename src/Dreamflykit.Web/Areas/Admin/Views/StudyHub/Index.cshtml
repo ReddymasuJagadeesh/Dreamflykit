@@ -16,6 +16,13 @@
     var s10 = Model.Section10 ?? new();
     var bBanner = Model.BottomBanner ?? new();
     var catPage = Model.CategoriesPage ?? new();
+
+    var heroSlides = hero.Slides != null && hero.Slides.Count > 0
+        ? hero.Slides
+        : new List<Dreamflykit.Application.StudyHub.Models.StudyHubHeroSlideDto>
+        {
+            new() { Id = "hero-slide-1", ImageUrl = hero.ImageUrl, SecondaryBadge = hero.SecondaryBadge, LinkUrl = hero.ButtonUrl, Title = hero.Title }
+        };
 }
 
 <div class="dk-admin-card" style="margin-bottom: 24px;">
@@ -120,22 +127,81 @@
             </div>
         </div>
 
-        <!-- Hero Image Picker -->
-        <label class="dk-sh-form-label">Hero Image (Super Admin Replaceable)</label>
-        <div class="dk-sh-img-ctrl-row">
-            <div class="dk-sh-img-preview-box">
-                <img id="preview_hero_img" src="@hero.ImageUrl" alt="Hero Preview" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
-            </div>
-            <div style="flex: 1;">
-                <input type="text" id="hero_img_url" class="dk-admin-form-input" value="@hero.ImageUrl" oninput="updateImgPreview('hero_img_url', 'preview_hero_img')" style="margin-bottom: 8px;" />
-                <div style="display: flex; gap: 8px;">
-                    <button type="button" class="dk-btn dk-btn-primary" onclick="triggerUploadFor('hero_img_url', 'preview_hero_img')">
-                        📷 Upload New Hero Image
-                    </button>
-                    <button type="button" class="dk-btn" style="background: #f1f5f9;" onclick="setTestPic('hero_img_url', 'preview_hero_img')">
-                        Set as Test Pic
-                    </button>
+        <!-- Hero Slides & Automatic Move Timing Controls -->
+        <div style="background: #f8fafc; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 18px 20px; margin-top: 10px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid #e2e8f0; margin-bottom: 16px;">
+                <div>
+                    <div style="font-weight: 800; color: #0369a1; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+                        <span>⏱️</span> Hero Slides Automatic Move Timeframe
+                    </div>
+                    <div style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">
+                        Admin decides how many seconds each slide stays before automatic rotation to the next slide.
+                    </div>
                 </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label class="dk-sh-form-label" style="margin: 0; white-space: nowrap; font-weight: 700;">Interval (Seconds):</label>
+                    <input type="number" id="hero_slide_interval" min="2" max="60" class="dk-admin-form-input" style="width: 100px; font-weight: 800; text-align: center; font-size: 1.05rem;" value="@(hero.AutoSlideIntervalSeconds > 0 ? hero.AutoSlideIntervalSeconds : 4)" />
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: #0f172a;">
+                        Hero Carousel Slides (<span id="hero_slides_count">@heroSlides.Count</span> Slides)
+                    </h4>
+                    <span style="font-size: 0.83rem; color: #64748b;">
+                        Admin can add slide images, customize badges, and set destination links.
+                    </span>
+                </div>
+                <button type="button" class="dk-btn dk-btn-primary" onclick="addNewHeroSlide()">
+                    + Add New Slide
+                </button>
+            </div>
+
+            <div id="hero_slides_container" style="display: flex; flex-direction: column; gap: 16px;">
+                @for (int sIdx = 0; sIdx < heroSlides.Count; sIdx++)
+                {
+                    var slide = heroSlides[sIdx];
+                    <div class="dk-sh-edit-card dk-sh-hero-slide-row" data-slide-id="@slide.Id" id="hero_slide_row_@sIdx" style="position: relative; border-left: 4px solid #0284c7; background: #ffffff;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span class="hero-slide-label" style="font-weight: 800; color: #0284c7; font-size: 0.95rem;">Slide #@(sIdx + 1)</span>
+                            <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 12px; padding: 4px 10px;" onclick="removeHeroSlide(this)">
+                                🗑️ Remove Slide
+                            </button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                            <div>
+                                <label class="dk-sh-form-label">Slide Badge Text (Floating badge on image)</label>
+                                <input type="text" class="dk-admin-form-input hero-slide-badge-input" value="@slide.SecondaryBadge" placeholder="e.g. New Country New Opportunities Same You! ✈️" />
+                            </div>
+                            <div>
+                                <label class="dk-sh-form-label">Slide Target Link URL</label>
+                                <input type="text" class="dk-admin-form-input hero-slide-link-input" value="@slide.LinkUrl" placeholder="/category/study-essentials" />
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <label class="dk-sh-form-label">Slide Title / Alt Caption</label>
+                            <input type="text" class="dk-admin-form-input hero-slide-title-input" value="@slide.Title" placeholder="Slide caption or description" />
+                        </div>
+                        <label class="dk-sh-form-label">Slide Image (Super Admin Replaceable)</label>
+                        <div class="dk-sh-img-ctrl-row">
+                            <div class="dk-sh-img-preview-box" style="width: 140px; height: 90px;">
+                                <img id="preview_hero_slide_@sIdx" src="@slide.ImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                            </div>
+                            <div style="flex: 1;">
+                                <input type="text" id="hero_slide_img_@sIdx" class="dk-admin-form-input hero-slide-img-input" value="@slide.ImageUrl" oninput="updateImgPreview('hero_slide_img_@sIdx', 'preview_hero_slide_@sIdx')" style="margin-bottom: 8px;" />
+                                <div style="display: flex; gap: 8px;">
+                                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 5px 12px;" onclick="triggerUploadFor('hero_slide_img_@sIdx', 'preview_hero_slide_@sIdx')">
+                                        📷 Upload Slide Image
+                                    </button>
+                                    <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 12px; padding: 5px 12px;" onclick="setTestPic('hero_slide_img_@sIdx', 'preview_hero_slide_@sIdx')">
+                                        Set as Test Pic
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -866,12 +932,107 @@
         }
     });
 
+    function updateHeroSlideNumbers() {
+        const rows = document.querySelectorAll("#hero_slides_container .dk-sh-hero-slide-row");
+        const countSpan = document.getElementById("hero_slides_count");
+        if (countSpan) countSpan.textContent = rows.length;
+        rows.forEach((row, i) => {
+            const label = row.querySelector(".hero-slide-label");
+            if (label) label.textContent = `Slide #${i + 1}`;
+        });
+    }
+
+    function removeHeroSlide(btn) {
+        const rows = document.querySelectorAll("#hero_slides_container .dk-sh-hero-slide-row");
+        if (rows.length <= 1) {
+            alert("At least one slide must remain configured.");
+            return;
+        }
+        const row = btn.closest(".dk-sh-hero-slide-row");
+        if (row) {
+            row.remove();
+            updateHeroSlideNumbers();
+        }
+    }
+
+    let slideCounter = 100;
+    function addNewHeroSlide() {
+        slideCounter++;
+        const sIdx = slideCounter;
+        const container = document.getElementById("hero_slides_container");
+        if (!container) return;
+        const newRow = document.createElement("div");
+        newRow.className = "dk-sh-edit-card dk-sh-hero-slide-row";
+        newRow.dataset.slideId = "hero-slide-" + sIdx;
+        newRow.id = "hero_slide_row_" + sIdx;
+        newRow.style.cssText = "position: relative; border-left: 4px solid #0284c7; background: #ffffff; margin-bottom: 16px;";
+        newRow.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span class="hero-slide-label" style="font-weight: 800; color: #0284c7; font-size: 0.95rem;">New Slide</span>
+                <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 12px; padding: 4px 10px;" onclick="removeHeroSlide(this)">
+                    🗑️ Remove Slide
+                </button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <div>
+                    <label class="dk-sh-form-label">Slide Badge Text (Floating badge on image)</label>
+                    <input type="text" class="dk-admin-form-input hero-slide-badge-input" value="Curated Study Gear &amp; Discounts 🎓" placeholder="e.g. New Country New Opportunities Same You! ✈️" />
+                </div>
+                <div>
+                    <label class="dk-sh-form-label">Slide Target Link URL</label>
+                    <input type="text" class="dk-admin-form-input hero-slide-link-input" value="/category/study-essentials" placeholder="/category/study-essentials" />
+                </div>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label class="dk-sh-form-label">Slide Title / Alt Caption</label>
+                <input type="text" class="dk-admin-form-input hero-slide-title-input" value="Student Essentials Slide" placeholder="Slide caption or description" />
+            </div>
+            <label class="dk-sh-form-label">Slide Image (Super Admin Replaceable)</label>
+            <div class="dk-sh-img-ctrl-row">
+                <div class="dk-sh-img-preview-box" style="width: 140px; height: 90px;">
+                    <img id="preview_hero_slide_${sIdx}" src="/images/study-hub/test-pic-placeholder.svg" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                </div>
+                <div style="flex: 1;">
+                    <input type="text" id="hero_slide_img_${sIdx}" class="dk-admin-form-input hero-slide-img-input" value="/images/study-hub/test-pic-placeholder.svg" oninput="updateImgPreview('hero_slide_img_${sIdx}', 'preview_hero_slide_${sIdx}')" style="margin-bottom: 8px;" />
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 5px 12px;" onclick="triggerUploadFor('hero_slide_img_${sIdx}', 'preview_hero_slide_${sIdx}')">
+                            📷 Upload Slide Image
+                        </button>
+                        <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 12px; padding: 5px 12px;" onclick="setTestPic('hero_slide_img_${sIdx}', 'preview_hero_slide_${sIdx}')">
+                            Set as Test Pic
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(newRow);
+        updateHeroSlideNumbers();
+    }
+
     async function saveAllChanges() {
         const btn = document.getElementById("btnSaveTop");
         if (btn) {
             btn.disabled = true;
             btn.textContent = "Saving...";
         }
+
+        // Build Hero Slides
+        const heroSlides = [];
+        document.querySelectorAll("#hero_slides_container .dk-sh-hero-slide-row").forEach((row, idx) => {
+            const imgInput = row.querySelector(".hero-slide-img-input");
+            const badgeInput = row.querySelector(".hero-slide-badge-input");
+            const linkInput = row.querySelector(".hero-slide-link-input");
+            const titleInput = row.querySelector(".hero-slide-title-input");
+            heroSlides.push({
+                Id: row.dataset.slideId || ("slide-" + (idx + 1)),
+                ImageUrl: imgInput ? imgInput.value : "/images/study-hub/test-pic-placeholder.svg",
+                SecondaryBadge: badgeInput ? badgeInput.value : "",
+                LinkUrl: linkInput ? linkInput.value : "/category/study-essentials",
+                Title: titleInput ? titleInput.value : ""
+            });
+        });
+
+        const slideInterval = parseInt(document.getElementById("hero_slide_interval")?.value || "4", 10);
 
         // Build StudyHubDto JSON payload
         const payload = {
@@ -881,28 +1042,30 @@
                 Subtitle: document.getElementById("hero_sub")?.value || "",
                 ButtonText: document.getElementById("hero_btn_text")?.value || "Explore Study Essentials →",
                 ButtonUrl: document.getElementById("hero_btn_url")?.value || "/category/study-essentials",
-                ImageUrl: document.getElementById("hero_img_url")?.value || "/images/study-hub/test-pic-placeholder.svg",
-                SecondaryBadge: document.getElementById("hero_sec_badge")?.value || ""
+                ImageUrl: heroSlides.length > 0 ? heroSlides[0].ImageUrl : "/images/study-hub/test-pic-placeholder.svg",
+                SecondaryBadge: heroSlides.length > 0 ? heroSlides[0].SecondaryBadge : (document.getElementById("hero_sec_badge")?.value || ""),
+                AutoSlideIntervalSeconds: isNaN(slideInterval) || slideInterval < 2 ? 4 : slideInterval,
+                Slides: heroSlides
             },
             Section1: {
-                Title: document.getElementById("s1_title")?.value || "1. Shop by Category",
+                Title: document.getElementById("s1_title")?.value || "Shop by Category",
                 Subtitle: document.getElementById("s1_subtitle")?.value || "",
                 ViewAllLinkText: document.getElementById("s1_view_all_text")?.value || "View All Categories →",
                 ViewAllLinkUrl: document.getElementById("s1_view_all_url")?.value || "/category/study-essentials",
                 Cards: []
             },
             Section2: {
-                Title: document.getElementById("s2_title")?.value || "2. Our Study Essentials Kits",
+                Title: document.getElementById("s2_title")?.value || "Our Study Essentials Kits",
                 Subtitle: document.getElementById("s2_subtitle")?.value || "",
                 Kits: []
             },
             Section3Detail: {
-                Title: document.getElementById("s3_title")?.value || "3. Key Study Essentials - In Detail",
+                Title: document.getElementById("s3_title")?.value || "Key Study Essentials - In Detail",
                 Subtitle: document.getElementById("s3_subtitle")?.value || "",
                 Cards: []
             },
             Section4: {
-                Title: document.getElementById("s4_title")?.value || "4. Abroad Packing Checklist",
+                Title: document.getElementById("s4_title")?.value || "Abroad Packing Checklist",
                 BadgeText: document.getElementById("s4_badge")?.value || "Highly Recommended",
                 Subtitle: document.getElementById("s4_sub")?.value || "",
                 ButtonText: document.getElementById("s4_btn_text")?.value || "View Missing Essentials →",
@@ -911,14 +1074,14 @@
                 Items: []
             },
             Section5: {
-                Title: document.getElementById("s5_title")?.value || "5. Shop by Destination",
+                Title: document.getElementById("s5_title")?.value || "Shop by Destination",
                 Subtitle: document.getElementById("s5_subtitle")?.value || "",
                 ButtonText: "Explore Essentials by Country →",
                 ButtonUrl: "/category/study-essentials",
                 Countries: []
             },
             Section6: {
-                StepNumber: document.getElementById("s6_step")?.value || "6.",
+                StepNumber: document.getElementById("s6_step")?.value || "",
                 Title: document.getElementById("s6_title")?.value || "Build Your Own Study Kit",
                 BadgeText: "Customize Your Perfect Kit",
                 Subtitle: document.getElementById("s6_sub")?.value || "",
@@ -927,12 +1090,12 @@
                 Items: []
             },
             Section7: {
-                Title: document.getElementById("s7_title")?.value || "7. Best Sellers & Student Favorites",
+                Title: document.getElementById("s7_title")?.value || "Best Sellers & Student Favorites",
                 Subtitle: document.getElementById("s7_sub")?.value || "",
                 Products: []
             },
             Section8: {
-                Title: document.getElementById("s8_title")?.value || "8. Smart Study Setup",
+                Title: document.getElementById("s8_title")?.value || "Smart Study Setup",
                 Subtitle: document.getElementById("s8_sub")?.value || "",
                 ImageUrl: document.getElementById("s8_img_url")?.value || "/images/study-hub/test-pic-placeholder.svg",
                 ButtonText: "Shop Study Setup →",
@@ -940,12 +1103,12 @@
                 Items: []
             },
             Section9: {
-                Title: document.getElementById("s9_title")?.value || "9. Why Choose DreamFlyKit?",
+                Title: document.getElementById("s9_title")?.value || "Why Choose DreamFlyKit?",
                 Subtitle: document.getElementById("s9_sub")?.value || "",
                 Pillars: []
             },
             Section10: {
-                Title: document.getElementById("s10_title")?.value || "10. Frequently Asked Questions",
+                Title: document.getElementById("s10_title")?.value || "Frequently Asked Questions",
                 Subtitle: document.getElementById("s10_sub")?.value || "",
                 Faqs: []
             },

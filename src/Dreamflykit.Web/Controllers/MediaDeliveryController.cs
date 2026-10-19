@@ -30,20 +30,26 @@ public sealed class MediaDeliveryController : Controller
     [ResponseCache(Duration = 2592000, Location = ResponseCacheLocation.Any)]
     public async Task<IActionResult> GetMedia(string? path, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(path))
+        if (string.IsNullOrWhiteSpace(path) || path.Contains("..") || path.Contains(':'))
         {
-            return NotFound();
+            return BadRequest("Invalid media path specification.");
         }
 
         // Normalize object key (all assets stored under media/ in S3)
-        var cleanPath = path.Trim().TrimStart('/');
+        var cleanPath = path.Trim().TrimStart('/', '\\');
         var objectKey = cleanPath.StartsWith("media/", StringComparison.OrdinalIgnoreCase)
             ? cleanPath
             : $"media/{cleanPath}";
 
-        var cacheRoot = Path.Combine(_environment.ContentRootPath, "App_Data", "MediaCache");
-        var safeRelativePath = objectKey.Replace('/', Path.DirectorySeparatorChar);
-        var cachedFilePath = Path.Combine(cacheRoot, safeRelativePath);
+        var cacheRoot = Path.GetFullPath(Path.Combine(_environment.ContentRootPath, "App_Data", "MediaCache"));
+        var safeRelativePath = objectKey.Replace('/', Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar);
+        var cachedFilePath = Path.GetFullPath(Path.Combine(cacheRoot, safeRelativePath));
+
+        // Enforce canonical directory boundary check (CWE-22 mitigation)
+        if (!cachedFilePath.StartsWith(cacheRoot, StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest("Invalid media path boundary.");
+        }
 
         var contentType = GetContentType(objectKey);
 

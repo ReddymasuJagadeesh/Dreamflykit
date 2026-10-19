@@ -19,7 +19,7 @@ public sealed class CheckoutViewModel
     [Required(ErrorMessage = "Please select a payment method.")]
     public string PaymentMethod { get; set; } = "COD"; // COD or ONLINE
 
-    public CartSummary? Cart { get; set; }
+    public CartSummary Cart { get; set; } = new();
 }
 
 public sealed class OrderConfirmationViewModel

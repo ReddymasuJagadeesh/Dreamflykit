@@ -227,15 +227,15 @@ public sealed class ProductsController : SellerBaseController
 
         var shortDesc = !string.IsNullOrWhiteSpace(model.ShortDescription)
             ? model.ShortDescription.Trim()
-            : (model.Description.Length > 180 ? model.Description.Substring(0, 180) + "..." : model.Description).Trim();
+            : ((model.Description?.Length ?? 0) > 180 ? model.Description!.Substring(0, 180) + "..." : (model.Description ?? string.Empty)).Trim();
 
         // Create product - NO price is provided by seller!
         var product = new Product(
             model.CategoryId,
-            model.Name.Trim(),
+            (model.Name ?? string.Empty).Trim(),
             cleanSlug,
             shortDesc,
-            model.Description.Trim(),
+            (model.Description ?? string.Empty).Trim(),
             displayOrder: 0);
 
         if (model.SubcategoryId.HasValue && model.SubcategoryId.Value != Guid.Empty)
@@ -251,13 +251,13 @@ public sealed class ProductsController : SellerBaseController
         // Upload primary image if attached
         if (model.ImageFile != null && model.ImageFile.Length > 0)
         {
-            var uploadedAssetId = await UploadProductMediaFileAsync(model.ImageFile, product.Id, model.Name.Trim(), cancellationToken);
+            var uploadedAssetId = await UploadProductMediaFileAsync(model.ImageFile, product.Id, (model.Name ?? string.Empty).Trim(), cancellationToken);
             if (uploadedAssetId.HasValue)
             {
                 var media = new ProductMedia(
                     product.Id,
                     uploadedAssetId.Value,
-                    !string.IsNullOrWhiteSpace(model.AltText) ? model.AltText.Trim() : model.Name.Trim(),
+                    !string.IsNullOrWhiteSpace(model.AltText) ? model.AltText.Trim() : (model.Name ?? string.Empty).Trim(),
                     displayOrder: 0,
                     isPrimary: true);
 
