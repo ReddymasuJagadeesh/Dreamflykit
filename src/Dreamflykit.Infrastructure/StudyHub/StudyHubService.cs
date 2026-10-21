@@ -116,6 +116,10 @@ public sealed class StudyHubService : IStudyHubService
                             dto.CategoriesPage = def.CategoriesPage;
                         if (dto.Section3 == null || dto.Section3.Items.Count == 0)
                             dto.Section3 = def.Section3;
+                        if (dto.ChecklistPage == null || dto.ChecklistPage.Categories.Count == 0)
+                            dto.ChecklistPage = def.ChecklistPage;
+                        if (dto.AbroadProfile == null || dto.AbroadProfile.Services.Count == 0)
+                            dto.AbroadProfile = def.AbroadProfile;
 
                         _cache.Set(CacheKey, dto, TimeSpan.FromHours(4));
                         return dto;

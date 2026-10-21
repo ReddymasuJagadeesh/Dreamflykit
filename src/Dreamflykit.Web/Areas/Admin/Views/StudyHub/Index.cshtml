@@ -16,6 +16,8 @@
     var s10 = Model.Section10 ?? new();
     var bBanner = Model.BottomBanner ?? new();
     var catPage = Model.CategoriesPage ?? new();
+    var chkPage = Model.ChecklistPage ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultChecklistPage();
+    var abroadProfile = Model.AbroadProfile ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultAbroadProfile();
 
     var heroSlides = hero.Slides != null && hero.Slides.Count > 0
         ? hero.Slides
@@ -37,12 +39,16 @@
             </p>
         </div>
         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-            <a href="/study-abroad-hub" target="_blank" class="dk-btn" style="background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+            <a href="/study-abroad-hub" target="_blank" class="dk-btn" style="background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; font-size: 13px; font-weight: 700; text-decoration: none; padding: 8px 16px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                View Live 10-Section Hub
+                ✈️ View Study Abroad Hub Profile
             </a>
             <a href="/category/study-essentials" target="_blank" class="dk-btn" style="background: #ffffff; color: #0284c7; border: 1px solid #bae6fd; font-size: 13px; font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
                 View Live Categories Page
+            </a>
+            <a href="/abroad-packing-checklist" target="_blank" class="dk-btn" style="background: #ffffff; color: #16a34a; border: 1px solid #bbf7d0; font-size: 13px; font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                View Live Checklist Page
             </a>
             <form asp-action="ResetDefaults" method="post" style="display: inline;" onsubmit="return confirm('Restore all 10 sections and categories to default content and test pics?');">
                 @Html.AntiForgeryToken()
@@ -75,11 +81,13 @@
 
 <!-- TABS NAVIGATION -->
 <div class="dk-sh-admin-tabs">
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-abroad-profile')" style="background: #e0f2fe; border-color: #38bdf8; color: #0369a1; font-weight: 800;">✈️ Study Abroad Hub Profile</button>
     <button type="button" class="dk-sh-tab-btn active" onclick="switchAdminTab('tab-hero')">Hero &amp; Trust</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s1')">1. Shop by Category</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s2')">2. Study Kits</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s3')">3. Abroad Essentials</button>
-    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s4')">4. Packing Checklist</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s4')">4. Hub Checklist Card</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-checklist')" style="background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 800;">📋 Checklist Page (10 Categories)</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s5')">5. Destinations</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s6')">6. Build Kit</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s7')">7. Best Sellers</button>
@@ -486,6 +494,16 @@
                 </div>
             </div>
         </div>
+
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 16px; margin-top: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+            <div>
+                <strong style="color: #1e40af; font-size: 13.5px; display: block;">Full Checklist Page Controls Available</strong>
+                <span style="font-size: 12.5px; color: #3b82f6;">When users click the checklist card or button, they are redirected to the live 10-category checklist page.</span>
+            </div>
+            <button type="button" class="dk-btn" style="background: #0284c7; color: #fff; font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 6px; border: none; cursor: pointer;" onclick="switchAdminTab('tab-checklist')">
+                Open 10-Category Checklist Tab →
+            </button>
+        </div>
     </div>
 </div>
 
@@ -835,6 +853,411 @@
     </div>
 </div>
 
+<!-- ========================================================
+     TAB CHECKLIST: ABROAD PACKING CHECKLIST PAGE (10 CATEGORIES)
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-checklist">
+    <!-- Header info banner -->
+    <div class="dk-admin-card" style="margin-bottom: 20px; border-left: 5px solid #16a34a;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+            <div>
+                <h3 class="dk-sh-tab-title" style="margin: 0; color: #166534; display: flex; align-items: center; gap: 8px;">
+                    <span>📋</span> Abroad Packing Checklist Page Controls (Dedicated Page)
+                </h3>
+                <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">
+                    Controls for the live page at <code>/abroad-packing-checklist</code> (Dreamflykit Profile). Customize the traveler hero, all 10 categories, items, and bottom banner.
+                </p>
+            </div>
+            <a href="/abroad-packing-checklist" target="_blank" class="dk-btn" style="background: #16a34a; color: #fff; font-size: 12.5px; font-weight: 700; padding: 7px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                Open Live Checklist Page
+            </a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Hero Pill Badge</label>
+                <input type="text" id="chk_hero_pill" class="dk-admin-form-input" value="@chkPage.HeroPill" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Hero Floating Badge</label>
+                <input type="text" id="chk_hero_badge" class="dk-admin-form-input" value="@chkPage.HeroBadgeText" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Hero Tagline / Subtitle</label>
+                <input type="text" id="chk_hero_tagline" class="dk-admin-form-input" value="@chkPage.HeroSubtitle" />
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Hero Page Main Heading</label>
+                <input type="text" id="chk_hero_title" class="dk-admin-form-input" value="@chkPage.HeroTitle" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Default Country Selection</label>
+                <input type="text" id="chk_dest" class="dk-admin-form-input" value="@chkPage.SelectedDestination" />
+            </div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+            <label class="dk-sh-form-label">Hero Description</label>
+            <textarea id="chk_hero_desc" class="dk-admin-form-input" rows="2">@chkPage.HeroDescription</textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Shop Missing Button Text</label>
+                <input type="text" id="chk_shop_missing_btn" class="dk-admin-form-input" value="@chkPage.ShopMissingButtonText" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Shop Missing Button URL</label>
+                <input type="text" id="chk_shop_missing_url" class="dk-admin-form-input" value="@chkPage.ShopMissingButtonUrl" />
+            </div>
+        </div>
+
+        <label class="dk-sh-form-label">Hero Airport Traveler Image (Super Admin Replaceable)</label>
+        <div class="dk-sh-img-ctrl-row">
+            <div class="dk-sh-img-preview-box" style="width: 140px; height: 90px;">
+                <img id="preview_chk_hero_img" src="@chkPage.HeroImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+            </div>
+            <div style="flex: 1;">
+                <input type="text" id="chk_hero_img_url" class="dk-admin-form-input" value="@chkPage.HeroImageUrl" oninput="updateImgPreview('chk_hero_img_url', 'preview_chk_hero_img')" style="margin-bottom: 8px;" />
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" class="dk-btn dk-btn-primary" onclick="triggerUploadFor('chk_hero_img_url', 'preview_chk_hero_img')">📷 Upload Airport Pic</button>
+                    <button type="button" class="dk-btn" style="background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; font-weight: 700;" onclick="setModelPic('chk_hero_img_url', 'preview_chk_hero_img', '/images/study-hub/checklist-hero.jpg')">Set Model Airport Pic</button>
+                    <button type="button" class="dk-btn" style="background: #f1f5f9;" onclick="setTestPic('chk_hero_img_url', 'preview_chk_hero_img')">Test Pic</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10 Categories Management -->
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">10 Packing Checklist Categories</h3>
+        <p style="margin: -10px 0 16px 0; color: #64748b; font-size: 13px;">
+            Edit titles, progress summaries, images, and checklist items. 
+            <b>Tip:</b> Enter one item per line in the items box. Append an asterisk <code>*</code> to mark it pre-checked by default (e.g., <code>Laptop &amp; Mouse *</code>).
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;">
+            @for (int i = 0; i < chkPage.Categories.Count; i++)
+            {
+                var cat = chkPage.Categories[i];
+                var itemsText = string.Join("\n", cat.Items.Select(it => it.Name + (it.IsChecked ? " *" : "")));
+                <div class="dk-sh-edit-card" style="border-top: 4px solid #0284c7;">
+                    <input type="hidden" id="chk_cat_id_@i" value="@cat.Id" />
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-weight: 800; color: #0284c7; font-size: 13px; text-transform: uppercase;">
+                            Category #@(cat.Number > 0 ? cat.Number : (i + 1))
+                        </span>
+                        <input type="text" id="chk_cat_total_disp_@i" class="dk-admin-form-input" value="@cat.TotalCountDisplay" style="width: 130px; font-size: 11px; padding: 4px 8px;" placeholder="View All (10) ↓" />
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label class="dk-sh-form-label">Category Title</label>
+                            <input type="text" id="chk_cat_title_@i" class="dk-admin-form-input" value="@cat.Title" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">Checked Summary</label>
+                            <input type="text" id="chk_cat_badge_@i" class="dk-admin-form-input" value="@cat.Subtitle" placeholder="e.g. 6 of 10 items checked" />
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label class="dk-sh-form-label">Shop Button Text</label>
+                            <input type="text" id="chk_cat_btn_@i" class="dk-admin-form-input" value="@cat.ShopButtonText" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">Shop Target Link</label>
+                            <input type="text" id="chk_cat_link_@i" class="dk-admin-form-input" value="@cat.ShopButtonUrl" />
+                        </div>
+                    </div>
+
+                    <label class="dk-sh-form-label">Category Photo (Super Admin Replaceable)</label>
+                    <div class="dk-sh-img-ctrl-row" style="margin-bottom: 12px;">
+                        <div class="dk-sh-img-preview-box" style="width: 90px; height: 70px;">
+                            <img id="preview_chk_cat_@i" src="@cat.ImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="text" id="chk_cat_img_@i" class="dk-admin-form-input" value="@cat.ImageUrl" oninput="updateImgPreview('chk_cat_img_@i', 'preview_chk_cat_@i')" style="margin-bottom: 6px; font-size: 12px;" />
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; padding: 4px 10px;" onclick="triggerUploadFor('chk_cat_img_@i', 'preview_chk_cat_@i')">📷 Upload Pic</button>
+                                <button type="button" class="dk-btn" style="background: #e0f2fe; color: #0369a1; font-size: 11px; padding: 4px 8px; border: 1px solid #7dd3fc;" onclick="setModelPic('chk_cat_img_@i', 'preview_chk_cat_@i', '@cat.ImageUrl')">Set Model Pic</button>
+                                <button type="button" class="dk-btn" style="font-size: 11px; padding: 4px 8px; background: #f1f5f9;" onclick="setTestPic('chk_cat_img_@i', 'preview_chk_cat_@i')">Test Pic</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label class="dk-sh-form-label">Checklist Items (1 per line; * = checked)</label>
+                    <textarea id="chk_cat_items_@i" class="dk-admin-form-input" rows="5" style="font-family: monospace; font-size: 12.5px; line-height: 1.4;">@itemsText</textarea>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Quick Tips and Bottom Banner -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="dk-admin-card">
+            <h3 class="dk-sh-tab-title">💡 Quick Tips (One tip per line)</h3>
+            <textarea id="chk_quick_tips" class="dk-admin-form-input" rows="8" style="font-family: monospace; font-size: 13px; line-height: 1.5;">@string.Join("\n", chkPage.QuickTips)</textarea>
+        </div>
+
+        <div class="dk-admin-card">
+            <h3 class="dk-sh-tab-title">✈️ Checklist Bottom CTA Banner</h3>
+            <div style="margin-bottom: 10px;">
+                <label class="dk-sh-form-label">Banner Title</label>
+                <input type="text" id="chk_banner_title" class="dk-admin-form-input" value="@chkPage.BottomBannerTitle" />
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label class="dk-sh-form-label">Banner Subtitle</label>
+                <input type="text" id="chk_banner_sub" class="dk-admin-form-input" value="@chkPage.BottomBannerSubtitle" />
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                <div>
+                    <label class="dk-sh-form-label">Button Text</label>
+                    <input type="text" id="chk_banner_btn_text" class="dk-admin-form-input" value="@chkPage.BottomBannerButtonText" />
+                </div>
+                <div>
+                    <label class="dk-sh-form-label">Button Target URL</label>
+                    <input type="text" id="chk_banner_btn_url" class="dk-admin-form-input" value="@chkPage.BottomBannerButtonUrl" />
+                </div>
+            </div>
+            <label class="dk-sh-form-label">Banner Background Image (Super Admin Replaceable)</label>
+            <div class="dk-sh-img-ctrl-row">
+                <div class="dk-sh-img-preview-box" style="width: 100px; height: 60px;">
+                    <img id="preview_chk_banner_img" src="@chkPage.BottomBannerImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                </div>
+                <div style="flex: 1;">
+                    <input type="text" id="chk_banner_img_url" class="dk-admin-form-input" value="@chkPage.BottomBannerImageUrl" oninput="updateImgPreview('chk_banner_img_url', 'preview_chk_banner_img')" style="margin-bottom: 6px; font-size: 12px;" />
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                        <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; padding: 4px 10px;" onclick="triggerUploadFor('chk_banner_img_url', 'preview_chk_banner_img')">📷 Upload Banner</button>
+                        <button type="button" class="dk-btn" style="background: #e0f2fe; color: #0369a1; font-size: 11px; padding: 4px 8px; border: 1px solid #7dd3fc;" onclick="setModelPic('chk_banner_img_url', 'preview_chk_banner_img', '/images/study-hub/checklist-bottom-banner.jpg')">Set Model Banner</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     TAB ABROAD PROFILE: STUDY ABROAD HUB PROFILE (SERVICES PORTAL)
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-abroad-profile">
+    <div class="dk-admin-card" style="margin-bottom: 20px; border-left: 5px solid #0284c7;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+            <div>
+                <h3 class="dk-sh-tab-title" style="margin: 0; color: #0369a1; display: flex; align-items: center; gap: 8px;">
+                    <span>✈️</span> Study Abroad Hub Profile Management (Separate Education Services Portal)
+                </h3>
+                <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">
+                    Controls for the dedicated services portal at <code>/study-abroad-hub</code>. Images left empty will display the "Uploading Soon" placeholder until uploaded by Super Admin.
+                </p>
+            </div>
+            <a href="/study-abroad-hub" target="_blank" class="dk-btn" style="background: #0284c7; color: #fff; font-size: 12.5px; font-weight: 700; padding: 7px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                View Live Hub Profile
+            </a>
+        </div>
+
+        <h4 style="font-size: 14px; font-weight: 800; color: #0f172a; margin: 16px 0 10px 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
+            1. Full-Width Hero Banner
+        </h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Hero Badge Pill</label>
+                <input type="text" id="abroad_hero_badge" class="dk-admin-form-input" value="@abroadProfile.HeroBadge" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Hero Title Part 1</label>
+                <input type="text" id="abroad_hero_title" class="dk-admin-form-input" value="@abroadProfile.HeroTitle" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Hero Title Part 2 (Highlight)</label>
+                <input type="text" id="abroad_hero_highlight" class="dk-admin-form-input" value="@abroadProfile.HeroTitleHighlight" />
+            </div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+            <label class="dk-sh-form-label">Hero Subtitle</label>
+            <input type="text" id="abroad_hero_sub" class="dk-admin-form-input" value="@abroadProfile.HeroSubtitle" />
+            <input type="hidden" id="abroad_hero_note" value="" />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Hero CTA Button Text</label>
+                <input type="text" id="abroad_hero_cta_text" class="dk-admin-form-input" value="@abroadProfile.HeroCtaText" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Hero CTA Target URL</label>
+                <input type="text" id="abroad_hero_cta_url" class="dk-admin-form-input" value="@abroadProfile.HeroCtaUrl" />
+            </div>
+        </div>
+
+        <label class="dk-sh-form-label">Full-Width Hero Visual Image (Super Admin Replaceable • Empty = "Uploading Soon")</label>
+        <div class="dk-sh-img-ctrl-row">
+            <div class="dk-sh-img-preview-box" style="width: 140px; height: 90px;">
+                <img id="preview_abroad_hero_img" src="@(string.IsNullOrWhiteSpace(abroadProfile.HeroImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : abroadProfile.HeroImageUrl)" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+            </div>
+            <div style="flex: 1;">
+                <input type="text" id="abroad_hero_img_url" class="dk-admin-form-input" value="@abroadProfile.HeroImageUrl" placeholder="Leave empty for 'Uploading Soon' placeholder" oninput="updateImgPreview('abroad_hero_img_url', 'preview_abroad_hero_img')" style="margin-bottom: 8px;" />
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" class="dk-btn dk-btn-primary" onclick="triggerUploadFor('abroad_hero_img_url', 'preview_abroad_hero_img')">📷 Upload Full Hero Image</button>
+                    <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 12px; font-weight: 700;" onclick="clearAdminImg('abroad_hero_img_url', 'preview_abroad_hero_img')">Set As 'Uploading Soon'</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Quick Service Pills Controls (Admin Chooses What to Display) -->
+        <div style="background: #f8fafc; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 18px 20px; margin-top: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+                <div>
+                    <h5 style="margin: 0; font-size: 13.5px; font-weight: 800; color: #0369a1; text-transform: uppercase; letter-spacing: 0.5px;">
+                        🎯 Hero Quick Service Pills (Admin Chooses What to Display Over Hero Banner)
+                    </h5>
+                    <p style="margin: 2px 0 0 0; color: #64748b; font-size: 12px;">
+                        Check or uncheck pills to choose what to display over the Hero Banner. Admin can edit titles, links, and icons anytime.
+                    </p>
+                </div>
+                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="addAbroadHeroPill()">
+                    + Add New Pill
+                </button>
+            </div>
+
+            <div id="abroad_hero_pills_container" style="display: flex; flex-direction: column; gap: 10px;">
+                @for (int pIdx = 0; pIdx < abroadProfile.HeroServices.Count; pIdx++)
+                {
+                    var p = abroadProfile.HeroServices[pIdx];
+                    <div class="abroad-hero-pill-row" data-pill-id="@p.Id" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; display: grid; grid-template-columns: auto 2fr 2fr 1.5fr auto; gap: 12px; align-items: center;">
+                        <label style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12px; color: #0284c7; cursor: pointer; white-space: nowrap; margin-top: 14px;">
+                            <input type="checkbox" class="abroad-hs-enabled-chk" @(p.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #0284c7;" />
+                            <span>Show</span>
+                        </label>
+                        <div>
+                            <label class="dk-sh-form-label" style="margin-bottom: 2px;">Pill Title</label>
+                            <input type="text" class="dk-admin-form-input abroad-hs-title-input" value="@p.Title" placeholder="e.g. Educational Loans" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="margin-bottom: 2px;">Target URL / Anchor</label>
+                            <input type="text" class="dk-admin-form-input abroad-hs-link-input" value="@p.TargetUrl" placeholder="#service-loans" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="margin-bottom: 2px;">Icon Type</label>
+                            <select class="dk-admin-form-input abroad-hs-icon-select">
+                                <option value="loan" selected="@(p.IconType == "loan" ? "selected" : null)">🎓 Education Loan</option>
+                                <option value="gr_loan" selected="@(p.IconType == "gr_loan" ? "selected" : null)">🏦 GR Loans</option>
+                                <option value="consultancy" selected="@(p.IconType == "consultancy" ? "selected" : null)">👥 Consultancy Details</option>
+                                <option value="near_me" selected="@(p.IconType == "near_me" ? "selected" : null)">📍 Find Near Me</option>
+                                <option value="insurance" selected="@(p.IconType == "insurance" ? "selected" : null)">🛡️ Health Insurance</option>
+                                <option value="booking" selected="@(p.IconType == "booking" ? "selected" : null)">📅 Booking Slots</option>
+                                <option value="test" selected="@(p.IconType == "test" ? "selected" : null)">📖 Language Tests</option>
+                                <option value="scholarship" selected="@(p.IconType == "scholarship" ? "selected" : null)">🎓 Scholarships</option>
+                            </select>
+                        </div>
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 11px; padding: 6px 10px; margin-top: 14px;" onclick="this.closest('.abroad-hero-pill-row').remove()" title="Remove pill">
+                            🗑️
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 6 Education Services Management -->
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <h3 class="dk-sh-tab-title">2. Explore Our Services (6 Core Services)</h3>
+        <p style="margin: -10px 0 16px 0; color: #64748b; font-size: 13px;">
+            Edit titles, descriptions, button labels, links, and upload service images. Empty images will display the "Uploading Soon" badge.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;">
+            @for (int i = 0; i < abroadProfile.Services.Count; i++)
+            {
+                var srv = abroadProfile.Services[i];
+                <div class="dk-sh-edit-card" style="border-top: 4px solid @(srv.ThemeColor == "purple" ? "#7c3aed" : srv.ThemeColor == "teal" ? "#0d9488" : "#0284c7");">
+                    <input type="hidden" id="abroad_srv_id_@i" value="@srv.Id" />
+                    <input type="hidden" id="abroad_srv_color_@i" value="@srv.ThemeColor" />
+                    <input type="hidden" id="abroad_srv_icon_@i" value="@srv.IconType" />
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-weight: 800; color: @(srv.ThemeColor == "purple" ? "#7c3aed" : srv.ThemeColor == "teal" ? "#0d9488" : "#0284c7"); font-size: 13px; text-transform: uppercase;">
+                            Service #@(i + 1): @srv.Title
+                        </span>
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                        <label class="dk-sh-form-label">Service Title</label>
+                        <input type="text" id="abroad_srv_title_@i" class="dk-admin-form-input" value="@srv.Title" />
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                        <label class="dk-sh-form-label">Description</label>
+                        <textarea id="abroad_srv_desc_@i" class="dk-admin-form-input" rows="2">@srv.Description</textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label class="dk-sh-form-label">Button Text</label>
+                            <input type="text" id="abroad_srv_btn_@i" class="dk-admin-form-input" value="@srv.ButtonText" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">Target Link URL</label>
+                            <input type="text" id="abroad_srv_link_@i" class="dk-admin-form-input" value="@srv.ButtonUrl" />
+                        </div>
+                    </div>
+
+                    <label class="dk-sh-form-label">Service Image (Super Admin Replaceable • Empty = "Uploading Soon")</label>
+                    <div class="dk-sh-img-ctrl-row" style="margin-bottom: 12px;">
+                        <div class="dk-sh-img-preview-box" style="width: 80px; height: 60px;">
+                            <img id="preview_abroad_srv_img_@i" src="@(string.IsNullOrWhiteSpace(srv.ImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : srv.ImageUrl)" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="text" id="abroad_srv_img_@i" class="dk-admin-form-input" value="@srv.ImageUrl" placeholder="Leave empty for 'Uploading Soon'" oninput="updateImgPreview('abroad_srv_img_@i', 'preview_abroad_srv_img_@i')" style="margin-bottom: 6px; font-size: 12px;" />
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; padding: 4px 10px;" onclick="triggerUploadFor('abroad_srv_img_@i', 'preview_abroad_srv_img_@i')">📷 Upload Pic</button>
+                                <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 11px; padding: 4px 8px;" onclick="clearAdminImg('abroad_srv_img_@i', 'preview_abroad_srv_img_@i')">Set Uploading Soon</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (srv.SubService != null)
+                    {
+                        <div style="background: #f1f5f9; border-radius: 8px; padding: 10px 12px; margin-top: 8px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 6px;">Sub-Card Feature</div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
+                                <div>
+                                    <label class="dk-sh-form-label">Sub Title</label>
+                                    <input type="text" id="abroad_sub_title_@i" class="dk-admin-form-input" value="@srv.SubService.Title" />
+                                </div>
+                                <div>
+                                    <label class="dk-sh-form-label">Sub Link</label>
+                                    <input type="text" id="abroad_sub_link_@i" class="dk-admin-form-input" value="@srv.SubService.ButtonUrl" />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="dk-sh-form-label">Sub Description</label>
+                                <input type="text" id="abroad_sub_desc_@i" class="dk-admin-form-input" value="@srv.SubService.Description" />
+                            </div>
+                        </div>
+                    }
+
+                    @if (srv.Bullets != null && srv.Bullets.Count > 0)
+                    {
+                        <div style="margin-top: 8px;">
+                            <label class="dk-sh-form-label">Bullet Highlights (1 per line)</label>
+                            <textarea id="abroad_srv_bullets_@i" class="dk-admin-form-input" rows="3">@string.Join("\n", srv.Bullets)</textarea>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
 <!-- Floating Bottom Save Bar -->
 <div style="position: sticky; bottom: 20px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); padding: 14px 24px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 100; margin-top: 30px;">
     <div style="font-size: 13.5px; font-weight: 600;">
@@ -976,6 +1399,53 @@
         const img = document.getElementById(imgId);
         if (input) input.value = url;
         if (img) img.src = url;
+    }
+
+    function clearAdminImg(inputId, imgId) {
+        const input = document.getElementById(inputId);
+        const img = document.getElementById(imgId);
+        if (input) input.value = "";
+        if (img) img.src = "/images/study-hub/test-pic-placeholder.svg";
+    }
+
+    function addAbroadHeroPill() {
+        const container = document.getElementById("abroad_hero_pills_container");
+        if (!container) return;
+        const newRow = document.createElement("div");
+        newRow.className = "abroad-hero-pill-row";
+        newRow.dataset.pillId = "hs-" + Date.now();
+        newRow.style.cssText = "background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; display: grid; grid-template-columns: auto 2fr 2fr 1.5fr auto; gap: 12px; align-items: center;";
+        newRow.innerHTML = `
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12px; color: #0284c7; cursor: pointer; white-space: nowrap; margin-top: 14px;">
+                <input type="checkbox" class="abroad-hs-enabled-chk" checked style="width: 16px; height: 16px; accent-color: #0284c7;" />
+                <span>Show</span>
+            </label>
+            <div>
+                <label class="dk-sh-form-label" style="margin-bottom: 2px;">Pill Title</label>
+                <input type="text" class="dk-admin-form-input abroad-hs-title-input" value="New Service" placeholder="e.g. Visa Guidance" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label" style="margin-bottom: 2px;">Target URL / Anchor</label>
+                <input type="text" class="dk-admin-form-input abroad-hs-link-input" value="#explore-services" placeholder="#explore-services" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label" style="margin-bottom: 2px;">Icon Type</label>
+                <select class="dk-admin-form-input abroad-hs-icon-select">
+                    <option value="loan">🎓 Education Loan</option>
+                    <option value="gr_loan">🏦 GR Loans</option>
+                    <option value="consultancy">👥 Consultancy Details</option>
+                    <option value="near_me">📍 Find Near Me</option>
+                    <option value="insurance">🛡️ Health Insurance</option>
+                    <option value="booking">📅 Booking Slots</option>
+                    <option value="test">📖 Language Tests</option>
+                    <option value="scholarship">🎓 Scholarships</option>
+                </select>
+            </div>
+            <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 11px; padding: 6px 10px; margin-top: 14px;" onclick="this.closest('.abroad-hero-pill-row').remove()" title="Remove pill">
+                🗑️
+            </button>
+        `;
+        container.appendChild(newRow);
     }
 
     function triggerUploadFor(inputId, imgId) {
@@ -1216,6 +1686,25 @@
                 HeroSubtitle: document.getElementById("cat_hero_sub")?.value || "",
                 HeroImageUrl: document.getElementById("cat_hero_img_url")?.value || "/images/study-hub/test-pic-placeholder.svg",
                 Categories: []
+            },
+            ChecklistPage: {
+                HeroPill: document.getElementById("chk_hero_pill")?.value || "STUDY ESSENTIALS",
+                HeroTitle: document.getElementById("chk_hero_title")?.value || "Abroad Packing Checklist",
+                HeroSubtitle: document.getElementById("chk_hero_tagline")?.value || "Don't just pack. Pack smart!",
+                HeroDescription: document.getElementById("chk_hero_desc")?.value || "",
+                HeroBadgeText: document.getElementById("chk_hero_badge")?.value || "Pack Smart, Travel Far ✈",
+                HeroImageUrl: document.getElementById("chk_hero_img_url")?.value || "/images/study-hub/checklist-hero.jpg",
+                SelectedDestination: document.getElementById("chk_dest")?.value || "USA",
+                ShopMissingButtonText: document.getElementById("chk_shop_missing_btn")?.value || "Shop Missing Essentials →",
+                ShopMissingButtonUrl: document.getElementById("chk_shop_missing_url")?.value || "/category/study-essentials",
+                Categories: [],
+                DestinationGuides: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chkPage.DestinationGuides, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = null })),
+                QuickTips: [],
+                BottomBannerTitle: document.getElementById("chk_banner_title")?.value || "Ready for Your Next Chapter?",
+                BottomBannerSubtitle: document.getElementById("chk_banner_sub")?.value || "Everything you need, all in one place.",
+                BottomBannerButtonText: document.getElementById("chk_banner_btn_text")?.value || "Shop Study Essentials →",
+                BottomBannerButtonUrl: document.getElementById("chk_banner_btn_url")?.value || "/category/study-essentials",
+                BottomBannerImageUrl: document.getElementById("chk_banner_img_url")?.value || "/images/study-hub/checklist-bottom-banner.jpg"
             }
         };
 
@@ -1321,6 +1810,106 @@
                 Slug: document.getElementById("cat_item_slug_" + i)?.value || "",
                 Description: document.getElementById("cat_item_desc_" + i)?.value || "",
                 ImageUrl: document.getElementById("cat_item_img_" + i)?.value || "/images/study-hub/test-pic-placeholder.svg"
+            });
+        }
+
+        // Checklist Page 10 Categories
+        for (let i = 0; i < 20; i++) {
+            const t = document.getElementById("chk_cat_title_" + i);
+            if (!t) break;
+            const itemsRaw = document.getElementById("chk_cat_items_" + i)?.value || "";
+            const items = itemsRaw.split("\n").map(l => l.trim()).filter(l => l.length > 0).map((line, itemIdx) => {
+                const isChecked = line.endsWith("*");
+                const cleanName = isChecked ? line.substring(0, line.length - 1).trim() : line;
+                return {
+                    Id: "cat-" + (i + 1) + "-item-" + (itemIdx + 1),
+                    Name: cleanName,
+                    IsChecked: isChecked
+                };
+            });
+
+            payload.ChecklistPage.Categories.push({
+                Id: document.getElementById("chk_cat_id_" + i)?.value || ("checklist-cat-" + (i + 1)),
+                Number: i + 1,
+                Title: t.value,
+                Subtitle: document.getElementById("chk_cat_badge_" + i)?.value || "",
+                IconType: "study",
+                ImageUrl: document.getElementById("chk_cat_img_" + i)?.value || "/images/study-hub/test-pic-placeholder.svg",
+                ShopButtonText: document.getElementById("chk_cat_btn_" + i)?.value || "Shop Now →",
+                ShopButtonUrl: document.getElementById("chk_cat_link_" + i)?.value || "/category/study-essentials",
+                TotalCountDisplay: document.getElementById("chk_cat_total_disp_" + i)?.value || ("View All (" + items.length + ") ↓"),
+                Items: items
+            });
+        }
+
+        const quickTipsRaw = document.getElementById("chk_quick_tips")?.value || "";
+        payload.ChecklistPage.QuickTips = quickTipsRaw.split("\n").map(t => t.trim()).filter(t => t.length > 0);
+
+        // Build Study Abroad Hub Profile (Dedicated Services Portal)
+        payload.AbroadProfile = {
+            HeroBadge: document.getElementById("abroad_hero_badge")?.value || "Study Abroad Hub",
+            HeroTitle: document.getElementById("abroad_hero_title")?.value || "Your Dreams Abroad.",
+            HeroTitleHighlight: document.getElementById("abroad_hero_highlight")?.value || "Our Support.",
+            HeroSubtitle: document.getElementById("abroad_hero_sub")?.value || "Everything you need to plan your international education journey — all in one place.",
+            HeroCtaText: document.getElementById("abroad_hero_cta_text")?.value || "Explore Study Abroad Hub →",
+            HeroCtaUrl: document.getElementById("abroad_hero_cta_url")?.value || "#explore-services",
+            HeroImageUrl: document.getElementById("abroad_hero_img_url")?.value || "",
+            HeroHandwrittenNote: document.getElementById("abroad_hero_note")?.value || "Study Explore Grow ♡",
+            HeroServices: [],
+            ServicesSectionTitle: "Explore Our Services",
+            ServicesSectionSubtitle: "Your complete guide to financial support, trusted consultancies and health coverage for a global education.",
+            Services: [],
+            TrustPillars: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(abroadProfile.TrustPillars, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = null })),
+            FooterSlogan: "@(abroadProfile.FooterSlogan ?? "Your Global Education Partner ♡")",
+            TrustTagline: "@(abroadProfile.TrustTagline ?? abroadProfile.FooterSlogan ?? "Your Global Education Partner ♡")"
+        };
+
+        // Collect Hero Quick Service Pills from UI (Respecting Admin's enabled choices)
+        document.querySelectorAll("#abroad_hero_pills_container .abroad-hero-pill-row").forEach((row, idx) => {
+            const chk = row.querySelector(".abroad-hs-enabled-chk");
+            const t = row.querySelector(".abroad-hs-title-input");
+            const l = row.querySelector(".abroad-hs-link-input");
+            const icon = row.querySelector(".abroad-hs-icon-select");
+            if (t && t.value.trim().length > 0) {
+                payload.AbroadProfile.HeroServices.push({
+                    Id: row.dataset.pillId || ("hs-" + (idx + 1)),
+                    Title: t.value.trim(),
+                    TargetUrl: l ? l.value : "#",
+                    IconType: icon ? icon.value : "loan",
+                    IsEnabled: chk ? chk.checked : true
+                });
+            }
+        });
+
+        for (let i = 0; i < 10; i++) {
+            const titleInput = document.getElementById("abroad_srv_title_" + i);
+            if (!titleInput) break;
+
+            const bulletsText = document.getElementById("abroad_srv_bullets_" + i)?.value || "";
+            const bullets = bulletsText.split("\n").map(b => b.trim()).filter(b => b.length > 0);
+
+            const subTitleInput = document.getElementById("abroad_sub_title_" + i);
+            let subService = null;
+            if (subTitleInput) {
+                subService = {
+                    Title: subTitleInput.value,
+                    Description: document.getElementById("abroad_sub_desc_" + i)?.value || "",
+                    ButtonUrl: document.getElementById("abroad_sub_link_" + i)?.value || "#",
+                    IconType: i === 0 ? "bank" : "pin"
+                };
+            }
+
+            payload.AbroadProfile.Services.push({
+                Id: document.getElementById("abroad_srv_id_" + i)?.value || ("srv-" + (i + 1)),
+                Title: titleInput.value,
+                Description: document.getElementById("abroad_srv_desc_" + i)?.value || "",
+                ButtonText: document.getElementById("abroad_srv_btn_" + i)?.value || "Get Started →",
+                ButtonUrl: document.getElementById("abroad_srv_link_" + i)?.value || "#",
+                IconType: document.getElementById("abroad_srv_icon_" + i)?.value || "service",
+                ThemeColor: document.getElementById("abroad_srv_color_" + i)?.value || "blue",
+                ImageUrl: document.getElementById("abroad_srv_img_" + i)?.value || "",
+                SubService: subService,
+                Bullets: bullets
             });
         }
 

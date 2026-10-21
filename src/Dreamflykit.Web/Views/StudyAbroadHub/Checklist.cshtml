@@ -1,0 +1,1038 @@
+@model Dreamflykit.Application.StudyHub.Models.AbroadChecklistPageDto
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = (!string.IsNullOrWhiteSpace(Model.HeroTitle) ? Model.HeroTitle : "Abroad Packing Checklist") + " — Dreamflykit";
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="dk-checklist-page-wrapper" id="abroadChecklistRoot">
+
+    @if (canManage)
+    {
+        <div class="dk-chk-admin-bar">
+            <span class="dk-chk-admin-badge">Admin Controls</span>
+            <span>Super Admin can upload/replace category images and modify text content anytime in the Admin Dashboard.</span>
+            <a href="/Admin/StudyHub#tab-checklist" class="dk-chk-admin-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                Manage Checklist Content &amp; Images
+            </a>
+        </div>
+    }
+
+    <!-- ========================================================
+         BREADCRUMB
+    ========================================================= -->
+    <nav class="dk-chk-breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="dk-chk-bc-sep">›</span>
+        <a href="/category/study-essentials">Study Essentials</a>
+        <span class="dk-chk-bc-sep">›</span>
+        <span class="dk-chk-bc-curr">Abroad Packing Checklist</span>
+    </nav>
+
+    <!-- ========================================================
+         HERO SECTION
+    ========================================================= -->
+    <section class="dk-chk-hero" aria-labelledby="chkHeroTitle">
+        <div class="dk-chk-hero-left">
+            <div class="dk-chk-pill">@Model.HeroPill</div>
+            <h1 id="chkHeroTitle" class="dk-chk-hero-title">@Model.HeroTitle</h1>
+            <p class="dk-chk-hero-tagline">@Model.HeroSubtitle</p>
+            <p class="dk-chk-hero-desc">@Model.HeroDescription</p>
+        </div>
+
+        <div class="dk-chk-hero-right">
+            <div class="dk-chk-hero-img-wrap">
+                <img src="@Model.HeroImageUrl" alt="@Model.HeroTitle" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Model.HeroBadgeText))
+            {
+                <div class="dk-chk-flight-badge">
+                    <svg width="40" height="24" viewBox="0 0 40 24" fill="none" class="dk-chk-flight-svg" aria-hidden="true">
+                        <path d="M2 20 C 14 18, 26 10, 36 4" stroke="#0284c7" stroke-width="2" stroke-dasharray="3 3" stroke-linecap="round" />
+                    </svg>
+                    <span class="dk-chk-flight-text">@Model.HeroBadgeText</span>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ========================================================
+         STICKY FILTER & PROGRESS BAR
+    ========================================================= -->
+    <div class="dk-chk-bar-wrap" id="chkProgressControlBar">
+        <div class="dk-chk-bar-inner">
+            <!-- Destination Dropdown -->
+            <div class="dk-chk-dest-select-wrap">
+                <label for="destinationSelect" class="dk-chk-bar-label">Select Your Destination</label>
+                <div class="dk-chk-select-box">
+                    <select id="destinationSelect" class="dk-chk-select" onchange="onDestinationChange(this.value)">
+                        <option value="USA" selected="@(Model.SelectedDestination == "USA" ? "selected" : null)">🇺🇸 USA</option>
+                        <option value="UK" selected="@(Model.SelectedDestination == "UK" ? "selected" : null)">🇬🇧 UK</option>
+                        <option value="Canada" selected="@(Model.SelectedDestination == "Canada" ? "selected" : null)">🇨🇦 Canada</option>
+                        <option value="Australia" selected="@(Model.SelectedDestination == "Australia" ? "selected" : null)">🇦🇺 Australia</option>
+                        <option value="France" selected="@(Model.SelectedDestination == "France" ? "selected" : null)">🇫🇷 France</option>
+                        <option value="Germany" selected="@(Model.SelectedDestination == "Germany" ? "selected" : null)">🇩🇪 Germany</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Progress Meter -->
+            <div class="dk-chk-prog-wrap">
+                <div class="dk-chk-prog-header">
+                    <span class="dk-chk-bar-label">Checklist Progress</span>
+                    <span class="dk-chk-prog-counts">
+                        <strong id="chkCountChecked">0</strong> of <strong id="chkCountTotal">0</strong> items checked
+                    </span>
+                </div>
+                <div class="dk-chk-prog-track">
+                    <div class="dk-chk-prog-bar" id="chkProgressBar" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Percentage Circle Badge -->
+            <div class="dk-chk-pct-badge" id="chkPctBadge" title="Overall Completion Percentage">
+                <span id="chkPctNumber">0%</span>
+            </div>
+
+            <!-- Shop Missing Essentials Button -->
+            <div class="dk-chk-bar-action">
+                <a href="@Model.ShopMissingButtonUrl" class="dk-chk-btn-shop-missing">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    <span>@Model.ShopMissingButtonText</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         CHECKLIST CATEGORIES GRID (10 Categories + 2 Special Cards)
+    ========================================================= -->
+    <section class="dk-chk-grid-section" aria-label="Packing Categories">
+        <div class="dk-chk-categories-grid">
+
+            @foreach (var cat in Model.Categories)
+            {
+                var visibleItems = cat.Items.Take(5).ToList();
+                var hiddenItems = cat.Items.Skip(5).ToList();
+                var totalCatItems = cat.Items.Count;
+                var checkedCatItems = cat.Items.Count(x => x.IsChecked);
+
+                <div class="dk-chk-cat-card" id="cat-card-@cat.Id" data-cat-id="@cat.Id">
+                    <!-- Card Top Header -->
+                    <div class="dk-chk-cat-header">
+                        <div class="dk-chk-cat-title-wrap">
+                            <h2 class="dk-chk-cat-title">@cat.Title</h2>
+                            <span class="dk-chk-cat-counter" id="cat-counter-@cat.Id">
+                                @checkedCatItems of @totalCatItems items checked
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Card Body: Split Image (Left) + Checkbox Items (Right) -->
+                    <div class="dk-chk-cat-body">
+                        <div class="dk-chk-cat-img-wrap">
+                            <img src="@cat.ImageUrl" alt="@cat.Title" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                        </div>
+
+                        <div class="dk-chk-cat-items-wrap">
+                            <div class="dk-chk-items-list" id="cat-items-list-@cat.Id">
+                                @foreach (var item in visibleItems)
+                                {
+                                    <label class="dk-chk-item-row" id="chk_label_@item.Id">
+                                        <input type="checkbox"
+                                               class="dk-chk-box-input"
+                                               id="chk_input_@item.Id"
+                                               data-item-id="@item.Id"
+                                               data-cat-id="@cat.Id"
+                                               checked="@(item.IsChecked ? "checked" : null)"
+                                               onchange="onCheckItemToggle(this)" />
+                                        <span class="dk-chk-custom-box"></span>
+                                        <span class="dk-chk-item-text">@item.Name</span>
+                                    </label>
+                                }
+
+                                @if (hiddenItems.Count > 0)
+                                {
+                                    <div class="dk-chk-hidden-items" id="hidden_items_@cat.Id" style="display: none;">
+                                        @foreach (var item in hiddenItems)
+                                        {
+                                            <label class="dk-chk-item-row" id="chk_label_@item.Id">
+                                                <input type="checkbox"
+                                                       class="dk-chk-box-input"
+                                                       id="chk_input_@item.Id"
+                                                       data-item-id="@item.Id"
+                                                       data-cat-id="@cat.Id"
+                                                       checked="@(item.IsChecked ? "checked" : null)"
+                                                       onchange="onCheckItemToggle(this)" />
+                                                <span class="dk-chk-custom-box"></span>
+                                                <span class="dk-chk-item-text">@item.Name</span>
+                                            </label>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer Actions -->
+                    <div class="dk-chk-cat-footer">
+                        @if (hiddenItems.Count > 0)
+                        {
+                            <button type="button"
+                                    class="dk-chk-btn-view-all"
+                                    id="btn_view_all_@cat.Id"
+                                    onclick="toggleViewAllCat('@cat.Id', @totalCatItems)">
+                                View All (@totalCatItems) ↓
+                            </button>
+                        }
+                        else
+                        {
+                            <span style="font-size: 0.8rem; color: #64748b; font-weight: 600;">All Essentials Listed</span>
+                        }
+
+                        <a href="@cat.ShopButtonUrl" class="dk-chk-btn-shop-cat">
+                            @(!string.IsNullOrWhiteSpace(cat.ShopButtonText) ? cat.ShopButtonText : "Shop Now →")
+                        </a>
+                    </div>
+                </div>
+            }
+
+            <!-- ========================================================
+                 SPECIAL CARD 11: DESTINATION-SPECIFIC GUIDE
+            ========================================================= -->
+            <div class="dk-chk-cat-card dk-chk-guide-card" id="card-destination-guide">
+                <div class="dk-chk-cat-header">
+                    <div class="dk-chk-cat-title-wrap">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.3rem;">🌐</span>
+                            <h2 class="dk-chk-cat-title" style="margin: 0;">Destination-Specific Guide</h2>
+                        </div>
+                        <span class="dk-chk-cat-counter">Get country-wise recommendations for your study abroad journey.</span>
+                    </div>
+                </div>
+
+                <div class="dk-chk-guide-body">
+                    <div class="dk-chk-guide-countries-grid">
+                        @foreach (var g in Model.DestinationGuides)
+                        {
+                            <div class="dk-chk-guide-country-item" id="guide_country_@g.CountryName.ToLowerInvariant()">
+                                <div class="dk-chk-guide-flag">
+                                    @if (!string.IsNullOrWhiteSpace(g.FlagUrl))
+                                    {
+                                        <img src="@g.FlagUrl" alt="@g.CountryName" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';" />
+                                        <span style="display: none; font-size: 1.5rem;">@g.FlagEmoji</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="font-size: 1.5rem;">@g.FlagEmoji</span>
+                                    }
+                                </div>
+                                <div class="dk-chk-guide-info">
+                                    <div class="dk-chk-guide-cname">@g.CountryName</div>
+                                    <div class="dk-chk-guide-adapter">@g.AdapterType <span style="color: #64748b; font-weight: 500;">@g.Voltage</span></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div style="margin-top: 18px;">
+                        <a href="/category/study-essentials" class="dk-chk-btn-view-guide">
+                            View Detailed Guide →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================
+                 SPECIAL CARD 12: QUICK TIPS
+            ========================================================= -->
+            <div class="dk-chk-cat-card dk-chk-tips-card" id="card-quick-tips">
+                <div class="dk-chk-cat-header">
+                    <div class="dk-chk-cat-title-wrap">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.3rem;">💡</span>
+                            <h2 class="dk-chk-cat-title" style="margin: 0;">Quick Tips</h2>
+                        </div>
+                        <span class="dk-chk-cat-counter">Crucial travel &amp; packing guidelines for students.</span>
+                    </div>
+                </div>
+
+                <div class="dk-chk-tips-body">
+                    <ul class="dk-chk-tips-list">
+                        @foreach (var tip in Model.QuickTips)
+                        {
+                            <li>
+                                <span class="dk-chk-tip-icon">✓</span>
+                                <span>@tip</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================
+         BOTTOM BANNER & TRUST BAR
+    ========================================================= -->
+    <section class="dk-chk-bottom-banner-wrap" aria-label="Ready for Your Next Chapter">
+        <div class="dk-chk-bottom-banner" style="background-image: linear-gradient(rgba(15, 23, 42, 0.65), rgba(15, 23, 42, 0.75)), url('@Model.BottomBannerImageUrl');">
+            <div class="dk-chk-bottom-content">
+                <h2 class="dk-chk-bottom-title">@Model.BottomBannerTitle</h2>
+                <p class="dk-chk-bottom-sub">@Model.BottomBannerSubtitle</p>
+                <div style="margin-top: 20px;">
+                    <a href="@Model.BottomBannerButtonUrl" class="dk-chk-btn-bottom">
+                        @Model.BottomBannerButtonText
+                    </a>
+                </div>
+            </div>
+
+            <div class="dk-chk-trust-bar">
+                <div class="dk-chk-trust-item">
+                    <div class="dk-chk-trust-icon">🛡️</div>
+                    <div>
+                        <div class="dk-chk-trust-title">Quality Products</div>
+                        <div class="dk-chk-trust-desc">Trusted &amp; Affordable</div>
+                    </div>
+                </div>
+                <div class="dk-chk-trust-item">
+                    <div class="dk-chk-trust-icon">🚀</div>
+                    <div>
+                        <div class="dk-chk-trust-title">Fast Delivery</div>
+                        <div class="dk-chk-trust-desc">To Your Doorstep</div>
+                    </div>
+                </div>
+                <div class="dk-chk-trust-item">
+                    <div class="dk-chk-trust-icon">💬</div>
+                    <div>
+                        <div class="dk-chk-trust-title">24/7 Support</div>
+                        <div class="dk-chk-trust-desc">We're Here to Help</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- ========================================================
+     STYLES FOR ABROAD PACKING CHECKLIST PAGE
+========================================================= -->
+<style>
+    .dk-checklist-page-wrapper {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 16px 20px 60px 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #0f172a;
+    }
+
+    /* Admin Bar */
+    .dk-chk-admin-bar {
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 10px 18px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.88rem;
+        flex-wrap: wrap;
+    }
+    .dk-chk-admin-badge {
+        background: #0284c7;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 0.72rem;
+        padding: 3px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+    }
+    .dk-chk-admin-btn {
+        margin-left: auto;
+        background: #0284c7;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.82rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.15s;
+    }
+    .dk-chk-admin-btn:hover { background: #0369a1; color: #ffffff; }
+
+    /* Breadcrumb */
+    .dk-chk-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.84rem;
+        color: #64748b;
+        margin-bottom: 20px;
+    }
+    .dk-chk-breadcrumb a {
+        color: #64748b;
+        text-decoration: none;
+        transition: color 0.15s;
+    }
+    .dk-chk-breadcrumb a:hover { color: #0284c7; }
+    .dk-chk-bc-sep { color: #94a3b8; }
+    .dk-chk-bc-curr { color: #0284c7; font-weight: 700; }
+
+    /* Hero Section */
+    .dk-chk-hero {
+        background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+        border: 1px solid #bae6fd;
+        border-radius: 24px;
+        padding: 36px 40px;
+        display: grid;
+        grid-template-columns: 1.25fr 0.95fr;
+        gap: 36px;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 20px rgba(2, 132, 199, 0.06);
+    }
+    @@media (max-width: 900px) {
+        .dk-chk-hero {
+            grid-template-columns: 1fr;
+            padding: 24px 20px;
+            gap: 20px;
+        }
+    }
+    .dk-chk-pill {
+        display: inline-block;
+        background: #0284c7;
+        color: #ffffff;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 999px;
+        margin-bottom: 12px;
+    }
+    .dk-chk-hero-title {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #034687;
+        line-height: 1.18;
+        margin: 0 0 8px 0;
+        letter-spacing: -0.02em;
+    }
+    .dk-chk-hero-tagline {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #0284c7;
+        margin: 0 0 10px 0;
+    }
+    .dk-chk-hero-desc {
+        font-size: 0.95rem;
+        color: #475569;
+        line-height: 1.6;
+        margin: 0;
+        max-width: 580px;
+    }
+    .dk-chk-hero-right {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .dk-chk-hero-img-wrap {
+        width: 100%;
+        max-height: 280px;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 12px 30px rgba(2, 132, 199, 0.15);
+        background: #ffffff;
+    }
+    .dk-chk-hero-img-wrap img {
+        width: 100%;
+        height: 100%;
+        max-height: 280px;
+        object-fit: cover;
+        display: block;
+    }
+    .dk-chk-flight-badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: #ffffff;
+        border: 1px solid #bae6fd;
+        padding: 6px 14px;
+        border-radius: 999px;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .dk-chk-flight-text {
+        font-size: 0.88rem;
+        font-weight: 800;
+        color: #0369a1;
+        font-style: italic;
+    }
+
+    /* Sticky Control Bar */
+    .dk-chk-bar-wrap {
+        position: sticky;
+        top: 70px;
+        z-index: 50;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        border: 1px solid #cbd5e1;
+        border-radius: 16px;
+        padding: 14px 22px;
+        margin-bottom: 28px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+    .dk-chk-bar-inner {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+    .dk-chk-bar-label {
+        display: block;
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 4px;
+    }
+    .dk-chk-dest-select-wrap {
+        min-width: 180px;
+    }
+    .dk-chk-select {
+        width: 100%;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #0f172a;
+        background: #f8fafc;
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.15s;
+    }
+    .dk-chk-select:focus { border-color: #0284c7; }
+
+    /* Progress bar */
+    .dk-chk-prog-wrap {
+        flex: 1;
+        min-width: 220px;
+    }
+    .dk-chk-prog-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+    }
+    .dk-chk-prog-counts {
+        font-size: 0.82rem;
+        color: #475569;
+    }
+    .dk-chk-prog-counts strong {
+        color: #0284c7;
+    }
+    .dk-chk-prog-track {
+        height: 10px;
+        background: #e2e8f0;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+    .dk-chk-prog-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #0284c7 0%, #10b981 100%);
+        border-radius: 999px;
+        transition: width 0.3s ease;
+    }
+    .dk-chk-pct-badge {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #e0f2fe;
+        border: 3px solid #0284c7;
+        color: #0369a1;
+        font-weight: 900;
+        font-size: 0.92rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .dk-chk-btn-shop-missing {
+        background: #0284c7;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 10px 18px;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+        transition: all 0.15s ease;
+        white-space: nowrap;
+    }
+    .dk-chk-btn-shop-missing:hover {
+        background: #0369a1;
+        color: #ffffff;
+        transform: translateY(-1px);
+    }
+
+    /* Categories Grid */
+    .dk-chk-categories-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+    @@media (max-width: 900px) {
+        .dk-chk-categories-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Category Card */
+    .dk-chk-cat-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 20px 22px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+    }
+    .dk-chk-cat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 26px rgba(2, 132, 199, 0.1);
+        border-color: #7dd3fc;
+    }
+    .dk-chk-cat-header {
+        margin-bottom: 14px;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 10px;
+    }
+    .dk-chk-cat-title {
+        font-size: 1.18rem;
+        font-weight: 800;
+        color: #004b87;
+        margin: 0 0 2px 0;
+    }
+    .dk-chk-cat-counter {
+        font-size: 0.8rem;
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    /* Body split */
+    .dk-chk-cat-body {
+        display: grid;
+        grid-template-columns: 130px 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+        align-items: flex-start;
+    }
+    @@media (max-width: 500px) {
+        .dk-chk-cat-body { grid-template-columns: 1fr; }
+    }
+    .dk-chk-cat-img-wrap {
+        width: 100%;
+        height: 130px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #f8fafc;
+        border: 1px solid #f1f5f9;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+    .dk-chk-cat-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    .dk-chk-cat-card:hover .dk-chk-cat-img-wrap img {
+        transform: scale(1.05);
+    }
+
+    /* Checklist Items */
+    .dk-chk-cat-items-wrap {
+        display: flex;
+        flex-direction: column;
+    }
+    .dk-chk-items-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .dk-chk-item-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        cursor: pointer;
+        user-select: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #1e293b;
+        transition: color 0.15s;
+    }
+    .dk-chk-item-row:hover { color: #0284c7; }
+    .dk-chk-box-input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+    .dk-chk-custom-box {
+        width: 18px;
+        height: 18px;
+        border-radius: 5px;
+        border: 2px solid #94a3b8;
+        background: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.15s ease;
+    }
+    .dk-chk-box-input:checked + .dk-chk-custom-box {
+        background: #0284c7;
+        border-color: #0284c7;
+    }
+    .dk-chk-box-input:checked + .dk-chk-custom-box::after {
+        content: "✓";
+        color: #ffffff;
+        font-weight: 900;
+        font-size: 11px;
+    }
+    .dk-chk-box-input:checked ~ .dk-chk-item-text {
+        color: #64748b;
+        text-decoration: line-through;
+    }
+
+    /* Card Footer */
+    .dk-chk-cat-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 12px;
+        border-top: 1px solid #f1f5f9;
+        gap: 12px;
+    }
+    .dk-chk-btn-view-all {
+        background: none;
+        border: none;
+        color: #0284c7;
+        font-weight: 700;
+        font-size: 0.84rem;
+        cursor: pointer;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: color 0.15s;
+    }
+    .dk-chk-btn-view-all:hover { color: #0369a1; text-decoration: underline; }
+    .dk-chk-btn-shop-cat {
+        background: #0284c7;
+        color: #ffffff;
+        font-size: 0.82rem;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background 0.15s;
+    }
+    .dk-chk-btn-shop-cat:hover { background: #0369a1; color: #ffffff; }
+
+    /* Guide Card */
+    .dk-chk-guide-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+        border: 1px solid #bae6fd;
+    }
+    .dk-chk-guide-countries-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    @@media (max-width: 500px) {
+        .dk-chk-guide-countries-grid { grid-template-columns: 1fr; }
+    }
+    .dk-chk-guide-country-item {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    }
+    .dk-chk-guide-country-item.highlighted {
+        border-color: #0284c7;
+        background: #e0f2fe;
+    }
+    .dk-chk-guide-flag {
+        width: 32px;
+        height: 22px;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid #cbd5e1;
+        flex-shrink: 0;
+    }
+    .dk-chk-guide-flag img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dk-chk-guide-cname {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #0f172a;
+    }
+    .dk-chk-guide-adapter {
+        font-size: 0.76rem;
+        color: #0284c7;
+        font-weight: 600;
+    }
+    .dk-chk-btn-view-guide {
+        background: #0284c7;
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.84rem;
+        padding: 8px 16px;
+        border-radius: 8px;
+        display: inline-block;
+    }
+
+    /* Quick Tips Card */
+    .dk-chk-tips-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+        border: 1px solid #bbf7d0;
+    }
+    .dk-chk-tips-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .dk-chk-tips-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 0.88rem;
+        color: #334155;
+        line-height: 1.5;
+    }
+    .dk-chk-tip-icon {
+        color: #16a34a;
+        font-weight: 900;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    /* Bottom Banner */
+    .dk-chk-bottom-banner-wrap {
+        margin-top: 40px;
+    }
+    .dk-chk-bottom-banner {
+        border-radius: 24px;
+        padding: 50px 40px;
+        color: #ffffff;
+        background-size: cover;
+        background-position: center;
+        box-shadow: 0 12px 36px rgba(15, 23, 42, 0.2);
+    }
+    .dk-chk-bottom-content {
+        max-width: 600px;
+        margin-bottom: 40px;
+    }
+    .dk-chk-bottom-title {
+        font-size: 2.1rem;
+        font-weight: 900;
+        color: #ffffff;
+        margin: 0 0 10px 0;
+        line-height: 1.2;
+    }
+    .dk-chk-bottom-sub {
+        font-size: 1.05rem;
+        color: #e2e8f0;
+        margin: 0;
+    }
+    .dk-chk-btn-bottom {
+        background: #0284c7;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 0.95rem;
+        padding: 12px 26px;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-block;
+        box-shadow: 0 6px 18px rgba(2, 132, 199, 0.4);
+        transition: all 0.15s ease;
+    }
+    .dk-chk-btn-bottom:hover {
+        background: #0369a1;
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    /* Trust Bar */
+    .dk-chk-trust-bar {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        padding-top: 30px;
+    }
+    @@media (max-width: 700px) {
+        .dk-chk-trust-bar { grid-template-columns: 1fr; gap: 16px; }
+        .dk-chk-bottom-banner { padding: 30px 20px; }
+        .dk-chk-bottom-title { font-size: 1.5rem; }
+    }
+    .dk-chk-trust-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    .dk-chk-trust-icon {
+        font-size: 1.8rem;
+    }
+    .dk-chk-trust-title {
+        font-weight: 800;
+        font-size: 0.95rem;
+        color: #ffffff;
+    }
+    .dk-chk-trust-desc {
+        font-size: 0.8rem;
+        color: #cbd5e1;
+    }
+</style>
+
+<!-- ========================================================
+     CLIENT-SIDE INTERACTIVE CHECKLIST LOGIC
+========================================================= -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        restoreCheckedState();
+        recalculateProgress();
+        highlightDestinationCountry(document.getElementById("destinationSelect")?.value || "USA");
+    });
+
+    function onCheckItemToggle(chk) {
+        const catId = chk.dataset.catId;
+        saveCheckedState();
+        recalculateProgress();
+        updateCategoryCounter(catId);
+    }
+
+    function recalculateProgress() {
+        const allBoxes = document.querySelectorAll(".dk-chk-box-input");
+        const total = allBoxes.length;
+        let checked = 0;
+        allBoxes.forEach(b => { if (b.checked) checked++; });
+
+        const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+
+        const countCheckedEl = document.getElementById("chkCountChecked");
+        const countTotalEl = document.getElementById("chkCountTotal");
+        const progressBar = document.getElementById("chkProgressBar");
+        const pctNumber = document.getElementById("chkPctNumber");
+
+        if (countCheckedEl) countCheckedEl.textContent = checked;
+        if (countTotalEl) countTotalEl.textContent = total;
+        if (progressBar) progressBar.style.width = pct + "%";
+        if (pctNumber) pctNumber.textContent = pct + "%";
+    }
+
+    function updateCategoryCounter(catId) {
+        if (!catId) return;
+        const catBoxes = document.querySelectorAll(`.dk-chk-box-input[data-cat-id="${catId}"]`);
+        const total = catBoxes.length;
+        let checked = 0;
+        catBoxes.forEach(b => { if (b.checked) checked++; });
+
+        const counterSpan = document.getElementById(`cat-counter-${catId}`);
+        if (counterSpan) {
+            counterSpan.textContent = `${checked} of ${total} items checked`;
+        }
+    }
+
+    function toggleViewAllCat(catId, totalCount) {
+        const hiddenDiv = document.getElementById(`hidden_items_${catId}`);
+        const btn = document.getElementById(`btn_view_all_${catId}`);
+        if (!hiddenDiv || !btn) return;
+
+        if (hiddenDiv.style.display === "none" || hiddenDiv.style.display === "") {
+            hiddenDiv.style.display = "flex";
+            hiddenDiv.style.flexDirection = "column";
+            hiddenDiv.style.gap = "8px";
+            hiddenDiv.style.marginTop = "8px";
+            btn.textContent = "Show Less ↑";
+        } else {
+            hiddenDiv.style.display = "none";
+            btn.textContent = `View All (${totalCount}) ↓`;
+        }
+    }
+
+    function onDestinationChange(country) {
+        highlightDestinationCountry(country);
+    }
+
+    function highlightDestinationCountry(country) {
+        const items = document.querySelectorAll(".dk-chk-guide-country-item");
+        items.forEach(el => el.classList.remove("highlighted"));
+        const target = document.getElementById(`guide_country_${country.toLowerCase()}`);
+        if (target) {
+            target.classList.add("highlighted");
+        }
+    }
+
+    const STORAGE_KEY = "dk_abroad_checklist_state_v1";
+
+    function saveCheckedState() {
+        const checkedMap = {};
+        document.querySelectorAll(".dk-chk-box-input").forEach(b => {
+            if (b.checked && b.dataset.itemId) {
+                checkedMap[b.dataset.itemId] = true;
+            }
+        });
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedMap));
+        } catch (e) {
+            // ignore storage quota issues
+        }
+    }
+
+    function restoreCheckedState() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const checkedMap = JSON.parse(raw);
+            document.querySelectorAll(".dk-chk-box-input").forEach(b => {
+                if (b.dataset.itemId && checkedMap[b.dataset.itemId] !== undefined) {
+                    b.checked = !!checkedMap[b.dataset.itemId];
+                }
+            });
+            // Update individual category counters
+            document.querySelectorAll(".dk-chk-cat-card").forEach(c => {
+                updateCategoryCounter(c.dataset.catId);
+            });
+        } catch (e) {
+            // ignore JSON parse issues
+        }
+    }
+</script>
