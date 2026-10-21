@@ -94,7 +94,7 @@ public sealed class StudyHubService : IStudyHubService
                             dto.Section1 = def.Section1;
                         if (dto.Section2 == null || dto.Section2.Kits.Count == 0)
                             dto.Section2 = def.Section2;
-                        if (dto.Section3Detail == null || dto.Section3Detail.Cards.Count == 0)
+                        if (dto.Section3Detail == null || dto.Section3Detail.Cards.Count == 0 || (dto.Section3Detail.Title != null && dto.Section3Detail.Title.Contains("Key Study Essentials")))
                             dto.Section3Detail = def.Section3Detail;
                         if (dto.Section4 == null || dto.Section4.Items.Count == 0)
                             dto.Section4 = def.Section4;

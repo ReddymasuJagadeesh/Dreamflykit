@@ -215,64 +215,51 @@ public sealed class StudyHubDto
             },
             Section3Detail = new StudyHubSection3DetailDto
             {
-                Title = "Key Study Essentials - In Detail",
-                Subtitle = "Everything you need, category-wise",
+                Title = "What Every Student Needs Before Going Abroad",
+                Subtitle = "Prepare smarter, pack better and feel confident about your journey abroad.",
+                BadgeText = "Be Ready for New Adventures ✈",
                 TitleFontSize = "large",
                 Cards = new List<StudyHubDetailCardDto>
                 {
                     new()
                     {
-                        Id = "detail-stationery",
-                        Title = "Stationery & Study Supplies",
-                        Description = "Notebooks, pens, highlighters, more...",
-                        IconType = "pen",
-                        ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        LinkUrl = "/category/study-essentials?subcategory=stationery-study-supplies"
+                        Id = "abroad-study-ready",
+                        Title = "Stay Study-Ready",
+                        Description = "Keep your stationery, academic planner and essential study tools ready for your new university.",
+                        IconType = "study",
+                        ImageUrl = "/images/study-hub/card-study-ready.png",
+                        LinkUrl = "/category/study-essentials?subcategory=stationery-study-supplies",
+                        ButtonText = "Explore Essentials →"
                     },
                     new()
                     {
-                        Id = "detail-electronics",
-                        Title = "Electronics & Digital Tools",
-                        Description = "Laptops, mouse, headphones, USB hub...",
-                        IconType = "laptop",
-                        ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        LinkUrl = "/category/study-essentials?subcategory=tech-for-study"
+                        Id = "abroad-connected",
+                        Title = "Stay Connected",
+                        Description = "Prepare your laptop accessories, headphones, chargers and other digital essentials for your studies.",
+                        IconType = "tech",
+                        ImageUrl = "/images/study-hub/card-connected.png",
+                        LinkUrl = "/category/study-essentials?subcategory=tech-for-study",
+                        ButtonText = "Explore Essentials →"
                     },
                     new()
                     {
-                        Id = "detail-documents",
-                        Title = "Documents & Organization",
-                        Description = "Passport holder, folders, file organizers...",
-                        IconType = "file",
-                        ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        LinkUrl = "/category/study-essentials?subcategory=document-organization"
+                        Id = "abroad-documents",
+                        Title = "Keep Documents Organized",
+                        Description = "Keep your passport, visa documents, admission letter and academic certificates safely organized.",
+                        IconType = "documents",
+                        ImageUrl = "/images/study-hub/card-documents.png",
+                        LinkUrl = "/category/study-essentials?subcategory=document-organization",
+                        ButtonText = "Explore Essentials →"
                     },
                     new()
                     {
-                        Id = "detail-desk",
-                        Title = "Desk & Room Essentials",
-                        Description = "Planner, lamp, water bottle, organizers...",
-                        IconType = "lamp",
-                        ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        LinkUrl = "/category/study-essentials?subcategory=desk-room-study-essential"
-                    },
-                    new()
-                    {
-                        Id = "detail-campus",
-                        Title = "College & Campus Essentials",
-                        Description = "Backpack, lunch box, ID holder...",
-                        IconType = "bag",
-                        ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        LinkUrl = "/category/study-essentials?subcategory=college-campus-essentials"
-                    },
-                    new()
-                    {
-                        Id = "detail-online",
-                        Title = "Online Classes & Productivity",
-                        Description = "Webcam, microphone, external drive...",
-                        IconType = "monitor",
-                        ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        LinkUrl = "/category/study-essentials?subcategory=online-classes-productivity"
+                        Id = "abroad-student-life",
+                        Title = "Set Up Your Student Life",
+                        Description = "Discover useful everyday essentials for your campus, accommodation and comfortable student life abroad.",
+                        IconType = "life",
+                        ImageUrl = "/images/study-hub/card-student-life.png",
+                        LinkUrl = "/category/study-essentials?subcategory=college-campus-essentials",
+                        ButtonText = "Explore Essentials →"
                     }
                 }
             },
@@ -625,8 +612,9 @@ public sealed class StudyHubKitDto
 
 public sealed class StudyHubSection3DetailDto
 {
-    public string Title { get; set; } = "Key Study Essentials - In Detail";
-    public string Subtitle { get; set; } = "Everything you need, category-wise";
+    public string Title { get; set; } = "What Every Student Needs Before Going Abroad";
+    public string Subtitle { get; set; } = "Prepare smarter, pack better and feel confident about your journey abroad.";
+    public string BadgeText { get; set; } = "Be Ready for New Adventures ✈";
     public string TitleFontSize { get; set; } = "large";
     public List<StudyHubDetailCardDto> Cards { get; set; } = new();
 }
@@ -636,9 +624,10 @@ public sealed class StudyHubDetailCardDto
     public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public string IconType { get; set; } = "pen";
+    public string IconType { get; set; } = "study";
     public string ImageUrl { get; set; } = "/images/study-hub/test-pic-placeholder.svg";
     public string LinkUrl { get; set; } = "/category/study-essentials";
+    public string ButtonText { get; set; } = "Explore Essentials →";
 }
 
 public sealed class StudyHubSection3Dto

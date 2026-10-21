@@ -78,7 +78,7 @@
     <button type="button" class="dk-sh-tab-btn active" onclick="switchAdminTab('tab-hero')">Hero &amp; Trust</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s1')">1. Shop by Category</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s2')">2. Study Kits</button>
-    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s3')">3. Key Essentials</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s3')">3. Abroad Essentials</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s4')">4. Packing Checklist</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s5')">5. Destinations</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s6')">6. Build Kit</button>
@@ -326,36 +326,120 @@
 </div>
 
 <!-- ========================================================
-     TAB S3: 3. KEY ESSENTIALS - IN DETAIL
+     TAB S3: 3. ABROAD ESSENTIALS (WHAT EVERY STUDENT NEEDS)
 ========================================================= -->
 <div class="dk-sh-tab-pane" id="tab-s3">
     <div class="dk-admin-card" style="margin-bottom: 20px;">
-        <h3 class="dk-sh-tab-title">Section 3: Key Essentials Header</h3>
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+        <h3 class="dk-sh-tab-title">Section 3: What Every Student Needs Before Going Abroad</h3>
+        <p style="color: #64748b; font-size: 0.88rem; margin: -6px 0 16px 0;">
+            Manage the abroad essentials header, adventure flight badge, and cards. Super Admin can upload/replace images, edit titles &amp; descriptions, choose icons, and set target links.
+        </p>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
             <div>
-                <label class="dk-sh-form-label">Title</label>
+                <label class="dk-sh-form-label">Section Title</label>
                 <input type="text" id="s3_title" class="dk-admin-form-input" value="@s3Detail.Title" />
             </div>
             <div>
-                <label class="dk-sh-form-label">Subtitle</label>
-                <input type="text" id="s3_subtitle" class="dk-admin-form-input" value="@s3Detail.Subtitle" />
+                <label class="dk-sh-form-label">Adventure Flight Badge Text (Top-right)</label>
+                <input type="text" id="s3_badge" class="dk-admin-form-input" value="@s3Detail.BadgeText" placeholder="e.g. Be Ready for New Adventures ✈" />
             </div>
+        </div>
+        <div>
+            <label class="dk-sh-form-label">Section Subtitle</label>
+            <input type="text" id="s3_subtitle" class="dk-admin-form-input" value="@s3Detail.Subtitle" />
         </div>
     </div>
 
     <div class="dk-admin-card">
-        <h3 class="dk-sh-tab-title">6 Detail Cards</h3>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 class="dk-sh-tab-title" style="margin: 0;">Abroad Essentials Cards (@s3Detail.Cards.Count Cards)</h3>
+            <span style="font-size: 0.82rem; color: #0284c7; background: #e0f2fe; padding: 4px 10px; border-radius: 6px; font-weight: 600;">
+                Super Admin Image Upload Enabled
+            </span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px;">
             @for (int i = 0; i < s3Detail.Cards.Count; i++)
             {
                 var card = s3Detail.Cards[i];
-                <div class="dk-sh-edit-card">
+                var modelPic = i switch
+                {
+                    0 => "/images/study-hub/card-study-ready.png",
+                    1 => "/images/study-hub/card-connected.png",
+                    2 => "/images/study-hub/card-documents.png",
+                    3 => "/images/study-hub/card-student-life.png",
+                    _ => "/images/study-hub/test-pic-placeholder.svg"
+                };
+                <div class="dk-sh-edit-card" style="border-top: 3px solid #0284c7;">
+                    <input type="hidden" id="s3_card_id_@i" value="@card.Id" />
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: 700; color: #0284c7; font-size: 0.95rem;">Card #@(i + 1)</span>
+                        <span style="font-size: 0.78rem; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 4px;">@card.IconType</span>
+                    </div>
+
                     <label class="dk-sh-form-label">Card Title</label>
                     <input type="text" id="s3_card_title_@i" class="dk-admin-form-input" value="@card.Title" style="margin-bottom: 8px;" />
-                    <label class="dk-sh-form-label">Description / Item preview</label>
-                    <textarea id="s3_card_desc_@i" class="dk-admin-form-input" rows="2" style="margin-bottom: 8px;">@card.Description</textarea>
-                    <label class="dk-sh-form-label">Target Link</label>
-                    <input type="text" id="s3_card_link_@i" class="dk-admin-form-input" value="@card.LinkUrl" />
+
+                    <label class="dk-sh-form-label">Description</label>
+                    <textarea id="s3_card_desc_@i" class="dk-admin-form-input" rows="3" style="margin-bottom: 8px;">@card.Description</textarea>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                        <div>
+                            <label class="dk-sh-form-label">Icon Type</label>
+                            <select id="s3_card_icon_@i" class="dk-admin-form-input">
+                                <option value="study" selected="@(card.IconType == "study" ? "selected" : null)">Study (Book/Cap)</option>
+                                <option value="tech" selected="@(card.IconType == "tech" || card.IconType == "laptop" || card.IconType == "digital" ? "selected" : null)">Tech / Connected</option>
+                                <option value="documents" selected="@(card.IconType == "documents" || card.IconType == "file" || card.IconType == "passport" ? "selected" : null)">Documents (Passport/Files)</option>
+                                <option value="life" selected="@(card.IconType == "life" || card.IconType == "bag" || card.IconType == "campus" ? "selected" : null)">Student Life (Backpack)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">Button Text</label>
+                            <input type="text" id="s3_card_btn_@i" class="dk-admin-form-input" value="@(!string.IsNullOrWhiteSpace(card.ButtonText) ? card.ButtonText : "Explore Essentials →")" />
+                        </div>
+                    </div>
+
+                    <label class="dk-sh-form-label">Target Link URL</label>
+                    <input type="text" id="s3_card_link_@i" class="dk-admin-form-input" value="@card.LinkUrl" style="margin-bottom: 12px;" />
+
+                    <!-- Image Upload Controls -->
+                    <label class="dk-sh-form-label">Card Image (Super Admin Replaceable)</label>
+                    <div class="dk-sh-img-ctrl-row" style="align-items: flex-start;">
+                        <div class="dk-sh-img-preview-box" style="width: 110px; height: 95px; flex-shrink: 0; position: relative;">
+                            <img id="preview_s3_card_@i"
+                                 src="@card.ImageUrl"
+                                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;"
+                                 onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="text"
+                                   id="s3_card_img_@i"
+                                   class="dk-admin-form-input"
+                                   value="@card.ImageUrl"
+                                   oninput="updateImgPreview('s3_card_img_@i', 'preview_s3_card_@i')"
+                                   style="margin-bottom: 6px; font-size: 12px;" />
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                <button type="button"
+                                        class="dk-btn dk-btn-primary"
+                                        style="font-size: 11px; padding: 5px 10px;"
+                                        onclick="triggerUploadFor('s3_card_img_@i', 'preview_s3_card_@i')">
+                                    📷 Upload Pic
+                                </button>
+                                <button type="button"
+                                        class="dk-btn"
+                                        style="font-size: 11px; padding: 5px 8px; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;"
+                                        onclick="setModelPic('s3_card_img_@i', 'preview_s3_card_@i', '@modelPic')">
+                                    Set Model Pic
+                                </button>
+                                <button type="button"
+                                        class="dk-btn"
+                                        style="font-size: 11px; padding: 5px 8px; background: #f1f5f9;"
+                                        onclick="setTestPic('s3_card_img_@i', 'preview_s3_card_@i')">
+                                    Test Pic
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             }
         </div>
@@ -887,6 +971,13 @@
         if (img) img.src = testPath;
     }
 
+    function setModelPic(inputId, imgId, url) {
+        const input = document.getElementById(inputId);
+        const img = document.getElementById(imgId);
+        if (input) input.value = url;
+        if (img) img.src = url;
+    }
+
     function triggerUploadFor(inputId, imgId) {
         currentUploadTargetInputId = inputId;
         currentUploadPreviewImgId = imgId;
@@ -1060,8 +1151,9 @@
                 Kits: []
             },
             Section3Detail: {
-                Title: document.getElementById("s3_title")?.value || "Key Study Essentials - In Detail",
+                Title: document.getElementById("s3_title")?.value || "What Every Student Needs Before Going Abroad",
                 Subtitle: document.getElementById("s3_subtitle")?.value || "",
+                BadgeText: document.getElementById("s3_badge")?.value || "Be Ready for New Adventures ✈",
                 Cards: []
             },
             Section4: {
@@ -1158,15 +1250,18 @@
             });
         }
 
-        // Section 3 Detail Cards
-        for (let i = 0; i < 10; i++) {
+        // Section 3 Detail Cards (Abroad Essentials)
+        for (let i = 0; i < 16; i++) {
             const t = document.getElementById("s3_card_title_" + i);
             if (!t) break;
             payload.Section3Detail.Cards.push({
+                Id: document.getElementById("s3_card_id_" + i)?.value || ("abroad-card-" + (i + 1)),
                 Title: t.value,
                 Description: document.getElementById("s3_card_desc_" + i)?.value || "",
                 LinkUrl: document.getElementById("s3_card_link_" + i)?.value || "/category/study-essentials",
-                IconType: "pen"
+                ButtonText: document.getElementById("s3_card_btn_" + i)?.value || "Explore Essentials →",
+                IconType: document.getElementById("s3_card_icon_" + i)?.value || "study",
+                ImageUrl: document.getElementById("s3_card_img_" + i)?.value || "/images/study-hub/test-pic-placeholder.svg"
             });
         }
 
