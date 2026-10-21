@@ -36,10 +36,13 @@
 
     @{
         var reqPath = Context.Request.Path.Value ?? "";
-        var isAbroad = reqPath.StartsWith("/study-abroad-hub", StringComparison.OrdinalIgnoreCase) ||
-                       reqPath.StartsWith("/StudyAbroadHub", StringComparison.OrdinalIgnoreCase) ||
-                       reqPath.StartsWith("/SpecialOffer", StringComparison.OrdinalIgnoreCase) ||
-                       reqPath.StartsWith("/AbroadHub", StringComparison.OrdinalIgnoreCase);
+        var isAbroad = (reqPath.Equals("/study-abroad-hub", StringComparison.OrdinalIgnoreCase) ||
+                        reqPath.Equals("/study-abroad-hub/", StringComparison.OrdinalIgnoreCase) ||
+                        reqPath.Equals("/StudyAbroadHub", StringComparison.OrdinalIgnoreCase) ||
+                        reqPath.Equals("/StudyAbroadHub/", StringComparison.OrdinalIgnoreCase) ||
+                        reqPath.StartsWith("/SpecialOffer", StringComparison.OrdinalIgnoreCase) ||
+                        reqPath.StartsWith("/AbroadHub", StringComparison.OrdinalIgnoreCase)) &&
+                       !reqPath.Contains("checklist", StringComparison.OrdinalIgnoreCase);
     }
     @if (!isAbroad)
     {

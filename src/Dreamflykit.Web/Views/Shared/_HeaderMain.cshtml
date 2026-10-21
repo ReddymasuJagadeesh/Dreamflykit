@@ -11,11 +11,14 @@
         : (!string.IsNullOrWhiteSpace(queryCategory) ? queryCategory.Trim().ToLowerInvariant() : null);
 
     var currentReqPath = Context.Request.Path.Value ?? "";
-    var isAbroadHub = currentReqPath.StartsWith("/study-abroad-hub", StringComparison.OrdinalIgnoreCase) ||
-                      currentReqPath.StartsWith("/StudyAbroadHub", StringComparison.OrdinalIgnoreCase) ||
+    var isAbroadHub = (currentReqPath.Equals("/study-abroad-hub", StringComparison.OrdinalIgnoreCase) ||
+                      currentReqPath.Equals("/study-abroad-hub/", StringComparison.OrdinalIgnoreCase) ||
+                      currentReqPath.Equals("/StudyAbroadHub", StringComparison.OrdinalIgnoreCase) ||
+                      currentReqPath.Equals("/StudyAbroadHub/", StringComparison.OrdinalIgnoreCase) ||
                       currentReqPath.StartsWith("/SpecialOffer", StringComparison.OrdinalIgnoreCase) ||
                       currentReqPath.StartsWith("/AbroadHub", StringComparison.OrdinalIgnoreCase) ||
-                      currentReqPath.StartsWith("/Offer", StringComparison.OrdinalIgnoreCase);
+                      currentReqPath.StartsWith("/Offer", StringComparison.OrdinalIgnoreCase)) &&
+                      !currentReqPath.Contains("checklist", StringComparison.OrdinalIgnoreCase);
     var isDreamflykit = !isAbroadHub;
 
     var isOffersZone = Context.Request.Query.ContainsKey("minDiscount") ||

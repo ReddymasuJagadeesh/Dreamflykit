@@ -480,77 +480,88 @@
     </section>
 
     <!-- ========================================================
-         SECTION 4: 4. ABROAD PACKING CHECKLIST
+         SECTIONS 4 & 5: SIDE-BY-SIDE (CHECKLIST & DESTINATIONS)
     ========================================================= -->
-    <section class="dk-sh-section-wrap" aria-labelledby="sh-s4-title">
-        <div class="dk-sh-checklist-card">
-            <div class="dk-sh-checklist-left">
-                <div class="dk-sh-badge-line">
-                    <h2 id="sh-s4-title" class="dk-sh-title @GetTitleClass(s4.TitleFontSize)">@CleanTitle(s4.Title)</h2>
-                    @if (!string.IsNullOrWhiteSpace(s4.BadgeText))
-                    {
-                        <span class="dk-sh-pill-badge dk-sh-badge-green">@s4.BadgeText</span>
-                    }
-                </div>
-                <p class="dk-sh-subtitle" style="margin-top: 4px; margin-bottom: 20px;">@s4.Subtitle</p>
-
-                <div class="dk-sh-checklist-list">
-                    @foreach (var chk in s4.Items)
-                    {
-                        <label class="dk-sh-checklist-item" id="chk_label_@chk.Id">
-                            <input type="checkbox"
-                                   class="dk-sh-check-input"
-                                   id="chk_input_@chk.Id"
-                                   checked="@(chk.IsChecked ? "checked" : null)"
-                                   onchange="toggleChecklistItem('@chk.Id')" />
-                            <span class="dk-sh-check-custom"></span>
-                            <span class="dk-sh-check-text">@chk.Text</span>
-                        </label>
-                    }
-                </div>
-
-                <div style="margin-top: 24px;">
-                    <a href="@s4.ButtonUrl" class="dk-sh-btn-primary">
-                        @s4.ButtonText
-                    </a>
-                </div>
-            </div>
-
-            <div class="dk-sh-checklist-right">
-                <div class="dk-sh-checklist-img-wrap">
-                    <img src="@s4.ImageUrl" alt="@s4.Title" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========================================================
-         SECTION 5: 5. SHOP BY DESTINATION
-    ========================================================= -->
-    <section class="dk-sh-section-wrap" aria-labelledby="sh-s5-title">
-        <div class="dk-sh-section-head">
-            <div>
-                <h2 id="sh-s5-title" class="dk-sh-title @GetTitleClass(s5.TitleFontSize)">@CleanTitle(s5.Title)</h2>
-                <p class="dk-sh-subtitle">@s5.Subtitle</p>
-            </div>
-            @if (!string.IsNullOrWhiteSpace(s5.ButtonText))
-            {
-                <a href="@s5.ButtonUrl" class="dk-sh-view-all-link">
-                    @s5.ButtonText
-                </a>
-            }
-        </div>
-
-        <div class="dk-sh-destinations-grid">
-            @foreach (var c in s5.Countries)
-            {
-                <a href="@c.LinkUrl" class="dk-sh-destination-card" title="Explore essentials for @c.Name">
-                    <div class="dk-sh-flag-wrap">
-                        <img src="@c.FlagUrl" alt="@c.Name Flag" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+    <section class="dk-sh-section-wrap dk-sh-split-section" aria-label="Abroad Packing Checklist and Destinations">
+        <div class="dk-sh-split-grid">
+            <!-- Left Side: Abroad Packing Checklist -->
+            <div class="dk-sh-split-card dk-sh-split-checklist" id="sh-split-checklist-card">
+                <div class="dk-sh-split-header">
+                    <div class="dk-sh-badge-line">
+                        <h2 id="sh-s4-title" class="dk-sh-title @GetTitleClass(s4.TitleFontSize)">
+                            <a href="/abroad-packing-checklist" style="color: inherit; text-decoration: none; transition: color 0.15s ease;" onmouseover="this.style.color='#0284c7'" onmouseout="this.style.color='inherit'">
+                                @CleanTitle(s4.Title)
+                            </a>
+                        </h2>
+                        @if (!string.IsNullOrWhiteSpace(s4.BadgeText))
+                        {
+                            <span class="dk-sh-pill-badge dk-sh-badge-green">@s4.BadgeText</span>
+                        }
                     </div>
-                    <div class="dk-sh-dest-name">@c.Name</div>
-                </a>
-            }
+                    <p class="dk-sh-subtitle" style="margin-top: 4px; margin-bottom: 16px;">@s4.Subtitle</p>
+                </div>
+
+                <div class="dk-sh-split-checklist-body">
+                    <div class="dk-sh-checklist-list">
+                        @foreach (var chk in s4.Items)
+                        {
+                            <label class="dk-sh-checklist-item" id="chk_label_@chk.Id">
+                                <input type="checkbox"
+                                       class="dk-sh-check-input"
+                                       id="chk_input_@chk.Id"
+                                       checked="@(chk.IsChecked ? "checked" : null)"
+                                       onchange="toggleChecklistItem('@chk.Id')" />
+                                <span class="dk-sh-check-custom"></span>
+                                <span class="dk-sh-check-text">@chk.Text</span>
+                            </label>
+                        }
+                    </div>
+
+                    <div style="margin-top: 22px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                        <a href="/abroad-packing-checklist" class="dk-sh-btn-primary" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
+                            <span>@(string.IsNullOrWhiteSpace(s4.ButtonText) ? "View Full Checklist →" : s4.ButtonText)</span>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                        <span style="font-size: 0.8rem; color: #16a34a; font-weight: 700; background: #dcfce7; padding: 4px 10px; border-radius: 999px;">
+                            ✓ Interactive 64-Item Checklist
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Shop by Destination -->
+            <div class="dk-sh-split-card dk-sh-split-destinations" id="sh-split-destinations-card">
+                <div class="dk-sh-split-header" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap;">
+                    <div>
+                        <h2 id="sh-s5-title" class="dk-sh-title @GetTitleClass(s5.TitleFontSize)">@CleanTitle(s5.Title)</h2>
+                        <p class="dk-sh-subtitle" style="margin-top: 4px; margin-bottom: 16px;">@s5.Subtitle</p>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(s5.ButtonText))
+                    {
+                        <a href="@s5.ButtonUrl" class="dk-sh-view-all-link" style="font-size: 0.84rem; font-weight: 700;">
+                            @s5.ButtonText
+                        </a>
+                    }
+                </div>
+
+                <div class="dk-sh-destinations-side-grid">
+                    @foreach (var c in s5.Countries)
+                    {
+                        <a href="@c.LinkUrl" class="dk-sh-dest-side-card" title="Explore essentials for @c.Name">
+                            <div class="dk-sh-dest-side-flag">
+                                <img src="@c.FlagUrl" alt="@c.Name Flag" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                            </div>
+                            <div class="dk-sh-dest-side-info">
+                                <span class="dk-sh-dest-side-name">@c.Name</span>
+                                <span class="dk-sh-dest-side-hint">View Gear →</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1493,20 +1504,97 @@
         transform: translateX(3px);
     }
 
-    /* Section 4: Packing Checklist Card */
-    .dk-sh-checklist-card {
+    /* Split Row: Side-by-side Checklist & Destinations */
+    .dk-sh-split-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: stretch;
+    }
+    @@media (max-width: 992px) {
+        .dk-sh-split-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+    }
+    .dk-sh-split-card {
+        border-radius: 20px;
+        padding: 30px 32px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        position: relative;
+    }
+    .dk-sh-split-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px rgba(2, 132, 199, 0.08);
+    }
+    .dk-sh-split-checklist {
         background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
         border: 1px solid #bbf7d0;
-        border-radius: 20px;
-        padding: 32px 36px;
-        display: grid;
-        grid-template-columns: 1.15fr 0.85fr;
-        gap: 32px;
-        align-items: center;
-        box-shadow: 0 8px 24px rgba(22, 101, 52, 0.05);
     }
-    @@media (max-width: 850px) {
-        .dk-sh-checklist-card { grid-template-columns: 1fr; }
+    .dk-sh-split-destinations {
+        background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+        border: 1px solid #bae6fd;
+    }
+    .dk-sh-destinations-side-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 14px;
+    }
+    @@media (max-width: 600px) {
+        .dk-sh-destinations-side-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    .dk-sh-dest-side-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 14px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        transition: all 0.18s ease;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+    }
+    .dk-sh-dest-side-card:hover {
+        border-color: #38bdf8;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(2, 132, 199, 0.12);
+        background: #f8fafc;
+    }
+    .dk-sh-dest-side-flag {
+        width: 38px;
+        height: 26px;
+        border-radius: 4px;
+        overflow: hidden;
+        flex-shrink: 0;
+        border: 1px solid #cbd5e1;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .dk-sh-dest-side-flag img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dk-sh-dest-side-info {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.25;
+    }
+    .dk-sh-dest-side-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #0f172a;
+    }
+    .dk-sh-dest-side-hint {
+        font-size: 0.72rem;
+        color: #0284c7;
+        font-weight: 600;
     }
     .dk-sh-badge-line {
         display: flex;

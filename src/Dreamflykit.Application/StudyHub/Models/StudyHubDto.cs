@@ -19,6 +19,8 @@ public sealed class StudyHubDto
     public StudyHubBottomBannerDto BottomBanner { get; set; } = new();
 
     public StudyHubCategoriesPageDto CategoriesPage { get; set; } = new();
+    public AbroadChecklistPageDto ChecklistPage { get; set; } = new();
+    public StudyAbroadHubProfileDto AbroadProfile { get; set; } = new();
 
     public static StudyHubDto CreateDefault()
     {
@@ -268,16 +270,16 @@ public sealed class StudyHubDto
                 Title = "Abroad Packing Checklist",
                 BadgeText = "Highly Recommended",
                 Subtitle = "Make sure you don't forget anything important.",
-                ButtonText = "View Missing Essentials →",
-                ButtonUrl = "/category/study-essentials",
-                ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
+                ButtonText = "View Full Checklist →",
+                ButtonUrl = "/abroad-packing-checklist",
+                ImageUrl = "/images/study-hub/checklist-hero.jpg",
                 Items = new List<StudyHubChecklistItemDto>
                 {
-                    new() { Id = "chk-1", Text = "Study Materials", IsChecked = true, TargetUrl = "/category/study-essentials?subcategory=stationery-study-supplies" },
-                    new() { Id = "chk-2", Text = "Electronics & Accessories", IsChecked = true, TargetUrl = "/category/study-essentials?subcategory=tech-for-study" },
-                    new() { Id = "chk-3", Text = "Travel Essentials", IsChecked = false, TargetUrl = "/category/travel-gear" },
-                    new() { Id = "chk-4", Text = "Documents & Organizers", IsChecked = false, TargetUrl = "/category/study-essentials?subcategory=document-organization" },
-                    new() { Id = "chk-5", Text = "Personal Essentials", IsChecked = false, TargetUrl = "/category/room-living" }
+                    new() { Id = "chk-1", Text = "Study Materials", IsChecked = true, TargetUrl = "/abroad-packing-checklist" },
+                    new() { Id = "chk-2", Text = "Electronics & Accessories", IsChecked = true, TargetUrl = "/abroad-packing-checklist" },
+                    new() { Id = "chk-3", Text = "Travel Essentials", IsChecked = false, TargetUrl = "/abroad-packing-checklist" },
+                    new() { Id = "chk-4", Text = "Documents & Organizers", IsChecked = false, TargetUrl = "/abroad-packing-checklist" },
+                    new() { Id = "chk-5", Text = "Personal Essentials", IsChecked = false, TargetUrl = "/abroad-packing-checklist" }
                 }
             },
             Section5 = new StudyHubSection5DestinationDto
@@ -527,7 +529,387 @@ public sealed class StudyHubDto
             Items = dto.Section6.Items
         };
 
+        dto.ChecklistPage = CreateDefaultChecklistPage();
+        dto.AbroadProfile = CreateDefaultAbroadProfile();
+
         return dto;
+    }
+
+    public static AbroadChecklistPageDto CreateDefaultChecklistPage()
+    {
+        return new AbroadChecklistPageDto
+        {
+            HeroPill = "STUDY ESSENTIALS",
+            HeroTitle = "Abroad Packing Checklist",
+            HeroSubtitle = "Don't just pack. Pack smart!",
+            HeroDescription = "Your complete checklist for a hassle-free journey abroad. From study essentials to travel must-haves, we've got you covered.",
+            HeroBadgeText = "Pack Smart, Travel Far ✈",
+            HeroImageUrl = "/images/study-hub/checklist-hero.jpg",
+            SelectedDestination = "USA",
+            ShopMissingButtonText = "Shop Missing Essentials →",
+            ShopMissingButtonUrl = "/category/study-essentials",
+            Categories = new List<ChecklistCategoryGroupDto>
+            {
+                new()
+                {
+                    Id = "cat-study",
+                    Number = 1,
+                    Title = "1. Study Essentials",
+                    Subtitle = "6 of 10 items checked",
+                    IconType = "study",
+                    ImageUrl = "/images/study-hub/checklist-study.jpg",
+                    ShopButtonText = "Shop Now →",
+                    ShopButtonUrl = "/category/study-essentials?subcategory=stationery-study-supplies",
+                    Items = new List<ChecklistGroupItemDto>
+                    {
+                        new() { Id = "s-1", Name = "Notebooks & Writing Pads", IsChecked = true },
+                        new() { Id = "s-2", Name = "Pens, Pencils & Highlighters", IsChecked = true },
+                        new() { Id = "s-3", Name = "Academic Planner", IsChecked = false },
+                        new() { Id = "s-4", Name = "Calculator", IsChecked = true },
+                        new() { Id = "s-5", Name = "Document Folders", IsChecked = false },
+                        new() { Id = "s-6", Name = "Highlighter Set", IsChecked = true },
+                        new() { Id = "s-7", Name = "Sticky Notes & Index Tabs", IsChecked = true },
+                        new() { Id = "s-8", Name = "Desk Organizer", IsChecked = false },
+                        new() { Id = "s-9", Name = "Backpack Laptop Sleeve", IsChecked = true },
+                        new() { Id = "s-10", Name = "Correction Tape & Erasers", IsChecked = false }
+                    }
+                },
+                new()
+                {
+                    Id = "cat-electronics",
+                    Number = 2,
+                    Title = "2. Electronics",
+                    Subtitle = "4 of 8 items checked",
+                    IconType = "tech",
+                    ImageUrl = "/images/study-hub/checklist-electronics.jpg",
+                    ShopButtonText = "Shop Now →",
+                    ShopButtonUrl = "/category/study-essentials?subcategory=tech-for-study",
+                    Items = new List<ChecklistGroupItemDto>
+                    {
+                        new() { Id = "e-1", Name = "Laptop & Mouse", IsChecked = true },
+                        new() { Id = "e-2", Name = "Headphones / Earphones", IsChecked = true },
+                        new() { Id = "e-3", Name = "Chargers & Cables", IsChecked = false },
+                        new() { Id = "e-4", Name = "Power Bank", IsChecked = false },
+                        new() { Id = "e-5", Name = "Universal Travel Adapter", IsChecked = false },
+                        new() { Id = "e-6", Name = "External Hard Drive / SSD", IsChecked = true },
+                        new() { Id = "e-7", Name = "Multi-Port USB Hub", IsChecked = true },
+                        new() { Id = "e-8", Name = "Surge Protector Spike Guard", IsChecked = false }
+                    }
+                },
+                new()
+                {
+                    Id = "cat-clothing",
+                    Number = 3,
+                    Title = "3. Clothing & Fashion",
+                    Subtitle = "5 of 12 items checked",
+                    IconType = "fashion",
+                    ImageUrl = "/images/study-hub/checklist-clothing.jpg",
+                    ShopButtonText = "Shop Now →",
+                    ShopButtonUrl = "/category/study-essentials",
+                    Items = new List<ChecklistGroupItemDto>
+                    {
+                        new() { Id = "c-1", Name = "T-shirts & Shirts", IsChecked = true },
+                        new() { Id = "c-2", Name = "Jeans & Casual Wear", IsChecked = true },
+                        new() { Id = "c-3", Name = "Jackets & Winter Wear", IsChecked = false },
+                        new() { Id = "c-4", Name = "Innerwear & Thermals", IsChecked = false },
+                        new() { Id = "c-5", Name = "Socks", IsChecked = false },
+                        new() { Id = "c-6", Name = "Formal Suit / Blazers", IsChecked = true },
+                        new() { Id = "c-7", Name = "Track Pants & Sweatshirts", IsChecked = true },
+                        new() { Id = "c-8", Name = "Raincoat & Compact Umbrella", IsChecked = true },
+                        new() { Id = "c-9", Name = "Belts & Traditional Attire", IsChecked = false },
+                        new() { Id = "c-10", Name = "Beanie & Winter Gloves", IsChecked = false },
+                        new() { Id = "c-11", Name = "Nightwear & Loungewear", IsChecked = false },
+                        new() { Id = "c-12", Name = "Extra Pairs of Hangers", IsChecked = false }
+                    }
+                },
+                new()
+                {
+                    Id = "cat-footwear",
+                    Number = 4,
+                    Title = "4. Footwear",
+                    Subtitle = "2 of 4 items checked",
+                    IconType = "footwear",
+                    ImageUrl = "/images/study-hub/checklist-footwear.jpg",
+                    ShopButtonText = "Shop Now →",
+                    ShopButtonUrl = "/category/study-essentials",
+                    Items = new List<ChecklistGroupItemDto>
+                    {
+                        new() { Id = "f-1", Name = "Casual Shoes", IsChecked = true },
+                        new() { Id = "f-2", Name = "Formal Shoes", IsChecked = false },
+                        new() { Id = "f-3", Name = "Sports Shoes", IsChecked = false },
+                        new() { Id = "f-4", Name = "Slippers", IsChecked = false }
+                    }
+                },
+                new()
+                {
+                    Id = "cat-care",
+                    Number = 5,
+                    Title = "5. Personal Care",
+                    Subtitle = "3 of 8 items checked",
+                    IconType = "care",
+                    ImageUrl = "/images/study-hub/checklist-personal-care.jpg",
+                    ShopButtonText = "Shop Now →",
+                    ShopButtonUrl = "/category/study-essentials",
+                    Items = new List<ChecklistGroupItemDto>
+                    {
+                        new() { Id = "p-1", Name = "Toothbrush & Toothpaste", IsChecked = true },
+                        new() { Id = "p-2", Name = "Shampoo & Soap", IsChecked = true },
+                        new() { Id = "p-3", Name = "Skincare Products", IsChecked = false },
+                        new() { Id = "p-4", Name = "Grooming Essentials", IsChecked = false },
+                        new() { Id = "p-5", Name = "Nail Clipper Kit", IsChecked = true },
+                        new() { Id = "p-6", Name = "Hair Dryer / Trimmer", IsChecked = false },
+                        new() { Id = "p-7", Name = "Sunscreen & Moisturizer", IsChecked = false },
+                        new() { Id = "p-8", Name = "Quick-Dry Towels", IsChecked = false }
+                    }
+                },
+                new()
+                {
+                    Id = "cat-travel",
+                    Number = 6,
+                    Title = "6. Travel Essentials",
+                    Subtitle = "4 of 8 items checked",
+                    IconType = "travel",
+                    ImageUrl = "/images/study-hub/checklist-travel.jpg",
+                    ShopButtonText = "Shop Now →",
+                    ShopButtonUrl = "/category/study-essentials",
+                    Items = new List<ChecklistGroupItemDto>
+                    {
+                        new() { Id = "t-1", Name = "Backpack", IsChecked = true },
+                        new() { Id = "t-2", Name = "Suitcase", IsChecked = false },
+                        new() { Id = "t-3", Name = "Travel Pillow", IsChecked = false },
+                        new() { Id = "t-4", Name = "Water Bottle", IsChecked = false },
+                        new() { Id = "t-5", Name = "Luggage Tags", IsChecked = false },
+                        new() { Id = "t-6", Name = "TSA Approved Locks", IsChecked = true },
+                        new() { Id = "t-7", Name = "Luggage Weighing Scale", IsChecked = true },
+                        new() { Id = "t-8", Name = "Eye Mask & Earplugs", IsChecked = true }
+                    }
+                },
+                new()
+                {
+                    Id = "cat-documents",
+                    Number = 7,
+                    Title = "7. Important Documents",
+                    Subtitle = "5 of 7 items checked",
+                    IconType = "documents",
+                    ImageUrl = "/images/study-hub/checklist-documents.jpg",
+                    ShopButtonText = "Shop Now →",
+                    ShopButtonUrl = "/category/study-essentials?subcategory=document-organization",
+                    Items = new List<ChecklistGroupItemDto>
+                    {
+                        new() { Id = "d-1", Name = "Passport", IsChecked = true },
+                        new() { Id = "d-2", Name = "Student Visa", IsChecked = true },
+                        new() { Id = "d-3", Name = "University Admission Letter", IsChecked = true },
+                        new() { Id = "d-4", Name = "Academic Certificates", IsChecked = false },
+                        new() { Id = "d-5", Name = "Insurance Documents", IsChecked = false },
+                        new() { Id = "d-6", Name = "Flight Tickets & Itinerary", IsChecked = true },
+                        new() { Id = "d-7", Name = "Passport Size Photographs", IsChecked = true }
+                    }
+                },
+                new()
+                {
+                    Id = "cat-living",
+                    Number = 8,
+                    Title = "8. Living & Room Essentials",
+                    Subtitle = "Get country-wise recommendations for your study abroad journey.",
+                    IconType = "living",
+                    ImageUrl = "/images/study-hub/checklist-living.jpg",
+                    ShopButtonText = "Shop Now →",
+                    ShopButtonUrl = "/category/study-essentials?subcategory=desk-room-study-essential",
+                    Items = new List<ChecklistGroupItemDto>
+                    {
+                        new() { Id = "l-1", Name = "Bedsheets", IsChecked = true },
+                        new() { Id = "l-2", Name = "Pillowcase", IsChecked = false },
+                        new() { Id = "l-3", Name = "Laundry Bag", IsChecked = false },
+                        new() { Id = "l-4", Name = "Storage Organizers", IsChecked = false },
+                        new() { Id = "l-5", Name = "Bath Towels", IsChecked = true },
+                        new() { Id = "l-6", Name = "Clothes Hangers", IsChecked = false }
+                    }
+                },
+                new()
+                {
+                    Id = "cat-firstaid",
+                    Number = 9,
+                    Title = "9. Health & First Aid",
+                    Subtitle = "1 of 5 items checked",
+                    IconType = "health",
+                    ImageUrl = "/images/study-hub/checklist-firstaid.jpg",
+                    ShopButtonText = "Shop Now →",
+                    ShopButtonUrl = "/category/study-essentials",
+                    Items = new List<ChecklistGroupItemDto>
+                    {
+                        new() { Id = "h-1", Name = "First-Aid Kit", IsChecked = true },
+                        new() { Id = "h-2", Name = "Personal Medications", IsChecked = false },
+                        new() { Id = "h-3", Name = "Prescriptions", IsChecked = false },
+                        new() { Id = "h-4", Name = "Health Supplements", IsChecked = false },
+                        new() { Id = "h-5", Name = "Thermometer & Pain Relief", IsChecked = false }
+                    }
+                },
+                new()
+                {
+                    Id = "cat-kitchen",
+                    Number = 10,
+                    Title = "10. Food & Kitchen Essentials",
+                    Subtitle = "2 of 5 items checked",
+                    IconType = "kitchen",
+                    ImageUrl = "/images/study-hub/checklist-kitchen.jpg",
+                    ShopButtonText = "Shop Now →",
+                    ShopButtonUrl = "/category/study-essentials",
+                    Items = new List<ChecklistGroupItemDto>
+                    {
+                        new() { Id = "k-1", Name = "Food Containers", IsChecked = true },
+                        new() { Id = "k-2", Name = "Lunch Box", IsChecked = false },
+                        new() { Id = "k-3", Name = "Reusable Cutlery", IsChecked = false },
+                        new() { Id = "k-4", Name = "Travel Mug", IsChecked = false },
+                        new() { Id = "k-5", Name = "Ready-to-Eat Instant Food", IsChecked = true },
+                        new() { Id = "k-6", Name = "Compact Electric Kettle", IsChecked = false },
+                        new() { Id = "k-7", Name = "Water Purifier Bottle", IsChecked = false }
+                    }
+                }
+            },
+            DestinationGuides = new List<ChecklistDestinationGuideDto>
+            {
+                new() { CountryName = "USA", CountryCode = "US", FlagEmoji = "🇺🇸", FlagUrl = "/images/countries/usa.webp", AdapterType = "Adapter Type A/B", Voltage = "(120V)", LinkUrl = "/category/study-essentials?country=usa" },
+                new() { CountryName = "UK", CountryCode = "GB", FlagEmoji = "🇬🇧", FlagUrl = "/images/countries/uk.webp", AdapterType = "Adapter Type G", Voltage = "(230V)", LinkUrl = "/category/study-essentials?country=uk" },
+                new() { CountryName = "Canada", CountryCode = "CA", FlagEmoji = "🇨🇦", FlagUrl = "/images/countries/canada.webp", AdapterType = "Adapter Type A/B", Voltage = "(120V)", LinkUrl = "/category/study-essentials?country=canada" },
+                new() { CountryName = "Australia", CountryCode = "AU", FlagEmoji = "🇦🇺", FlagUrl = "/images/countries/australia.webp", AdapterType = "Adapter Type I", Voltage = "(230V)", LinkUrl = "/category/study-essentials?country=australia" },
+                new() { CountryName = "France", CountryCode = "FR", FlagEmoji = "🇫🇷", FlagUrl = "/images/countries/france.webp", AdapterType = "Adapter Type C/E", Voltage = "(230V)", LinkUrl = "/category/study-essentials?country=france" },
+                new() { CountryName = "Germany", CountryCode = "DE", FlagEmoji = "🇩🇪", FlagUrl = "/images/countries/germany.webp", AdapterType = "Adapter Type C/F", Voltage = "(230V)", LinkUrl = "/category/study-essentials?country=germany" }
+            },
+            QuickTips = new List<string>
+            {
+                "Check destination's customs rules before packing food, medicines or restricted items.",
+                "Keep important documents in your hand luggage.",
+                "Pack according to the climate of your destination.",
+                "Keep emergency contact numbers and university accommodation details handy."
+            },
+            BottomBannerTitle = "Ready for Your Next Chapter?",
+            BottomBannerSubtitle = "Everything you need, all in one place.",
+            BottomBannerButtonText = "Shop Study Essentials →",
+            BottomBannerButtonUrl = "/category/study-essentials",
+            BottomBannerImageUrl = "/images/study-hub/checklist-bottom-banner.jpg"
+        };
+    }
+
+    public static StudyAbroadHubProfileDto CreateDefaultAbroadProfile()
+    {
+        return new StudyAbroadHubProfileDto
+        {
+            HeroBadge = "Study Abroad Hub",
+            HeroTitle = "Your Dreams Abroad.",
+            HeroTitleHighlight = "Our Support.",
+            HeroSubtitle = "Everything you need to plan your international education journey — all in one place.",
+            HeroCtaText = "Explore Study Abroad Hub →",
+            HeroCtaUrl = "#explore-services",
+            HeroImageUrl = "",
+            HeroHandwrittenNote = "Study Explore Grow ♡",
+            HeroServices = new List<AbroadHeroServiceItemDto>
+            {
+                new() { Title = "Educational Loans", IconType = "loan", TargetUrl = "#service-loans", IsEnabled = true },
+                new() { Title = "GR Loans", IconType = "gr_loan", TargetUrl = "#service-loans", IsEnabled = true },
+                new() { Title = "Consultancy Details", IconType = "consultancy", TargetUrl = "#service-consultancies", IsEnabled = true },
+                new() { Title = "Find Consultancies Near Me", IconType = "near_me", TargetUrl = "#service-consultancies", IsEnabled = true },
+                new() { Title = "Health Insurance", IconType = "insurance", TargetUrl = "#service-insurance", IsEnabled = true }
+            },
+            ServicesSectionTitle = "Explore Our Services",
+            ServicesSectionSubtitle = "Your complete guide to financial support, trusted consultancies and health coverage for a global education.",
+            Services = new List<AbroadPrimaryServiceDto>
+            {
+                new()
+                {
+                    Id = "srv-loans",
+                    Title = "Educational Loans",
+                    Description = "Finance your dreams with the right education loan options from trusted banks and lenders.",
+                    ButtonText = "Get Started →",
+                    ButtonUrl = "/study-abroad-hub/education-loans",
+                    IconType = "loan",
+                    ThemeColor = "blue",
+                    ImageUrl = "",
+                    SubService = new AbroadSubServiceDto
+                    {
+                        Title = "GR Loans",
+                        Description = "Explore special loan schemes and financial assistance (GR Loans).",
+                        ButtonUrl = "/study-abroad-hub/gr-loans",
+                        IconType = "bank"
+                    }
+                },
+                new()
+                {
+                    Id = "srv-consultancy",
+                    Title = "Consultancy Details",
+                    Description = "Find trusted study abroad consultancies and get expert guidance.",
+                    ButtonText = "Get Started →",
+                    ButtonUrl = "/study-abroad-hub/consultancies",
+                    IconType = "consultancy",
+                    ThemeColor = "purple",
+                    ImageUrl = "",
+                    SubService = new AbroadSubServiceDto
+                    {
+                        Title = "Find Consultancies Near Me",
+                        Description = "Select your state, district or village to find the best consultancies near you.",
+                        ButtonUrl = "/study-abroad-hub/consultancies#near-me",
+                        IconType = "pin"
+                    }
+                },
+                new()
+                {
+                    Id = "srv-insurance",
+                    Title = "Health Insurance",
+                    Description = "Stay protected during your international journey.",
+                    ButtonText = "Get Started →",
+                    ButtonUrl = "/study-abroad-hub/health-insurance",
+                    IconType = "insurance",
+                    ThemeColor = "teal",
+                    ImageUrl = "",
+                    Bullets = new List<string>
+                    {
+                        "Global Coverage",
+                        "Medical & Emergency",
+                        "Compare Plans"
+                    }
+                },
+                new()
+                {
+                    Id = "srv-booking",
+                    Title = "Booking Slots",
+                    Description = "Book appointment slots for consultancy sessions, visa guidance and student counselling.",
+                    ButtonText = "Get Started →",
+                    ButtonUrl = "/study-abroad-hub/booking",
+                    IconType = "calendar",
+                    ThemeColor = "blue",
+                    ImageUrl = ""
+                },
+                new()
+                {
+                    Id = "srv-tests",
+                    Title = "Language Tests",
+                    Description = "IELTS, PTE, TOEFL preparation and test booking guidance.",
+                    ButtonText = "Get Started →",
+                    ButtonUrl = "/study-abroad-hub/language-tests",
+                    IconType = "test",
+                    ThemeColor = "teal",
+                    ImageUrl = ""
+                },
+                new()
+                {
+                    Id = "srv-scholarships",
+                    Title = "Scholarships & Grants",
+                    Description = "Discover scholarships, grants, eligibility and deadlines.",
+                    ButtonText = "Get Started →",
+                    ButtonUrl = "/study-abroad-hub/scholarships",
+                    IconType = "scholarship",
+                    ThemeColor = "purple",
+                    ImageUrl = ""
+                }
+            },
+            TrustPillars = new List<AbroadTrustPillarDto>
+            {
+                new() { Icon = "shield", Title = "Safe & Trusted", Description = "Verified partners and secure transactions" },
+                new() { Icon = "plane", Title = "Global Reach", Description = "Support for 50+ countries" },
+                new() { Icon = "users", Title = "Happy Students", Description = "10,000+ students and growing" },
+                new() { Icon = "headset", Title = "24/7 Support", Description = "We're here when you need us" }
+            },
+            FooterSlogan = "Your Global Education Partner ♡"
+        };
     }
 }
 
@@ -816,4 +1198,129 @@ public sealed class StudyHubCategoryCardDto
     public string ImageUrl { get; set; } = "/images/study-hub/test-pic-placeholder.svg";
     public string Icon { get; set; } = "pen";
     public int ProductCount { get; set; } = 0;
+}
+
+// -------------------------------------------------------------
+// DTOs for Dedicated Abroad Packing Checklist Page
+// -------------------------------------------------------------
+
+public sealed class AbroadChecklistPageDto
+{
+    public string HeroPill { get; set; } = "STUDY ESSENTIALS";
+    public string HeroTitle { get; set; } = "Abroad Packing Checklist";
+    public string HeroSubtitle { get; set; } = "Don't just pack. Pack smart!";
+    public string HeroDescription { get; set; } = "Your complete checklist for a hassle-free journey abroad. From study essentials to travel must-haves, we've got you covered.";
+    public string HeroBadgeText { get; set; } = "Pack Smart, Travel Far ✈";
+    public string HeroImageUrl { get; set; } = "/images/study-hub/checklist-hero.jpg";
+
+    public string SelectedDestination { get; set; } = "USA";
+    public string ShopMissingButtonText { get; set; } = "Shop Missing Essentials →";
+    public string ShopMissingButtonUrl { get; set; } = "/category/study-essentials";
+
+    public List<ChecklistCategoryGroupDto> Categories { get; set; } = new();
+    public List<ChecklistDestinationGuideDto> DestinationGuides { get; set; } = new();
+    public List<string> QuickTips { get; set; } = new();
+
+    public string BottomBannerTitle { get; set; } = "Ready for Your Next Chapter?";
+    public string BottomBannerSubtitle { get; set; } = "Everything you need, all in one place.";
+    public string BottomBannerButtonText { get; set; } = "Shop Study Essentials →";
+    public string BottomBannerButtonUrl { get; set; } = "/category/study-essentials";
+    public string BottomBannerImageUrl { get; set; } = "/images/study-hub/checklist-bottom-banner.jpg";
+}
+
+public sealed class ChecklistCategoryGroupDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public int Number { get; set; } = 1;
+    public string Title { get; set; } = string.Empty;
+    public string Subtitle { get; set; } = string.Empty;
+    public string IconType { get; set; } = "study";
+    public string ImageUrl { get; set; } = "/images/study-hub/test-pic-placeholder.svg";
+    public string ShopButtonText { get; set; } = "Shop Now →";
+    public string ShopButtonUrl { get; set; } = "/category/study-essentials";
+    public string TotalCountDisplay { get; set; } = string.Empty;
+    public List<ChecklistGroupItemDto> Items { get; set; } = new();
+}
+
+public sealed class ChecklistGroupItemDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Name { get; set; } = string.Empty;
+    public bool IsChecked { get; set; } = false;
+    public string TargetUrl { get; set; } = "/category/study-essentials";
+}
+
+public sealed class ChecklistDestinationGuideDto
+{
+    public string CountryName { get; set; } = string.Empty;
+    public string CountryCode { get; set; } = string.Empty;
+    public string FlagEmoji { get; set; } = string.Empty;
+    public string FlagUrl { get; set; } = string.Empty;
+    public string AdapterType { get; set; } = string.Empty;
+    public string Voltage { get; set; } = string.Empty;
+    public string LinkUrl { get; set; } = "/category/study-essentials";
+}
+
+// -------------------------------------------------------------
+// DTOs for Study Abroad Hub Profile (Services Portal)
+// -------------------------------------------------------------
+
+public sealed class StudyAbroadHubProfileDto
+{
+    public string HeroBadge { get; set; } = "Study Abroad Hub";
+    public string HeroTitle { get; set; } = "Your Dreams Abroad.";
+    public string HeroTitleHighlight { get; set; } = "Our Support.";
+    public string HeroSubtitle { get; set; } = "Everything you need to plan your international education journey — all in one place.";
+    public string HeroCtaText { get; set; } = "Explore Study Abroad Hub →";
+    public string HeroCtaUrl { get; set; } = "#explore-services";
+    public string HeroImageUrl { get; set; } = string.Empty;
+    public string HeroHandwrittenNote { get; set; } = "Study Explore Grow ♡";
+
+    public List<AbroadHeroServiceItemDto> HeroServices { get; set; } = new();
+
+    public string ServicesSectionTitle { get; set; } = "Explore Our Services";
+    public string ServicesSectionSubtitle { get; set; } = "Your complete guide to financial support, trusted consultancies and health coverage for a global education.";
+
+    public List<AbroadPrimaryServiceDto> Services { get; set; } = new();
+    public List<AbroadTrustPillarDto> TrustPillars { get; set; } = new();
+    public string FooterSlogan { get; set; } = "Your Global Education Partner ♡";
+    public string TrustTagline { get => FooterSlogan; set => FooterSlogan = value; }
+}
+
+public sealed class AbroadHeroServiceItemDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Title { get; set; } = string.Empty;
+    public string IconType { get; set; } = "loan";
+    public string TargetUrl { get; set; } = "#";
+    public bool IsEnabled { get; set; } = true;
+}
+
+public sealed class AbroadPrimaryServiceDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string ButtonText { get; set; } = "Get Started →";
+    public string ButtonUrl { get; set; } = "#";
+    public string IconType { get; set; } = "study";
+    public string ThemeColor { get; set; } = "blue";
+    public string ImageUrl { get; set; } = string.Empty;
+    public List<string> Bullets { get; set; } = new();
+    public AbroadSubServiceDto? SubService { get; set; }
+}
+
+public sealed class AbroadSubServiceDto
+{
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string ButtonUrl { get; set; } = "#";
+    public string IconType { get; set; } = "sub";
+}
+
+public sealed class AbroadTrustPillarDto
+{
+    public string Icon { get; set; } = "shield";
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
 }
