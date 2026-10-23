@@ -216,17 +216,140 @@
                     <input type="text" class="brand-product-url" value="@br.ProductUrl" placeholder="Target Link" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
                 </div>
             }
+    </div>
+
+    <!-- SECTION 3: FLAGSHIP SPECIALS (3-SECTION 3D SLIDE SHOWCASE) -->
+    @{
+        var flagshipSecs = (highlight.Sections != null && highlight.Sections.Count > 0) 
+            ? highlight.Sections 
+            : Dreamflykit.Application.MobilesHub.Models.MobilesHubDto.CreateDefault().HighlightBanner.Sections;
+    }
+    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffedd5; color: #c2410c; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; margin-bottom: 4px;">
+                    🔥 FLIPKART 3-SECTION FLAGSHIP SHOWCASE
+                </div>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">3. Flagship Specials (3 Sections &bull; Admin Slides &amp; Images)</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">
+                    3 side-by-side featured phone showcases with 3D pop-out cutouts, fiery metallic borders, 0% EMI coins, and star ratings. Admin decides slides count and images for each section!
+                </p>
+            </div>
+            
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: inline-flex; align-items: center; gap: 6px;">
+                    <input type="checkbox" id="flagshipIsEnabled" @(highlight.IsEnabled ? "checked" : "") /> Section Enabled
+                </label>
+                <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: inline-flex; align-items: center; gap: 6px;">
+                    <input type="checkbox" id="flagshipAutoPlay" @(highlight.AutoPlay ? "checked" : "") /> Auto-Play Slides
+                </label>
+                <div style="display: inline-flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 12px; font-weight: 700; color: #475569;">Slide Interval:</span>
+                    <input type="number" id="flagshipSlideInterval" value="@(highlight.SlideIntervalSeconds > 0 ? highlight.SlideIntervalSeconds : 4)" min="1" max="30" style="width: 55px; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px; font-weight: 800;" />
+                    <span style="font-size: 11px; color: #64748b;">sec</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 Columns Grid -->
+        <div id="flagshipSectionsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 18px;">
+            @for (int c = 0; c < flagshipSecs.Count; c++)
+            {
+                var col = flagshipSecs[c];
+                var colSlides = col.Slides ?? new List<Dreamflykit.Application.MobilesHub.Models.FlagshipSlideItemDto>();
+                <div class="flagship-col-card" data-col-index="@c" style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+                        <div>
+                            <span style="font-weight: 900; font-size: 13px; color: #c2410c; text-transform: uppercase;">Column @(c + 1)</span>
+                            <input type="text" class="flagship-col-title" value="@col.Title" style="font-weight: 800; font-size: 13.5px; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 6px; margin-left: 8px;" />
+                        </div>
+                        <button type="button" onclick="addNewFlagshipSlide(@c)" style="background: #2874f0; color: #ffffff; border: none; padding: 5px 10px; font-size: 11.5px; font-weight: 800; border-radius: 6px; cursor: pointer;">
+                            + Add Slide
+                        </button>
+                    </div>
+
+                    <input type="hidden" class="flagship-col-id" value="@col.Id" />
+
+                    <!-- Slides inside Column c -->
+                    <div class="flagship-slides-container" data-col="@c" style="display: flex; flex-direction: column; gap: 12px;">
+                        @for (int s = 0; s < colSlides.Count; s++)
+                        {
+                            var slide = colSlides[s];
+                            <div class="flagship-slide-card" data-slide-index="@s" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <span style="font-size: 12px; font-weight: 800; color: #0f172a;">Slide #@(s + 1): @slide.PhoneName</span>
+                                    <button type="button" onclick="removeFlagshipSlide(this)" style="background: #fee2e2; color: #dc2626; border: none; padding: 2px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer;">Delete</button>
+                                </div>
+
+                                <input type="hidden" class="flagship-slide-id" value="@slide.Id" />
+
+                                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px; margin-bottom: 6px;">
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Phone Name</label>
+                                        <input type="text" class="flagship-phone-name" value="@slide.PhoneName" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12.5px; font-weight: 700;" />
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Star Rating (★)</label>
+                                        <input type="text" class="flagship-rating" value="@slide.Rating" placeholder="4.6" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 800; color: #b45309;" />
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 6px;">
+                                    <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Tagline Highlight</label>
+                                    <input type="text" class="flagship-tagline" value="@slide.Tagline" placeholder="Unrivalled Nightography" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Selling Price</label>
+                                        <input type="text" class="flagship-price" value="@slide.PriceText" placeholder="From ₹44,999*" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 800; color: #16a34a;" />
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Original MRP</label>
+                                        <input type="text" class="flagship-orig-price" value="@slide.OriginalPriceText" placeholder="₹89,999" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                                    </div>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px; margin-bottom: 6px;">
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">0% EMI Text</label>
+                                        <input type="text" class="flagship-emi" value="@slide.EmiBadgeText" placeholder="0% EMI ₹3,750/m" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 700; color: #b45309;" />
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Glow Ribbon Color</label>
+                                        <input type="color" class="flagship-color" value="@slide.ThemeGlowColor" style="width: 100%; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" />
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 6px;">
+                                    <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">3D Phone Cutout Image</label>
+                                    <div style="display: flex; gap: 6px;">
+                                        <input type="text" class="flagship-img-url" value="@slide.ImageUrl" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                                        <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #2874f0; color: #ffffff; border: none; padding: 6px 10px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer;">Upload</button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Target Link</label>
+                                    <input type="text" class="flagship-target-url" value="@slide.TargetUrl" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
         </div>
     </div>
 
-    <!-- SECTION 3: TOP DEALS & 3D / 2D / 1D VISUALIZER SELECTION -->
+    <!-- SECTION 4: TOP DEALS & 3D / 2D / 1D VISUALIZER SELECTION -->
     <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
             <div>
                 <div style="display: inline-flex; align-items: center; gap: 6px; background: #dbeafe; color: #1d4ed8; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; margin-bottom: 4px;">
                     ✨ FLIPKART 3x3 GRID WITH 3D INTERACTIVE SUPPORT
                 </div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">3. TOP DEALS (Admin Decides 3D, 2D, or 1D for Every Phone!)</h2>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">4. TOP DEALS (Admin Decides 3D, 2D, or 1D for Every Phone!)</h2>
                 <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">
                     Select whether each mobile phone displays in <strong>3D</strong> (interactive 360° rotation with Three.js/ModelViewer), <strong>2D</strong> (gallery), or <strong>1D</strong> (single photo). Admin can also upload custom .glb/.gltf models!
                 </p>
@@ -592,7 +715,70 @@
                 </div>
             </div>
         </div>`;
-        container.insertAdjacentHTML("beforeend", html);
+    function addNewFlagshipSlide(colIndex) {
+        const colContainer = document.querySelector(`.flagship-slides-container[data-col='${colIndex}']`);
+        if (!colContainer) return;
+        const currentCount = colContainer.querySelectorAll(".flagship-slide-card").length;
+        const html = `
+        <div class="flagship-slide-card" data-slide-index="${currentCount}" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 12px; font-weight: 800; color: #0f172a;">Slide #${currentCount + 1}: New Phone</span>
+                <button type="button" onclick="removeFlagshipSlide(this)" style="background: #fee2e2; color: #dc2626; border: none; padding: 2px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer;">Delete</button>
+            </div>
+            <input type="hidden" class="flagship-slide-id" value="sec${colIndex+1}-slide-${Date.now()}" />
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px; margin-bottom: 6px;">
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Phone Name</label>
+                    <input type="text" class="flagship-phone-name" value="Flagship Smartphone 5G" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12.5px; font-weight: 700;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Star Rating (★)</label>
+                    <input type="text" class="flagship-rating" value="4.6" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 800; color: #b45309;" />
+                </div>
+            </div>
+            <div style="margin-bottom: 6px;">
+                <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Tagline Highlight</label>
+                <input type="text" class="flagship-tagline" value="Next-Gen AI &amp; Studio Camera" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Selling Price</label>
+                    <input type="text" class="flagship-price" value="From ₹39,999*" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 800; color: #16a34a;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Original MRP</label>
+                    <input type="text" class="flagship-orig-price" value="₹59,999" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px; margin-bottom: 6px;">
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">0% EMI Text</label>
+                    <input type="text" class="flagship-emi" value="0% EMI ₹3,333/m" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 700; color: #b45309;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Glow Ribbon Color</label>
+                    <input type="color" class="flagship-color" value="#f97316" style="width: 100%; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" />
+                </div>
+            </div>
+            <div style="margin-bottom: 6px;">
+                <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">3D Phone Cutout Image</label>
+                <div style="display: flex; gap: 6px;">
+                    <input type="text" class="flagship-img-url" value="/images/mobiles-hub/phones/nova2.svg" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                    <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #2874f0; color: #ffffff; border: none; padding: 6px 10px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer;">Upload</button>
+                </div>
+            </div>
+            <div>
+                <label style="display: block; font-size: 11px; font-weight: 700; color: #475569;">Target Link</label>
+                <input type="text" class="flagship-target-url" value="/products?category=mobiles" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+            </div>
+        </div>`;
+        colContainer.insertAdjacentHTML("beforeend", html);
+    }
+
+    function removeFlagshipSlide(btn) {
+        if (confirm("Remove this flagship slide?")) {
+            btn.closest(".flagship-slide-card").remove();
+        }
     }
 
     async function saveMobilesHub() {
@@ -616,13 +802,11 @@
                 Brands: []
             },
             HighlightBanner: {
-                IsEnabled: true,
-                Title: "Galaxy S25 Ultra 5G",
-                TitleHighlight: "From ₹58,999*",
-                Subtitle: "Upgrade to Flagship • Snapdragon 8 Elite • Galaxy AI Built-in",
-                ImageUrl: "/images/mobiles-hub/galaxy-s25-banner.svg",
-                TargetUrl: "/products?category=mobiles&q=Galaxy+S25",
-                ButtonText: "Buy Now with 0% EMI →"
+                IsEnabled: document.getElementById("flagshipIsEnabled")?.checked ?? true,
+                AutoPlay: document.getElementById("flagshipAutoPlay")?.checked ?? true,
+                SlideIntervalSeconds: parseInt(document.getElementById("flagshipSlideInterval")?.value, 10) || 4,
+                SectionHeading: "FLAGSHIP SPECIALS",
+                Sections: []
             },
             TopDealsSection: {
                 IsEnabled: true,
@@ -682,6 +866,35 @@
                 ProductUrl: card.querySelector(".brand-product-url")?.value || "/products?category=mobiles",
                 DisplayOrder: idx + 1
             });
+        });
+
+        // Collect Flagship Specials 3-Sections & Slides
+        document.querySelectorAll("#flagshipSectionsContainer .flagship-col-card").forEach((colEl, cIdx) => {
+            const colObj = {
+                Id: colEl.querySelector(".flagship-col-id")?.value || ("col-" + (cIdx+1)),
+                Title: colEl.querySelector(".flagship-col-title")?.value || ("Section " + (cIdx+1)),
+                DisplayOrder: cIdx + 1,
+                Slides: []
+            };
+            colEl.querySelectorAll(".flagship-slide-card").forEach((slideEl, sIdx) => {
+                colObj.Slides.push({
+                    Id: slideEl.querySelector(".flagship-slide-id")?.value || ("sec" + (cIdx+1) + "-slide-" + (sIdx+1)),
+                    PhoneName: slideEl.querySelector(".flagship-phone-name")?.value || "",
+                    Tagline: slideEl.querySelector(".flagship-tagline")?.value || "",
+                    Rating: slideEl.querySelector(".flagship-rating")?.value || "4.5",
+                    PriceText: slideEl.querySelector(".flagship-price")?.value || "",
+                    OriginalPriceText: slideEl.querySelector(".flagship-orig-price")?.value || "",
+                    EmiBadgeText: slideEl.querySelector(".flagship-emi")?.value || "",
+                    OfferDisclaimer: "*Incl. All Offers",
+                    ThemeGlowColor: slideEl.querySelector(".flagship-color")?.value || "#f97316",
+                    ImageUrl: slideEl.querySelector(".flagship-img-url")?.value || "",
+                    TargetUrl: slideEl.querySelector(".flagship-target-url")?.value || "/products?category=mobiles",
+                    BadgeText: "FLAGSHIP SPECIAL",
+                    DisplayOrder: sIdx + 1,
+                    IsActive: true
+                });
+            });
+            payload.HighlightBanner.Sections.push(colObj);
         });
 
         // Collect Deals

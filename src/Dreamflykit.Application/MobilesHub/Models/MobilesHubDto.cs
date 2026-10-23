@@ -105,12 +105,202 @@ public sealed class MobilesHubDto
             HighlightBanner = new MobilesHighlightBannerDto
             {
                 IsEnabled = true,
+                SectionHeading = "FLAGSHIP SPECIALS",
+                Subheading = "Curated Flagship Smartphones with 0% EMI & Star Ratings",
+                SlideIntervalSeconds = 4,
+                AutoPlay = true,
                 Title = "Galaxy S25 Ultra 5G",
-                TitleHighlight = "From â‚¹58,999*",
-                Subtitle = "Upgrade to Flagship â€¢ Snapdragon 8 Elite â€¢ Galaxy AI Built-in",
+                TitleHighlight = "From ₹58,999*",
+                Subtitle = "Upgrade to Flagship • Snapdragon 8 Elite • Galaxy AI Built-in",
                 ImageUrl = "/images/mobiles-hub/galaxy-s25-banner.svg",
                 TargetUrl = "/products?category=mobiles&q=Galaxy+S25",
-                ButtonText = "Buy Now with 0% EMI â†’"
+                ButtonText = "Buy Now with 0% EMI →",
+                Sections = new List<FlagshipSectionColumnDto>
+                {
+                    // Section 1
+                    new()
+                    {
+                        Id = "flagship-sec-1",
+                        Title = "Flagship Galaxy & iOS",
+                        DisplayOrder = 1,
+                        Slides = new List<FlagshipSlideItemDto>
+                        {
+                            new()
+                            {
+                                Id = "sec1-slide-1",
+                                PhoneName = "Galaxy S25 FE",
+                                Tagline = "Unrivalled Nightography",
+                                Rating = "4.6",
+                                PriceText = "From ₹44,999*",
+                                OriginalPriceText = "₹89,999",
+                                EmiBadgeText = "0% EMI ₹3,750/m",
+                                OfferDisclaimer = "*Incl. All Offers",
+                                ImageUrl = "/images/mobiles-hub/phones/s25fe.svg",
+                                TargetUrl = "/products?category=mobiles&q=Galaxy+S25+FE",
+                                ThemeGlowColor = "#f97316",
+                                BadgeText = "FLAGSHIP SPECIAL",
+                                DisplayOrder = 1,
+                                IsActive = true
+                            },
+                            new()
+                            {
+                                Id = "sec1-slide-2",
+                                PhoneName = "iPhone 16 Pro Max",
+                                Tagline = "A18 Pro & Ceramic Shield",
+                                Rating = "4.9",
+                                PriceText = "From ₹1,29,900*",
+                                OriginalPriceText = "₹1,44,900",
+                                EmiBadgeText = "0% EMI ₹10,825/m",
+                                OfferDisclaimer = "*Incl. Bank Offer",
+                                ImageUrl = "/images/mobiles-hub/phones/nova2.svg",
+                                TargetUrl = "/products?category=mobiles&q=iPhone+16+Pro",
+                                ThemeGlowColor = "#6366f1",
+                                BadgeText = "TITANIUM PRO",
+                                DisplayOrder = 2,
+                                IsActive = true
+                            },
+                            new()
+                            {
+                                Id = "sec1-slide-3",
+                                PhoneName = "Google Pixel 9 Pro XL",
+                                Tagline = "Google Tensor G4 & Gemini AI",
+                                Rating = "4.7",
+                                PriceText = "From ₹99,999*",
+                                OriginalPriceText = "₹1,24,999",
+                                EmiBadgeText = "0% EMI ₹8,333/m",
+                                OfferDisclaimer = "*Incl. Exchange Bonus",
+                                ImageUrl = "/images/mobiles-hub/phones/pixel11.svg",
+                                TargetUrl = "/products?category=mobiles&q=Pixel+9+Pro",
+                                ThemeGlowColor = "#0ea5e9",
+                                BadgeText = "PRO STUDIO",
+                                DisplayOrder = 3,
+                                IsActive = true
+                            }
+                        }
+                    },
+                    // Section 2
+                    new()
+                    {
+                        Id = "flagship-sec-2",
+                        Title = "Performance & Speed Beasts",
+                        DisplayOrder = 2,
+                        Slides = new List<FlagshipSlideItemDto>
+                        {
+                            new()
+                            {
+                                Id = "sec2-slide-1",
+                                PhoneName = "POCO X8 Pro Max 5G",
+                                Tagline = "Dimensity 9500s Flagship Speed",
+                                Rating = "4.3",
+                                PriceText = "From ₹42,999*",
+                                OriginalPriceText = "₹57,999",
+                                EmiBadgeText = "0% EMI ₹3,583/m",
+                                OfferDisclaimer = "*Incl. All Offers",
+                                ImageUrl = "/images/mobiles-hub/phones/pocox8.svg",
+                                TargetUrl = "/products?category=mobiles&q=POCO+X8",
+                                ThemeGlowColor = "#ef4444",
+                                BadgeText = "GAMING BEAST",
+                                DisplayOrder = 1,
+                                IsActive = true
+                            },
+                            new()
+                            {
+                                Id = "sec2-slide-2",
+                                PhoneName = "OnePlus 13 5G",
+                                Tagline = "Snapdragon 8 Elite & Hasselblad",
+                                Rating = "4.8",
+                                PriceText = "From ₹69,999*",
+                                OriginalPriceText = "₹79,999",
+                                EmiBadgeText = "0% EMI ₹5,833/m",
+                                OfferDisclaimer = "*Incl. Instant Bank Off",
+                                ImageUrl = "/images/mobiles-hub/phones/edge70.svg",
+                                TargetUrl = "/products?category=mobiles&q=OnePlus+13",
+                                ThemeGlowColor = "#10b981",
+                                BadgeText = "SPEED MONSTER",
+                                DisplayOrder = 2,
+                                IsActive = true
+                            },
+                            new()
+                            {
+                                Id = "sec2-slide-3",
+                                PhoneName = "Realme GT 7 Pro",
+                                Tagline = "Underwater Mode & 120W SuperCharge",
+                                Rating = "4.5",
+                                PriceText = "From ₹54,999*",
+                                OriginalPriceText = "₹64,999",
+                                EmiBadgeText = "0% EMI ₹4,583/m",
+                                OfferDisclaimer = "*Incl. Special Offers",
+                                ImageUrl = "/images/mobiles-hub/phones/motog37.svg",
+                                TargetUrl = "/products?category=mobiles&q=Realme+GT+7",
+                                ThemeGlowColor = "#f59e0b",
+                                BadgeText = "SUPER CHARGE",
+                                DisplayOrder = 3,
+                                IsActive = true
+                            }
+                        }
+                    },
+                    // Section 3
+                    new()
+                    {
+                        Id = "flagship-sec-3",
+                        Title = "Design & Iconic Flagships",
+                        DisplayOrder = 3,
+                        Slides = new List<FlagshipSlideItemDto>
+                        {
+                            new()
+                            {
+                                Id = "sec3-slide-1",
+                                PhoneName = "Nothing Phone (4b)",
+                                Tagline = "Glyph Matrix 2.0 & Transparent",
+                                Rating = "4.4",
+                                PriceText = "From ₹25,999",
+                                OriginalPriceText = "₹54,999",
+                                EmiBadgeText = "0% EMI ₹2,166/m",
+                                OfferDisclaimer = "*Incl. All Offers",
+                                ImageUrl = "/images/mobiles-hub/phones/phone4b.svg",
+                                TargetUrl = "/products?category=mobiles&q=Phone+4b",
+                                ThemeGlowColor = "#06b6d4",
+                                BadgeText = "DESIGN ICON",
+                                DisplayOrder = 1,
+                                IsActive = true
+                            },
+                            new()
+                            {
+                                Id = "sec3-slide-2",
+                                PhoneName = "Vivo X200 Pro 5G",
+                                Tagline = "ZEISS 200MP APO Telephoto",
+                                Rating = "4.8",
+                                PriceText = "From ₹94,999*",
+                                OriginalPriceText = "₹1,09,999",
+                                EmiBadgeText = "0% EMI ₹7,916/m",
+                                OfferDisclaimer = "*Incl. All Offers",
+                                ImageUrl = "/images/mobiles-hub/phones/oppok14.svg",
+                                TargetUrl = "/products?category=mobiles&q=Vivo+X200",
+                                ThemeGlowColor = "#8b5cf6",
+                                BadgeText = "ZEISS OPTICS",
+                                DisplayOrder = 2,
+                                IsActive = true
+                            },
+                            new()
+                            {
+                                Id = "sec3-slide-3",
+                                PhoneName = "Motorola Razr 50 Ultra",
+                                Tagline = "Largest 4.0\" External Screen Fold",
+                                Rating = "4.6",
+                                PriceText = "From ₹89,999*",
+                                OriginalPriceText = "₹1,09,999",
+                                EmiBadgeText = "0% EMI ₹7,499/m",
+                                OfferDisclaimer = "*Incl. Bank Offer",
+                                ImageUrl = "/images/mobiles-hub/phones/motog37-blue.svg",
+                                TargetUrl = "/products?category=mobiles&q=Razr+50",
+                                ThemeGlowColor = "#ec4899",
+                                BadgeText = "NEXT-GEN FLIP",
+                                DisplayOrder = 3,
+                                IsActive = true
+                            }
+                        }
+                    }
+                }
             },
             TopDealsSection = new MobilesTopDealsSectionDto
             {
@@ -394,12 +584,46 @@ public sealed class MobileBrandItemDto
 public sealed class MobilesHighlightBannerDto
 {
     public bool IsEnabled { get; set; } = true;
+    public string SectionHeading { get; set; } = "FLAGSHIP SPECIALS";
+    public string Subheading { get; set; } = "Next-Gen Flagship Smartphones with 0% EMI & Studio Optics";
+    public int SlideIntervalSeconds { get; set; } = 4;
+    public bool AutoPlay { get; set; } = true;
+    public List<FlagshipSectionColumnDto> Sections { get; set; } = new();
+
+    // Legacy fallback properties for backward compatibility
     public string Title { get; set; } = string.Empty;
     public string TitleHighlight { get; set; } = string.Empty;
     public string Subtitle { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = string.Empty;
     public string TargetUrl { get; set; } = string.Empty;
     public string ButtonText { get; set; } = "Shop Now";
+    public bool IsUploadingSoon { get; set; } = false;
+}
+
+public sealed class FlagshipSectionColumnDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string Title { get; set; } = "Section";
+    public int DisplayOrder { get; set; } = 1;
+    public List<FlagshipSlideItemDto> Slides { get; set; } = new();
+}
+
+public sealed class FlagshipSlideItemDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string PhoneName { get; set; } = string.Empty;
+    public string Tagline { get; set; } = string.Empty;
+    public string Rating { get; set; } = "4.5";
+    public string PriceText { get; set; } = string.Empty;
+    public string OriginalPriceText { get; set; } = string.Empty;
+    public string EmiBadgeText { get; set; } = "0% EMI Available";
+    public string OfferDisclaimer { get; set; } = "*Incl. All Offers";
+    public string ImageUrl { get; set; } = string.Empty;
+    public string TargetUrl { get; set; } = "/products?category=mobiles";
+    public string ThemeGlowColor { get; set; } = "#f97316";
+    public string BadgeText { get; set; } = "FLAGSHIP SPECIAL";
+    public int DisplayOrder { get; set; } = 1;
+    public bool IsActive { get; set; } = true;
     public bool IsUploadingSoon { get; set; } = false;
 }
 
