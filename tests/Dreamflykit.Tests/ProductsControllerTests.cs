@@ -16,12 +16,14 @@ public class ProductsControllerTests
     private readonly Mock<IProductService> _productServiceMock;
     private readonly Mock<ICategoryService> _categoryServiceMock;
     private readonly Mock<IStudyHubService> _studyHubServiceMock;
+    private readonly Mock<Dreamflykit.Application.FashionHub.Interfaces.IFashionHubService> _fashionHubServiceMock;
 
     public ProductsControllerTests()
     {
         _productServiceMock = new Mock<IProductService>();
         _categoryServiceMock = new Mock<ICategoryService>();
         _studyHubServiceMock = new Mock<IStudyHubService>();
+        _fashionHubServiceMock = new Mock<Dreamflykit.Application.FashionHub.Interfaces.IFashionHubService>();
     }
 
     private ProductsController CreateController(bool isAjax = false, bool partialQuery = false)
@@ -29,7 +31,8 @@ public class ProductsControllerTests
         var controller = new ProductsController(
             _productServiceMock.Object,
             _categoryServiceMock.Object,
-            _studyHubServiceMock.Object);
+            _studyHubServiceMock.Object,
+            _fashionHubServiceMock.Object);
 
         var httpContext = new DefaultHttpContext();
         if (isAjax)

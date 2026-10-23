@@ -1,0 +1,1221 @@
+@model Dreamflykit.Application.StudyHub.Models.StudyGuideDetailPageDto
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = $"{Model.Title} — Dreamflykit";
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+    var hasValidHeroImg = !string.IsNullOrWhiteSpace(Model.HeroImageUrl) && !Model.HeroImageUrl.Contains("placeholder");
+}
+
+<div class="dk-guide-page" id="dkGuideRoot">
+    @if (canManage)
+    {
+        <div class="dk-guide-admin-bar">
+            <div class="dk-guide-admin-left">
+                <span class="dk-guide-admin-badge">Admin Controls</span>
+                <span>You can edit all text, products, and upload/replace images for this guide in the Admin Panel.</span>
+            </div>
+            <a href="/Admin/StudyHub#tab-study-guides" class="dk-guide-admin-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                Manage This Guide in Admin
+            </a>
+        </div>
+    }
+
+    <!-- ========================================================
+         BREADCRUMB
+    ========================================================= -->
+    <nav class="dk-guide-breadcrumb" aria-label="Breadcrumb">
+        <div class="dk-guide-container">
+            <a href="/">Home</a>
+            <span class="dk-guide-bc-sep">›</span>
+            <a href="/category/study-essentials">Study Essentials</a>
+            <span class="dk-guide-bc-sep">›</span>
+            <span class="dk-guide-bc-current">@Model.Title</span>
+        </div>
+    </nav>
+
+    <!-- ========================================================
+         HERO BANNER
+    ========================================================= -->
+    <section class="dk-guide-hero-section">
+        <div class="dk-guide-container">
+            <div class="dk-guide-hero-card">
+                <div class="dk-guide-hero-content">
+                    @if (!string.IsNullOrWhiteSpace(Model.BadgeText))
+                    {
+                        <div class="dk-guide-pill-badge">@Model.BadgeText</div>
+                    }
+                    <h1 class="dk-guide-hero-title">@Model.Title</h1>
+                    <p class="dk-guide-hero-tagline">@Model.Subtitle</p>
+                    <p class="dk-guide-hero-desc">@Model.Description</p>
+                </div>
+
+                <div class="dk-guide-hero-media">
+                    <div class="dk-guide-hero-img-wrap">
+                        @if (hasValidHeroImg)
+                        {
+                            <img src="@Model.HeroImageUrl"
+                                 alt="@Model.Title"
+                                 onerror="this.onerror=null; this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';" />
+                            <div class="dk-guide-upload-pic-box" style="display: none;">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                                <span>Upload Pic</span>
+                                @if (canManage)
+                                {
+                                    <a href="/Admin/StudyHub#tab-study-guides" class="dk-guide-admin-quick-link">Admin Upload</a>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="dk-guide-upload-pic-box">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                                <span>Upload Pic</span>
+                                @if (canManage)
+                                {
+                                    <a href="/Admin/StudyHub#tab-study-guides" class="dk-guide-admin-quick-link">Admin Upload</a>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.HeroCursiveNote))
+                    {
+                        <div class="dk-guide-cursive-note">
+                            <span>@Model.HeroCursiveNote</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Trust Pillars Row -->
+            @if (Model.TrustPillars != null && Model.TrustPillars.Count > 0)
+            {
+                <div class="dk-guide-trust-bar">
+                    @foreach (var pillar in Model.TrustPillars)
+                    {
+                        <div class="dk-guide-trust-item">
+                            <div class="dk-guide-trust-icon">
+                                @if (pillar.Icon == "academic")
+                                {
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                                }
+                                else if (pillar.Icon == "tech")
+                                {
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                                }
+                                else if (pillar.Icon == "documents")
+                                {
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                                }
+                                else if (pillar.Icon == "life")
+                                {
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                }
+                                else if (pillar.Icon == "brand")
+                                {
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                                }
+                                else if (pillar.Icon == "price")
+                                {
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                }
+                                else
+                                {
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                }
+                            </div>
+                            <div class="dk-guide-trust-text">
+                                <div class="dk-guide-trust-title">@pillar.Title</div>
+                                <div class="dk-guide-trust-sub">@pillar.Subtitle</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 1: 3-COLUMN PREPARATION & CHECKLIST LAYOUT
+    ========================================================= -->
+    <section class="dk-guide-prep-section">
+        <div class="dk-guide-container">
+            <div class="dk-guide-step-header">
+                <span class="dk-guide-step-num">1</span>
+                <div>
+                    <h2 class="dk-guide-step-title">@Model.Section1Title</h2>
+                    <p class="dk-guide-step-sub">@Model.Section1Subtitle</p>
+                </div>
+            </div>
+
+            <div class="dk-guide-prep-grid">
+                <!-- Column 1: Preparation Guide -->
+                <div class="dk-guide-prep-card">
+                    <div class="dk-guide-card-head">
+                        <div class="dk-guide-card-icon" style="background: #e0f2fe; color: #0284c7;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                        </div>
+                        <h3 class="dk-guide-card-title">@Model.PrepGuideTitle</h3>
+                    </div>
+
+                    <ul class="dk-guide-prep-list">
+                        @foreach (var item in Model.PrepGuideItems)
+                        {
+                            <li>
+                                <span class="dk-guide-bullet-icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                </span>
+                                <span>@item</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <!-- Column 2: Essentials Checklist (Interactive) -->
+                <div class="dk-guide-prep-card dk-guide-checklist-card">
+                    <div class="dk-guide-card-head">
+                        <div class="dk-guide-card-icon" style="background: #f0fdf4; color: #16a34a;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                        </div>
+                        <div style="flex: 1;">
+                            <h3 class="dk-guide-card-title">@Model.ChecklistTitle</h3>
+                            <span class="dk-guide-chk-progress" id="guideChkProgressText">0 of @Model.ChecklistItems.Count checked</span>
+                        </div>
+                    </div>
+
+                    <div class="dk-guide-chk-list" id="guideChecklistContainer">
+                        @for (int i = 0; i < Model.ChecklistItems.Count; i++)
+                        {
+                            var chkText = Model.ChecklistItems[i];
+                            var chkId = $"chk_{Model.Slug}_{i}";
+                            <label class="dk-guide-chk-row" for="@chkId">
+                                <input type="checkbox"
+                                       id="@chkId"
+                                       class="dk-guide-chk-input"
+                                       data-slug="@Model.Slug"
+                                       data-index="@i"
+                                       onchange="onGuideChecklistChange(this)" />
+                                <span class="dk-guide-chk-custom"></span>
+                                <span class="dk-guide-chk-label">@chkText</span>
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                <!-- Column 3: Pro Tip Callout -->
+                <div class="dk-guide-prep-card dk-guide-protip-card">
+                    <div class="dk-guide-card-head">
+                        <div class="dk-guide-card-icon" style="background: #eff6ff; color: #1d4ed8;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        </div>
+                        <h3 class="dk-guide-card-title">@Model.ProTipTitle</h3>
+                    </div>
+
+                    <div class="dk-guide-protip-body">
+                        <p>@Model.ProTipContent</p>
+                    </div>
+
+                    <div class="dk-guide-protip-footer">
+                        <span>💡 Tip for international students</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 2 (OPTIONAL): COMMON MISTAKES TO AVOID
+    ========================================================= -->
+    @if (Model.ShowMistakesSection && Model.Mistakes != null && Model.Mistakes.Count > 0)
+    {
+        <section class="dk-guide-mistakes-section">
+            <div class="dk-guide-container">
+                <div class="dk-guide-step-header">
+                    <span class="dk-guide-step-num">2</span>
+                    <div>
+                        <h2 class="dk-guide-step-title">@Model.MistakesSectionTitle</h2>
+                        <p class="dk-guide-step-sub">@Model.MistakesSectionSubtitle</p>
+                    </div>
+                </div>
+
+                <div class="dk-guide-mistakes-grid">
+                    @foreach (var mistake in Model.Mistakes)
+                    {
+                        <div class="dk-guide-mistake-card">
+                            <div class="dk-guide-mistake-icon" aria-hidden="true">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            </div>
+                            <div class="dk-guide-mistake-info">
+                                <h4 class="dk-guide-mistake-title">@mistake.Title</h4>
+                                <p class="dk-guide-mistake-desc">@mistake.Description</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         SECTION 3: RECOMMENDED PRODUCTS OR CATEGORIES
+    ========================================================= -->
+    <section class="dk-guide-products-section">
+        <div class="dk-guide-container">
+            <div class="dk-guide-prod-header">
+                <div class="dk-guide-step-header" style="margin-bottom: 0;">
+                    <span class="dk-guide-step-num">@(Model.ShowMistakesSection ? "3" : "2")</span>
+                    <div>
+                        <h2 class="dk-guide-step-title">@Model.ProductsSectionTitle</h2>
+                    </div>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.ViewAllLinkText))
+                {
+                    <a href="@Model.ViewAllLinkUrl" class="dk-guide-view-all">@Model.ViewAllLinkText</a>
+                }
+            </div>
+
+            @if (Model.IsCategoryMode && Model.Categories != null && Model.Categories.Count > 0)
+            {
+                <!-- Categories Grid (e.g. Set Up Your Student Life) -->
+                <div class="dk-guide-categories-grid">
+                    @foreach (var cat in Model.Categories)
+                    {
+                        var hasCatImg = !string.IsNullOrWhiteSpace(cat.ImageUrl) && !cat.ImageUrl.Contains("placeholder");
+                        <div class="dk-guide-cat-card">
+                            <div class="dk-guide-cat-img-wrap">
+                                @if (hasCatImg)
+                                {
+                                    <img src="@cat.ImageUrl"
+                                         alt="@cat.Title"
+                                         loading="lazy"
+                                         onerror="this.onerror=null; this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';" />
+                                    <div class="dk-guide-upload-pic-box" style="display: none;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                        <span>Upload Pic</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="dk-guide-upload-pic-box">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                        <span>Upload Pic</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="dk-guide-cat-body">
+                                <h3 class="dk-guide-cat-title">@cat.Title</h3>
+                                <p class="dk-guide-cat-sub">@cat.Subtitle</p>
+                                <a href="@cat.TargetUrl" class="dk-guide-btn-view-items">@cat.ButtonText</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else if (Model.Products != null && Model.Products.Count > 0)
+            {
+                <!-- Products Grid -->
+                <div class="dk-guide-products-grid">
+                    @foreach (var prod in Model.Products)
+                    {
+                        var hasProdImg = !string.IsNullOrWhiteSpace(prod.ImageUrl) && !prod.ImageUrl.Contains("placeholder");
+                        <div class="dk-guide-prod-card">
+                            <div class="dk-guide-prod-img-wrap">
+                                @if (hasProdImg)
+                                {
+                                    <img src="@prod.ImageUrl"
+                                         alt="@prod.Title"
+                                         loading="lazy"
+                                         onerror="this.onerror=null; this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';" />
+                                    <div class="dk-guide-upload-pic-box" style="display: none;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                        <span>Upload Pic</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="dk-guide-upload-pic-box">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                        <span>Upload Pic</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="dk-guide-prod-body">
+                                <h3 class="dk-guide-prod-title">@prod.Title</h3>
+                                <div class="dk-guide-prod-stars" aria-label="5 stars rating">
+                                    ★★★★★
+                                </div>
+                                <div class="dk-guide-prod-price">₹@prod.Price.ToString("N0")</div>
+                                <button type="button"
+                                        class="dk-guide-btn-add-cart"
+                                        onclick="handleGuideAddToCart('@prod.Title', @prod.Price, '@prod.ImageUrl')">
+                                    @prod.ButtonText
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ========================================================
+         BOTTOM CALLOUT BANNER
+    ========================================================= -->
+    @if (!string.IsNullOrWhiteSpace(Model.BottomBannerTitle))
+    {
+        var hasBottomImg = !string.IsNullOrWhiteSpace(Model.BottomBannerImageUrl) && !Model.BottomBannerImageUrl.Contains("placeholder");
+        <section class="dk-guide-bottom-section">
+            <div class="dk-guide-container">
+                <div class="dk-guide-bottom-banner">
+                    <div class="dk-guide-bottom-left">
+                        <div class="dk-guide-bottom-icon" aria-hidden="true">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                        </div>
+                        <div class="dk-guide-bottom-text">
+                            <h3 class="dk-guide-bottom-title">@Model.BottomBannerTitle</h3>
+                            <p class="dk-guide-bottom-sub">@Model.BottomBannerSubtitle</p>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(Model.BottomBannerButtonText))
+                        {
+                            <a href="@Model.BottomBannerButtonUrl" class="dk-guide-btn-banner-cta">
+                                @Model.BottomBannerButtonText
+                            </a>
+                        }
+                    </div>
+
+                    <div class="dk-guide-bottom-right">
+                        @if (hasBottomImg)
+                        {
+                            <img src="@Model.BottomBannerImageUrl"
+                                 alt="@Model.BottomBannerTitle"
+                                 onerror="this.onerror=null; this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';" />
+                            <div class="dk-guide-upload-pic-box" style="display: none;">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                <span>Upload Pic</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="dk-guide-upload-pic-box">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                <span>Upload Pic</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+</div>
+
+<!-- ========================================================
+     STYLES FOR GUIDE DETAIL PAGES
+========================================================= -->
+<style>
+    .dk-guide-page {
+        background-color: #f8fafc;
+        color: #0f172a;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        padding-bottom: 60px;
+    }
+
+    .dk-guide-container {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* Admin Bar */
+    .dk-guide-admin-bar {
+        background: #0f172a;
+        color: #ffffff;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 13px;
+    }
+    .dk-guide-admin-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .dk-guide-admin-badge {
+        background: #38bdf8;
+        color: #082f49;
+        font-weight: 800;
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+    }
+    .dk-guide-admin-btn {
+        background: #0284c7;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        transition: background 0.2s;
+    }
+    .dk-guide-admin-btn:hover {
+        background: #0369a1;
+        color: #ffffff;
+    }
+
+    /* Breadcrumbs */
+    .dk-guide-breadcrumb {
+        padding: 16px 0;
+        font-size: 13px;
+        color: #64748b;
+    }
+    .dk-guide-breadcrumb a {
+        color: #0284c7;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .dk-guide-breadcrumb a:hover {
+        text-decoration: underline;
+    }
+    .dk-guide-bc-sep {
+        margin: 0 8px;
+        color: #94a3b8;
+    }
+    .dk-guide-bc-current {
+        color: #334155;
+        font-weight: 600;
+    }
+
+    /* Hero Section */
+    .dk-guide-hero-section {
+        margin-bottom: 40px;
+    }
+    .dk-guide-hero-card {
+        background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+        border: 1px solid #bae6fd;
+        border-radius: 20px;
+        padding: 40px 48px;
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 36px;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .dk-guide-pill-badge {
+        display: inline-block;
+        background: #0284c7;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 9999px;
+        margin-bottom: 14px;
+    }
+    .dk-guide-hero-title {
+        font-size: 2.35rem;
+        font-weight: 900;
+        color: #063f91;
+        margin: 0 0 10px 0;
+        line-height: 1.15;
+    }
+    .dk-guide-hero-tagline {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #0284c7;
+        margin: 0 0 12px 0;
+    }
+    .dk-guide-hero-desc {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #475569;
+        margin: 0;
+        max-width: 520px;
+    }
+
+    .dk-guide-hero-media {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .dk-guide-hero-img-wrap {
+        width: 100%;
+        max-width: 440px;
+        height: 240px;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #ffffff;
+        box-shadow: 0 10px 25px rgba(6, 63, 145, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dk-guide-hero-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dk-guide-cursive-note {
+        margin-top: 10px;
+        font-family: 'Caveat', 'Segoe Script', 'Comic Sans MS', cursive;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #0284c7;
+        transform: rotate(-2deg);
+        letter-spacing: 0.5px;
+    }
+
+    /* Trust Pillars Bar */
+    .dk-guide-trust-bar {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 16px 24px;
+        margin-top: 20px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .dk-guide-trust-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .dk-guide-trust-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: #eff6ff;
+        color: #0284c7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .dk-guide-trust-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .dk-guide-trust-sub {
+        font-size: 11.5px;
+        color: #64748b;
+    }
+
+    /* Step Headers */
+    .dk-guide-step-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+    .dk-guide-step-num {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #0284c7;
+        color: #ffffff;
+        font-weight: 900;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+    .dk-guide-step-title {
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: #063f91;
+        margin: 0 0 4px 0;
+    }
+    .dk-guide-step-sub {
+        font-size: 0.92rem;
+        color: #64748b;
+        margin: 0;
+    }
+
+    /* Preparation Section (3 Column Grid) */
+    .dk-guide-prep-section {
+        margin-bottom: 40px;
+    }
+    .dk-guide-prep-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+    .dk-guide-prep-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+        display: flex;
+        flex-direction: column;
+    }
+    .dk-guide-card-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .dk-guide-card-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .dk-guide-card-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+    }
+    .dk-guide-prep-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .dk-guide-prep-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 13.5px;
+        color: #334155;
+        line-height: 1.45;
+    }
+    .dk-guide-bullet-icon {
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    /* Checklist Column */
+    .dk-guide-chk-progress {
+        display: block;
+        font-size: 11.5px;
+        color: #16a34a;
+        font-weight: 600;
+        margin-top: 2px;
+    }
+    .dk-guide-chk-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .dk-guide-chk-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: #f8fafc;
+        border: 1px solid #f1f5f9;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+        user-select: none;
+    }
+    .dk-guide-chk-row:hover {
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+    }
+    .dk-guide-chk-input {
+        width: 17px;
+        height: 17px;
+        accent-color: #16a34a;
+        cursor: pointer;
+    }
+    .dk-guide-chk-label {
+        font-size: 13.5px;
+        color: #1e293b;
+        font-weight: 500;
+    }
+    .dk-guide-chk-row.is-completed .dk-guide-chk-label {
+        text-decoration: line-through;
+        color: #94a3b8;
+    }
+
+    /* Pro Tip Column */
+    .dk-guide-protip-card {
+        background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%);
+        border: 1px solid #bae6fd;
+    }
+    .dk-guide-protip-body {
+        flex: 1;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #0369a1;
+        font-weight: 500;
+    }
+    .dk-guide-protip-footer {
+        margin-top: 18px;
+        padding-top: 12px;
+        border-top: 1px solid #bae6fd;
+        font-size: 12px;
+        color: #0284c7;
+        font-weight: 700;
+    }
+
+    /* Mistakes Section */
+    .dk-guide-mistakes-section {
+        margin-bottom: 40px;
+    }
+    .dk-guide-mistakes-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+    .dk-guide-mistake-card {
+        background: #ffffff;
+        border: 1px solid #fee2e2;
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+    }
+    .dk-guide-mistake-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #fee2e2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .dk-guide-mistake-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #991b1b;
+        margin: 0 0 4px 0;
+    }
+    .dk-guide-mistake-desc {
+        font-size: 12px;
+        color: #64748b;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    /* Products / Categories Section */
+    .dk-guide-products-section {
+        margin-bottom: 40px;
+    }
+    .dk-guide-prod-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .dk-guide-view-all {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0284c7;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .dk-guide-view-all:hover {
+        text-decoration: underline;
+    }
+
+    .dk-guide-products-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 16px;
+    }
+    .dk-guide-prod-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .dk-guide-prod-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+    .dk-guide-prod-img-wrap {
+        width: 100%;
+        height: 130px;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+    .dk-guide-prod-img-wrap img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    .dk-guide-prod-body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .dk-guide-prod-title {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 4px 0;
+        line-height: 1.35;
+        min-height: 34px;
+    }
+    .dk-guide-prod-stars {
+        color: #f59e0b;
+        font-size: 12px;
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+    }
+    .dk-guide-prod-price {
+        font-size: 14px;
+        font-weight: 800;
+        color: #063f91;
+        margin-bottom: 10px;
+    }
+    .dk-guide-btn-add-cart {
+        margin-top: auto;
+        background: #0284c7;
+        color: #ffffff;
+        border: none;
+        padding: 7px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-align: center;
+    }
+    .dk-guide-btn-add-cart:hover {
+        background: #0369a1;
+    }
+
+    /* Categories Grid (for Category Mode) */
+    .dk-guide-categories-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    }
+    .dk-guide-cat-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s;
+    }
+    .dk-guide-cat-card:hover {
+        transform: translateY(-3px);
+    }
+    .dk-guide-cat-img-wrap {
+        width: 100%;
+        height: 150px;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dk-guide-cat-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dk-guide-cat-body {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .dk-guide-cat-title {
+        font-size: 14px;
+        font-weight: 800;
+        color: #063f91;
+        margin: 0 0 4px 0;
+    }
+    .dk-guide-cat-sub {
+        font-size: 12px;
+        color: #64748b;
+        margin: 0 0 14px 0;
+        flex: 1;
+    }
+    .dk-guide-btn-view-items {
+        display: inline-block;
+        background: #0284c7;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    /* Bottom Banner */
+    .dk-guide-bottom-section {
+        margin-top: 20px;
+    }
+    .dk-guide-bottom-banner {
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        border-radius: 18px;
+        padding: 32px 40px;
+        color: #ffffff;
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 30px;
+        align-items: center;
+    }
+    .dk-guide-bottom-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .dk-guide-bottom-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .dk-guide-bottom-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        margin: 0 0 4px 0;
+    }
+    .dk-guide-bottom-sub {
+        font-size: 0.9rem;
+        color: #e0f2fe;
+        margin: 0;
+    }
+    .dk-guide-btn-banner-cta {
+        background: #ffffff;
+        color: #0369a1;
+        text-decoration: none;
+        padding: 10px 22px;
+        border-radius: 10px;
+        font-weight: 800;
+        font-size: 13.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: transform 0.15s, box-shadow 0.15s;
+        margin-left: auto;
+    }
+    .dk-guide-btn-banner-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
+    .dk-guide-bottom-right {
+        height: 140px;
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.08);
+    }
+    .dk-guide-bottom-right img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    /* Fallback box for Upload Pic */
+    .dk-guide-upload-pic-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+        height: 100%;
+        background: #f1f5f9;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 600;
+        border: 2px dashed #cbd5e1;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+    }
+    .dk-guide-admin-quick-link {
+        font-size: 11px;
+        color: #0284c7;
+        font-weight: 700;
+        text-decoration: none;
+        background: #e0f2fe;
+        padding: 2px 8px;
+        border-radius: 4px;
+        margin-top: 4px;
+    }
+
+    /* Responsive */
+    @@media (max-width: 1024px) {
+        .dk-guide-products-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .dk-guide-trust-bar {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .dk-guide-prep-grid {
+            grid-template-columns: 1fr;
+        }
+        .dk-guide-mistakes-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .dk-guide-categories-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @@media (max-width: 768px) {
+        .dk-guide-hero-card {
+            grid-template-columns: 1fr;
+            padding: 24px;
+        }
+        .dk-guide-trust-bar {
+            grid-template-columns: 1fr;
+        }
+        .dk-guide-products-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .dk-guide-categories-grid {
+            grid-template-columns: 1fr;
+        }
+        .dk-guide-bottom-banner {
+            grid-template-columns: 1fr;
+            padding: 24px;
+        }
+        .dk-guide-btn-banner-cta {
+            margin-left: 0;
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- ========================================================
+     CLIENT INTERACTIVITY SCRIPT
+========================================================= -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        loadGuideChecklistState();
+    });
+
+    function getStorageKey() {
+        return "dk_guide_chk_" + "@Model.Slug";
+    }
+
+    function loadGuideChecklistState() {
+        const key = getStorageKey();
+        let state = {};
+        try {
+            state = JSON.parse(localStorage.getItem(key) || "{}");
+        } catch (e) { }
+
+        const inputs = document.querySelectorAll(".dk-guide-chk-input");
+        let checkedCount = 0;
+
+        inputs.forEach(input => {
+            const idx = input.getAttribute("data-index");
+            if (state[idx] === true) {
+                input.checked = true;
+                checkedCount++;
+                const row = input.closest(".dk-guide-chk-row");
+                if (row) row.classList.add("is-completed");
+            }
+        });
+
+        updateProgressText(checkedCount, inputs.length);
+    }
+
+    function onGuideChecklistChange(input) {
+        const key = getStorageKey();
+        let state = {};
+        try {
+            state = JSON.parse(localStorage.getItem(key) || "{}");
+        } catch (e) { }
+
+        const idx = input.getAttribute("data-index");
+        state[idx] = input.checked;
+        localStorage.setItem(key, JSON.stringify(state));
+
+        const row = input.closest(".dk-guide-chk-row");
+        if (row) {
+            if (input.checked) {
+                row.classList.add("is-completed");
+            } else {
+                row.classList.remove("is-completed");
+            }
+        }
+
+        const inputs = document.querySelectorAll(".dk-guide-chk-input");
+        const checkedCount = Array.from(inputs).filter(i => i.checked).length;
+        updateProgressText(checkedCount, inputs.length);
+    }
+
+    function updateProgressText(checked, total) {
+        const el = document.getElementById("guideChkProgressText");
+        if (el) {
+            el.textContent = checked + " of " + total + " checked";
+        }
+    }
+
+    function handleGuideAddToCart(title, price, img) {
+        showGuideToast("✓ Added " + title + " (₹" + Number(price).toLocaleString("en-IN") + ") to cart!");
+    }
+
+    function showGuideToast(msg) {
+        let toast = document.getElementById("dk-guide-toast");
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "dk-guide-toast";
+            toast.style.cssText = "position: fixed; bottom: 30px; right: 30px; background: #0f172a; color: #ffffff; padding: 12px 22px; border-radius: 10px; font-weight: 700; font-size: 13.5px; z-index: 99999; box-shadow: 0 10px 30px rgba(0,0,0,0.25); border-left: 4px solid #38bdf8; transition: opacity 0.3s;";
+            document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.display = "block";
+        toast.style.opacity = "1";
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            setTimeout(() => { toast.style.display = "none"; }, 300);
+        }, 3000);
+    }
+</script>

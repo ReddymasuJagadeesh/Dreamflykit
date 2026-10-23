@@ -14,15 +14,18 @@ public sealed class ProductsController : Controller
     private readonly IProductService _productService;
     private readonly ICategoryService _categoryService;
     private readonly IStudyHubService _studyHubService;
+    private readonly Dreamflykit.Application.FashionHub.Interfaces.IFashionHubService _fashionHubService;
 
     public ProductsController(
         IProductService productService,
         ICategoryService categoryService,
-        IStudyHubService studyHubService)
+        IStudyHubService studyHubService,
+        Dreamflykit.Application.FashionHub.Interfaces.IFashionHubService fashionHubService)
     {
         _productService = productService;
         _categoryService = categoryService;
         _studyHubService = studyHubService;
+        _fashionHubService = fashionHubService;
     }
 
     [HttpGet("/products")]
@@ -55,6 +58,8 @@ public sealed class ProductsController : Controller
 
         var isStudyCategory = string.Equals(effectiveCategory, "study-essentials", StringComparison.OrdinalIgnoreCase) ||
                               string.Equals(effectiveCategory, "study_essentials", StringComparison.OrdinalIgnoreCase);
+
+        var isFashionCategory = string.Equals(effectiveCategory, "fashion", StringComparison.OrdinalIgnoreCase);
 
         CategoryDetails? catDetails = null;
         string? currentSubcategoryName = null;
@@ -144,9 +149,12 @@ public sealed class ProductsController : Controller
             Discounts = result.Discounts,
             ViewMode = !string.IsNullOrWhiteSpace(view)
                 ? view.Trim().ToLowerInvariant()
-                : (isStudyCategory && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"),
+                : ((isStudyCategory || isFashionCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"),
             StudyHub = isStudyCategory
                         ? await _studyHubService.GetConfigAsync(cancellationToken)
+                        : null,
+            FashionHub = isFashionCategory
+                        ? await _fashionHubService.GetConfigAsync(cancellationToken)
                         : null
         };
 

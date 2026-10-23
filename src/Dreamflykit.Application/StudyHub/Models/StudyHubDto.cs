@@ -21,6 +21,7 @@ public sealed class StudyHubDto
     public StudyHubCategoriesPageDto CategoriesPage { get; set; } = new();
     public AbroadChecklistPageDto ChecklistPage { get; set; } = new();
     public StudyAbroadHubProfileDto AbroadProfile { get; set; } = new();
+    public List<StudyGuideDetailPageDto> GuidePages { get; set; } = new();
 
     public static StudyHubDto CreateDefault()
     {
@@ -230,7 +231,7 @@ public sealed class StudyHubDto
                         Description = "Keep your stationery, academic planner and essential study tools ready for your new university.",
                         IconType = "study",
                         ImageUrl = "/images/study-hub/card-study-ready.png",
-                        LinkUrl = "/category/study-essentials?subcategory=stationery-study-supplies",
+                        LinkUrl = "/study-guide/stay-study-ready",
                         ButtonText = "Explore Essentials →"
                     },
                     new()
@@ -240,7 +241,7 @@ public sealed class StudyHubDto
                         Description = "Prepare your laptop accessories, headphones, chargers and other digital essentials for your studies.",
                         IconType = "tech",
                         ImageUrl = "/images/study-hub/card-connected.png",
-                        LinkUrl = "/category/study-essentials?subcategory=tech-for-study",
+                        LinkUrl = "/study-guide/stay-connected",
                         ButtonText = "Explore Essentials →"
                     },
                     new()
@@ -250,7 +251,7 @@ public sealed class StudyHubDto
                         Description = "Keep your passport, visa documents, admission letter and academic certificates safely organized.",
                         IconType = "documents",
                         ImageUrl = "/images/study-hub/card-documents.png",
-                        LinkUrl = "/category/study-essentials?subcategory=document-organization",
+                        LinkUrl = "/study-guide/keep-documents-organized",
                         ButtonText = "Explore Essentials →"
                     },
                     new()
@@ -260,7 +261,7 @@ public sealed class StudyHubDto
                         Description = "Discover useful everyday essentials for your campus, accommodation and comfortable student life abroad.",
                         IconType = "life",
                         ImageUrl = "/images/study-hub/card-student-life.png",
-                        LinkUrl = "/category/study-essentials?subcategory=college-campus-essentials",
+                        LinkUrl = "/study-guide/set-up-your-student-life",
                         ButtonText = "Explore Essentials →"
                     }
                 }
@@ -531,6 +532,7 @@ public sealed class StudyHubDto
 
         dto.ChecklistPage = CreateDefaultChecklistPage();
         dto.AbroadProfile = CreateDefaultAbroadProfile();
+        dto.GuidePages = CreateDefaultGuidePages();
 
         return dto;
     }
@@ -909,6 +911,259 @@ public sealed class StudyHubDto
                 new() { Icon = "headset", Title = "24/7 Support", Description = "We're here when you need us" }
             },
             FooterSlogan = "Your Global Education Partner ♡"
+        };
+    }
+
+    public static List<StudyGuideDetailPageDto> CreateDefaultGuidePages()
+    {
+        return new List<StudyGuideDetailPageDto>
+        {
+            // 1. Stay Study-Ready
+            new()
+            {
+                Slug = "stay-study-ready",
+                BadgeText = "STUDY GUIDE",
+                Title = "Stay Study-Ready",
+                Subtitle = "Prepare for your academic journey abroad.",
+                Description = "Get the right study materials, stay organized, and build good study habits for a successful university experience.",
+                HeroImageUrl = "/images/study-hub/checklist-study.jpg",
+                HeroCursiveNote = "Better Preparation Brighter Future ➹",
+                TrustPillars = new List<StudyGuideTrustPillarDto>
+                {
+                    new() { Icon = "academic", Title = "Academic Success", Subtitle = "Start with the right tools" },
+                    new() { Icon = "brand", Title = "Trusted Brands", Subtitle = "Quality you can rely on" },
+                    new() { Icon = "price", Title = "Student-Friendly Prices", Subtitle = "More value, less stress" },
+                    new() { Icon = "delivery", Title = "Fast & Reliable Delivery", Subtitle = "To Your Doorstep" }
+                },
+                Section1Title = "What Do You Need for Your Studies?",
+                Section1Subtitle = "Before you head abroad, make sure you have the right study essentials and check your university's guidelines for specific requirements.",
+                PrepGuideTitle = "Your Study Preparation Guide",
+                PrepGuideItems = new List<string>
+                {
+                    "Check if your university recommends specific books or materials",
+                    "Carry essential notebooks and writing supplies",
+                    "Keep an academic planner to manage assignments and deadlines",
+                    "Organize your certificates and study documents",
+                    "Check if your course requires a calculator or other tools"
+                },
+                ChecklistTitle = "Study Essentials Checklist",
+                ChecklistItems = new List<string>
+                {
+                    "Notebooks & writing pads",
+                    "Pens & highlighters",
+                    "Academic planner / diary",
+                    "Pencil pouch",
+                    "Files & folders",
+                    "Calculator (if required)"
+                },
+                ProTipTitle = "Pro Tip",
+                ProTipContent = "Always check your university's website for a detailed list of recommended materials for your course.",
+                ShowMistakesSection = true,
+                MistakesSectionTitle = "Common Mistakes to Avoid",
+                MistakesSectionSubtitle = "Tips to help international students succeed.",
+                Mistakes = new List<StudyGuideMistakeCardDto>
+                {
+                    new() { Title = "Overpacking", Description = "Only carry what you really need" },
+                    new() { Title = "Forgetting important documents", Description = "Keep digital and physical copies" },
+                    new() { Title = "Ignoring climate needs", Description = "Pack suitable clothing for your destination" },
+                    new() { Title = "Not checking power compatibility", Description = "Use the right adapters and converters" }
+                },
+                ProductsSectionTitle = "Recommended Study Essentials",
+                ViewAllLinkText = "View All Study Essentials →",
+                ViewAllLinkUrl = "/category/study-essentials",
+                Products = new List<StudyGuideProductDto>
+                {
+                    new() { Id = "sr-prod-1", Title = "Spiral Notebook Set", Price = 349, Rating = 5.0m, ImageUrl = "/images/study-hub/item-notebook.png", ButtonText = "Add to Cart" },
+                    new() { Id = "sr-prod-2", Title = "Gel Pen Set", Price = 299, Rating = 5.0m, ImageUrl = "/images/study-hub/item-pens.png", ButtonText = "Add to Cart" },
+                    new() { Id = "sr-prod-3", Title = "Academic Planner", Price = 599, Rating = 5.0m, ImageUrl = "/images/study-hub/item-planner.png", ButtonText = "Add to Cart" },
+                    new() { Id = "sr-prod-4", Title = "Scientific Calculator", Price = 899, Rating = 5.0m, ImageUrl = "/images/study-hub/item-sleeve.png", ButtonText = "Add to Cart" },
+                    new() { Id = "sr-prod-5", Title = "Pencil Pouch", Price = 249, Rating = 5.0m, ImageUrl = "/images/study-hub/item-organizer.png", ButtonText = "Add to Cart" },
+                    new() { Id = "sr-prod-6", Title = "File Folder Set", Price = 399, Rating = 5.0m, ImageUrl = "/images/study-hub/card-study-ready.png", ButtonText = "Add to Cart" }
+                },
+                BottomBannerTitle = "Build Your Study Kit",
+                BottomBannerSubtitle = "Customize your perfect study kit with essentials for your course and destination.",
+                BottomBannerButtonText = "Create Your Kit →",
+                BottomBannerButtonUrl = "/study-abroad-hub#kits-section",
+                BottomBannerImageUrl = "/images/study-hub/kit-complete.png"
+            },
+
+            // 2. Stay Connected
+            new()
+            {
+                Slug = "stay-connected",
+                BadgeText = "GUIDE",
+                Title = "Stay Connected",
+                Subtitle = "Get your digital essentials ready before departure.",
+                Description = "Stay connected, stay productive and make the most of your online classes, research and campus life.",
+                HeroImageUrl = "/images/study-hub/checklist-electronics.jpg",
+                HeroCursiveNote = "Better Tech Bigger Opportunities ➹",
+                TrustPillars = new List<StudyGuideTrustPillarDto>
+                {
+                    new() { Icon = "tech", Title = "Stay Connected", Subtitle = "For a seamless experience" },
+                    new() { Icon = "brand", Title = "Trusted Brands", Subtitle = "Top global brands" },
+                    new() { Icon = "price", Title = "Student-Friendly Prices", Subtitle = "More value, less stress" },
+                    new() { Icon = "delivery", Title = "Fast & Reliable Delivery", Subtitle = "To Your Doorstep" }
+                },
+                Section1Title = "What Technology Will You Need?",
+                Section1Subtitle = "From online classes to research and assignments, the right tech makes it easier to stay productive and connected.",
+                PrepGuideTitle = "Your Digital Preparation Guide",
+                PrepGuideItems = new List<string>
+                {
+                    "Check if your laptop meets your course requirements",
+                    "Verify charger and voltage compatibility with your destination",
+                    "Choose a mouse and headphones for comfortable study",
+                    "Check if you need a USB hub or external storage",
+                    "Get a travel adapter for your destination's plug type"
+                },
+                ChecklistTitle = "Digital Essentials Checklist",
+                ChecklistItems = new List<string>
+                {
+                    "Laptop and charger",
+                    "Mouse",
+                    "Headphones / earphones",
+                    "USB hub",
+                    "Charging cables",
+                    "Travel adapter"
+                },
+                ProTipTitle = "Pro Tip",
+                ProTipContent = "Check your destination's plug type and voltage (e.g. 110V/220V) before buying electronics.",
+                ProductsSectionTitle = "Popular Digital Essentials",
+                ViewAllLinkText = "View All Electronics →",
+                ViewAllLinkUrl = "/category/electronics",
+                Products = new List<StudyGuideProductDto>
+                {
+                    new() { Id = "sc-prod-1", Title = "Laptop Sleeve", Price = 1299, Rating = 5.0m, ImageUrl = "/images/study-hub/item-sleeve.png", ButtonText = "Add to Cart" },
+                    new() { Id = "sc-prod-2", Title = "Wireless Mouse", Price = 799, Rating = 5.0m, ImageUrl = "/images/study-hub/card-connected.png", ButtonText = "Add to Cart" },
+                    new() { Id = "sc-prod-3", Title = "Headphones", Price = 2499, Rating = 5.0m, ImageUrl = "/images/study-hub/checklist-electronics.jpg", ButtonText = "Add to Cart" },
+                    new() { Id = "sc-prod-4", Title = "USB Hub", Price = 1099, Rating = 5.0m, ImageUrl = "/images/study-hub/test-pic-placeholder.svg", ButtonText = "Add to Cart" },
+                    new() { Id = "sc-prod-5", Title = "Power Bank", Price = 1499, Rating = 5.0m, ImageUrl = "/images/study-hub/card-connected.png", ButtonText = "Add to Cart" },
+                    new() { Id = "sc-prod-6", Title = "Travel Adapter", Price = 1199, Rating = 5.0m, ImageUrl = "/images/study-hub/checklist-electronics.jpg", ButtonText = "Add to Cart" }
+                },
+                BottomBannerTitle = "Need Help Choosing?",
+                BottomBannerSubtitle = "Use our tech guide to find the right devices for your study needs.",
+                BottomBannerButtonText = "View Tech Guide →",
+                BottomBannerButtonUrl = "/category/electronics",
+                BottomBannerImageUrl = "/images/study-hub/card-connected.png"
+            },
+
+            // 3. Keep Documents Organized
+            new()
+            {
+                Slug = "keep-documents-organized",
+                BadgeText = "GUIDE",
+                Title = "Keep Documents Organized",
+                Subtitle = "Keep your important documents safe and accessible.",
+                Description = "From passports to admission letters, make sure you have everything ready for a smooth journey.",
+                HeroImageUrl = "/images/study-hub/checklist-documents.jpg",
+                HeroCursiveNote = "Your Documents Your Journey ➹",
+                TrustPillars = new List<StudyGuideTrustPillarDto>
+                {
+                    new() { Icon = "documents", Title = "Stay Organized", Subtitle = "No last minute stress" },
+                    new() { Icon = "brand", Title = "Trusted Brands", Subtitle = "Quality you can rely on" },
+                    new() { Icon = "price", Title = "Student-Friendly Prices", Subtitle = "More value, less stress" },
+                    new() { Icon = "delivery", Title = "Fast & Reliable Delivery", Subtitle = "To Your Doorstep" }
+                },
+                Section1Title = "Which Documents Should You Prepare?",
+                Section1Subtitle = "Each country and university may have different requirements. Check the official guidelines and plan accordingly.",
+                PrepGuideTitle = "Document Preparation Guide",
+                PrepGuideItems = new List<string>
+                {
+                    "Keep your passport and visa documents accessible",
+                    "Carry your university admission letter",
+                    "Organize academic certificates and transcripts",
+                    "Keep accommodation and travel details available",
+                    "Store secure digital copies of important documents",
+                    "Check official instructions for your destination"
+                },
+                ChecklistTitle = "Document Checklist",
+                ChecklistItems = new List<string>
+                {
+                    "Passport",
+                    "Visa documents",
+                    "Admission letter",
+                    "Academic certificates",
+                    "Accommodation details",
+                    "Travel insurance (if applicable)"
+                },
+                ProTipTitle = "Pro Tip",
+                ProTipContent = "Keep both physical and digital copies of your important documents in a safe place.",
+                ProductsSectionTitle = "Recommended Document Organizers",
+                ViewAllLinkText = "View All Travel Accessories →",
+                ViewAllLinkUrl = "/category/travel-gear",
+                Products = new List<StudyGuideProductDto>
+                {
+                    new() { Id = "kd-prod-1", Title = "Passport Holder", Price = 249, Rating = 5.0m, ImageUrl = "/images/study-hub/card-documents.png", ButtonText = "Add to Cart" },
+                    new() { Id = "kd-prod-2", Title = "Document Organizer", Price = 899, Rating = 5.0m, ImageUrl = "/images/study-hub/item-organizer.png", ButtonText = "Add to Cart" },
+                    new() { Id = "kd-prod-3", Title = "Certificate Folder", Price = 399, Rating = 5.0m, ImageUrl = "/images/study-hub/card-documents.png", ButtonText = "Add to Cart" },
+                    new() { Id = "kd-prod-4", Title = "Travel Pouch", Price = 259, Rating = 5.0m, ImageUrl = "/images/study-hub/card-documents.png", ButtonText = "Add to Cart" },
+                    new() { Id = "kd-prod-5", Title = "Luggage Tag", Price = 349, Rating = 5.0m, ImageUrl = "/images/study-hub/card-documents.png", ButtonText = "Add to Cart" },
+                    new() { Id = "kd-prod-6", Title = "Waterproof Bag", Price = 449, Rating = 5.0m, ImageUrl = "/images/study-hub/checklist-documents.jpg", ButtonText = "Add to Cart" }
+                },
+                BottomBannerTitle = "Travel with Confidence",
+                BottomBannerSubtitle = "Organized documents = less stress and more time for what matters.",
+                BottomBannerButtonText = "Shop Document Organizers →",
+                BottomBannerButtonUrl = "/category/travel-gear",
+                BottomBannerImageUrl = "/images/study-hub/card-documents.png"
+            },
+
+            // 4. Set Up Your Student Life
+            new()
+            {
+                Slug = "set-up-your-student-life",
+                BadgeText = "GUIDE",
+                Title = "Set Up Your Student Life",
+                Subtitle = "Make your new student life abroad comfortable and convenient.",
+                Description = "From campus essentials to everyday living, get everything you need to feel at home, wherever you are.",
+                HeroImageUrl = "/images/study-hub/checklist-living.jpg",
+                HeroCursiveNote = "New Place New Routine Same You ➹",
+                TrustPillars = new List<StudyGuideTrustPillarDto>
+                {
+                    new() { Icon = "life", Title = "Comfort & Convenience", Subtitle = "For everyday living" },
+                    new() { Icon = "brand", Title = "Trusted Brands", Subtitle = "Quality you can rely on" },
+                    new() { Icon = "price", Title = "Student-Friendly Prices", Subtitle = "More value, less stress" },
+                    new() { Icon = "delivery", Title = "Fast & Reliable Delivery", Subtitle = "To Your Doorstep" }
+                },
+                Section1Title = "What Will Make Your Daily Life Easier?",
+                Section1Subtitle = "Be prepared for campus, accommodation and daily routines with the right essentials.",
+                PrepGuideTitle = "Student Life Preparation Guide",
+                PrepGuideItems = new List<string>
+                {
+                    "Check what your accommodation already provides",
+                    "Choose a comfortable backpack for your campus",
+                    "Carry a reusable water bottle and lunch box",
+                    "Consider a desk lamp and organizer for your room",
+                    "Check the local climate before packing clothes",
+                    "Avoid bulky items you can easily buy there"
+                },
+                ChecklistTitle = "Everyday Essentials Checklist",
+                ChecklistItems = new List<string>
+                {
+                    "Backpack",
+                    "Water bottle",
+                    "Lunch box",
+                    "Compact umbrella",
+                    "Desk organizer",
+                    "Laundry bag"
+                },
+                ProTipTitle = "Pro Tip",
+                ProTipContent = "Pack versatile items that work for both campus and daily life. Keep it light and organized.",
+                IsCategoryMode = true,
+                ProductsSectionTitle = "Essential Categories for Student Life",
+                ViewAllLinkText = "View All Student Life Essentials →",
+                ViewAllLinkUrl = "/category/study-essentials",
+                Categories = new List<StudyGuideCategoryCardDto>
+                {
+                    new() { Id = "sl-cat-1", Title = "Campus Essentials", Subtitle = "Backpacks, bottles, ID holders", ImageUrl = "/images/study-hub/card-student-life.png", ButtonText = "View Items →", TargetUrl = "/category/study-essentials?subcategory=college-campus-essentials" },
+                    new() { Id = "sl-cat-2", Title = "Study Room Essentials", Subtitle = "Desk lamps, organizers", ImageUrl = "/images/study-hub/checklist-living.jpg", ButtonText = "View Items →", TargetUrl = "/category/study-essentials?subcategory=desk-room-study-essential" },
+                    new() { Id = "sl-cat-3", Title = "Everyday Living Essentials", Subtitle = "Bags, laundry, room organizers", ImageUrl = "/images/study-hub/checklist-living.jpg", ButtonText = "View Items →", TargetUrl = "/category/study-essentials" },
+                    new() { Id = "sl-cat-4", Title = "Comfort Essentials", Subtitle = "Neck pillows, eye masks...", ImageUrl = "/images/study-hub/checklist-travel.jpg", ButtonText = "View Items →", TargetUrl = "/category/travel-gear" }
+                },
+                BottomBannerTitle = "Ready for a Better Student Life?",
+                BottomBannerSubtitle = "Find all the essentials you need for a comfortable and productive stay abroad.",
+                BottomBannerButtonText = "Shop Student Life Essentials →",
+                BottomBannerButtonUrl = "/category/study-essentials",
+                BottomBannerImageUrl = "/images/study-hub/card-student-life.png"
+            }
         };
     }
 }
@@ -1324,3 +1579,85 @@ public sealed class AbroadTrustPillarDto
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
 }
+
+// -------------------------------------------------------------
+// DTOs for 4 Study Guide Detail Pages (Dreamflykit Store Profile)
+// -------------------------------------------------------------
+
+public sealed class StudyGuideDetailPageDto
+{
+    public string Slug { get; set; } = string.Empty;
+    public string BadgeText { get; set; } = "STUDY GUIDE";
+    public string Title { get; set; } = string.Empty;
+    public string Subtitle { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string HeroImageUrl { get; set; } = string.Empty;
+    public string HeroCursiveNote { get; set; } = string.Empty;
+
+    public List<StudyGuideTrustPillarDto> TrustPillars { get; set; } = new();
+
+    public string Section1Title { get; set; } = string.Empty;
+    public string Section1Subtitle { get; set; } = string.Empty;
+
+    public string PrepGuideTitle { get; set; } = "Your Preparation Guide";
+    public List<string> PrepGuideItems { get; set; } = new();
+
+    public string ChecklistTitle { get; set; } = "Essentials Checklist";
+    public List<string> ChecklistItems { get; set; } = new();
+
+    public string ProTipTitle { get; set; } = "Pro Tip";
+    public string ProTipContent { get; set; } = string.Empty;
+
+    public bool ShowMistakesSection { get; set; } = false;
+    public string MistakesSectionTitle { get; set; } = "Common Mistakes to Avoid";
+    public string MistakesSectionSubtitle { get; set; } = "Tips to help international students succeed.";
+    public List<StudyGuideMistakeCardDto> Mistakes { get; set; } = new();
+
+    public bool IsCategoryMode { get; set; } = false;
+    public string ProductsSectionTitle { get; set; } = "Recommended Essentials";
+    public string ViewAllLinkText { get; set; } = "View All →";
+    public string ViewAllLinkUrl { get; set; } = "/category/study-essentials";
+    public List<StudyGuideProductDto> Products { get; set; } = new();
+    public List<StudyGuideCategoryCardDto> Categories { get; set; } = new();
+
+    public string BottomBannerTitle { get; set; } = string.Empty;
+    public string BottomBannerSubtitle { get; set; } = string.Empty;
+    public string BottomBannerButtonText { get; set; } = string.Empty;
+    public string BottomBannerButtonUrl { get; set; } = "/study-abroad-hub#kits-section";
+    public string BottomBannerImageUrl { get; set; } = string.Empty;
+}
+
+public sealed class StudyGuideTrustPillarDto
+{
+    public string Icon { get; set; } = "academic";
+    public string Title { get; set; } = string.Empty;
+    public string Subtitle { get; set; } = string.Empty;
+}
+
+public sealed class StudyGuideMistakeCardDto
+{
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+}
+
+public sealed class StudyGuideProductDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Title { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public decimal Rating { get; set; } = 5.0m;
+    public string ButtonText { get; set; } = "Add to Cart";
+    public string TargetUrl { get; set; } = "/cart";
+}
+
+public sealed class StudyGuideCategoryCardDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Title { get; set; } = string.Empty;
+    public string Subtitle { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
+    public string ButtonText { get; set; } = "View Items →";
+    public string TargetUrl { get; set; } = "/category/study-essentials";
+}
+

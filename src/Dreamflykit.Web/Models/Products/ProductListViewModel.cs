@@ -62,11 +62,16 @@ public sealed class ProductListViewModel
 
     public Dreamflykit.Application.StudyHub.Models.StudyHubDto? StudyHub { get; init; }
 
+    public Dreamflykit.Application.FashionHub.Models.FashionHubDto? FashionHub { get; init; }
+
     public string? ViewMode { get; init; }
 
     public bool IsStudyEssentialsHub =>
         string.Equals(CategorySlug, "study-essentials", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "study_essentials", StringComparison.OrdinalIgnoreCase);
+
+    public bool IsFashionHub =>
+        string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase);
 
     public bool HasActiveFilters =>
         !string.IsNullOrWhiteSpace(SearchTerm) ||

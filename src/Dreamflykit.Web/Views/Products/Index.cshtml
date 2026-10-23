@@ -151,7 +151,11 @@
         <nav class="dk-catalog-breadcrumb" aria-label="Breadcrumb">
             <a href="/" class="dk-breadcrumb-item">Home</a>
             <span class="dk-breadcrumb-separator">›</span>
-            @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
+            @if (Model.IsFashionHub && Model.ViewMode == "hub")
+            {
+                <span class="dk-breadcrumb-current">Fashion</span>
+            }
+            else if (!string.IsNullOrWhiteSpace(Model.CategoryName))
             {
                 <a href="/categories" class="dk-breadcrumb-item">Categories</a>
                 <span class="dk-breadcrumb-separator">›</span>
@@ -178,6 +182,13 @@
             }
         </nav>
     </div>
+
+    @if (Model.IsFashionHub && Model.FashionHub != null && Model.ViewMode == "hub")
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_FashionCategoryHub" model="Model.FashionHub" />
+        </div>
+    }
 
     @if (Model.IsStudyEssentialsHub && Model.StudyHub != null)
     {
@@ -213,7 +224,7 @@
         </div>
     }
 
-    @if (!Model.IsStudyEssentialsHub)
+    @if (!Model.IsStudyEssentialsHub && (!Model.IsFashionHub || Model.ViewMode != "hub"))
     {
         <!-- Main 2-Column Catalog Container -->
         <div class="dk-shell dk-catalog-layout">

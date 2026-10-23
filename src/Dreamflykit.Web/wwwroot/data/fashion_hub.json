@@ -1,0 +1,337 @@
+{
+  "HeroBanner": {
+    "IsEnabled": true,
+    "Title": "Fashion for",
+    "TitleHighlight": "Every Journey",
+    "Subtitle": "Stylish, comfortable & travel-ready fashion for students and explorers.",
+    "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/5392c9c495364fb6ba084646b545255d.webp",
+    "IsUploadingSoon": false,
+    "TitleColor": "#063f91",
+    "TitleHighlightColor": "#ea580c",
+    "SubtitleColor": "#334155",
+    "BadgeBgColor": "rgba(255, 255, 255, 0.94)",
+    "BadgeTextColor": "#0f172a",
+    "OverlayGradient": "linear-gradient(90deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.78) 42%, rgba(255, 255, 255, 0.2) 68%, rgba(255, 255, 255, 0.85) 100%)",
+    "BannerHeight": 440,
+    "Badges": [
+      {
+        "Id": "b1",
+        "Label": "Trendy & Comfortable",
+        "Icon": "shirt",
+        "IsActive": true
+      },
+      {
+        "Id": "b2",
+        "Label": "Premium Quality",
+        "Icon": "shield",
+        "IsActive": true
+      },
+      {
+        "Id": "b3",
+        "Label": "Affordable Prices",
+        "Icon": "tag",
+        "IsActive": true
+      },
+      {
+        "Id": "b4",
+        "Label": "Loved by 10K+ Students",
+        "Icon": "users",
+        "IsActive": true
+      }
+    ],
+    "RightCard": {
+      "Title": "Look Good.",
+      "TitleHighlight": "Travel Smart.",
+      "Features": [
+        {
+          "Id": "f1",
+          "Title": "Travel Friendly",
+          "Icon": "luggage",
+          "IsActive": true
+        },
+        {
+          "Id": "f2",
+          "Title": "Lightweight & Easy",
+          "Icon": "feather",
+          "IsActive": true
+        },
+        {
+          "Id": "f3",
+          "Title": "All-Season Wear",
+          "Icon": "grid",
+          "IsActive": true
+        }
+      ]
+    }
+  },
+  "CategoriesSection": {
+    "IsEnabled": true,
+    "Title": "Shop by Category",
+    "ViewAllText": "View All Categories →",
+    "ViewAllUrl": "/products?category=fashion",
+    "Categories": [
+      {
+        "Id": "c1",
+        "Name": "Men Clothing",
+        "Slug": "men-clothing",
+        "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/cbe08a88605f41be9f8d660b6ec1fcda.webp",
+        "DisplayOrder": 1,
+        "IsUploadingSoon": false,
+        "IsActive": true
+      },
+      {
+        "Id": "c2",
+        "Name": "Women Clothing",
+        "Slug": "women-clothing",
+        "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/4afea724c41c46bfa9e0b42050160354.webp",
+        "DisplayOrder": 2,
+        "IsUploadingSoon": false,
+        "IsActive": true
+      },
+      {
+        "Id": "c3",
+        "Name": "Men Footwear",
+        "Slug": "men-footwear",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 3,
+        "IsUploadingSoon": true,
+        "IsActive": true
+      },
+      {
+        "Id": "c4",
+        "Name": "Women Footwear",
+        "Slug": "women-footwear",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 4,
+        "IsUploadingSoon": true,
+        "IsActive": true
+      },
+      {
+        "Id": "c5",
+        "Name": "Watches",
+        "Slug": "watches",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 5,
+        "IsUploadingSoon": true,
+        "IsActive": true
+      },
+      {
+        "Id": "c6",
+        "Name": "Sunglasses",
+        "Slug": "sunglasses",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 6,
+        "IsUploadingSoon": true,
+        "IsActive": true
+      },
+      {
+        "Id": "c7",
+        "Name": "Caps & Hats",
+        "Slug": "caps-hats",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 7,
+        "IsUploadingSoon": true,
+        "IsActive": true
+      },
+      {
+        "Id": "c8",
+        "Name": "Belts & Wallets",
+        "Slug": "belts-wallets",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 8,
+        "IsUploadingSoon": true,
+        "IsActive": true
+      },
+      {
+        "Id": "c9",
+        "Name": "Socks",
+        "Slug": "socks",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 9,
+        "IsUploadingSoon": true,
+        "IsActive": true
+      },
+      {
+        "Id": "c10",
+        "Name": "Accessories",
+        "Slug": "accessories",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 10,
+        "IsUploadingSoon": true,
+        "IsActive": true
+      }
+    ]
+  },
+  "TopPicksSection": {
+    "IsEnabled": true,
+    "Title": "Top Picks for Men & Women",
+    "ViewAllText": "View All Products →",
+    "ViewAllUrl": "/products?category=fashion",
+    "Products": [
+      {
+        "Id": "p1",
+        "Name": "Men's Hoodie",
+        "CategoryName": "Fashion",
+        "Price": 999,
+        "OriginalPrice": 1999,
+        "Rating": 4.8,
+        "ReviewsCount": 128,
+        "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/70037107284b4d499c20a2e2794821b2.webp",
+        "ProductUrl": "/category/fashion/men-clothing",
+        "IsUploadingSoon": false,
+        "IsActive": true
+      },
+      {
+        "Id": "p2",
+        "Name": "Men's Bomber Jacket",
+        "CategoryName": "Fashion",
+        "Price": 1499,
+        "OriginalPrice": 2999,
+        "Rating": 4.9,
+        "ReviewsCount": 96,
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/category/fashion/men-clothing",
+        "IsUploadingSoon": true,
+        "IsActive": true
+      },
+      {
+        "Id": "p3",
+        "Name": "Men's Casual Shirt",
+        "CategoryName": "Fashion",
+        "Price": 749,
+        "OriginalPrice": 1499,
+        "Rating": 4.7,
+        "ReviewsCount": 87,
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/category/fashion/men-clothing",
+        "IsUploadingSoon": true,
+        "IsActive": true
+      },
+      {
+        "Id": "p4",
+        "Name": "Men's Joggers",
+        "CategoryName": "Fashion",
+        "Price": 799,
+        "OriginalPrice": 1599,
+        "Rating": 4.8,
+        "ReviewsCount": 76,
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/category/fashion/men-clothing",
+        "IsUploadingSoon": true,
+        "IsActive": true
+      },
+      {
+        "Id": "p5",
+        "Name": "Women's Sweatshirt",
+        "CategoryName": "Fashion",
+        "Price": 899,
+        "OriginalPrice": 1799,
+        "Rating": 4.9,
+        "ReviewsCount": 98,
+        "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/a52206ce61cc44f5ac3eaf8f89430617.webp",
+        "ProductUrl": "/category/fashion/women-clothing",
+        "IsUploadingSoon": false,
+        "IsActive": true
+      },
+      {
+        "Id": "p6",
+        "Name": "Women's Leggings",
+        "CategoryName": "Fashion",
+        "Price": 599,
+        "OriginalPrice": 1199,
+        "Rating": 4.7,
+        "ReviewsCount": 84,
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/category/fashion/women-clothing",
+        "IsUploadingSoon": true,
+        "IsActive": true
+      },
+      {
+        "Id": "p7",
+        "Name": "Women's Casual Dress",
+        "CategoryName": "Fashion",
+        "Price": 1099,
+        "OriginalPrice": 2199,
+        "Rating": 4.9,
+        "ReviewsCount": 65,
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/category/fashion/women-clothing",
+        "IsUploadingSoon": true,
+        "IsActive": true
+      },
+      {
+        "Id": "p8",
+        "Name": "Women's Denim Jacket",
+        "CategoryName": "Fashion",
+        "Price": 1299,
+        "OriginalPrice": 2499,
+        "Rating": 4.8,
+        "ReviewsCount": 78,
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/category/fashion/women-clothing",
+        "IsUploadingSoon": true,
+        "IsActive": true
+      }
+    ]
+  },
+  "TrustBadgesSection": {
+    "IsEnabled": true,
+    "Badges": [
+      {
+        "Id": "t1",
+        "Title": "Curated for Students",
+        "Subtitle": "Handpicked fashion for every journey",
+        "Icon": "box",
+        "IsActive": true
+      },
+      {
+        "Id": "t2",
+        "Title": "Trendy & Comfortable",
+        "Subtitle": "Stay stylish with all-day comfort",
+        "Icon": "shield",
+        "IsActive": true
+      },
+      {
+        "Id": "t3",
+        "Title": "Affordable for Everyone",
+        "Subtitle": "Best value fashion for students",
+        "Icon": "tag",
+        "IsActive": true
+      },
+      {
+        "Id": "t4",
+        "Title": "Fast & Reliable Delivery",
+        "Subtitle": "On-time delivery worldwide",
+        "Icon": "truck",
+        "IsActive": true
+      },
+      {
+        "Id": "t5",
+        "Title": "Easy Returns",
+        "Subtitle": "Hassle-free returns within 7 days",
+        "Icon": "return",
+        "IsActive": true
+      },
+      {
+        "Id": "t6",
+        "Title": "24/7 Customer Support",
+        "Subtitle": "We're always here to help you",
+        "Icon": "headset",
+        "IsActive": true
+      }
+    ]
+  },
+  "BottomBanner": {
+    "IsEnabled": true,
+    "QuizTitle": "Not Sure What You Need?",
+    "QuizSubtitle": "Take our quick quiz and find your perfect kit",
+    "QuizButtonText": "Find My Kit",
+    "QuizButtonUrl": "/find-my-kit",
+    "DestinationsTitle": "Kits for Top Destinations",
+    "DestinationsSubtitle": "USA, UK, Canada, Australia & More",
+    "BulkTitle": "Bulk Orders for Universities",
+    "BulkSubtitle": "Get special discounts for groups",
+    "BulkButtonText": "Contact Us",
+    "BulkButtonUrl": "/contact"
+  }
+}

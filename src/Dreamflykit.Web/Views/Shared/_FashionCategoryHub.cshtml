@@ -1,0 +1,1199 @@
+@model Dreamflykit.Application.FashionHub.Models.FashionHubDto
+@{
+    var hub = Model ?? Dreamflykit.Application.FashionHub.Models.FashionHubDto.CreateDefault();
+    var hero = hub.HeroBanner ?? new();
+    var catSection = hub.CategoriesSection ?? new();
+    var picksSection = hub.TopPicksSection ?? new();
+    var trustSection = hub.TrustBadgesSection ?? new();
+    var bottomBanner = hub.BottomBanner ?? new();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="dk-fashion-hub-container" id="fashion-hub-root">
+
+    @if (canManage)
+    {
+        <div class="dk-fashion-admin-bar">
+            <div class="dk-fashion-admin-bar-left">
+                <span class="dk-fashion-admin-badge">⚡ Admin Mode</span>
+                <span class="dk-fashion-admin-hint">Fashion Category Hub Active &bull; Customize banner, categories, products, text, &amp; upload images</span>
+            </div>
+            <a href="/Admin/FashionHub" class="dk-fashion-admin-btn" id="btnManageFashionHub">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Edit Fashion Hub &amp; Upload Images
+            </a>
+        </div>
+    }
+
+    <!-- ============================================================
+         1. HERO BANNER (FULL WIDTH, BRIGHT, HIGH AESTHETICS)
+    ============================================================ -->
+    <!-- ============================================================
+         1. HERO BANNER (FULL WIDTH, BRIGHT, TEXT OVERLAYED ON IMAGE)
+    ============================================================ -->
+    @if (hero.IsEnabled)
+    {
+        var minHeight = hero.BannerHeight > 0 ? hero.BannerHeight : 440;
+        var titleColor = !string.IsNullOrWhiteSpace(hero.TitleColor) ? hero.TitleColor : "#063f91";
+        var highlightColor = !string.IsNullOrWhiteSpace(hero.TitleHighlightColor) ? hero.TitleHighlightColor : "#ea580c";
+        var subtitleColor = !string.IsNullOrWhiteSpace(hero.SubtitleColor) ? hero.SubtitleColor : "#334155";
+        var badgeBg = !string.IsNullOrWhiteSpace(hero.BadgeBgColor) ? hero.BadgeBgColor : "rgba(255, 255, 255, 0.94)";
+        var badgeText = !string.IsNullOrWhiteSpace(hero.BadgeTextColor) ? hero.BadgeTextColor : "#0f172a";
+        var overlayGrad = !string.IsNullOrWhiteSpace(hero.OverlayGradient) 
+            ? hero.OverlayGradient 
+            : "linear-gradient(90deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.84) 40%, rgba(255, 255, 255, 0.18) 68%, rgba(255, 255, 255, 0.88) 100%)";
+
+        <section class="dk-fashion-hero-section full-width-hero" style="min-height: @(minHeight)px;" aria-label="Fashion Category Hero">
+            <!-- Full Width Panoramic Banner Image -->
+            @if (hero.IsUploadingSoon || string.IsNullOrWhiteSpace(hero.ImageUrl))
+            {
+                <div class="dk-fashion-hero-bg-soon">
+                    <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon Placeholder" class="dk-fashion-soon-watermark-img" />
+                    <div class="dk-fashion-soon-badge-banner">⏳ HERO BANNER UPLOADING SOON</div>
+                </div>
+            }
+            else
+            {
+                <img src="@hero.ImageUrl" 
+                     alt="Fashion for Every Journey" 
+                     class="dk-fashion-hero-bg-img" 
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="dk-fashion-hero-bg-soon" style="display: none;">
+                    <div class="dk-fashion-soon-badge-banner">⏳ HERO BANNER UPLOADING SOON</div>
+                </div>
+            }
+
+            <!-- High-Brightness Gradient Overlay for Contrast & Text Readability -->
+            <div class="dk-fashion-hero-overlay" style="background: @overlayGrad;"></div>
+
+            <!-- Content Overlayed Directly on Top of the Full-Width Banner Image -->
+            <div class="dk-fashion-hero-overlay-content">
+                
+                <!-- Left Content Area -->
+                <div class="dk-fashion-hero-left">
+                    <h1 class="dk-fashion-hero-headline" style="color: @titleColor;">
+                        @hero.Title <span class="dk-fashion-highlight" style="color: @highlightColor; -webkit-text-fill-color: @highlightColor; background: none;">@hero.TitleHighlight</span>
+                    </h1>
+                    
+                    <p class="dk-fashion-hero-subtext" style="color: @subtitleColor;">
+                        @hero.Subtitle
+                    </p>
+
+                    <!-- Badges Row (4 Pill Badges on Top of Banner) -->
+                    @if (hero.Badges != null && hero.Badges.Count > 0)
+                    {
+                        <div class="dk-fashion-badges-row">
+                            @foreach (var badge in hero.Badges.Where(b => b.IsActive))
+                            {
+                                <div class="dk-fashion-badge-item" style="background: @badgeBg; color: @badgeText;">
+                                    <span class="dk-fashion-badge-icon">
+                                        @if (badge.Icon == "shirt")
+                                        {
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                                        }
+                                        else if (badge.Icon == "shield")
+                                        {
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                                        }
+                                        else if (badge.Icon == "tag")
+                                        {
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                                        }
+                                        else
+                                        {
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                        }
+                                    </span>
+                                    <span class="dk-fashion-badge-text" style="color: @badgeText;">@badge.Label</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- Right Feature Callout Box ("Look Good. Travel Smart.") Overlayed on Right Side -->
+                @if (hero.RightCard != null)
+                {
+                    <div class="dk-fashion-hero-right">
+                        <div class="dk-fashion-callout-card">
+                            <h3 class="dk-fashion-callout-title">
+                                @hero.RightCard.Title <span class="dk-fashion-highlight-orange">@hero.RightCard.TitleHighlight</span>
+                            </h3>
+
+                            <div class="dk-fashion-callout-features">
+                                @foreach (var feat in hero.RightCard.Features.Where(f => f.IsActive))
+                                {
+                                    <div class="dk-fashion-callout-item">
+                                        <div class="dk-fashion-callout-icon">
+                                            @if (feat.Icon == "luggage")
+                                            {
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="6" width="14" height="15" rx="3"></rect><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path><circle cx="8" cy="21" r="1"></circle><circle cx="16" cy="21" r="1"></circle></svg>
+                                            }
+                                            else if (feat.Icon == "feather")
+                                            {
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>
+                                            }
+                                            else
+                                            {
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                                            }
+                                        </div>
+                                        <div class="dk-fashion-callout-text">
+                                            <span class="dk-fashion-callout-label">@feat.Title</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         2. SHOP BY CATEGORY SECTION
+    ============================================================ -->
+    @if (catSection.IsEnabled && catSection.Categories != null && catSection.Categories.Count > 0)
+    {
+        <section class="dk-fashion-section" aria-label="Shop Fashion by Category">
+            <div class="dk-fashion-section-header">
+                <h2 class="dk-fashion-section-heading">@catSection.Title</h2>
+                <a href="@catSection.ViewAllUrl" class="dk-fashion-section-link">
+                    @catSection.ViewAllText
+                </a>
+            </div>
+
+            <div class="dk-fashion-categories-grid">
+                @foreach (var cat in catSection.Categories.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder))
+                {
+                    var catUrl = !string.IsNullOrWhiteSpace(cat.Slug) ? $"/category/fashion/{cat.Slug}" : "/products?category=fashion";
+                    <a href="@catUrl" class="dk-fashion-cat-card" title="@cat.Name">
+                        <div class="dk-fashion-cat-img-box">
+                            @if (cat.IsUploadingSoon || string.IsNullOrWhiteSpace(cat.ImageUrl) || cat.ImageUrl.Contains("uploading-soon"))
+                            {
+                                <div class="dk-fashion-cat-placeholder">
+                                    <span class="dk-fashion-cat-emoji">
+                                        @GetCategoryEmoji(cat.Slug)
+                                    </span>
+                                    <span class="dk-fashion-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@cat.ImageUrl" 
+                                     alt="@cat.Name" 
+                                     loading="lazy" 
+                                     class="dk-fashion-cat-img" 
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-fashion-cat-placeholder" style="display: none;">
+                                    <span class="dk-fashion-cat-emoji">@GetCategoryEmoji(cat.Slug)</span>
+                                    <span class="dk-fashion-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+                        <span class="dk-fashion-cat-title">@cat.Name</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         3. TOP PICKS FOR MEN & WOMEN SECTION
+    ============================================================ -->
+    @if (picksSection.IsEnabled && picksSection.Products != null && picksSection.Products.Count > 0)
+    {
+        <section class="dk-fashion-section" aria-label="Top Picks for Men and Women">
+            <div class="dk-fashion-section-header">
+                <h2 class="dk-fashion-section-heading">@picksSection.Title</h2>
+                <div class="dk-fashion-slider-controls">
+                    <button type="button" class="dk-fashion-arrow-btn" id="dkFashionPicksPrev" aria-label="Previous products">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <button type="button" class="dk-fashion-arrow-btn" id="dkFashionPicksNext" aria-label="Next products">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                    <a href="@picksSection.ViewAllUrl" class="dk-fashion-section-link" style="margin-left: 12px;">
+                        @picksSection.ViewAllText
+                    </a>
+                </div>
+            </div>
+
+            <div class="dk-fashion-products-track-wrapper" id="dkFashionProductsTrackWrapper">
+                <div class="dk-fashion-products-track" id="dkFashionProductsTrack">
+                    @foreach (var prod in picksSection.Products.Where(p => p.IsActive))
+                    {
+                        var prodLink = !string.IsNullOrWhiteSpace(prod.ProductUrl) ? prod.ProductUrl : "/products?category=fashion";
+                        <div class="dk-fashion-product-card">
+                            <!-- Wishlist button -->
+                            <button type="button" class="dk-fashion-wish-btn" aria-label="Add @prod.Name to wishlist" onclick="event.preventDefault(); event.stopPropagation(); this.classList.toggle('active');">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                            </button>
+
+                            <a href="@prodLink" class="dk-fashion-prod-img-link">
+                                <div class="dk-fashion-prod-img-box">
+                                    @if (prod.IsUploadingSoon || string.IsNullOrWhiteSpace(prod.ImageUrl) || prod.ImageUrl.Contains("uploading-soon"))
+                                    {
+                                        <div class="dk-fashion-prod-placeholder">
+                                            <div class="dk-fashion-prod-icon-wrap">
+                                                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="1.8"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                                            </div>
+                                            <span class="dk-fashion-soon-badge-sm">Uploading Soon</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <img src="@prod.ImageUrl" 
+                                             alt="@prod.Name" 
+                                             loading="lazy" 
+                                             class="dk-fashion-prod-img" 
+                                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                        <div class="dk-fashion-prod-placeholder" style="display: none;">
+                                            <div class="dk-fashion-prod-icon-wrap">
+                                                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="1.8"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                                            </div>
+                                            <span class="dk-fashion-soon-badge-sm">Uploading Soon</span>
+                                        </div>
+                                    }
+                                </div>
+                            </a>
+
+                            <div class="dk-fashion-prod-details">
+                                <a href="@prodLink" class="dk-fashion-prod-name" title="@prod.Name">
+                                    @prod.Name
+                                </a>
+
+                                <div class="dk-fashion-prod-price-row">
+                                    <span class="dk-fashion-price">₹@prod.Price.ToString("N0")</span>
+                                    @if (prod.OriginalPrice.HasValue && prod.OriginalPrice.Value > prod.Price)
+                                    {
+                                        <span class="dk-fashion-orig-price">₹@prod.OriginalPrice.Value.ToString("N0")</span>
+                                    }
+                                </div>
+
+                                <div class="dk-fashion-prod-bottom-row">
+                                    <div class="dk-fashion-stars" title="Rating: @prod.Rating out of 5">
+                                        <span class="dk-fashion-star-icons">★★★★★</span>
+                                        <span class="dk-fashion-reviews-count">(@prod.ReviewsCount)</span>
+                                    </div>
+
+                                    <a href="@prodLink" class="dk-fashion-cart-btn" title="Add to Bag">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         4. TRUST BADGES / VALUE PROPOSITIONS BAR
+    ============================================================ -->
+    @if (trustSection.IsEnabled && trustSection.Badges != null && trustSection.Badges.Count > 0)
+    {
+        <section class="dk-fashion-trust-section" aria-label="Customer Guarantees">
+            <div class="dk-fashion-trust-grid">
+                @foreach (var badge in trustSection.Badges.Where(b => b.IsActive))
+                {
+                    <div class="dk-fashion-trust-card">
+                        <div class="dk-fashion-trust-icon">
+                            @if (badge.Icon == "box")
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                            }
+                            else if (badge.Icon == "shield")
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                            }
+                            else if (badge.Icon == "tag")
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                            }
+                            else if (badge.Icon == "truck")
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            }
+                            else if (badge.Icon == "return")
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                            }
+                            else
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                            }
+                        </div>
+                        <div class="dk-fashion-trust-content">
+                            <h4 class="dk-fashion-trust-title">@badge.Title</h4>
+                            <p class="dk-fashion-trust-sub">@badge.Subtitle</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         5. BOTTOM CALLOUT BANNER (DARK NAVY / KITS & DESTINATIONS)
+    ============================================================ -->
+    @if (bottomBanner.IsEnabled)
+    {
+        <section class="dk-fashion-bottom-bar" aria-label="Fashion Destination & Kits">
+            <div class="dk-fashion-bottom-container">
+                
+                <!-- Col 1: Quiz -->
+                <div class="dk-fashion-bottom-col">
+                    <div class="dk-fashion-bottom-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><circle cx="11" cy="14" r="2"></circle><line x1="13" y1="16" x2="15" y2="18"></line></svg>
+                    </div>
+                    <div class="dk-fashion-bottom-text">
+                        <strong class="dk-fashion-bottom-heading">@bottomBanner.QuizTitle</strong>
+                        <span class="dk-fashion-bottom-sub">@bottomBanner.QuizSubtitle</span>
+                    </div>
+                    <a href="@bottomBanner.QuizButtonUrl" class="dk-fashion-bottom-btn">
+                        @bottomBanner.QuizButtonText
+                    </a>
+                </div>
+
+                <div class="dk-fashion-bottom-divider"></div>
+
+                <!-- Col 2: Destinations -->
+                <div class="dk-fashion-bottom-col">
+                    <div class="dk-fashion-bottom-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    </div>
+                    <div class="dk-fashion-bottom-text">
+                        <strong class="dk-fashion-bottom-heading">@bottomBanner.DestinationsTitle</strong>
+                        <span class="dk-fashion-bottom-sub">@bottomBanner.DestinationsSubtitle</span>
+                    </div>
+                    <div class="dk-fashion-flags-row">
+                        <span class="dk-fashion-flag-emoji" title="United States">🇺🇸</span>
+                        <span class="dk-fashion-flag-emoji" title="United Kingdom">🇬🇧</span>
+                        <span class="dk-fashion-flag-emoji" title="Canada">🇨🇦</span>
+                        <span class="dk-fashion-flag-emoji" title="Australia">🇦🇺</span>
+                        <span class="dk-fashion-flag-more">+ More</span>
+                    </div>
+                </div>
+
+                <div class="dk-fashion-bottom-divider"></div>
+
+                <!-- Col 3: Bulk Orders -->
+                <div class="dk-fashion-bottom-col">
+                    <div class="dk-fashion-bottom-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    </div>
+                    <div class="dk-fashion-bottom-text">
+                        <strong class="dk-fashion-bottom-heading">@bottomBanner.BulkTitle</strong>
+                        <span class="dk-fashion-bottom-sub">@bottomBanner.BulkSubtitle</span>
+                    </div>
+                    <a href="@bottomBanner.BulkButtonUrl" class="dk-fashion-bottom-btn">
+                        @bottomBanner.BulkButtonText
+                    </a>
+                </div>
+
+            </div>
+        </section>
+    }
+
+</div>
+
+@functions {
+    public static string GetCategoryEmoji(string? slug)
+    {
+        if (string.IsNullOrWhiteSpace(slug)) return "👗";
+        var s = slug.ToLowerInvariant();
+        if (s.Contains("men-clothing") || s == "men") return "🧥";
+        if (s.Contains("women-clothing") || s == "women") return "👚";
+        if (s.Contains("men-footwear")) return "👟";
+        if (s.Contains("women-footwear")) return "👠";
+        if (s.Contains("watch")) return "⌚";
+        if (s.Contains("sunglass")) return "🕶️";
+        if (s.Contains("cap") || s.Contains("hat")) return "🧢";
+        if (s.Contains("belt") || s.Contains("wallet")) return "👛";
+        if (s.Contains("sock")) return "🧦";
+        if (s.Contains("access") || s.Contains("bag")) return "🎒";
+        return "👗";
+    }
+}
+
+<style>
+/* ========================================================
+   DREAMFLYKIT FASHION HUB STYLING (PIXEL-PERFECT MATCH)
+======================================================== */
+.dk-fashion-hub-container {
+    width: 100%;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+}
+
+/* Admin floating control bar */
+.dk-fashion-admin-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid #334155;
+    padding: 10px 20px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.dk-fashion-admin-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dk-fashion-admin-badge {
+    background: #ec4899;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 3px 10px;
+    border-radius: 6px;
+}
+.dk-fashion-admin-hint {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 500;
+}
+.dk-fashion-admin-btn {
+    background: #0284c7;
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px 16px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+.dk-fashion-admin-btn:hover {
+    background: #0369a1;
+    transform: translateY(-1px);
+}
+
+/* 1. HERO SECTION (FULL-WIDTH EXPANSIVE BANNER WITH OVERLAYED TEXT) */
+.dk-fashion-hero-section {
+    width: 100%;
+    position: relative;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    margin-bottom: 28px;
+    box-shadow: 0 10px 30px rgba(6, 63, 145, 0.05);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+}
+
+/* Full Width Panoramic Background Image */
+.dk-fashion-hero-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    z-index: 1;
+    filter: brightness(1.04) contrast(1.03);
+    transition: transform 0.6s ease;
+}
+.dk-fashion-hero-section:hover .dk-fashion-hero-bg-img {
+    transform: scale(1.015);
+}
+
+.dk-fashion-hero-bg-soon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 50%, #f8fafc 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+.dk-fashion-soon-watermark-img {
+    max-width: 220px;
+    opacity: 0.55;
+    margin-bottom: 12px;
+}
+.dk-fashion-soon-badge-banner {
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 7px 18px;
+    border-radius: 20px;
+    letter-spacing: 0.8px;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+}
+
+/* Brightness & Contrast Gradient Overlay */
+.dk-fashion-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Content floating directly on top of the image */
+.dk-fashion-hero-overlay-content {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    padding: 44px 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+}
+
+/* Left Hero Content */
+.dk-fashion-hero-left {
+    max-width: 500px;
+    z-index: 4;
+}
+.dk-fashion-hero-headline {
+    font-size: 46px;
+    line-height: 1.12;
+    font-weight: 900;
+    color: #063f91;
+    margin: 0 0 14px 0;
+    letter-spacing: -0.6px;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+}
+.dk-fashion-highlight {
+    font-weight: 900;
+    display: inline-block;
+}
+.dk-fashion-hero-subtext {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #334155;
+    margin: 0 0 24px 0;
+    max-width: 440px;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.7);
+}
+.dk-fashion-badges-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    max-width: 420px;
+}
+.dk-fashion-badge-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 10px;
+    padding: 9px 14px;
+    box-shadow: 0 4px 12px rgba(6, 63, 145, 0.04);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.dk-fashion-badge-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(6, 63, 145, 0.08);
+}
+.dk-fashion-badge-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0284c7;
+    flex-shrink: 0;
+}
+.dk-fashion-badge-text {
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* Right Callout Card (Floating Glassmorphism Card) */
+.dk-fashion-hero-right {
+    display: flex;
+    justify-content: flex-end;
+    z-index: 4;
+}
+.dk-fashion-callout-card {
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 14px;
+    padding: 24px 22px;
+    box-shadow: 0 10px 25px rgba(6, 63, 145, 0.08);
+    width: 100%;
+    max-width: 270px;
+}
+.dk-fashion-callout-title {
+    font-size: 21px;
+    font-weight: 800;
+    color: #063f91;
+    margin: 0 0 20px 0;
+    line-height: 1.25;
+}
+.dk-fashion-highlight-orange {
+    color: #ff7900;
+    display: block;
+}
+.dk-fashion-callout-features {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.dk-fashion-callout-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-fashion-callout-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #f0f7ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #063f91;
+    flex-shrink: 0;
+}
+.dk-fashion-callout-label {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+/* 2. SECTION COMMON HEADER */
+.dk-fashion-section {
+    margin-bottom: 32px;
+}
+.dk-fashion-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.dk-fashion-section-heading {
+    font-size: 19px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+}
+.dk-fashion-section-link {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0284c7;
+    text-decoration: none;
+    transition: color 0.15s ease, transform 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+}
+.dk-fashion-section-link:hover {
+    color: #0369a1;
+    transform: translateX(2px);
+}
+
+/* 2. CATEGORIES GRID */
+.dk-fashion-categories-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 12px;
+}
+.dk-fashion-cat-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+.dk-fashion-cat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(6, 63, 145, 0.08);
+    border-color: #38bdf8;
+}
+.dk-fashion-cat-img-box {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #f8fafc;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.dk-fashion-cat-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.dk-fashion-cat-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 4px;
+    background: #f8fafc;
+}
+.dk-fashion-cat-emoji {
+    font-size: 28px;
+    margin-bottom: 4px;
+}
+.dk-fashion-soon-badge {
+    font-size: 8.5px;
+    font-weight: 800;
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 2px 5px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+.dk-fashion-cat-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+/* 3. PRODUCTS CAROUSEL / TRACK */
+.dk-fashion-slider-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.dk-fashion-arrow-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #334155;
+    transition: all 0.15s ease;
+}
+.dk-fashion-arrow-btn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #94a3b8;
+}
+.dk-fashion-products-track-wrapper {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 10px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.dk-fashion-products-track-wrapper::-webkit-scrollbar {
+    display: none;
+}
+.dk-fashion-products-track {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(170px, 1fr));
+    gap: 14px;
+}
+.dk-fashion-product-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    transition: all 0.2s ease;
+}
+.dk-fashion-product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    border-color: #cbd5e1;
+}
+.dk-fashion-wish-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #64748b;
+    z-index: 2;
+    transition: all 0.15s ease;
+}
+.dk-fashion-wish-btn:hover {
+    color: #ef4444;
+    transform: scale(1.1);
+}
+.dk-fashion-wish-btn.active {
+    color: #ef4444;
+    fill: #ef4444;
+}
+.dk-fashion-prod-img-link {
+    text-decoration: none;
+    display: block;
+}
+.dk-fashion-prod-img-box {
+    width: 100%;
+    aspect-ratio: 1 / 1.1;
+    background: #f8fafc;
+    overflow: hidden;
+    position: relative;
+}
+.dk-fashion-prod-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.dk-fashion-prod-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+.dk-fashion-prod-icon-wrap {
+    margin-bottom: 8px;
+    color: #0284c7;
+}
+.dk-fashion-soon-badge-sm {
+    font-size: 9.5px;
+    font-weight: 800;
+    background: #e0f2fe;
+    color: #0284c7;
+    padding: 3px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+.dk-fashion-prod-details {
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.dk-fashion-prod-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    text-decoration: none;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dk-fashion-prod-name:hover {
+    color: #0284c7;
+}
+.dk-fashion-prod-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.dk-fashion-price {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.dk-fashion-orig-price {
+    font-size: 11.5px;
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+.dk-fashion-prod-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+}
+.dk-fashion-stars {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+}
+.dk-fashion-star-icons {
+    color: #f59e0b;
+    font-size: 12px;
+    letter-spacing: -1px;
+}
+.dk-fashion-reviews-count {
+    color: #64748b;
+    font-size: 11px;
+}
+.dk-fashion-cart-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0284c7;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+.dk-fashion-cart-btn:hover {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+}
+
+/* 4. TRUST BADGES */
+.dk-fashion-trust-section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+.dk-fashion-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+}
+.dk-fashion-trust-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+.dk-fashion-trust-icon {
+    flex-shrink: 0;
+    color: #0284c7;
+}
+.dk-fashion-trust-content {
+    display: flex;
+    flex-direction: column;
+}
+.dk-fashion-trust-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 2px 0;
+    line-height: 1.25;
+}
+.dk-fashion-trust-sub {
+    font-size: 11px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* 5. BOTTOM BAR */
+.dk-fashion-bottom-bar {
+    background: linear-gradient(135deg, #063f91 0%, #082857 100%);
+    border-radius: 12px;
+    padding: 20px 28px;
+    color: #ffffff;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 24px rgba(6, 63, 145, 0.15);
+}
+.dk-fashion-bottom-container {
+    display: grid;
+    grid-template-columns: 1.2fr auto 1.3fr auto 1.2fr;
+    align-items: center;
+    gap: 20px;
+}
+.dk-fashion-bottom-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.15);
+}
+.dk-fashion-bottom-col {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-fashion-bottom-icon {
+    flex-shrink: 0;
+    color: #38bdf8;
+}
+.dk-fashion-bottom-text {
+    display: flex;
+    flex-direction: column;
+}
+.dk-fashion-bottom-heading {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.2;
+}
+.dk-fashion-bottom-sub {
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 2px;
+}
+.dk-fashion-bottom-btn {
+    margin-left: auto;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+.dk-fashion-bottom-btn:hover {
+    background: #ffffff;
+    color: #063f91 !important;
+    border-color: #ffffff;
+}
+.dk-fashion-flags-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+}
+.dk-fashion-flag-emoji {
+    font-size: 18px;
+    line-height: 1;
+}
+.dk-fashion-flag-more {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.12);
+    padding: 3px 7px;
+    border-radius: 10px;
+}
+
+/* RESPONSIVE BREAKPOINTS */
+@@media (max-width: 1024px) {
+    .dk-fashion-hero-overlay-content {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 30px 24px;
+        gap: 24px;
+    }
+    .dk-fashion-hero-right {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    .dk-fashion-callout-card {
+        max-width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .dk-fashion-callout-title {
+        margin: 0;
+    }
+    .dk-fashion-callout-features {
+        flex-direction: row;
+        gap: 20px;
+    }
+    .dk-fashion-categories-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .dk-fashion-trust-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .dk-fashion-bottom-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .dk-fashion-bottom-divider {
+        display: none;
+    }
+}
+
+@@media (max-width: 768px) {
+    .dk-fashion-hero-section {
+        min-height: 480px;
+    }
+    .dk-fashion-hero-overlay-content {
+        padding: 24px 18px;
+    }
+    .dk-fashion-hero-headline {
+        font-size: 32px;
+    }
+    .dk-fashion-badges-row {
+        grid-template-columns: 1fr;
+    }
+    .dk-fashion-callout-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .dk-fashion-callout-features {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .dk-fashion-categories-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .dk-fashion-trust-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const track = document.getElementById("dkFashionProductsTrackWrapper");
+    const prevBtn = document.getElementById("dkFashionPicksPrev");
+    const nextBtn = document.getElementById("dkFashionPicksNext");
+
+    if (track && prevBtn && nextBtn) {
+        prevBtn.addEventListener("click", function () {
+            track.scrollBy({ left: -260, behavior: "smooth" });
+        });
+        nextBtn.addEventListener("click", function () {
+            track.scrollBy({ left: 260, behavior: "smooth" });
+        });
+    }
+});
+</script>
