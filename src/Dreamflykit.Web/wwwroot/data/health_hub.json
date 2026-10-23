@@ -1,0 +1,340 @@
+{
+  "HeroBanner": {
+    "IsEnabled": true,
+    "EnableSlideshow": true,
+    "AutoPlay": true,
+    "SlideIntervalSeconds": 5,
+    "TransitionEffect": "fade",
+    "BannerHeight": 440,
+    "ThemeColor": "#0d7a5f",
+    "ThemeAccentColor": "#059669",
+    "Slides": [
+      {
+        "Id": "slide-1",
+        "DiscountBadge": "FLAT 20% OFF",
+        "Title": "Your Health,",
+        "TitleHighlight": "Our Priority.",
+        "Subtitle": "Wide range of medicines & healthcare products delivered to your doorstep.",
+        "ImageUrl": "/images/health-hub/health_hero_banner_1.jpg",
+        "TargetUrl": "/products?category=health-care",
+        "DisplayOrder": 1,
+        "IsActive": true,
+        "Badges": [
+          {
+            "Id": "b-0-0",
+            "Label": "100% Genuine Medicines",
+            "Icon": "shield-check",
+            "IsActive": true
+          },
+          {
+            "Id": "b-0-1",
+            "Label": "Doctor Approved",
+            "Icon": "stethoscope",
+            "IsActive": true
+          },
+          {
+            "Id": "b-0-2",
+            "Label": "Easy Returns",
+            "Icon": "refresh",
+            "IsActive": true
+          },
+          {
+            "Id": "b-0-3",
+            "Label": "Fast & Safe Delivery",
+            "Icon": "truck",
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "Id": "slide-2",
+        "DiscountBadge": "FLAT 25% OFF",
+        "Title": "Wellness & Care,",
+        "TitleHighlight": "For Every Student.",
+        "Subtitle": "Authentic Ayurveda, vitamins, daily immunity boosters, and health monitoring kits.",
+        "ImageUrl": "/images/health-hub/health_hero_banner_2.jpg",
+        "TargetUrl": "/products?category=health-care",
+        "DisplayOrder": 2,
+        "IsActive": true,
+        "Badges": [
+          {
+            "Id": "b-1-0",
+            "Label": "Pure & Certified",
+            "Icon": "shield-check",
+            "IsActive": true
+          },
+          {
+            "Id": "b-1-1",
+            "Label": "Pharmacist Verified",
+            "Icon": "stethoscope",
+            "IsActive": true
+          },
+          {
+            "Id": "b-1-2",
+            "Label": "Express Dispatch",
+            "Icon": "truck",
+            "IsActive": true
+          },
+          {
+            "Id": "b-1-3",
+            "Label": "24/7 Health Desk",
+            "Icon": "refresh",
+            "IsActive": true
+          }
+        ]
+      }
+    ]
+  },
+  "CategoriesSection": {
+    "IsEnabled": true,
+    "Title": "Shop by Category",
+    "ViewAllText": "View All >",
+    "ViewAllUrl": "/products?category=health-care",
+    "Categories": [
+      {
+        "Id": "c1",
+        "Name": "Medicines",
+        "Slug": "",
+        "Icon": "",
+        "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/f6bec99f84f44d31bf36a0d1463c8975.webp",
+        "ProductUrl": "/products?category=health-care&q=Medicines",
+        "DisplayOrder": 1,
+        "IsActive": true,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "c2",
+        "Name": "Lab Tests",
+        "Slug": "",
+        "Icon": "",
+        "ImageUrl": "/images/health-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/products?category=health-care&q=Lab+Tests",
+        "DisplayOrder": 2,
+        "IsActive": true,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "c3",
+        "Name": "Health Conditions",
+        "Slug": "",
+        "Icon": "",
+        "ImageUrl": "/images/health-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/products?category=health-care&q=Health+Conditions",
+        "DisplayOrder": 3,
+        "IsActive": true,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "c4",
+        "Name": "Personal Care",
+        "Slug": "",
+        "Icon": "",
+        "ImageUrl": "/images/health-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/products?category=health-care&q=Personal+Care",
+        "DisplayOrder": 4,
+        "IsActive": true,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "c5",
+        "Name": "Health Devices",
+        "Slug": "",
+        "Icon": "",
+        "ImageUrl": "/images/health-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/products?category=health-care&q=Health+Devices",
+        "DisplayOrder": 5,
+        "IsActive": true,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "c6",
+        "Name": "Baby Care",
+        "Slug": "",
+        "Icon": "",
+        "ImageUrl": "/images/health-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/products?category=health-care&q=Baby+Care",
+        "DisplayOrder": 6,
+        "IsActive": true,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "c7",
+        "Name": "Elderly Care",
+        "Slug": "",
+        "Icon": "",
+        "ImageUrl": "/images/health-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/products?category=health-care&q=Elderly+Care",
+        "DisplayOrder": 7,
+        "IsActive": true,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "c8",
+        "Name": "Offers",
+        "Slug": "",
+        "Icon": "",
+        "ImageUrl": "/images/health-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/products?category=health-care&minDiscount=15",
+        "DisplayOrder": 8,
+        "IsActive": true,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "c9",
+        "Name": "Prescription Upload",
+        "Slug": "",
+        "Icon": "",
+        "ImageUrl": "/images/health-hub/uploading-soon-placeholder.svg",
+        "ProductUrl": "/products?category=health-care&q=Prescription",
+        "DisplayOrder": 9,
+        "IsActive": true,
+        "IsUploadingSoon": false
+      }
+    ]
+  },
+  "PopularSection": {
+    "IsEnabled": true,
+    "Title": "Popular Health Categories",
+    "ViewAllText": "View All >",
+    "ViewAllUrl": "/products?category=health-care",
+    "Categories": [
+      {
+        "Id": "pc1",
+        "Name": "Pain Relief",
+        "Slug": "",
+        "Icon": "",
+        "ProductUrl": "/products?category=health-care&q=Pain+Relief",
+        "DisplayOrder": 1,
+        "IsActive": true
+      },
+      {
+        "Id": "pc2",
+        "Name": "Fever",
+        "Slug": "",
+        "Icon": "",
+        "ProductUrl": "/products?category=health-care&q=Fever",
+        "DisplayOrder": 2,
+        "IsActive": true
+      },
+      {
+        "Id": "pc3",
+        "Name": "Cough & Cold",
+        "Slug": "",
+        "Icon": "",
+        "ProductUrl": "/products?category=health-care&q=Cough+Cold",
+        "DisplayOrder": 3,
+        "IsActive": true
+      },
+      {
+        "Id": "pc4",
+        "Name": "Diabetes Care",
+        "Slug": "",
+        "Icon": "",
+        "ProductUrl": "/products?category=health-care&q=Diabetes",
+        "DisplayOrder": 4,
+        "IsActive": true
+      },
+      {
+        "Id": "pc5",
+        "Name": "Heart Care",
+        "Slug": "",
+        "Icon": "",
+        "ProductUrl": "/products?category=health-care&q=Heart+Care",
+        "DisplayOrder": 5,
+        "IsActive": true
+      },
+      {
+        "Id": "pc6",
+        "Name": "Vitamins & Supplements",
+        "Slug": "",
+        "Icon": "",
+        "ProductUrl": "/products?category=health-care&q=Vitamins",
+        "DisplayOrder": 6,
+        "IsActive": true
+      },
+      {
+        "Id": "pc7",
+        "Name": "Stomach Care",
+        "Slug": "",
+        "Icon": "",
+        "ProductUrl": "/products?category=health-care&q=Stomach",
+        "DisplayOrder": 7,
+        "IsActive": true
+      },
+      {
+        "Id": "pc8",
+        "Name": "Skin Care",
+        "Slug": "",
+        "Icon": "",
+        "ProductUrl": "/products?category=health-care&q=Skin+Care",
+        "DisplayOrder": 8,
+        "IsActive": true
+      },
+      {
+        "Id": "pc9",
+        "Name": "Women Care",
+        "Slug": "",
+        "Icon": "",
+        "ProductUrl": "/products?category=health-care&q=Women+Care",
+        "DisplayOrder": 9,
+        "IsActive": true
+      },
+      {
+        "Id": "pc10",
+        "Name": "Ayurveda",
+        "Slug": "",
+        "Icon": "",
+        "ProductUrl": "/products?category=health-care&q=Ayurveda",
+        "DisplayOrder": 10,
+        "IsActive": true
+      }
+    ]
+  },
+  "TrustBarSection": {
+    "IsEnabled": true,
+    "Items": [
+      {
+        "Id": "tb1",
+        "Title": "100% Genuine Medicines",
+        "Subtitle": "Sourced from trusted brands",
+        "Icon": "",
+        "IsActive": true
+      },
+      {
+        "Id": "tb2",
+        "Title": "Flat 20% OFF",
+        "Subtitle": "On all medicines",
+        "Icon": "",
+        "IsActive": true
+      },
+      {
+        "Id": "tb3",
+        "Title": "Easy Returns",
+        "Subtitle": "Hassle-free returns",
+        "Icon": "",
+        "IsActive": true
+      },
+      {
+        "Id": "tb4",
+        "Title": "Fast Delivery",
+        "Subtitle": "On-time, every time",
+        "Icon": "",
+        "IsActive": true
+      },
+      {
+        "Id": "tb5",
+        "Title": "Secure Payments",
+        "Subtitle": "100% safe & secure",
+        "Icon": "",
+        "IsActive": true
+      },
+      {
+        "Id": "tb6",
+        "Title": "24/7 Customer Support",
+        "Subtitle": "We're here for you",
+        "Icon": "",
+        "IsActive": true
+      }
+    ]
+  }
+}

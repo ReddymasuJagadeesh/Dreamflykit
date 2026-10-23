@@ -1,0 +1,978 @@
+@model Dreamflykit.Application.HealthHub.Models.HealthHubDto
+@{
+    var hub = Model ?? Dreamflykit.Application.HealthHub.Models.HealthHubDto.CreateDefault();
+    var hero = hub.HeroBanner ?? new Dreamflykit.Application.HealthHub.Models.HealthHeroBannerDto();
+    var slides = hero.Slides?.Where(s => s.IsActive).OrderBy(s => s.DisplayOrder).ToList() 
+                 ?? new List<Dreamflykit.Application.HealthHub.Models.HealthHeroSlideDto>();
+    if (slides.Count == 0)
+    {
+        slides = Dreamflykit.Application.HealthHub.Models.HealthHubDto.CreateDefault().HeroBanner.Slides;
+    }
+
+    var enableSlides = hero.EnableSlideshow && slides.Count > 1;
+    var slideDuration = hero.SlideIntervalSeconds > 0 ? hero.SlideIntervalSeconds : 5;
+    var themeColor = !string.IsNullOrWhiteSpace(hero.ThemeColor) ? hero.ThemeColor : "#0d7a5f";
+    var accentColor = !string.IsNullOrWhiteSpace(hero.ThemeAccentColor) ? hero.ThemeAccentColor : "#059669";
+    var minHeight = hero.BannerHeight > 0 ? hero.BannerHeight : 420;
+    var isAdmin = User.IsInRole("Admin") || User.IsInRole("SuperAdmin");
+}
+
+<div class="dk-health-hub-root" id="health-hub-root" style="--hh-primary: @themeColor; --hh-accent: @accentColor;">
+
+    <!-- ========================================================
+         ADMIN FLOATING / TOP BAR (Only visible to Admin)
+    ========================================================= -->
+    @if (isAdmin)
+    {
+        <div class="dk-health-admin-bar">
+            <div class="dk-health-admin-left">
+                <span class="dk-health-admin-badge">⚡ Admin Mode</span>
+                <span class="dk-health-admin-hint">Health Care Hub Active &bull; Fully customize slides, timing, categories &amp; images</span>
+            </div>
+            <a href="/Admin/HealthHub" class="dk-health-admin-btn" id="btnManageHealthHub">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                Manage Health Hub &amp; Upload Images
+            </a>
+        </div>
+    }
+
+    <!-- ========================================================
+         HERO BANNER (MULTI-SLIDE CAROUSEL / FULL WIDTH / LIVE ANIMATION)
+    ========================================================= -->
+    @if (hero.IsEnabled)
+    {
+        <section class="dk-health-hero-section" 
+                 id="healthHeroCarousel" 
+                 data-autoplay="@(hero.AutoPlay ? "true" : "false")"
+                 data-interval="@(slideDuration * 1000)"
+                 style="min-height: @(minHeight)px;"
+                 aria-label="Health Care Category Hero">
+
+            <div class="dk-health-slides-wrapper" id="healthSlidesContainer">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    var slide = slides[i];
+                    var isActive = i == 0;
+                    <div class="dk-health-slide @(isActive ? "active" : "")" 
+                         data-slide-index="@i"
+                         id="healthSlide-@i"
+                         role="tabpanel"
+                         aria-hidden="@(isActive ? "false" : "true")">
+
+                        <!-- Panoramic Background Product Showcase Image -->
+                        <div class="dk-health-slide-bg">
+                            <img src="@slide.ImageUrl" 
+                                 alt="@slide.Title @slide.TitleHighlight" 
+                                 class="dk-health-slide-img" 
+                                 onerror="this.src='/images/health-hub/uploading-soon-placeholder.svg';" />
+                            <!-- Clean Transparent Gradient for Pristine Text Readability -->
+                            <div class="dk-health-slide-overlay"></div>
+                        </div>
+
+                        <!-- Live Interactive Overlay Text Content on Banner -->
+                        <div class="dk-health-slide-content">
+                            <div class="dk-health-slide-left">
+                                @if (!string.IsNullOrWhiteSpace(slide.DiscountBadge))
+                                {
+                                    <div class="dk-health-discount-badge">
+                                        <span class="dk-health-badge-icon">🏷️</span>
+                                        <span class="dk-health-badge-text">@slide.DiscountBadge</span>
+                                    </div>
+                                }
+
+                                <h1 class="dk-health-headline">
+                                    @slide.Title <br />
+                                    <span class="dk-health-headline-highlight">@slide.TitleHighlight</span>
+                                </h1>
+
+                                <p class="dk-health-subtitle">
+                                    @slide.Subtitle
+                                </p>
+
+                                @if (slide.Badges != null && slide.Badges.Count > 0)
+                                {
+                                    <div class="dk-health-hero-pills">
+                                        @foreach (var badge in slide.Badges.Where(b => b.IsActive))
+                                        {
+                                            <div class="dk-health-pill-badge">
+                                                <span class="dk-health-pill-icon">
+                                                    @if (badge.Icon == "shield-check" || badge.Icon == "shield")
+                                                    {
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                                                    }
+                                                    else if (badge.Icon == "stethoscope")
+                                                    {
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"></path><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"></path><circle cx="20" cy="10" r="2"></circle></svg>
+                                                    }
+                                                    else if (badge.Icon == "refresh" || badge.Icon == "refresh-cw")
+                                                    {
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                                                    }
+                                                    else if (badge.Icon == "truck")
+                                                    {
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                                    }
+                                                    else
+                                                    {
+                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                    }
+                                                </span>
+                                                <span class="dk-health-pill-text">@badge.Label</span>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Carousel Navigation Chevrons (< and >) -->
+            @if (enableSlides)
+            {
+                <button type="button" class="dk-health-nav-btn prev" id="btnHealthHeroPrev" aria-label="Previous Slide">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <button type="button" class="dk-health-nav-btn next" id="btnHealthHeroNext" aria-label="Next Slide">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+
+                <!-- Indicator Dots -->
+                <div class="dk-health-dots" id="healthHeroDots" role="tablist">
+                    @for (int d = 0; d < slides.Count; d++)
+                    {
+                        <button type="button" 
+                                class="dk-health-dot @(d == 0 ? "active" : "")" 
+                                data-index="@d" 
+                                role="tab" 
+                                aria-label="Go to slide @(d + 1)"></button>
+                    }
+                </div>
+            }
+        </section>
+    }
+
+    <!-- ========================================================
+         SECTION 1: SHOP BY CATEGORY (9 ITEMS, BIGGER ICONS, COMPACT SPACE)
+    ========================================================= -->
+    @if (hub.CategoriesSection != null && hub.CategoriesSection.IsEnabled)
+    {
+        var cats = hub.CategoriesSection.Categories?.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder).ToList() 
+                   ?? new List<Dreamflykit.Application.HealthHub.Models.HealthCategoryCardDto>();
+
+        <section class="dk-health-section" aria-label="Shop by Category">
+            <div class="dk-health-section-header">
+                <h2 class="dk-health-section-title">@hub.CategoriesSection.Title</h2>
+                <a href="@hub.CategoriesSection.ViewAllUrl" class="dk-health-view-all-btn" id="btnHealthViewAllCategories">
+                    @hub.CategoriesSection.ViewAllText
+                </a>
+            </div>
+
+            <div class="dk-health-categories-grid">
+                @foreach (var cat in cats)
+                {
+                    <a href="@cat.ProductUrl" class="dk-health-cat-card" title="@cat.Name">
+                        <div class="dk-health-cat-img-box">
+                            @if (!string.IsNullOrWhiteSpace(cat.ImageUrl) && !cat.IsUploadingSoon && cat.ImageUrl != "/images/health-hub/uploading-soon-placeholder.svg")
+                            {
+                                <img src="@cat.ImageUrl" alt="@cat.Name" class="dk-health-cat-img" loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="dk-health-cat-icon-container">
+                                    @switch (cat.Icon)
+                                    {
+                                        case "pills":
+                                            <span class="dk-health-cat-emoji">💊</span>
+                                            break;
+                                        case "flask":
+                                            <span class="dk-health-cat-emoji">🧪</span>
+                                            break;
+                                        case "heart-pulse":
+                                            <span class="dk-health-cat-emoji">❤️</span>
+                                            break;
+                                        case "sparkles":
+                                            <span class="dk-health-cat-emoji">🧴</span>
+                                            break;
+                                        case "activity":
+                                            <span class="dk-health-cat-emoji">🩺</span>
+                                            break;
+                                        case "smile":
+                                            <span class="dk-health-cat-emoji">🍼</span>
+                                            break;
+                                        case "users":
+                                            <span class="dk-health-cat-emoji">👴👵</span>
+                                            break;
+                                        case "percent":
+                                            <span class="dk-health-cat-emoji">🏷️</span>
+                                            break;
+                                        case "file-text":
+                                            <span class="dk-health-cat-emoji">📋</span>
+                                            break;
+                                        default:
+                                            <span class="dk-health-cat-emoji">🌿</span>
+                                            break;
+                                    }
+                                </div>
+                            }
+                            @if (cat.IsUploadingSoon)
+                            {
+                                <span class="dk-health-cat-soon-badge">Uploading Soon</span>
+                            }
+                        </div>
+                        <span class="dk-health-cat-name">@cat.Name</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         SECTION 2: POPULAR HEALTH CATEGORIES (10 CONDITIONS, CRISP ICONS)
+    ========================================================= -->
+    @if (hub.PopularSection != null && hub.PopularSection.IsEnabled)
+    {
+        var popCats = hub.PopularSection.Categories?.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder).ToList() 
+                      ?? new List<Dreamflykit.Application.HealthHub.Models.HealthConditionCardDto>();
+
+        <section class="dk-health-section dk-health-popular-section" aria-label="Popular Health Categories">
+            <div class="dk-health-section-header">
+                <h2 class="dk-health-section-title">@hub.PopularSection.Title</h2>
+                <a href="@hub.PopularSection.ViewAllUrl" class="dk-health-view-all-btn" id="btnHealthViewAllPopular">
+                    @hub.PopularSection.ViewAllText
+                </a>
+            </div>
+
+            <div class="dk-health-conditions-grid">
+                @foreach (var pop in popCats)
+                {
+                    <a href="@pop.ProductUrl" class="dk-health-condition-card" title="@pop.Name">
+                        <div class="dk-health-condition-icon-box">
+                            @switch (pop.Icon)
+                            {
+                                case "brain":
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path><line x1="8" y1="3" x2="8" y2="7"></line><line x1="16" y1="3" x2="16" y2="7"></line></svg>
+                                    break;
+                                case "thermometer":
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path></svg>
+                                    break;
+                                case "wind":
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path></svg>
+                                    break;
+                                case "droplet":
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                                    break;
+                                case "heart":
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                    break;
+                                case "capsule":
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="8" width="18" height="8" rx="4" transform="rotate(-45 12 12)"></rect><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"></line></svg>
+                                    break;
+                                case "shield":
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                    break;
+                                case "sun":
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                                    break;
+                                case "user":
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                    break;
+                                case "feather":
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>
+                                    break;
+                                default:
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                                    break;
+                            }
+                        </div>
+                        <span class="dk-health-condition-name">@pop.Name</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         SECTION 3: BOTTOM TRUST BAR & GUARANTEES (6 ITEMS)
+    ========================================================= -->
+    @if (hub.TrustBarSection != null && hub.TrustBarSection.IsEnabled)
+    {
+        var trusts = hub.TrustBarSection.Items?.Where(t => t.IsActive).ToList() 
+                     ?? new List<Dreamflykit.Application.HealthHub.Models.HealthTrustItemDto>();
+
+        <section class="dk-health-trust-bar" aria-label="Customer Guarantees">
+            <div class="dk-health-trust-grid">
+                @foreach (var item in trusts)
+                {
+                    <div class="dk-health-trust-item">
+                        <div class="dk-health-trust-icon">
+                            @if (item.Icon == "shield-check")
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                            }
+                            else if (item.Icon == "tag")
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                            }
+                            else if (item.Icon == "refresh-cw")
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                            }
+                            else if (item.Icon == "truck")
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            }
+                            else if (item.Icon == "lock")
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            }
+                            else
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                            }
+                        </div>
+                        <div class="dk-health-trust-texts">
+                            <span class="dk-health-trust-title">@item.Title</span>
+                            <span class="dk-health-trust-sub">@item.Subtitle</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+</div>
+
+<style>
+/* ========================================================
+   HEALTH CARE HUB STYLING (Fresh Medical Green Theme)
+======================================================== */
+.dk-health-hub-root {
+    --hh-primary: #0d7a5f;
+    --hh-accent: #059669;
+    --hh-dark: #064e3b;
+    --hh-bg-soft: #f0fdf4;
+    --hh-bg-mint: #e6f7f2;
+    --hh-border: #d1fae5;
+    --hh-text: #0f172a;
+    --hh-muted: #475569;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--hh-text);
+}
+
+/* Admin Bar */
+.dk-health-admin-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #064e3b 0%, #0d7a5f 100%);
+    color: #ffffff;
+    padding: 10px 18px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 16px rgba(13, 122, 95, 0.25);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.dk-health-admin-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.dk-health-admin-badge {
+    background: rgba(255, 255, 255, 0.2);
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+.dk-health-admin-hint {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.95;
+}
+.dk-health-admin-btn {
+    background: #ffffff;
+    color: #064e3b;
+    font-weight: 700;
+    font-size: 12.5px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+.dk-health-admin-btn:hover {
+    background: #d1fae5;
+    color: #047857;
+    transform: translateY(-1px);
+}
+
+/* Hero Section */
+.dk-health-hero-section {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 30px rgba(13, 122, 95, 0.08), 0 1px 3px rgba(0,0,0,0.04);
+    background: #eef8f4;
+}
+.dk-health-slides-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: inherit;
+}
+.dk-health-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s ease;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+.dk-health-slide.active {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Background Image & Overlay */
+.dk-health-slide-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+.dk-health-slide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+    filter: brightness(1.03) contrast(1.02);
+    transition: transform 6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.dk-health-slide.active .dk-health-slide-img {
+    transform: scale(1.02);
+}
+.dk-health-slide-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        rgba(238, 248, 244, 0.96) 0%, 
+        rgba(238, 248, 244, 0.88) 38%, 
+        rgba(238, 248, 244, 0.28) 64%, 
+        rgba(238, 248, 244, 0.05) 100%);
+    pointer-events: none;
+}
+
+/* Content floating directly on left of banner */
+.dk-health-slide-content {
+    position: relative;
+    z-index: 2;
+    padding: 38px 48px;
+    width: 100%;
+    max-width: 620px;
+}
+.dk-health-slide-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Discount Badge */
+.dk-health-discount-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #0d7a5f;
+    color: #ffffff;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 12px rgba(13, 122, 95, 0.3);
+    text-transform: uppercase;
+    animation: hhBadgePulse 3s infinite ease-in-out;
+}
+@@keyframes hhBadgePulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(13, 122, 95, 0.3); }
+    50% { transform: scale(1.03); box-shadow: 0 6px 18px rgba(13, 122, 95, 0.45); }
+}
+
+/* Headline */
+.dk-health-headline {
+    font-size: 44px;
+    line-height: 1.15;
+    font-weight: 900;
+    color: #064e3b;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.6px;
+}
+.dk-health-headline-highlight {
+    color: #0d7a5f;
+}
+
+/* Subtitle */
+.dk-health-subtitle {
+    font-size: 15.5px;
+    line-height: 1.5;
+    color: #334155;
+    margin: 0 0 22px 0;
+    max-width: 480px;
+    font-weight: 500;
+}
+
+/* 4 Trust Feature Pills on Banner */
+.dk-health-hero-pills {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 10px 14px;
+}
+.dk-health-pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(167, 243, 208, 0.85);
+    border-radius: 8px;
+    padding: 7px 12px;
+    box-shadow: 0 2px 8px rgba(13, 122, 95, 0.08);
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+.dk-health-pill-badge:hover {
+    transform: translateY(-2px);
+    background: #ffffff;
+    border-color: #0d7a5f;
+}
+.dk-health-pill-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0d7a5f;
+}
+.dk-health-pill-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: #0f172a;
+    white-space: nowrap;
+}
+
+/* Navigation Chevrons */
+.dk-health-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    transition: all 0.2s ease;
+}
+.dk-health-nav-btn:hover {
+    background: #0d7a5f;
+    color: #ffffff;
+    border-color: #0d7a5f;
+    transform: translateY(-50%) scale(1.08);
+}
+.dk-health-nav-btn.prev { left: 16px; }
+.dk-health-nav-btn.next { right: 16px; }
+
+/* Indicator Dots */
+.dk-health-dots {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dk-health-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(13, 122, 95, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    padding: 0;
+}
+.dk-health-dot.active {
+    width: 24px;
+    border-radius: 12px;
+    background: #0d7a5f;
+}
+
+/* Common Section Header */
+.dk-health-section {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    border: 1px solid #eef2f6;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+.dk-health-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.dk-health-section-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+.dk-health-view-all-btn {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0d7a5f;
+    text-decoration: none;
+    border: 1px solid #d1fae5;
+    padding: 5px 14px;
+    border-radius: 8px;
+    background: #f0fdf4;
+    transition: all 0.2s ease;
+}
+.dk-health-view-all-btn:hover {
+    background: #0d7a5f;
+    color: #ffffff;
+    border-color: #0d7a5f;
+}
+
+/* ========================================================
+   SECTION 1: SHOP BY CATEGORY (9 Cards - Compact, Big Images)
+======================================================== */
+.dk-health-categories-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 12px;
+}
+.dk-health-cat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 12px 6px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    text-align: center;
+}
+.dk-health-cat-card:hover {
+    border-color: #0d7a5f;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(13, 122, 95, 0.12);
+}
+.dk-health-cat-img-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+}
+.dk-health-cat-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.dk-health-cat-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-health-cat-emoji {
+    font-size: 32px;
+    line-height: 1;
+}
+.dk-health-cat-soon-badge {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+    background: #0d7a5f;
+    color: #ffffff;
+    font-size: 8px;
+    font-weight: 800;
+    text-align: center;
+    padding: 1px 0;
+    border-radius: 4px;
+}
+.dk-health-cat-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.25;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.dk-health-cat-card:hover .dk-health-cat-name {
+    color: #0d7a5f;
+}
+
+/* ========================================================
+   SECTION 2: POPULAR HEALTH CATEGORIES (10 Conditions)
+======================================================== */
+.dk-health-conditions-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 10px;
+}
+.dk-health-condition-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px 6px;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+.dk-health-condition-card:hover {
+    border-color: #0d7a5f;
+    background: #f0fdf4;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(13, 122, 95, 0.1);
+}
+.dk-health-condition-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #f0fdf4;
+    border: 1px solid #a7f3d0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0d7a5f;
+    margin-bottom: 8px;
+    transition: all 0.2s ease;
+}
+.dk-health-condition-card:hover .dk-health-condition-icon-box {
+    background: #0d7a5f;
+    color: #ffffff;
+    border-color: #0d7a5f;
+    transform: scale(1.08);
+}
+.dk-health-condition-name {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.2;
+    max-width: 80px;
+}
+.dk-health-condition-card:hover .dk-health-condition-name {
+    color: #0d7a5f;
+}
+
+/* ========================================================
+   SECTION 3: TRUST BAR (6 Guarantees)
+======================================================== */
+.dk-health-trust-bar {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 18px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+.dk-health-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+}
+.dk-health-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-health-trust-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #f0fdf4;
+    border: 1px solid #d1fae5;
+    color: #0d7a5f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+.dk-health-trust-item:hover .dk-health-trust-icon {
+    background: #0d7a5f;
+    color: #ffffff;
+    transform: rotate(6deg) scale(1.05);
+}
+.dk-health-trust-texts {
+    display: flex;
+    flex-direction: column;
+}
+.dk-health-trust-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.25;
+}
+.dk-health-trust-sub {
+    font-size: 11px;
+    font-weight: 500;
+    color: #64748b;
+    line-height: 1.2;
+}
+
+/* Responsive Breakpoints */
+@@media (max-width: 1200px) {
+    .dk-health-categories-grid { grid-template-columns: repeat(5, 1fr); }
+    .dk-health-conditions-grid { grid-template-columns: repeat(5, 1fr); }
+    .dk-health-trust-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@@media (max-width: 768px) {
+    .dk-health-headline { font-size: 32px; }
+    .dk-health-slide-content { padding: 24px 20px; }
+    .dk-health-categories-grid { grid-template-columns: repeat(3, 1fr); }
+    .dk-health-conditions-grid { grid-template-columns: repeat(3, 1fr); }
+    .dk-health-trust-grid { grid-template-columns: repeat(2, 1fr); }
+    .dk-health-hero-pills { grid-template-columns: 1fr; }
+}
+</style>
+
+<script>
+(function() {
+    const hero = document.getElementById("healthHeroCarousel");
+    if (!hero) return;
+
+    const slides = Array.from(hero.querySelectorAll(".dk-health-slide"));
+    const dots = Array.from(hero.querySelectorAll(".dk-health-dot"));
+    const btnPrev = document.getElementById("btnHealthHeroPrev");
+    const btnNext = document.getElementById("btnHealthHeroNext");
+
+    if (slides.length <= 1) return;
+
+    let currentIndex = 0;
+    let timer = null;
+    const isAutoPlay = hero.getAttribute("data-autoplay") === "true";
+    const intervalMs = parseInt(hero.getAttribute("data-interval") || "5000", 10);
+
+    function showSlide(index) {
+        if (index < 0) index = slides.length - 1;
+        if (index >= slides.length) index = 0;
+
+        slides.forEach((s, idx) => {
+            const isActive = idx === index;
+            s.classList.toggle("active", isActive);
+            s.setAttribute("aria-hidden", isActive ? "false" : "true");
+        });
+
+        dots.forEach((d, idx) => {
+            d.classList.toggle("active", idx === index);
+        });
+
+        currentIndex = index;
+    }
+
+    function startAutoPlay() {
+        if (!isAutoPlay || slides.length <= 1) return;
+        stopAutoPlay();
+        timer = setInterval(() => {
+            showSlide(currentIndex + 1);
+        }, intervalMs);
+    }
+
+    function stopAutoPlay() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    if (btnPrev) {
+        btnPrev.addEventListener("click", () => {
+            showSlide(currentIndex - 1);
+            startAutoPlay();
+        });
+    }
+
+    if (btnNext) {
+        btnNext.addEventListener("click", () => {
+            showSlide(currentIndex + 1);
+            startAutoPlay();
+        });
+    }
+
+    dots.forEach((d) => {
+        d.addEventListener("click", (e) => {
+            const idx = parseInt(d.getAttribute("data-index") || "0", 10);
+            showSlide(idx);
+            startAutoPlay();
+        });
+    });
+
+    hero.addEventListener("mouseenter", stopAutoPlay);
+    hero.addEventListener("mouseleave", startAutoPlay);
+
+    // Touch Swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    hero.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    hero.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        if (touchStartX - touchEndX > 45) {
+            showSlide(currentIndex + 1);
+            startAutoPlay();
+        } else if (touchEndX - touchStartX > 45) {
+            showSlide(currentIndex - 1);
+            startAutoPlay();
+        }
+    }, { passive: true });
+
+    startAutoPlay();
+})();
+</script>

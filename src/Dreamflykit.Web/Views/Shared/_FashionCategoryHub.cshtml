@@ -45,7 +45,7 @@
         var badgeText = !string.IsNullOrWhiteSpace(hero.BadgeTextColor) ? hero.BadgeTextColor : "#0f172a";
         var overlayGrad = !string.IsNullOrWhiteSpace(hero.OverlayGradient) 
             ? hero.OverlayGradient 
-            : "linear-gradient(90deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.84) 40%, rgba(255, 255, 255, 0.18) 68%, rgba(255, 255, 255, 0.88) 100%)";
+            : "linear-gradient(90deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.32) 36%, rgba(255, 255, 255, 0.0) 58%, rgba(255, 255, 255, 0.28) 85%, rgba(255, 255, 255, 0.65) 100%)";
 
         <section class="dk-fashion-hero-section full-width-hero" style="min-height: @(minHeight)px;" aria-label="Fashion Category Hero">
             <!-- Full Width Panoramic Banner Image -->
@@ -511,11 +511,12 @@
     object-fit: cover;
     object-position: center 30%;
     z-index: 1;
-    filter: brightness(1.04) contrast(1.03);
-    transition: transform 0.6s ease;
+    filter: brightness(1.15) contrast(1.10) saturate(1.22);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
 }
 .dk-fashion-hero-section:hover .dk-fashion-hero-bg-img {
-    transform: scale(1.015);
+    transform: scale(1.02);
+    filter: brightness(1.18) contrast(1.12) saturate(1.26);
 }
 
 .dk-fashion-hero-bg-soon {

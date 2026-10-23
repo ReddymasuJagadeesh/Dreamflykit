@@ -64,6 +64,8 @@ public sealed class ProductListViewModel
 
     public Dreamflykit.Application.FashionHub.Models.FashionHubDto? FashionHub { get; init; }
 
+    public Dreamflykit.Application.HealthHub.Models.HealthHubDto? HealthHub { get; init; }
+
     public string? ViewMode { get; init; }
 
     public bool IsStudyEssentialsHub =>
@@ -72,6 +74,11 @@ public sealed class ProductListViewModel
 
     public bool IsFashionHub =>
         string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase);
+
+    public bool IsHealthCareHub =>
+        string.Equals(CategorySlug, "health-care", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "healthcare", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "health_care", StringComparison.OrdinalIgnoreCase);
 
     public bool HasActiveFilters =>
         !string.IsNullOrWhiteSpace(SearchTerm) ||

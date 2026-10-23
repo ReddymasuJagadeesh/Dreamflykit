@@ -17,6 +17,7 @@ public class ProductsControllerTests
     private readonly Mock<ICategoryService> _categoryServiceMock;
     private readonly Mock<IStudyHubService> _studyHubServiceMock;
     private readonly Mock<Dreamflykit.Application.FashionHub.Interfaces.IFashionHubService> _fashionHubServiceMock;
+    private readonly Mock<Dreamflykit.Application.HealthHub.Interfaces.IHealthHubService> _healthHubServiceMock;
 
     public ProductsControllerTests()
     {
@@ -24,6 +25,9 @@ public class ProductsControllerTests
         _categoryServiceMock = new Mock<ICategoryService>();
         _studyHubServiceMock = new Mock<IStudyHubService>();
         _fashionHubServiceMock = new Mock<Dreamflykit.Application.FashionHub.Interfaces.IFashionHubService>();
+        _healthHubServiceMock = new Mock<Dreamflykit.Application.HealthHub.Interfaces.IHealthHubService>();
+        _healthHubServiceMock.Setup(h => h.GetConfigAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Dreamflykit.Application.HealthHub.Models.HealthHubDto.CreateDefault());
     }
 
     private ProductsController CreateController(bool isAjax = false, bool partialQuery = false)
@@ -32,7 +36,8 @@ public class ProductsControllerTests
             _productServiceMock.Object,
             _categoryServiceMock.Object,
             _studyHubServiceMock.Object,
-            _fashionHubServiceMock.Object);
+            _fashionHubServiceMock.Object,
+            _healthHubServiceMock.Object);
 
         var httpContext = new DefaultHttpContext();
         if (isAjax)
