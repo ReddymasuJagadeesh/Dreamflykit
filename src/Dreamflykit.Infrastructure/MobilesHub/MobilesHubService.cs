@@ -77,6 +77,10 @@ public sealed class MobilesHubService : IMobilesHubService
                         }
                         dto.BrandsSection ??= def.BrandsSection;
                         dto.HighlightBanner ??= def.HighlightBanner;
+                        if (dto.HighlightBanner.Sections == null || dto.HighlightBanner.Sections.Count == 0)
+                        {
+                            dto.HighlightBanner.Sections = def.HighlightBanner.Sections;
+                        }
                         dto.TopDealsSection ??= def.TopDealsSection;
                         dto.ConfusedSection ??= def.ConfusedSection;
                         dto.PromoBanner ??= def.PromoBanner;
