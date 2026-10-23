@@ -1,0 +1,2269 @@
+@model Dreamflykit.Application.MobilesHub.Models.MobilesHubDto
+@{
+    var hub = Model ?? Dreamflykit.Application.MobilesHub.Models.MobilesHubDto.CreateDefault();
+    var hero = hub.HeroBanner ?? new Dreamflykit.Application.MobilesHub.Models.MobilesHeroBannerDto();
+    var slides = hero.Slides?.Where(s => s.IsActive).OrderBy(s => s.DisplayOrder).ToList() 
+                 ?? new List<Dreamflykit.Application.MobilesHub.Models.MobilesHeroSlideDto>();
+    if (slides.Count == 0)
+    {
+        slides = Dreamflykit.Application.MobilesHub.Models.MobilesHubDto.CreateDefault().HeroBanner.Slides;
+    }
+
+    var enableSlides = hero.EnableSlideshow && slides.Count > 1;
+    var slideDuration = hero.SlideIntervalSeconds > 0 ? hero.SlideIntervalSeconds : 4;
+    var themeColor = !string.IsNullOrWhiteSpace(hero.ThemeColor) ? hero.ThemeColor : "#2874f0";
+    var accentColor = !string.IsNullOrWhiteSpace(hero.ThemeAccentColor) ? hero.ThemeAccentColor : "#fb641b";
+    var minHeight = hero.BannerHeight > 0 ? hero.BannerHeight : 440;
+    var isAdmin = User.IsInRole("Admin") || User.IsInRole("SuperAdmin");
+
+    var brands = hub.BrandsSection?.Brands?.OrderBy(b => b.DisplayOrder).ToList() ?? new List<Dreamflykit.Application.MobilesHub.Models.MobileBrandItemDto>();
+    var highlight = hub.HighlightBanner ?? new Dreamflykit.Application.MobilesHub.Models.MobilesHighlightBannerDto();
+    var topDeals = hub.TopDealsSection?.Deals?.OrderBy(d => d.DisplayOrder).ToList() ?? new List<Dreamflykit.Application.MobilesHub.Models.MobileDealItemDto>();
+    var confused = hub.ConfusedSection ?? new Dreamflykit.Application.MobilesHub.Models.MobilesConfusedSectionDto();
+    var promo = hub.PromoBanner ?? new Dreamflykit.Application.MobilesHub.Models.MobilesPromoBannerDto();
+    var unmissable = hub.UnmissableDealsSection?.Deals?.OrderBy(u => u.DisplayOrder).ToList() ?? new List<Dreamflykit.Application.MobilesHub.Models.MobileEmiDealItemDto>();
+}
+
+<!-- Google Model Viewer & Three.js Libraries for Industry Standard 3D Visualization -->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<div class="dk-mobiles-hub-root" id="mobiles-hub-root" style="--mob-primary: @themeColor; --mob-accent: @accentColor;">
+
+    <!-- ========================================================
+         ADMIN QUICK-BAR (Visible only to Admin / SuperAdmin)
+    ========================================================= -->
+    @if (isAdmin)
+    {
+        <div class="dk-mob-admin-bar">
+            <div class="dk-mob-admin-left">
+                <span class="dk-mob-admin-badge">⚡ Admin Mode Active</span>
+                <span class="dk-mob-admin-hint">
+                    Flipkart Mobiles Hub &bull; Slides Timing: <strong>@(slideDuration)s</strong> &bull; Total Slides: <strong>@slides.Count</strong> &bull; 3D Visualizer: <strong>Enabled</strong>
+                </span>
+            </div>
+            <div class="dk-mob-admin-actions">
+                <a href="/Admin/MobilesHub" class="dk-mob-admin-btn" id="btnManageMobilesHub">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    Manage Mobiles Hub, Upload Images &amp; 3D Models
+                </a>
+            </div>
+        </div>
+    }
+
+    <!-- ========================================================
+         1. HERO BANNER: ONE FULL-WIDTH BIG SIZE HERO BANNER WITH SLIDES
+         Admin decides slide duration (sec), images upload, and text!
+    ========================================================= -->
+    @if (hero.IsEnabled)
+    {
+        <section class="dk-mob-hero-section" 
+                 id="mobilesHeroCarousel" 
+                 data-autoplay="@(hero.AutoPlay ? "true" : "false")"
+                 data-interval="@(slideDuration * 1000)"
+                 style="min-height: @(minHeight)px;"
+                 aria-label="Mobiles Featured Showcase">
+
+            <div class="dk-mob-slides-container" id="mobilesSlidesContainer">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    var slide = slides[i];
+                    var isActive = i == 0;
+                    <div class="dk-mob-slide @(isActive ? "active" : "")" 
+                         data-slide-index="@i"
+                         id="mobSlide-@i"
+                         role="tabpanel"
+                         aria-hidden="@(isActive ? "false" : "true")">
+
+                        <!-- Full Width Panoramic Background Image -->
+                        <div class="dk-mob-slide-bg">
+                            <img src="@slide.ImageUrl" 
+                                 alt="@slide.Title @slide.TitleHighlight" 
+                                 class="dk-mob-slide-img" 
+                                 onerror="this.src='/images/mobiles-hub/uploading-soon-placeholder.svg';" />
+                            <div class="dk-mob-slide-overlay"></div>
+                        </div>
+
+                        <!-- Live Text Content Overlay -->
+                        <div class="dk-mob-slide-content">
+                            <div class="dk-mob-slide-left">
+                                @if (!string.IsNullOrWhiteSpace(slide.DiscountBadge))
+                                {
+                                    <div class="dk-mob-slide-badge">
+                                        <span class="dk-mob-badge-fire">🔥</span>
+                                        <span>@slide.DiscountBadge</span>
+                                    </div>
+                                }
+
+                                <h1 class="dk-mob-slide-title">
+                                    @slide.Title <br />
+                                    <span class="dk-mob-slide-highlight">@slide.TitleHighlight</span>
+                                </h1>
+
+                                <p class="dk-mob-slide-subtitle">
+                                    @slide.Subtitle
+                                </p>
+
+                                <div class="dk-mob-slide-ctas">
+                                    <a href="@(string.IsNullOrWhiteSpace(slide.TargetUrl) ? "/products?category=mobiles" : slide.TargetUrl)" 
+                                       class="dk-mob-btn-primary">
+                                        @(string.IsNullOrWhiteSpace(slide.ButtonText) ? "Shop Now" : slide.ButtonText)
+                                    </a>
+                                    <button type="button" 
+                                            class="dk-mob-btn-secondary" 
+                                            onclick="open3dModal('AI+ Nova 2 5G', '#4f46e5', '6.7 120Hz AMOLED | 50MP OIS', 'From ₹11,999*')">
+                                        <span style="font-size: 16px;">🌐</span> View in 3D Model
+                                    </button>
+                                </div>
+                            </div>
+
+                            @if (slide.IsUploadingSoon)
+                            {
+                                <div class="dk-mob-slide-uploading-tag">
+                                    <span>⏳ New Image Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                }
+            </div>
+
+            <!-- Slide Navigation Controls -->
+            @if (enableSlides)
+            {
+                <button type="button" class="dk-mob-carousel-arrow dk-mob-prev" id="mobHeroPrev" aria-label="Previous Slide">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <button type="button" class="dk-mob-carousel-arrow dk-mob-next" id="mobHeroNext" aria-label="Next Slide">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+
+                <!-- Indicator Dots & Timer Bar -->
+                <div class="dk-mob-carousel-indicators" id="mobHeroIndicators">
+                    @for (int i = 0; i < slides.Count; i++)
+                    {
+                        <button type="button" 
+                                class="dk-mob-dot @(i == 0 ? "active" : "")" 
+                                data-slide-target="@i" 
+                                aria-label="Go to slide @(i+1)">
+                            <span class="dk-mob-dot-fill"></span>
+                        </button>
+                    }
+                </div>
+            }
+        </section>
+    }
+
+    <!-- ========================================================
+         2. TOP SMARTPHONE BRANDS STRIP (Flipkart Pedestal Circles)
+    ========================================================= -->
+    @if (hub.BrandsSection.IsEnabled && brands.Count > 0)
+    {
+        var row1Brands = brands.Take(9).ToList();
+        var row2Brands = brands.Skip(9).Take(9).ToList();
+        if (row2Brands.Count == 0 && brands.Count > 6)
+        {
+            var half = (int)Math.Ceiling(brands.Count / 2.0);
+            row1Brands = brands.Take(half).ToList();
+            row2Brands = brands.Skip(half).ToList();
+        }
+
+        <section class="dk-mob-brands-section" id="popularBrandsSection" aria-label="Top Mobile Brands Showcase">
+            
+            <!-- Creative Section Header & Pill Navigation -->
+            <div class="dk-mob-section-header">
+                <div class="dk-mob-section-title-wrap">
+                    <span class="dk-mob-section-pill dk-pill-gradient">🔥 POPULAR FLAGSHIP BRANDS</span>
+                    <div>
+                        <h2 class="dk-mob-section-title">@hub.BrandsSection.Title</h2>
+                        <span class="dk-mob-section-caption">Explore official flagship smartphones presented live on 3D pedestals</span>
+                    </div>
+                </div>
+
+                <!-- Scroll Nav Buttons & View All -->
+                <div class="dk-mob-brands-nav-right">
+                    <div class="dk-mob-track-arrows">
+                        <button type="button" class="dk-mob-arrow-btn" id="btnBrandsPrev" aria-label="Scroll Brands Left">&#8249;</button>
+                        <button type="button" class="dk-mob-arrow-btn" id="btnBrandsNext" aria-label="Scroll Brands Right">&#8250;</button>
+                    </div>
+                    <a href="@hub.BrandsSection.ViewAllUrl" class="dk-mob-view-all-link">
+                        View All Brands &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Filter Chips for Popular Categories -->
+            <div class="dk-mob-brand-filter-bar">
+                <button type="button" class="dk-brand-chip active" onclick="filterBrandStages('all', this)">
+                    ✨ All Popular Brands (@brands.Count)
+                </button>
+                <button type="button" class="dk-brand-chip" onclick="filterBrandStages('flagship', this)">
+                    💎 Flagship Elite (Apple, Samsung, Pixel)
+                </button>
+                <button type="button" class="dk-brand-chip" onclick="filterBrandStages('performance', this)">
+                    ⚡ 5G Gaming &amp; Speed (POCO, Nothing, OnePlus)
+                </button>
+                <button type="button" class="dk-brand-chip" onclick="filterBrandStages('camera', this)">
+                    📸 Studio Camera Kings (vivo, OPPO, realme)
+                </button>
+                <button type="button" class="dk-brand-chip" onclick="filterBrandStages('value', this)">
+                    💰 Student Value 5G (Ai+, LAVA, REDMI, Tecno)
+                </button>
+            </div>
+
+            <!-- Two-Tier Panoramic Stage Display (Flipkart Dual Row Style - Big Sized Stage Podiums) -->
+            <div class="dk-mob-stage-scroller" id="mobBrandsScroller">
+                
+                <!-- Tier 1 Row -->
+                <div class="dk-mob-stage-row" id="brandTierRow1">
+                    @foreach (var brand in row1Brands)
+                    {
+                        var brandSlug = brand.Slug?.ToLowerInvariant() ?? "";
+                        var filterCat = (brandSlug.Contains("apple") || brandSlug.Contains("google") || brandSlug.Contains("samsung")) ? "flagship" :
+                                        (brandSlug.Contains("poco") || brandSlug.Contains("nothing") || brandSlug.Contains("oneplus")) ? "performance" :
+                                        (brandSlug.Contains("realme") || brandSlug.Contains("motorola") || brandSlug.Contains("vivo") || brandSlug.Contains("oppo")) ? "camera" : "value";
+
+                        <a href="@brand.ProductUrl" 
+                           class="dk-mob-stage-card" 
+                           data-brand-category="@filterCat"
+                           title="Explore @brand.Name Smartphones">
+                            
+                            <!-- 3D Pedestal Stage Phone Showcase (Large High-Res Size) -->
+                            <div class="dk-mob-stage-podium-wrap">
+                                <img src="@brand.IconUrl" 
+                                     alt="@brand.Name" 
+                                     class="dk-mob-stage-phone-img" 
+                                     loading="lazy"
+                                     onerror="this.src='/images/mobiles-hub/uploading-soon-placeholder.svg';" />
+
+                                <!-- Hover Quick 3D Pill -->
+                                <div class="dk-mob-stage-hover-pill">
+                                    <span>🌐 View 3D</span>
+                                </div>
+                            </div>
+
+                            <!-- Metallic Brand Title Plate -->
+                            <div class="dk-mob-brand-badge-plate">
+                                <span class="dk-mob-stage-brand-title">@brand.Name</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+
+                <!-- Tier 2 Row -->
+                @if (row2Brands.Count > 0)
+                {
+                    <div class="dk-mob-stage-row" id="brandTierRow2">
+                        @foreach (var brand in row2Brands)
+                        {
+                            var brandSlug = brand.Slug?.ToLowerInvariant() ?? "";
+                            var filterCat = (brandSlug.Contains("apple") || brandSlug.Contains("google") || brandSlug.Contains("samsung")) ? "flagship" :
+                                            (brandSlug.Contains("poco") || brandSlug.Contains("nothing") || brandSlug.Contains("oneplus")) ? "performance" :
+                                            (brandSlug.Contains("realme") || brandSlug.Contains("motorola") || brandSlug.Contains("vivo") || brandSlug.Contains("oppo")) ? "camera" : "value";
+
+                            <a href="@brand.ProductUrl" 
+                               class="dk-mob-stage-card" 
+                               data-brand-category="@filterCat"
+                               title="Explore @brand.Name Smartphones">
+                                
+                                <div class="dk-mob-stage-podium-wrap">
+                                    <img src="@brand.IconUrl" 
+                                         alt="@brand.Name" 
+                                         class="dk-mob-stage-phone-img" 
+                                         loading="lazy"
+                                         onerror="this.src='/images/mobiles-hub/uploading-soon-placeholder.svg';" />
+
+                                    <div class="dk-mob-stage-hover-pill">
+                                        <span>🌐 View 3D</span>
+                                    </div>
+                                </div>
+
+                                <div class="dk-mob-brand-badge-plate">
+                                    <span class="dk-mob-stage-brand-title">@brand.Name</span>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                }
+
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         3. FEATURED FLAGSHIP HIGHLIGHT BANNER (e.g. Galaxy S25)
+    ========================================================= -->
+    @if (highlight.IsEnabled)
+    {
+        <section class="dk-mob-highlight-section" aria-label="Flagship Smartphone Banner">
+            <a href="@highlight.TargetUrl" class="dk-mob-highlight-card">
+                <div class="dk-mob-highlight-content">
+                    <div class="dk-mob-highlight-pill">FLAGSHIP SPECIAL</div>
+                    <h3 class="dk-mob-highlight-title">@highlight.Title</h3>
+                    <div class="dk-mob-highlight-price">@highlight.TitleHighlight</div>
+                    <p class="dk-mob-highlight-sub">@highlight.Subtitle</p>
+                    <span class="dk-mob-highlight-cta">@highlight.ButtonText</span>
+                </div>
+                <div class="dk-mob-highlight-visual">
+                    <img src="@highlight.ImageUrl" 
+                         alt="@highlight.Title" 
+                         class="dk-mob-highlight-img" 
+                         onerror="this.src='/images/mobiles-hub/uploading-soon-placeholder.svg';" />
+                </div>
+            </a>
+        </section>
+    }
+
+    <!-- ========================================================
+         4. TOP DEALS (Flipkart Blue Neon Festive Frame & 3D Interactive Grid)
+         Admin decides 3D / 2D / 1D mode for every product!
+    ========================================================= -->
+    @if (hub.TopDealsSection.IsEnabled && topDeals.Count > 0)
+    {
+        <section class="dk-mob-topdeals-wrapper" id="mobilesTopDealsSection" aria-label="Top Mobile Deals">
+            <!-- Blue Festive Glowing Frame -->
+            <div class="dk-mob-deals-frame">
+                
+                <!-- Festive Header -->
+                <div class="dk-mob-deals-banner-header">
+                    <div class="dk-mob-deals-spark-left">✨</div>
+                    <div class="dk-mob-deals-title-box">
+                        <h2 class="dk-mob-deals-main-title">@hub.TopDealsSection.Title</h2>
+                        <span class="dk-mob-deals-tagline">@hub.TopDealsSection.Tagline</span>
+                    </div>
+                    <div class="dk-mob-deals-spark-right">✨</div>
+                </div>
+
+                <!-- 3x3 Phone Grid -->
+                <div class="dk-mob-deals-grid">
+                    @foreach (var deal in topDeals)
+                    {
+                        var is3d = string.Equals(deal.ViewMode, "3D", StringComparison.OrdinalIgnoreCase);
+                        <div class="dk-mob-deal-card" id="dealCard-@deal.Id">
+                            
+                            <!-- Phone Preview Area -->
+                            <div class="dk-mob-card-photo-area">
+                                <a href="@deal.ProductUrl" class="dk-mob-card-img-link">
+                                    <img src="@deal.ImageUrl" 
+                                         alt="@deal.Name" 
+                                         class="dk-mob-card-img" 
+                                         loading="lazy"
+                                         onerror="this.src='/images/mobiles-hub/uploading-soon-placeholder.svg';" />
+                                </a>
+
+                                <!-- Offer Vertical Ribbon -->
+                                @if (!string.IsNullOrWhiteSpace(deal.OfferTag))
+                                {
+                                    <div class="dk-mob-vertical-ribbon">
+                                        <span>@deal.OfferTag</span>
+                                    </div>
+                                }
+
+                                <!-- 3D / 2D / 1D Badge Indicator -->
+                                <div class="dk-mob-mode-badge @(is3d ? "is-3d" : "is-2d")">
+                                    @(is3d ? "3D INTERACTIVE" : (deal.ViewMode == "1D" ? "1D VIEW" : "2D GALLERY"))
+                                </div>
+                            </div>
+
+                            <!-- Phone Info -->
+                            <div class="dk-mob-card-info">
+                                <h3 class="dk-mob-phone-name" title="@deal.Name">
+                                    <a href="@deal.ProductUrl">@deal.Name</a>
+                                </h3>
+
+                                <div class="dk-mob-price-row">
+                                    <span class="dk-mob-selling-price">@deal.PriceText</span>
+                                    @if (!string.IsNullOrWhiteSpace(deal.OriginalPriceText))
+                                    {
+                                        <span class="dk-mob-strike-price">@deal.OriginalPriceText</span>
+                                    }
+                                </div>
+
+                                @if (!string.IsNullOrWhiteSpace(deal.Specifications))
+                                {
+                                    <div class="dk-mob-specs-snippet" title="@deal.Specifications">
+                                        @deal.Specifications
+                                    </div>
+                                }
+
+                                <!-- Interactive Action Buttons -->
+                                <div class="dk-mob-card-actions">
+                                    @if (is3d)
+                                    {
+                                        <button type="button" 
+                                                class="dk-mob-btn-view-3d"
+                                                onclick="open3dModal('@deal.Name', '@deal.ColorHex', '@deal.Specifications', '@deal.PriceText', '@(deal.Model3dUrl ?? "")')">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                            View 3D (360°)
+                                        </button>
+                                    }
+                                    <a href="@deal.ProductUrl" class="dk-mob-btn-details">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                </div>
+
+                <!-- Footer Bottom Strip -->
+                <div class="dk-mob-deals-footer-strip">
+                    <span>⚡ 100% Student Verified &bull; Global Fast Dispatch &bull; Official Brand Warranty</span>
+                    <a href="@hub.TopDealsSection.ViewAllUrl" class="dk-mob-deals-all-btn">
+                        View All Deals &rarr;
+                    </a>
+                </div>
+
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         5. CONFUSED? PHONE PICKER WIDGET & 0% EMI STRIP
+    ========================================================= -->
+    @if (confused.IsEnabled)
+    {
+        <section class="dk-mob-confused-strip" aria-label="Phone Recommendation Helper">
+            <div class="dk-mob-confused-card">
+                <div class="dk-mob-confused-lantern">🏮</div>
+                <div class="dk-mob-confused-content">
+                    <span class="dk-mob-confused-badge">@confused.Title</span>
+                    <h3 class="dk-mob-confused-title">@confused.Subtitle</h3>
+                    <p class="dk-mob-confused-sub">Select your priority: Gaming, 200MP Camera, 4-Day Battery, or Travel eSIM</p>
+                </div>
+                <a href="@confused.TargetUrl" class="dk-mob-confused-btn">
+                    @confused.ButtonText
+                </a>
+                <div class="dk-mob-confused-lantern">🏮</div>
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         6. CONTEST & PROMO BANNER (Win Pixel Watch 5)
+    ========================================================= -->
+    @if (promo.IsEnabled)
+    {
+        <section class="dk-mob-promo-section" aria-label="Smartphone Contest Banner">
+            <a href="@promo.TargetUrl" class="dk-mob-promo-card">
+                <div class="dk-mob-promo-content">
+                    <span class="dk-mob-promo-kicker">FESTIVE CONTEST</span>
+                    <h3 class="dk-mob-promo-title">@promo.Title</h3>
+                    <div class="dk-mob-promo-highlight">@promo.Highlight</div>
+                    <span class="dk-mob-promo-btn">@promo.ButtonText</span>
+                </div>
+                <div class="dk-mob-promo-visual">
+                    <img src="@promo.ImageUrl" 
+                         alt="@promo.Title" 
+                         class="dk-mob-promo-img" 
+                         onerror="this.src='/images/mobiles-hub/uploading-soon-placeholder.svg';" />
+                </div>
+            </a>
+        </section>
+    }
+
+    <!-- ========================================================
+         7. UNMISSABLE DEALS (EMI CAROUSEL)
+    ========================================================= -->
+    @if (hub.UnmissableDealsSection.IsEnabled && unmissable.Count > 0)
+    {
+        <section class="dk-mob-unmissable-section" aria-label="Unmissable Phone Deals">
+            <div class="dk-mob-section-header">
+                <div class="dk-mob-section-title-wrap">
+                    <span class="dk-mob-section-pill">FLEXIBLE EMI</span>
+                    <h2 class="dk-mob-section-title">@hub.UnmissableDealsSection.Title</h2>
+                </div>
+                <div class="dk-mob-carousel-nav-btns">
+                    <button type="button" class="dk-mob-circle-nav-btn" id="unmissablePrev" aria-label="Scroll left">&#8249;</button>
+                    <button type="button" class="dk-mob-circle-nav-btn" id="unmissableNext" aria-label="Scroll right">&#8250;</button>
+                </div>
+            </div>
+
+            <div class="dk-mob-unmissable-track" id="unmissableTrack">
+                @foreach (var emiDeal in unmissable)
+                {
+                    <div class="dk-mob-emi-card">
+                        <!-- Top EMI Tag -->
+                        <div class="dk-mob-emi-header-tag">
+                            @emiDeal.EmiText
+                        </div>
+
+                        <!-- Image -->
+                        <div class="dk-mob-emi-img-wrap">
+                            <img src="@emiDeal.ImageUrl" 
+                                 alt="@emiDeal.Name" 
+                                 class="dk-mob-emi-img" 
+                                 loading="lazy"
+                                 onerror="this.src='/images/mobiles-hub/uploading-soon-placeholder.svg';" />
+                        </div>
+
+                        <!-- Info -->
+                        <div class="dk-mob-emi-info">
+                            <h4 class="dk-mob-emi-name">@emiDeal.Name</h4>
+                            <div class="dk-mob-emi-prices">
+                                <span class="dk-mob-emi-selling">@emiDeal.PriceText</span>
+                                @if (!string.IsNullOrWhiteSpace(emiDeal.OriginalPriceText))
+                                {
+                                    <span class="dk-mob-emi-strike">@emiDeal.OriginalPriceText</span>
+                                }
+                            </div>
+                            <div class="dk-mob-emi-actions">
+                                <button type="button" 
+                                        class="dk-mob-emi-3d-btn"
+                                        onclick="open3dModal('@emiDeal.Name', '@emiDeal.ColorHex', '@emiDeal.EmiText', '@emiDeal.PriceText')">
+                                    3D View
+                                </button>
+                                <a href="@emiDeal.ProductUrl" class="dk-mob-emi-shop-btn">
+                                    Buy Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+</div>
+
+<!-- ========================================================
+     8. INDUSTRY STANDARD 3D INTERACTIVE SMARTPHONE VIEWER MODAL
+     (Google Model-Viewer & Three.js 360° Realtime Rendering)
+========================================================= -->
+<div class="dk-3d-modal-backdrop" id="dk3dModalBackdrop" style="display: none;">
+    <div class="dk-3d-modal-container" role="dialog" aria-modal="true" aria-labelledby="modalPhoneTitle">
+        
+        <!-- Modal Top Bar -->
+        <div class="dk-3d-modal-header">
+            <div class="dk-3d-header-left">
+                <span class="dk-3d-badge-live">● 3D LIVE ENGINE</span>
+                <h3 class="dk-3d-modal-title" id="modalPhoneTitle">Interactive 3D Phone Inspection</h3>
+                <span class="dk-3d-modal-sub" id="modalPhoneSub">Snapdragon 8 Gen 3 &bull; 200MP Camera &bull; 7200mAh</span>
+            </div>
+            <div class="dk-3d-header-right">
+                <span class="dk-3d-price-tag" id="modalPhonePrice">From ₹11,999*</span>
+                <button type="button" class="dk-3d-close-btn" onclick="close3dModal()" aria-label="Close 3D View">&times;</button>
+            </div>
+        </div>
+
+        <!-- 3D Canvas Stage & Controls -->
+        <div class="dk-3d-stage-wrapper">
+            
+            <!-- Three.js Canvas Container -->
+            <div id="threeJsContainer" class="dk-3d-viewport"></div>
+
+            <!-- Optional Google Model-Viewer for Custom .glb/.gltf models -->
+            <model-viewer id="googleModelViewer" 
+                          style="display: none; width: 100%; height: 100%;"
+                          camera-controls 
+                          auto-rotate 
+                          ar 
+                          shadow-intensity="1" 
+                          exposure="1" 
+                          alt="3D Smartphone Model">
+            </model-viewer>
+
+            <!-- Floating 3D Interaction Control Overlay -->
+            <div class="dk-3d-floating-controls">
+                <div class="dk-3d-control-group">
+                    <button type="button" class="dk-3d-ctrl-btn" id="btn3dAutoRotate" onclick="toggle3dRotation()" title="Toggle Auto Rotation">
+                        🔄 Auto Rotate
+                    </button>
+                    <button type="button" class="dk-3d-ctrl-btn" onclick="set3dView('front')" title="Front View">
+                        📱 Front Face
+                    </button>
+                    <button type="button" class="dk-3d-ctrl-btn" onclick="set3dView('back')" title="Back View">
+                        📸 Back Cameras
+                    </button>
+                    <button type="button" class="dk-3d-ctrl-btn" onclick="set3dView('side')" title="Side Profile">
+                        📏 Side Profile
+                    </button>
+                    <button type="button" class="dk-3d-ctrl-btn" onclick="set3dView('iso')" title="Isometric 3D">
+                        🌐 3D Angle
+                    </button>
+                </div>
+
+                <!-- Zoom Controls -->
+                <div class="dk-3d-zoom-group">
+                    <button type="button" class="dk-3d-ctrl-btn" onclick="zoom3d(0.85)" title="Zoom In">➕</button>
+                    <button type="button" class="dk-3d-ctrl-btn" onclick="zoom3d(1.15)" title="Zoom Out">➖</button>
+                    <button type="button" class="dk-3d-ctrl-btn" onclick="reset3dCamera()" title="Reset Angle">↺ Reset</button>
+                </div>
+            </div>
+
+            <!-- Color Variant Selector -->
+            <div class="dk-3d-color-picker">
+                <span class="dk-3d-color-label">Chassis Color:</span>
+                <div class="dk-3d-color-swatches">
+                    <button type="button" class="dk-3d-swatch active" style="background: #2563eb;" onclick="change3dColor('#2563eb', this)" title="Titanium Blue"></button>
+                    <button type="button" class="dk-3d-swatch" style="background: #0f172a;" onclick="change3dColor('#0f172a', this)" title="Phantom Black"></button>
+                    <button type="button" class="dk-3d-swatch" style="background: #059669;" onclick="change3dColor('#059669', this)" title="Emerald Green"></button>
+                    <button type="button" class="dk-3d-swatch" style="background: #ea580c;" onclick="change3dColor('#ea580c', this)" title="Sunset Gold"></button>
+                    <button type="button" class="dk-3d-swatch" style="background: #e2e8f0;" onclick="change3dColor('#e2e8f0', this)" title="Titanium Silver"></button>
+                </div>
+            </div>
+
+            <!-- Drag to Rotate Instruction Hint -->
+            <div class="dk-3d-hint-pill">
+                <span>🖱️ Drag to rotate 360° &bull; Scroll to Zoom &bull; Touch friendly</span>
+            </div>
+        </div>
+
+        <!-- Modal Bottom Actions -->
+        <div class="dk-3d-modal-footer">
+            <span class="dk-3d-footer-info">Inspecting high fidelity 3D mesh model with specular shine &amp; realistic camera bump reflections.</span>
+            <div class="dk-3d-footer-btns">
+                <button type="button" class="dk-mob-btn-secondary" onclick="close3dModal()">Close 3D View</button>
+                <a href="/products?category=mobiles" class="dk-mob-btn-primary" id="modalBuyLink">Buy This Smartphone Now &rarr;</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================================
+     CSS STYLING: HIGH-END FLIPKART MOBILES TEMPLATE
+========================================================= -->
+<style>
+/* Root Hub Configuration */
+.dk-mobiles-hub-root {
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #212121;
+    background: #f1f3f6;
+    padding-bottom: 40px;
+    box-sizing: border-box;
+}
+
+/* Admin Floating Bar */
+.dk-mob-admin-bar {
+    background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
+    color: #f8fafc;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.dk-mob-admin-badge {
+    background: #fb641b;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+    letter-spacing: 0.5px;
+}
+.dk-mob-admin-hint {
+    font-size: 13px;
+    color: #cbd5e1;
+}
+.dk-mob-admin-btn {
+    background: #2874f0;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+.dk-mob-admin-btn:hover {
+    background: #1d4ed8;
+    color: #ffffff;
+}
+
+/* 1. Hero Banner */
+.dk-mob-hero-section {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #0f172a;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    margin-bottom: 20px;
+}
+.dk-mob-slides-container {
+    position: relative;
+    width: 100%;
+    min-height: 440px;
+}
+.dk-mob-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s;
+    display: flex;
+    align-items: center;
+}
+.dk-mob-slide.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+}
+.dk-mob-slide-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+.dk-mob-slide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center right;
+}
+.dk-mob-slide-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.75) 45%, rgba(15, 23, 42, 0.1) 100%);
+}
+.dk-mob-slide-content {
+    position: relative;
+    z-index: 3;
+    padding: 40px 50px;
+    max-width: 680px;
+}
+.dk-mob-slide-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(251, 100, 27, 0.95);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(251, 100, 27, 0.4);
+}
+.dk-mob-slide-title {
+    font-size: 38px;
+    line-height: 1.18;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0 0 14px 0;
+    letter-spacing: -0.5px;
+}
+.dk-mob-slide-highlight {
+    background: linear-gradient(90deg, #38bdf8 0%, #60a5fa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.dk-mob-slide-subtitle {
+    font-size: 15px;
+    line-height: 1.55;
+    color: #e2e8f0;
+    margin: 0 0 24px 0;
+    font-weight: 400;
+}
+.dk-mob-slide-ctas {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+.dk-mob-btn-primary {
+    background: linear-gradient(135deg, #2874f0 0%, #1d4ed8 100%);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(40, 116, 240, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.dk-mob-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 116, 240, 0.6);
+    color: #ffffff;
+}
+.dk-mob-btn-secondary {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 11px 20px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+.dk-mob-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.24);
+    border-color: #ffffff;
+    color: #ffffff;
+}
+.dk-mob-carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 4;
+    transition: background 0.2s, transform 0.2s;
+}
+.dk-mob-carousel-arrow:hover {
+    background: #ffffff;
+}
+.dk-mob-prev { left: 0; border-radius: 0 6px 6px 0; }
+.dk-mob-next { right: 0; border-radius: 6px 0 0 6px; }
+
+.dk-mob-carousel-indicators {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 4;
+}
+.dk-mob-dot {
+    width: 28px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.35);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 0;
+    overflow: hidden;
+    transition: width 0.3s, background 0.3s;
+}
+.dk-mob-dot.active {
+    width: 44px;
+    background: #38bdf8;
+}
+
+/* 2. Brand Pedestals Strip (Flipkart Dual Row 3D Stage Style) */
+.dk-mob-brands-section {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+.dk-mob-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.dk-mob-section-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-mob-section-pill {
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+.dk-pill-gradient {
+    background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(234, 88, 12, 0.3);
+}
+.dk-mob-section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+.dk-mob-section-caption {
+    font-size: 12.5px;
+    color: #64748b;
+    font-weight: 500;
+    display: block;
+    margin-top: 2px;
+}
+.dk-mob-brands-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.dk-mob-track-arrows {
+    display: flex;
+    gap: 6px;
+}
+.dk-mob-arrow-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.dk-mob-arrow-btn:hover {
+    background: #2874f0;
+    color: #ffffff;
+    border-color: #2874f0;
+    transform: scale(1.08);
+}
+.dk-mob-view-all-link {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #2874f0;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.dk-mob-view-all-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* Category Filter Chips */
+.dk-mob-brand-filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: none;
+}
+.dk-mob-brand-filter-bar::-webkit-scrollbar {
+    display: none;
+}
+.dk-brand-chip {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+.dk-brand-chip:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+    transform: translateY(-1px);
+}
+.dk-brand-chip.active {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #ffffff;
+    border-color: #1d4ed8;
+    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
+}
+
+/* 3D Stage Scroller & Dual Rows */
+.dk-mob-stage-scroller {
+    width: 100%;
+    overflow-x: auto;
+    padding: 10px 4px 18px 4px;
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.dk-mob-stage-scroller::-webkit-scrollbar {
+    height: 6px;
+}
+.dk-mob-stage-scroller::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+.dk-mob-stage-scroller::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+.dk-mob-stage-scroller::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+.dk-mob-stage-row {
+    display: flex;
+    gap: 20px;
+    min-width: max-content;
+    align-items: flex-end;
+}
+
+/* Stage Card (Creative 3D Stage Floating Physics) */
+.dk-mob-stage-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    width: 154px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+.dk-mob-stage-card:hover {
+    transform: translateY(-8px);
+}
+.dk-mob-stage-card.is-filtered-out {
+    display: none !important;
+}
+
+/* Large Stage Podium Wrap */
+.dk-mob-stage-podium-wrap {
+    width: 154px;
+    height: 150px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center 60%, rgba(241, 245, 249, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 16px;
+    transition: background 0.3s;
+}
+.dk-mob-stage-card:hover .dk-mob-stage-podium-wrap {
+    background: radial-gradient(circle at center 60%, rgba(224, 231, 255, 0.9) 0%, rgba(255, 255, 255, 0) 75%);
+}
+
+/* Phone Image: Large, Creative Stage Cutout */
+.dk-mob-stage-phone-img {
+    width: 146px;
+    height: 142px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 14px rgba(15, 23, 42, 0.16));
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+}
+.dk-mob-stage-card:hover .dk-mob-stage-phone-img {
+    transform: scale(1.08) translateY(-4px);
+    filter: drop-shadow(0 16px 22px rgba(37, 99, 235, 0.28));
+}
+
+/* Hover Quick 3D Pill */
+.dk-mob-stage-hover-pill {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(6px);
+    color: #38bdf8;
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.25s ease;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.dk-mob-stage-card:hover .dk-mob-stage-hover-pill {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Metallic Brand Badge Plate */
+.dk-mob-brand-badge-plate {
+    margin-top: 6px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+    width: 85%;
+    box-sizing: border-box;
+    transition: all 0.25s ease;
+}
+.dk-mob-stage-card:hover .dk-mob-brand-badge-plate {
+    background: #0f172a;
+    border-color: #0f172a;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+}
+.dk-mob-stage-brand-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #1e293b;
+    white-space: nowrap;
+    transition: color 0.25s ease;
+}
+.dk-mob-stage-card:hover .dk-mob-stage-brand-title {
+    color: #ffffff;
+}
+
+/* 3. Flagship Highlight Banner */
+.dk-mob-highlight-section {
+    margin-bottom: 22px;
+}
+.dk-mob-highlight-card {
+    background: linear-gradient(135deg, #c2410c 0%, #ea580c 50%, #f97316 100%);
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.25);
+    color: #ffffff;
+    min-height: 180px;
+}
+.dk-mob-highlight-content {
+    padding: 30px 40px;
+    max-width: 600px;
+}
+.dk-mob-highlight-pill {
+    background: rgba(0, 0, 0, 0.3);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+.dk-mob-highlight-title {
+    font-size: 28px;
+    font-weight: 900;
+    margin: 0 0 6px 0;
+}
+.dk-mob-highlight-price {
+    font-size: 32px;
+    font-weight: 900;
+    color: #fef08a;
+    margin-bottom: 8px;
+}
+.dk-mob-highlight-sub {
+    font-size: 14px;
+    margin: 0 0 16px 0;
+    color: #ffedd5;
+}
+.dk-mob-highlight-cta {
+    background: #ffffff;
+    color: #ea580c;
+    font-size: 13.5px;
+    font-weight: 800;
+    padding: 8px 18px;
+    border-radius: 6px;
+    display: inline-block;
+}
+.dk-mob-highlight-visual {
+    padding-right: 40px;
+    display: flex;
+    align-items: center;
+}
+.dk-mob-highlight-img {
+    height: 160px;
+    object-fit: contain;
+}
+
+/* 4. TOP DEALS (Flipkart Blue Neon Festive Frame) */
+.dk-mob-topdeals-wrapper {
+    margin-bottom: 24px;
+}
+.dk-mob-deals-frame {
+    background: #0284c7;
+    background: linear-gradient(180deg, #0284c7 0%, #0369a1 40%, #075985 100%);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(2, 132, 199, 0.35);
+    border: 3px solid #38bdf8;
+    position: relative;
+}
+.dk-mob-deals-banner-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px 0 18px 0;
+    text-align: center;
+}
+.dk-mob-deals-spark-left, .dk-mob-deals-spark-right {
+    font-size: 26px;
+    animation: pulseSpark 1.5s infinite alternate;
+}
+@@keyframes pulseSpark {
+    0% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+    100% { transform: scale(1.3) rotate(20deg); opacity: 1; }
+}
+.dk-mob-deals-main-title {
+    font-size: 32px;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+.dk-mob-deals-tagline {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #e0f2fe;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+
+/* 3x3 Deals Grid */
+.dk-mob-deals-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+@@media (max-width: 900px) {
+    .dk-mob-deals-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@@media (max-width: 560px) {
+    .dk-mob-deals-grid { grid-template-columns: 1fr; }
+}
+.dk-mob-deal-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.25s, box-shadow 0.25s;
+    position: relative;
+    border: 1px solid #e2e8f0;
+}
+.dk-mob-deal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+.dk-mob-card-photo-area {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+.dk-mob-card-img-link {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-mob-card-img {
+    max-height: 180px;
+    max-width: 90%;
+    object-fit: contain;
+    transition: transform 0.3s;
+}
+.dk-mob-deal-card:hover .dk-mob-card-img {
+    transform: scale(1.05);
+}
+.dk-mob-vertical-ribbon {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 4px 2px;
+    font-size: 9px;
+    font-weight: 800;
+    color: #475569;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+.dk-mob-mode-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 3px 8px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+}
+.dk-mob-mode-badge.is-3d {
+    background: linear-gradient(135deg, #2874f0 0%, #1d4ed8 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(40, 116, 240, 0.35);
+}
+.dk-mob-mode-badge.is-2d {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.dk-mob-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.dk-mob-phone-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dk-mob-phone-name a {
+    color: #1e293b;
+    text-decoration: none;
+}
+.dk-mob-phone-name a:hover {
+    color: #2874f0;
+}
+.dk-mob-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+.dk-mob-selling-price {
+    font-size: 17px;
+    font-weight: 900;
+    color: #16a34a;
+}
+.dk-mob-strike-price {
+    font-size: 13px;
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+.dk-mob-specs-snippet {
+    font-size: 11.5px;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dk-mob-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+.dk-mob-btn-view-3d {
+    flex: 1;
+    background: #eff6ff;
+    color: #2874f0;
+    border: 1px solid #bfdbfe;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.2s;
+}
+.dk-mob-btn-view-3d:hover {
+    background: #2874f0;
+    color: #ffffff;
+    border-color: #2874f0;
+}
+.dk-mob-btn-details {
+    flex: 1;
+    background: #f8fafc;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.2s;
+}
+.dk-mob-btn-details:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+.dk-mob-deals-footer-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 12px 8px 4px 8px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.dk-mob-deals-all-btn {
+    color: #fef08a;
+    text-decoration: none;
+    font-weight: 800;
+}
+.dk-mob-deals-all-btn:hover { text-decoration: underline; }
+
+/* 5. Confused Strip */
+.dk-mob-confused-strip {
+    margin-bottom: 22px;
+}
+.dk-mob-confused-card {
+    background: #fffbeb;
+    border: 2px dashed #f59e0b;
+    border-radius: 12px;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.dk-mob-confused-lantern { font-size: 28px; }
+.dk-mob-confused-content { flex: 1; min-width: 260px; }
+.dk-mob-confused-badge {
+    background: #f59e0b;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.8px;
+}
+.dk-mob-confused-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: #78350f;
+    margin: 6px 0 4px 0;
+}
+.dk-mob-confused-sub {
+    font-size: 13px;
+    color: #92400e;
+    margin: 0;
+}
+.dk-mob-confused-btn {
+    background: #b45309;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 800;
+    padding: 10px 22px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(180, 83, 9, 0.25);
+    white-space: nowrap;
+}
+
+/* 6. Promo Contest Banner */
+.dk-mob-promo-section {
+    margin-bottom: 24px;
+}
+.dk-mob-promo-card {
+    background: linear-gradient(135deg, #581c87 0%, #3b0764 100%);
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    overflow: hidden;
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(88, 28, 135, 0.3);
+    min-height: 160px;
+}
+.dk-mob-promo-content {
+    padding: 26px 36px;
+    max-width: 580px;
+}
+.dk-mob-promo-kicker {
+    background: #a855f7;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+.dk-mob-promo-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0 0 6px 0;
+}
+.dk-mob-promo-highlight {
+    font-size: 26px;
+    font-weight: 900;
+    color: #facc15;
+    margin-bottom: 14px;
+}
+.dk-mob-promo-btn {
+    background: #ffffff;
+    color: #581c87;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 8px 18px;
+    border-radius: 6px;
+    display: inline-block;
+}
+.dk-mob-promo-visual {
+    padding-right: 40px;
+    display: flex;
+    align-items: center;
+}
+.dk-mob-promo-img {
+    height: 140px;
+    object-fit: contain;
+}
+
+/* 7. Unmissable Deals (EMI Carousel) */
+.dk-mob-unmissable-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+.dk-mob-carousel-nav-btns {
+    display: flex;
+    gap: 8px;
+}
+.dk-mob-circle-nav-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.dk-mob-circle-nav-btn:hover {
+    background: #2874f0;
+    color: #ffffff;
+    border-color: #2874f0;
+}
+.dk-mob-unmissable-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 8px 0;
+    scrollbar-width: thin;
+    scroll-behavior: smooth;
+}
+.dk-mob-emi-card {
+    min-width: 220px;
+    max-width: 220px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.dk-mob-emi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+.dk-mob-emi-header-tag {
+    background: #ffedd5;
+    color: #c2410c;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 5px 10px;
+    text-align: center;
+    border-bottom: 1px solid #fed7aa;
+}
+.dk-mob-emi-img-wrap {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: #f8fafc;
+}
+.dk-mob-emi-img {
+    max-height: 130px;
+    max-width: 90%;
+    object-fit: contain;
+}
+.dk-mob-emi-info {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.dk-mob-emi-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #1e293b;
+}
+.dk-mob-emi-prices {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+.dk-mob-emi-selling {
+    font-size: 15px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.dk-mob-emi-strike {
+    font-size: 12px;
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+.dk-mob-emi-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+}
+.dk-mob-emi-3d-btn {
+    flex: 1;
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.dk-mob-emi-shop-btn {
+    flex: 1;
+    background: #2874f0;
+    color: #ffffff;
+    border: none;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px;
+    border-radius: 4px;
+    text-decoration: none;
+    text-align: center;
+}
+
+/* ========================================================
+   8. 3D INTERACTIVE VIEWER MODAL STYLES
+========================================================= */
+.dk-3d-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.dk-3d-modal-container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 960px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+.dk-3d-modal-header {
+    background: #0f172a;
+    color: #ffffff;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1e293b;
+}
+.dk-3d-badge-live {
+    background: #22c55e;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+.dk-3d-modal-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0;
+}
+.dk-3d-modal-sub {
+    font-size: 12px;
+    color: #94a3b8;
+}
+.dk-3d-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.dk-3d-price-tag {
+    font-size: 18px;
+    font-weight: 900;
+    color: #38bdf8;
+}
+.dk-3d-close-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #ffffff;
+    font-size: 28px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.dk-3d-close-btn:hover {
+    background: #ef4444;
+}
+
+/* 3D Viewport Stage */
+.dk-3d-stage-wrapper {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%);
+    overflow: hidden;
+}
+.dk-3d-viewport {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+}
+.dk-3d-viewport:active {
+    cursor: grabbing;
+}
+.dk-3d-floating-controls {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 10;
+}
+.dk-3d-control-group, .dk-3d-zoom-group {
+    display: flex;
+    gap: 6px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.dk-3d-ctrl-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.dk-3d-ctrl-btn:hover {
+    background: #2874f0;
+    border-color: #2874f0;
+}
+
+/* Color Variant Swatches */
+.dk-3d-color-picker {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 10;
+}
+.dk-3d-color-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+.dk-3d-color-swatches {
+    display: flex;
+    gap: 8px;
+}
+.dk-3d-swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.dk-3d-swatch:hover, .dk-3d-swatch.active {
+    transform: scale(1.25);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+.dk-3d-hint-pill {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 600;
+    z-index: 10;
+}
+
+.dk-3d-modal-footer {
+    background: #f8fafc;
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.dk-3d-footer-info {
+    font-size: 12px;
+    color: #64748b;
+}
+.dk-3d-footer-btns {
+    display: flex;
+    gap: 10px;
+}
+</style>
+
+<!-- ========================================================
+     JAVASCRIPT: HERO CAROUSEL & THREE.JS 3D ENGINE
+========================================================= -->
+<script>
+(function() {
+    // ----------------------------------------------------
+    // 1. HERO BANNER MULTI-SLIDE CAROUSEL
+    // ----------------------------------------------------
+    const carousel = document.getElementById("mobilesHeroCarousel");
+    if (carousel) {
+        const slides = carousel.querySelectorAll(".dk-mob-slide");
+        const indicators = carousel.querySelectorAll(".dk-mob-dot");
+        const prevBtn = document.getElementById("mobHeroPrev");
+        const nextBtn = document.getElementById("mobHeroNext");
+        const autoPlay = carousel.getAttribute("data-autoplay") === "true";
+        const intervalMs = parseInt(carousel.getAttribute("data-interval"), 10) || 4000;
+        let currentIndex = 0;
+        let timer = null;
+
+        function showSlide(index) {
+            if (slides.length <= 1) return;
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
+
+            slides.forEach((s, i) => {
+                const isActive = (i === index);
+                s.classList.toggle("active", isActive);
+                s.setAttribute("aria-hidden", isActive ? "false" : "true");
+            });
+
+            indicators.forEach((ind, i) => {
+                ind.classList.toggle("active", i === index);
+            });
+
+            currentIndex = index;
+        }
+
+        function startTimer() {
+            if (!autoPlay || slides.length <= 1) return;
+            stopTimer();
+            timer = setInterval(() => showSlide(currentIndex + 1), intervalMs);
+        }
+
+        function stopTimer() {
+            if (timer) clearInterval(timer);
+        }
+
+        prevBtn?.addEventListener("click", () => {
+            showSlide(currentIndex - 1);
+            startTimer();
+        });
+
+        nextBtn?.addEventListener("click", () => {
+            showSlide(currentIndex + 1);
+            startTimer();
+        });
+
+        indicators.forEach(ind => {
+            ind.addEventListener("click", () => {
+                const target = parseInt(ind.getAttribute("data-slide-target"), 10);
+                if (!isNaN(target)) {
+                    showSlide(target);
+                    startTimer();
+                }
+            });
+        });
+
+        carousel.addEventListener("mouseenter", stopTimer);
+        carousel.addEventListener("mouseleave", startTimer);
+
+        startTimer();
+    }
+
+    // ----------------------------------------------------
+    // 2. BRAND STAGE SHOWCASE NAVIGATION & FILTERING
+    // ----------------------------------------------------
+    const brandsScroller = document.getElementById("mobBrandsScroller");
+    document.getElementById("btnBrandsPrev")?.addEventListener("click", () => {
+        brandsScroller?.scrollBy({ left: -340, behavior: "smooth" });
+    });
+    document.getElementById("btnBrandsNext")?.addEventListener("click", () => {
+        brandsScroller?.scrollBy({ left: 340, behavior: "smooth" });
+    });
+
+    window.filterBrandStages = function(category, btn) {
+        const allChips = document.querySelectorAll(".dk-brand-chip");
+        allChips.forEach(c => c.classList.remove("active"));
+        if (btn) btn.classList.add("active");
+
+        const cards = document.querySelectorAll(".dk-mob-stage-card");
+        cards.forEach(card => {
+            const cardCat = card.getAttribute("data-brand-category") || "all";
+            if (category === "all" || cardCat === category) {
+                card.classList.remove("is-filtered-out");
+                card.style.opacity = "0";
+                setTimeout(() => { card.style.opacity = "1"; }, 30);
+            } else {
+                card.classList.add("is-filtered-out");
+            }
+        });
+    };
+
+    // ----------------------------------------------------
+    // 3. UNMISSABLE DEALS SCROLL BUTTONS
+    // ----------------------------------------------------
+    const unmissableTrack = document.getElementById("unmissableTrack");
+    document.getElementById("unmissablePrev")?.addEventListener("click", () => {
+        unmissableTrack?.scrollBy({ left: -260, behavior: "smooth" });
+    });
+    document.getElementById("unmissableNext")?.addEventListener("click", () => {
+        unmissableTrack?.scrollBy({ left: 260, behavior: "smooth" });
+    });
+
+})();
+
+// ----------------------------------------------------
+// 3. THREE.JS 3D INTERACTIVE SMARTPHONE VISUALIZER
+// ----------------------------------------------------
+let threeScene, threeCamera, threeRenderer, phoneGroup, chassisMesh;
+let isRotating = true;
+let isDragging = false;
+let prevMousePos = { x: 0, y: 0 };
+
+function initThreeJsPhone() {
+    const container = document.getElementById("threeJsContainer");
+    if (!container || threeScene) return;
+
+    const width = container.clientWidth || 920;
+    const height = container.clientHeight || 480;
+
+    // Scene & Camera
+    threeScene = new THREE.Scene();
+    threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    threeCamera.position.set(0, 0, 8);
+
+    // Renderer
+    threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    threeRenderer.setSize(width, height);
+    threeRenderer.setPixelRatio(window.devicePixelRatio || 1);
+    threeRenderer.shadowMap.enabled = true;
+    container.appendChild(threeRenderer.domElement);
+
+    // Lighting (Studio Key + Fill + Rim Lights for realistic reflections)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    threeScene.add(ambientLight);
+
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.2);
+    dirLight1.position.set(5, 10, 7);
+    dirLight1.castShadow = true;
+    threeScene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.6);
+    dirLight2.position.set(-5, -5, -4);
+    threeScene.add(dirLight2);
+
+    // Build Realistic 3D Smartphone Mesh Hierarchy
+    phoneGroup = new THREE.Group();
+
+    // 1. Chassis Body (Smooth rounded phone frame)
+    const chassisGeo = new THREE.BoxGeometry(2.3, 4.8, 0.22);
+    const chassisMat = new THREE.MeshStandardMaterial({
+        color: 0x2563eb,
+        metalness: 0.85,
+        roughness: 0.22,
+        clearcoat: 0.4,
+        clearcoatRoughness: 0.1
+    });
+    chassisMesh = new THREE.Mesh(chassisGeo, chassisMat);
+    chassisMesh.castShadow = true;
+    phoneGroup.add(chassisMesh);
+
+    // 2. Front Screen Face
+    const screenGeo = new THREE.PlaneGeometry(2.15, 4.62);
+    // Canvas texture for live screen wallpaper
+    const screenCanvas = document.createElement("canvas");
+    screenCanvas.width = 512;
+    screenCanvas.height = 1024;
+    const sCtx = screenCanvas.getContext("2d");
+    // Dynamic wallpaper gradient
+    const sGrad = sCtx.createLinearGradient(0, 0, 512, 1024);
+    sGrad.addColorStop(0, "#0f172a");
+    sGrad.addColorStop(0.4, "#2563eb");
+    sGrad.addColorStop(0.7, "#06b6d4");
+    sGrad.addColorStop(1, "#020617");
+    sCtx.fillStyle = sGrad;
+    sCtx.fillRect(0, 0, 512, 1024);
+    // Clock text
+    sCtx.fillStyle = "#ffffff";
+    sCtx.font = "bold 72px sans-serif";
+    sCtx.textAlign = "center";
+    sCtx.fillText("10:45", 256, 260);
+    sCtx.font = "500 28px sans-serif";
+    sCtx.fillStyle = "#94a3b8";
+    sCtx.fillText("Dreamfly 5G • 100% Battery", 256, 310);
+    // 3D badge pill
+    sCtx.fillStyle = "#fb641b";
+    sCtx.beginPath();
+    sCtx.roundRect(156, 780, 200, 60, 30);
+    sCtx.fill();
+    sCtx.fillStyle = "#ffffff";
+    sCtx.font = "bold 30px sans-serif";
+    sCtx.fillText("3D LIVE", 256, 822);
+
+    const screenTexture = new THREE.CanvasTexture(screenCanvas);
+    const screenMat = new THREE.MeshBasicMaterial({ map: screenTexture });
+    const screenMesh = new THREE.Mesh(screenGeo, screenMat);
+    screenMesh.position.z = 0.115;
+    phoneGroup.add(screenMesh);
+
+    // 3. Back Camera Island
+    const bumpGeo = new THREE.BoxGeometry(0.9, 1.4, 0.08);
+    const bumpMat = new THREE.MeshStandardMaterial({
+        color: 0x0f172a,
+        metalness: 0.9,
+        roughness: 0.1
+    });
+    const bumpMesh = new THREE.Mesh(bumpGeo, bumpMat);
+    bumpMesh.position.set(-0.55, 1.45, -0.14);
+    phoneGroup.add(bumpMesh);
+
+    // Camera Lenses
+    for (let c = 0; c < 3; c++) {
+        const lensGeo = new THREE.CylinderGeometry(0.16, 0.16, 0.06, 32);
+        lensGeo.rotateX(Math.PI / 2);
+        const lensMat = new THREE.MeshStandardMaterial({
+            color: 0x020617,
+            metalness: 0.95,
+            roughness: 0.05
+        });
+        const lensMesh = new THREE.Mesh(lensGeo, lensMat);
+        lensMesh.position.set(-0.55, 1.85 - (c * 0.42), -0.17);
+        phoneGroup.add(lensMesh);
+
+        // Glass reflection inside lens
+        const irisGeo = new THREE.CircleGeometry(0.08, 16);
+        irisGeo.rotateY(Math.PI);
+        const irisMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+        const irisMesh = new THREE.Mesh(irisGeo, irisMat);
+        irisMesh.position.set(-0.55, 1.85 - (c * 0.42), -0.201);
+        phoneGroup.add(irisMesh);
+    }
+
+    threeScene.add(phoneGroup);
+
+    // Mouse & Touch Drag Interaction
+    const dom = threeRenderer.domElement;
+    dom.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        isRotating = false;
+        prevMousePos = { x: e.clientX, y: e.clientY };
+    });
+    window.addEventListener("mouseup", () => { isDragging = false; });
+    dom.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevMousePos.x;
+        const dy = e.clientY - prevMousePos.y;
+        phoneGroup.rotation.y += dx * 0.01;
+        phoneGroup.rotation.x += dy * 0.01;
+        prevMousePos = { x: e.clientX, y: e.clientY };
+    });
+
+    // Touch support for mobile devices
+    dom.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 1) {
+            isDragging = true;
+            isRotating = false;
+            prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+    }, { passive: true });
+    dom.addEventListener("touchend", () => { isDragging = false; });
+    dom.addEventListener("touchmove", (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - prevMousePos.x;
+        const dy = e.touches[0].clientY - prevMousePos.y;
+        phoneGroup.rotation.y += dx * 0.015;
+        phoneGroup.rotation.x += dy * 0.015;
+        prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }, { passive: true });
+
+    // Scroll to Zoom
+    dom.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        threeCamera.position.z += e.deltaY * 0.005;
+        threeCamera.position.z = Math.max(4.5, Math.min(14, threeCamera.position.z));
+    }, { passive: false });
+
+    // Animation Loop
+    function animate() {
+        requestAnimationFrame(animate);
+        if (isRotating && phoneGroup) {
+            phoneGroup.rotation.y += 0.012;
+        }
+        threeRenderer.render(threeScene, threeCamera);
+    }
+    animate();
+}
+
+function open3dModal(phoneName, colorHex, specs, price, model3dUrl) {
+    const modal = document.getElementById("dk3dModalBackdrop");
+    if (!modal) return;
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+
+    document.getElementById("modalPhoneTitle").innerText = phoneName || "Interactive 3D Smartphone";
+    if (specs) document.getElementById("modalPhoneSub").innerText = specs;
+    if (price) document.getElementById("modalPhonePrice").innerText = price;
+
+    const threeContainer = document.getElementById("threeJsContainer");
+    const googleViewer = document.getElementById("googleModelViewer");
+
+    if (model3dUrl && (model3dUrl.endsWith(".glb") || model3dUrl.endsWith(".gltf"))) {
+        // Use Google model-viewer for uploaded GLB/GLTF 3D models
+        threeContainer.style.display = "none";
+        googleViewer.style.display = "block";
+        googleViewer.setAttribute("src", model3dUrl);
+    } else {
+        // Use Three.js 3D Procedural Smartphone Engine
+        googleViewer.style.display = "none";
+        threeContainer.style.display = "block";
+        if (!threeScene) {
+            initThreeJsPhone();
+        }
+        if (colorHex) {
+            change3dColor(colorHex);
+        }
+        reset3dCamera();
+        isRotating = true;
+    }
+}
+
+function close3dModal() {
+    const modal = document.getElementById("dk3dModalBackdrop");
+    if (modal) modal.style.display = "none";
+    document.body.style.overflow = "";
+    isRotating = false;
+}
+
+function toggle3dRotation() {
+    isRotating = !isRotating;
+    const btn = document.getElementById("btn3dAutoRotate");
+    if (btn) btn.style.background = isRotating ? "#2874f0" : "rgba(255,255,255,0.12)";
+}
+
+function set3dView(angle) {
+    if (!phoneGroup) return;
+    isRotating = false;
+    if (angle === 'front') {
+        phoneGroup.rotation.set(0, 0, 0);
+    } else if (angle === 'back') {
+        phoneGroup.rotation.set(0, Math.PI, 0);
+    } else if (angle === 'side') {
+        phoneGroup.rotation.set(0, Math.PI / 2, 0);
+    } else if (angle === 'iso') {
+        phoneGroup.rotation.set(0.35, 0.65, 0);
+    }
+}
+
+function zoom3d(factor) {
+    if (!threeCamera) return;
+    threeCamera.position.z *= factor;
+    threeCamera.position.z = Math.max(4.5, Math.min(14, threeCamera.position.z));
+}
+
+function reset3dCamera() {
+    if (!threeCamera || !phoneGroup) return;
+    threeCamera.position.set(0, 0, 8);
+    phoneGroup.rotation.set(0.2, 0.4, 0);
+}
+
+function change3dColor(hexColor, buttonEl) {
+    if (chassisMesh && chassisMesh.material) {
+        const color = new THREE.Color(hexColor);
+        chassisMesh.material.color = color;
+    }
+    if (buttonEl) {
+        document.querySelectorAll(".dk-3d-swatch").forEach(s => s.classList.remove("active"));
+        buttonEl.classList.add("active");
+    }
+}
+
+// Close modal on Escape key
+window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") close3dModal();
+});
+</script>

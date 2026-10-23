@@ -30,7 +30,12 @@
     var defaultImageUrl = !string.IsNullOrWhiteSpace(primaryImage?.Url)
         ? primaryImage.Url
         : "/images/products/product-placeholder.webp";
+
+    var isMobileCategory = string.Equals(Model.CategorySlug, "mobiles", StringComparison.OrdinalIgnoreCase) ||
+                           string.Equals(Model.CategorySlug, "mobile", StringComparison.OrdinalIgnoreCase);
 }
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <div class="dk-pdp-page">
 
@@ -64,6 +69,19 @@
                  LEFT COLUMN: GALLERY + ICONIC ACTION BUTTONS
             ========================================================= -->
             <div class="dk-pdp-left">
+
+                <!-- 3D / 2D / 1D Mode Switcher (Admin Decides & User Toggles) -->
+                <div class="dk-pdp-dimension-nav" id="pdpDimensionNav">
+                    <button type="button" class="dk-pdp-dim-tab @(isMobileCategory ? "active" : "")" id="pdpTab3D" onclick="switchDimensionMode('3D')">
+                        <span class="dk-dim-tab-icon">🌐</span> 3D Interactive Model
+                    </button>
+                    <button type="button" class="dk-pdp-dim-tab @(!isMobileCategory ? "active" : "")" id="pdpTab2D" onclick="switchDimensionMode('2D')">
+                        <span class="dk-dim-tab-icon">🖼️</span> 2D Gallery
+                    </button>
+                    <button type="button" class="dk-pdp-dim-tab" id="pdpTab1D" onclick="switchDimensionMode('1D')">
+                        <span class="dk-dim-tab-icon">🔍</span> 1D View
+                    </button>
+                </div>
 
                 <div class="dk-pdp-gallery-wrap">
 
@@ -120,6 +138,20 @@
                              id="pdpMainImg"
                              class="dk-pdp-stage-img"
                              onerror="this.onerror=null;this.src='/images/products/product-placeholder.webp';" />
+
+                        <!-- 3D Interactive Canvas Stage for PDP -->
+                        <div id="pdp3dStage" class="dk-pdp-3d-viewport" style="display: @(isMobileCategory ? "block" : "none");">
+                            <div id="pdpThreeContainer" style="width: 100%; height: 380px;"></div>
+                            <div class="dk-pdp-3d-bar">
+                                <button type="button" class="dk-pdp-3d-btn" id="btnPdpRotate" onclick="togglePdpRotation()">🔄 Rotate</button>
+                                <button type="button" class="dk-pdp-3d-btn" onclick="setPdpAngle('front')">Front</button>
+                                <button type="button" class="dk-pdp-3d-btn" onclick="setPdpAngle('back')">Back</button>
+                                <button type="button" class="dk-pdp-3d-btn" onclick="setPdpAngle('side')">Side</button>
+                                <button type="button" class="dk-pdp-3d-btn" onclick="setPdpAngle('iso')">3D Angle</button>
+                            </div>
+                            <div class="dk-pdp-3d-hint">🖱️ 360° Drag to inspect phone &bull; Scroll to Zoom</div>
+                        </div>
+
                     </div>
 
                 </div>
@@ -615,5 +647,242 @@
                 }
             });
         }
+
+        // Initialize 3D if in mobile category
+        @if (isMobileCategory)
+        {
+            <text>
+            setTimeout(function() {
+                initPdp3D();
+            }, 200);
+            </text>
+        }
     });
+
+    // Dimension Switcher (3D, 2D, 1D)
+    function switchDimensionMode(mode) {
+        var tabs = document.querySelectorAll('.dk-pdp-dim-tab');
+        tabs.forEach(function(t) { t.classList.remove('active'); });
+
+        var activeTab = document.getElementById('pdpTab' + mode);
+        if (activeTab) activeTab.classList.add('active');
+
+        var pdpImg = document.getElementById('pdpMainImg');
+        var pdp3d = document.getElementById('pdp3dStage');
+        var thumbList = document.getElementById('pdpThumbList');
+
+        if (mode === '3D') {
+            if (pdpImg) pdpImg.style.display = 'none';
+            if (pdp3d) pdp3d.style.display = 'block';
+            if (thumbList) thumbList.style.display = 'flex';
+            initPdp3D();
+        } else if (mode === '2D') {
+            if (pdp3d) pdp3d.style.display = 'none';
+            if (pdpImg) pdpImg.style.display = 'block';
+            if (thumbList) thumbList.style.display = 'flex';
+            pdpIsRotating = false;
+        } else if (mode === '1D') {
+            if (pdp3d) pdp3d.style.display = 'none';
+            if (pdpImg) pdpImg.style.display = 'block';
+            if (thumbList) thumbList.style.display = 'none';
+            pdpIsRotating = false;
+        }
+    }
+
+    // PDP Three.js 3D Engine
+    var pdpScene, pdpCamera, pdpRenderer, pdpPhoneGroup, pdpIsRotating = true;
+    var pdpIsDragging = false, pdpPrevMouse = { x: 0, y: 0 };
+
+    function initPdp3D() {
+        var container = document.getElementById('pdpThreeContainer');
+        if (!container || pdpScene) return;
+
+        var width = container.clientWidth || 360;
+        var height = container.clientHeight || 380;
+
+        pdpScene = new THREE.Scene();
+        pdpCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+        pdpCamera.position.set(0, 0, 7.5);
+
+        pdpRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        pdpRenderer.setSize(width, height);
+        pdpRenderer.setPixelRatio(window.devicePixelRatio || 1);
+        container.appendChild(pdpRenderer.domElement);
+
+        var ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        pdpScene.add(ambientLight);
+
+        var dirLight1 = new THREE.DirectionalLight(0xffffff, 1.2);
+        dirLight1.position.set(5, 10, 7);
+        pdpScene.add(dirLight1);
+
+        var dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.7);
+        dirLight2.position.set(-5, -5, -4);
+        pdpScene.add(dirLight2);
+
+        pdpPhoneGroup = new THREE.Group();
+
+        // Phone Chassis
+        var chassisGeo = new THREE.BoxGeometry(2.2, 4.6, 0.22);
+        var chassisMat = new THREE.MeshStandardMaterial({
+            color: 0x2563eb,
+            metalness: 0.85,
+            roughness: 0.2
+        });
+        var chassis = new THREE.Mesh(chassisGeo, chassisMat);
+        pdpPhoneGroup.add(chassis);
+
+        // Screen
+        var screenGeo = new THREE.PlaneGeometry(2.05, 4.42);
+        var screenMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
+        var screen = new THREE.Mesh(screenGeo, screenMat);
+        screen.position.z = 0.115;
+        pdpPhoneGroup.add(screen);
+
+        // Camera Bump
+        var bumpGeo = new THREE.BoxGeometry(0.85, 1.3, 0.08);
+        var bumpMat = new THREE.MeshStandardMaterial({ color: 0x020617, metalness: 0.9, roughness: 0.1 });
+        var bump = new THREE.Mesh(bumpGeo, bumpMat);
+        bump.position.set(-0.55, 1.4, -0.14);
+        pdpPhoneGroup.add(bump);
+
+        pdpScene.add(pdpPhoneGroup);
+
+        var dom = pdpRenderer.domElement;
+        dom.addEventListener('mousedown', function(e) {
+            pdpIsDragging = true;
+            pdpIsRotating = false;
+            pdpPrevMouse = { x: e.clientX, y: e.clientY };
+        });
+        window.addEventListener('mouseup', function() { pdpIsDragging = false; });
+        dom.addEventListener('mousemove', function(e) {
+            if (!pdpIsDragging) return;
+            var dx = e.clientX - pdpPrevMouse.x;
+            var dy = e.clientY - pdpPrevMouse.y;
+            pdpPhoneGroup.rotation.y += dx * 0.01;
+            pdpPhoneGroup.rotation.x += dy * 0.01;
+            pdpPrevMouse = { x: e.clientX, y: e.clientY };
+        });
+
+        // Touch support
+        dom.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 1) {
+                pdpIsDragging = true;
+                pdpIsRotating = false;
+                pdpPrevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+        }, { passive: true });
+        window.addEventListener('touchend', function() { pdpIsDragging = false; });
+        dom.addEventListener('touchmove', function(e) {
+            if (!pdpIsDragging || e.touches.length !== 1) return;
+            var dx = e.touches[0].clientX - pdpPrevMouse.x;
+            var dy = e.touches[0].clientY - pdpPrevMouse.y;
+            pdpPhoneGroup.rotation.y += dx * 0.015;
+            pdpPhoneGroup.rotation.x += dy * 0.015;
+            pdpPrevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }, { passive: true });
+
+        function renderLoop() {
+            requestAnimationFrame(renderLoop);
+            if (pdpIsRotating && pdpPhoneGroup) {
+                pdpPhoneGroup.rotation.y += 0.012;
+            }
+            pdpRenderer.render(pdpScene, pdpCamera);
+        }
+        renderLoop();
+    }
+
+    function togglePdpRotation() {
+        pdpIsRotating = !pdpIsRotating;
+    }
+
+    function setPdpAngle(angle) {
+        if (!pdpPhoneGroup) return;
+        pdpIsRotating = false;
+        if (angle === 'front') pdpPhoneGroup.rotation.set(0, 0, 0);
+        else if (angle === 'back') pdpPhoneGroup.rotation.set(0, Math.PI, 0);
+        else if (angle === 'side') pdpPhoneGroup.rotation.set(0, Math.PI / 2, 0);
+        else if (angle === 'iso') pdpPhoneGroup.rotation.set(0.35, 0.65, 0);
+    }
 </script>
+
+<style>
+/* 3D / 2D / 1D PDP Styles */
+.dk-pdp-dimension-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    background: #f8fafc;
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+.dk-pdp-dim-tab {
+    flex: 1;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 7px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+.dk-pdp-dim-tab:hover {
+    border-color: #2874f0;
+    color: #2874f0;
+}
+.dk-pdp-dim-tab.active {
+    background: linear-gradient(135deg, #2874f0 0%, #1d4ed8 100%);
+    color: #ffffff;
+    border-color: #2874f0;
+    box-shadow: 0 2px 8px rgba(40, 116, 240, 0.3);
+}
+.dk-pdp-3d-viewport {
+    width: 100%;
+    position: relative;
+    background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.dk-pdp-3d-bar {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    gap: 4px;
+    background: rgba(15, 23, 42, 0.7);
+    padding: 4px;
+    border-radius: 6px;
+}
+.dk-pdp-3d-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.dk-pdp-3d-btn:hover {
+    background: #2874f0;
+}
+.dk-pdp-3d-hint {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.8);
+    color: #94a3b8;
+    font-size: 10.5px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+</style>

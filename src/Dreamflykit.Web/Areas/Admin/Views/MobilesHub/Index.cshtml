@@ -1,0 +1,747 @@
+@model Dreamflykit.Application.MobilesHub.Models.MobilesHubDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Mobiles Flipkart Template & 3D Visualizer";
+    var hub = Model ?? Dreamflykit.Application.MobilesHub.Models.MobilesHubDto.CreateDefault();
+    var hero = hub.HeroBanner ?? new Dreamflykit.Application.MobilesHub.Models.MobilesHeroBannerDto();
+    var slides = hero.Slides ?? new List<Dreamflykit.Application.MobilesHub.Models.MobilesHeroSlideDto>();
+    var brands = hub.BrandsSection?.Brands ?? new List<Dreamflykit.Application.MobilesHub.Models.MobileBrandItemDto>();
+    var highlight = hub.HighlightBanner ?? new Dreamflykit.Application.MobilesHub.Models.MobilesHighlightBannerDto();
+    var topDeals = hub.TopDealsSection?.Deals ?? new List<Dreamflykit.Application.MobilesHub.Models.MobileDealItemDto>();
+    var confused = hub.ConfusedSection ?? new Dreamflykit.Application.MobilesHub.Models.MobilesConfusedSectionDto();
+    var promo = hub.PromoBanner ?? new Dreamflykit.Application.MobilesHub.Models.MobilesPromoBannerDto();
+    var unmissable = hub.UnmissableDealsSection?.Deals ?? new List<Dreamflykit.Application.MobilesHub.Models.MobileEmiDealItemDto>();
+    var themeColor = !string.IsNullOrWhiteSpace(hero.ThemeColor) ? hero.ThemeColor : "#2874f0";
+}
+
+@Html.AntiForgeryToken()
+
+<div class="dk-admin-content-container" style="max-width: 1400px; margin: 0 auto; padding: 24px 20px;">
+
+    <!-- Header & Action Bar -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                <span style="background: #2874f0; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 6px; letter-spacing: 0.5px;">FLIPKART MOBILES HUB</span>
+                <span style="background: #e0f2fe; color: #0284c7; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">3D / 2D / 1D SUPPORT</span>
+            </div>
+            <h1 style="font-size: 24px; font-weight: 900; color: #0f172a; margin: 0;">Mobiles Store &amp; 3D Showcase Management</h1>
+            <p style="font-size: 13.5px; color: #64748b; margin: 4px 0 0 0;">
+                Configure the full-width big hero banner, slide seconds interval, image uploads, phone cards, and decide 3D, 2D, or 1D mode for every product.
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="/category/mobiles" target="_blank" class="dk-btn" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 9px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <span>👁️</span> Preview Live Store
+            </a>
+            <button type="button" class="dk-btn" id="btnSaveMobilesTop" style="background: #2874f0; color: #ffffff; border: none; padding: 10px 24px; font-size: 13.5px; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 14px rgba(40, 116, 240, 0.35);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save All Changes
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-weight: 600;">
+            ✅ @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-weight: 600;">
+            ❌ @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Hidden Master Form for Serializing JSON -->
+    <form id="mobilesHubForm" method="post" action="/Admin/MobilesHub/Save" style="display: none;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="jsonPayload" id="jsonPayload" />
+    </form>
+
+    <!-- SECTION 1: HERO BANNER SETTINGS (SLIDE SECONDS & TIMING) -->
+    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <div>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">1. Big Full-Width Hero Banner &amp; Slides Timing</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Decide slide duration in seconds, banner height, and customize/upload slide graphics.</p>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
+                    <input type="checkbox" id="heroIsEnabled" @(hero.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #2874f0;" />
+                    Enable Hero Banner
+                </label>
+                <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
+                    <input type="checkbox" id="heroAutoPlay" @(hero.AutoPlay ? "checked" : "") style="width: 16px; height: 16px; accent-color: #2874f0;" />
+                    Auto-Rotate Slides
+                </label>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px;">
+            <div>
+                <label style="display: block; font-size: 13px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">
+                    ⏱️ Slide Duration / Interval (Seconds)
+                </label>
+                <input type="number" id="heroSlideIntervalSeconds" value="@hero.SlideIntervalSeconds" min="1" max="60" 
+                       style="width: 100%; padding: 10px 14px; border: 2px solid #2874f0; border-radius: 8px; font-size: 14px; font-weight: 800; color: #0f172a;" />
+                <span style="font-size: 11.5px; color: #64748b; margin-top: 4px; display: block;">Admin decides how many seconds each slide stays on screen before advancing.</span>
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+                    Banner Height (px)
+                </label>
+                <input type="number" id="heroBannerHeight" value="@hero.BannerHeight" min="300" max="700" 
+                       style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+                    Primary Theme Color
+                </label>
+                <input type="color" id="heroThemeColor" value="@themeColor" style="width: 100%; height: 42px; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer;" />
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
+                    Global Default View Mode
+                </label>
+                <select id="hubDefaultViewMode" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: 700;">
+                    <option value="3D" selected="@(hub.DefaultViewMode == "3D")">🌐 3D Interactive Model (Recommended)</option>
+                    <option value="2D" selected="@(hub.DefaultViewMode == "2D")">🖼️ 2D High-Res Gallery</option>
+                    <option value="1D" selected="@(hub.DefaultViewMode == "1D")">🔍 1D Single View</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Slides List Manager -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">Hero Carousel Slides (@slides.Count Slides)</h3>
+                <button type="button" onclick="addNewSlide()" class="dk-btn" style="background: #2874f0; color: #ffffff; border: none; padding: 6px 14px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer;">
+                    + Add New Slide
+                </button>
+            </div>
+
+            <div id="slidesListContainer" style="display: flex; flex-direction: column; gap: 14px;">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    var s = slides[i];
+                    <div class="slide-item-card" data-index="@i" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-weight: 800; font-size: 13px; color: #2874f0;">Slide #@(i+1)</span>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <label style="font-size: 12px; font-weight: 600; color: #475569;">
+                                    <input type="checkbox" class="slide-active" @(s.IsActive ? "checked" : "") /> Active
+                                </label>
+                                <label style="font-size: 12px; font-weight: 600; color: #c2410c;">
+                                    <input type="checkbox" class="slide-uploading-soon" @(s.IsUploadingSoon ? "checked" : "") /> ⏳ Uploading Soon
+                                </label>
+                                <button type="button" onclick="removeSlide(this)" style="background: #fee2e2; color: #dc2626; border: none; padding: 4px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer;">Delete</button>
+                            </div>
+                        </div>
+
+                        <input type="hidden" class="slide-id" value="@s.Id" />
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;">
+                            <div>
+                                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Badge Offer Text</label>
+                                <input type="text" class="slide-badge" value="@s.DiscountBadge" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Slide Title</label>
+                                <input type="text" class="slide-title" value="@s.Title" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Title Highlight (Glow)</label>
+                                <input type="text" class="slide-highlight" value="@s.TitleHighlight" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Subtitle</label>
+                                <input type="text" class="slide-subtitle" value="@s.Subtitle" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Button Text &amp; URL</label>
+                                <div style="display: flex; gap: 6px;">
+                                    <input type="text" class="slide-btn-text" value="@s.ButtonText" placeholder="Shop Now" style="width: 40%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                                    <input type="text" class="slide-target-url" value="@s.TargetUrl" placeholder="/products?category=mobiles" style="width: 60%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                                </div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Image URL &amp; Upload</label>
+                                <div style="display: flex; gap: 6px; align-items: center;">
+                                    <input type="text" class="slide-image-url" value="@s.ImageUrl" style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;" />
+                                    <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #2874f0; color: #ffffff; border: none; padding: 8px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; white-space: nowrap;">
+                                        Upload
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 2: TOP SMARTPHONE BRANDS STRIP -->
+    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <div>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">2. Top Smartphone Brands (Circular Pedestals)</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Flipkart round brand pedestals (Apple, Samsung, Nothing, Google, OnePlus, etc.).</p>
+            </div>
+            <button type="button" onclick="addNewBrand()" class="dk-btn" style="background: #0284c7; color: #ffffff; border: none; padding: 6px 14px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer;">
+                + Add Brand
+            </button>
+        </div>
+
+        <div id="brandsListContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
+            @for (int b = 0; b < brands.Count; b++)
+            {
+                var br = brands[b];
+                <div class="brand-item-card" data-index="@b" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <input type="text" class="brand-name" value="@br.Name" style="font-weight: 800; font-size: 13px; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; width: 65%;" />
+                        <button type="button" onclick="removeBrand(this)" style="background: #fee2e2; color: #dc2626; border: none; padding: 3px 6px; font-size: 11px; border-radius: 4px; cursor: pointer;">Delete</button>
+                    </div>
+                    <input type="hidden" class="brand-id" value="@br.Id" />
+                    <input type="hidden" class="brand-slug" value="@br.Slug" />
+                    <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+                        <input type="text" class="brand-icon-url" value="@br.IconUrl" placeholder="Icon URL" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                        <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #64748b; color: #ffffff; border: none; padding: 6px 10px; font-size: 11px; border-radius: 4px; cursor: pointer;">Upload</button>
+                    </div>
+                    <input type="text" class="brand-product-url" value="@br.ProductUrl" placeholder="Target Link" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- SECTION 3: TOP DEALS & 3D / 2D / 1D VISUALIZER SELECTION -->
+    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <div>
+                <div style="display: inline-flex; align-items: center; gap: 6px; background: #dbeafe; color: #1d4ed8; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; margin-bottom: 4px;">
+                    ✨ FLIPKART 3x3 GRID WITH 3D INTERACTIVE SUPPORT
+                </div>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">3. TOP DEALS (Admin Decides 3D, 2D, or 1D for Every Phone!)</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">
+                    Select whether each mobile phone displays in <strong>3D</strong> (interactive 360° rotation with Three.js/ModelViewer), <strong>2D</strong> (gallery), or <strong>1D</strong> (single photo). Admin can also upload custom .glb/.gltf models!
+                </p>
+            </div>
+            <button type="button" onclick="addNewDeal()" class="dk-btn" style="background: #2874f0; color: #ffffff; border: none; padding: 8px 16px; font-size: 13px; font-weight: 800; border-radius: 6px; cursor: pointer;">
+                + Add Phone Deal
+            </button>
+        </div>
+
+        <div id="dealsListContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px;">
+            @for (int d = 0; d < topDeals.Count; d++)
+            {
+                var deal = topDeals[d];
+                <div class="deal-item-card" data-index="@d" style="background: #ffffff; border: 2px solid @(deal.ViewMode == "3D" ? "#2874f0" : "#cbd5e1"); border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-weight: 900; font-size: 14px; color: #2874f0;">Phone #@(d+1): @deal.Name</span>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <label style="font-size: 11px; font-weight: 700; color: #c2410c;">
+                                <input type="checkbox" class="deal-uploading-soon" @(deal.IsUploadingSoon ? "checked" : "") /> ⏳ Uploading Soon
+                            </label>
+                            <button type="button" onclick="removeDeal(this)" style="background: #fee2e2; color: #dc2626; border: none; padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer;">Delete</button>
+                        </div>
+                    </div>
+
+                    <input type="hidden" class="deal-id" value="@deal.Id" />
+
+                    <!-- Main Fields -->
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 3px;">Phone Model Name</label>
+                            <input type="text" class="deal-name" value="@deal.Name" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-weight: 700;" />
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Deal Price Tag</label>
+                                <input type="text" class="deal-price" value="@deal.PriceText" placeholder="From ₹11,999*" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #16a34a; font-weight: 800;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Original MRP</label>
+                                <input type="text" class="deal-orig-price" value="@deal.OriginalPriceText" placeholder="₹16,999" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                            </div>
+                        </div>
+
+                        <!-- 3D / 2D / 1D DECISION SELECTOR -->
+                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px;">
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: #1e40af; margin-bottom: 4px;">
+                                🌐 Admin Visualization Mode (3D / 2D / 1D)
+                            </label>
+                            <select class="deal-view-mode" onchange="toggleDeal3dFields(this)" style="width: 100%; padding: 8px 10px; border: 2px solid #2874f0; border-radius: 6px; font-size: 13px; font-weight: 800; color: #1e3a8a;">
+                                <option value="3D" selected="@(deal.ViewMode == "3D")">🌐 3D Interactive Model (360° Spin &amp; Inspection)</option>
+                                <option value="2D" selected="@(deal.ViewMode == "2D")">🖼️ 2D High-Resolution Gallery</option>
+                                <option value="1D" selected="@(deal.ViewMode == "1D")">🔍 1D Single Portrait View</option>
+                            </select>
+
+                            <!-- 3D Specific Settings -->
+                            <div class="deal-3d-extra" style="margin-top: 8px; display: @(deal.ViewMode == "3D" ? "block" : "none");">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #1e40af;">3D Chassis Color</label>
+                                        <input type="color" class="deal-color-hex" value="@deal.ColorHex" style="width: 100%; height: 36px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer;" />
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #1e40af;">Custom 3D Model (.glb)</label>
+                                        <button type="button" onclick="triggerFileUpload(this, '3d')" style="width: 100%; background: #1e40af; color: #ffffff; border: none; padding: 8px 10px; font-size: 11.5px; font-weight: 700; border-radius: 6px; cursor: pointer;">
+                                            Upload .GLB
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="text" class="deal-model-3d-url" value="@deal.Model3dUrl" placeholder="Optional .glb URL or leave blank for 3D engine" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                            </div>
+                        </div>
+
+                        <!-- Image Upload & Preview -->
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Product Photo (Full View Width)</label>
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <input type="text" class="deal-image-url" value="@deal.ImageUrl" style="flex: 1; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
+                                <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #2874f0; color: #ffffff; border: none; padding: 7px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer;">Upload</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Specifications Snippet</label>
+                            <input type="text" class="deal-specs" value="@deal.Specifications" placeholder="6.7 AMOLED | 50MP Sony | 5000mAh" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
+                        </div>
+
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Target URL</label>
+                            <input type="text" class="deal-url" value="@deal.ProductUrl" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- SECTION 4: UNMISSABLE DEALS (EMI STRIP) -->
+    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <div>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">4. UNMISSABLE DEALS (0% EMI Carousel)</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Phones with monthly EMI tags (Google Pixel 11, Galaxy S25 FE, etc.).</p>
+            </div>
+            <button type="button" onclick="addNewEmiDeal()" class="dk-btn" style="background: #0284c7; color: #ffffff; border: none; padding: 6px 14px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer;">
+                + Add EMI Deal
+            </button>
+        </div>
+
+        <div id="emiDealsListContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
+            @for (int u = 0; u < unmissable.Count; u++)
+            {
+                var emi = unmissable[u];
+                <div class="emi-item-card" data-index="@u" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <input type="text" class="emi-name" value="@emi.Name" style="font-weight: 800; font-size: 13px; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; width: 65%;" />
+                        <button type="button" onclick="removeEmiDeal(this)" style="background: #fee2e2; color: #dc2626; border: none; padding: 3px 6px; font-size: 11px; border-radius: 4px; cursor: pointer;">Delete</button>
+                    </div>
+                    <input type="hidden" class="emi-id" value="@emi.Id" />
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                        <input type="text" class="emi-tag" value="@emi.EmiText" placeholder="Pay Only ₹8,000/m" style="padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 700; color: #c2410c;" />
+                        <input type="text" class="emi-price" value="@emi.PriceText" placeholder="₹71,999*" style="padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 700;" />
+                    </div>
+                    <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+                        <input type="text" class="emi-img-url" value="@emi.ImageUrl" placeholder="Image URL" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                        <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #64748b; color: #ffffff; border: none; padding: 6px 10px; font-size: 11px; border-radius: 4px; cursor: pointer;">Upload</button>
+                    </div>
+                    <input type="text" class="emi-product-url" value="@emi.ProductUrl" placeholder="Target Link" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Bottom Save & Reset Actions Bar -->
+    <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e2e8f0; padding: 18px 24px; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); flex-wrap: wrap; gap: 14px;">
+        <form method="post" action="/Admin/MobilesHub/ResetDefaults" onsubmit="return confirm('Restore default Flipkart template with 3D models? All unsaved edits will be reset.');">
+            @Html.AntiForgeryToken()
+            <button type="submit" style="background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; padding: 10px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer;">
+                ↺ Restore Default Flipkart Template
+            </button>
+        </form>
+
+        <button type="button" id="btnSaveMobilesBottom" class="dk-btn" style="background: #2874f0; color: #ffffff; border: none; padding: 12px 30px; font-size: 14px; font-weight: 800; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(40, 116, 240, 0.35);">
+            💾 Save All Mobiles Hub Changes
+        </button>
+    </div>
+
+</div>
+
+<!-- Hidden File Inputs for Image & 3D Model Upload -->
+<input type="file" id="globalImageUploadInput" accept=".jpg,.jpeg,.png,.webp,.svg" style="display: none;" />
+<input type="file" id="global3dUploadInput" accept=".glb,.gltf" style="display: none;" />
+
+<script>
+    let activeUploadTargetInput = null;
+
+    function triggerFileUpload(btn, type) {
+        if (type === '3d') {
+            const card = btn.closest(".deal-item-card");
+            activeUploadTargetInput = card.querySelector(".deal-model-3d-url");
+            document.getElementById("global3dUploadInput").click();
+        } else {
+            const container = btn.parentElement;
+            activeUploadTargetInput = container.querySelector("input[type='text']");
+            document.getElementById("globalImageUploadInput").click();
+        }
+    }
+
+    document.getElementById("globalImageUploadInput").addEventListener("change", async function() {
+        if (!this.files || this.files.length === 0 || !activeUploadTargetInput) return;
+        const file = this.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("__RequestVerificationToken", document.querySelector("input[name='__RequestVerificationToken']").value);
+
+        try {
+            const res = await fetch("/Admin/MobilesHub/UploadImage", {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success && data.url) {
+                activeUploadTargetInput.value = data.url;
+                alert("Image uploaded successfully!");
+            } else {
+                alert("Upload failed: " + (data.message || "Unknown error"));
+            }
+        } catch (err) {
+            alert("Upload failed: " + err.message);
+        }
+        this.value = "";
+    });
+
+    document.getElementById("global3dUploadInput").addEventListener("change", async function() {
+        if (!this.files || this.files.length === 0 || !activeUploadTargetInput) return;
+        const file = this.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("__RequestVerificationToken", document.querySelector("input[name='__RequestVerificationToken']").value);
+
+        try {
+            const res = await fetch("/Admin/MobilesHub/Upload3DModel", {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success && data.url) {
+                activeUploadTargetInput.value = data.url;
+                alert("3D Model (.glb/.gltf) uploaded successfully!");
+            } else {
+                alert("3D Upload failed: " + (data.message || "Unknown error"));
+            }
+        } catch (err) {
+            alert("Upload failed: " + err.message);
+        }
+        this.value = "";
+    });
+
+    function toggleDeal3dFields(selectEl) {
+        const card = selectEl.closest(".deal-item-card");
+        const extra = card.querySelector(".deal-3d-extra");
+        if (extra) {
+            extra.style.display = (selectEl.value === "3D") ? "block" : "none";
+        }
+        card.style.borderColor = (selectEl.value === "3D") ? "#2874f0" : "#cbd5e1";
+    }
+
+    function removeSlide(btn) {
+        if (confirm("Delete this slide?")) {
+            btn.closest(".slide-item-card").remove();
+        }
+    }
+
+    function removeBrand(btn) {
+        btn.closest(".brand-item-card").remove();
+    }
+
+    function removeDeal(btn) {
+        if (confirm("Delete this phone deal?")) {
+            btn.closest(".deal-item-card").remove();
+        }
+    }
+
+    function removeEmiDeal(btn) {
+        btn.closest(".emi-item-card").remove();
+    }
+
+    function addNewSlide() {
+        const container = document.getElementById("slidesListContainer");
+        const count = container.querySelectorAll(".slide-item-card").length + 1;
+        const id = "mob-slide-" + Date.now();
+        const html = `
+        <div class="slide-item-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-weight: 800; font-size: 13px; color: #2874f0;">Slide #${count} (New)</span>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <label style="font-size: 12px; font-weight: 600; color: #475569;"><input type="checkbox" class="slide-active" checked /> Active</label>
+                    <label style="font-size: 12px; font-weight: 600; color: #c2410c;"><input type="checkbox" class="slide-uploading-soon" /> ⏳ Uploading Soon</label>
+                    <button type="button" onclick="removeSlide(this)" style="background: #fee2e2; color: #dc2626; border: none; padding: 4px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer;">Delete</button>
+                </div>
+            </div>
+            <input type="hidden" class="slide-id" value="${id}" />
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;">
+                <div>
+                    <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Badge Offer Text</label>
+                    <input type="text" class="slide-badge" value="SPECIAL 5G FEST" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Slide Title</label>
+                    <input type="text" class="slide-title" value="New Launch Smartphone" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Title Highlight</label>
+                    <input type="text" class="slide-highlight" value="Extra ₹3,000 Off" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Subtitle</label>
+                    <input type="text" class="slide-subtitle" value="Experience speed and power with top flagship smartphones." style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Button Text &amp; URL</label>
+                    <div style="display: flex; gap: 6px;">
+                        <input type="text" class="slide-btn-text" value="Shop Now" style="width: 40%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                        <input type="text" class="slide-target-url" value="/products?category=mobiles" style="width: 60%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                    </div>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Image URL &amp; Upload</label>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <input type="text" class="slide-image-url" value="/images/mobiles-hub/hero-slide-1.svg" style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;" />
+                        <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #2874f0; color: #ffffff; border: none; padding: 8px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer;">Upload</button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+        container.insertAdjacentHTML("beforeend", html);
+    }
+
+    function addNewDeal() {
+        const container = document.getElementById("dealsListContainer");
+        const count = container.querySelectorAll(".deal-item-card").length + 1;
+        const id = "deal-" + Date.now();
+        const html = `
+        <div class="deal-item-card" style="background: #ffffff; border: 2px solid #2874f0; border-radius: 10px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-weight: 900; font-size: 14px; color: #2874f0;">Phone #${count}: New Phone Deal</span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <label style="font-size: 11px; font-weight: 700; color: #c2410c;"><input type="checkbox" class="deal-uploading-soon" /> ⏳ Uploading Soon</label>
+                    <button type="button" onclick="removeDeal(this)" style="background: #fee2e2; color: #dc2626; border: none; padding: 3px 8px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer;">Delete</button>
+                </div>
+            </div>
+            <input type="hidden" class="deal-id" value="${id}" />
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 3px;">Phone Model Name</label>
+                    <input type="text" class="deal-name" value="Flagship Smartphone 5G" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-weight: 700;" />
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Deal Price Tag</label>
+                        <input type="text" class="deal-price" value="From ₹19,999*" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #16a34a; font-weight: 800;" />
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Original MRP</label>
+                        <input type="text" class="deal-orig-price" value="₹24,999" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                    </div>
+                </div>
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px;">
+                    <label style="display: block; font-size: 12px; font-weight: 800; color: #1e40af; margin-bottom: 4px;">🌐 Admin Visualization Mode</label>
+                    <select class="deal-view-mode" onchange="toggleDeal3dFields(this)" style="width: 100%; padding: 8px 10px; border: 2px solid #2874f0; border-radius: 6px; font-size: 13px; font-weight: 800;">
+                        <option value="3D" selected>🌐 3D Interactive Model (360° Spin &amp; Inspection)</option>
+                        <option value="2D">🖼️ 2D High-Resolution Gallery</option>
+                        <option value="1D">🔍 1D Single Portrait View</option>
+                    </select>
+                    <div class="deal-3d-extra" style="margin-top: 8px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #1e40af;">3D Chassis Color</label>
+                                <input type="color" class="deal-color-hex" value="#2563eb" style="width: 100%; height: 36px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #1e40af;">Custom 3D Model (.glb)</label>
+                                <button type="button" onclick="triggerFileUpload(this, '3d')" style="width: 100%; background: #1e40af; color: #ffffff; border: none; padding: 8px 10px; font-size: 11.5px; font-weight: 700; border-radius: 6px; cursor: pointer;">Upload .GLB</button>
+                            </div>
+                        </div>
+                        <input type="text" class="deal-model-3d-url" placeholder="Optional .glb URL" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                    </div>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Product Photo</label>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <input type="text" class="deal-image-url" value="/images/mobiles-hub/phones/nova2.svg" style="flex: 1; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
+                        <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #2874f0; color: #ffffff; border: none; padding: 7px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer;">Upload</button>
+                    </div>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Specifications Snippet</label>
+                    <input type="text" class="deal-specs" value="6.7 AMOLED 120Hz | 50MP OIS | 5000mAh" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px;">Target URL</label>
+                    <input type="text" class="deal-url" value="/products?category=mobiles" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
+                </div>
+            </div>
+        </div>`;
+        container.insertAdjacentHTML("beforeend", html);
+    }
+
+    async function saveMobilesHub() {
+        const payload = {
+            DefaultViewMode: document.getElementById("hubDefaultViewMode").value,
+            HeroBanner: {
+                IsEnabled: document.getElementById("heroIsEnabled").checked,
+                EnableSlideshow: true,
+                AutoPlay: document.getElementById("heroAutoPlay").checked,
+                SlideIntervalSeconds: parseInt(document.getElementById("heroSlideIntervalSeconds").value, 10) || 4,
+                TransitionEffect: "slide",
+                BannerHeight: parseInt(document.getElementById("heroBannerHeight").value, 10) || 440,
+                ThemeColor: document.getElementById("heroThemeColor").value,
+                ThemeAccentColor: "#fb641b",
+                Slides: []
+            },
+            BrandsSection: {
+                IsEnabled: true,
+                Title: "Explore Top Smartphone Brands",
+                ViewAllUrl: "/products?category=mobiles",
+                Brands: []
+            },
+            HighlightBanner: {
+                IsEnabled: true,
+                Title: "Galaxy S25 Ultra 5G",
+                TitleHighlight: "From ₹58,999*",
+                Subtitle: "Upgrade to Flagship • Snapdragon 8 Elite • Galaxy AI Built-in",
+                ImageUrl: "/images/mobiles-hub/galaxy-s25-banner.svg",
+                TargetUrl: "/products?category=mobiles&q=Galaxy+S25",
+                ButtonText: "Buy Now with 0% EMI →"
+            },
+            TopDealsSection: {
+                IsEnabled: true,
+                Title: "TOP DEALS",
+                Subtitle: "Curated Smartphone Steals of the Week",
+                Tagline: "Lightning Fast 5G • Mega Batteries • 100% Student Verified",
+                ViewAllUrl: "/products?category=mobiles",
+                Deals: []
+            },
+            ConfusedSection: {
+                IsEnabled: true,
+                Title: "CONFUSED?",
+                Subtitle: "Let us pick your perfect phone in 30 seconds",
+                ButtonText: "EXPLORE NOW ➔",
+                TargetUrl: "/products?category=mobiles"
+            },
+            PromoBanner: {
+                IsEnabled: true,
+                Title: "Buy any Smartphone and Get a Chance to Win",
+                Highlight: "GOOGLE PIXEL WATCH 5",
+                ButtonText: "Shop Now ➔",
+                ImageUrl: "/images/mobiles-hub/pixel-watch-promo.svg",
+                TargetUrl: "/products?category=mobiles"
+            },
+            UnmissableDealsSection: {
+                IsEnabled: true,
+                Title: "UNMISSABLE DEALS",
+                ViewAllUrl: "/products?category=mobiles",
+                Deals: []
+            }
+        };
+
+        // Collect Slides
+        document.querySelectorAll("#slidesListContainer .slide-item-card").forEach((card, idx) => {
+            payload.HeroBanner.Slides.push({
+                Id: card.querySelector(".slide-id")?.value || ("slide-" + (idx+1)),
+                DiscountBadge: card.querySelector(".slide-badge")?.value || "",
+                Title: card.querySelector(".slide-title")?.value || "",
+                TitleHighlight: card.querySelector(".slide-highlight")?.value || "",
+                Subtitle: card.querySelector(".slide-subtitle")?.value || "",
+                ImageUrl: card.querySelector(".slide-image-url")?.value || "",
+                ButtonText: card.querySelector(".slide-btn-text")?.value || "Shop Now",
+                TargetUrl: card.querySelector(".slide-target-url")?.value || "/products?category=mobiles",
+                DisplayOrder: idx + 1,
+                IsActive: card.querySelector(".slide-active")?.checked ?? true,
+                IsUploadingSoon: card.querySelector(".slide-uploading-soon")?.checked ?? false
+            });
+        });
+
+        // Collect Brands
+        document.querySelectorAll("#brandsListContainer .brand-item-card").forEach((card, idx) => {
+            payload.BrandsSection.Brands.push({
+                Id: card.querySelector(".brand-id")?.value || ("brand-" + (idx+1)),
+                Name: card.querySelector(".brand-name")?.value || "",
+                Slug: card.querySelector(".brand-slug")?.value || "brand",
+                IconUrl: card.querySelector(".brand-icon-url")?.value || "",
+                ProductUrl: card.querySelector(".brand-product-url")?.value || "/products?category=mobiles",
+                DisplayOrder: idx + 1
+            });
+        });
+
+        // Collect Deals
+        document.querySelectorAll("#dealsListContainer .deal-item-card").forEach((card, idx) => {
+            payload.TopDealsSection.Deals.push({
+                Id: card.querySelector(".deal-id")?.value || ("deal-" + (idx+1)),
+                Name: card.querySelector(".deal-name")?.value || "",
+                PriceText: card.querySelector(".deal-price")?.value || "",
+                OriginalPriceText: card.querySelector(".deal-orig-price")?.value || "",
+                OfferTag: "Incl. All Offers",
+                ImageUrl: card.querySelector(".deal-image-url")?.value || "",
+                ProductUrl: card.querySelector(".deal-url")?.value || "/products?category=mobiles",
+                DisplayOrder: idx + 1,
+                ViewMode: card.querySelector(".deal-view-mode")?.value || "3D",
+                Model3dUrl: card.querySelector(".deal-model-3d-url")?.value || null,
+                ColorHex: card.querySelector(".deal-color-hex")?.value || "#2563eb",
+                Specifications: card.querySelector(".deal-specs")?.value || "",
+                IsUploadingSoon: card.querySelector(".deal-uploading-soon")?.checked ?? false
+            });
+        });
+
+        // Collect EMI Deals
+        document.querySelectorAll("#emiDealsListContainer .emi-item-card").forEach((card, idx) => {
+            payload.UnmissableDealsSection.Deals.push({
+                Id: card.querySelector(".emi-id")?.value || ("emi-" + (idx+1)),
+                Name: card.querySelector(".emi-name")?.value || "",
+                PriceText: card.querySelector(".emi-price")?.value || "",
+                EmiText: card.querySelector(".emi-tag")?.value || "",
+                ImageUrl: card.querySelector(".emi-img-url")?.value || "",
+                ProductUrl: card.querySelector(".emi-product-url")?.value || "/products?category=mobiles",
+                DisplayOrder: idx + 1,
+                ViewMode: "3D"
+            });
+        });
+
+        const token = document.querySelector("input[name='__RequestVerificationToken']").value;
+
+        try {
+            const res = await fetch("/Admin/MobilesHub/Save", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "RequestVerificationToken": token
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                alert("Mobiles Hub settings & 3D configurations saved successfully!");
+                location.reload();
+            } else {
+                alert("Save failed: " + (data.message || "Unknown error"));
+            }
+        } catch (err) {
+            alert("Save failed: " + err.message);
+        }
+    }
+
+    document.getElementById("btnSaveMobilesTop")?.addEventListener("click", saveMobilesHub);
+    document.getElementById("btnSaveMobilesBottom")?.addEventListener("click", saveMobilesHub);
+</script>

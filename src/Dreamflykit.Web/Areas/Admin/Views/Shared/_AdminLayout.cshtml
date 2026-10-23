@@ -161,6 +161,14 @@
                     <span>💊 Health Care Hub</span>
                 </a>
 
+                <a href="/Admin/MobilesHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "MobilesHub" ? "active" : "")" style="color: #38bdf8;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                    </svg>
+                    <span>📱 Mobiles &amp; 3D Hub</span>
+                </a>
+
                 @if (User.IsInRole("SuperAdmin"))
                 {
                     <div style="padding: 0.75rem 1rem 0.25rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.05em;">

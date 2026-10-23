@@ -283,6 +283,9 @@ public static class InfrastructureServiceCollectionExtensions
         // Health Care Category Hub Service
         services.AddScoped<Dreamflykit.Application.HealthHub.Interfaces.IHealthHubService, Dreamflykit.Infrastructure.HealthHub.HealthHubService>();
 
+        // Mobiles Category Hub Service (Flipkart Template & 3D Visualization)
+        services.AddScoped<Dreamflykit.Application.MobilesHub.Interfaces.IMobilesHubService, Dreamflykit.Infrastructure.MobilesHub.MobilesHubService>();
+
         // Central Enterprise Audit Logging
         services.AddScoped<Dreamflykit.Application.Audit.Interfaces.IAuditLogService, Dreamflykit.Infrastructure.Audit.AuditLogService>();
     }
