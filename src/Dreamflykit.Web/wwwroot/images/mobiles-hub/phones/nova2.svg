@@ -1,0 +1,53 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 380" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bodyGrad-nova2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#312e81" />
+    </linearGradient>
+    <linearGradient id="screenGrad-nova2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+    <filter id="shadow-nova2" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#312e81" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Platform glow reflection -->
+  <ellipse cx="160" cy="350" rx="100" ry="14" fill="#312e81" opacity="0.18" />
+
+  <!-- Dual Phone Presentation (Front + Back Angle Showcase) -->
+  <!-- Back angled view -->
+  <g transform="translate(60, 25) rotate(-6, 75, 150)" filter="url(#shadow-nova2)">
+    <rect x="0" y="0" width="140" height="280" rx="28" fill="url(#bodyGrad-nova2)" stroke="#ffffff" stroke-width="2" stroke-opacity="0.4" />
+    <!-- Camera bump island -->
+    <rect x="15" y="15" width="55" height="110" rx="18" fill="#000000" opacity="0.3" />
+    <circle cx="42" cy="42" r="16" fill="#111827" stroke="#ffffff" stroke-width="2" stroke-opacity="0.5" />
+    <circle cx="42" cy="42" r="8" fill="#6366f1" opacity="0.8" />
+    <circle cx="42" cy="85" r="16" fill="#111827" stroke="#ffffff" stroke-width="2" stroke-opacity="0.5" />
+    <circle cx="42" cy="85" r="8" fill="#6366f1" opacity="0.8" />
+    <circle cx="58" cy="112" r="5" fill="#facc15" />
+    <!-- Brand watermark -->
+    <text x="70" y="240" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="900" fill="#ffffff" opacity="0.6" text-anchor="middle" letter-spacing="2">DREAMFLY 5G</text>
+  </g>
+
+  <!-- Front face display view -->
+  <g transform="translate(130, 45)" filter="url(#shadow-nova2)">
+    <rect x="0" y="0" width="140" height="280" rx="28" fill="#1e293b" stroke="#ffffff" stroke-width="2.5" />
+    <!-- Screen wallpaper -->
+    <rect x="4" y="4" width="132" height="272" rx="24" fill="url(#screenGrad-nova2)" />
+    <!-- Bezel / Edge lighting -->
+    <path d="M 12 4 L 128 4" stroke="#ffffff" stroke-width="1" stroke-opacity="0.4" />
+    <!-- Punch hole selfie camera -->
+    <circle cx="70" cy="16" r="4" fill="#000000" stroke="#475569" stroke-width="1" />
+    <!-- Lockscreen UI -->
+    <text x="70" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="28" font-weight="300" fill="#ffffff" text-anchor="middle">10:45</text>
+    <text x="70" y="82" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#cbd5e1" text-anchor="middle">WED, OCT 24 • 5G+</text>
+    <!-- 3D Badge on screen -->
+    <rect x="45" y="210" width="50" height="22" rx="11" fill="#2874f0" />
+    <text x="70" y="225" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="900" fill="#ffffff" text-anchor="middle">3D LIVE</text>
+    <!-- Home swipe bar -->
+    <rect x="45" y="266" width="50" height="3" rx="1.5" fill="#ffffff" opacity="0.7" />
+  </g>
+</svg>

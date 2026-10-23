@@ -1,0 +1,470 @@
+{
+  "HeroBanner": {
+    "IsEnabled": true,
+    "EnableSlideshow": true,
+    "AutoPlay": true,
+    "SlideIntervalSeconds": 4,
+    "TransitionEffect": "slide",
+    "BannerHeight": 440,
+    "ThemeColor": "#2874f0",
+    "ThemeAccentColor": "#fb641b",
+    "Slides": [
+      {
+        "Id": "mob-slide-1",
+        "DiscountBadge": "BIGGEST MOBILE FEST â€¢ UP TO 45% OFF",
+        "Title": "Next-Gen Smartphones,",
+        "TitleHighlight": "Unbeatable Deals.",
+        "Subtitle": "Flagship Snapdragon & Bionic powerhouses, 200MP camera phones, 7200mAh battery monsters with 0% EMI.",
+        "ImageUrl": "/images/mobiles-hub/hero-slide-1.svg",
+        "TargetUrl": "/products?category=mobiles",
+        "ButtonText": "Shop All Mobiles â†’",
+        "DisplayOrder": 1,
+        "IsActive": true,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "mob-slide-2",
+        "DiscountBadge": "NEW LAUNCHES & 5G FLAGSHIPS",
+        "Title": "Experience 3D Showcase,",
+        "TitleHighlight": "Rotate & Inspect Live.",
+        "Subtitle": "Explore smartphones in 360Â° 3D before buying. Inspect titanium frames, camera lenses & futuristic designs.",
+        "ImageUrl": "/images/mobiles-hub/hero-slide-2.svg",
+        "TargetUrl": "/products?category=mobiles",
+        "ButtonText": "Explore 3D Deals â†’",
+        "DisplayOrder": 2,
+        "IsActive": true,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "mob-slide-3",
+        "DiscountBadge": "STUDENT EXCLUSIVE â€¢ EXTRA â‚¹2,500 OFF",
+        "Title": "Best Smartphones for Study,",
+        "TitleHighlight": "Travel & Campus Life.",
+        "Subtitle": "All-day battery, global 5G dual eSIM, crystal-clear display for notes, assignments and international travel.",
+        "ImageUrl": "/images/mobiles-hub/hero-slide-3.svg",
+        "TargetUrl": "/products?category=mobiles",
+        "ButtonText": "Claim Student Offer â†’",
+        "DisplayOrder": 3,
+        "IsActive": true,
+        "IsUploadingSoon": false
+      }
+    ]
+  },
+  "BrandsSection": {
+    "IsEnabled": true,
+    "Title": "Explore Top Smartphone Brands",
+    "ViewAllUrl": "/products?category=mobiles",
+    "Brands": [
+      {
+        "Id": "brand-1",
+        "Name": "iPhone",
+        "Slug": "apple",
+        "IconUrl": "/images/mobiles-hub/brand-stages/apple-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=iPhone",
+        "DisplayOrder": 1,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-2",
+        "Name": "motorola",
+        "Slug": "motorola",
+        "IconUrl": "/images/mobiles-hub/brand-stages/motorola-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=motorola",
+        "DisplayOrder": 2,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-3",
+        "Name": "realme",
+        "Slug": "realme",
+        "IconUrl": "/images/mobiles-hub/brand-stages/realme-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=realme",
+        "DisplayOrder": 3,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-4",
+        "Name": "POCO",
+        "Slug": "poco",
+        "IconUrl": "/images/mobiles-hub/brand-stages/poco-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=POCO",
+        "DisplayOrder": 4,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-5",
+        "Name": "Google",
+        "Slug": "google-pixel",
+        "IconUrl": "/images/mobiles-hub/brand-stages/google-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=Google",
+        "DisplayOrder": 5,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-6",
+        "Name": "HMD",
+        "Slug": "hmd",
+        "IconUrl": "/images/mobiles-hub/brand-stages/hmd-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=HMD",
+        "DisplayOrder": 6,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-7",
+        "Name": "boltt",
+        "Slug": "boltt",
+        "IconUrl": "/images/mobiles-hub/brand-stages/boltt-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=boltt",
+        "DisplayOrder": 7,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-8",
+        "Name": "MIVI",
+        "Slug": "mivi",
+        "IconUrl": "/images/mobiles-hub/brand-stages/mivi-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=MIVI",
+        "DisplayOrder": 8,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-9",
+        "Name": "Tecno",
+        "Slug": "tecno",
+        "IconUrl": "/images/mobiles-hub/brand-stages/tecno-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=Tecno",
+        "DisplayOrder": 9,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-10",
+        "Name": "Samsung",
+        "Slug": "samsung",
+        "IconUrl": "/images/mobiles-hub/brand-stages/samsung-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=Samsung",
+        "DisplayOrder": 10,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-11",
+        "Name": "vivo",
+        "Slug": "vivo",
+        "IconUrl": "/images/mobiles-hub/brand-stages/vivo-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=vivo",
+        "DisplayOrder": 11,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-12",
+        "Name": "OPPO",
+        "Slug": "oppo",
+        "IconUrl": "/images/mobiles-hub/brand-stages/oppo-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=OPPO",
+        "DisplayOrder": 12,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-13",
+        "Name": "Ai+",
+        "Slug": "ai-plus",
+        "IconUrl": "/images/mobiles-hub/brand-stages/ai-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=Ai%2B",
+        "DisplayOrder": 13,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-14",
+        "Name": "Nothing",
+        "Slug": "nothing",
+        "IconUrl": "/images/mobiles-hub/brand-stages/nothing-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=Nothing",
+        "DisplayOrder": 14,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-15",
+        "Name": "Infinix",
+        "Slug": "infinix",
+        "IconUrl": "/images/mobiles-hub/brand-stages/infinix-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=Infinix",
+        "DisplayOrder": 15,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-16",
+        "Name": "LAVA",
+        "Slug": "lava",
+        "IconUrl": "/images/mobiles-hub/brand-stages/lava-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=LAVA",
+        "DisplayOrder": 16,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-17",
+        "Name": "REDMI",
+        "Slug": "redmi",
+        "IconUrl": "/images/mobiles-hub/brand-stages/redmi-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=REDMI",
+        "DisplayOrder": 17,
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-18",
+        "Name": "OnePlus",
+        "Slug": "oneplus",
+        "IconUrl": "/images/mobiles-hub/brand-stages/oneplus-stage.svg",
+        "ProductUrl": "/products?category=mobiles&q=OnePlus",
+        "DisplayOrder": 18,
+        "IsUploadingSoon": false
+      }
+    ]
+  },
+  "HighlightBanner": {
+    "IsEnabled": true,
+    "Title": "Galaxy S25 Ultra 5G",
+    "TitleHighlight": "From â‚¹58,999*",
+    "Subtitle": "Upgrade to Flagship â€¢ Snapdragon 8 Elite â€¢ Galaxy AI Built-in",
+    "ImageUrl": "/images/mobiles-hub/galaxy-s25-banner.svg",
+    "TargetUrl": "/products?category=mobiles&q=Galaxy+S25",
+    "ButtonText": "Buy Now with 0% EMI â†’",
+    "IsUploadingSoon": false
+  },
+  "TopDealsSection": {
+    "IsEnabled": true,
+    "Title": "TOP DEALS",
+    "Subtitle": "Curated Smartphone Steals of the Week",
+    "Tagline": "Lightning Fast 5G â€¢ Mega Batteries â€¢ 100% Student Verified",
+    "ViewAllUrl": "/products?category=mobiles",
+    "Deals": [
+      {
+        "Id": "deal-1",
+        "Name": "Ai+ Nova 2 5G",
+        "PriceText": "From â‚¹11,999*",
+        "OriginalPriceText": "â‚¹16,999",
+        "OfferTag": "Incl. All Offers",
+        "ImageUrl": "/images/mobiles-hub/phones/nova2.svg",
+        "ProductUrl": "/products?category=mobiles&q=Nova+2",
+        "DisplayOrder": 1,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#6366f1",
+        "Specifications": "6.7\" 120Hz AMOLED | 50MP Sony OIS | 5000mAh 67W"
+      },
+      {
+        "Id": "deal-2",
+        "Name": "Phone (4b) Glyph 5G",
+        "PriceText": "Just â‚¹25,999*",
+        "OriginalPriceText": "â‚¹32,999",
+        "OfferTag": "Incl. All Offers",
+        "ImageUrl": "/images/mobiles-hub/phones/phone4b.svg",
+        "ProductUrl": "/products?category=mobiles&q=Phone+4b",
+        "DisplayOrder": 2,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#0284c7",
+        "Specifications": "Transparent Glyph Matrix | Dimensity 8300 | 50MP Dual"
+      },
+      {
+        "Id": "deal-3",
+        "Name": "moto g37 Power 7200mAh",
+        "PriceText": "From â‚¹14,999",
+        "OriginalPriceText": "â‚¹19,999",
+        "OfferTag": "Incl. All Offers",
+        "ImageUrl": "/images/mobiles-hub/phones/motog37.svg",
+        "ProductUrl": "/products?category=mobiles&q=moto+g37",
+        "DisplayOrder": 3,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#1e3a8a",
+        "Specifications": "7200mAh 4-Day Battery | Gorilla Glass | Clean Android 15"
+      },
+      {
+        "Id": "deal-4",
+        "Name": "OPPO K14 Plus 5G",
+        "PriceText": "From â‚¹25,999*",
+        "OriginalPriceText": "â‚¹31,999",
+        "OfferTag": "Incl. All Offers",
+        "ImageUrl": "/images/mobiles-hub/phones/oppok14.svg",
+        "ProductUrl": "/products?category=mobiles&q=OPPO+K14",
+        "DisplayOrder": 4,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#ea580c",
+        "Specifications": "Curved Vision Display | 64MP Portrait Camera | 80W SuperVOOC"
+      },
+      {
+        "Id": "deal-5",
+        "Name": "boltt Ace Pro 5G",
+        "PriceText": "From â‚¹11,999",
+        "OriginalPriceText": "â‚¹17,499",
+        "OfferTag": "Incl. All Offers",
+        "ImageUrl": "/images/mobiles-hub/phones/bolttace.svg",
+        "ProductUrl": "/products?category=mobiles&q=boltt+Ace",
+        "DisplayOrder": 5,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#be185d",
+        "Specifications": "Titanium Finish Frame | 108MP Studio Sensor | Stereo Dolby"
+      },
+      {
+        "Id": "deal-6",
+        "Name": "motorola edge 70 Fusion",
+        "PriceText": "From â‚¹29,749*",
+        "OriginalPriceText": "â‚¹36,999",
+        "OfferTag": "Incl. All Offers",
+        "ImageUrl": "/images/mobiles-hub/phones/edge70.svg",
+        "ProductUrl": "/products?category=mobiles&q=edge+70",
+        "DisplayOrder": 6,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#0d9488",
+        "Specifications": "IP68 Underwater Proof | 144Hz pOLED | Sony LYTIA 700C"
+      },
+      {
+        "Id": "deal-7",
+        "Name": "Vibe 2 5G (4|64GB)",
+        "PriceText": "From â‚¹10,499*",
+        "OriginalPriceText": "â‚¹14,999",
+        "OfferTag": "Incl. All Offers",
+        "ImageUrl": "/images/mobiles-hub/phones/vibe2.svg",
+        "ProductUrl": "/products?category=mobiles&q=Vibe+2",
+        "DisplayOrder": 7,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#db2777",
+        "Specifications": "Pocket Budget King | 5G Ready | Expandable 1TB | 5000mAh"
+      },
+      {
+        "Id": "deal-8",
+        "Name": "POCO X8 Power 5G",
+        "PriceText": "From â‚¹28,999*",
+        "OriginalPriceText": "â‚¹34,999",
+        "OfferTag": "Incl. All Offers",
+        "ImageUrl": "/images/mobiles-hub/phones/pocox8.svg",
+        "ProductUrl": "/products?category=mobiles&q=POCO+X8",
+        "DisplayOrder": 8,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#eab308",
+        "Specifications": "Flagship Gaming Snapdragon 8s | Liquid Cooling | 120W HyperCharge"
+      },
+      {
+        "Id": "deal-9",
+        "Name": "Nothing Phone (4a) 5G",
+        "PriceText": "Just â‚¹31,999*",
+        "OriginalPriceText": "â‚¹37,999",
+        "OfferTag": "Incl. All Offers",
+        "ImageUrl": "/images/mobiles-hub/phones/phone4a.svg",
+        "ProductUrl": "/products?category=mobiles&q=Phone+4a",
+        "DisplayOrder": 9,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#f8fafc",
+        "Specifications": "Minimalist Icon | Transparent White Glass | Nothing OS 3.0"
+      }
+    ]
+  },
+  "ConfusedSection": {
+    "IsEnabled": true,
+    "Title": "CONFUSED?",
+    "Subtitle": "Let us pick your perfect phone in 30 seconds",
+    "ButtonText": "EXPLORE NOW âž”",
+    "TargetUrl": "/products?category=mobiles"
+  },
+  "PromoBanner": {
+    "IsEnabled": true,
+    "Title": "Buy any Smartphone and Get a Chance to Win",
+    "Highlight": "GOOGLE PIXEL WATCH 5",
+    "ButtonText": "Shop Now âž”",
+    "ImageUrl": "/images/mobiles-hub/pixel-watch-promo.svg",
+    "TargetUrl": "/products?category=mobiles",
+    "IsUploadingSoon": false
+  },
+  "UnmissableDealsSection": {
+    "IsEnabled": true,
+    "Title": "UNMISSABLE DEALS",
+    "ViewAllUrl": "/products?category=mobiles",
+    "Deals": [
+      {
+        "Id": "emi-1",
+        "Name": "Google Pixel 11 5G",
+        "PriceText": "â‚¹71,999*",
+        "OriginalPriceText": "â‚¹83,000",
+        "EmiText": "Pay Only â‚¹8,000/m",
+        "ImageUrl": "/images/mobiles-hub/phones/pixel11.svg",
+        "ProductUrl": "/products?category=mobiles&q=Pixel+11",
+        "DisplayOrder": 1,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#94a3b8"
+      },
+      {
+        "Id": "emi-2",
+        "Name": "Galaxy S25 FE",
+        "PriceText": "â‚¹44,999",
+        "OriginalPriceText": "â‚¹58,000",
+        "EmiText": "Pay Only â‚¹7,044/m",
+        "ImageUrl": "/images/mobiles-hub/phones/s25fe.svg",
+        "ProductUrl": "/products?category=mobiles&q=S25+FE",
+        "DisplayOrder": 2,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#334155"
+      },
+      {
+        "Id": "emi-3",
+        "Name": "moto g37 Power 5G",
+        "PriceText": "â‚¹14,999",
+        "OriginalPriceText": "â‚¹24,000",
+        "EmiText": "Pay Only â‚¹2,500/m",
+        "ImageUrl": "/images/mobiles-hub/phones/motog37-blue.svg",
+        "ProductUrl": "/products?category=mobiles&q=moto+g37",
+        "DisplayOrder": 3,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#1d4ed8"
+      },
+      {
+        "Id": "emi-4",
+        "Name": "Mivi One 5G Pro",
+        "PriceText": "â‚¹15,999*",
+        "OriginalPriceText": "â‚¹25,000",
+        "EmiText": "Pay Only â‚¹2,666/m",
+        "ImageUrl": "/images/mobiles-hub/phones/mivi-one.svg",
+        "ProductUrl": "/products?category=mobiles&q=Mivi+One",
+        "DisplayOrder": 4,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#16a34a"
+      },
+      {
+        "Id": "emi-5",
+        "Name": "HMD Vibe 5G Minimal",
+        "PriceText": "â‚¹11,999*",
+        "OriginalPriceText": "â‚¹20,000",
+        "EmiText": "Pay Only â‚¹1,999/m",
+        "ImageUrl": "/images/mobiles-hub/phones/hmd-vibe.svg",
+        "ProductUrl": "/products?category=mobiles&q=HMD+Vibe",
+        "DisplayOrder": 5,
+        "IsUploadingSoon": false,
+        "ViewMode": "3D",
+        "Model3dUrl": null,
+        "ColorHex": "#e2e8f0"
+      }
+    ]
+  },
+  "DefaultViewMode": "3D"
+}
