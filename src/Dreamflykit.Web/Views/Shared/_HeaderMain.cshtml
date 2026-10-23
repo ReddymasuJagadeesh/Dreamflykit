@@ -18,7 +18,8 @@
                       currentReqPath.StartsWith("/SpecialOffer", StringComparison.OrdinalIgnoreCase) ||
                       currentReqPath.StartsWith("/AbroadHub", StringComparison.OrdinalIgnoreCase) ||
                       currentReqPath.StartsWith("/Offer", StringComparison.OrdinalIgnoreCase)) &&
-                      !currentReqPath.Contains("checklist", StringComparison.OrdinalIgnoreCase);
+                      !currentReqPath.Contains("checklist", StringComparison.OrdinalIgnoreCase) &&
+                      !currentReqPath.StartsWith("/study-guide", StringComparison.OrdinalIgnoreCase);
     var isDreamflykit = !isAbroadHub;
 
     var isOffersZone = Context.Request.Query.ContainsKey("minDiscount") ||

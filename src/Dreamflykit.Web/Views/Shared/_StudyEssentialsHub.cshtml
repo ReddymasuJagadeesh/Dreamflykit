@@ -411,8 +411,23 @@
             <div class="dk-sh-abroad-grid">
                 @foreach (var item in s3Detail.Cards)
                 {
+                    var guideLink = !string.IsNullOrWhiteSpace(item.LinkUrl) && item.LinkUrl.StartsWith("/study-guide")
+                        ? item.LinkUrl
+                        : (item.Id switch {
+                            "abroad-study-ready" => "/study-guide/stay-study-ready",
+                            "abroad-connected" => "/study-guide/stay-connected",
+                            "abroad-documents" => "/study-guide/keep-documents-organized",
+                            "abroad-student-life" => "/study-guide/set-up-your-student-life",
+                            _ => item.Title?.ToLowerInvariant() switch {
+                                var t when t != null && t.Contains("ready") => "/study-guide/stay-study-ready",
+                                var t when t != null && t.Contains("connect") => "/study-guide/stay-connected",
+                                var t when t != null && t.Contains("document") => "/study-guide/keep-documents-organized",
+                                _ => "/study-guide/set-up-your-student-life"
+                            }
+                        });
+
                     var hasValidImg = !string.IsNullOrWhiteSpace(item.ImageUrl) && !item.ImageUrl.Contains("placeholder");
-                    <div class="dk-sh-abroad-card">
+                    <div class="dk-sh-abroad-card" onclick="window.location.href='@guideLink'" style="cursor: pointer;">
                         <div class="dk-sh-abroad-img-wrap">
                             @if (hasValidImg)
                             {
@@ -469,7 +484,7 @@
 
                             <p class="dk-sh-abroad-card-desc">@item.Description</p>
 
-                            <a href="@item.LinkUrl" class="dk-sh-abroad-card-link">
+                            <a href="@guideLink" class="dk-sh-abroad-card-link" onclick="event.stopPropagation();">
                                 @(!string.IsNullOrWhiteSpace(item.ButtonText) ? item.ButtonText : "Explore Essentials →")
                             </a>
                         </div>

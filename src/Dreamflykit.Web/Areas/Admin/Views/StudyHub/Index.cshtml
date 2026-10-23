@@ -18,6 +18,7 @@
     var catPage = Model.CategoriesPage ?? new();
     var chkPage = Model.ChecklistPage ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultChecklistPage();
     var abroadProfile = Model.AbroadProfile ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultAbroadProfile();
+    var guidePages = Model.GuidePages != null && Model.GuidePages.Count > 0 ? Model.GuidePages : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultGuidePages();
 
     var heroSlides = hero.Slides != null && hero.Slides.Count > 0
         ? hero.Slides
@@ -86,6 +87,7 @@
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s1')">1. Shop by Category</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s2')">2. Study Kits</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s3')">3. Abroad Essentials</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-study-guides')" style="background: #eff6ff; border-color: #60a5fa; color: #1e40af; font-weight: 800;">📖 Study Guides (4 Pages)</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s4')">4. Hub Checklist Card</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-checklist')" style="background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 800;">📋 Checklist Page (10 Categories)</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s5')">5. Destinations</button>
@@ -1258,6 +1260,320 @@
     </div>
 </div>
 
+<!-- ========================================================
+     TAB STUDY GUIDES (4 DEDICATED PAGES)
+========================================================= -->
+<div class="dk-sh-tab-pane" id="tab-study-guides">
+    <div class="dk-admin-card" style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+            <div>
+                <h3 class="dk-sh-tab-title" style="margin-bottom: 4px;">📖 Study Guides (4 Dedicated Detail Pages)</h3>
+                <p style="margin: 0; color: #64748b; font-size: 0.9rem;">
+                    When users click a card in Section 3 ("What Every Student Needs Before Going Abroad"), it opens that specific guide page.
+                    Super Admin can customize the text, checklists, tips, product recommendations, and upload custom images for each guide.
+                </p>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                @foreach (var g in guidePages)
+                {
+                    <a href="/study-guide/@g.Slug" target="_blank" class="dk-btn" style="background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; font-size: 11.5px; padding: 6px 12px; border-radius: 6px; text-decoration: none;">
+                        👁️ @g.Title
+                    </a>
+                }
+            </div>
+        </div>
+
+        <!-- Sub-tabs for the 4 Guides -->
+        <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; overflow-x: auto;">
+            @for (int g = 0; g < guidePages.Count; g++)
+            {
+                var guide = guidePages[g];
+                <button type="button" class="dk-btn dk-guide-subtab-btn @(g == 0 ? "dk-btn-primary" : "")"
+                        id="guide_subtab_btn_@g"
+                        onclick="switchGuideSubtab(@g)"
+                        style="font-size: 12.5px; padding: 7px 16px; border-radius: 8px; font-weight: 700;">
+                    @(g + 1). @guide.Title
+                </button>
+            }
+        </div>
+
+        @for (int g = 0; g < guidePages.Count; g++)
+        {
+            var guide = guidePages[g];
+            <div id="guide_subpane_@g" class="dk-guide-subpane" style="@(g == 0 ? "display: block;" : "display: none;")">
+                <input type="hidden" id="gd_slug_@g" value="@guide.Slug" />
+                <input type="hidden" id="gd_is_cat_mode_@g" value="@(guide.IsCategoryMode ? "true" : "false")" />
+
+                <!-- Hero Section Config -->
+                <div class="dk-sh-edit-card" style="margin-bottom: 20px; border-left: 4px solid #0284c7;">
+                    <h4 style="margin: 0 0 14px 0; color: #0284c7; font-weight: 800;">1. Guide Hero Header</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 14px; margin-bottom: 12px;">
+                        <div>
+                            <label class="dk-sh-form-label">Badge Text</label>
+                            <input type="text" id="gd_badge_@g" class="dk-admin-form-input" value="@guide.BadgeText" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">Guide Title</label>
+                            <input type="text" id="gd_title_@g" class="dk-admin-form-input" value="@guide.Title" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">Hero Cursive Note</label>
+                            <input type="text" id="gd_cursive_@g" class="dk-admin-form-input" value="@guide.HeroCursiveNote" placeholder="Better Preparation Brighter Future ➹" />
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                        <div>
+                            <label class="dk-sh-form-label">Subtitle / Tagline</label>
+                            <input type="text" id="gd_sub_@g" class="dk-admin-form-input" value="@guide.Subtitle" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">Description</label>
+                            <input type="text" id="gd_desc_@g" class="dk-admin-form-input" value="@guide.Description" />
+                        </div>
+                    </div>
+
+                    <!-- Hero Image Upload -->
+                    <label class="dk-sh-form-label">Hero Image (Super Admin Replaceable)</label>
+                    <div class="dk-sh-img-ctrl-row">
+                        <div class="dk-sh-img-preview-box" style="width: 140px; height: 90px;">
+                            <img id="preview_gd_hero_img_@g" src="@guide.HeroImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="text" id="gd_hero_img_@g" class="dk-admin-form-input" value="@guide.HeroImageUrl" oninput="updateImgPreview('gd_hero_img_@g', 'preview_gd_hero_img_@g')" style="margin-bottom: 8px;" />
+                            <div style="display: flex; gap: 8px;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; padding: 5px 12px;" onclick="triggerUploadFor('gd_hero_img_@g', 'preview_gd_hero_img_@g')">
+                                    📷 Upload Hero Pic
+                                </button>
+                                <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 11px; padding: 5px 10px;" onclick="setTestPic('gd_hero_img_@g', 'preview_gd_hero_img_@g')">
+                                    Set as Test Pic
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trust Pillars -->
+                    <div style="margin-top: 16px;">
+                        <label class="dk-sh-form-label">Trust Pillars (4 Highlights below Hero)</label>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                            @for (int p = 0; p < 4; p++)
+                            {
+                                var tp = (guide.TrustPillars != null && p < guide.TrustPillars.Count) ? guide.TrustPillars[p] : new Dreamflykit.Application.StudyHub.Models.StudyGuideTrustPillarDto();
+                                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px;">
+                                    <input type="hidden" id="gd_tp_icon_@(g)_@(p)" value="@tp.Icon" />
+                                    <input type="text" id="gd_tp_title_@(g)_@(p)" class="dk-admin-form-input" value="@tp.Title" style="font-weight: 700; margin-bottom: 4px; font-size: 12px;" placeholder="Title" />
+                                    <input type="text" id="gd_tp_sub_@(g)_@(p)" class="dk-admin-form-input" value="@tp.Subtitle" style="font-size: 11px;" placeholder="Subtitle" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 1 Config: Prep & Checklist -->
+                <div class="dk-sh-edit-card" style="margin-bottom: 20px; border-left: 4px solid #16a34a;">
+                    <h4 style="margin: 0 0 14px 0; color: #16a34a; font-weight: 800;">2. Step 1: Preparation, Checklist &amp; Pro Tip</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                        <div>
+                            <label class="dk-sh-form-label">Section 1 Main Title</label>
+                            <input type="text" id="gd_s1_title_@g" class="dk-admin-form-input" value="@guide.Section1Title" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">Section 1 Subtitle</label>
+                            <input type="text" id="gd_s1_sub_@g" class="dk-admin-form-input" value="@guide.Section1Subtitle" />
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+                        <!-- Col 1: Prep Guide -->
+                        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px;">
+                            <label class="dk-sh-form-label">Col 1 Title</label>
+                            <input type="text" id="gd_prep_title_@g" class="dk-admin-form-input" value="@guide.PrepGuideTitle" style="margin-bottom: 8px;" />
+                            <label class="dk-sh-form-label">Preparation Guidelines (1 per line)</label>
+                            <textarea id="gd_prep_items_@g" class="dk-admin-form-input" rows="7" style="font-size: 12px;">@string.Join("\n", guide.PrepGuideItems)</textarea>
+                        </div>
+
+                        <!-- Col 2: Checklist Items -->
+                        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px;">
+                            <label class="dk-sh-form-label">Col 2 Title</label>
+                            <input type="text" id="gd_chk_title_@g" class="dk-admin-form-input" value="@guide.ChecklistTitle" style="margin-bottom: 8px;" />
+                            <label class="dk-sh-form-label">Interactive Checklist Items (1 per line)</label>
+                            <textarea id="gd_chk_items_@g" class="dk-admin-form-input" rows="7" style="font-size: 12px;">@string.Join("\n", guide.ChecklistItems)</textarea>
+                        </div>
+
+                        <!-- Col 3: Pro Tip -->
+                        <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 12px;">
+                            <label class="dk-sh-form-label">Col 3 Title</label>
+                            <input type="text" id="gd_protip_title_@g" class="dk-admin-form-input" value="@guide.ProTipTitle" style="margin-bottom: 8px;" />
+                            <label class="dk-sh-form-label">Pro Tip Content</label>
+                            <textarea id="gd_protip_content_@g" class="dk-admin-form-input" rows="7" style="font-size: 12px;">@guide.ProTipContent</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Mistakes to Avoid (Optional) -->
+                <div class="dk-sh-edit-card" style="margin-bottom: 20px; border-left: 4px solid #ef4444;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h4 style="margin: 0; color: #ef4444; font-weight: 800;">3. Step 2: Common Mistakes to Avoid (Alert Cards)</h4>
+                        <label style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12px; color: #991b1b; cursor: pointer;">
+                            <input type="checkbox" id="gd_show_mistakes_@g" @(guide.ShowMistakesSection ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ef4444;" />
+                            <span>Show Mistakes Section</span>
+                        </label>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px;">
+                        <div>
+                            <label class="dk-sh-form-label">Section Title</label>
+                            <input type="text" id="gd_mistakes_title_@g" class="dk-admin-form-input" value="@guide.MistakesSectionTitle" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">Section Subtitle</label>
+                            <input type="text" id="gd_mistakes_sub_@g" class="dk-admin-form-input" value="@guide.MistakesSectionSubtitle" />
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                        @for (int m = 0; m < 4; m++)
+                        {
+                            var mistake = (guide.Mistakes != null && m < guide.Mistakes.Count) ? guide.Mistakes[m] : new Dreamflykit.Application.StudyHub.Models.StudyGuideMistakeCardDto();
+                            <div style="background: #ffffff; border: 1px solid #fee2e2; border-radius: 8px; padding: 10px;">
+                                <label class="dk-sh-form-label" style="color: #991b1b;">Mistake #@(m + 1)</label>
+                                <input type="text" id="gd_m_title_@(g)_@(m)" class="dk-admin-form-input" value="@mistake.Title" style="font-weight: 700; font-size: 12px; margin-bottom: 6px;" placeholder="Mistake Title" />
+                                <input type="text" id="gd_m_desc_@(g)_@(m)" class="dk-admin-form-input" value="@mistake.Description" style="font-size: 11.5px;" placeholder="Advice" />
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Section 3: Recommended Products or Categories -->
+                <div class="dk-sh-edit-card" style="margin-bottom: 20px; border-left: 4px solid #8b5cf6;">
+                    <h4 style="margin: 0 0 14px 0; color: #8b5cf6; font-weight: 800;">4. Recommended Products / Categories Grid</h4>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                        <div>
+                            <label class="dk-sh-form-label">Section Title</label>
+                            <input type="text" id="gd_prods_title_@g" class="dk-admin-form-input" value="@guide.ProductsSectionTitle" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">View All Link Text</label>
+                            <input type="text" id="gd_view_all_text_@g" class="dk-admin-form-input" value="@guide.ViewAllLinkText" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">View All Link URL</label>
+                            <input type="text" id="gd_view_all_url_@g" class="dk-admin-form-input" value="@guide.ViewAllLinkUrl" />
+                        </div>
+                    </div>
+
+                    @if (guide.IsCategoryMode)
+                    {
+                        <!-- Category Cards Edit Grid -->
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                            @for (int c = 0; c < 4; c++)
+                            {
+                                var cat = (guide.Categories != null && c < guide.Categories.Count) ? guide.Categories[c] : new Dreamflykit.Application.StudyHub.Models.StudyGuideCategoryCardDto();
+                                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                                    <input type="hidden" id="gd_cat_id_@(g)_@(c)" value="@cat.Id" />
+                                    <label class="dk-sh-form-label">Category Title</label>
+                                    <input type="text" id="gd_cat_title_@(g)_@(c)" class="dk-admin-form-input" value="@cat.Title" style="font-weight: 700; margin-bottom: 6px; font-size: 12px;" />
+                                    <label class="dk-sh-form-label">Subtitle</label>
+                                    <input type="text" id="gd_cat_sub_@(g)_@(c)" class="dk-admin-form-input" value="@cat.Subtitle" style="margin-bottom: 6px; font-size: 11.5px;" />
+                                    <label class="dk-sh-form-label">Button Text</label>
+                                    <input type="text" id="gd_cat_btn_@(g)_@(c)" class="dk-admin-form-input" value="@cat.ButtonText" style="margin-bottom: 6px; font-size: 11.5px;" />
+                                    <label class="dk-sh-form-label">Image</label>
+                                    <div class="dk-sh-img-ctrl-row" style="margin-top: 4px;">
+                                        <div class="dk-sh-img-preview-box" style="width: 50px; height: 50px;">
+                                            <img id="preview_gd_cat_img_@(g)_@(c)" src="@cat.ImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <input type="text" id="gd_cat_img_@(g)_@(c)" class="dk-admin-form-input" value="@cat.ImageUrl" oninput="updateImgPreview('gd_cat_img_@(g)_@(c)', 'preview_gd_cat_img_@(g)_@(c)')" style="font-size: 11px; margin-bottom: 4px;" />
+                                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px;" onclick="triggerUploadFor('gd_cat_img_@(g)_@(c)', 'preview_gd_cat_img_@(g)_@(c)')">
+                                                📷 Upload
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Products Cards Edit Grid -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                            @for (int pr = 0; pr < 6; pr++)
+                            {
+                                var prod = (guide.Products != null && pr < guide.Products.Count) ? guide.Products[pr] : new Dreamflykit.Application.StudyHub.Models.StudyGuideProductDto();
+                                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                                    <input type="hidden" id="gd_prod_id_@(g)_@(pr)" value="@prod.Id" />
+                                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px; margin-bottom: 6px;">
+                                        <div>
+                                            <label class="dk-sh-form-label">Product Name</label>
+                                            <input type="text" id="gd_prod_title_@(g)_@(pr)" class="dk-admin-form-input" value="@prod.Title" style="font-weight: 700; font-size: 12px;" />
+                                        </div>
+                                        <div>
+                                            <label class="dk-sh-form-label">Price (₹)</label>
+                                            <input type="number" id="gd_prod_price_@(g)_@(pr)" class="dk-admin-form-input" value="@prod.Price" style="font-size: 12px;" />
+                                        </div>
+                                    </div>
+                                    <div style="margin-bottom: 6px;">
+                                        <label class="dk-sh-form-label">Button Text</label>
+                                        <input type="text" id="gd_prod_btn_@(g)_@(pr)" class="dk-admin-form-input" value="@prod.ButtonText" style="font-size: 11.5px;" />
+                                    </div>
+                                    <label class="dk-sh-form-label">Product Image</label>
+                                    <div class="dk-sh-img-ctrl-row" style="margin-top: 4px;">
+                                        <div class="dk-sh-img-preview-box" style="width: 50px; height: 50px;">
+                                            <img id="preview_gd_prod_img_@(g)_@(pr)" src="@prod.ImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <input type="text" id="gd_prod_img_@(g)_@(pr)" class="dk-admin-form-input" value="@prod.ImageUrl" oninput="updateImgPreview('gd_prod_img_@(g)_@(pr)', 'preview_gd_prod_img_@(g)_@(pr)')" style="font-size: 11px; margin-bottom: 4px;" />
+                                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px;" onclick="triggerUploadFor('gd_prod_img_@(g)_@(pr)', 'preview_gd_prod_img_@(g)_@(pr)')">
+                                                📷 Upload
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- Bottom Banner -->
+                <div class="dk-sh-edit-card" style="margin-bottom: 10px; border-left: 4px solid #0369a1;">
+                    <h4 style="margin: 0 0 14px 0; color: #0369a1; font-weight: 800;">5. Bottom Callout Banner</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px;">
+                        <div>
+                            <label class="dk-sh-form-label">Banner Title</label>
+                            <input type="text" id="gd_bb_title_@g" class="dk-admin-form-input" value="@guide.BottomBannerTitle" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">Banner Subtitle</label>
+                            <input type="text" id="gd_bb_sub_@g" class="dk-admin-form-input" value="@guide.BottomBannerSubtitle" />
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px;">
+                        <div>
+                            <label class="dk-sh-form-label">Button Text</label>
+                            <input type="text" id="gd_bb_btn_text_@g" class="dk-admin-form-input" value="@guide.BottomBannerButtonText" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">Button URL</label>
+                            <input type="text" id="gd_bb_btn_url_@g" class="dk-admin-form-input" value="@guide.BottomBannerButtonUrl" />
+                        </div>
+                    </div>
+                    <label class="dk-sh-form-label">Banner Image</label>
+                    <div class="dk-sh-img-ctrl-row">
+                        <div class="dk-sh-img-preview-box" style="width: 110px; height: 70px;">
+                            <img id="preview_gd_bb_img_@g" src="@guide.BottomBannerImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="text" id="gd_bb_img_@g" class="dk-admin-form-input" value="@guide.BottomBannerImageUrl" oninput="updateImgPreview('gd_bb_img_@g', 'preview_gd_bb_img_@g')" style="margin-bottom: 4px; font-size: 11px;" />
+                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; padding: 4px 10px;" onclick="triggerUploadFor('gd_bb_img_@g', 'preview_gd_bb_img_@g')">
+                                📷 Upload Banner Pic
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
 <!-- Floating Bottom Save Bar -->
 <div style="position: sticky; bottom: 20px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); padding: 14px 24px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 100; margin-top: 30px;">
     <div style="font-size: 13.5px; font-weight: 600;">
@@ -1376,6 +1692,15 @@
         event.currentTarget.classList.add("active");
         const target = document.getElementById(tabId);
         if (target) target.classList.add("active");
+    }
+
+    function switchGuideSubtab(idx) {
+        document.querySelectorAll(".dk-guide-subpane").forEach(p => p.style.display = "none");
+        document.querySelectorAll(".dk-guide-subtab-btn").forEach(b => b.classList.remove("dk-btn-primary"));
+        const pane = document.getElementById("guide_subpane_" + idx);
+        const btn = document.getElementById("guide_subtab_btn_" + idx);
+        if (pane) pane.style.display = "block";
+        if (btn) btn.classList.add("dk-btn-primary");
     }
 
     function updateImgPreview(inputId, imgId) {
@@ -1910,6 +2235,127 @@
                 ImageUrl: document.getElementById("abroad_srv_img_" + i)?.value || "",
                 SubService: subService,
                 Bullets: bullets
+            });
+        }
+
+        // 4 Study Guides Detail Pages
+        payload.GuidePages = [];
+        for (let g = 0; g < 4; g++) {
+            const slugEl = document.getElementById("gd_slug_" + g);
+            if (!slugEl) continue;
+            const slug = slugEl.value;
+            const title = document.getElementById("gd_title_" + g)?.value || "";
+            const badge = document.getElementById("gd_badge_" + g)?.value || "GUIDE";
+            const sub = document.getElementById("gd_sub_" + g)?.value || "";
+            const desc = document.getElementById("gd_desc_" + g)?.value || "";
+            const heroImg = document.getElementById("gd_hero_img_" + g)?.value || "";
+            const cursive = document.getElementById("gd_cursive_" + g)?.value || "";
+            const sec1Title = document.getElementById("gd_s1_title_" + g)?.value || "";
+            const sec1Sub = document.getElementById("gd_s1_sub_" + g)?.value || "";
+            const prepTitle = document.getElementById("gd_prep_title_" + g)?.value || "";
+            const prepRaw = document.getElementById("gd_prep_items_" + g)?.value || "";
+            const prepItems = prepRaw.split("\n").map(s => s.trim()).filter(s => s.length > 0);
+            const chkTitle = document.getElementById("gd_chk_title_" + g)?.value || "";
+            const chkRaw = document.getElementById("gd_chk_items_" + g)?.value || "";
+            const chkItems = chkRaw.split("\n").map(s => s.trim()).filter(s => s.length > 0);
+            const proTipTitle = document.getElementById("gd_protip_title_" + g)?.value || "Pro Tip";
+            const proTipContent = document.getElementById("gd_protip_content_" + g)?.value || "";
+            const showMistakes = document.getElementById("gd_show_mistakes_" + g)?.checked || false;
+            const mistakesTitle = document.getElementById("gd_mistakes_title_" + g)?.value || "";
+            const mistakesSub = document.getElementById("gd_mistakes_sub_" + g)?.value || "";
+
+            // Trust Pillars
+            const pillars = [];
+            for (let p = 0; p < 4; p++) {
+                const pTitle = document.getElementById("gd_tp_title_" + g + "_" + p)?.value;
+                if (pTitle) {
+                    pillars.push({
+                        Icon: document.getElementById("gd_tp_icon_" + g + "_" + p)?.value || "academic",
+                        Title: pTitle,
+                        Subtitle: document.getElementById("gd_tp_sub_" + g + "_" + p)?.value || ""
+                    });
+                }
+            }
+
+            // Mistakes
+            const mistakes = [];
+            for (let m = 0; m < 4; m++) {
+                const mTitle = document.getElementById("gd_m_title_" + g + "_" + m)?.value;
+                if (mTitle) {
+                    mistakes.push({
+                        Title: mTitle,
+                        Description: document.getElementById("gd_m_desc_" + g + "_" + m)?.value || ""
+                    });
+                }
+            }
+
+            // Products
+            const products = [];
+            for (let pr = 0; pr < 10; pr++) {
+                const prTitle = document.getElementById("gd_prod_title_" + g + "_" + pr)?.value;
+                if (prTitle) {
+                    products.push({
+                        Id: document.getElementById("gd_prod_id_" + g + "_" + pr)?.value || ("prod-" + (pr + 1)),
+                        Title: prTitle,
+                        Price: parseFloat(document.getElementById("gd_prod_price_" + g + "_" + pr)?.value || "0"),
+                        ImageUrl: document.getElementById("gd_prod_img_" + g + "_" + pr)?.value || "",
+                        Rating: 5.0,
+                        ButtonText: document.getElementById("gd_prod_btn_" + g + "_" + pr)?.value || "Add to Cart",
+                        TargetUrl: "/cart"
+                    });
+                }
+            }
+
+            // Categories
+            const categories = [];
+            for (let c = 0; c < 6; c++) {
+                const cTitle = document.getElementById("gd_cat_title_" + g + "_" + c)?.value;
+                if (cTitle) {
+                    categories.push({
+                        Id: document.getElementById("gd_cat_id_" + g + "_" + c)?.value || ("cat-" + (c + 1)),
+                        Title: cTitle,
+                        Subtitle: document.getElementById("gd_cat_sub_" + g + "_" + c)?.value || "",
+                        ImageUrl: document.getElementById("gd_cat_img_" + g + "_" + c)?.value || "",
+                        ButtonText: document.getElementById("gd_cat_btn_" + g + "_" + c)?.value || "View Items →",
+                        TargetUrl: "/category/study-essentials"
+                    });
+                }
+            }
+
+            const isCatMode = document.getElementById("gd_is_cat_mode_" + g)?.value === "true";
+
+            payload.GuidePages.push({
+                Slug: slug,
+                BadgeText: badge,
+                Title: title,
+                Subtitle: sub,
+                Description: desc,
+                HeroImageUrl: heroImg,
+                HeroCursiveNote: cursive,
+                TrustPillars: pillars,
+                Section1Title: sec1Title,
+                Section1Subtitle: sec1Sub,
+                PrepGuideTitle: prepTitle,
+                PrepGuideItems: prepItems,
+                ChecklistTitle: chkTitle,
+                ChecklistItems: chkItems,
+                ProTipTitle: proTipTitle,
+                ProTipContent: proTipContent,
+                ShowMistakesSection: showMistakes,
+                MistakesSectionTitle: mistakesTitle,
+                MistakesSectionSubtitle: mistakesSub,
+                Mistakes: mistakes,
+                IsCategoryMode: isCatMode,
+                ProductsSectionTitle: document.getElementById("gd_prods_title_" + g)?.value || "",
+                ViewAllLinkText: document.getElementById("gd_view_all_text_" + g)?.value || "",
+                ViewAllLinkUrl: document.getElementById("gd_view_all_url_" + g)?.value || "",
+                Products: products,
+                Categories: categories,
+                BottomBannerTitle: document.getElementById("gd_bb_title_" + g)?.value || "",
+                BottomBannerSubtitle: document.getElementById("gd_bb_sub_" + g)?.value || "",
+                BottomBannerButtonText: document.getElementById("gd_bb_btn_text_" + g)?.value || "",
+                BottomBannerButtonUrl: document.getElementById("gd_bb_btn_url_" + g)?.value || "",
+                BottomBannerImageUrl: document.getElementById("gd_bb_img_" + g)?.value || ""
             });
         }
 

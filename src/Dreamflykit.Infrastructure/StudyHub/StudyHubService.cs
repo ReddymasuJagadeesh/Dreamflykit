@@ -120,6 +120,23 @@ public sealed class StudyHubService : IStudyHubService
                             dto.ChecklistPage = def.ChecklistPage;
                         if (dto.AbroadProfile == null || dto.AbroadProfile.Services.Count == 0)
                             dto.AbroadProfile = def.AbroadProfile;
+                        if (dto.GuidePages == null || dto.GuidePages.Count == 0)
+                            dto.GuidePages = def.GuidePages;
+
+                        if (dto.Section3Detail?.Cards != null)
+                        {
+                            foreach (var card in dto.Section3Detail.Cards)
+                            {
+                                if (card.Id == "abroad-study-ready" && (string.IsNullOrWhiteSpace(card.LinkUrl) || card.LinkUrl.Contains("category")))
+                                    card.LinkUrl = "/study-guide/stay-study-ready";
+                                else if (card.Id == "abroad-connected" && (string.IsNullOrWhiteSpace(card.LinkUrl) || card.LinkUrl.Contains("category")))
+                                    card.LinkUrl = "/study-guide/stay-connected";
+                                else if (card.Id == "abroad-documents" && (string.IsNullOrWhiteSpace(card.LinkUrl) || card.LinkUrl.Contains("category")))
+                                    card.LinkUrl = "/study-guide/keep-documents-organized";
+                                else if (card.Id == "abroad-student-life" && (string.IsNullOrWhiteSpace(card.LinkUrl) || card.LinkUrl.Contains("category")))
+                                    card.LinkUrl = "/study-guide/set-up-your-student-life";
+                            }
+                        }
 
                         _cache.Set(CacheKey, dto, TimeSpan.FromHours(4));
                         return dto;

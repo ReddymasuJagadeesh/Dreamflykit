@@ -14,15 +14,21 @@ public sealed class ProductsController : Controller
     private readonly IProductService _productService;
     private readonly ICategoryService _categoryService;
     private readonly IStudyHubService _studyHubService;
+    private readonly Dreamflykit.Application.FashionHub.Interfaces.IFashionHubService _fashionHubService;
+    private readonly Dreamflykit.Application.HealthHub.Interfaces.IHealthHubService _healthHubService;
 
     public ProductsController(
         IProductService productService,
         ICategoryService categoryService,
-        IStudyHubService studyHubService)
+        IStudyHubService studyHubService,
+        Dreamflykit.Application.FashionHub.Interfaces.IFashionHubService fashionHubService,
+        Dreamflykit.Application.HealthHub.Interfaces.IHealthHubService healthHubService)
     {
         _productService = productService;
         _categoryService = categoryService;
         _studyHubService = studyHubService;
+        _fashionHubService = fashionHubService;
+        _healthHubService = healthHubService;
     }
 
     [HttpGet("/products")]
@@ -55,6 +61,12 @@ public sealed class ProductsController : Controller
 
         var isStudyCategory = string.Equals(effectiveCategory, "study-essentials", StringComparison.OrdinalIgnoreCase) ||
                               string.Equals(effectiveCategory, "study_essentials", StringComparison.OrdinalIgnoreCase);
+
+        var isFashionCategory = string.Equals(effectiveCategory, "fashion", StringComparison.OrdinalIgnoreCase);
+
+        var isHealthCategory = string.Equals(effectiveCategory, "health-care", StringComparison.OrdinalIgnoreCase) ||
+                               string.Equals(effectiveCategory, "healthcare", StringComparison.OrdinalIgnoreCase) ||
+                               string.Equals(effectiveCategory, "health_care", StringComparison.OrdinalIgnoreCase);
 
         CategoryDetails? catDetails = null;
         string? currentSubcategoryName = null;
@@ -144,9 +156,15 @@ public sealed class ProductsController : Controller
             Discounts = result.Discounts,
             ViewMode = !string.IsNullOrWhiteSpace(view)
                 ? view.Trim().ToLowerInvariant()
-                : (isStudyCategory && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"),
+                : ((isStudyCategory || isFashionCategory || isHealthCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"),
             StudyHub = isStudyCategory
                         ? await _studyHubService.GetConfigAsync(cancellationToken)
+                        : null,
+            FashionHub = isFashionCategory
+                        ? await _fashionHubService.GetConfigAsync(cancellationToken)
+                        : null,
+            HealthHub = isHealthCategory
+                        ? await _healthHubService.GetConfigAsync(cancellationToken)
                         : null
         };
 

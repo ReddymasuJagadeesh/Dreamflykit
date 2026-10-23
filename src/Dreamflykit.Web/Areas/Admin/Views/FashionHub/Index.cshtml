@@ -1,0 +1,1584 @@
+@model Dreamflykit.Application.FashionHub.Models.FashionHubDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Fashion Category Hub Management";
+    var hub = Model ?? Dreamflykit.Application.FashionHub.Models.FashionHubDto.CreateDefault();
+    var hero = hub.HeroBanner ?? new();
+    var catSection = hub.CategoriesSection ?? new();
+    var picksSection = hub.TopPicksSection ?? new();
+    var trustSection = hub.TrustBadgesSection ?? new();
+    var bottomBanner = hub.BottomBanner ?? new();
+    var categories = catSection.Categories ?? new();
+    var products = picksSection.Products ?? new();
+}
+
+<div class="dk-admin-hub-wrapper">
+
+    <!-- Top Toolbar -->
+    <div class="dk-admin-hub-header">
+        <div class="dk-admin-hub-title-box">
+            <span class="dk-admin-hub-tag">Category Experience</span>
+            <h1 class="dk-admin-hub-title">👗 Fashion Category Landing Page</h1>
+            <p class="dk-admin-hub-subtitle">
+                Manage hero banner, subcategories, top picks, trust propositions, and images. All changes update the live Fashion Category page.
+            </p>
+        </div>
+        <div class="dk-admin-hub-actions">
+            <a href="/category/fashion" target="_blank" class="dk-btn-view-live" title="Preview live page in new tab">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                View Live Fashion Page
+            </a>
+            <button type="button" class="dk-btn-save-hub" id="btnSaveHubHeader">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save All Changes
+            </button>
+        </div>
+    </div>
+
+    <!-- Alert Banners -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="dk-alert dk-alert-success">
+            <span>✓</span> @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="dk-alert dk-alert-error">
+            <span>⚠</span> @TempData["ErrorMessage"]
+        </div>
+    }
+    <div id="ajaxAlertBox" style="display: none;" class="dk-alert"></div>
+
+    <!-- Main Form Tabs -->
+    <div class="dk-hub-tabs-bar">
+        <button type="button" class="dk-tab-btn active" data-tab="tab-hero">
+            🖼️ Hero Banner
+        </button>
+        <button type="button" class="dk-tab-btn" data-tab="tab-categories">
+            🏷️ Shop by Category (@(hub.CategoriesSection?.Categories?.Count ?? 0))
+        </button>
+        <button type="button" class="dk-tab-btn" data-tab="tab-toppicks">
+            ⭐ Top Picks Products (@(hub.TopPicksSection?.Products?.Count ?? 0))
+        </button>
+        <button type="button" class="dk-tab-btn" data-tab="tab-trust">
+            🛡️ Trust Propositions
+        </button>
+        <button type="button" class="dk-tab-btn" data-tab="tab-bottom">
+            🌐 Bottom Destination Bar
+        </button>
+    </div>
+
+    <form id="fashionHubForm" method="post" action="/Admin/FashionHub/Save">
+        @Html.AntiForgeryToken()
+
+        <!-- ========================================================
+             TAB 1: HERO BANNER
+        ========================================================= -->
+        <div class="dk-tab-pane active" id="tab-hero">
+            <div class="dk-card">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">Hero Banner Configuration</h2>
+                        <p class="dk-card-desc">Customize the full-width high brightness hero section, headlines, badges, and background visual.</p>
+                    </div>
+                    <label class="dk-switch">
+                        <input type="checkbox" id="heroIsEnabled" @(hub.HeroBanner.IsEnabled ? "checked" : "") />
+                        <span class="dk-slider"></span>
+                        <span class="dk-switch-label">Section Enabled</span>
+                    </label>
+                </div>
+
+                <div class="dk-card-body">
+                    <div class="dk-form-grid-2">
+                        <div class="dk-form-group">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <label class="dk-label" for="heroTitle" style="margin: 0;">Headline First Part</label>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 11.5px; color: #64748b; font-weight: 600;">Color:</span>
+                                    <input type="color" id="heroTitleColor" value="@(!string.IsNullOrWhiteSpace(hero.TitleColor) ? hero.TitleColor : "#063f91")" style="width: 32px; height: 26px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; padding: 0;" />
+                                </div>
+                            </div>
+                            <input type="text" id="heroTitle" class="dk-input" value="@hero.Title" placeholder="e.g. Fashion for" />
+                            <small class="dk-hint">First portion of the large headline</small>
+                        </div>
+                        <div class="dk-form-group">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <label class="dk-label" for="heroTitleHighlight" style="margin: 0;">Headline Highlighted Part</label>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 11.5px; color: #64748b; font-weight: 600;">Color:</span>
+                                    <input type="color" id="heroTitleHighlightColor" value="@(!string.IsNullOrWhiteSpace(hero.TitleHighlightColor) ? hero.TitleHighlightColor : "#ea580c")" style="width: 32px; height: 26px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; padding: 0;" />
+                                </div>
+                            </div>
+                            <input type="text" id="heroTitleHighlight" class="dk-input" value="@hero.TitleHighlight" placeholder="e.g. Every Journey" />
+                            <small class="dk-hint">Highlighted sunset orange or custom brand color</small>
+                        </div>
+                    </div>
+
+                    <div class="dk-form-grid-2">
+                        <div class="dk-form-group">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <label class="dk-label" for="heroSubtitle" style="margin: 0;">Subtitle &amp; Description</label>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="font-size: 11.5px; color: #64748b; font-weight: 600;">Text Color:</span>
+                                    <input type="color" id="heroSubtitleColor" value="@(!string.IsNullOrWhiteSpace(hero.SubtitleColor) ? hero.SubtitleColor : "#334155")" style="width: 32px; height: 26px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; padding: 0;" />
+                                </div>
+                            </div>
+                            <textarea id="heroSubtitle" class="dk-textarea" rows="2">@hero.Subtitle</textarea>
+                        </div>
+
+                        <div class="dk-form-group">
+                            <label class="dk-label">Banner Dimensions &amp; Badge Colors</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                                <div>
+                                    <span style="font-size: 11.5px; color: #64748b; font-weight: 600; display: block; margin-bottom: 4px;">Min Height (px):</span>
+                                    <input type="number" id="heroBannerHeight" class="dk-input" value="@(hero.BannerHeight > 0 ? hero.BannerHeight : 440)" placeholder="440" />
+                                </div>
+                                <div>
+                                    <span style="font-size: 11.5px; color: #64748b; font-weight: 600; display: block; margin-bottom: 4px;">Badge Bg:</span>
+                                    <input type="text" id="heroBadgeBgColor" class="dk-input" value="@(!string.IsNullOrWhiteSpace(hero.BadgeBgColor) ? hero.BadgeBgColor : "rgba(255, 255, 255, 0.94)")" placeholder="rgba(255,255,255,0.94)" />
+                                </div>
+                                <div>
+                                    <span style="font-size: 11.5px; color: #64748b; font-weight: 600; display: block; margin-bottom: 4px;">Badge Text:</span>
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <input type="color" id="heroBadgeTextColor" value="@(!string.IsNullOrWhiteSpace(hero.BadgeTextColor) ? hero.BadgeTextColor : "#0f172a")" style="width: 34px; height: 38px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; padding: 0;" />
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="dk-hint">Text &amp; badge pills float seamlessly on top of full-width banner image</small>
+                        </div>
+                    </div>
+
+                    <!-- Banner Image & Uploading Soon Status -->
+                    <div class="dk-media-uploader-box">
+                        <h3 class="dk-subhead">Hero Visual &amp; Media</h3>
+                        <div class="dk-uploader-row">
+                            <div class="dk-preview-box">
+                                <img id="heroImagePreview" 
+                                     src="@(!string.IsNullOrWhiteSpace(hub.HeroBanner.ImageUrl) ? hub.HeroBanner.ImageUrl : "/images/fashion-hub/uploading-soon-placeholder.svg")" 
+                                     alt="Hero Preview" 
+                                     class="dk-preview-hero-img" 
+                                     onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                            </div>
+
+                            <div class="dk-uploader-controls">
+                                <div class="dk-form-group">
+                                    <label class="dk-label">Image Source URL</label>
+                                    <input type="text" id="heroImageUrl" class="dk-input" value="@hub.HeroBanner.ImageUrl" placeholder="/images/fashion-hub/fashion_hero_banner.jpg" />
+                                </div>
+
+                                <div class="dk-upload-btn-group">
+                                    <input type="file" id="heroFileInput" class="dk-file-hidden" accept="image/*" />
+                                    <button type="button" class="dk-btn-upload" onclick="document.getElementById('heroFileInput').click();">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                        Upload New Banner Image
+                                    </button>
+                                    <button type="button" class="dk-btn-clear" onclick="setHeroDefaultImage();">
+                                        Use Default Template Image
+                                    </button>
+                                </div>
+
+                                <div class="dk-toggle-uploading-soon">
+                                    <label class="dk-checkbox-label">
+                                        <input type="checkbox" id="heroIsUploadingSoon" @(hub.HeroBanner.IsUploadingSoon ? "checked" : "") />
+                                        <span>Show <strong>"Uploading Soon"</strong> placeholder on banner instead of image</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hero Badges -->
+                    <div class="dk-section-subpart">
+                        <div class="dk-subpart-header">
+                            <h3 class="dk-subhead">Hero Pill Badges (4 Displayed)</h3>
+                        </div>
+                        <div class="dk-badges-editor-grid" id="heroBadgesContainer">
+                            @for (int b = 0; b < hub.HeroBanner.Badges.Count; b++)
+                            {
+                                var badge = hub.HeroBanner.Badges[b];
+                                <div class="dk-badge-edit-card" data-badge-id="@badge.Id">
+                                    <div class="dk-badge-edit-header">
+                                        <span class="dk-badge-num">Badge #@(b + 1)</span>
+                                        <label class="dk-sm-switch">
+                                            <input type="checkbox" class="badge-active" @(badge.IsActive ? "checked" : "") />
+                                            <span>Active</span>
+                                        </label>
+                                    </div>
+                                    <div class="dk-form-group">
+                                        <label class="dk-xs-label">Label</label>
+                                        <input type="text" class="dk-input badge-label" value="@badge.Label" />
+                                    </div>
+                                    <div class="dk-form-group">
+                                        <label class="dk-xs-label">Icon</label>
+                                        <select class="dk-select badge-icon">
+                                            <option value="shirt" selected="@(badge.Icon == "shirt")">Shirt / Clothing</option>
+                                            <option value="shield" selected="@(badge.Icon == "shield")">Shield / Quality</option>
+                                            <option value="tag" selected="@(badge.Icon == "tag")">Price Tag</option>
+                                            <option value="users" selected="@(badge.Icon == "users")">Users / Loved</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Right Card ("Look Good. Travel Smart.") -->
+                    <div class="dk-section-subpart">
+                        <div class="dk-subpart-header">
+                            <h3 class="dk-subhead">Right Callout Box ("Look Good. Travel Smart.")</h3>
+                        </div>
+                        <div class="dk-form-grid-2">
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="rightCardTitle">Box Title</label>
+                                <input type="text" id="rightCardTitle" class="dk-input" value="@hub.HeroBanner.RightCard.Title" placeholder="Look Good." />
+                            </div>
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="rightCardTitleHighlight">Box Title Highlight</label>
+                                <input type="text" id="rightCardTitleHighlight" class="dk-input" value="@hub.HeroBanner.RightCard.TitleHighlight" placeholder="Travel Smart." />
+                            </div>
+                        </div>
+
+                        <div class="dk-features-editor-grid" id="rightFeaturesContainer">
+                            @for (int f = 0; f < hub.HeroBanner.RightCard.Features.Count; f++)
+                            {
+                                var feat = hub.HeroBanner.RightCard.Features[f];
+                                <div class="dk-feat-edit-card" data-feat-id="@feat.Id">
+                                    <div class="dk-badge-edit-header">
+                                        <span class="dk-badge-num">Feature #@(f + 1)</span>
+                                        <label class="dk-sm-switch">
+                                            <input type="checkbox" class="feat-active" @(feat.IsActive ? "checked" : "") />
+                                            <span>Active</span>
+                                        </label>
+                                    </div>
+                                    <div class="dk-form-group">
+                                        <label class="dk-xs-label">Title</label>
+                                        <input type="text" class="dk-input feat-title" value="@feat.Title" />
+                                    </div>
+                                    <div class="dk-form-group">
+                                        <label class="dk-xs-label">Icon</label>
+                                        <select class="dk-select feat-icon">
+                                            <option value="luggage" selected="@(feat.Icon == "luggage")">🧳 Luggage / Travel</option>
+                                            <option value="feather" selected="@(feat.Icon == "feather")">🪶 Feather / Lightweight</option>
+                                            <option value="grid" selected="@(feat.Icon == "grid")">▦ Grid / All-Season</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB 2: SHOP BY CATEGORY
+        ========================================================= -->
+        <div class="dk-tab-pane" id="tab-categories">
+            <div class="dk-card">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">Shop by Category Section</h2>
+                        <p class="dk-card-desc">Manage subcategories shown in the visual cards row. Admin can upload custom images or mark items as "Uploading Soon".</p>
+                    </div>
+                    <label class="dk-switch">
+                        <input type="checkbox" id="categoriesIsEnabled" @(catSection.IsEnabled ? "checked" : "") />
+                        <span class="dk-slider"></span>
+                        <span class="dk-switch-label">Section Enabled</span>
+                    </label>
+                </div>
+
+                <div class="dk-card-body">
+                    <div class="dk-form-grid-2">
+                        <div class="dk-form-group">
+                            <label class="dk-label" for="categoriesTitle">Section Title</label>
+                            <input type="text" id="categoriesTitle" class="dk-input" value="@catSection.Title" placeholder="Shop by Category" />
+                        </div>
+                        <div class="dk-form-group">
+                            <label class="dk-label" for="categoriesViewAllUrl">"View All" Link Target</label>
+                            <input type="text" id="categoriesViewAllUrl" class="dk-input" value="@catSection.ViewAllUrl" placeholder="/products?category=fashion" />
+                        </div>
+                    </div>
+
+                    <div class="dk-items-table-header">
+                        <h3 class="dk-subhead">Category Items</h3>
+                        <button type="button" class="dk-btn-add-item" onclick="addCategoryRow();">
+                            + Add New Category
+                        </button>
+                    </div>
+
+                    <div class="dk-category-rows-container" id="categoryRowsContainer">
+                        @for (int c = 0; c < categories.Count; c++)
+                        {
+                            var cat = categories[c];
+                            <div class="dk-item-row" data-id="@cat.Id">
+                                <div class="dk-item-thumb-box">
+                                    <img src="@(!string.IsNullOrWhiteSpace(cat.ImageUrl) ? cat.ImageUrl : "/images/fashion-hub/uploading-soon-placeholder.svg")" 
+                                         alt="@cat.Name" 
+                                         class="dk-item-thumb cat-thumb-preview" 
+                                         onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                                    <input type="file" class="dk-file-hidden cat-file-input" accept="image/*" onchange="uploadRowImage(this, 'category');" />
+                                    <button type="button" class="dk-btn-thumb-upload" onclick="this.previousElementSibling.click();" title="Upload Image">
+                                        📷
+                                    </button>
+                                </div>
+
+                                <div class="dk-item-fields-grid">
+                                    <div class="dk-form-group">
+                                        <label class="dk-xs-label">Category Name</label>
+                                        <input type="text" class="dk-input cat-name" value="@cat.Name" placeholder="e.g. Men Clothing" />
+                                    </div>
+
+                                    <div class="dk-form-group">
+                                        <label class="dk-xs-label">Slug / Path</label>
+                                        <input type="text" class="dk-input cat-slug" value="@cat.Slug" placeholder="e.g. men-clothing" />
+                                    </div>
+
+                                    <div class="dk-form-group">
+                                        <label class="dk-xs-label">Image URL</label>
+                                        <input type="text" class="dk-input cat-image-url" value="@cat.ImageUrl" placeholder="/images/fashion-hub/..." />
+                                    </div>
+
+                                    <div class="dk-form-group dk-form-group-sm">
+                                        <label class="dk-xs-label">Order</label>
+                                        <input type="number" class="dk-input cat-order" value="@cat.DisplayOrder" style="width: 70px;" />
+                                    </div>
+
+                                    <div class="dk-item-toggles">
+                                        <label class="dk-checkbox-label" title="Show uploading soon indicator on customer page">
+                                            <input type="checkbox" class="cat-soon" @(cat.IsUploadingSoon ? "checked" : "") />
+                                            <span>⏳ Uploading Soon</span>
+                                        </label>
+
+                                        <label class="dk-checkbox-label">
+                                            <input type="checkbox" class="cat-active" @(cat.IsActive ? "checked" : "") />
+                                            <span>Active</span>
+                                        </label>
+                                    </div>
+
+                                    <button type="button" class="dk-btn-remove-row" onclick="removeRow(this);" title="Delete category">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB 3: TOP PICKS FOR MEN & WOMEN
+        ========================================================= -->
+        <div class="dk-tab-pane" id="tab-toppicks">
+            <div class="dk-card">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">Top Picks for Men &amp; Women</h2>
+                        <p class="dk-card-desc">Curate showcase products in the horizontal carousel. Add pricing, star ratings, and upload product photos or mark as "Uploading Soon".</p>
+                    </div>
+                    <label class="dk-switch">
+                        <input type="checkbox" id="picksIsEnabled" @(picksSection.IsEnabled ? "checked" : "") />
+                        <span class="dk-slider"></span>
+                        <span class="dk-switch-label">Section Enabled</span>
+                    </label>
+                </div>
+
+                <div class="dk-card-body">
+                    <div class="dk-form-grid-2">
+                        <div class="dk-form-group">
+                            <label class="dk-label" for="picksTitle">Section Title</label>
+                            <input type="text" id="picksTitle" class="dk-input" value="@picksSection.Title" placeholder="Top Picks for Men & Women" />
+                        </div>
+                        <div class="dk-form-group">
+                            <label class="dk-label" for="picksViewAllUrl">"View All" Link Target</label>
+                            <input type="text" id="picksViewAllUrl" class="dk-input" value="@picksSection.ViewAllUrl" placeholder="/products?category=fashion" />
+                        </div>
+                    </div>
+
+                    <div class="dk-items-table-header">
+                        <h3 class="dk-subhead">Top Pick Products</h3>
+                        <button type="button" class="dk-btn-add-item" onclick="addProductRow();">
+                            + Add New Product
+                        </button>
+                    </div>
+
+                    <div class="dk-product-rows-container" id="productRowsContainer">
+                        @for (int p = 0; p < products.Count; p++)
+                        {
+                            var prod = products[p];
+                            <div class="dk-item-row" data-id="@prod.Id">
+                                <div class="dk-item-thumb-box">
+                                    <img src="@(!string.IsNullOrWhiteSpace(prod.ImageUrl) ? prod.ImageUrl : "/images/fashion-hub/uploading-soon-placeholder.svg")" 
+                                         alt="@prod.Name" 
+                                         class="dk-item-thumb prod-thumb-preview" 
+                                         onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                                    <input type="file" class="dk-file-hidden prod-file-input" accept="image/*" onchange="uploadRowImage(this, 'product');" />
+                                    <button type="button" class="dk-btn-thumb-upload" onclick="this.previousElementSibling.click();" title="Upload Image">
+                                        📷
+                                    </button>
+                                </div>
+
+                                <div class="dk-item-fields-grid-prod">
+                                    <div class="dk-form-group">
+                                        <label class="dk-xs-label">Product Name</label>
+                                        <input type="text" class="dk-input prod-name" value="@prod.Name" placeholder="e.g. Men's Hoodie" />
+                                    </div>
+
+                                    <div class="dk-form-group">
+                                        <label class="dk-xs-label">Price (₹)</label>
+                                        <input type="number" class="dk-input prod-price" value="@prod.Price" placeholder="999" />
+                                    </div>
+
+                                    <div class="dk-form-group">
+                                        <label class="dk-xs-label">Original Price (₹)</label>
+                                        <input type="number" class="dk-input prod-orig-price" value="@prod.OriginalPrice" placeholder="1999" />
+                                    </div>
+
+                                    <div class="dk-form-group dk-form-group-sm">
+                                        <label class="dk-xs-label">Rating</label>
+                                        <input type="number" step="0.1" class="dk-input prod-rating" value="@prod.Rating" placeholder="4.8" style="width: 70px;" />
+                                    </div>
+
+                                    <div class="dk-form-group dk-form-group-sm">
+                                        <label class="dk-xs-label">Reviews</label>
+                                        <input type="number" class="dk-input prod-reviews" value="@prod.ReviewsCount" placeholder="128" style="width: 70px;" />
+                                    </div>
+
+                                    <div class="dk-form-group">
+                                        <label class="dk-xs-label">Target Link</label>
+                                        <input type="text" class="dk-input prod-url" value="@prod.ProductUrl" placeholder="/products?category=fashion" />
+                                    </div>
+
+                                    <input type="hidden" class="prod-image-url" value="@prod.ImageUrl" />
+
+                                    <div class="dk-item-toggles">
+                                        <label class="dk-checkbox-label" title="Show uploading soon placeholder on customer card">
+                                            <input type="checkbox" class="prod-soon" @(prod.IsUploadingSoon ? "checked" : "") />
+                                            <span>⏳ Uploading Soon</span>
+                                        </label>
+
+                                        <label class="dk-checkbox-label">
+                                            <input type="checkbox" class="prod-active" @(prod.IsActive ? "checked" : "") />
+                                            <span>Active</span>
+                                        </label>
+                                    </div>
+
+                                    <button type="button" class="dk-btn-remove-row" onclick="removeRow(this);" title="Delete product">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB 4: TRUST BADGES
+        ========================================================= -->
+        <div class="dk-tab-pane" id="tab-trust">
+            <div class="dk-card">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">Trust Propositions Bar</h2>
+                        <p class="dk-card-desc">Guarantees and student value propositions shown across the category landing page.</p>
+                    </div>
+                    <label class="dk-switch">
+                        <input type="checkbox" id="trustIsEnabled" @(hub.TrustBadgesSection.IsEnabled ? "checked" : "") />
+                        <span class="dk-slider"></span>
+                        <span class="dk-switch-label">Section Enabled</span>
+                    </label>
+                </div>
+
+                <div class="dk-card-body">
+                    <div class="dk-trust-edit-grid" id="trustBadgesContainer">
+                        @for (int t = 0; t < hub.TrustBadgesSection.Badges.Count; t++)
+                        {
+                            var tb = hub.TrustBadgesSection.Badges[t];
+                            <div class="dk-trust-edit-card" data-id="@tb.Id">
+                                <div class="dk-badge-edit-header">
+                                    <span class="dk-badge-num">Pillar #@(t + 1)</span>
+                                    <label class="dk-sm-switch">
+                                        <input type="checkbox" class="trust-active" @(tb.IsActive ? "checked" : "") />
+                                        <span>Active</span>
+                                    </label>
+                                </div>
+                                <div class="dk-form-group">
+                                    <label class="dk-xs-label">Title</label>
+                                    <input type="text" class="dk-input trust-title" value="@tb.Title" />
+                                </div>
+                                <div class="dk-form-group">
+                                    <label class="dk-xs-label">Subtitle</label>
+                                    <input type="text" class="dk-input trust-sub" value="@tb.Subtitle" />
+                                </div>
+                                <div class="dk-form-group">
+                                    <label class="dk-xs-label">Icon</label>
+                                    <select class="dk-select trust-icon">
+                                        <option value="box" selected="@(tb.Icon == "box")">📦 Package / Curated</option>
+                                        <option value="shield" selected="@(tb.Icon == "shield")">🛡️ Shield / Quality</option>
+                                        <option value="tag" selected="@(tb.Icon == "tag")">🏷️ Tag / Affordable</option>
+                                        <option value="truck" selected="@(tb.Icon == "truck")">🚚 Truck / Delivery</option>
+                                        <option value="return" selected="@(tb.Icon == "return")">🔄 Return / Hassle-Free</option>
+                                        <option value="headset" selected="@(tb.Icon == "headset")">🎧 Support / 24/7</option>
+                                    </select>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB 5: BOTTOM DESTINATION BAR
+        ========================================================= -->
+        <div class="dk-tab-pane" id="tab-bottom">
+            <div class="dk-card">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">Bottom Destination &amp; Kit Bar</h2>
+                        <p class="dk-card-desc">The dark navy banner with Student Quiz, Destination Kits, and Bulk Order links.</p>
+                    </div>
+                    <label class="dk-switch">
+                        <input type="checkbox" id="bottomIsEnabled" @(hub.BottomBanner.IsEnabled ? "checked" : "") />
+                        <span class="dk-slider"></span>
+                        <span class="dk-switch-label">Section Enabled</span>
+                    </label>
+                </div>
+
+                <div class="dk-card-body">
+                    <!-- Column 1: Quiz -->
+                    <div class="dk-section-subpart">
+                        <h3 class="dk-subhead">Column 1: Quiz Callout</h3>
+                        <div class="dk-form-grid-2">
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="bottomQuizTitle">Heading</label>
+                                <input type="text" id="bottomQuizTitle" class="dk-input" value="@hub.BottomBanner.QuizTitle" />
+                            </div>
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="bottomQuizSub">Subtitle</label>
+                                <input type="text" id="bottomQuizSub" class="dk-input" value="@hub.BottomBanner.QuizSubtitle" />
+                            </div>
+                        </div>
+                        <div class="dk-form-grid-2">
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="bottomQuizBtnText">Button Text</label>
+                                <input type="text" id="bottomQuizBtnText" class="dk-input" value="@hub.BottomBanner.QuizButtonText" />
+                            </div>
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="bottomQuizBtnUrl">Button Link Target</label>
+                                <input type="text" id="bottomQuizBtnUrl" class="dk-input" value="@hub.BottomBanner.QuizButtonUrl" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Destinations -->
+                    <div class="dk-section-subpart">
+                        <h3 class="dk-subhead">Column 2: Destination Countries</h3>
+                        <div class="dk-form-grid-2">
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="bottomDestTitle">Heading</label>
+                                <input type="text" id="bottomDestTitle" class="dk-input" value="@hub.BottomBanner.DestinationsTitle" />
+                            </div>
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="bottomDestSub">Subtitle</label>
+                                <input type="text" id="bottomDestSub" class="dk-input" value="@hub.BottomBanner.DestinationsSubtitle" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Bulk Orders -->
+                    <div class="dk-section-subpart">
+                        <h3 class="dk-subhead">Column 3: University Bulk Orders</h3>
+                        <div class="dk-form-grid-2">
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="bottomBulkTitle">Heading</label>
+                                <input type="text" id="bottomBulkTitle" class="dk-input" value="@hub.BottomBanner.BulkTitle" />
+                            </div>
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="bottomBulkSub">Subtitle</label>
+                                <input type="text" id="bottomBulkSub" class="dk-input" value="@hub.BottomBanner.BulkSubtitle" />
+                            </div>
+                        </div>
+                        <div class="dk-form-grid-2">
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="bottomBulkBtnText">Button Text</label>
+                                <input type="text" id="bottomBulkBtnText" class="dk-input" value="@hub.BottomBanner.BulkButtonText" />
+                            </div>
+                            <div class="dk-form-group">
+                                <label class="dk-label" for="bottomBulkBtnUrl">Button Link Target</label>
+                                <input type="text" id="bottomBulkBtnUrl" class="dk-input" value="@hub.BottomBanner.BulkButtonUrl" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <!-- Bottom Action Bar -->
+    <div class="dk-bottom-sticky-bar">
+        <div class="dk-bottom-sticky-content">
+            <span class="dk-bottom-tip">💡 Tip: When "Uploading Soon" is checked, an attractive placeholder badge will be shown to users until you upload the actual image.</span>
+            <div class="dk-bottom-btn-group">
+                <form method="post" action="/Admin/FashionHub/ResetDefaults" style="display: inline;" onsubmit="return confirm('Are you sure you want to restore the default Fashion Hub template? All current customizations will be reset.');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="dk-btn-reset">
+                        Reset to Defaults
+                    </button>
+                </form>
+
+                <button type="button" class="dk-btn-save-hub" id="btnSaveHubFooter">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    Save All Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+/* ========================================================
+   FASHION HUB ADMIN STYLING
+======================================================== */
+.dk-admin-hub-wrapper {
+    padding: 24px;
+    max-width: 1320px;
+    margin: 0 auto 80px auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+.dk-admin-hub-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.dk-admin-hub-tag {
+    background: #ec4899;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 6px;
+}
+.dk-admin-hub-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 6px 0;
+}
+.dk-admin-hub-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+    max-width: 650px;
+}
+.dk-admin-hub-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-btn-view-live {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155 !important;
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 700;
+    padding: 9px 18px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+.dk-btn-view-live:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a !important;
+}
+.dk-btn-save-hub {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    border: none;
+    font-size: 13.5px;
+    font-weight: 800;
+    padding: 10px 22px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    transition: all 0.2s ease;
+}
+.dk-btn-save-hub:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(2, 132, 199, 0.4);
+}
+
+/* Tabs Bar */
+.dk-hub-tabs-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 2px;
+    overflow-x: auto;
+}
+.dk-tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+.dk-tab-btn:hover {
+    color: #0284c7;
+}
+.dk-tab-btn.active {
+    color: #0284c7;
+    border-bottom-color: #0284c7;
+}
+.dk-tab-pane {
+    display: none;
+}
+.dk-tab-pane.active {
+    display: block;
+}
+
+/* Card */
+.dk-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+.dk-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.dk-card-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+}
+.dk-card-desc {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Switches & Inputs */
+.dk-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+.dk-switch input {
+    display: none;
+}
+.dk-slider {
+    width: 42px;
+    height: 24px;
+    background: #cbd5e1;
+    border-radius: 24px;
+    position: relative;
+    transition: background 0.2s;
+}
+.dk-slider:before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+.dk-switch input:checked + .dk-slider {
+    background: #0284c7;
+}
+.dk-switch input:checked + .dk-slider:before {
+    transform: translateX(18px);
+}
+.dk-switch-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.dk-form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+.dk-form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+}
+.dk-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 6px;
+}
+.dk-xs-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+.dk-input, .dk-textarea, .dk-select {
+    padding: 9px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.2s;
+    background: #ffffff;
+}
+.dk-input:focus, .dk-textarea:focus, .dk-select:focus {
+    border-color: #0284c7;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+.dk-hint {
+    font-size: 11.5px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+/* Media Uploader Box */
+.dk-media-uploader-box {
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+}
+.dk-subhead {
+    font-size: 15px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 14px 0;
+}
+.dk-uploader-row {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 20px;
+    align-items: center;
+}
+.dk-preview-box {
+    width: 100%;
+    height: 190px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-preview-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.dk-uploader-controls {
+    display: flex;
+    flex-direction: column;
+}
+.dk-file-hidden {
+    display: none;
+}
+.dk-upload-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0 14px 0;
+}
+.dk-btn-upload {
+    background: #0284c7;
+    color: #ffffff;
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s ease;
+}
+.dk-btn-upload:hover {
+    background: #0369a1;
+}
+.dk-btn-clear {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.dk-btn-clear:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+.dk-toggle-uploading-soon {
+    margin-top: 6px;
+}
+.dk-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+}
+
+/* Badges Editor Grid */
+.dk-section-subpart {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid #f1f5f9;
+}
+.dk-badges-editor-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+.dk-badge-edit-card, .dk-feat-edit-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px;
+}
+.dk-badge-edit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.dk-badge-num {
+    font-size: 12px;
+    font-weight: 800;
+    color: #0284c7;
+    text-transform: uppercase;
+}
+.dk-sm-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+}
+.dk-features-editor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+/* Item Rows (Categories & Products) */
+.dk-items-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0 12px 0;
+}
+.dk-btn-add-item {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.dk-btn-add-item:hover {
+    background: #15803d;
+    color: #ffffff;
+}
+.dk-item-row {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.dk-item-thumb-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+}
+.dk-item-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.dk-btn-thumb-upload {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: rgba(0,0,0,0.6);
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.dk-item-fields-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1.2fr 1.6fr 80px auto 36px;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
+.dk-item-fields-grid-prod {
+    display: grid;
+    grid-template-columns: 1.5fr 100px 100px 70px 70px 1.4fr auto 36px;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
+.dk-item-toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.dk-btn-remove-row {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #ef4444;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+.dk-btn-remove-row:hover {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+/* Trust Badges Editor */
+.dk-trust-edit-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+.dk-trust-edit-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px;
+}
+
+/* Bottom Sticky Action Bar */
+.dk-bottom-sticky-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid #cbd5e1;
+    padding: 12px 24px;
+    z-index: 100;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+}
+.dk-bottom-sticky-content {
+    max-width: 1320px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.dk-bottom-tip {
+    font-size: 12.5px;
+    color: #64748b;
+}
+.dk-bottom-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-btn-reset {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 9px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.dk-btn-reset:hover {
+    background: #fef2f2;
+    color: #ef4444;
+    border-color: #fca5a5;
+}
+
+/* Alerts */
+.dk-alert {
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+.dk-alert-success {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+}
+.dk-alert-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+@@media (max-width: 1024px) {
+    .dk-uploader-row {
+        grid-template-columns: 1fr;
+    }
+    .dk-badges-editor-grid, .dk-features-editor-grid, .dk-trust-edit-grid {
+        grid-template-columns: 1fr;
+    }
+    .dk-item-fields-grid, .dk-item-fields-grid-prod {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // 1. Tab Switching
+    const tabBtns = document.querySelectorAll(".dk-tab-btn");
+    const tabPanes = document.querySelectorAll(".dk-tab-pane");
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            tabBtns.forEach(b => b.classList.remove("active"));
+            tabPanes.forEach(p => p.classList.remove("active"));
+            btn.classList.add("active");
+            const targetId = btn.getAttribute("data-tab");
+            const targetPane = document.getElementById(targetId);
+            if (targetPane) targetPane.classList.add("active");
+        });
+    });
+
+    // 2. Hero File Upload
+    const heroFileInput = document.getElementById("heroFileInput");
+    if (heroFileInput) {
+        heroFileInput.addEventListener("change", async function () {
+            if (!this.files || this.files.length === 0) return;
+            const file = this.files[0];
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("targetField", "heroBanner");
+            
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || "";
+            formData.append("__RequestVerificationToken", token);
+
+            showAlert("Uploading hero banner image...", "info");
+
+            try {
+                const res = await fetch("/Admin/FashionHub/UploadImage", {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success && data.url) {
+                    document.getElementById("heroImageUrl").value = data.url;
+                    document.getElementById("heroImagePreview").src = data.url;
+                    showAlert("Hero banner image uploaded successfully! Don't forget to click Save All Changes.", "success");
+                } else {
+                    showAlert("Upload failed: " + (data.message || "Unknown error"), "error");
+                }
+            } catch (err) {
+                showAlert("Network or upload error: " + err.message, "error");
+            }
+        });
+    }
+
+    // Live URL Preview on typing
+    const heroImageUrlInput = document.getElementById("heroImageUrl");
+    if (heroImageUrlInput) {
+        heroImageUrlInput.addEventListener("input", function () {
+            const val = this.value.trim();
+            if (val) {
+                document.getElementById("heroImagePreview").src = val;
+            }
+        });
+    }
+
+    // Save buttons
+    document.getElementById("btnSaveHubHeader")?.addEventListener("click", saveFashionHub);
+    document.getElementById("btnSaveHubFooter")?.addEventListener("click", saveFashionHub);
+});
+
+function setHeroDefaultImage() {
+    const defaultUrl = "/images/fashion-hub/fashion_hero_banner.jpg";
+    document.getElementById("heroImageUrl").value = defaultUrl;
+    document.getElementById("heroImagePreview").src = defaultUrl;
+    document.getElementById("heroIsUploadingSoon").checked = false;
+}
+
+async function uploadRowImage(input, type) {
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("targetField", type);
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || "";
+    formData.append("__RequestVerificationToken", token);
+
+    showAlert(`Uploading image for ${type}...`, "info");
+
+    try {
+        const res = await fetch("/Admin/FashionHub/UploadImage", {
+            method: "POST",
+            body: formData
+        });
+        const data = await res.json();
+        if (data.success && data.url) {
+            const row = input.closest(".dk-item-row");
+            if (type === "category") {
+                row.querySelector(".cat-thumb-preview").src = data.url;
+                row.querySelector(".cat-image-url").value = data.url;
+                // Uncheck uploading soon if actual image is uploaded
+                row.querySelector(".cat-soon").checked = false;
+            } else {
+                row.querySelector(".prod-thumb-preview").src = data.url;
+                row.querySelector(".prod-image-url").value = data.url;
+                row.querySelector(".prod-soon").checked = false;
+            }
+            showAlert("Image uploaded! Remember to Save Changes.", "success");
+        } else {
+            showAlert("Upload failed: " + (data.message || "Unknown error"), "error");
+        }
+    } catch (err) {
+        showAlert("Upload error: " + err.message, "error");
+    }
+}
+
+function removeRow(btn) {
+    if (confirm("Remove this item?")) {
+        const row = btn.closest(".dk-item-row");
+        if (row) row.remove();
+    }
+}
+
+function addCategoryRow() {
+    const container = document.getElementById("categoryRowsContainer");
+    const count = container.querySelectorAll(".dk-item-row").length + 1;
+    const newId = "cat-" + Date.now();
+    const rowHtml = `
+        <div class="dk-item-row" data-id="${newId}">
+            <div class="dk-item-thumb-box">
+                <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="New Category" class="dk-item-thumb cat-thumb-preview" />
+                <input type="file" class="dk-file-hidden cat-file-input" accept="image/*" onchange="uploadRowImage(this, 'category');" />
+                <button type="button" class="dk-btn-thumb-upload" onclick="this.previousElementSibling.click();" title="Upload Image">📷</button>
+            </div>
+            <div class="dk-item-fields-grid">
+                <div class="dk-form-group">
+                    <label class="dk-xs-label">Category Name</label>
+                    <input type="text" class="dk-input cat-name" value="New Category" />
+                </div>
+                <div class="dk-form-group">
+                    <label class="dk-xs-label">Slug / Path</label>
+                    <input type="text" class="dk-input cat-slug" value="new-category" />
+                </div>
+                <div class="dk-form-group">
+                    <label class="dk-xs-label">Image URL</label>
+                    <input type="text" class="dk-input cat-image-url" value="/images/fashion-hub/uploading-soon-placeholder.svg" />
+                </div>
+                <div class="dk-form-group dk-form-group-sm">
+                    <label class="dk-xs-label">Order</label>
+                    <input type="number" class="dk-input cat-order" value="${count}" style="width: 70px;" />
+                </div>
+                <div class="dk-item-toggles">
+                    <label class="dk-checkbox-label">
+                        <input type="checkbox" class="cat-soon" checked />
+                        <span>⏳ Uploading Soon</span>
+                    </label>
+                    <label class="dk-checkbox-label">
+                        <input type="checkbox" class="cat-active" checked />
+                        <span>Active</span>
+                    </label>
+                </div>
+                <button type="button" class="dk-btn-remove-row" onclick="removeRow(this);" title="Delete category">🗑️</button>
+            </div>
+        </div>`;
+    container.insertAdjacentHTML("beforeend", rowHtml);
+}
+
+function addProductRow() {
+    const container = document.getElementById("productRowsContainer");
+    const newId = "prod-" + Date.now();
+    const rowHtml = `
+        <div class="dk-item-row" data-id="${newId}">
+            <div class="dk-item-thumb-box">
+                <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="New Product" class="dk-item-thumb prod-thumb-preview" />
+                <input type="file" class="dk-file-hidden prod-file-input" accept="image/*" onchange="uploadRowImage(this, 'product');" />
+                <button type="button" class="dk-btn-thumb-upload" onclick="this.previousElementSibling.click();" title="Upload Image">📷</button>
+            </div>
+            <div class="dk-item-fields-grid-prod">
+                <div class="dk-form-group">
+                    <label class="dk-xs-label">Product Name</label>
+                    <input type="text" class="dk-input prod-name" value="Fashion Item" />
+                </div>
+                <div class="dk-form-group">
+                    <label class="dk-xs-label">Price (₹)</label>
+                    <input type="number" class="dk-input prod-price" value="999" />
+                </div>
+                <div class="dk-form-group">
+                    <label class="dk-xs-label">Original Price (₹)</label>
+                    <input type="number" class="dk-input prod-orig-price" value="1999" />
+                </div>
+                <div class="dk-form-group dk-form-group-sm">
+                    <label class="dk-xs-label">Rating</label>
+                    <input type="number" step="0.1" class="dk-input prod-rating" value="4.8" style="width: 70px;" />
+                </div>
+                <div class="dk-form-group dk-form-group-sm">
+                    <label class="dk-xs-label">Reviews</label>
+                    <input type="number" class="dk-input prod-reviews" value="50" style="width: 70px;" />
+                </div>
+                <div class="dk-form-group">
+                    <label class="dk-xs-label">Target Link</label>
+                    <input type="text" class="dk-input prod-url" value="/products?category=fashion" />
+                </div>
+                <input type="hidden" class="prod-image-url" value="/images/fashion-hub/uploading-soon-placeholder.svg" />
+                <div class="dk-item-toggles">
+                    <label class="dk-checkbox-label">
+                        <input type="checkbox" class="prod-soon" checked />
+                        <span>⏳ Uploading Soon</span>
+                    </label>
+                    <label class="dk-checkbox-label">
+                        <input type="checkbox" class="prod-active" checked />
+                        <span>Active</span>
+                    </label>
+                </div>
+                <button type="button" class="dk-btn-remove-row" onclick="removeRow(this);" title="Delete product">🗑️</button>
+            </div>
+        </div>`;
+    container.insertAdjacentHTML("beforeend", rowHtml);
+}
+
+function showAlert(msg, type) {
+    const box = document.getElementById("ajaxAlertBox");
+    if (!box) return;
+    box.style.display = "block";
+    box.className = "dk-alert " + (type === "success" ? "dk-alert-success" : (type === "error" ? "dk-alert-error" : ""));
+    box.innerHTML = msg;
+    if (type === "success") {
+        setTimeout(() => { box.style.display = "none"; }, 5000);
+    }
+}
+
+async function saveFashionHub() {
+    showAlert("Saving all Fashion Category Hub changes...", "info");
+
+    // Gather Badges
+    const badges = [];
+    document.querySelectorAll("#heroBadgesContainer .dk-badge-edit-card").forEach(el => {
+        badges.push({
+            id: el.getAttribute("data-badge-id") || "",
+            label: el.querySelector(".badge-label")?.value || "",
+            icon: el.querySelector(".badge-icon")?.value || "shirt",
+            isActive: el.querySelector(".badge-active")?.checked ?? true
+        });
+    });
+
+    // Gather Right Features
+    const features = [];
+    document.querySelectorAll("#rightFeaturesContainer .dk-feat-edit-card").forEach(el => {
+        features.push({
+            id: el.getAttribute("data-feat-id") || "",
+            title: el.querySelector(".feat-title")?.value || "",
+            icon: el.querySelector(".feat-icon")?.value || "luggage",
+            isActive: el.querySelector(".feat-active")?.checked ?? true
+        });
+    });
+
+    // Gather Categories
+    const categories = [];
+    document.querySelectorAll("#categoryRowsContainer .dk-item-row").forEach(el => {
+        categories.push({
+            id: el.getAttribute("data-id") || "",
+            name: el.querySelector(".cat-name")?.value || "",
+            slug: el.querySelector(".cat-slug")?.value || "",
+            imageUrl: el.querySelector(".cat-image-url")?.value || "",
+            displayOrder: parseInt(el.querySelector(".cat-order")?.value || "0"),
+            isUploadingSoon: el.querySelector(".cat-soon")?.checked ?? true,
+            isActive: el.querySelector(".cat-active")?.checked ?? true
+        });
+    });
+
+    // Gather Products
+    const products = [];
+    document.querySelectorAll("#productRowsContainer .dk-item-row").forEach(el => {
+        products.push({
+            id: el.getAttribute("data-id") || "",
+            name: el.querySelector(".prod-name")?.value || "",
+            categoryName: "Fashion",
+            price: parseFloat(el.querySelector(".prod-price")?.value || "0"),
+            originalPrice: el.querySelector(".prod-orig-price")?.value ? parseFloat(el.querySelector(".prod-orig-price").value) : null,
+            rating: parseFloat(el.querySelector(".prod-rating")?.value || "4.8"),
+            reviewsCount: parseInt(el.querySelector(".prod-reviews")?.value || "50"),
+            imageUrl: el.querySelector(".prod-image-url")?.value || "",
+            productUrl: el.querySelector(".prod-url")?.value || "/products?category=fashion",
+            isUploadingSoon: el.querySelector(".prod-soon")?.checked ?? true,
+            isActive: el.querySelector(".prod-active")?.checked ?? true
+        });
+    });
+
+    // Gather Trust Badges
+    const trustBadges = [];
+    document.querySelectorAll("#trustBadgesContainer .dk-trust-edit-card").forEach(el => {
+        trustBadges.push({
+            id: el.getAttribute("data-id") || "",
+            title: el.querySelector(".trust-title")?.value || "",
+            subtitle: el.querySelector(".trust-sub")?.value || "",
+            icon: el.querySelector(".trust-icon")?.value || "box",
+            isActive: el.querySelector(".trust-active")?.checked ?? true
+        });
+    });
+
+    // Build Payload
+    const payload = {
+        heroBanner: {
+            isEnabled: document.getElementById("heroIsEnabled")?.checked ?? true,
+            title: document.getElementById("heroTitle")?.value || "Fashion for",
+            titleHighlight: document.getElementById("heroTitleHighlight")?.value || "Every Journey",
+            titleColor: document.getElementById("heroTitleColor")?.value || "#063f91",
+            titleHighlightColor: document.getElementById("heroTitleHighlightColor")?.value || "#ea580c",
+            subtitle: document.getElementById("heroSubtitle")?.value || "",
+            subtitleColor: document.getElementById("heroSubtitleColor")?.value || "#334155",
+            badgeBgColor: document.getElementById("heroBadgeBgColor")?.value || "rgba(255, 255, 255, 0.94)",
+            badgeTextColor: document.getElementById("heroBadgeTextColor")?.value || "#0f172a",
+            bannerHeight: parseInt(document.getElementById("heroBannerHeight")?.value || "440"),
+            imageUrl: document.getElementById("heroImageUrl")?.value || "",
+            isUploadingSoon: document.getElementById("heroIsUploadingSoon")?.checked ?? false,
+            badges: badges,
+            rightCard: {
+                title: document.getElementById("rightCardTitle")?.value || "Look Good.",
+                titleHighlight: document.getElementById("rightCardTitleHighlight")?.value || "Travel Smart.",
+                features: features
+            }
+        },
+        categoriesSection: {
+            isEnabled: document.getElementById("categoriesIsEnabled")?.checked ?? true,
+            title: document.getElementById("categoriesTitle")?.value || "Shop by Category",
+            viewAllUrl: document.getElementById("categoriesViewAllUrl")?.value || "/products?category=fashion",
+            viewAllText: "View All Categories →",
+            categories: categories
+        },
+        topPicksSection: {
+            isEnabled: document.getElementById("picksIsEnabled")?.checked ?? true,
+            title: document.getElementById("picksTitle")?.value || "Top Picks for Men & Women",
+            viewAllUrl: document.getElementById("picksViewAllUrl")?.value || "/products?category=fashion",
+            viewAllText: "View All Products →",
+            products: products
+        },
+        trustBadgesSection: {
+            isEnabled: document.getElementById("trustIsEnabled")?.checked ?? true,
+            badges: trustBadges
+        },
+        bottomBanner: {
+            isEnabled: document.getElementById("bottomIsEnabled")?.checked ?? true,
+            quizTitle: document.getElementById("bottomQuizTitle")?.value || "",
+            quizSubtitle: document.getElementById("bottomQuizSub")?.value || "",
+            quizButtonText: document.getElementById("bottomQuizBtnText")?.value || "Find My Kit",
+            quizButtonUrl: document.getElementById("bottomQuizBtnUrl")?.value || "/find-my-kit",
+            destinationsTitle: document.getElementById("bottomDestTitle")?.value || "",
+            destinationsSubtitle: document.getElementById("bottomDestSub")?.value || "",
+            bulkTitle: document.getElementById("bottomBulkTitle")?.value || "",
+            bulkSubtitle: document.getElementById("bottomBulkSub")?.value || "",
+            bulkButtonText: document.getElementById("bottomBulkBtnText")?.value || "Contact Us",
+            bulkButtonUrl: document.getElementById("bottomBulkBtnUrl")?.value || "/contact"
+        }
+    };
+
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || "";
+
+    try {
+        const response = await fetch("/Admin/FashionHub/Save", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "RequestVerificationToken": token,
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            showAlert("✓ " + (result.message || "Fashion Category Hub settings saved successfully!"), "success");
+        } else {
+            showAlert("⚠ Save failed: " + (result.message || "Unknown error"), "error");
+        }
+    } catch (err) {
+        showAlert("⚠ Network or server error: " + err.message, "error");
+    }
+}
+</script>
