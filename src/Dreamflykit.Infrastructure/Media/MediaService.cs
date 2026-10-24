@@ -66,33 +66,36 @@ public sealed class MediaService : IMediaService
             return MediaUploadResult.Failure(validationError);
         }
 
-        // 2. Generate new asset ID and S3 object key
+        // 2. Generate new asset ID and S3 object keys
         var mediaAssetId = Guid.NewGuid();
         var mediaTypeName = request.MediaType.ToString();
         var objectKey = MediaUrlService.BuildObjectKey(mediaTypeName, request.OwnerId, mediaAssetId);
+        var detailKey = MediaUrlService.BuildVariantObjectKey(mediaTypeName, request.OwnerId, mediaAssetId, "detail");
+        var cardKey = MediaUrlService.BuildVariantObjectKey(mediaTypeName, request.OwnerId, mediaAssetId, "card");
+        var thumbKey = MediaUrlService.BuildVariantObjectKey(mediaTypeName, request.OwnerId, mediaAssetId, "thumb");
 
-        // 3. Process original image to WebP (detail variant)
-        var (processedStream, width, height) = await _validator.ProcessVariantAsync(
+        // 3. High-performance single-pass image decoding and cascading variant generation
+        await using var variants = await _validator.GenerateAllVariantsAsync(
             request.FileStream,
             _options.Variants.Detail,
+            _options.Variants.Card,
+            _options.Variants.Thumbnail,
             cancellationToken);
 
-        // 4. Upload original (detail) to storage
-        var uploadSuccess = await _storage.PutObjectAsync(
-            objectKey,
-            processedStream,
-            "image/webp",
-            cancellationToken);
+        // Separate clone stream for detailKey variant to allow safe concurrent upload
+        using var detailVariantStream = new MemoryStream(variants.DetailStream.ToArray());
 
-        // Also save explicit detailKey variant so calls to GetDetailUrl resolve directly
-        var detailKey = MediaUrlService.BuildVariantObjectKey(mediaTypeName, request.OwnerId, mediaAssetId, "detail");
-        if (processedStream.CanSeek)
+        // 4. Parallel upload all variants to storage
+        var uploadTasks = new[]
         {
-            processedStream.Position = 0;
-            await _storage.PutObjectAsync(detailKey, processedStream, "image/webp", cancellationToken);
-        }
+            _storage.PutObjectAsync(objectKey, variants.DetailStream, "image/webp", cancellationToken),
+            _storage.PutObjectAsync(detailKey, detailVariantStream, "image/webp", cancellationToken),
+            _storage.PutObjectAsync(cardKey, variants.CardStream, "image/webp", cancellationToken),
+            _storage.PutObjectAsync(thumbKey, variants.ThumbStream, "image/webp", cancellationToken)
+        };
 
-        await processedStream.DisposeAsync();
+        var uploadResults = await Task.WhenAll(uploadTasks);
+        var uploadSuccess = uploadResults[0];
 
         if (!uploadSuccess)
         {
@@ -102,27 +105,8 @@ public sealed class MediaService : IMediaService
             return MediaUploadResult.Failure(errorMessage);
         }
 
-        // 5. Generate and upload thumbnail variant
-        request.FileStream.Position = 0;
-        var (thumbStream, _, _) = await _validator.ProcessVariantAsync(
-            request.FileStream,
-            _options.Variants.Thumbnail,
-            cancellationToken);
-
-        var thumbKey = MediaUrlService.BuildVariantObjectKey(mediaTypeName, request.OwnerId, mediaAssetId, "thumb");
-        await _storage.PutObjectAsync(thumbKey, thumbStream, "image/webp", cancellationToken);
-        await thumbStream.DisposeAsync();
-
-        // 6. Generate and upload card variant
-        request.FileStream.Position = 0;
-        var (cardStream, _, _) = await _validator.ProcessVariantAsync(
-            request.FileStream,
-            _options.Variants.Card,
-            cancellationToken);
-
-        var cardKey = MediaUrlService.BuildVariantObjectKey(mediaTypeName, request.OwnerId, mediaAssetId, "card");
-        await _storage.PutObjectAsync(cardKey, cardStream, "image/webp", cancellationToken);
-        await cardStream.DisposeAsync();
+        var width = variants.Width;
+        var height = variants.Height;
 
         // 7. Persist MediaAsset to database
         var effectiveAltText = !string.IsNullOrWhiteSpace(request.AltText)

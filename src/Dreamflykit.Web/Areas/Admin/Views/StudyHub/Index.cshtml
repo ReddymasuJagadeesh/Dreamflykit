@@ -105,68 +105,97 @@
 ========================================================= -->
 <div class="dk-sh-tab-pane active" id="tab-hero">
     <div class="dk-admin-card" style="margin-bottom: 20px;">
-        <h3 class="dk-sh-tab-title">Hero Banner Controls</h3>
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
             <div>
-                <label class="dk-sh-form-label">Hero Title</label>
-                <input type="text" id="hero_title" class="dk-admin-form-input" value="@hero.Title" />
+                <h3 class="dk-sh-tab-title" style="margin-bottom: 4px;">Study Essentials Hero Slider (Up to 12 Slides)</h3>
+                <p style="margin: 0; font-size: 0.88rem; color: #64748b;">
+                    Full-width visual banner slider without text overlay. Super Admin can manage up to <strong>12 active slides</strong> and set the slide duration in seconds.
+                </p>
             </div>
-            <div>
-                <label class="dk-sh-form-label">Hero Pill Badge</label>
-                <input type="text" id="hero_pill" class="dk-admin-form-input" value="@hero.PillText" />
-            </div>
-        </div>
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
-            <div>
-                <label class="dk-sh-form-label">Hero Subtitle</label>
-                <input type="text" id="hero_sub" class="dk-admin-form-input" value="@hero.Subtitle" />
-            </div>
-            <div>
-                <label class="dk-sh-form-label">Secondary Badge Text</label>
-                <input type="text" id="hero_sec_badge" class="dk-admin-form-input" value="@hero.SecondaryBadge" />
-            </div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-            <div>
-                <label class="dk-sh-form-label">Primary Button Text</label>
-                <input type="text" id="hero_btn_text" class="dk-admin-form-input" value="@hero.ButtonText" />
-            </div>
-            <div>
-                <label class="dk-sh-form-label">Primary Button Link</label>
-                <input type="text" id="hero_btn_url" class="dk-admin-form-input" value="@hero.ButtonUrl" />
+            <div style="display: flex; align-items: center; gap: 10px; background: #f0fdf4; border: 1.5px solid #bbf7d0; padding: 8px 16px; border-radius: 12px;">
+                <span style="font-size: 13px; font-weight: 800; color: #166534;">Slide Slots:</span>
+                <span style="font-size: 13px; font-weight: 800; color: #15803d;"><span id="hero_slides_count">@heroSlides.Count</span> / 12</span>
+                <div style="width: 80px; height: 8px; background: #dcfce7; border-radius: 999px; overflow: hidden; border: 1px solid #86efac;">
+                    <div id="hero_slides_progress" style="width: @(Math.Min(100, (int)Math.Round((double)heroSlides.Count / 12 * 100)))%; height: 100%; background: #16a34a; transition: width 0.3s ease;"></div>
+                </div>
             </div>
         </div>
 
         <!-- Hero Slides & Automatic Move Timing Controls -->
-        <div style="background: #f8fafc; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 18px 20px; margin-top: 10px; margin-bottom: 24px;">
+        <div style="background: #f8fafc; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 18px 20px; margin-bottom: 24px;">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid #e2e8f0; margin-bottom: 16px;">
                 <div>
                     <div style="font-weight: 800; color: #0369a1; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
-                        <span>⏱️</span> Hero Slides Automatic Move Timeframe
+                        <span>⏱️</span> Hero Slides Rotation Timeframe (Seconds)
                     </div>
                     <div style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">
                         Admin decides how many seconds each slide stays before automatic rotation to the next slide.
                     </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <label class="dk-sh-form-label" style="margin: 0; white-space: nowrap; font-weight: 700;">Interval (Seconds):</label>
-                    <input type="number" id="hero_slide_interval" min="2" max="60" class="dk-admin-form-input" style="width: 100px; font-weight: 800; text-align: center; font-size: 1.05rem;" value="@(hero.AutoSlideIntervalSeconds > 0 ? hero.AutoSlideIntervalSeconds : 4)" />
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <label class="dk-sh-form-label" style="margin: 0; white-space: nowrap; font-weight: 700;">Interval (Sec):</label>
+                    <input type="number" id="hero_slide_interval" min="2" max="60" class="dk-admin-form-input" style="width: 85px; font-weight: 800; text-align: center; font-size: 1.05rem;" value="@(hero.AutoSlideIntervalSeconds > 0 ? hero.AutoSlideIntervalSeconds : 4)" />
+                    <div style="display: flex; gap: 4px;">
+                        <button type="button" class="dk-btn" style="padding: 4px 8px; font-size: 11px; font-weight: 700; background: #e0f2fe; color: #0369a1;" onclick="document.getElementById('hero_slide_interval').value=2">2s</button>
+                        <button type="button" class="dk-btn" style="padding: 4px 8px; font-size: 11px; font-weight: 700; background: #e0f2fe; color: #0369a1;" onclick="document.getElementById('hero_slide_interval').value=3">3s</button>
+                        <button type="button" class="dk-btn" style="padding: 4px 8px; font-size: 11px; font-weight: 700; background: #e0f2fe; color: #0369a1;" onclick="document.getElementById('hero_slide_interval').value=4">4s</button>
+                        <button type="button" class="dk-btn" style="padding: 4px 8px; font-size: 11px; font-weight: 700; background: #e0f2fe; color: #0369a1;" onclick="document.getElementById('hero_slide_interval').value=5">5s</button>
+                        <button type="button" class="dk-btn" style="padding: 4px 8px; font-size: 11px; font-weight: 700; background: #e0f2fe; color: #0369a1;" onclick="document.getElementById('hero_slide_interval').value=6">6s</button>
+                        <button type="button" class="dk-btn" style="padding: 4px 8px; font-size: 11px; font-weight: 700; background: #e0f2fe; color: #0369a1;" onclick="document.getElementById('hero_slide_interval').value=8">8s</button>
+                    </div>
                 </div>
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
                 <div>
                     <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: #0f172a;">
-                        Hero Carousel Slides (<span id="hero_slides_count">@heroSlides.Count</span> Slides)
+                        Hero Carousel Slides (Max 12 Slides)
                     </h4>
                     <span style="font-size: 0.83rem; color: #64748b;">
-                        Admin can add slide images, customize badges, and set destination links.
+                        Admin can upload up to 12 slides, set links, and customize captions. Displayed full-width on the Study Essentials hub.
                     </span>
                 </div>
-                <button type="button" class="dk-btn dk-btn-primary" onclick="addNewHeroSlide()">
-                    + Add New Slide
+                <button type="button" class="dk-btn dk-btn-primary" id="btnAddNewHeroSlide" onclick="addNewHeroSlide()" @(heroSlides.Count >= 12 ? "disabled" : "")>
+                    + Add New Slide (Max 12)
                 </button>
             </div>
+
+            <!-- Optional collapsed metadata to preserve form bindings without visual clutter -->
+            <details style="margin-bottom: 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px 12px;">
+                <summary style="font-size: 12px; font-weight: 700; color: #64748b; cursor: pointer;">
+                    ⚙️ Optional Hero Fallback Text &amp; Button Settings (Hidden on clean full-width banner)
+                </summary>
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-top: 10px; margin-bottom: 10px;">
+                    <div>
+                        <label class="dk-sh-form-label">Hero Title</label>
+                        <input type="text" id="hero_title" class="dk-admin-form-input" value="@hero.Title" />
+                    </div>
+                    <div>
+                        <label class="dk-sh-form-label">Hero Pill Badge</label>
+                        <input type="text" id="hero_pill" class="dk-admin-form-input" value="@hero.PillText" />
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 10px;">
+                    <div>
+                        <label class="dk-sh-form-label">Hero Subtitle</label>
+                        <input type="text" id="hero_sub" class="dk-admin-form-input" value="@hero.Subtitle" />
+                    </div>
+                    <div>
+                        <label class="dk-sh-form-label">Secondary Badge Text</label>
+                        <input type="text" id="hero_sec_badge" class="dk-admin-form-input" value="@hero.SecondaryBadge" />
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label class="dk-sh-form-label">Primary Button Text</label>
+                        <input type="text" id="hero_btn_text" class="dk-admin-form-input" value="@hero.ButtonText" />
+                    </div>
+                    <div>
+                        <label class="dk-sh-form-label">Primary Button Link</label>
+                        <input type="text" id="hero_btn_url" class="dk-admin-form-input" value="@hero.ButtonUrl" />
+                    </div>
+                </div>
+            </details>
 
             <div id="hero_slides_container" style="display: flex; flex-direction: column; gap: 16px;">
                 @for (int sIdx = 0; sIdx < heroSlides.Count; sIdx++)
@@ -1822,6 +1851,23 @@
         const rows = document.querySelectorAll("#hero_slides_container .dk-sh-hero-slide-row");
         const countSpan = document.getElementById("hero_slides_count");
         if (countSpan) countSpan.textContent = rows.length;
+
+        const progress = document.getElementById("hero_slides_progress");
+        if (progress) progress.style.width = Math.min(100, Math.round((rows.length / 12) * 100)) + "%";
+
+        const addBtn = document.getElementById("btnAddNewHeroSlide");
+        if (addBtn) {
+            if (rows.length >= 12) {
+                addBtn.disabled = true;
+                addBtn.style.opacity = "0.5";
+                addBtn.title = "Maximum capacity of 12 slides reached";
+            } else {
+                addBtn.disabled = false;
+                addBtn.style.opacity = "1";
+                addBtn.title = "";
+            }
+        }
+
         rows.forEach((row, i) => {
             const label = row.querySelector(".hero-slide-label");
             if (label) label.textContent = `Slide #${i + 1}`;
@@ -1843,6 +1889,11 @@
 
     let slideCounter = 100;
     function addNewHeroSlide() {
+        const rows = document.querySelectorAll("#hero_slides_container .dk-sh-hero-slide-row");
+        if (rows.length >= 12) {
+            alert("Maximum capacity reached: Study Essentials hero banner supports up to 12 slides.");
+            return;
+        }
         slideCounter++;
         const sIdx = slideCounter;
         const container = document.getElementById("hero_slides_container");
@@ -1931,7 +1982,7 @@
                 ImageUrl: heroSlides.length > 0 ? heroSlides[0].ImageUrl : "/images/study-hub/test-pic-placeholder.svg",
                 SecondaryBadge: heroSlides.length > 0 ? heroSlides[0].SecondaryBadge : (document.getElementById("hero_sec_badge")?.value || ""),
                 AutoSlideIntervalSeconds: isNaN(slideInterval) || slideInterval < 2 ? 4 : slideInterval,
-                Slides: heroSlides
+                Slides: heroSlides.slice(0, 12)
             },
             Section1: {
                 Title: document.getElementById("s1_title")?.value || "Shop by Category",

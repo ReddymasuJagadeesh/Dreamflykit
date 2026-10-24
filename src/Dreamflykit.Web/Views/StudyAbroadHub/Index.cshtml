@@ -479,7 +479,7 @@
             </div>
 
             <div class="dk-abroad-trust-slogan">
-                <span>@profile.FooterSlogan</span>
+                <span>@Html.Raw(profile.FooterSlogan?.Replace("&#x2661;", "♡") ?? "Your Global Education Partner ♡")</span>
             </div>
         </div>
     </section>
@@ -651,8 +651,8 @@
     }
 
     .dk-abroad-hero-inner {
-        width: 100%;
-        max-width: 1280px;
+        width: 96%;
+        max-width: 1780px;
         margin: 0 auto;
         position: relative;
         z-index: 2;
@@ -795,22 +795,23 @@
         border: none;
     }
 
-    /* Services Section */
+    /* Services Section - Expanded Full Width across Study Hub Profile */
     .dk-abroad-services-section {
-        max-width: 1280px;
+        width: 96%;
+        max-width: 1780px;
         margin: 0 auto;
-        padding: 48px 24px 20px 24px;
+        padding: 48px 24px 24px 24px;
     }
     .dk-abroad-section-header {
         display: flex;
         align-items: center;
-        gap: 14px;
-        margin-bottom: 30px;
+        gap: 16px;
+        margin-bottom: 32px;
     }
     .dk-abroad-header-crest {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
         background: #e0f2fe;
         display: flex;
         align-items: center;
@@ -818,14 +819,14 @@
         flex-shrink: 0;
     }
     .dk-abroad-section-title {
-        font-size: 1.65rem;
+        font-size: 1.85rem;
         font-weight: 800;
         color: #0f172a;
-        margin: 0 0 4px 0;
+        margin: 0 0 6px 0;
         letter-spacing: -0.3px;
     }
     .dk-abroad-section-subtitle {
-        font-size: 0.94rem;
+        font-size: 1rem;
         color: #64748b;
         margin: 0;
     }
@@ -834,29 +835,29 @@
     .dk-abroad-cards-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+        gap: 26px;
     }
-    @@media (max-width: 1024px) {
+    @@media (max-width: 1100px) {
         .dk-abroad-cards-grid { grid-template-columns: repeat(2, 1fr); }
     }
-    @@media (max-width: 680px) {
+    @@media (max-width: 700px) {
         .dk-abroad-cards-grid { grid-template-columns: 1fr; }
     }
 
     .dk-abroad-service-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 22px;
+        border-radius: 18px;
+        padding: 26px 28px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
         transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
     .dk-abroad-service-card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.09);
         border-color: #cbd5e1;
     }
 
@@ -1073,7 +1074,8 @@
 
     /* Trust Section */
     .dk-abroad-trust-section {
-        max-width: 1280px;
+        width: 96%;
+        max-width: 1780px;
         margin: 32px auto 0 auto;
         padding: 0 24px;
     }

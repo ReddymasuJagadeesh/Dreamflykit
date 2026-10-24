@@ -15,7 +15,7 @@
     var bottomBanner = hub.BottomBanner ?? new();
 
     var heroSlides = hero.Slides != null && hero.Slides.Count > 0
-        ? hero.Slides
+        ? hero.Slides.Take(12).ToList()
         : new List<Dreamflykit.Application.StudyHub.Models.StudyHubHeroSlideDto>
         {
             new() { Id = "hero-slide-1", ImageUrl = hero.ImageUrl, SecondaryBadge = hero.SecondaryBadge, LinkUrl = hero.ButtonUrl, Title = hero.Title }
@@ -54,66 +54,53 @@
     }
 
     <!-- ========================================================
-         HERO BANNER & TRUST BAR
+         HERO BANNER & TRUST BAR (FULL WIDTH HERO WITH OVERLAY TEXT)
     ========================================================= -->
     <section class="dk-sh-hero-banner" aria-label="Study Essentials Hero">
-        <div class="dk-sh-hero-content">
-            <div class="dk-sh-hero-text">
-                <div class="dk-sh-hero-pill">@hero.PillText</div>
-                <h1 class="dk-sh-hero-title">@hero.Title</h1>
-                <p class="dk-sh-hero-sub">@hero.Subtitle</p>
-                <div class="dk-sh-hero-actions">
-                    <a href="@hero.ButtonUrl" class="dk-sh-btn-hero-primary">
-                        @hero.ButtonText
-                    </a>
-                    <a href="#custom-kit-section" class="dk-sh-btn-hero-secondary">
-                        Customize Your Kit
-                    </a>
-                </div>
-            </div>
-            <div class="dk-sh-hero-visual">
-                <div class="dk-sh-hero-slider" id="dkHeroSlider" data-interval="@(heroIntervalSec * 1000)">
-                    <div class="dk-sh-hero-slider-track" id="dkHeroSliderTrack">
-                        @for (int idx = 0; idx < heroSlides.Count; idx++)
-                        {
-                            var slide = heroSlides[idx];
-                            <div class="dk-sh-hero-slide @(idx == 0 ? "active" : "")" data-slide-index="@idx">
-                                <a href="@(!string.IsNullOrWhiteSpace(slide.LinkUrl) ? slide.LinkUrl : hero.ButtonUrl)" class="dk-sh-hero-slide-link" aria-label="@(string.IsNullOrWhiteSpace(slide.Title) ? hero.Title : slide.Title)">
-                                    <img src="@slide.ImageUrl" alt="@(string.IsNullOrWhiteSpace(slide.Title) ? hero.Title : slide.Title)" loading="@(idx == 0 ? "eager" : "lazy")" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
-                                </a>
-                                @if (!string.IsNullOrWhiteSpace(slide.SecondaryBadge))
-                                {
-                                    <div class="dk-sh-hero-badge-float">
-                                        <span>@slide.SecondaryBadge</span>
-                                    </div>
-                                }
-                            </div>
-                        }
-                    </div>
-
-                    @if (heroSlides.Count > 1)
+        <div class="dk-sh-hero-slider-wrap">
+            <div class="dk-sh-hero-slider" id="dkHeroSlider" data-interval="@(heroIntervalSec * 1000)">
+                <div class="dk-sh-hero-slider-track" id="dkHeroSliderTrack">
+                    @for (int idx = 0; idx < heroSlides.Count; idx++)
                     {
-                        <!-- Prev / Next Navigation Arrows -->
-                        <button type="button" class="dk-sh-slider-nav dk-sh-slider-prev" id="dkHeroSliderPrev" aria-label="Previous Slide">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="15 18 9 12 15 6"></polyline>
-                            </svg>
-                        </button>
-                        <button type="button" class="dk-sh-slider-nav dk-sh-slider-next" id="dkHeroSliderNext" aria-label="Next Slide">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </button>
-
-                        <!-- Navigation Dots -->
-                        <div class="dk-sh-slider-dots" id="dkHeroSliderDots">
-                            @for (int d = 0; d < heroSlides.Count; d++)
+                        var slide = heroSlides[idx];
+                        <div class="dk-sh-hero-slide @(idx == 0 ? "active" : "")" data-slide-index="@idx">
+                            <a href="@(!string.IsNullOrWhiteSpace(slide.LinkUrl) ? slide.LinkUrl : hero.ButtonUrl)" class="dk-sh-hero-slide-link" aria-label="@(string.IsNullOrWhiteSpace(slide.Title) ? hero.Title : slide.Title)">
+                                <img src="@slide.ImageUrl" alt="@(string.IsNullOrWhiteSpace(slide.Title) ? hero.Title : slide.Title)" loading="@(idx == 0 ? "eager" : "lazy")" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                            </a>
+                            @if (!string.IsNullOrWhiteSpace(slide.SecondaryBadge))
                             {
-                                <button type="button" class="dk-sh-slider-dot @(d == 0 ? "active" : "")" data-target-slide="@d" aria-label="Go to slide @(d + 1)"></button>
+                                <div class="dk-sh-hero-badge-float">
+                                    <span>@slide.SecondaryBadge</span>
+                                </div>
                             }
                         </div>
                     }
                 </div>
+
+
+
+                @if (heroSlides.Count > 1)
+                {
+                    <!-- Prev / Next Navigation Arrows -->
+                    <button type="button" class="dk-sh-slider-nav dk-sh-slider-prev" id="dkHeroSliderPrev" aria-label="Previous Slide">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <button type="button" class="dk-sh-slider-nav dk-sh-slider-next" id="dkHeroSliderNext" aria-label="Next Slide">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+
+                    <!-- Navigation Dots -->
+                    <div class="dk-sh-slider-dots" id="dkHeroSliderDots">
+                        @for (int d = 0; d < heroSlides.Count; d++)
+                        {
+                            <button type="button" class="dk-sh-slider-dot @(d == 0 ? "active" : "")" data-target-slide="@d" aria-label="Go to slide @(d + 1)"></button>
+                        }
+                    </div>
+                }
             </div>
         </div>
 
@@ -849,107 +836,47 @@
         transform: translateX(2px);
     }
 
-    /* Hero Banner - Right Side Image Bigger, Left Side Text Smaller & Slides Carousel */
+    /* ============================================================
+       Full Width Hero Banner Slider with Text Overlay
+       Image is 100% Full Bright, Vivid & Attractive with Crisp Clarity
+       ============================================================ */
     .dk-sh-hero-banner {
-        background: linear-gradient(135deg, #eff6ff 0%, #e0f2fe 50%, #f0fdf4 100%);
-        border: 1px solid #bae6fd;
-        border-radius: 16px;
-        padding: 20px 24px 16px 24px;
-        margin-bottom: 22px;
-        box-shadow: 0 6px 24px rgba(2, 132, 199, 0.08);
-    }
-    .dk-sh-hero-content {
-        display: grid;
-        grid-template-columns: 0.82fr 1.18fr;
-        gap: 24px;
-        align-items: center;
-    }
-    @@media (max-width: 900px) {
-        .dk-sh-hero-content {
-            grid-template-columns: 1fr;
-            gap: 18px;
-        }
-    }
-    .dk-sh-hero-pill {
-        display: inline-block;
-        background: linear-gradient(135deg, #063f91 0%, #075bc8 100%);
-        color: #ffffff;
-        font-size: 10px;
-        font-weight: 800;
-        padding: 4px 12px;
-        border-radius: 20px;
-        letter-spacing: 0.8px;
-        text-transform: uppercase;
-        margin-bottom: 8px;
-        box-shadow: 0 2px 6px rgba(6, 63, 145, 0.2);
-    }
-    .dk-sh-hero-title {
-        font-size: 1.65rem;
-        font-weight: 850;
-        color: #0f172a;
-        line-height: 1.2;
-        letter-spacing: -0.025em;
-        margin: 0 0 8px 0;
-    }
-    .dk-sh-hero-sub {
-        font-size: 0.92rem;
-        color: #475569;
-        margin: 0 0 16px 0;
-        line-height: 1.4;
-    }
-    .dk-sh-hero-actions {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-    .dk-sh-btn-hero-primary {
-        background: linear-gradient(135deg, #063f91 0%, #075bc8 100%);
-        color: #ffffff;
-        font-weight: 700;
-        font-size: 0.88rem;
-        padding: 9px 18px;
-        border-radius: 8px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        box-shadow: 0 3px 10px rgba(6, 63, 145, 0.3);
-        transition: all 0.2s ease;
-    }
-    .dk-sh-btn-hero-primary:hover {
-        background: #ff7900;
-        box-shadow: 0 4px 14px rgba(255, 121, 0, 0.35);
-        transform: translateY(-1px);
-    }
-    .dk-sh-btn-hero-secondary {
+        width: 100%;
         background: #ffffff;
-        color: #0f172a;
-        border: 1px solid #cbd5e1;
-        font-weight: 700;
-        font-size: 0.88rem;
-        padding: 9px 16px;
-        border-radius: 8px;
-        text-decoration: none;
-        transition: background 0.15s, border-color 0.15s;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 8px 8px 14px 8px;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 30px rgba(6, 63, 145, 0.08);
+        overflow: hidden;
     }
-    .dk-sh-btn-hero-secondary:hover {
-        background: #f8fafc;
-        border-color: #94a3b8;
-    }
-    .dk-sh-hero-visual {
+    .dk-sh-hero-slider-wrap {
         position: relative;
         width: 100%;
+        border-radius: 14px;
+        overflow: hidden;
     }
     .dk-sh-hero-slider {
         position: relative;
-        border-radius: 14px;
+        width: 100%;
+        aspect-ratio: 16 / 5.2;
+        min-height: 260px;
+        max-height: 430px;
+        background: #f8fafc;
         overflow: hidden;
-        aspect-ratio: 16/9;
-        min-height: 250px;
-        max-height: 330px;
-        background: #0b1329;
-        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
-        border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+    @@media (max-width: 900px) {
+        .dk-sh-hero-slider {
+            aspect-ratio: 16 / 6.5;
+            min-height: 200px;
+            max-height: 320px;
+        }
+    }
+    @@media (max-width: 600px) {
+        .dk-sh-hero-slider {
+            aspect-ratio: 16 / 8;
+            min-height: 170px;
+        }
     }
     .dk-sh-hero-slider-track {
         position: relative;
@@ -964,7 +891,7 @@
         height: 100%;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+        transition: opacity 0.45s ease-in-out, visibility 0.45s ease-in-out;
     }
     .dk-sh-hero-slide.active {
         opacity: 1;
@@ -977,80 +904,105 @@
         height: 100%;
         text-decoration: none;
     }
+    /* Full bright, sharp, attractive slide image */
     .dk-sh-hero-slide img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        object-position: center;
         display: block;
+        filter: brightness(1.04) contrast(1.02) saturate(1.05);
+        transition: transform 6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .dk-sh-hero-slide.active img {
+        transform: scale(1.02);
     }
     .dk-sh-hero-badge-float {
         position: absolute;
-        bottom: 12px;
-        right: 12px;
+        bottom: 24px;
+        right: 28px;
         background: rgba(15, 23, 42, 0.88);
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(10px);
         color: #ffffff;
-        padding: 5px 12px;
+        padding: 7px 18px;
         border-radius: 30px;
-        font-size: 11px;
-        font-weight: 700;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        z-index: 4;
+        font-size: 12px;
+        font-weight: 750;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        z-index: 5;
         pointer-events: none;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    }
+    @@media (max-width: 768px) {
+        .dk-sh-hero-badge-float {
+            top: 16px;
+            bottom: auto;
+            right: 16px;
+            font-size: 11px;
+            padding: 5px 12px;
+        }
     }
     .dk-sh-slider-nav {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        width: 32px;
-        height: 32px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
-        background: rgba(15, 23, 42, 0.65);
-        backdrop-filter: blur(4px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: #ffffff;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        color: #0f172a;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.16);
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        z-index: 6;
-        opacity: 0;
-        transition: opacity 0.2s ease, background 0.2s ease, transform 0.2s ease;
+        z-index: 7;
+        opacity: 0.85;
+        transition: all 0.2s ease;
     }
     .dk-sh-hero-slider:hover .dk-sh-slider-nav {
         opacity: 1;
     }
-    .dk-sh-slider-prev { left: 10px; }
-    .dk-sh-slider-next { right: 10px; }
+    .dk-sh-slider-prev { left: 16px; }
+    .dk-sh-slider-next { right: 16px; }
     .dk-sh-slider-nav:hover {
         background: #ff7900;
         border-color: #ff7900;
-        transform: translateY(-50%) scale(1.08);
+        color: #ffffff;
+        transform: translateY(-50%) scale(1.1);
+        box-shadow: 0 6px 18px rgba(255, 121, 0, 0.4);
     }
     .dk-sh-slider-dots {
         position: absolute;
-        bottom: 10px;
-        left: 14px;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
         display: flex;
         align-items: center;
-        gap: 6px;
-        z-index: 6;
+        gap: 7px;
+        z-index: 7;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(8px);
+        padding: 5px 12px;
+        border-radius: 20px;
     }
     .dk-sh-slider-dot {
-        width: 7px;
-        height: 7px;
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.6);
         border: none;
         padding: 0;
         cursor: pointer;
         transition: all 0.25s ease;
     }
     .dk-sh-slider-dot.active {
-        width: 18px;
-        border-radius: 8px;
+        width: 22px;
+        border-radius: 10px;
         background: #ffffff;
-        box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
     }
 
     /* Trust Bar */

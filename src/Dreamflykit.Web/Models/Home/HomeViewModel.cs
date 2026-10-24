@@ -22,6 +22,9 @@ public sealed class HomeViewModel
     public string TrendingDealsSubtitle { get; init; } = "Exclusive student abroad discounts & special offers";
     public string FeaturedProductsTitle { get; init; } = "Best of Study & Travel Essentials";
     public string FeaturedProductsSubtitle { get; init; } = "Student-curated essentials trusted worldwide";
+
+    public int SlideDurationSeconds { get; init; } = 5;
+    public bool AutoPlay { get; init; } = true;
 }
 
 public sealed class HomeCategoryDto

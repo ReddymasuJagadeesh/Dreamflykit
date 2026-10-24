@@ -246,6 +246,13 @@
         </div>
     }
 
+    @if (Model.IsElectronicsCategory)
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_ElectronicsCategoryHubBanner" model="Model" />
+        </div>
+    }
+
     @if (!Model.IsStudyEssentialsHub && (!Model.IsFashionHub || Model.ViewMode != "hub") && (!Model.IsHealthCareHub || Model.ViewMode != "hub") && (!Model.IsMobilesHub || Model.ViewMode != "hub"))
     {
         <!-- Main 2-Column Catalog Container -->
