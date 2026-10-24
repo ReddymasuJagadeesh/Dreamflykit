@@ -142,7 +142,7 @@
 
 <div id="dkCatalogInner">
     <!-- Category Hero Banner & Subcategory Strip -->
-    @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
+    @if (!string.IsNullOrWhiteSpace(Model.CategoryName) && !Model.IsElectronicsCategory)
     {
         <div class="dk-category-hero-card">
             <div class="dk-category-hero-text">

@@ -86,6 +86,10 @@ public sealed class ProductListViewModel
         string.Equals(CategorySlug, "mobiles", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "mobile", StringComparison.OrdinalIgnoreCase);
 
+    public bool IsElectronicsCategory =>
+        string.Equals(CategorySlug, "electronics", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "electronic", StringComparison.OrdinalIgnoreCase);
+
     public bool HasActiveFilters =>
         !string.IsNullOrWhiteSpace(SearchTerm) ||
         SubcategoryId.HasValue ||
