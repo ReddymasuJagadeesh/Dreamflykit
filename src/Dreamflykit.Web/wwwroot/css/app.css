@@ -1037,14 +1037,17 @@ img {
     transform: translateX(-50%);
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 92%;
+    gap: 6px;
     z-index: 10;
-    padding: 6px 14px;
-    background: rgba(15, 23, 42, 0.45);
+    padding: 6px 12px;
+    background: rgba(15, 23, 42, 0.55);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 9999px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .dk-hero-dot {

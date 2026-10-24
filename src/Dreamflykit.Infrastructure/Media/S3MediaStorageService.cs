@@ -24,6 +24,8 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
     private readonly string _cacheRoot;
     private readonly ILogger<S3MediaStorageService> _logger;
 
+    private DateTime _s3DegradedUntilUtc = DateTime.MinValue;
+
     /// <inheritdoc />
     public string? LastError { get; private set; }
 
@@ -49,6 +51,11 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
         var hasValidSecretKey = !string.IsNullOrWhiteSpace(s3Opts.SecretAccessKey) && !IsPlaceholder(s3Opts.SecretAccessKey);
         var hasValidBucket = !string.IsNullOrWhiteSpace(_bucketName) && !IsPlaceholder(_bucketName);
 
+        var envAccessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
+        var envSecretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
+        var hasValidEnvCredentials = !string.IsNullOrWhiteSpace(envAccessKey) && !IsPlaceholder(envAccessKey)
+            && !string.IsNullOrWhiteSpace(envSecretKey) && !IsPlaceholder(envSecretKey);
+
         if (hasValidBucket && hasValidAccessKey && hasValidSecretKey)
         {
             try
@@ -68,14 +75,14 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
                 _logger.LogWarning(ex, "Failed to initialize AmazonS3Client with explicit credentials. Falling back to local filesystem storage.");
             }
         }
-        else if (hasValidBucket && string.IsNullOrWhiteSpace(s3Opts.AccessKeyId))
+        else if (hasValidBucket && hasValidEnvCredentials)
         {
             try
             {
-                // Fallback to standard AWS SDK credential chain (env vars, IAM role, or ~/.aws credentials)
+                // Fallback to standard AWS SDK credential chain only when actual AWS environment variables are present
                 _s3Client = new AmazonS3Client(region);
                 _s3Configured = true;
-                _logger.LogInformation("Initialized S3 storage client with default AWS credential chain for bucket '{Bucket}' in region '{Region}'",
+                _logger.LogInformation("Initialized S3 storage client with AWS environment credentials for bucket '{Bucket}' in region '{Region}'",
                     _bucketName, region.SystemName);
             }
             catch (Exception ex)
@@ -87,7 +94,7 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
         else
         {
             _s3Configured = false;
-            _logger.LogInformation("AWS S3 bucket or credentials not configured or set to placeholder values. Media storage is operating in local filesystem mode (cache: {CacheRoot})",
+            _logger.LogInformation("AWS S3 credentials not provided. Operating in high-speed local filesystem storage mode (cache: {CacheRoot})",
                 _cacheRoot);
         }
     }
@@ -164,8 +171,8 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
         // 1. Always persist to local disk cache first for zero-latency instant serving & fallback
         var localSaved = await SaveToLocalCacheAsync(objectKey, stream, cancellationToken);
 
-        // 2. If S3 client is not configured, local storage fulfills the storage contract
-        if (_s3Client is null || !_s3Configured)
+        // 2. If S3 client is not configured or in degraded state, local storage fulfills the storage contract instantly
+        if (_s3Client is null || !_s3Configured || DateTime.UtcNow < _s3DegradedUntilUtc)
         {
             if (!localSaved)
             {
@@ -175,7 +182,7 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
             return true;
         }
 
-        // 3. Upload to AWS S3
+        // 3. Upload to AWS S3 with timeout protection
         try
         {
             if (stream.CanSeek)
@@ -192,7 +199,10 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
                 ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256
             };
 
-            var response = await _s3Client.PutObjectAsync(request, cancellationToken);
+            using var s3Cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            s3Cts.CancelAfter(TimeSpan.FromSeconds(4));
+
+            var response = await _s3Client.PutObjectAsync(request, s3Cts.Token);
 
             if ((int)response.HttpStatusCode >= 200 && (int)response.HttpStatusCode < 300)
             {
@@ -210,8 +220,16 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
 
             return localSaved;
         }
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+        {
+            _s3DegradedUntilUtc = DateTime.UtcNow.AddMinutes(1);
+            LastError = "S3 upload timed out after 4 seconds. Switched to local storage fallback.";
+            _logger.LogWarning("S3 upload timed out for key {ObjectKey}. Switched to local disk fallback for 60 seconds.", objectKey);
+            return localSaved;
+        }
         catch (AmazonS3Exception ex)
         {
+            _s3DegradedUntilUtc = DateTime.UtcNow.AddMinutes(1);
             LastError = $"[{ex.ErrorCode}] {ex.Message}";
             _logger.LogWarning(ex,
                 "S3 error uploading object {ObjectKey} to bucket {BucketName}: {ErrorCode} - {Message}. Local disk copy will be served.",
@@ -221,6 +239,7 @@ public sealed class S3MediaStorageService : IMediaStorageService, IDisposable
         }
         catch (Exception ex)
         {
+            _s3DegradedUntilUtc = DateTime.UtcNow.AddMinutes(1);
             LastError = ex.Message;
             _logger.LogWarning(ex,
                 "Unexpected error uploading object {ObjectKey} to S3. Local disk copy will be served.",

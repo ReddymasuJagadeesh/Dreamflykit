@@ -69,6 +69,10 @@ public sealed class MediaEditViewModel
 public sealed class BannerListViewModel
 {
     public IReadOnlyList<BannerItemDto> Banners { get; set; } = [];
+    public int MaxLiveSlides { get; set; } = 12;
+    public int ActiveLiveCount { get; set; }
+    public int SlideDurationSeconds { get; set; } = 5;
+    public bool AutoPlay { get; set; } = true;
 }
 
 public sealed class BannerItemDto
@@ -85,18 +89,20 @@ public sealed class BannerItemDto
     public bool IsPublished { get; set; }
     public DateTime? StartDateUtc { get; set; }
     public DateTime? EndDateUtc { get; set; }
+    public bool IsLiveInHero { get; set; }
 }
 
 public sealed class BannerEditViewModel
 {
     public Guid? Id { get; set; }
 
-    [Required(ErrorMessage = "Please select or upload an image")]
     public Guid MediaAssetId { get; set; }
+
+    public IFormFile? ImageFile { get; set; }
 
     public string? CurrentImageUrl { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Title / Headline is required")]
     [MaxLength(150)]
     public string Title { get; set; } = string.Empty;
 
@@ -109,7 +115,7 @@ public sealed class BannerEditViewModel
     [MaxLength(300)]
     public string? CtaUrl { get; set; }
 
-    public int DisplayOrder { get; set; }
+    public int DisplayOrder { get; set; } = 1;
 
     public bool IsActive { get; set; } = true;
     public bool IsPublished { get; set; } = true;

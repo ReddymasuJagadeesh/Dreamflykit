@@ -121,6 +121,93 @@ public sealed class MediaValidationService
     }
 
     /// <summary>
+    /// High-performance multi-variant generation that decodes the source image ONCE into memory,
+    /// cascades resizing (Original -> Detail -> Card -> Thumb) with high-efficiency Bicubic resampling,
+    /// and encodes all variants to WebP. Disposing GeneratedVariants disposes all streams.
+    /// </summary>
+    public async Task<GeneratedVariants> GenerateAllVariantsAsync(
+        Stream sourceStream,
+        int detailMax,
+        int cardMax,
+        int thumbMax,
+        CancellationToken cancellationToken = default)
+    {
+        sourceStream.Position = 0;
+        using var originalImage = await Image.LoadAsync(sourceStream, cancellationToken);
+        var origWidth = originalImage.Width;
+        var origHeight = originalImage.Height;
+
+        var webpEncoder = new WebpEncoder
+        {
+            Quality = 80,
+            FileFormat = WebpFileFormatType.Lossy
+        };
+
+        // 1. Detail variant (up to detailMax)
+        using var detailImage = originalImage.Clone(ctx =>
+        {
+            if (originalImage.Width > detailMax || originalImage.Height > detailMax)
+            {
+                ctx.Resize(new ResizeOptions
+                {
+                    Size = new Size(detailMax, detailMax),
+                    Mode = ResizeMode.Max,
+                    Sampler = KnownResamplers.Bicubic
+                });
+            }
+        });
+
+        var detailStream = new MemoryStream();
+        await detailImage.SaveAsync(detailStream, webpEncoder, cancellationToken);
+        detailStream.Position = 0;
+
+        // 2. Card variant (cascaded down from detailImage - already <= detailMax)
+        using var cardImage = detailImage.Clone(ctx =>
+        {
+            if (detailImage.Width > cardMax || detailImage.Height > cardMax)
+            {
+                ctx.Resize(new ResizeOptions
+                {
+                    Size = new Size(cardMax, cardMax),
+                    Mode = ResizeMode.Max,
+                    Sampler = KnownResamplers.Bicubic
+                });
+            }
+        });
+
+        var cardStream = new MemoryStream();
+        await cardImage.SaveAsync(cardStream, webpEncoder, cancellationToken);
+        cardStream.Position = 0;
+
+        // 3. Thumb variant (cascaded down from cardImage - already <= cardMax)
+        using var thumbImage = cardImage.Clone(ctx =>
+        {
+            if (cardImage.Width > thumbMax || cardImage.Height > thumbMax)
+            {
+                ctx.Resize(new ResizeOptions
+                {
+                    Size = new Size(thumbMax, thumbMax),
+                    Mode = ResizeMode.Max,
+                    Sampler = KnownResamplers.Bicubic
+                });
+            }
+        });
+
+        var thumbStream = new MemoryStream();
+        await thumbImage.SaveAsync(thumbStream, webpEncoder, cancellationToken);
+        thumbStream.Position = 0;
+
+        return new GeneratedVariants
+        {
+            DetailStream = detailStream,
+            CardStream = cardStream,
+            ThumbStream = thumbStream,
+            Width = origWidth,
+            Height = origHeight
+        };
+    }
+
+    /// <summary>
     /// Converts the source image to WebP and resizes to the specified max dimension.
     /// Returns a new MemoryStream with the WebP bytes. Caller must dispose.
     /// </summary>
@@ -133,14 +220,14 @@ public sealed class MediaValidationService
 
         using var image = await Image.LoadAsync(sourceStream, cancellationToken);
 
-        // Resize maintaining aspect ratio
+        // Resize maintaining aspect ratio with fast Bicubic resampler
         if (image.Width > maxDimension || image.Height > maxDimension)
         {
             image.Mutate(x => x.Resize(new ResizeOptions
             {
                 Size = new Size(maxDimension, maxDimension),
                 Mode = ResizeMode.Max,
-                Sampler = KnownResamplers.Lanczos3
+                Sampler = KnownResamplers.Bicubic
             }));
         }
 
@@ -148,7 +235,7 @@ public sealed class MediaValidationService
 
         await image.SaveAsync(outputStream, new WebpEncoder
         {
-            Quality = 82,
+            Quality = 80,
             FileFormat = WebpFileFormatType.Lossy
         }, cancellationToken);
 
@@ -193,5 +280,28 @@ public sealed class MediaValidationService
             if (data[i] != prefix[i]) return false;
         }
         return true;
+    }
+}
+
+public sealed class GeneratedVariants : IAsyncDisposable, IDisposable
+{
+    public required MemoryStream DetailStream { get; init; }
+    public required MemoryStream CardStream { get; init; }
+    public required MemoryStream ThumbStream { get; init; }
+    public int Width { get; init; }
+    public int Height { get; init; }
+
+    public void Dispose()
+    {
+        DetailStream.Dispose();
+        CardStream.Dispose();
+        ThumbStream.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await DetailStream.DisposeAsync();
+        await CardStream.DisposeAsync();
+        await ThumbStream.DisposeAsync();
     }
 }

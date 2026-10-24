@@ -14,17 +14,20 @@ public sealed class HomeController : Controller
     private readonly DreamflykitDbContext _db;
     private readonly IMediaUrlService _urlService;
     private readonly Dreamflykit.Application.Catalog.Interfaces.IProductRepository _productRepository;
+    private readonly IWebHostEnvironment _env;
 
     public HomeController(
         ICountryService countryService,
         DreamflykitDbContext db,
         IMediaUrlService urlService,
-        Dreamflykit.Application.Catalog.Interfaces.IProductRepository productRepository)
+        Dreamflykit.Application.Catalog.Interfaces.IProductRepository productRepository,
+        IWebHostEnvironment env)
     {
         _countryService = countryService;
         _db = db;
         _urlService = urlService;
         _productRepository = productRepository;
+        _env = env;
     }
 
     [HttpGet]
@@ -69,7 +72,7 @@ public sealed class HomeController : Controller
                         (!b.EndDateUtc.HasValue || b.EndDateUtc.Value >= now) &&
                         b.MediaAssetId.HasValue)
             .OrderBy(b => b.DisplayOrder)
-            .Take(5)
+            .Take(12)
             .ToListAsync(cancellationToken);
 
         var bannerDtos = new List<HomeBannerDto>();
@@ -163,11 +166,12 @@ public sealed class HomeController : Controller
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.SectionKey == HomepageSectionKey.FeaturedProducts, cancellationToken);
 
-        // 2b. Build dynamic hero slider slides (Admin Banners + Curated Slides)
+        // 2b. Build dynamic hero slider slides (Admin Banners + Curated Slides, up to 12 slides)
         var heroSlides = new List<HomeHeroSlideDto>();
 
         foreach (var b in bannerDtos)
         {
+            if (heroSlides.Count >= 12) break;
             heroSlides.Add(new HomeHeroSlideDto
             {
                 ImageUrl = b.ImageUrl,
@@ -190,6 +194,10 @@ public sealed class HomeController : Controller
                 CtaUrl = heroBannerLink,
                 AltText = heroBannerAlt ?? "Dreamflykit Hero"
             });
+            if (heroSlides.Count > 12)
+            {
+                heroSlides = heroSlides.Take(12).ToList();
+            }
         }
 
         if (heroSlides.Count < 2)
@@ -234,6 +242,30 @@ public sealed class HomeController : Controller
             }
         }
 
+        int slideDurationSeconds = 5;
+        bool autoPlay = true;
+        try
+        {
+            var settingsPath = Path.Combine(_env.WebRootPath, "data", "hero_slider_settings.json");
+            if (System.IO.File.Exists(settingsPath))
+            {
+                var json = await System.IO.File.ReadAllTextAsync(settingsPath, cancellationToken);
+                using var doc = System.Text.Json.JsonDocument.Parse(json);
+                if (doc.RootElement.TryGetProperty("SlideDurationSeconds", out var dProp))
+                {
+                    slideDurationSeconds = Math.Clamp(dProp.GetInt32(), 2, 30);
+                }
+                if (doc.RootElement.TryGetProperty("AutoPlay", out var aProp))
+                {
+                    autoPlay = aProp.GetBoolean();
+                }
+            }
+        }
+        catch
+        {
+            // fallback
+        }
+
         var model =
             new HomeViewModel
             {
@@ -249,14 +281,16 @@ public sealed class HomeController : Controller
                 HeroBannerAlt = heroBannerAlt,
                 HeroBannerLink = heroBannerLink,
                 HeroSlides = heroSlides,
-                Banners = bannerDtos,
+                Banners = Array.Empty<HomeBannerDto>(), // Only hero banner displays on homepage
                 Categories = categoryDtos,
                 TrendingDeals = trendingDeals,
                 FeaturedProducts = featuredProducts,
                 TrendingDealsTitle = trendingSec?.Title ?? "Top Deals of the Day",
                 TrendingDealsSubtitle = trendingSec?.Subtitle ?? "Exclusive student abroad discounts & special offers",
                 FeaturedProductsTitle = featuredSec?.Title ?? "Best of Study & Travel Essentials",
-                FeaturedProductsSubtitle = featuredSec?.Subtitle ?? "Student-curated essentials trusted worldwide"
+                FeaturedProductsSubtitle = featuredSec?.Subtitle ?? "Student-curated essentials trusted worldwide",
+                SlideDurationSeconds = slideDurationSeconds,
+                AutoPlay = autoPlay
             };
 
         return View(model);

@@ -1,128 +1,302 @@
 @model Dreamflykit.Web.Areas.Admin.Models.BannerListViewModel
 @{
-    ViewData["Title"] = "Manage Banners & Promotions";
+    ViewData["Title"] = "Homepage Hero Slides & Banners (Up to 12 Slides)";
 }
 
-<div class="dk-admin-content-card">
-    <div class="dk-admin-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+<div class="dk-admin-content-card" style="margin-bottom: 2rem;">
+    <!-- HEADER BAR -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border-color, #e5e7eb);">
         <div>
-            <h1 class="dk-admin-card-title" style="font-size: 1.5rem; margin: 0;">Banners & Promotions</h1>
-            <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0.25rem 0 0;">
-                Configure dynamic hero sliders, promotional strips, and time-based campaign graphics.
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <h1 class="dk-admin-card-title" style="font-size: 1.6rem; font-weight: 700; margin: 0; color: #0f172a;">
+                    Homepage Hero Slides & Banners
+                </h1>
+                <span style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                    <span>Up to 12 Live Slides Supported</span>
+                </span>
+            </div>
+            <p style="color: var(--text-muted, #64748b); font-size: 0.9rem; margin: 0.35rem 0 0; max-width: 720px; line-height: 1.5;">
+                Manage the main carousel on Dreamflykit homepage. Upload promotional graphics, set call-to-action buttons, configure display order, and schedule limited-time campaigns.
             </p>
         </div>
-        <div>
-            <a href="/Admin/Banners/Create" class="dk-btn dk-btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+
+        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <a href="/" target="_blank" class="dk-btn dk-btn-ghost" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;" title="View public homepage in new tab">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <span>View Live Site</span>
+            </a>
+            <a href="/Admin/Banners/Create" class="dk-btn dk-btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; padding: 0.6rem 1.2rem; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
-                <span>Add Banner</span>
+                <span>Add New Slide</span>
             </a>
         </div>
     </div>
 
+    <!-- FLASH MESSAGES -->
     @if (TempData["SuccessMessage"] is string msg)
     {
-        <div class="dk-alert dk-alert-success" style="margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: #ecfdf5; border-left: 4px solid #10b981; color: #065f46; border-radius: 4px;">
-            @msg
+        <div class="dk-alert dk-alert-success" style="margin-bottom: 1.5rem; padding: 0.85rem 1.25rem; background: #ecfdf5; border-left: 4px solid #10b981; color: #065f46; border-radius: 8px; font-weight: 500; display: flex; align-items: center; gap: 0.6rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>@msg</span>
         </div>
     }
 
+    <!-- LIVE HERO SLOTS CAPACITY STATUS BAR -->
+    <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.1rem 1.4rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 44px; height: 44px; border-radius: 10px; background: #ea580c; display: flex; align-items: center; justify-content: center; color: #fff;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+            </div>
+            <div>
+                <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 700;">
+                    Homepage Hero Capacity
+                </div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: #0f172a;">
+                    @Model.ActiveLiveCount <span style="font-size: 0.9rem; font-weight: 500; color: #64748b;">of @Model.MaxLiveSlides maximum slides currently live</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROGRESS PILL INDICATOR -->
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+            @for (int s = 1; s <= Model.MaxLiveSlides; s++)
+            {
+                var isFilled = s <= Model.ActiveLiveCount;
+                <div style="width: 18px; height: 26px; border-radius: 4px; background: @(isFilled ? "#ea580c" : "#cbd5e1"); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: @(isFilled ? "#fff" : "#64748b"); transition: all 0.2s;" title="Slide Slot #@s: @(isFilled ? "Active" : "Empty")">
+                    @s
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- TIMEFRAME & ROTATION SPEED SETTINGS CARD -->
+    <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+        <form method="post" action="/Admin/Banners/UpdateTimeframe" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.25rem;">
+            @Html.AntiForgeryToken()
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: #fff7ed; color: #ea580c; display: flex; align-items: center; justify-content: center;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <div>
+                    <strong style="color: #0f172a; font-size: 0.95rem; display: block;">Slide Auto-Play Timeframe</strong>
+                    <span style="color: #64748b; font-size: 0.8rem;">
+                        Controls how many seconds each slide stays on screen before advancing on the live homepage.
+                    </span>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <label for="slideDurationSeconds" style="font-size: 0.85rem; font-weight: 600; color: #334155; margin: 0;">
+                        Duration:
+                    </label>
+                    <select id="slideDurationSeconds" name="slideDurationSeconds" class="dk-input" style="padding: 0.45rem 0.75rem; border-radius: 6px; font-weight: 600; color: #0f172a;">
+                        <!option value="2" @(Model.SlideDurationSeconds == 2 ? "selected" : "")>2 Seconds (Very Fast)</!option>
+                        <!option value="3" @(Model.SlideDurationSeconds == 3 ? "selected" : "")>3 Seconds (Fast)</!option>
+                        <!option value="4" @(Model.SlideDurationSeconds == 4 ? "selected" : "")>4 Seconds</!option>
+                        <!option value="5" @(Model.SlideDurationSeconds == 5 ? "selected" : "")>5 Seconds (Default)</!option>
+                        <!option value="6" @(Model.SlideDurationSeconds == 6 ? "selected" : "")>6 Seconds</!option>
+                        <!option value="7" @(Model.SlideDurationSeconds == 7 ? "selected" : "")>7 Seconds</!option>
+                        <!option value="8" @(Model.SlideDurationSeconds == 8 ? "selected" : "")>8 Seconds (Relaxed)</!option>
+                        <!option value="10" @(Model.SlideDurationSeconds == 10 ? "selected" : "")>10 Seconds (Slow)</!option>
+                        <!option value="12" @(Model.SlideDurationSeconds == 12 ? "selected" : "")>12 Seconds</!option>
+                        <!option value="15" @(Model.SlideDurationSeconds == 15 ? "selected" : "")>15 Seconds</!option>
+                    </select>
+                </div>
+
+                <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; color: #334155; cursor: pointer;">
+                    <input type="checkbox" name="autoPlay" value="true" @(Model.AutoPlay ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" />
+                    <span>Auto-advance slides</span>
+                </label>
+
+                <button type="submit" class="dk-btn dk-btn-secondary dk-btn-sm" style="font-weight: 700; padding: 0.45rem 1rem;">
+                    Save Timeframe
+                </button>
+            </div>
+        </form>
+    </div>
+
     @if (!Model.Banners.Any())
     {
-        <div style="text-align: center; padding: 4rem 1rem;">
-            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--text-muted); margin-bottom: 1rem;">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-            </svg>
-            <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">No banners created yet</h3>
-            <p style="color: var(--text-muted); max-width: 400px; margin: 0 auto 1.5rem;">
-                Create promotional banners to highlight sales, featured kits, or announcements.
+        <div style="text-align: center; padding: 4.5rem 1.5rem; background: #fff; border: 2px dashed #cbd5e1; border-radius: 14px;">
+            <div style="width: 68px; height: 68px; border-radius: 50%; background: #fff7ed; color: #ea580c; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;">
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="12" y1="11" x2="12" y2="17"></line>
+                    <line x1="9" y1="14" x2="15" y2="14"></line>
+                </svg>
+            </div>
+            <h2 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem;">No custom slides uploaded yet</h2>
+            <p style="color: #64748b; max-width: 480px; margin: 0 auto 1.5rem; line-height: 1.5; font-size: 0.95rem;">
+                The homepage is currently running default fallback slides. You can upload up to 12 custom slides with images, headlines, and call-to-action buttons.
             </p>
-            <a href="/Admin/Banners/Create" class="dk-btn dk-btn-primary">Create First Banner</a>
+            <a href="/Admin/Banners/Create" class="dk-btn dk-btn-primary" style="font-weight: 600; padding: 0.75rem 1.5rem;">
+                Upload First Slide
+            </a>
         </div>
     }
     else
     {
-        <div class="dk-table-responsive" style="overflow-x: auto;">
+        <div class="dk-table-responsive" style="overflow-x: auto; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
             <table class="dk-admin-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
                 <thead>
-                    <tr style="border-bottom: 2px solid #e5e7eb; text-align: left; background: var(--bg-alt, #f9fafb);">
-                        <th style="padding: 0.75rem 1rem; width: 100px;">Banner</th>
-                        <th style="padding: 0.75rem 1rem;">Title & Subtitle</th>
-                        <th style="padding: 0.75rem 1rem;">CTA Link</th>
-                        <th style="padding: 0.75rem 1rem; width: 80px; text-align: center;">Order</th>
-                        <th style="padding: 0.75rem 1rem; width: 120px;">Schedule</th>
-                        <th style="padding: 0.75rem 1rem; width: 100px;">Status</th>
-                        <th style="padding: 0.75rem 1rem; width: 120px; text-align: right;">Actions</th>
+                    <tr style="border-bottom: 2px solid #e2e8f0; text-align: left; background: #f8fafc;">
+                        <th style="padding: 1rem 1.2rem; width: 60px; text-align: center; color: #475569; font-weight: 700;">Slot</th>
+                        <th style="padding: 1rem 1.2rem; width: 150px; color: #475569; font-weight: 700;">Image Preview</th>
+                        <th style="padding: 1rem 1.2rem; color: #475569; font-weight: 700;">Slide Content & CTA</th>
+                        <th style="padding: 1rem 1.2rem; width: 90px; text-align: center; color: #475569; font-weight: 700;">Order</th>
+                        <th style="padding: 1rem 1.2rem; width: 140px; color: #475569; font-weight: 700;">Schedule</th>
+                        <th style="padding: 1rem 1.2rem; width: 130px; color: #475569; font-weight: 700;">Status</th>
+                        <th style="padding: 1rem 1.2rem; width: 150px; text-align: right; color: #475569; font-weight: 700;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @{ int slotIndex = 1; }
                     @foreach (var b in Model.Banners)
                     {
-                        <tr style="border-bottom: 1px solid #e5e7eb;">
-                            <td style="padding: 0.75rem 1rem;">
+                        <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s;" onmouseover="this.style.background='#fbfcfd'" onmouseout="this.style.background='transparent'">
+                            <!-- SLOT BADGE -->
+                            <td style="padding: 1rem 1.2rem; text-align: center;">
+                                @if (b.IsLiveInHero)
+                                {
+                                    <span style="display: inline-block; width: 28px; height: 28px; line-height: 28px; border-radius: 50%; background: #ea580c; color: #fff; font-weight: 800; font-size: 0.8rem; box-shadow: 0 2px 4px rgba(234, 88, 12, 0.3);" title="Live in Homepage Hero Carousel: Slot #@slotIndex">
+                                        #@slotIndex
+                                    </span>
+                                    slotIndex++;
+                                }
+                                else
+                                {
+                                    <span style="display: inline-block; width: 28px; height: 28px; line-height: 28px; border-radius: 50%; background: #e2e8f0; color: #64748b; font-weight: 600; font-size: 0.8rem;" title="Not currently shown in live hero">
+                                        —
+                                    </span>
+                                }
+                            </td>
+
+                            <!-- IMAGE THUMBNAIL -->
+                            <td style="padding: 1rem 1.2rem;">
                                 @if (!string.IsNullOrWhiteSpace(b.ImageUrl))
                                 {
-                                    <img src="@b.ImageUrl" alt="@b.Title" style="width: 80px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #e5e7eb;" />
+                                    <div style="position: relative; width: 140px; height: 75px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); background: #f8fafc;">
+                                        <img src="@b.ImageUrl" alt="@b.Title" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" />
+                                    </div>
                                 }
                                 else
                                 {
-                                    <div style="width: 80px; height: 45px; background: #e5e7eb; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #6b7280;">No Image</div>
+                                    <div style="width: 140px; height: 75px; background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; color: #94a3b8; gap: 0.25rem;">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                        <span>No image</span>
+                                    </div>
                                 }
                             </td>
-                            <td style="padding: 0.75rem 1rem;">
-                                <div style="font-weight: 600;">@b.Title</div>
+
+                            <!-- CONTENT & CTA -->
+                            <td style="padding: 1rem 1.2rem;">
+                                <div style="font-weight: 700; font-size: 0.95rem; color: #0f172a; margin-bottom: 0.2rem;">
+                                    @b.Title
+                                </div>
                                 @if (!string.IsNullOrWhiteSpace(b.Subtitle))
                                 {
-                                    <div style="font-size: 0.8rem; color: var(--text-muted);">@b.Subtitle</div>
+                                    <div style="font-size: 0.825rem; color: #64748b; margin-bottom: 0.4rem; line-height: 1.4;">
+                                        @b.Subtitle
+                                    </div>
                                 }
+                                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                    @if (!string.IsNullOrWhiteSpace(b.CtaUrl))
+                                    {
+                                        <span style="display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.78rem; background: #f1f5f9; padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid #e2e8f0; color: #334155;">
+                                            <span style="font-weight: 700; color: #ea580c;">@(string.IsNullOrWhiteSpace(b.CtaText) ? "Link" : b.CtaText):</span>
+                                            <code style="color: #0369a1; font-size: 0.75rem;">@b.CtaUrl</code>
+                                        </span>
+                                    }
+                                </div>
                             </td>
-                            <td style="padding: 0.75rem 1rem;">
-                                @if (!string.IsNullOrWhiteSpace(b.CtaUrl))
-                                {
-                                    <span style="font-size: 0.85rem;">@b.CtaText: <code>@b.CtaUrl</code></span>
-                                }
-                                else
-                                {
-                                    <span style="color: var(--text-muted); font-size: 0.85rem;">—</span>
-                                }
+
+                            <!-- DISPLAY ORDER -->
+                            <td style="padding: 1rem 1.2rem; text-align: center;">
+                                <span style="display: inline-block; padding: 0.25rem 0.65rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-weight: 700; color: #334155; font-size: 0.9rem;">
+                                    @b.DisplayOrder
+                                </span>
                             </td>
-                            <td style="padding: 0.75rem 1rem; text-align: center; font-weight: 600;">
-                                @b.DisplayOrder
-                            </td>
-                            <td style="padding: 0.75rem 1rem; font-size: 0.8rem; color: var(--text-muted);">
+
+                            <!-- SCHEDULE -->
+                            <td style="padding: 1rem 1.2rem; font-size: 0.8rem; color: #64748b;">
                                 @if (b.StartDateUtc.HasValue || b.EndDateUtc.HasValue)
                                 {
-                                    <div>From: @(b.StartDateUtc?.ToString("MMM dd") ?? "Always")</div>
-                                    <div>To: @(b.EndDateUtc?.ToString("MMM dd") ?? "Ongoing")</div>
+                                    <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+                                        <div><strong style="color: #475569;">From:</strong> @(b.StartDateUtc?.ToString("MMM dd, yyyy") ?? "Always")</div>
+                                        <div><strong style="color: #475569;">To:</strong> @(b.EndDateUtc?.ToString("MMM dd, yyyy") ?? "Ongoing")</div>
+                                    </div>
                                 }
                                 else
                                 {
-                                    <span>Always Active</span>
+                                    <span style="display: inline-flex; align-items: center; gap: 0.3rem; color: #059669; font-weight: 600;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                                        Always Active
+                                    </span>
                                 }
                             </td>
-                            <td style="padding: 0.75rem 1rem;">
-                                @if (b.IsPublished && b.IsActive)
-                                {
-                                    <span style="font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; background: #ecfdf5; color: #065f46; font-weight: 600;">Live</span>
-                                }
-                                else if (!b.IsActive)
-                                {
-                                    <span style="font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; background: #fef2f2; color: #991b1b; font-weight: 600;">Inactive</span>
-                                }
-                                else
-                                {
-                                    <span style="font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; background: #f3f4f6; color: #374151; font-weight: 600;">Draft</span>
-                                }
+
+                            <!-- STATUS & HERO BADGE -->
+                            <td style="padding: 1rem 1.2rem;">
+                                <div style="display: flex; flex-direction: column; gap: 0.35rem; align-items: flex-start;">
+                                    @if (b.IsLiveInHero)
+                                    {
+                                        <span style="font-size: 0.72rem; padding: 0.2rem 0.55rem; border-radius: 9999px; background: #ecfdf5; color: #047857; font-weight: 700; border: 1px solid #a7f3d0; display: inline-flex; align-items: center; gap: 0.3rem;">
+                                            <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></span>
+                                            Live in Hero
+                                        </span>
+                                    }
+                                    else if (!b.IsActive)
+                                    {
+                                        <span style="font-size: 0.72rem; padding: 0.2rem 0.55rem; border-radius: 9999px; background: #fef2f2; color: #b91c1c; font-weight: 700; border: 1px solid #fecaca;">
+                                            Inactive
+                                        </span>
+                                    }
+                                    else if (!b.IsPublished)
+                                    {
+                                        <span style="font-size: 0.72rem; padding: 0.2rem 0.55rem; border-radius: 9999px; background: #f8fafc; color: #475569; font-weight: 700; border: 1px solid #e2e8f0;">
+                                            Draft / Unpublished
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span style="font-size: 0.72rem; padding: 0.2rem 0.55rem; border-radius: 9999px; background: #fff7ed; color: #c2410c; font-weight: 700; border: 1px solid #ffedd5;">
+                                            Scheduled / Standby
+                                        </span>
+                                    }
+                                </div>
                             </td>
-                            <td style="padding: 0.75rem 1rem; text-align: right;">
-                                <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
-                                    <a href="/Admin/Banners/Edit/@b.Id" class="dk-btn dk-btn-secondary dk-btn-sm">Edit</a>
-                                    <form method="post" action="/Admin/Banners/Delete/@b.Id" style="display: inline;" onsubmit="return confirm('Remove this banner?');">
+
+                            <!-- ACTIONS -->
+                            <td style="padding: 1rem 1.2rem; text-align: right;">
+                                <div style="display: flex; gap: 0.4rem; justify-content: flex-end; align-items: center;">
+                                    <!-- QUICK TOGGLE ACTIVE FORM -->
+                                    <form method="post" action="/Admin/Banners/ToggleActive/@b.Id" style="display: inline;">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="dk-btn dk-btn-danger dk-btn-sm">Delete</button>
+                                        <button type="submit" class="dk-btn dk-btn-sm @(b.IsActive ? "dk-btn-ghost" : "dk-btn-secondary")" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;" title="@(b.IsActive ? "Deactivate this slide" : "Activate this slide")">
+                                            @(b.IsActive ? "Deactivate" : "Activate")
+                                        </button>
+                                    </form>
+
+                                    <a href="/Admin/Banners/Edit/@b.Id" class="dk-btn dk-btn-secondary dk-btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">
+                                        Edit
+                                    </a>
+
+                                    <form method="post" action="/Admin/Banners/Delete/@b.Id" style="display: inline;" onsubmit="return confirm('Are you sure you want to permanently delete slide \'@b.Title\'?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dk-btn dk-btn-danger dk-btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">
+                                            Delete
+                                        </button>
                                     </form>
                                 </div>
                             </td>
@@ -132,4 +306,17 @@
             </table>
         </div>
     }
+
+    <!-- ADMIN BEST PRACTICES HELPER BOX -->
+    <div style="margin-top: 2rem; padding: 1.25rem 1.5rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; gap: 1rem; align-items: flex-start;">
+        <div style="color: #ea580c; font-size: 1.4rem; line-height: 1;">💡</div>
+        <div style="font-size: 0.875rem; color: #475569; line-height: 1.55;">
+            <strong style="color: #0f172a; display: block; margin-bottom: 0.25rem;">Best Practices for Homepage Hero Carousel:</strong>
+            <ul style="margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                <li><strong>Resolution:</strong> Upload high-clarity landscape banners (recommended: <strong>1600 × 600 px</strong> or <strong>1920 × 600 px</strong>). WebP, PNG, and JPEG formats are supported and automatically compressed.</li>
+                <li><strong>Ordering:</strong> Lower numbers appear first in the carousel. Slot #1 is the initial slide visitors see when opening Dreamflykit.</li>
+                <li><strong>Live Limit:</strong> Up to 12 active slides cycle automatically with progress timers, side navigation arrows, and touch-swipe controls.</li>
+            </ul>
+        </div>
+    </div>
 </div>
