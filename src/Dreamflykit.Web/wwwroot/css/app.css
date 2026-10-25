@@ -8745,14 +8745,42 @@ img {
 }
 
 /* 4. STUDY ABROAD HUB PROFILE EMPTY CANVAS & MINIMAL HEADER */
-.dk-main-header-abroad {
-    padding: 14px 0;
-    border-bottom: 1px solid #e2e8f0;
-    background: #ffffff;
+.dk-main-header.dk-main-header-abroad {
+    min-height: 0 !important;
+    height: auto !important;
+    padding-top: 10px !important;
+    padding-bottom: 14px !important;
+    margin-bottom: 0 !important;
+    border-bottom: none !important;
+    background: #ffffff !important;
 }
 
-.dk-main-header-abroad .dk-header-top-row {
-    margin-bottom: 0;
+.dk-main-header.dk-main-header-abroad .dk-main-header-inner {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 auto !important;
+    gap: 0 !important;
+    min-height: 0 !important;
+}
+
+.dk-main-header.dk-main-header-abroad .dk-header-top-row {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    align-items: flex-end !important;
+}
+
+.dk-main-header.dk-main-header-abroad .dk-profile-switcher-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: flex-end !important;
+    line-height: 1 !important;
+}
+
+.dk-main-header.dk-main-header-abroad .dk-profile-pill {
+    margin-bottom: 0 !important;
 }
 
 .dk-study-abroad-hub-empty-page {

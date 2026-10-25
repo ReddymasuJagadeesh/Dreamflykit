@@ -1129,16 +1129,40 @@
             </div>
         </div>
 
-        <label class="dk-sh-form-label">Full-Width Hero Visual Image (Super Admin Replaceable • Empty = "Uploading Soon")</label>
-        <div class="dk-sh-img-ctrl-row">
-            <div class="dk-sh-img-preview-box" style="width: 140px; height: 90px;">
-                <img id="preview_abroad_hero_img" src="@(string.IsNullOrWhiteSpace(abroadProfile.HeroImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : abroadProfile.HeroImageUrl)" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+        <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                <label class="dk-sh-form-label" style="font-weight: 800; color: #0369a1; margin: 0;">Full-Width Hero Visual (Image or Video Background)</label>
+                <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                    <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: #0f172a; cursor: pointer;">
+                        <input type="checkbox" id="abroad_hero_show_text" @(abroadProfile.HeroShowText ? "checked" : "") style="width: 16px; height: 16px; accent-color: #0284c7;" />
+                        <span>Show Text Overlay on Banner</span>
+                    </label>
+                    <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: #0f172a; cursor: pointer;">
+                        <input type="checkbox" id="abroad_hero_enable_video" @(abroadProfile.HeroEnableVideo ? "checked" : "") style="width: 16px; height: 16px; accent-color: #0284c7;" />
+                        <span>Enable Background Video</span>
+                    </label>
+                </div>
             </div>
-            <div style="flex: 1;">
-                <input type="text" id="abroad_hero_img_url" class="dk-admin-form-input" value="@abroadProfile.HeroImageUrl" placeholder="Leave empty for 'Uploading Soon' placeholder" oninput="updateImgPreview('abroad_hero_img_url', 'preview_abroad_hero_img')" style="margin-bottom: 8px;" />
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button type="button" class="dk-btn dk-btn-primary" onclick="triggerUploadFor('abroad_hero_img_url', 'preview_abroad_hero_img')">📷 Upload Full Hero Image</button>
-                    <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 12px; font-weight: 700;" onclick="clearAdminImg('abroad_hero_img_url', 'preview_abroad_hero_img')">Set As 'Uploading Soon'</button>
+
+            <div style="margin-bottom: 14px;">
+                <label class="dk-sh-form-label">Hero Video URL (.mp4, .webm)</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="abroad_hero_video_url" class="dk-admin-form-input" value="@abroadProfile.HeroVideoUrl" placeholder="e.g. /videos/study-abroad-hero.mp4 or CDN link" />
+                    <button type="button" class="dk-btn dk-btn-primary" style="white-space: nowrap;" onclick="triggerUploadFor('abroad_hero_video_url')">🎥 Upload Video</button>
+                </div>
+            </div>
+
+            <label class="dk-sh-form-label">Full-Width Hero Visual Image (Background or Fallback • Empty = "Uploading Soon")</label>
+            <div class="dk-sh-img-ctrl-row">
+                <div class="dk-sh-img-preview-box" style="width: 140px; height: 90px;">
+                    <img id="preview_abroad_hero_img" src="@(string.IsNullOrWhiteSpace(abroadProfile.HeroImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : abroadProfile.HeroImageUrl)" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                </div>
+                <div style="flex: 1;">
+                    <input type="text" id="abroad_hero_img_url" class="dk-admin-form-input" value="@abroadProfile.HeroImageUrl" placeholder="Leave empty for 'Uploading Soon' placeholder" oninput="updateImgPreview('abroad_hero_img_url', 'preview_abroad_hero_img')" style="margin-bottom: 8px;" />
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button type="button" class="dk-btn dk-btn-primary" onclick="triggerUploadFor('abroad_hero_img_url', 'preview_abroad_hero_img')">📷 Upload Full Hero Image</button>
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 12px; font-weight: 700;" onclick="clearAdminImg('abroad_hero_img_url', 'preview_abroad_hero_img')">Set As 'Uploading Soon'</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1198,9 +1222,245 @@
         </div>
     </div>
 
-    <!-- 6 Education Services Management -->
+    <!-- 2. Synchronized 5-Section Carousel Management (Bank of Baroda Style) -->
+    @{
+        var syncCarousel = abroadProfile.FiveSectionCarousel ?? new Dreamflykit.Application.StudyHub.Models.AbroadFiveSectionCarouselDto();
+        var syncSlides = syncCarousel.Slides != null && syncCarousel.Slides.Count > 0
+            ? syncCarousel.Slides
+            : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultAbroadProfile().FiveSectionCarousel.Slides;
+    }
+    <div class="dk-admin-card" style="margin-bottom: 20px; border-left: 5px solid #f97316;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+            <div>
+                <h3 class="dk-sh-tab-title" style="margin: 0; color: #ea580c; display: flex; align-items: center; gap: 8px;">
+                    <span>🎡</span> 2. Synchronized 5-Section Carousel (Bank of Baroda Style Showcase)
+                </h3>
+                <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">
+                    All 5 sections transition at one time. Admin decides slide timing frame (seconds), image uploads, and section destinations. Users have a Play/Pause button.
+                </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <label style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13px; color: #0f172a; cursor: pointer;">
+                    <input type="checkbox" id="abroad_sync_enabled" @(syncCarousel.IsEnabled ? "checked" : "") style="width: 17px; height: 17px; accent-color: #f97316;" />
+                    <span>Enable Carousel</span>
+                </label>
+                <label style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13px; color: #0f172a; cursor: pointer;">
+                    <input type="checkbox" id="abroad_sync_autoplay" @(syncCarousel.AutoPlay ? "checked" : "") style="width: 17px; height: 17px; accent-color: #f97316;" />
+                    <span>Auto-Play</span>
+                </label>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr 2fr; gap: 14px; margin-bottom: 18px; background: #fff7ed; border: 1px solid #ffedd5; border-radius: 12px; padding: 14px 16px;">
+            <div>
+                <label class="dk-sh-form-label" style="color: #c2410c;">⏱ Slide Timing (Seconds)</label>
+                <input type="number" id="abroad_sync_interval" class="dk-admin-form-input" value="@(syncCarousel.SlideIntervalSeconds > 0 ? syncCarousel.SlideIntervalSeconds : 5)" min="2" max="30" />
+                <span style="font-size: 11px; color: #7c2d12;">All 5 sections move together after this time</span>
+            </div>
+            <div>
+                <label class="dk-sh-form-label" style="color: #c2410c;">Section Heading Title</label>
+                <input type="text" id="abroad_sync_title" class="dk-admin-form-input" value="@syncCarousel.SectionTitle" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label" style="color: #c2410c;">Section Subtitle</label>
+                <input type="text" id="abroad_sync_sub" class="dk-admin-form-input" value="@syncCarousel.SectionSubtitle" />
+            </div>
+        </div>
+
+        <!-- Slide Sets Container -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h4 style="margin: 0; font-size: 14px; font-weight: 800; color: #0f172a;">
+                Slide Sets (Each Set contains 5 Synchronized Sections)
+            </h4>
+            <button type="button" class="dk-btn" style="background: #f97316; color: #fff; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 8px;" onclick="addSyncSlideSet()">
+                + Add New 5-Section Slide Set
+            </button>
+        </div>
+
+        <div id="abroad_sync_slide_sets_wrap" style="display: flex; flex-direction: column; gap: 20px;">
+            @for (int sIdx = 0; sIdx < syncSlides.Count; sIdx++)
+            {
+                var s = syncSlides[sIdx];
+                var spot = s.Spotlight ?? new();
+                var c1 = s.Card1 ?? new();
+                var c2 = s.Card2 ?? new();
+                var c3 = s.Card3 ?? new();
+                var c4 = s.Card4 ?? new();
+
+                <div class="abroad-sync-slide-set-card" data-slide-id="@s.Id" style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="background: #f97316; color: #fff; font-weight: 800; font-size: 12px; padding: 3px 10px; border-radius: 999px;">
+                                Slide Set #@(sIdx + 1)
+                            </span>
+                            <input type="text" class="dk-admin-form-input abroad-slide-label-input" value="@s.SlideLabel" style="width: 280px; font-weight: 700;" placeholder="Slide Label" />
+                        </div>
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 12px; font-weight: 700; padding: 4px 10px;" onclick="this.closest('.abroad-sync-slide-set-card').remove()">
+                            🗑️ Delete Slide Set
+                        </button>
+                    </div>
+
+                    <!-- 5 SECTIONS GRID -->
+                    <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr; gap: 12px;">
+                        
+                        <!-- Section 1: Spotlight (Left Tall Card) -->
+                        <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; padding: 12px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 8px;">
+                                Section 1: Spotlight
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Title</label>
+                                <input type="text" class="dk-admin-form-input spot-title-input" value="@spot.Title" style="font-size: 12px; padding: 4px 8px;" />
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label>
+                                <input type="text" class="dk-admin-form-input spot-sub-input" value="@spot.Subtitle" style="font-size: 12px; padding: 4px 8px;" />
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Tag</label>
+                                <input type="text" class="dk-admin-form-input spot-tag-input" value="@spot.TagText" style="font-size: 12px; padding: 4px 8px;" />
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
+                                <input type="text" class="dk-admin-form-input spot-btn-input" value="@spot.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                                <input type="text" class="dk-admin-form-input spot-link-input" value="@spot.ButtonUrl" style="font-size: 11px; padding: 3px 6px;" />
+                            </div>
+                            <div>
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label>
+                                <input type="text" class="dk-admin-form-input spot-img-input" value="@spot.ImageUrl" placeholder="Leave empty for 'Uploading Soon'" style="font-size: 11px; padding: 3px 6px;" />
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Card 1 (Featured) -->
+                        <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 12px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #0369a1; text-transform: uppercase; margin-bottom: 8px;">
+                                Section 2: Card 1
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Title</label>
+                                <input type="text" class="dk-admin-form-input c1-title-input" value="@c1.Title" style="font-size: 12px; padding: 4px 8px;" />
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label>
+                                <input type="text" class="dk-admin-form-input c1-sub-input" value="@c1.Subtitle" style="font-size: 12px; padding: 4px 8px;" />
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label>
+                                <select class="dk-admin-form-input c1-icon-select" style="font-size: 11px; padding: 3px 6px;">
+                                    <option value="loan" selected="@(c1.IconType == "loan" ? "selected" : null)">🎓 Education Loan</option>
+                                    <option value="test" selected="@(c1.IconType == "test" ? "selected" : null)">📖 Language Test</option>
+                                    <option value="accommodation" selected="@(c1.IconType == "accommodation" ? "selected" : null)">🏠 Accommodation</option>
+                                    <option value="star" selected="@(c1.IconType == "star" ? "selected" : null)">⭐ Star Feature</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
+                                <input type="text" class="dk-admin-form-input c1-btn-input" value="@c1.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                                <input type="text" class="dk-admin-form-input c1-link-input" value="@c1.ButtonUrl" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label>
+                                <input type="text" class="dk-admin-form-input c1-img-input" value="@c1.ImageUrl" placeholder="Leave empty for emblem" style="font-size: 11px; padding: 3px 6px;" />
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Card 2 -->
+                        <div style="background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 10px; padding: 12px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #7e22ce; text-transform: uppercase; margin-bottom: 8px;">
+                                Section 3: Card 2
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Title</label>
+                                <input type="text" class="dk-admin-form-input c2-title-input" value="@c2.Title" style="font-size: 12px; padding: 4px 8px;" />
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label>
+                                <input type="text" class="dk-admin-form-input c2-sub-input" value="@c2.Subtitle" style="font-size: 12px; padding: 4px 8px;" />
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label>
+                                <select class="dk-admin-form-input c2-icon-select" style="font-size: 11px; padding: 3px 6px;">
+                                    <option value="consultancy" selected="@(c2.IconType == "consultancy" ? "selected" : null)">👥 Consultancy</option>
+                                    <option value="booking" selected="@(c2.IconType == "booking" ? "selected" : null)">📅 Booking Slots</option>
+                                    <option value="forex" selected="@(c2.IconType == "forex" ? "selected" : null)">💳 Forex Card</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
+                                <input type="text" class="dk-admin-form-input c2-btn-input" value="@c2.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                                <input type="text" class="dk-admin-form-input c2-link-input" value="@c2.ButtonUrl" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label>
+                                <input type="text" class="dk-admin-form-input c2-img-input" value="@c2.ImageUrl" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px;" />
+                            </div>
+                        </div>
+
+                        <!-- Section 4: Card 3 -->
+                        <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 10px; padding: 12px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #0f766e; text-transform: uppercase; margin-bottom: 8px;">
+                                Section 4: Card 3
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Title</label>
+                                <input type="text" class="dk-admin-form-input c3-title-input" value="@c3.Title" style="font-size: 12px; padding: 4px 8px;" />
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label>
+                                <input type="text" class="dk-admin-form-input c3-sub-input" value="@c3.Subtitle" style="font-size: 12px; padding: 4px 8px;" />
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label>
+                                <select class="dk-admin-form-input c3-icon-select" style="font-size: 11px; padding: 3px 6px;">
+                                    <option value="insurance" selected="@(c3.IconType == "insurance" ? "selected" : null)">🛡️ Health Insurance</option>
+                                    <option value="gr_loan" selected="@(c3.IconType == "gr_loan" ? "selected" : null)">🏦 GR Loans</option>
+                                    <option value="flight" selected="@(c3.IconType == "flight" ? "selected" : null)">✈️ Flight Savings</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
+                                <input type="text" class="dk-admin-form-input c3-btn-input" value="@c3.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                                <input type="text" class="dk-admin-form-input c3-link-input" value="@c3.ButtonUrl" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label>
+                                <input type="text" class="dk-admin-form-input c3-img-input" value="@c3.ImageUrl" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px;" />
+                            </div>
+                        </div>
+
+                        <!-- Section 5: Card 4 -->
+                        <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 10px; padding: 12px;">
+                            <div style="font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 8px;">
+                                Section 5: Card 4
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Title</label>
+                                <input type="text" class="dk-admin-form-input c4-title-input" value="@c4.Title" style="font-size: 12px; padding: 4px 8px;" />
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label>
+                                <input type="text" class="dk-admin-form-input c4-sub-input" value="@c4.Subtitle" style="font-size: 12px; padding: 4px 8px;" />
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label>
+                                <select class="dk-admin-form-input c4-icon-select" style="font-size: 11px; padding: 3px 6px;">
+                                    <option value="scholarship" selected="@(c4.IconType == "scholarship" ? "selected" : null)">🎓 Scholarships</option>
+                                    <option value="near_me" selected="@(c4.IconType == "near_me" ? "selected" : null)">📍 Near Me</option>
+                                    <option value="checklist" selected="@(c4.IconType == "checklist" ? "selected" : null)">📋 Checklist</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
+                                <input type="text" class="dk-admin-form-input c4-btn-input" value="@c4.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                                <input type="text" class="dk-admin-form-input c4-link-input" value="@c4.ButtonUrl" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label>
+                                <input type="text" class="dk-admin-form-input c4-img-input" value="@c4.ImageUrl" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px;" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 3. Explore Our Services (6 Core Services) -->
     <div class="dk-admin-card" style="margin-bottom: 20px;">
-        <h3 class="dk-sh-tab-title">2. Explore Our Services (6 Core Services)</h3>
+        <h3 class="dk-sh-tab-title">3. Explore Our Services (6 Core Services)</h3>
         <p style="margin: -10px 0 16px 0; color: #64748b; font-size: 13px;">
             Edit titles, descriptions, button labels, links, and upload service images. Empty images will display the "Uploading Soon" badge.
         </p>
@@ -1946,6 +2206,77 @@
         updateHeroSlideNumbers();
     }
 
+    function addSyncSlideSet() {
+        const wrap = document.getElementById("abroad_sync_slide_sets_wrap");
+        if (!wrap) return;
+        const count = wrap.querySelectorAll(".abroad-sync-slide-set-card").length + 1;
+        const newSet = document.createElement("div");
+        newSet.className = "abroad-sync-slide-set-card";
+        newSet.dataset.slideId = "sync-slide-" + Date.now();
+        newSet.style.cssText = "background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px;";
+        newSet.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #f97316; color: #fff; font-weight: 800; font-size: 12px; padding: 3px 10px; border-radius: 999px;">
+                        Slide Set #\${count}
+                    </span>
+                    <input type="text" class="dk-admin-form-input abroad-slide-label-input" value="Global Slide #\${count}" style="width: 280px; font-weight: 700;" placeholder="Slide Label" />
+                </div>
+                <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 12px; font-weight: 700; padding: 4px 10px;" onclick="this.closest('.abroad-sync-slide-set-card').remove()">
+                    🗑️ Delete Slide Set
+                </button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr; gap: 12px;">
+                <!-- Section 1: Spotlight -->
+                <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; padding: 12px;">
+                    <div style="font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 8px;">Section 1: Spotlight</div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Title</label><input type="text" class="dk-admin-form-input spot-title-input" value="Student Ambassador" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label><input type="text" class="dk-admin-form-input spot-sub-input" value="Empowering Your Global Journey" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Tag</label><input type="text" class="dk-admin-form-input spot-tag-input" value="Featured Showcase" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label><input type="text" class="dk-admin-form-input spot-btn-input" value="Know More" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" /><input type="text" class="dk-admin-form-input spot-link-input" value="/study-abroad-hub/ambassador-showcase" style="font-size: 11px; padding: 3px 6px;" /></div>
+                    <div><label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label><input type="text" class="dk-admin-form-input spot-img-input" value="" placeholder="Leave empty for 'Uploading Soon'" style="font-size: 11px; padding: 3px 6px;" /></div>
+                </div>
+                <!-- Section 2: Card 1 -->
+                <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 12px;">
+                    <div style="font-size: 11px; font-weight: 800; color: #0369a1; text-transform: uppercase; margin-bottom: 8px;">Section 2: Card 1</div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Title</label><input type="text" class="dk-admin-form-input c1-title-input" value="Educational Loans" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label><input type="text" class="dk-admin-form-input c1-sub-input" value="Up to 100% funding" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label><select class="dk-admin-form-input c1-icon-select" style="font-size: 11px; padding: 3px 6px;"><option value="handshake" selected>🤝 Handshake / Loan</option><option value="visa">🛂 Visa Guidance</option><option value="housing">🏠 Student Housing</option></select></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label><input type="text" class="dk-admin-form-input c1-btn-input" value="Know More" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" /><input type="text" class="dk-admin-form-input c1-link-input" value="/study-abroad-hub/educational-loans" style="font-size: 11px; padding: 3px 6px;" /></div>
+                    <div><label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label><input type="text" class="dk-admin-form-input c1-img-input" value="" placeholder="Leave empty for emblem" style="font-size: 11px; padding: 3px 6px;" /></div>
+                </div>
+                <!-- Section 3: Card 2 -->
+                <div style="background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 10px; padding: 12px;">
+                    <div style="font-size: 11px; font-weight: 800; color: #7e22ce; text-transform: uppercase; margin-bottom: 8px;">Section 3: Card 2</div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Title</label><input type="text" class="dk-admin-form-input c2-title-input" value="Consultancy Details" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label><input type="text" class="dk-admin-form-input c2-sub-input" value="Top rated experts" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label><select class="dk-admin-form-input c2-icon-select" style="font-size: 11px; padding: 3px 6px;"><option value="consultancy" selected>👥 Consultancy</option><option value="booking">📅 Booking Slots</option><option value="forex">💳 Forex Card</option></select></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label><input type="text" class="dk-admin-form-input c2-btn-input" value="Know More" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" /><input type="text" class="dk-admin-form-input c2-link-input" value="/study-abroad-hub/consultancy-details" style="font-size: 11px; padding: 3px 6px;" /></div>
+                    <div><label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label><input type="text" class="dk-admin-form-input c2-img-input" value="" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px;" /></div>
+                </div>
+                <!-- Section 4: Card 3 -->
+                <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 10px; padding: 12px;">
+                    <div style="font-size: 11px; font-weight: 800; color: #0f766e; text-transform: uppercase; margin-bottom: 8px;">Section 4: Card 3</div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Title</label><input type="text" class="dk-admin-form-input c3-title-input" value="Health Insurance" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label><input type="text" class="dk-admin-form-input c3-sub-input" value="Global coverage" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label><select class="dk-admin-form-input c3-icon-select" style="font-size: 11px; padding: 3px 6px;"><option value="insurance" selected>🛡️ Health Insurance</option><option value="gr_loan">🏦 GR Loans</option><option value="flight">✈️ Flight Savings</option></select></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label><input type="text" class="dk-admin-form-input c3-btn-input" value="Know More" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" /><input type="text" class="dk-admin-form-input c3-link-input" value="/study-abroad-hub/health-insurance" style="font-size: 11px; padding: 3px 6px;" /></div>
+                    <div><label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label><input type="text" class="dk-admin-form-input c3-img-input" value="" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px;" /></div>
+                </div>
+                <!-- Section 5: Card 4 -->
+                <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 10px; padding: 12px;">
+                    <div style="font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 8px;">Section 5: Card 4</div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Title</label><input type="text" class="dk-admin-form-input c4-title-input" value="Consultancies Near Me" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label><input type="text" class="dk-admin-form-input c4-sub-input" value="Verified local offices" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label><select class="dk-admin-form-input c4-icon-select" style="font-size: 11px; padding: 3px 6px;"><option value="scholarship">🎓 Scholarships</option><option value="near_me" selected>📍 Near Me</option><option value="checklist">📋 Checklist</option></select></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label><input type="text" class="dk-admin-form-input c4-btn-input" value="Know More" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" /><input type="text" class="dk-admin-form-input c4-link-input" value="/study-abroad-hub/find-consultancies-near-me" style="font-size: 11px; padding: 3px 6px;" /></div>
+                    <div><label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label><input type="text" class="dk-admin-form-input c4-img-input" value="" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px;" /></div>
+                </div>
+            </div>
+        `;
+        wrap.appendChild(newSet);
+    }
+
     async function saveAllChanges() {
         const btn = document.getElementById("btnSaveTop");
         if (btn) {
@@ -2227,11 +2558,22 @@
             HeroTitle: document.getElementById("abroad_hero_title")?.value || "Your Dreams Abroad.",
             HeroTitleHighlight: document.getElementById("abroad_hero_highlight")?.value || "Our Support.",
             HeroSubtitle: document.getElementById("abroad_hero_sub")?.value || "Everything you need to plan your international education journey — all in one place.",
+            HeroShowText: document.getElementById("abroad_hero_show_text") ? document.getElementById("abroad_hero_show_text").checked : false,
             HeroCtaText: document.getElementById("abroad_hero_cta_text")?.value || "Explore Study Abroad Hub →",
             HeroCtaUrl: document.getElementById("abroad_hero_cta_url")?.value || "#explore-services",
             HeroImageUrl: document.getElementById("abroad_hero_img_url")?.value || "",
+            HeroVideoUrl: document.getElementById("abroad_hero_video_url")?.value || "",
+            HeroEnableVideo: document.getElementById("abroad_hero_enable_video") ? document.getElementById("abroad_hero_enable_video").checked : false,
             HeroHandwrittenNote: document.getElementById("abroad_hero_note")?.value || "Study Explore Grow ♡",
             HeroServices: [],
+            FiveSectionCarousel: {
+                IsEnabled: document.getElementById("abroad_sync_enabled") ? document.getElementById("abroad_sync_enabled").checked : true,
+                AutoPlay: document.getElementById("abroad_sync_autoplay") ? document.getElementById("abroad_sync_autoplay").checked : true,
+                SlideIntervalSeconds: parseInt(document.getElementById("abroad_sync_interval")?.value || "5", 10),
+                SectionTitle: document.getElementById("abroad_sync_title")?.value || "Our Global Partnerships & Special Services",
+                SectionSubtitle: document.getElementById("abroad_sync_sub")?.value || "Explore exclusive student offerings, brand ambassadors, zero-commission financial assistance, and travel perks.",
+                Slides: []
+            },
             ServicesSectionTitle: "Explore Our Services",
             ServicesSectionSubtitle: "Your complete guide to financial support, trusted consultancies and health coverage for a global education.",
             Services: [],
@@ -2239,6 +2581,97 @@
             FooterSlogan: "@(abroadProfile.FooterSlogan ?? "Your Global Education Partner ♡")",
             TrustTagline: "@(abroadProfile.TrustTagline ?? abroadProfile.FooterSlogan ?? "Your Global Education Partner ♡")"
         };
+
+        // Collect Synchronized 5-Section Carousel Slides
+        document.querySelectorAll("#abroad_sync_slide_sets_wrap .abroad-sync-slide-set-card").forEach((setCard, idx) => {
+            const slideLabel = setCard.querySelector(".abroad-slide-label-input")?.value || ("Slide Set #" + (idx + 1));
+            const slideId = setCard.dataset.slideId || ("sync-slide-" + (idx + 1));
+
+            // Section 1: Spotlight
+            const spotTitle = setCard.querySelector(".spot-title-input")?.value || "";
+            const spotSub = setCard.querySelector(".spot-sub-input")?.value || "";
+            const spotTag = setCard.querySelector(".spot-tag-input")?.value || "";
+            const spotBtn = setCard.querySelector(".spot-btn-input")?.value || "Know More";
+            const spotLink = setCard.querySelector(".spot-link-input")?.value || "/study-abroad-hub/ambassador-showcase";
+            const spotImg = setCard.querySelector(".spot-img-input")?.value || "";
+
+            // Section 2: Card 1
+            const c1Title = setCard.querySelector(".c1-title-input")?.value || "";
+            const c1Sub = setCard.querySelector(".c1-sub-input")?.value || "";
+            const c1Icon = setCard.querySelector(".c1-icon-select")?.value || "handshake";
+            const c1Btn = setCard.querySelector(".c1-btn-input")?.value || "Know More";
+            const c1Link = setCard.querySelector(".c1-link-input")?.value || "/study-abroad-hub/educational-loans";
+            const c1Img = setCard.querySelector(".c1-img-input")?.value || "";
+
+            // Section 3: Card 2
+            const c2Title = setCard.querySelector(".c2-title-input")?.value || "";
+            const c2Sub = setCard.querySelector(".c2-sub-input")?.value || "";
+            const c2Icon = setCard.querySelector(".c2-icon-select")?.value || "consultancy";
+            const c2Btn = setCard.querySelector(".c2-btn-input")?.value || "Know More";
+            const c2Link = setCard.querySelector(".c2-link-input")?.value || "/study-abroad-hub/consultancy-details";
+            const c2Img = setCard.querySelector(".c2-img-input")?.value || "";
+
+            // Section 4: Card 3
+            const c3Title = setCard.querySelector(".c3-title-input")?.value || "";
+            const c3Sub = setCard.querySelector(".c3-sub-input")?.value || "";
+            const c3Icon = setCard.querySelector(".c3-icon-select")?.value || "insurance";
+            const c3Btn = setCard.querySelector(".c3-btn-input")?.value || "Know More";
+            const c3Link = setCard.querySelector(".c3-link-input")?.value || "/study-abroad-hub/health-insurance";
+            const c3Img = setCard.querySelector(".c3-img-input")?.value || "";
+
+            // Section 5: Card 4
+            const c4Title = setCard.querySelector(".c4-title-input")?.value || "";
+            const c4Sub = setCard.querySelector(".c4-sub-input")?.value || "";
+            const c4Icon = setCard.querySelector(".c4-icon-select")?.value || "scholarship";
+            const c4Btn = setCard.querySelector(".c4-btn-input")?.value || "Know More";
+            const c4Link = setCard.querySelector(".c4-link-input")?.value || "/study-abroad-hub/find-consultancies-near-me";
+            const c4Img = setCard.querySelector(".c4-img-input")?.value || "";
+
+            payload.AbroadProfile.FiveSectionCarousel.Slides.push({
+                Id: slideId,
+                SlideLabel: slideLabel,
+                Spotlight: {
+                    Title: spotTitle,
+                    Subtitle: spotSub,
+                    TagText: spotTag,
+                    ButtonText: spotBtn,
+                    ButtonUrl: spotLink,
+                    ImageUrl: spotImg
+                },
+                Card1: {
+                    Title: c1Title,
+                    Subtitle: c1Sub,
+                    IconType: c1Icon,
+                    ButtonText: c1Btn,
+                    ButtonUrl: c1Link,
+                    ImageUrl: c1Img
+                },
+                Card2: {
+                    Title: c2Title,
+                    Subtitle: c2Sub,
+                    IconType: c2Icon,
+                    ButtonText: c2Btn,
+                    ButtonUrl: c2Link,
+                    ImageUrl: c2Img
+                },
+                Card3: {
+                    Title: c3Title,
+                    Subtitle: c3Sub,
+                    IconType: c3Icon,
+                    ButtonText: c3Btn,
+                    ButtonUrl: c3Link,
+                    ImageUrl: c3Img
+                },
+                Card4: {
+                    Title: c4Title,
+                    Subtitle: c4Sub,
+                    IconType: c4Icon,
+                    ButtonText: c4Btn,
+                    ButtonUrl: c4Link,
+                    ImageUrl: c4Img
+                }
+            });
+        });
 
         // Collect Hero Quick Service Pills from UI (Respecting Admin's enabled choices)
         document.querySelectorAll("#abroad_hero_pills_container .abroad-hero-pill-row").forEach((row, idx) => {

@@ -15,36 +15,40 @@
 
 <div class="dk-abroad-hub-root">
 
-    @if (canManage)
-    {
-        <div class="dk-abroad-admin-notice">
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <span class="dk-abroad-admin-pill">Admin Controls</span>
-                <span>Super Admin can edit titles, descriptions, and upload all service images anytime in the Admin Dashboard.</span>
-            </div>
-            <a href="/Admin/StudyHub#tab-abroad-profile" class="dk-abroad-admin-link">
-                ⚙️ Open Study Abroad Hub Profile Admin Controls
-            </a>
-        </div>
-    }
-
     <!-- ========================================================
-         HERO BANNER: BIG ATTRACTIVE FULL-WIDTH IMAGE BANNER
+         HERO BANNER: FULL-WIDTH IMAGE / VIDEO BANNER (Image 2 Style)
+         Super Admin can upload high-res Image OR Video with reality view animations.
+         Directly touches the profile switch bar above with 0 gap.
     ========================================================= -->
-    <section class="dk-abroad-hero-section @(!string.IsNullOrWhiteSpace(profile.HeroImageUrl) ? "has-hero-bg" : "is-uploading-soon")"
-             style="@(!string.IsNullOrWhiteSpace(profile.HeroImageUrl) ? $"background-image: url('{profile.HeroImageUrl}');" : "")"
+    <section class="dk-abroad-hero-section @((profile.HeroEnableVideo && !string.IsNullOrWhiteSpace(profile.HeroVideoUrl)) || !string.IsNullOrWhiteSpace(profile.HeroImageUrl) ? "has-hero-bg" : "is-uploading-soon") @(profile.HeroShowText ? "show-text-overlay" : "hide-text-overlay")"
              aria-label="Study Abroad Hub Hero">
 
-        <!-- Translucent Backdrop Overlay to guarantee crisp text contrast -->
-        <div class="dk-abroad-hero-overlay" aria-hidden="true"></div>
+        <!-- Background Video if enabled by Admin -->
+        @if (profile.HeroEnableVideo && !string.IsNullOrWhiteSpace(profile.HeroVideoUrl))
+        {
+            <video class="dk-abroad-hero-video-bg" autoplay muted loop playsinline src="@profile.HeroVideoUrl"></video>
+        }
+        else if (!string.IsNullOrWhiteSpace(profile.HeroImageUrl))
+        {
+            <div class="dk-abroad-hero-bg-cover" style="background-image: url('@profile.HeroImageUrl');"></div>
+        }
 
-        @if (string.IsNullOrWhiteSpace(profile.HeroImageUrl))
+        <!-- Translucent Backdrop Overlay to guarantee crisp text contrast (Only when text is shown) -->
+        @if (profile.HeroShowText)
+        {
+            <div class="dk-abroad-hero-overlay" aria-hidden="true"></div>
+        }
+
+        @if (string.IsNullOrWhiteSpace(profile.HeroImageUrl) && (!profile.HeroEnableVideo || string.IsNullOrWhiteSpace(profile.HeroVideoUrl)))
         {
             <div class="dk-abroad-hero-deco-bg" aria-hidden="true">
+                <div class="dk-reality-light-beam"></div>
+                <div class="dk-reality-orb-1"></div>
+                <div class="dk-reality-orb-2"></div>
                 <span class="dk-deco-plane-sky">✈</span>
                 <span class="dk-deco-cloud cloud-1">☁</span>
                 <span class="dk-deco-cloud cloud-2">☁</span>
-                <svg class="dk-skyline-silhouette" viewBox="0 0 1000 240" fill="none" opacity="0.18" preserveAspectRatio="xMaxYMid meet">
+                <svg class="dk-skyline-silhouette" viewBox="0 0 1000 240" fill="none" opacity="0.22" preserveAspectRatio="xMaxYMid meet">
                     <path d="M40 240V140h20v-40h12v40h20v100H40z M72 70l-6 30h12z" fill="#0284c7"/>
                     <path d="M140 240V110h24v130h-24z M152 70l-8 40h16z" fill="#0284c7"/>
                     <path d="M260 240l30-180h12l30 180h-18l-10-60h-16l-10 60h-18z M294 130h18l-9-60z" fill="#0284c7"/>
@@ -56,392 +60,116 @@
             <!-- Uploading Soon notice badge -->
             <div class="dk-abroad-hero-status-pill">
                 <span class="dk-status-pulse-dot"></span>
-                <span>📷 Full Hero Image: Uploading Soon • Admin can upload panoramic banner anytime</span>
+                <span>📷 Full Hero Visual (Image/Video): Uploading Soon &bull; Super Admin can upload panoramic banner or video anytime</span>
                 @if (canManage)
                 {
-                    <a href="/Admin/StudyHub#tab-abroad-profile" class="dk-status-admin-link">Upload Image in Admin →</a>
+                    <a href="/Admin/StudyHub#tab-abroad-profile" class="dk-status-admin-link">Upload in Admin Panel →</a>
                 }
             </div>
         }
 
-        <div class="dk-abroad-hero-inner">
-            
-            <div class="dk-abroad-hero-content">
-                <div class="dk-abroad-hero-badge">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/>
-                    </svg>
-                    <span>@profile.HeroBadge</span>
+        @if (profile.HeroShowText)
+        {
+            <div class="dk-abroad-hero-inner">
+                
+                <div class="dk-abroad-hero-content">
+                    <div class="dk-abroad-hero-badge">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/>
+                        </svg>
+                        <span>@profile.HeroBadge</span>
+                    </div>
+
+                    <h1 class="dk-abroad-hero-heading">
+                        @profile.HeroTitle
+                        <span class="dk-abroad-highlight">@profile.HeroTitleHighlight</span>
+                    </h1>
+
+                    <p class="dk-abroad-hero-sub">
+                        @profile.HeroSubtitle
+                    </p>
+
+                    <!-- DIRECT HERO SERVICE PILLS (Admin can choose what to display) -->
+                    @{
+                        var displayPills = (profile.HeroServices ?? new List<Dreamflykit.Application.StudyHub.Models.AbroadHeroServiceItemDto>())
+                            .Where(hs => hs.IsEnabled)
+                            .ToList();
+                    }
+                    @if (displayPills.Count > 0)
+                    {
+                        <div class="dk-abroad-hero-quick-services" role="navigation" aria-label="Quick Hub Services">
+                            @foreach (var hs in displayPills)
+                            {
+                                <a href="@hs.TargetUrl" class="dk-abroad-h-badge">
+                                    <span class="dk-abroad-h-icon" aria-hidden="true">
+                                        @if (hs.IconType == "loan")
+                                        {
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                                        }
+                                        else if (hs.IconType == "gr_loan")
+                                        {
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="21" x2="21" y2="21"></line><line x1="3" y1="10" x2="21" y2="10"></line><polyline points="5 6 12 3 19 6"></polyline><line x1="4" y1="10" x2="4" y2="21"></line><line x1="20" y1="10" x2="20" y2="21"></line></svg>
+                                        }
+                                        else if (hs.IconType == "consultancy")
+                                        {
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                        }
+                                        else if (hs.IconType == "near_me")
+                                        {
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                        }
+                                        else if (hs.IconType == "insurance")
+                                        {
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                        }
+                                        else if (hs.IconType == "booking")
+                                        {
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="15" r="2"/></svg>
+                                        }
+                                        else if (hs.IconType == "test")
+                                        {
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="12" y2="11"/></svg>
+                                        }
+                                        else if (hs.IconType == "scholarship")
+                                        {
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                                        }
+                                        else
+                                        {
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>
+                                        }
+                                    </span>
+                                    <span>@hs.Title</span>
+                                </a>
+                            }
+                        </div>
+                    }
+
+                    <div class="dk-abroad-hero-cta-line">
+                        <a href="@profile.HeroCtaUrl" class="dk-abroad-cta-btn">
+                            <span>@profile.HeroCtaText</span>
+                        </a>
+
+                        <div class="dk-abroad-slider-dots" aria-hidden="true">
+                            <span class="dk-dot active"></span>
+                            <span class="dk-dot"></span>
+                            <span class="dk-dot"></span>
+                        </div>
+                    </div>
                 </div>
 
-                <h1 class="dk-abroad-hero-heading">
-                    @profile.HeroTitle
-                    <span class="dk-abroad-highlight">@profile.HeroTitleHighlight</span>
-                </h1>
-
-                <p class="dk-abroad-hero-sub">
-                    @profile.HeroSubtitle
-                </p>
-
-                <!-- DIRECT HERO SERVICE PILLS (Admin can choose what to display) -->
-                @{
-                    var displayPills = (profile.HeroServices ?? new List<Dreamflykit.Application.StudyHub.Models.AbroadHeroServiceItemDto>())
-                        .Where(hs => hs.IsEnabled)
-                        .ToList();
-                }
-                @if (displayPills.Count > 0)
-                {
-                    <div class="dk-abroad-hero-quick-services" role="navigation" aria-label="Quick Hub Services">
-                        @foreach (var hs in displayPills)
-                        {
-                            <a href="@hs.TargetUrl" class="dk-abroad-h-badge">
-                                <span class="dk-abroad-h-icon" aria-hidden="true">
-                                    @if (hs.IconType == "loan")
-                                    {
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                                    }
-                                    else if (hs.IconType == "gr_loan")
-                                    {
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="21" x2="21" y2="21"></line><line x1="3" y1="10" x2="21" y2="10"></line><polyline points="5 6 12 3 19 6"></polyline><line x1="4" y1="10" x2="4" y2="21"></line><line x1="20" y1="10" x2="20" y2="21"></line></svg>
-                                    }
-                                    else if (hs.IconType == "consultancy")
-                                    {
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                                    }
-                                    else if (hs.IconType == "near_me")
-                                    {
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                                    }
-                                    else if (hs.IconType == "insurance")
-                                    {
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                    }
-                                    else if (hs.IconType == "booking")
-                                    {
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="15" r="2"/></svg>
-                                    }
-                                    else if (hs.IconType == "test")
-                                    {
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="12" y2="11"/></svg>
-                                    }
-                                    else if (hs.IconType == "scholarship")
-                                    {
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                                    }
-                                    else
-                                    {
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>
-                                    }
-                                </span>
-                                <span>@hs.Title</span>
-                            </a>
-                        }
-                    </div>
-                }
-
-                <div class="dk-abroad-hero-cta-line">
-                    <a href="@profile.HeroCtaUrl" class="dk-abroad-cta-btn">
-                        <span>@profile.HeroCtaText</span>
-                    </a>
-
-                    <div class="dk-abroad-slider-dots" aria-hidden="true">
-                        <span class="dk-dot active"></span>
-                        <span class="dk-dot"></span>
-                        <span class="dk-dot"></span>
-                    </div>
-                </div>
             </div>
-
-        </div>
+        }
     </section>
 
     <!-- ========================================================
-         EXPLORE OUR SERVICES: 6 SERVICES (ROWS 1 & 2)
+         2. SYNCHRONIZED 5-SECTION CAROUSEL (Image 3 Bank of Baroda Style)
+         All 5 sections transition at one time, with Play/Pause button and Admin timing
     ========================================================= -->
-    <section class="dk-abroad-services-section" id="explore-services" aria-labelledby="abroadServicesTitle">
-        
-        <div class="dk-abroad-section-header">
-            <div class="dk-abroad-header-crest">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                </svg>
-            </div>
-            <div>
-                <h2 id="abroadServicesTitle" class="dk-abroad-section-title">@profile.ServicesSectionTitle</h2>
-                <p class="dk-abroad-section-subtitle">@profile.ServicesSectionSubtitle</p>
-            </div>
-        </div>
-
-        <!-- ROW 1: LOANS, CONSULTANCY, HEALTH INSURANCE -->
-        <div class="dk-abroad-cards-grid dk-abroad-grid-row1">
-
-            <!-- CARD 1: EDUCATIONAL LOANS (+ GR LOANS) -->
-            @if (sLoans != null)
-            {
-                <div class="dk-abroad-service-card" id="service-loans">
-                    <div class="dk-abroad-card-top">
-                        <div class="dk-abroad-icon-bubble color-blue">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                        </div>
-                        <div style="flex: 1;">
-                            <h3 class="dk-abroad-card-title">@sLoans.Title</h3>
-                            <p class="dk-abroad-card-desc">@sLoans.Description</p>
-                        </div>
-                    </div>
-
-                    <div class="dk-abroad-card-action-row">
-                        <a href="@sLoans.ButtonUrl" class="dk-abroad-btn-pill btn-blue">
-                            @sLoans.ButtonText
-                        </a>
-
-                        <!-- IMAGE / UPLOADING SOON -->
-                        <div class="dk-abroad-card-media-box">
-                            @if (!string.IsNullOrWhiteSpace(sLoans.ImageUrl))
-                            {
-                                <img src="@sLoans.ImageUrl" alt="@sLoans.Title" class="dk-abroad-card-img" />
-                            }
-                            else
-                            {
-                                <div class="dk-card-uploading-tag">
-                                    <span class="dk-card-u-icon">📷</span>
-                                    <span>Uploading Soon</span>
-                                </div>
-                            }
-                        </div>
-                    </div>
-
-                    @if (sLoans.SubService != null)
-                    {
-                        <div class="dk-abroad-sub-card sub-blue">
-                            <div class="dk-sub-left">
-                                <div class="dk-sub-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="21" x2="21" y2="21"></line><line x1="3" y1="10" x2="21" y2="10"></line><polyline points="5 6 12 3 19 6"></polyline><line x1="4" y1="10" x2="4" y2="21"></line><line x1="20" y1="10" x2="20" y2="21"></line></svg>
-                                </div>
-                                <div>
-                                    <div class="dk-sub-title">@sLoans.SubService.Title</div>
-                                    <div class="dk-sub-desc">@sLoans.SubService.Description</div>
-                                </div>
-                            </div>
-                            <a href="@sLoans.SubService.ButtonUrl" class="dk-sub-circle-btn" aria-label="Go to @sLoans.SubService.Title">
-                                →
-                            </a>
-                        </div>
-                    }
-                </div>
-            }
-
-            <!-- CARD 2: CONSULTANCY DETAILS (+ FIND NEAR ME) -->
-            @if (sConsultancy != null)
-            {
-                <div class="dk-abroad-service-card" id="service-consultancies">
-                    <div class="dk-abroad-card-top">
-                        <div class="dk-abroad-icon-bubble color-purple">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                        </div>
-                        <div style="flex: 1;">
-                            <h3 class="dk-abroad-card-title">@sConsultancy.Title</h3>
-                            <p class="dk-abroad-card-desc">@sConsultancy.Description</p>
-                        </div>
-                    </div>
-
-                    <div class="dk-abroad-card-action-row">
-                        <a href="@sConsultancy.ButtonUrl" class="dk-abroad-btn-pill btn-purple">
-                            @sConsultancy.ButtonText
-                        </a>
-
-                        <!-- IMAGE / UPLOADING SOON -->
-                        <div class="dk-abroad-card-media-box">
-                            @if (!string.IsNullOrWhiteSpace(sConsultancy.ImageUrl))
-                            {
-                                <img src="@sConsultancy.ImageUrl" alt="@sConsultancy.Title" class="dk-abroad-card-img" />
-                            }
-                            else
-                            {
-                                <div class="dk-card-uploading-tag">
-                                    <span class="dk-card-u-icon">📷</span>
-                                    <span>Uploading Soon</span>
-                                </div>
-                            }
-                        </div>
-                    </div>
-
-                    @if (sConsultancy.SubService != null)
-                    {
-                        <div class="dk-abroad-sub-card sub-purple">
-                            <div class="dk-sub-left">
-                                <div class="dk-sub-icon">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                                </div>
-                                <div>
-                                    <div class="dk-sub-title">@sConsultancy.SubService.Title</div>
-                                    <div class="dk-sub-desc">@sConsultancy.SubService.Description</div>
-                                </div>
-                            </div>
-                            <a href="@sConsultancy.SubService.ButtonUrl" class="dk-sub-circle-btn" aria-label="Go to @sConsultancy.SubService.Title">
-                                →
-                            </a>
-                        </div>
-                    }
-                </div>
-            }
-
-            <!-- CARD 3: HEALTH INSURANCE -->
-            @if (sInsurance != null)
-            {
-                <div class="dk-abroad-service-card" id="service-insurance">
-                    <div class="dk-abroad-card-top">
-                        <div class="dk-abroad-icon-bubble color-teal">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        </div>
-                        <div style="flex: 1;">
-                            <h3 class="dk-abroad-card-title">@sInsurance.Title</h3>
-                            <p class="dk-abroad-card-desc">@sInsurance.Description</p>
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 14px;">
-                        <a href="@sInsurance.ButtonUrl" class="dk-abroad-btn-pill btn-teal">
-                            @sInsurance.ButtonText
-                        </a>
-                    </div>
-
-                    <div class="dk-abroad-insurance-bottom">
-                        <div class="dk-abroad-bullets">
-                            @foreach (var b in sInsurance.Bullets)
-                            {
-                                <div class="dk-abroad-bullet-item">
-                                    <span class="dk-bullet-check">✓</span>
-                                    <span>@b</span>
-                                </div>
-                            }
-                        </div>
-
-                        <!-- IMAGE / UPLOADING SOON -->
-                        <div class="dk-abroad-card-media-box" style="width: 120px; height: 80px;">
-                            @if (!string.IsNullOrWhiteSpace(sInsurance.ImageUrl))
-                            {
-                                <img src="@sInsurance.ImageUrl" alt="@sInsurance.Title" class="dk-abroad-card-img" />
-                            }
-                            else
-                            {
-                                <div class="dk-card-uploading-tag">
-                                    <span class="dk-card-u-icon">📷</span>
-                                    <span>Uploading Soon</span>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
-
-        </div>
-
-        <!-- ROW 2: BOOKING SLOTS, LANGUAGE TESTS, SCHOLARSHIPS & GRANTS (From Screenshot 2) -->
-        <div class="dk-abroad-cards-grid dk-abroad-grid-row2" style="margin-top: 20px;">
-
-            <!-- CARD 4: BOOKING SLOTS -->
-            @if (sBooking != null)
-            {
-                <div class="dk-abroad-service-card dk-card-horizontal">
-                    <div style="flex: 1;">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                            <div class="dk-abroad-icon-bubble color-blue" style="width: 42px; height: 42px;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="15" r="2"/></svg>
-                            </div>
-                            <h3 class="dk-abroad-card-title" style="margin: 0;">@sBooking.Title</h3>
-                        </div>
-                        <p class="dk-abroad-card-desc">@sBooking.Description</p>
-                        <a href="@sBooking.ButtonUrl" class="dk-abroad-btn-pill btn-blue" style="margin-top: 12px; display: inline-flex;">
-                            @sBooking.ButtonText
-                        </a>
-                    </div>
-
-                    <div class="dk-abroad-card-media-box" style="width: 110px; height: 80px; flex-shrink: 0;">
-                        @if (!string.IsNullOrWhiteSpace(sBooking.ImageUrl))
-                        {
-                            <img src="@sBooking.ImageUrl" alt="@sBooking.Title" class="dk-abroad-card-img" />
-                        }
-                        else
-                        {
-                            <div class="dk-card-uploading-tag">
-                                <span class="dk-card-u-icon">📷</span>
-                                <span>Uploading Soon</span>
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
-
-            <!-- CARD 5: LANGUAGE TESTS -->
-            @if (sTests != null)
-            {
-                <div class="dk-abroad-service-card dk-card-horizontal">
-                    <div style="flex: 1;">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                            <div class="dk-abroad-icon-bubble color-teal" style="width: 42px; height: 42px;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="12" y2="11"/></svg>
-                            </div>
-                            <h3 class="dk-abroad-card-title" style="margin: 0;">@sTests.Title</h3>
-                        </div>
-                        <p class="dk-abroad-card-desc">@sTests.Description</p>
-                        <a href="@sTests.ButtonUrl" class="dk-abroad-btn-pill btn-teal" style="margin-top: 12px; display: inline-flex;">
-                            @sTests.ButtonText
-                        </a>
-                    </div>
-
-                    <div class="dk-abroad-card-media-box" style="width: 110px; height: 80px; flex-shrink: 0;">
-                        @if (!string.IsNullOrWhiteSpace(sTests.ImageUrl))
-                        {
-                            <img src="@sTests.ImageUrl" alt="@sTests.Title" class="dk-abroad-card-img" />
-                        }
-                        else
-                        {
-                            <div class="dk-card-uploading-tag">
-                                <span class="dk-card-u-icon">📷</span>
-                                <span>Uploading Soon</span>
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
-
-            <!-- CARD 6: SCHOLARSHIPS & GRANTS -->
-            @if (sScholarships != null)
-            {
-                <div class="dk-abroad-service-card dk-card-horizontal">
-                    <div style="flex: 1;">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                            <div class="dk-abroad-icon-bubble color-purple" style="width: 42px; height: 42px;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                            </div>
-                            <h3 class="dk-abroad-card-title" style="margin: 0;">@sScholarships.Title</h3>
-                        </div>
-                        <p class="dk-abroad-card-desc">@sScholarships.Description</p>
-                        <a href="@sScholarships.ButtonUrl" class="dk-abroad-btn-pill btn-purple" style="margin-top: 12px; display: inline-flex;">
-                            @sScholarships.ButtonText
-                        </a>
-                    </div>
-
-                    <div class="dk-abroad-card-media-box" style="width: 110px; height: 80px; flex-shrink: 0;">
-                        @if (!string.IsNullOrWhiteSpace(sScholarships.ImageUrl))
-                        {
-                            <img src="@sScholarships.ImageUrl" alt="@sScholarships.Title" class="dk-abroad-card-img" />
-                        }
-                        else
-                        {
-                            <div class="dk-card-uploading-tag">
-                                <span class="dk-card-u-icon">📷</span>
-                                <span>Uploading Soon</span>
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
-
-        </div>
-
-    </section>
+    @if (profile.FiveSectionCarousel != null && profile.FiveSectionCarousel.IsEnabled)
+    {
+        <partial name="_AbroadFiveSectionCarousel" model="profile.FiveSectionCarousel" />
+    }
 
     <!-- ========================================================
          TRUST & IMPACT BAR
@@ -484,6 +212,15 @@
         </div>
     </section>
 
+    @if (canManage)
+    {
+        <div style="position: fixed; bottom: 20px; right: 20px; z-index: 99999;">
+            <a href="/Admin/StudyHub#tab-abroad-profile" class="dk-abroad-admin-link" style="background: #0f172a; color: #38bdf8; padding: 10px 18px; border-radius: 999px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; text-decoration: none;">
+                <span>⚙️ Edit Study Abroad Hub Profile</span>
+            </a>
+        </div>
+    }
+
 </div>
 
 <!-- ========================================================
@@ -495,65 +232,101 @@
         color: #0f172a;
         background: #f8fafc;
         padding-bottom: 60px;
+        margin-top: 0;
+        padding-top: 0;
     }
 
-    /* Admin Bar */
-    .dk-abroad-admin-notice {
-        background: #0f172a;
-        color: #ffffff;
-        padding: 10px 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-        font-size: 13px;
-        flex-wrap: wrap;
-    }
-    .dk-abroad-admin-pill {
-        background: #0284c7;
-        color: #fff;
-        font-weight: 800;
-        font-size: 11px;
-        padding: 3px 8px;
-        border-radius: 4px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    .dk-abroad-admin-link {
-        color: #38bdf8;
-        font-weight: 700;
-        text-decoration: none;
-        font-size: 12.5px;
-        background: rgba(255,255,255,0.08);
-        padding: 5px 12px;
-        border-radius: 6px;
-        transition: all 0.15s ease;
-    }
-    .dk-abroad-admin-link:hover {
-        background: #0284c7;
-        color: #ffffff;
-    }
-
-    /* Hero Section: Full-Width Panoramic Image Banner (Full Brightness) */
+    /* Hero Section: True Full-Width Panoramic Image / Video Banner (Image 2 Style) */
     .dk-abroad-hero-section {
-        min-height: 480px;
+        width: 100vw;
         position: relative;
-        background-size: cover;
-        background-position: center right;
-        background-repeat: no-repeat;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        min-height: 500px;
         border-bottom: 1px solid #e2e8f0;
-        padding: 56px 24px 64px 24px;
+        margin-top: 0;
+        padding: 64px 24px 72px 24px;
         overflow: hidden;
         display: flex;
         align-items: center;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 45%, #dbeafe 100%);
+    }
+    .dk-abroad-hero-section.hide-text-overlay {
+        min-height: 480px;
+        padding: 0;
     }
     .dk-abroad-hero-section.has-hero-bg {
-        /* Full brightness and natural crisp clarity */
-        background-position: center right;
-        filter: brightness(1.03) contrast(1.02);
+        filter: brightness(1.02);
     }
-    .dk-abroad-hero-section.is-uploading-soon {
-        background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 40%, #e0f2fe 75%, #bae6fd 100%);
+    .dk-abroad-hero-video-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        filter: brightness(1.02);
+    }
+    .dk-abroad-hero-bg-cover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center right;
+        background-repeat: no-repeat;
+        z-index: 0;
+        filter: brightness(1.02);
+    }
+
+    /* Reality View Ambient Animations */
+    .dk-reality-light-beam {
+        position: absolute;
+        top: -40px;
+        right: 18%;
+        width: 300px;
+        height: 520px;
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.32) 0%, rgba(2, 132, 199, 0) 70%);
+        transform: rotate(22deg);
+        filter: blur(40px);
+        animation: realityBeam 6s ease-in-out infinite alternate;
+        pointer-events: none;
+    }
+    @@keyframes realityBeam {
+        0% { opacity: 0.5; transform: rotate(20deg) scale(0.95); }
+        100% { opacity: 0.9; transform: rotate(25deg) scale(1.05); }
+    }
+    .dk-reality-orb-1 {
+        position: absolute;
+        top: 15%;
+        right: 25%;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(14, 165, 233, 0.28) 0%, rgba(14, 165, 233, 0) 70%);
+        filter: blur(28px);
+        animation: realityFloat 8s ease-in-out infinite alternate;
+        pointer-events: none;
+    }
+    .dk-reality-orb-2 {
+        position: absolute;
+        bottom: 10%;
+        right: 10%;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(249, 115, 22, 0.22) 0%, rgba(249, 115, 22, 0) 70%);
+        filter: blur(34px);
+        animation: realityFloat 10s ease-in-out infinite alternate-reverse;
+        pointer-events: none;
+    }
+    @@keyframes realityFloat {
+        0% { transform: translateY(0px) scale(1); }
+        100% { transform: translateY(-20px) scale(1.08); }
     }
 
     /* Soft directional fade ONLY behind text on the left, leaving center & right 100% full brightness */
@@ -563,16 +336,16 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.38) 24%, rgba(255, 255, 255, 0.0) 46%);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.42) 28%, rgba(255, 255, 255, 0.0) 50%);
         z-index: 1;
         pointer-events: none;
     }
     .is-uploading-soon .dk-abroad-hero-overlay {
-        background: linear-gradient(90deg, rgba(240, 248, 255, 0.90) 0%, rgba(240, 248, 255, 0.70) 42%, rgba(255, 255, 255, 0.15) 100%);
+        background: linear-gradient(90deg, rgba(240, 248, 255, 0.92) 0%, rgba(240, 248, 255, 0.65) 36%, rgba(255, 255, 255, 0.12) 100%);
     }
     @@media (max-width: 768px) {
         .dk-abroad-hero-overlay {
-            background: rgba(255, 255, 255, 0.90) !important;
+            background: rgba(255, 255, 255, 0.92) !important;
         }
     }
 

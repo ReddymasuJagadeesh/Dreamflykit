@@ -19,10 +19,10 @@ public sealed class StudyHubController : AdminBaseController
 
     private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
-        ".jpg", ".jpeg", ".png", ".webp", ".svg"
+        ".jpg", ".jpeg", ".png", ".webp", ".svg", ".mp4", ".webm"
     };
 
-    private const long MaxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
+    private const long MaxFileSizeBytes = 50 * 1024 * 1024; // 50 MB
 
     public StudyHubController(
         IStudyHubService studyHubService,
@@ -112,6 +112,7 @@ public sealed class StudyHubController : AdminBaseController
         try
         {
             await using var stream = file.OpenReadStream();
+            var isVideo = ext.Equals(".mp4", StringComparison.OrdinalIgnoreCase) || ext.Equals(".webm", StringComparison.OrdinalIgnoreCase);
             var uploadRequest = new MediaUploadRequest
             {
                 FileStream = stream,
@@ -119,7 +120,7 @@ public sealed class StudyHubController : AdminBaseController
                 ContentType = file.ContentType,
                 MediaType = Dreamflykit.Domain.Media.MediaType.Banner,
                 OwnerId = CurrentUserId,
-                AltText = "Study Essentials Hub Asset",
+                AltText = isVideo ? "Study Abroad Hub Video Visual" : "Study Essentials Hub Asset",
                 UploadedBy = CurrentUserId
             };
 
