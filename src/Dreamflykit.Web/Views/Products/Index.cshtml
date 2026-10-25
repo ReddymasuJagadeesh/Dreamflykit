@@ -151,7 +151,11 @@
         <nav class="dk-catalog-breadcrumb" aria-label="Breadcrumb">
             <a href="/" class="dk-breadcrumb-item">Home</a>
             <span class="dk-breadcrumb-separator">›</span>
-            @if (Model.IsFashionHub && Model.ViewMode == "hub")
+            @if (Model.IsMenClothing || Model.ViewMode == "men-clothing")
+            {
+                <span class="dk-breadcrumb-current">Men Clothing</span>
+            }
+            else if (Model.IsFashionHub && Model.ViewMode == "hub")
             {
                 <span class="dk-breadcrumb-current">Fashion</span>
             }
@@ -191,7 +195,13 @@
         </nav>
     </div>
 
-    @if (Model.IsFashionHub && Model.FashionHub != null && Model.ViewMode == "hub")
+    @if ((Model.IsMenClothing || Model.ViewMode == "men-clothing") && Model.FashionHub?.MenClothing != null)
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_FashionMenClothingHub" model="Model.FashionHub.MenClothing" />
+        </div>
+    }
+    else if (Model.IsFashionHub && Model.FashionHub != null && Model.ViewMode == "hub")
     {
         <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
             <partial name="_FashionCategoryHub" model="Model.FashionHub" />
@@ -253,7 +263,7 @@
         </div>
     }
 
-    @if (!Model.IsStudyEssentialsHub && (!Model.IsFashionHub || Model.ViewMode != "hub") && (!Model.IsHealthCareHub || Model.ViewMode != "hub") && (!Model.IsMobilesHub || Model.ViewMode != "hub"))
+    @if (!Model.IsStudyEssentialsHub && (!Model.IsFashionHub || Model.ViewMode != "hub") && !Model.IsMenClothing && Model.ViewMode != "men-clothing" && (!Model.IsHealthCareHub || Model.ViewMode != "hub") && (!Model.IsMobilesHub || Model.ViewMode != "hub"))
     {
         <!-- Main 2-Column Catalog Container -->
         <div class="dk-shell dk-catalog-layout">

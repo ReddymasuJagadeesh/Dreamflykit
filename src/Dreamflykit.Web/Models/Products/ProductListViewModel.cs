@@ -77,6 +77,13 @@ public sealed class ProductListViewModel
     public bool IsFashionHub =>
         string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase);
 
+    public bool IsMenClothing =>
+        (IsFashionHub && (string.Equals(CurrentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+                          string.Equals(CurrentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase))) ||
+        string.Equals(CategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(ViewMode, "men-clothing", StringComparison.OrdinalIgnoreCase);
+
     public bool IsHealthCareHub =>
         string.Equals(CategorySlug, "health-care", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "healthcare", StringComparison.OrdinalIgnoreCase) ||

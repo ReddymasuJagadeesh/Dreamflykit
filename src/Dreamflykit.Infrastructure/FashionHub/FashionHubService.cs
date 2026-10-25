@@ -75,6 +75,7 @@ public sealed class FashionHubService : IFashionHubService
                         dto.TopPicksSection ??= def.TopPicksSection;
                         dto.TrustBadgesSection ??= def.TrustBadgesSection;
                         dto.BottomBanner ??= def.BottomBanner;
+                        dto.MenClothing ??= def.MenClothing;
 
                         _cache.Set(CacheKey, dto, TimeSpan.FromHours(4));
                         return dto;
