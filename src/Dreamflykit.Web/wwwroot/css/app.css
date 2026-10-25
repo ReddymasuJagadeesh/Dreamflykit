@@ -782,16 +782,17 @@ img {
 
 
 /* ============================================================
-   CATEGORY NAV
+   CATEGORY NAV (BANK OF BARODA SIGNATURE ORANGE BAR)
 ============================================================ */
 
 .dk-category-nav {
-    height: 58px;
+    height: 44px;
     width: 100%;
     max-width: 100%;
-    background: #ffffff;
-    border-bottom: 1px solid var(--dk-border);
+    background: linear-gradient(90deg, #f26522 0%, #ea580c 100%);
+    border-bottom: 2px solid #c2410c;
     overflow: hidden;
+    box-shadow: 0 3px 8px rgba(242, 101, 34, 0.22);
 }
 
 
@@ -799,12 +800,13 @@ img {
     height: 100%;
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
     min-width: 0;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    padding: 0 4px;
 }
 
 
@@ -814,56 +816,68 @@ img {
 
 
 .dk-category-link {
-    height: 100%;
+    height: 32px;
     flex: 0 0 auto;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 0 10px;
-    color: #1e3154;
+    gap: 6px;
+    padding: 0 11px;
+    color: #ffffff !important;
     font-size: 12px;
-    font-weight: 650;
+    font-weight: 700;
     white-space: nowrap;
-    border-bottom: 2px solid transparent;
-    transition: color .2s ease, border-color .2s ease;
+    border-radius: 9999px;
+    text-decoration: none !important;
+    transition: all .2s ease;
+    border: 1px solid transparent;
 }
 
 
-    .dk-category-link:hover,
+    .dk-category-link:hover {
+        background: rgba(255, 255, 255, 0.22);
+        color: #ffffff !important;
+        transform: translateY(-1px);
+    }
+
     .dk-category-active {
-        color: var(--dk-blue-2);
-        border-bottom-color: var(--dk-blue-2);
+        background: #ffffff !important;
+        color: #ea580c !important;
+        font-weight: 800 !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+        border-color: rgba(255, 255, 255, 0.9);
     }
 
 
     .dk-category-link span {
-        font-size: 15px;
+        font-size: 14px;
     }
 
 
 .dk-find-kit {
     margin-left: auto;
-    flex: 0 0 170px;
-    width: 170px;
-    min-width: 170px;
-    height: 46px;
-    display: flex;
+    flex: 0 0 auto;
+    height: 32px;
+    padding: 0 14px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
-    border-radius: 10px;
-    background: linear-gradient( 135deg, var(--dk-orange), var(--dk-orange-2) );
-    color: white;
-    font-size: 14px;
+    gap: 6px;
+    border-radius: 9999px;
+    background: #002b49;
+    color: #ffffff !important;
+    font-size: 12px;
     font-weight: 800;
-    box-shadow: 0 8px 20px rgba(255, 121, 0, .22);
-    transition: transform .2s ease, box-shadow .2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 3px 10px rgba(0, 43, 73, 0.35);
+    text-decoration: none !important;
+    transition: all .2s ease;
 }
 
 
     .dk-find-kit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 26px rgba(255, 121, 0, .30);
+        background: #063c64;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 14px rgba(0, 43, 73, 0.45);
     }
 
 
@@ -1859,15 +1873,15 @@ img {
     .dk-category-nav {
         display: block !important;
         width: 100%;
-        background: #ffffff;
-        border-bottom: 1px solid var(--dk-border);
+        background: linear-gradient(90deg, #f26522 0%, #ea580c 100%) !important;
+        border-bottom: 2px solid #c2410c !important;
         overflow-x: auto;
         overflow-y: hidden;
         white-space: nowrap;
         scrollbar-width: none;
         -ms-overflow-style: none;
         -webkit-overflow-scrolling: touch;
-        padding: 5px 0;
+        padding: 4px 0;
     }
 
     .dk-category-nav::-webkit-scrollbar {
@@ -1878,7 +1892,7 @@ img {
         display: flex;
         align-items: center;
         gap: 6px;
-        padding: 0 12px;
+        padding: 0 10px;
         width: max-content;
         min-width: 100%;
         box-sizing: border-box;
@@ -1888,13 +1902,13 @@ img {
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        padding: 6px 12px;
-        font-size: 12px;
-        font-weight: 600;
+        padding: 5px 12px;
+        font-size: 11.5px;
+        font-weight: 700;
         border-radius: 9999px;
-        background: #f1f5f9;
-        color: #1e293b;
-        border: 1px solid #e2e8f0;
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.25) !important;
         white-space: nowrap;
         flex-shrink: 0;
         text-decoration: none;
@@ -1902,9 +1916,11 @@ img {
     }
 
     .dk-category-link.dk-category-active {
-        background: #075bc8;
-        color: #ffffff;
-        border-color: #075bc8;
+        background: #ffffff !important;
+        color: #ea580c !important;
+        border-color: #ffffff !important;
+        font-weight: 800 !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
 
     .dk-find-kit {
@@ -8598,150 +8614,684 @@ img {
 }
 
 /* ========================================================
-   FLIPKART-STYLE DUAL PROFILE SWITCHER (DREAMFLYKIT & STUDY ABROAD HUB)
+   BANK OF BARODA ARCHITECTURE: 3-TIER STICKY HEADER SYSTEM
+   Tier 1: Top Profile Strip (White Background, Tabbed Switcher)
+   Tier 2: The Main Orange Bar (Section 1 'D' Logo + Section 2 Brand Logo + Search + Actions)
+   Tier 3: Category Navigation Row (White Background)
    ======================================================== */
-.dk-header-top-row {
+
+.dk-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.25s ease;
+}
+
+.dk-header.is-scrolled {
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.16);
+}
+
+/* ========================================================
+   BANK OF BARODA COMPOSITE HEADER (ORANGE & WHITE WITH REVERSE INWARD CURVE)
+   ======================================================== */
+.dk-bob-composite-header {
+    width: 100%;
+    background: #f26522;
+    position: relative;
+}
+
+.dk-bob-main-container {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    background: #f26522;
+    position: relative;
+}
+
+/* LEFT TALL LOGO SECTION (EXTENDS FROM TOP DOWN TO BASE OF SEARCH BAR) */
+.dk-bob-tall-logo-wing {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: #f26522;
+    padding: 6px 14px 6px 24px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* THE BANK OF BARODA REVERSE INWARD C-SHAPE CURVE (MIDDLE SCOOPS INSIDE) */
+.dk-bob-curve-shape {
+    position: absolute;
+    right: -28px;
+    top: 0;
+    width: 32px;
+    height: 40px;
+    flex-shrink: 0;
+    z-index: 10;
+    pointer-events: none;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dk-bob-curve-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* RIGHT 2-TIER PANEL: WHITE STRIP (TOP) + ORANGE ACTION LINE (BOTTOM) */
+.dk-bob-right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* ROW 1: WHITE STRIP (PROFILES & UTILITIES) */
+.dk-bob-white-top-strip {
+    height: 40px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    padding: 0 24px 0 36px; /* Pad left to clear the reverse C-curve */
+    transition: all 0.25s ease;
+}
+
+.dk-bob-white-top-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
     width: 100%;
+    height: 100%;
 }
 
+/* PROFILE TABS (BANK OF BARODA STYLE: UNDERLINE INDICATOR) */
 .dk-profile-switcher-wrapper {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: transparent;
-    padding: 0;
-    user-select: none;
+    height: 100%;
+}
+
+.dk-profile-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    padding: 0 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    text-decoration: none !important;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.dk-profile-tab:hover {
+    color: #f26522;
+    background: rgba(242, 101, 34, 0.04);
+}
+
+.dk-profile-tab.is-active {
+    color: #f26522 !important;
+    border-bottom-color: #f26522;
+    font-weight: 800;
+    background: rgba(242, 101, 34, 0.06);
+}
+
+.dk-profile-tab-icon {
+    font-size: 14px;
+}
+
+/* TOP STRIP RIGHT UTILITIES */
+.dk-top-strip-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.dk-top-utility-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dk-top-utility-item strong {
+    color: #0f172a;
+}
+
+.dk-top-ad-pill {
+    background: #e0f2fe;
+    color: #0369a1 !important;
+    border: 1px solid #bae6fd;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dk-top-admin-badge {
+    background: #f1f5f9;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dk-top-logo-badge {
+    background: #fff7ed;
+    color: #c2410c !important;
+    border-color: #fed7aa;
+}
+
+/* ========================================================
+   ROW 2: THE MAIN ORANGE ACTION LINE (FULL WIDTH BANNER)
+   ======================================================== */
+.dk-bob-orange-action-line,
+.dk-bob-orange-bar {
+    background: linear-gradient(90deg, #f26522 0%, #ea580c 50%, #f26522 100%);
+    padding: 7px 24px 7px 12px;
+    box-shadow: 0 4px 14px rgba(242, 101, 34, 0.28);
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dk-orange-action-inner,
+.dk-orange-bar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    width: 100%;
+}
+
+/* LEFT LOGO GROUP (SECTION 1 + SECTION 2) */
+.dk-brand-sections-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
     flex-shrink: 0;
 }
 
-.dk-profile-pill {
+/* SECTION 1: 'D' LOGO SECTION (TALL BOX EXTENDING TO BASE OF SEARCH BAR) */
+.dk-logo-section-1 {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none !important;
+    flex-shrink: 0;
+}
+
+.dk-logo-s1-box {
+    width: 82px;
+    height: 82px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.25s ease;
+}
+
+.dk-logo-s1-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.32);
+}
+
+.dk-logo-s1-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    display: block;
+}
+
+/* SECTION 2: 'DREAMFLYKIT' BRAND LOGO SECTION (TALL BOX, COLLAPSES ON SCROLL) */
+.dk-logo-section-2 {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none !important;
+    flex-shrink: 0;
+    max-width: 300px;
+    opacity: 1;
+    transform: scale(1);
+    transform-origin: left center;
+    transition: max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, transform 0.25s ease, margin 0.35s ease, padding 0.35s ease;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.dk-logo-s2-box {
+    height: 82px;
+    padding: 6px 18px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.dk-logo-s2-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.32);
+}
+
+.dk-logo-s2-img {
+    height: 64px;
+    width: auto;
+    max-width: 250px;
+    object-fit: contain;
+    display: block;
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* UPLOADING SOON PLACEHOLDER BADGE */
+.dk-logo-uploading-soon {
+    background: #ffffff;
+    color: #f26522;
+    border: 1.5px dashed #f26522;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* SEARCH BAR ON ORANGE LINE */
+.dk-search-orange-bar {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    width: 100%;
+}
+
+.dk-search-orange-bar .dk-search-icon {
+    padding-left: 12px;
+    display: flex;
+    align-items: center;
+    color: #94a3b8;
+}
+
+.dk-search-orange-bar .dk-search-icon svg {
+    width: 17px;
+    height: 17px;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    fill: none;
+}
+
+.dk-search-orange-bar input[type="search"] {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0 10px;
+    font-size: 13.5px;
+    color: #0f172a;
+    font-weight: 500;
+}
+
+.dk-search-orange-bar input[type="search"]::placeholder {
+    color: #94a3b8;
+}
+
+.dk-search-orange-bar .dk-search-submit-btn {
+    background: #002b49;
+    color: #ffffff;
+    border: none;
+    width: 44px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.dk-search-orange-bar .dk-search-submit-btn:hover {
+    background: #07406c;
+}
+
+.dk-search-orange-bar .dk-search-submit-btn svg {
+    width: 17px;
+    height: 17px;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    fill: none;
+}
+
+/* ACTIONS ON ORANGE LINE (ACCOUNT, MENU, WISHLIST, CART) */
+.dk-header-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+
+.dk-account {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    height: 44px;
-    padding: 0 18px;
-    border-radius: 9999px;
-    font-size: 14px;
-    font-weight: 700;
-    text-decoration: none !important;
-    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
-    border: 1.5px solid transparent;
-    white-space: nowrap;
-    cursor: pointer;
-    line-height: 1;
-}
-
-/* 1. SHARED DUAL SWITCHER BEHAVIOR:
-   ACTIVE = BLUE, INACTIVE = WHITE */
-.dk-profile-pill.is-active {
-    background: #0271e8;
-    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
     color: #ffffff !important;
-    border-color: #0284c7;
-    box-shadow: 0 3px 12px rgba(2, 113, 232, 0.35);
+    text-decoration: none !important;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 5px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
-.dk-profile-pill.is-inactive {
-    background: #ffffff;
-    color: #1e293b !important;
-    border-color: #e2e8f0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+.dk-account:hover {
+    background: rgba(255, 255, 255, 0.26);
 }
 
-.dk-profile-pill.is-inactive:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-    color: #0271e8 !important;
+.dk-account-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: #ffffff;
+    fill: none;
+}
+
+.dk-account-text {
+    line-height: 1.15;
+}
+
+.dk-account-text small {
+    display: block;
+    font-size: 10px;
+    opacity: 0.9;
+    color: #ffffff;
+}
+
+.dk-account-text strong {
+    font-size: 12.5px;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.dk-account-caret {
+    stroke: #ffffff !important;
+    width: 12px;
+    height: 12px;
+}
+
+.dk-menu-button {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 5px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    line-height: 1.1;
+    transition: all 0.2s ease;
+}
+
+.dk-menu-button:hover {
+    background: rgba(255, 255, 255, 0.24);
+}
+
+.dk-menu-button svg {
+    width: 18px;
+    height: 18px;
+    stroke: #ffffff;
+}
+
+.dk-wishlist {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    font-size: 12.5px;
+    font-weight: 700;
+    transition: transform 0.2s ease;
+}
+
+.dk-wishlist:hover, .dk-cart:hover {
     transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* 2. STORE PROFILE (DREAMFLYKIT) */
-.dk-profile-pill-store .dk-profile-brand-logo-wrap {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.dk-wishlist-icon {
+    position: relative;
+    display: flex;
 }
 
-.dk-profile-pill-store.is-active {
-    padding: 3px;
+.dk-wishlist-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: #ffffff;
+    fill: none;
 }
 
-.dk-profile-pill-store.is-active .dk-profile-brand-logo-wrap {
+.dk-wishlist-count {
+    position: absolute;
+    top: -4px;
+    right: -6px;
     background: #ffffff;
-    padding: 4px 18px;
-    border-radius: 9999px;
-    display: inline-flex;
+    color: #f26522;
+    font-size: 10px;
+    font-weight: 800;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dk-cart {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    font-size: 12.5px;
+    font-weight: 700;
+    transition: transform 0.2s ease;
+}
+
+.dk-cart-icon {
+    position: relative;
+    display: flex;
+}
+
+.dk-cart-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: #ffffff;
+    fill: none;
+}
+
+.dk-cart-count {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    background: #ffffff;
+    color: #f26522;
+    font-size: 10px;
+    font-weight: 800;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================================
+   TIER 3: CATEGORY NAVIGATION ROW BELOW (WHITE BACKGROUND)
+   ======================================================== */
+.dk-category-nav {
+    height: 42px;
+    width: 100%;
+    max-width: 100%;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.dk-category-nav-inner {
     height: 100%;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0 4px;
 }
 
-.dk-profile-pill-store.is-active .dk-profile-brand-logo-img {
-    height: 28px;
-    width: auto;
-    max-width: 160px;
-    display: block;
-    object-fit: contain;
-    image-rendering: -webkit-optimize-contrast;
+.dk-category-nav-inner::-webkit-scrollbar {
+    display: none;
 }
 
-.dk-profile-pill-store.is-inactive {
-    padding: 0 18px;
+.dk-category-link {
+    height: 100%;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    color: #334155 !important;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    border-radius: 0;
+    border-bottom: 2.5px solid transparent !important;
+    background: transparent !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    text-decoration: none !important;
+    transition: color 0.18s ease, border-color 0.18s ease;
 }
 
-.dk-profile-pill-store.is-inactive .dk-profile-brand-logo-wrap {
-    background: transparent;
-    padding: 0;
+.dk-category-link:hover {
+    color: #f26522 !important;
+    border-bottom-color: #f26522 !important;
+    background: transparent !important;
+    transform: none !important;
 }
 
-.dk-profile-pill-store.is-inactive .dk-profile-brand-logo-img {
-    height: 28px;
-    width: auto;
-    max-width: 160px;
-    display: block;
-    object-fit: contain;
-    image-rendering: -webkit-optimize-contrast;
+.dk-category-link.dk-category-active {
+    color: #f26522 !important;
+    border-bottom-color: #f26522 !important;
+    font-weight: 800 !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
-/* 3. STUDY ABROAD HUB PROFILE (ICON + TEXT ONLY) */
-.dk-profile-pill-abroad .dk-profile-pill-icon-wrap {
+.dk-category-link span {
+    font-size: 14px;
+}
+
+.dk-find-kit {
+    margin-left: auto;
+    flex: 0 0 auto;
+    height: 30px;
+    padding: 0 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    gap: 6px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #f26522, #ea580c) !important;
+    color: #ffffff !important;
+    font-size: 11.5px;
+    font-weight: 800;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(242, 101, 34, 0.35);
+    text-decoration: none !important;
+    transition: all 0.2s ease;
 }
 
-.dk-profile-pill-abroad.is-active .dk-profile-svg-abroad {
-    color: #ffffff;
+.dk-find-kit:hover {
+    background: linear-gradient(135deg, #ea580c, #c2410c) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(242, 101, 34, 0.45);
 }
 
-.dk-profile-pill-abroad.is-active .dk-profile-abroad-title {
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 13.5px;
-    letter-spacing: -0.1px;
+/* ========================================================
+   DYNAMIC SCROLL TRANSITION (SECTION 2 COLLAPSE ON SCROLL)
+   ======================================================== */
+.dk-header.is-scrolled .dk-bob-tall-logo-wing {
+    padding: 5px 12px 5px 20px !important;
 }
 
-.dk-profile-pill-abroad.is-inactive .dk-profile-svg-abroad {
-    color: #0271e8;
+.dk-header.is-scrolled .dk-bob-curve-shape {
+    height: 38px !important;
 }
 
-.dk-profile-pill-abroad.is-inactive .dk-profile-abroad-title {
-    color: #1e293b;
-    font-weight: 700;
-    font-size: 13.5px;
-    letter-spacing: -0.1px;
+.dk-header.is-scrolled .dk-bob-white-top-strip {
+    height: 38px !important;
 }
 
-.dk-profile-pill-abroad.is-inactive:hover .dk-profile-abroad-title {
-    color: #0271e8;
+.dk-header.is-scrolled .dk-logo-section-2 {
+    max-width: 0 !important;
+    opacity: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: scaleX(0.5) !important;
+    pointer-events: none !important;
+}
+
+.dk-header.is-scrolled .dk-bob-orange-action-line,
+.dk-header.is-scrolled .dk-bob-orange-bar {
+    padding: 5px 24px 5px 12px !important;
+}
+
+.dk-header.is-scrolled .dk-logo-s1-box {
+    width: 72px !important;
+    height: 72px !important;
+    border-radius: 10px !important;
+}
+
+.dk-header.is-scrolled .dk-search-orange-bar {
+    height: 38px !important;
 }
 
 /* 4. STUDY ABROAD HUB PROFILE EMPTY CANVAS & MINIMAL HEADER */

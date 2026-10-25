@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" fill="none">
+    <!-- Subtle circular badge backdrop -->
+    <rect width="120" height="120" rx="24" fill="white" />
+    
+    <!-- Outer orange booster streak swooshing under the D -->
+    <path d="M16 100 C 22 100, 32 94, 46 80 C 60 66, 88 56, 108 50 C 90 58, 64 68, 44 86 C 30 98, 20 102, 16 100 Z" 
+          fill="url(#dkOrangeGrad)" />
+    
+    <!-- Orange flame core at bottom left of D -->
+    <path d="M18 100 L 40 82 C 34 76, 28 82, 22 92 Z" 
+          fill="#ff4500" opacity="0.9" />
+
+    <!-- The Bold Stylized 'D' Glyph -->
+    <path d="M 28 20 
+             L 66 20 
+             C 92 20, 106 36, 106 58 
+             C 106 80, 88 96, 60 96 
+             L 24 96 
+             L 36 78 
+             L 54 78 
+             C 72 78, 84 70, 84 58 
+             C 84 46, 74 38, 56 38 
+             L 40 38 
+             Z" 
+          fill="url(#dkBlueGrad)" />
+
+    <!-- White Airplane Soaring Inside the 'D' Counter Space -->
+    <g transform="translate(46, 42) rotate(-22) scale(0.95)">
+        <!-- Airplane Fuselage & Wings -->
+        <path d="M 12 0 
+                 C 14 -3, 17 -3, 19 0 
+                 L 22 12 
+                 L 38 18 
+                 L 38 22 
+                 L 22 19 
+                 L 21 28 
+                 L 27 33 
+                 L 27 36 
+                 L 15 34 
+                 L 4 36 
+                 L 4 33 
+                 L 10 28 
+                 L 9 19 
+                 L -7 22 
+                 L -7 18 
+                 L 9 12 
+                 Z" 
+              fill="#ffffff" 
+              stroke="#0a2540" 
+              stroke-width="1.2" 
+              stroke-linejoin="round" />
+    </g>
+
+    <!-- Definitions for Rich Bank of Baroda Inspired Gradients -->
+    <defs>
+        <linearGradient id="dkOrangeGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ff3b00" />
+            <stop offset="50%" stop-color="#f26522" />
+            <stop offset="100%" stop-color="#ff9900" />
+        </linearGradient>
+        <linearGradient id="dkBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#002b49" />
+            <stop offset="50%" stop-color="#0a2540" />
+            <stop offset="100%" stop-color="#0264b3" />
+        </linearGradient>
+    </defs>
+</svg>
