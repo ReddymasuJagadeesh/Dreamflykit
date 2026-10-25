@@ -10,6 +10,11 @@
     var bottomBanner = hub.BottomBanner ?? new();
     var categories = catSection.Categories ?? new();
     var products = picksSection.Products ?? new();
+
+    var men = hub.MenClothing ?? Dreamflykit.Application.FashionHub.Models.FashionMenClothingDto.CreateDefault();
+    var menHero = men.HeroBanner ?? new();
+    var menCat = men.CategoriesSection ?? new();
+    var menPicks = men.TopPicksSection ?? new();
 }
 
 <div class="dk-admin-hub-wrapper">
@@ -24,6 +29,9 @@
             </p>
         </div>
         <div class="dk-admin-hub-actions">
+            <a href="/category/fashion/men-clothing" target="_blank" class="dk-btn-view-live" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; font-weight: 700;" title="Preview Men Clothing template in new tab">
+                👔 View Men Clothing Live
+            </a>
             <a href="/category/fashion" target="_blank" class="dk-btn-view-live" title="Preview live page in new tab">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 View Live Fashion Page
@@ -67,6 +75,9 @@
         <button type="button" class="dk-tab-btn" data-tab="tab-bottom">
             🌐 Bottom Destination Bar
         </button>
+        <button type="button" class="dk-tab-btn" data-tab="tab-men-clothing" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #93c5fd; font-weight: 800;">
+            👔 Men Clothing Template
+        </button>
     </div>
 
     <form id="fashionHubForm" method="post" action="/Admin/FashionHub/Save">
@@ -83,7 +94,7 @@
                         <p class="dk-card-desc">Customize the full-width high brightness hero section, headlines, badges, and background visual.</p>
                     </div>
                     <label class="dk-switch">
-                        <input type="checkbox" id="heroIsEnabled" @(hub.HeroBanner.IsEnabled ? "checked" : "") />
+                        <input type="checkbox" id="heroIsEnabled" @(hub.HeroBanner?.IsEnabled == true ? "checked" : "") />
                         <span class="dk-slider"></span>
                         <span class="dk-switch-label">Section Enabled</span>
                     </label>
@@ -489,7 +500,7 @@
                         <p class="dk-card-desc">Guarantees and student value propositions shown across the category landing page.</p>
                     </div>
                     <label class="dk-switch">
-                        <input type="checkbox" id="trustIsEnabled" @(hub.TrustBadgesSection.IsEnabled ? "checked" : "") />
+                        <input type="checkbox" id="trustIsEnabled" @(hub.TrustBadgesSection?.IsEnabled == true ? "checked" : "") />
                         <span class="dk-slider"></span>
                         <span class="dk-switch-label">Section Enabled</span>
                     </label>
@@ -497,9 +508,9 @@
 
                 <div class="dk-card-body">
                     <div class="dk-trust-edit-grid" id="trustBadgesContainer">
-                        @for (int t = 0; t < hub.TrustBadgesSection.Badges.Count; t++)
+                        @for (int t = 0; t < (hub.TrustBadgesSection?.Badges ?? new List<Dreamflykit.Application.FashionHub.Models.FashionTrustBadgeDto>()).Count; t++)
                         {
-                            var tb = hub.TrustBadgesSection.Badges[t];
+                            var tb = hub.TrustBadgesSection!.Badges[t];
                             <div class="dk-trust-edit-card" data-id="@tb.Id">
                                 <div class="dk-badge-edit-header">
                                     <span class="dk-badge-num">Pillar #@(t + 1)</span>
@@ -545,7 +556,7 @@
                         <p class="dk-card-desc">The dark navy banner with Student Quiz, Destination Kits, and Bulk Order links.</p>
                     </div>
                     <label class="dk-switch">
-                        <input type="checkbox" id="bottomIsEnabled" @(hub.BottomBanner.IsEnabled ? "checked" : "") />
+                        <input type="checkbox" id="bottomIsEnabled" @(hub.BottomBanner?.IsEnabled == true ? "checked" : "") />
                         <span class="dk-slider"></span>
                         <span class="dk-switch-label">Section Enabled</span>
                     </label>
@@ -619,6 +630,338 @@
 
                 </div>
             </div>
+        </div>
+
+        <!-- ========================================================
+             TAB 6: MEN CLOTHING TEMPLATE (MATCHING USER IMAGE 2)
+        ========================================================= -->
+        <div class="dk-tab-pane" id="tab-men-clothing">
+            <div class="dk-card" style="margin-bottom: 24px; border-left: 4px solid #1d4ed8;">
+                <div class="dk-card-header" style="background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);">
+                    <div>
+                        <h2 class="dk-card-title" style="color: #1e3a8a; display: flex; align-items: center; gap: 8px;">
+                            <span>👔</span> Men Clothing Dedicated Hub Template
+                        </h2>
+                        <p class="dk-card-desc">
+                            When users click "Men Clothing" under Fashion, this high-converting full-width template is displayed. Features full-size attractive hero banner, 10 subcategories, 8 top pick products, and trust propositions.
+                        </p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <a href="/category/fashion/men-clothing" target="_blank" class="dk-btn-view-live" style="background: #ffffff; color: #1d4ed8; border: 1.5px solid #bfdbfe; font-size: 12px; padding: 6px 12px;">
+                            👁️ Preview Live Template
+                        </a>
+                        <label class="dk-switch">
+                            <input type="checkbox" id="menIsEnabled" @(men.IsEnabled ? "checked" : "") />
+                            <span class="dk-slider"></span>
+                            <span class="dk-switch-label">Template Enabled</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Men Clothing Hero Banner Card -->
+            <div class="dk-card" style="margin-bottom: 24px;">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">1. Men Clothing Hero Banner</h2>
+                        <p class="dk-card-desc">Customize headlines, descriptions, 4 badge pills, right checklist, and full-width attractive travel model photo.</p>
+                    </div>
+                    <label class="dk-switch">
+                        <input type="checkbox" id="menHeroIsEnabled" @(menHero.IsEnabled ? "checked" : "") />
+                        <span class="dk-slider"></span>
+                        <span class="dk-switch-label">Hero Enabled</span>
+                    </label>
+                </div>
+
+                <div class="dk-card-body">
+                    <div class="dk-form-grid-2">
+                        <div class="dk-form-group">
+                            <label class="dk-label" for="menHeroTitle">Headline Main (Title)</label>
+                            <input type="text" id="menHeroTitle" class="dk-input" value="@menHero.Title" placeholder="e.g. Men Clothing" />
+                            <small class="dk-hint">Main title displayed in bold navy</small>
+                        </div>
+                        <div class="dk-form-group">
+                            <label class="dk-label" for="menHeroTitleHighlight">Headline Highlight (Orange)</label>
+                            <input type="text" id="menHeroTitleHighlight" class="dk-input" value="@menHero.TitleHighlight" placeholder="e.g. Wherever You Go." />
+                            <small class="dk-hint">Orange accent text</small>
+                        </div>
+                    </div>
+
+                    <div class="dk-form-grid-2">
+                        <div class="dk-form-group">
+                            <label class="dk-label" for="menHeroSubtitle">Tagline / Subtitle</label>
+                            <input type="text" id="menHeroSubtitle" class="dk-input" value="@menHero.Subtitle" placeholder="e.g. Style. Comfort. Wherever You Go." />
+                        </div>
+                        <div class="dk-form-group">
+                            <label class="dk-label" for="menHeroBannerHeight">Min Height (px)</label>
+                            <input type="number" id="menHeroBannerHeight" class="dk-input" value="@(menHero.BannerHeight > 0 ? menHero.BannerHeight : 440)" />
+                        </div>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label class="dk-label" for="menHeroDesc">Description Paragraph</label>
+                        <textarea id="menHeroDesc" class="dk-textarea" rows="2" placeholder="e.g. Trendy, durable & travel-ready outfits for every student and explorer.">@menHero.Description</textarea>
+                    </div>
+
+                    <!-- Hero Visual / Image Upload -->
+                    <div class="dk-form-group" style="background: #f8fafc; border: 1.5px solid #bae6fd; border-radius: 14px; padding: 18px; margin-top: 14px;">
+                        <label class="dk-label" style="color: #0369a1; font-size: 14px; font-weight: 800; margin-bottom: 8px;">
+                            📷 Men Clothing Hero Banner Photo (Full Size, High Quality)
+                        </label>
+                        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: center;">
+                            <div style="width: 200px; height: 130px; border-radius: 12px; overflow: hidden; background: #e2e8f0; border: 1.5px solid #cbd5e1; display: flex; align-items: center; justify-content: center;">
+                                <img id="menHeroImagePreview" src="@(!string.IsNullOrWhiteSpace(menHero.ImageUrl) ? menHero.ImageUrl : "/images/fashion-hub/men_clothing_hero.jpg")" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                            </div>
+                            <div>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                                    <input type="file" id="menHeroFileInput" accept="image/png,image/jpeg,image/webp" style="display: none;" />
+                                    <button type="button" class="dk-btn-upload-lg" onclick="document.getElementById('menHeroFileInput').click()">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                        Upload New Model Photo
+                                    </button>
+                                    <button type="button" class="dk-btn-secondary" onclick="setMenHeroDefaultImage()">
+                                        Use Default Travel Photo
+                                    </button>
+                                </div>
+                                <div style="margin-bottom: 8px;">
+                                    <input type="text" id="menHeroImageUrl" class="dk-input" value="@menHero.ImageUrl" placeholder="https://... or /images/..." />
+                                </div>
+                                <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; font-weight: 700; color: #334155;">
+                                    <input type="checkbox" id="menHeroIsUploadingSoon" @(menHero.IsUploadingSoon ? "checked" : "") style="width: 16px; height: 16px; cursor: pointer;" />
+                                    <span>Display "Uploading Soon" Placeholder Badge on Banner</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4 Badges Row Editor -->
+                    <div style="margin-top: 22px;">
+                        <h4 style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">
+                            Badge Pills (4 Badges Under Headline)
+                        </h4>
+                        <div id="menHeroBadgesContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px;">
+                            @foreach (var badge in (menHero.Badges ?? new List<Dreamflykit.Application.FashionHub.Models.FashionHeroBadgeDto>()))
+                            {
+                                <div class="dk-badge-edit-card" data-badge-id="@badge.Id" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px;">
+                                    <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                                        <input type="text" class="dk-input badge-label" value="@badge.Label" placeholder="Badge Label" style="font-weight: 700; font-size: 12.5px; padding: 5px 8px;" />
+                                        <select class="dk-select badge-icon" style="width: 75px; font-size: 12px; padding: 5px;">
+                                            <option value="shirt" selected="@(badge.Icon == "shirt")">👕 Shirt</option>
+                                            <option value="shield" selected="@(badge.Icon == "shield")">🛡️ Shield</option>
+                                            <option value="tag" selected="@(badge.Icon == "tag")">🏷️ Tag</option>
+                                            <option value="users" selected="@(badge.Icon == "users")">👥 Users</option>
+                                        </select>
+                                    </div>
+                                    <label style="font-size: 11.5px; color: #64748b; display: inline-flex; align-items: center; gap: 6px;">
+                                        <input type="checkbox" class="badge-active" @(badge.IsActive ? "checked" : "") />
+                                        <span>Show Badge</span>
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Right Features Checklist Editor -->
+                    <div style="margin-top: 22px;">
+                        <h4 style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">
+                            Right Checklist Features (4 Items)
+                        </h4>
+                        <div id="menRightFeaturesContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px;">
+                            @foreach (var feat in (menHero.RightCard?.Features ?? new List<Dreamflykit.Application.FashionHub.Models.FashionHeroFeatureDto>()))
+                            {
+                                <div class="dk-feat-edit-card" data-feat-id="@feat.Id" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px;">
+                                    <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                                        <input type="text" class="dk-input feat-title" value="@feat.Title" placeholder="Feature Label" style="font-weight: 700; font-size: 12.5px; padding: 5px 8px;" />
+                                        <select class="dk-select feat-icon" style="width: 85px; font-size: 12px; padding: 5px;">
+                                            <option value="shirt" selected="@(feat.Icon == "shirt")">👕 Comfort</option>
+                                            <option value="luggage" selected="@(feat.Icon == "luggage")">🧳 Pack</option>
+                                            <option value="clock" selected="@(feat.Icon == "clock")">⏱️ Season</option>
+                                            <option value="plane" selected="@(feat.Icon == "plane")">✈️ Travel</option>
+                                        </select>
+                                    </div>
+                                    <label style="font-size: 11.5px; color: #64748b; display: inline-flex; align-items: center; gap: 6px;">
+                                        <input type="checkbox" class="feat-active" @(feat.IsActive ? "checked" : "") />
+                                        <span>Show Feature</span>
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Men Clothing Shop by Category Card -->
+            <div class="dk-card" style="margin-bottom: 24px;">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">2. Shop by Category (10 Subcategories)</h2>
+                        <p class="dk-card-desc">Admin can upload images or toggle "Uploading Soon" for each subcategory.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button type="button" class="dk-btn-secondary" onclick="addNewMenCategory()">
+                            + Add Subcategory
+                        </button>
+                        <label class="dk-switch">
+                            <input type="checkbox" id="menCategoriesIsEnabled" @(menCat.IsEnabled ? "checked" : "") />
+                            <span class="dk-slider"></span>
+                            <span class="dk-switch-label">Enabled</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="dk-card-body">
+                    <div class="dk-form-group" style="margin-bottom: 16px;">
+                        <label class="dk-label" for="menCategoriesTitle">Section Title</label>
+                        <input type="text" id="menCategoriesTitle" class="dk-input" value="@menCat.Title" style="max-width: 380px;" />
+                    </div>
+
+                    <div id="menCategoryRowsContainer" class="dk-items-list">
+                        @foreach (var cat in (menCat.Categories ?? new List<Dreamflykit.Application.FashionHub.Models.FashionCategoryItemDto>()).OrderBy(c => c.DisplayOrder))
+                        {
+                            <div class="dk-item-row" data-id="@cat.Id">
+                                <span class="dk-row-handle">☰</span>
+                                
+                                <div class="dk-thumb-box">
+                                    <img src="@(!string.IsNullOrWhiteSpace(cat.ImageUrl) ? cat.ImageUrl : "/images/fashion-hub/uploading-soon-placeholder.svg")" 
+                                         alt="@cat.Name" 
+                                         class="cat-thumb-preview"
+                                         onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                                    <button type="button" class="dk-btn-thumb-upload" onclick="this.nextElementSibling.click()" title="Upload Image">
+                                        📷
+                                    </button>
+                                    <input type="file" accept="image/*" style="display: none;" onchange="uploadRowImage(this, 'category')" />
+                                </div>
+
+                                <div class="dk-row-inputs" style="grid-template-columns: 1.5fr 1.5fr 2fr 70px;">
+                                    <div>
+                                        <label class="dk-mini-label">Subcategory Name</label>
+                                        <input type="text" class="dk-input cat-name" value="@cat.Name" placeholder="Name" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Slug / Key</label>
+                                        <input type="text" class="dk-input cat-slug" value="@cat.Slug" placeholder="slug" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Image URL</label>
+                                        <input type="text" class="dk-input cat-image-url" value="@cat.ImageUrl" placeholder="URL" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Order</label>
+                                        <input type="number" class="dk-input cat-order" value="@cat.DisplayOrder" style="text-align: center;" />
+                                    </div>
+                                </div>
+
+                                <div class="dk-row-toggles">
+                                    <label class="dk-soon-check" title="Show 'Uploading Soon' placeholder">
+                                        <input type="checkbox" class="cat-soon" @(cat.IsUploadingSoon ? "checked" : "") />
+                                        <span>Soon</span>
+                                    </label>
+                                    <label class="dk-soon-check">
+                                        <input type="checkbox" class="cat-active" @(cat.IsActive ? "checked" : "") />
+                                        <span>Active</span>
+                                    </label>
+                                </div>
+
+                                <button type="button" class="dk-btn-delete-row" onclick="this.closest('.dk-item-row').remove()" title="Delete">
+                                    ✕
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Men Clothing Top Picks Products Card -->
+            <div class="dk-card" style="margin-bottom: 24px;">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">3. Top Picks for Men Products (8 Products)</h2>
+                        <p class="dk-card-desc">Admin can edit products, prices (₹), ratings, upload product photos, or toggle "Uploading Soon".</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button type="button" class="dk-btn-secondary" onclick="addNewMenProduct()">
+                            + Add New Product
+                        </button>
+                        <label class="dk-switch">
+                            <input type="checkbox" id="menPicksIsEnabled" @(menPicks.IsEnabled ? "checked" : "") />
+                            <span class="dk-slider"></span>
+                            <span class="dk-switch-label">Enabled</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="dk-card-body">
+                    <div class="dk-form-group" style="margin-bottom: 16px;">
+                        <label class="dk-label" for="menPicksTitle">Section Title</label>
+                        <input type="text" id="menPicksTitle" class="dk-input" value="@menPicks.Title" style="max-width: 380px;" />
+                    </div>
+
+                    <div id="menProductRowsContainer" class="dk-items-list">
+                        @foreach (var prod in (menPicks.Products ?? new List<Dreamflykit.Application.FashionHub.Models.FashionProductItemDto>()))
+                        {
+                            <div class="dk-item-row" data-id="@prod.Id">
+                                <span class="dk-row-handle">☰</span>
+                                
+                                <div class="dk-thumb-box">
+                                    <img src="@(!string.IsNullOrWhiteSpace(prod.ImageUrl) ? prod.ImageUrl : "/images/fashion-hub/uploading-soon-placeholder.svg")" 
+                                         alt="@prod.Name" 
+                                         class="prod-thumb-preview"
+                                         onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                                    <button type="button" class="dk-btn-thumb-upload" onclick="this.nextElementSibling.click()" title="Upload Image">
+                                        📷
+                                    </button>
+                                    <input type="file" accept="image/*" style="display: none;" onchange="uploadRowImage(this, 'product')" />
+                                </div>
+
+                                <div class="dk-row-inputs" style="grid-template-columns: 2fr 100px 100px 75px 80px 2fr;">
+                                    <div>
+                                        <label class="dk-mini-label">Product Name</label>
+                                        <input type="text" class="dk-input prod-name" value="@prod.Name" placeholder="Product Name" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Price (₹)</label>
+                                        <input type="number" class="dk-input prod-price" value="@prod.Price" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Orig. Price (₹)</label>
+                                        <input type="number" class="dk-input prod-orig-price" value="@prod.OriginalPrice" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Rating</label>
+                                        <input type="number" step="0.1" class="dk-input prod-rating" value="@prod.Rating" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Reviews</label>
+                                        <input type="number" class="dk-input prod-reviews" value="@prod.ReviewsCount" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Image URL</label>
+                                        <input type="text" class="dk-input prod-image-url" value="@prod.ImageUrl" placeholder="URL" />
+                                        <input type="hidden" class="prod-url" value="@prod.ProductUrl" />
+                                    </div>
+                                </div>
+
+                                <div class="dk-row-toggles">
+                                    <label class="dk-soon-check" title="Show 'Uploading Soon' placeholder">
+                                        <input type="checkbox" class="prod-soon" @(prod.IsUploadingSoon ? "checked" : "") />
+                                        <span>Soon</span>
+                                    </label>
+                                    <label class="dk-soon-check">
+                                        <input type="checkbox" class="prod-active" @(prod.IsActive ? "checked" : "") />
+                                        <span>Active</span>
+                                    </label>
+                                </div>
+
+                                <button type="button" class="dk-btn-delete-row" onclick="this.closest('.dk-item-row').remove()" title="Delete">
+                                    ✕
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </form>
@@ -1222,8 +1565,20 @@ document.addEventListener("DOMContentLoaded", function () {
             const targetId = btn.getAttribute("data-tab");
             const targetPane = document.getElementById(targetId);
             if (targetPane) targetPane.classList.add("active");
+            if (history.replaceState) {
+                history.replaceState(null, null, "#" + targetId);
+            }
         });
     });
+
+    // Check URL hash for direct tab opening (e.g. #tab-men-clothing)
+    if (window.location.hash) {
+        const hash = window.location.hash.substring(1);
+        const matchingBtn = document.querySelector(`.dk-tab-btn[data-tab="${hash}"]`);
+        if (matchingBtn) {
+            matchingBtn.click();
+        }
+    }
 
     // 2. Hero File Upload
     const heroFileInput = document.getElementById("heroFileInput");
@@ -1259,6 +1614,41 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // 3. Men Clothing Hero Photo Upload
+    const menHeroFileInput = document.getElementById("menHeroFileInput");
+    if (menHeroFileInput) {
+        menHeroFileInput.addEventListener("change", async function () {
+            if (!this.files || this.files.length === 0) return;
+            const file = this.files[0];
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("targetField", "menHeroBanner");
+            
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || "";
+            formData.append("__RequestVerificationToken", token);
+
+            showAlert("Uploading Men Clothing hero banner photo...", "info");
+
+            try {
+                const res = await fetch("/Admin/FashionHub/UploadImage", {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success && data.url) {
+                    document.getElementById("menHeroImageUrl").value = data.url;
+                    document.getElementById("menHeroImagePreview").src = data.url;
+                    document.getElementById("menHeroIsUploadingSoon").checked = false;
+                    showAlert("Men Clothing photo uploaded successfully! Don't forget to click Save All Changes.", "success");
+                } else {
+                    showAlert("Upload failed: " + (data.message || "Unknown error"), "error");
+                }
+            } catch (err) {
+                showAlert("Network or upload error: " + err.message, "error");
+            }
+        });
+    }
+
     // Live URL Preview on typing
     const heroImageUrlInput = document.getElementById("heroImageUrl");
     if (heroImageUrlInput) {
@@ -1266,6 +1656,16 @@ document.addEventListener("DOMContentLoaded", function () {
             const val = this.value.trim();
             if (val) {
                 document.getElementById("heroImagePreview").src = val;
+            }
+        });
+    }
+
+    const menHeroImageUrlInput = document.getElementById("menHeroImageUrl");
+    if (menHeroImageUrlInput) {
+        menHeroImageUrlInput.addEventListener("input", function () {
+            const val = this.value.trim();
+            if (val) {
+                document.getElementById("menHeroImagePreview").src = val;
             }
         });
     }
@@ -1280,6 +1680,117 @@ function setHeroDefaultImage() {
     document.getElementById("heroImageUrl").value = defaultUrl;
     document.getElementById("heroImagePreview").src = defaultUrl;
     document.getElementById("heroIsUploadingSoon").checked = false;
+}
+
+function setMenHeroDefaultImage() {
+    const defaultUrl = "/images/fashion-hub/men_clothing_hero.jpg";
+    document.getElementById("menHeroImageUrl").value = defaultUrl;
+    document.getElementById("menHeroImagePreview").src = defaultUrl;
+    document.getElementById("menHeroIsUploadingSoon").checked = false;
+}
+
+function addNewMenCategory() {
+    const container = document.getElementById("menCategoryRowsContainer");
+    if (!container) return;
+    const newId = "mc_" + Date.now();
+    const count = container.querySelectorAll(".dk-item-row").length + 1;
+    const row = document.createElement("div");
+    row.className = "dk-item-row";
+    row.setAttribute("data-id", newId);
+    row.innerHTML = `
+        <span class="dk-row-handle">☰</span>
+        <div class="dk-thumb-box">
+            <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="New Category" class="cat-thumb-preview" />
+            <button type="button" class="dk-btn-thumb-upload" onclick="this.nextElementSibling.click()" title="Upload Image">📷</button>
+            <input type="file" accept="image/*" style="display: none;" onchange="uploadRowImage(this, 'category')" />
+        </div>
+        <div class="dk-row-inputs" style="grid-template-columns: 1.5fr 1.5fr 2fr 70px;">
+            <div>
+                <label class="dk-mini-label">Subcategory Name</label>
+                <input type="text" class="dk-input cat-name" value="New Subcategory" placeholder="Name" />
+            </div>
+            <div>
+                <label class="dk-mini-label">Slug / Key</label>
+                <input type="text" class="dk-input cat-slug" value="new-subcategory" placeholder="slug" />
+            </div>
+            <div>
+                <label class="dk-mini-label">Image URL</label>
+                <input type="text" class="dk-input cat-image-url" value="" placeholder="URL" />
+            </div>
+            <div>
+                <label class="dk-mini-label">Order</label>
+                <input type="number" class="dk-input cat-order" value="${count}" style="text-align: center;" />
+            </div>
+        </div>
+        <div class="dk-row-toggles">
+            <label class="dk-soon-check" title="Show 'Uploading Soon' placeholder">
+                <input type="checkbox" class="cat-soon" checked />
+                <span>Soon</span>
+            </label>
+            <label class="dk-soon-check">
+                <input type="checkbox" class="cat-active" checked />
+                <span>Active</span>
+            </label>
+        </div>
+        <button type="button" class="dk-btn-delete-row" onclick="this.closest('.dk-item-row').remove()" title="Delete">✕</button>
+    `;
+    container.appendChild(row);
+}
+
+function addNewMenProduct() {
+    const container = document.getElementById("menProductRowsContainer");
+    if (!container) return;
+    const newId = "mp_" + Date.now();
+    const row = document.createElement("div");
+    row.className = "dk-item-row";
+    row.setAttribute("data-id", newId);
+    row.innerHTML = `
+        <span class="dk-row-handle">☰</span>
+        <div class="dk-thumb-box">
+            <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="New Product" class="prod-thumb-preview" />
+            <button type="button" class="dk-btn-thumb-upload" onclick="this.nextElementSibling.click()" title="Upload Image">📷</button>
+            <input type="file" accept="image/*" style="display: none;" onchange="uploadRowImage(this, 'product')" />
+        </div>
+        <div class="dk-row-inputs" style="grid-template-columns: 2fr 100px 100px 75px 80px 2fr;">
+            <div>
+                <label class="dk-mini-label">Product Name</label>
+                <input type="text" class="dk-input prod-name" value="Men's New Style" placeholder="Product Name" />
+            </div>
+            <div>
+                <label class="dk-mini-label">Price (₹)</label>
+                <input type="number" class="dk-input prod-price" value="799" />
+            </div>
+            <div>
+                <label class="dk-mini-label">Orig. Price (₹)</label>
+                <input type="number" class="dk-input prod-orig-price" value="1599" />
+            </div>
+            <div>
+                <label class="dk-mini-label">Rating</label>
+                <input type="number" step="0.1" class="dk-input prod-rating" value="4.8" />
+            </div>
+            <div>
+                <label class="dk-mini-label">Reviews</label>
+                <input type="number" class="dk-input prod-reviews" value="50" />
+            </div>
+            <div>
+                <label class="dk-mini-label">Image URL</label>
+                <input type="text" class="dk-input prod-image-url" value="" placeholder="URL" />
+                <input type="hidden" class="prod-url" value="/category/fashion/men-clothing" />
+            </div>
+        </div>
+        <div class="dk-row-toggles">
+            <label class="dk-soon-check" title="Show 'Uploading Soon' placeholder">
+                <input type="checkbox" class="prod-soon" checked />
+                <span>Soon</span>
+            </label>
+            <label class="dk-soon-check">
+                <input type="checkbox" class="prod-active" checked />
+                <span>Active</span>
+            </label>
+        </div>
+        <button type="button" class="dk-btn-delete-row" onclick="this.closest('.dk-item-row').remove()" title="Delete">✕</button>
+    `;
+    container.appendChild(row);
 }
 
 async function uploadRowImage(input, type) {
@@ -1503,6 +2014,60 @@ async function saveFashionHub() {
         });
     });
 
+    // Gather Men Clothing Badges
+    const menBadges = [];
+    document.querySelectorAll("#menHeroBadgesContainer .dk-badge-edit-card").forEach(el => {
+        menBadges.push({
+            id: el.getAttribute("data-badge-id") || "",
+            label: el.querySelector(".badge-label")?.value || "",
+            icon: el.querySelector(".badge-icon")?.value || "shirt",
+            isActive: el.querySelector(".badge-active")?.checked ?? true
+        });
+    });
+
+    // Gather Men Clothing Right Checklist Features
+    const menFeatures = [];
+    document.querySelectorAll("#menRightFeaturesContainer .dk-feat-edit-card").forEach(el => {
+        menFeatures.push({
+            id: el.getAttribute("data-feat-id") || "",
+            title: el.querySelector(".feat-title")?.value || "",
+            icon: el.querySelector(".feat-icon")?.value || "shirt",
+            isActive: el.querySelector(".feat-active")?.checked ?? true
+        });
+    });
+
+    // Gather Men Clothing Subcategories
+    const menCategories = [];
+    document.querySelectorAll("#menCategoryRowsContainer .dk-item-row").forEach(el => {
+        menCategories.push({
+            id: el.getAttribute("data-id") || "",
+            name: el.querySelector(".cat-name")?.value || "",
+            slug: el.querySelector(".cat-slug")?.value || "",
+            imageUrl: el.querySelector(".cat-image-url")?.value || "",
+            displayOrder: parseInt(el.querySelector(".cat-order")?.value || "0"),
+            isUploadingSoon: el.querySelector(".cat-soon")?.checked ?? true,
+            isActive: el.querySelector(".cat-active")?.checked ?? true
+        });
+    });
+
+    // Gather Men Clothing Products
+    const menProducts = [];
+    document.querySelectorAll("#menProductRowsContainer .dk-item-row").forEach(el => {
+        menProducts.push({
+            id: el.getAttribute("data-id") || "",
+            name: el.querySelector(".prod-name")?.value || "",
+            categoryName: "Men Clothing",
+            price: parseFloat(el.querySelector(".prod-price")?.value || "0"),
+            originalPrice: el.querySelector(".prod-orig-price")?.value ? parseFloat(el.querySelector(".prod-orig-price").value) : null,
+            rating: parseFloat(el.querySelector(".prod-rating")?.value || "4.8"),
+            reviewsCount: parseInt(el.querySelector(".prod-reviews")?.value || "50"),
+            imageUrl: el.querySelector(".prod-image-url")?.value || "",
+            productUrl: el.querySelector(".prod-url")?.value || "/category/fashion/men-clothing",
+            isUploadingSoon: el.querySelector(".prod-soon")?.checked ?? true,
+            isActive: el.querySelector(".prod-active")?.checked ?? true
+        });
+    });
+
     // Build Payload
     const payload = {
         heroBanner: {
@@ -1555,6 +2120,56 @@ async function saveFashionHub() {
             bulkSubtitle: document.getElementById("bottomBulkSub")?.value || "",
             bulkButtonText: document.getElementById("bottomBulkBtnText")?.value || "Contact Us",
             bulkButtonUrl: document.getElementById("bottomBulkBtnUrl")?.value || "/contact"
+        },
+        menClothing: {
+            isEnabled: document.getElementById("menIsEnabled")?.checked ?? true,
+            heroBanner: {
+                isEnabled: document.getElementById("menHeroIsEnabled")?.checked ?? true,
+                title: document.getElementById("menHeroTitle")?.value || "Men Clothing",
+                titleHighlight: document.getElementById("menHeroTitleHighlight")?.value || "Wherever You Go.",
+                subtitle: document.getElementById("menHeroSubtitle")?.value || "Style. Comfort. Wherever You Go.",
+                description: document.getElementById("menHeroDesc")?.value || "Trendy, durable & travel-ready outfits for every student and explorer.",
+                imageUrl: document.getElementById("menHeroImageUrl")?.value || "/images/fashion-hub/men_clothing_hero.jpg",
+                isUploadingSoon: document.getElementById("menHeroIsUploadingSoon")?.checked ?? false,
+                bannerHeight: parseInt(document.getElementById("menHeroBannerHeight")?.value || "440"),
+                badges: menBadges,
+                rightCard: {
+                    title: "Everyday Comfort",
+                    titleHighlight: "Travel Smart.",
+                    features: menFeatures
+                }
+            },
+            categoriesSection: {
+                isEnabled: document.getElementById("menCategoriesIsEnabled")?.checked ?? true,
+                title: document.getElementById("menCategoriesTitle")?.value || "Shop by Category",
+                viewAllUrl: "/category/fashion/men-clothing",
+                viewAllText: "View All Categories →",
+                categories: menCategories
+            },
+            topPicksSection: {
+                isEnabled: document.getElementById("menPicksIsEnabled")?.checked ?? true,
+                title: document.getElementById("menPicksTitle")?.value || "Top Picks for Men",
+                viewAllUrl: "/category/fashion/men-clothing",
+                viewAllText: "View All Products →",
+                products: menProducts
+            },
+            trustBadgesSection: {
+                isEnabled: true,
+                badges: trustBadges
+            },
+            bottomBanner: {
+                isEnabled: true,
+                quizTitle: "Not Sure What You Need?",
+                quizSubtitle: "Take our quick quiz and find your perfect kit",
+                quizButtonText: "Find My Kit",
+                quizButtonUrl: "/find-my-kit",
+                destinationsTitle: "Kits for Top Destinations",
+                destinationsSubtitle: "USA, UK, Canada, Australia & More",
+                bulkTitle: "Bulk Orders for Universities",
+                bulkSubtitle: "Get special discounts for groups",
+                bulkButtonText: "Contact Us",
+                bulkButtonUrl: "/contact"
+            }
         }
     };
 

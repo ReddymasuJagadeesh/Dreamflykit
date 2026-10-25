@@ -333,5 +333,287 @@
     "BulkSubtitle": "Get special discounts for groups",
     "BulkButtonText": "Contact Us",
     "BulkButtonUrl": "/contact"
+  },
+  "MenClothing": {
+    "IsEnabled": true,
+    "HeroBanner": {
+      "IsEnabled": true,
+      "Title": "Men Clothing",
+      "TitleHighlight": "Wherever You Go.",
+      "Subtitle": "Style. Comfort.",
+      "Description": "Trendy, durable & travel-ready outfits for every student and explorer.",
+      "ImageUrl": "/images/fashion-hub/men_clothing_hero.jpg",
+      "IsUploadingSoon": false,
+      "TitleColor": "#063f91",
+      "TitleHighlightColor": "#ea580c",
+      "SubtitleColor": "#334155",
+      "BannerHeight": 440,
+      "Badges": [
+        {
+          "Id": "mb1",
+          "Label": "Trendy Styles",
+          "Icon": "shirt",
+          "IsActive": true
+        },
+        {
+          "Id": "mb2",
+          "Label": "Premium Quality",
+          "Icon": "shield",
+          "IsActive": true
+        },
+        {
+          "Id": "mb3",
+          "Label": "Affordable Prices",
+          "Icon": "tag",
+          "IsActive": true
+        },
+        {
+          "Id": "mb4",
+          "Label": "Loved by 10K+ Students",
+          "Icon": "users",
+          "IsActive": true
+        }
+      ],
+      "RightCard": {
+        "Title": "Everyday",
+        "TitleHighlight": "Comfort",
+        "Features": [
+          {
+            "Id": "mf1",
+            "Title": "Everyday Comfort",
+            "Icon": "shirt",
+            "IsActive": true
+          },
+          {
+            "Id": "mf2",
+            "Title": "Easy to Pack",
+            "Icon": "luggage",
+            "IsActive": true
+          },
+          {
+            "Id": "mf3",
+            "Title": "All-Season Wear",
+            "Icon": "clock",
+            "IsActive": true
+          },
+          {
+            "Id": "mf4",
+            "Title": "Perfect for Travel",
+            "Icon": "plane",
+            "IsActive": true
+          }
+        ]
+      }
+    },
+    "CategoriesSection": {
+      "IsEnabled": true,
+      "Title": "Shop by Category",
+      "ViewAllText": "View All Categories →",
+      "ViewAllUrl": "/category/fashion",
+      "Categories": [
+        {
+          "Id": "mc1",
+          "Name": "T-Shirts & Polos",
+          "Slug": "t-shirts-polos",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 1,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mc2",
+          "Name": "Shirts",
+          "Slug": "shirts",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 2,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mc3",
+          "Name": "Hoodies & Sweatshirts",
+          "Slug": "hoodies-sweatshirts",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 3,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mc4",
+          "Name": "Jackets & Coats",
+          "Slug": "jackets-coats",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 4,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mc5",
+          "Name": "Jeans",
+          "Slug": "jeans",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 5,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mc6",
+          "Name": "Trousers & Chinos",
+          "Slug": "trousers-chinos",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 6,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mc7",
+          "Name": "Shorts",
+          "Slug": "shorts",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 7,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mc8",
+          "Name": "Innerwear & Sleepwear",
+          "Slug": "innerwear-sleepwear",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 8,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mc9",
+          "Name": "Activewear",
+          "Slug": "activewear",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 9,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mc10",
+          "Name": "Accessories",
+          "Slug": "accessories",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 10,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        }
+      ]
+    },
+    "TopPicksSection": {
+      "IsEnabled": true,
+      "Title": "Top Picks for Men",
+      "ViewAllText": "View All Products →",
+      "ViewAllUrl": "/products?category=fashion",
+      "Products": [
+        {
+          "Id": "mp1",
+          "Name": "Men's Polo T-Shirt",
+          "CategoryName": "Men Clothing",
+          "Price": 599.0,
+          "OriginalPrice": 1199.0,
+          "Rating": 4.8,
+          "ReviewsCount": 128,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/products?category=fashion",
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mp2",
+          "Name": "Men's Casual Shirt",
+          "CategoryName": "Men Clothing",
+          "Price": 849.0,
+          "OriginalPrice": 1699.0,
+          "Rating": 4.7,
+          "ReviewsCount": 96,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/products?category=fashion",
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mp3",
+          "Name": "Men's Hoodie",
+          "CategoryName": "Men Clothing",
+          "Price": 899.0,
+          "OriginalPrice": 1799.0,
+          "Rating": 4.8,
+          "ReviewsCount": 87,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/products?category=fashion",
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mp4",
+          "Name": "Men's Slim Fit Jeans",
+          "CategoryName": "Men Clothing",
+          "Price": 1199.0,
+          "OriginalPrice": 2399.0,
+          "Rating": 4.9,
+          "ReviewsCount": 76,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/products?category=fashion",
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mp5",
+          "Name": "Men's Bomber Jacket",
+          "CategoryName": "Men Clothing",
+          "Price": 1499.0,
+          "OriginalPrice": 2999.0,
+          "Rating": 4.9,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/products?category=fashion",
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mp6",
+          "Name": "Men's Chino Pants",
+          "CategoryName": "Men Clothing",
+          "Price": 999.0,
+          "OriginalPrice": 1999.0,
+          "Rating": 4.7,
+          "ReviewsCount": 84,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/products?category=fashion",
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mp7",
+          "Name": "Men's Dry Fit T-Shirt",
+          "CategoryName": "Men Clothing",
+          "Price": 599.0,
+          "OriginalPrice": 1199.0,
+          "Rating": 4.8,
+          "ReviewsCount": 65,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/products?category=fashion",
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mp8",
+          "Name": "Men's Checked Shirt",
+          "CategoryName": "Men Clothing",
+          "Price": 749.0,
+          "OriginalPrice": 1499.0,
+          "Rating": 4.7,
+          "ReviewsCount": 78,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/products?category=fashion",
+          "IsUploadingSoon": true,
+          "IsActive": true
+        }
+      ]
+    }
   }
 }

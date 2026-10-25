@@ -7,11 +7,13 @@ public sealed class FashionHubDto
     public FashionTopPicksSectionDto TopPicksSection { get; set; } = new();
     public FashionTrustBadgesSectionDto TrustBadgesSection { get; set; } = new();
     public FashionBottomBannerDto BottomBanner { get; set; } = new();
+    public FashionMenClothingDto MenClothing { get; set; } = FashionMenClothingDto.CreateDefault();
 
     public static FashionHubDto CreateDefault()
     {
         return new FashionHubDto
         {
+            MenClothing = FashionMenClothingDto.CreateDefault(),
             HeroBanner = new FashionHeroBannerDto
             {
                 IsEnabled = true,
@@ -114,6 +116,7 @@ public sealed class FashionHeroBannerDto
     public string Title { get; set; } = "Fashion for";
     public string TitleHighlight { get; set; } = "Every Journey";
     public string Subtitle { get; set; } = "Stylish, comfortable & travel-ready fashion for students and explorers.";
+    public string? Description { get; set; }
     public string? ImageUrl { get; set; } = "/images/fashion-hub/fashion_hero_banner.jpg";
     public bool IsUploadingSoon { get; set; } = false;
 
@@ -225,4 +228,120 @@ public sealed class FashionBottomBannerDto
     public string BulkSubtitle { get; set; } = "Get special discounts for groups";
     public string BulkButtonText { get; set; } = "Contact Us";
     public string BulkButtonUrl { get; set; } = "/contact";
+}
+
+public sealed class FashionMenClothingDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public FashionHeroBannerDto HeroBanner { get; set; } = new();
+    public FashionCategoriesSectionDto CategoriesSection { get; set; } = new();
+    public FashionTopPicksSectionDto TopPicksSection { get; set; } = new();
+    public FashionTrustBadgesSectionDto TrustBadgesSection { get; set; } = new();
+    public FashionBottomBannerDto BottomBanner { get; set; } = new();
+
+    public static FashionMenClothingDto CreateDefault()
+    {
+        return new FashionMenClothingDto
+        {
+            IsEnabled = true,
+            HeroBanner = new FashionHeroBannerDto
+            {
+                IsEnabled = true,
+                Title = "Men Clothing",
+                TitleHighlight = "Wherever You Go.",
+                Subtitle = "Style. Comfort.",
+                Description = "Trendy, durable & travel-ready outfits for every student and explorer.",
+                ImageUrl = "/images/fashion-hub/men_clothing_hero.jpg",
+                IsUploadingSoon = false,
+                TitleColor = "#063f91",
+                TitleHighlightColor = "#ea580c",
+                SubtitleColor = "#334155",
+                BannerHeight = 440,
+                Badges = new List<FashionHeroBadgeDto>
+                {
+                    new() { Id = "mb1", Label = "Trendy Styles", Icon = "shirt" },
+                    new() { Id = "mb2", Label = "Premium Quality", Icon = "shield" },
+                    new() { Id = "mb3", Label = "Affordable Prices", Icon = "tag" },
+                    new() { Id = "mb4", Label = "Loved by 10K+ Students", Icon = "users" }
+                },
+                RightCard = new FashionHeroRightCardDto
+                {
+                    Title = "Everyday",
+                    TitleHighlight = "Comfort",
+                    Features = new List<FashionHeroFeatureDto>
+                    {
+                        new() { Id = "mf1", Title = "Everyday Comfort", Icon = "shirt" },
+                        new() { Id = "mf2", Title = "Easy to Pack", Icon = "luggage" },
+                        new() { Id = "mf3", Title = "All-Season Wear", Icon = "clock" },
+                        new() { Id = "mf4", Title = "Perfect for Travel", Icon = "plane" }
+                    }
+                }
+            },
+            CategoriesSection = new FashionCategoriesSectionDto
+            {
+                IsEnabled = true,
+                Title = "Shop by Category",
+                ViewAllText = "View All Categories →",
+                ViewAllUrl = "/products?category=fashion",
+                Categories = new List<FashionCategoryItemDto>
+                {
+                    new() { Id = "mc1", Name = "T-Shirts & Polos", Slug = "t-shirts-polos", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 1, IsUploadingSoon = true },
+                    new() { Id = "mc2", Name = "Shirts", Slug = "shirts", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 2, IsUploadingSoon = true },
+                    new() { Id = "mc3", Name = "Hoodies & Sweatshirts", Slug = "hoodies-sweatshirts", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 3, IsUploadingSoon = true },
+                    new() { Id = "mc4", Name = "Jackets & Coats", Slug = "jackets-coats", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 4, IsUploadingSoon = true },
+                    new() { Id = "mc5", Name = "Jeans", Slug = "jeans", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 5, IsUploadingSoon = true },
+                    new() { Id = "mc6", Name = "Trousers & Chinos", Slug = "trousers-chinos", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 6, IsUploadingSoon = true },
+                    new() { Id = "mc7", Name = "Shorts", Slug = "shorts", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 7, IsUploadingSoon = true },
+                    new() { Id = "mc8", Name = "Innerwear & Sleepwear", Slug = "innerwear-sleepwear", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 8, IsUploadingSoon = true },
+                    new() { Id = "mc9", Name = "Activewear", Slug = "activewear", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 9, IsUploadingSoon = true },
+                    new() { Id = "mc10", Name = "Accessories", Slug = "accessories", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 10, IsUploadingSoon = true }
+                }
+            },
+            TopPicksSection = new FashionTopPicksSectionDto
+            {
+                IsEnabled = true,
+                Title = "Top Picks for Men",
+                ViewAllText = "View All Products →",
+                ViewAllUrl = "/products?category=fashion",
+                Products = new List<FashionProductItemDto>
+                {
+                    new() { Id = "mp1", Name = "Men's Polo T-Shirt", CategoryName = "Men Clothing", Price = 599, OriginalPrice = 1199, Rating = 4.8m, ReviewsCount = 128, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/products?category=fashion", IsUploadingSoon = true },
+                    new() { Id = "mp2", Name = "Men's Casual Shirt", CategoryName = "Men Clothing", Price = 849, OriginalPrice = 1699, Rating = 4.7m, ReviewsCount = 96, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/products?category=fashion", IsUploadingSoon = true },
+                    new() { Id = "mp3", Name = "Men's Hoodie", CategoryName = "Men Clothing", Price = 899, OriginalPrice = 1799, Rating = 4.8m, ReviewsCount = 87, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/products?category=fashion", IsUploadingSoon = true },
+                    new() { Id = "mp4", Name = "Men's Slim Fit Jeans", CategoryName = "Men Clothing", Price = 1199, OriginalPrice = 2399, Rating = 4.9m, ReviewsCount = 76, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/products?category=fashion", IsUploadingSoon = true },
+                    new() { Id = "mp5", Name = "Men's Bomber Jacket", CategoryName = "Men Clothing", Price = 1499, OriginalPrice = 2999, Rating = 4.9m, ReviewsCount = 98, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/products?category=fashion", IsUploadingSoon = true },
+                    new() { Id = "mp6", Name = "Men's Chino Pants", CategoryName = "Men Clothing", Price = 999, OriginalPrice = 1999, Rating = 4.7m, ReviewsCount = 84, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/products?category=fashion", IsUploadingSoon = true },
+                    new() { Id = "mp7", Name = "Men's Dry Fit T-Shirt", CategoryName = "Men Clothing", Price = 599, OriginalPrice = 1199, Rating = 4.8m, ReviewsCount = 65, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/products?category=fashion", IsUploadingSoon = true },
+                    new() { Id = "mp8", Name = "Men's Checked Shirt", CategoryName = "Men Clothing", Price = 749, OriginalPrice = 1499, Rating = 4.7m, ReviewsCount = 78, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/products?category=fashion", IsUploadingSoon = true }
+                }
+            },
+            TrustBadgesSection = new FashionTrustBadgesSectionDto
+            {
+                IsEnabled = true,
+                Badges = new List<FashionTrustBadgeDto>
+                {
+                    new() { Id = "mt1", Title = "Curated for Students", Subtitle = "Handpicked styles for every student's journey", Icon = "box" },
+                    new() { Id = "mt2", Title = "Quality You Can Trust", Subtitle = "100% genuine & premium quality", Icon = "shield" },
+                    new() { Id = "mt3", Title = "Affordable for Everyone", Subtitle = "Best value fashion for students", Icon = "tag" },
+                    new() { Id = "mt4", Title = "Fast & Reliable Delivery", Subtitle = "On-time delivery worldwide", Icon = "truck" },
+                    new() { Id = "mt5", Title = "Easy Returns", Subtitle = "Hassle-free returns within 7 days", Icon = "return" },
+                    new() { Id = "mt6", Title = "24/7 Customer Support", Subtitle = "We're always here to help you", Icon = "headset" }
+                }
+            },
+            BottomBanner = new FashionBottomBannerDto
+            {
+                IsEnabled = true,
+                QuizTitle = "Not Sure What You Need?",
+                QuizSubtitle = "Take our quick quiz and find your perfect kit",
+                QuizButtonText = "Find My Kit",
+                QuizButtonUrl = "/find-my-kit",
+                DestinationsTitle = "Kits for Top Destinations",
+                DestinationsSubtitle = "USA, UK, Canada, Australia & More",
+                BulkTitle = "Bulk Orders for Universities",
+                BulkSubtitle = "Get special discounts for groups",
+                BulkButtonText = "Contact Us",
+                BulkButtonUrl = "/contact"
+            }
+        };
+    }
 }

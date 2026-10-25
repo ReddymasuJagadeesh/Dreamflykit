@@ -131,6 +131,11 @@ public sealed class ProductsController : Controller
             query,
             cancellationToken);
 
+        var isMenClothingCategory = string.Equals(effectiveCategory, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+                                    string.Equals(effectiveCategory, "men_clothing", StringComparison.OrdinalIgnoreCase) ||
+                                    (isFashionCategory && (string.Equals(currentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+                                                           string.Equals(currentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase)));
+
         var model = new ProductListViewModel
         {
             Products = result.Items,
@@ -143,13 +148,13 @@ public sealed class ProductsController : Controller
             SearchTerm = effectiveSearch,
             CategoryId = categoryId,
             CategorySlug = result.CurrentCategorySlug ?? effectiveCategory,
-            CategoryName = result.CurrentCategoryName ?? catDetails?.Name,
+            CategoryName = isMenClothingCategory ? "Men Clothing" : (result.CurrentCategoryName ?? catDetails?.Name),
             CategoryImageUrl = catDetails?.ImageUrl,
             CategoryDescription = !string.IsNullOrWhiteSpace(catDetails?.Name)
                 ? $"Explore premium {catDetails.Name} student essentials, verified university supplies, and travel-ready gear curated for international students."
                 : null,
             SubcategoryId = subcategoryId,
-            CurrentSubcategoryName = currentSubcategoryName,
+            CurrentSubcategoryName = isMenClothingCategory ? "Men Clothing" : currentSubcategoryName,
             CurrentSubcategorySlug = currentSubcategorySlug,
             Subcategories = catDetails?.Subcategories ?? Array.Empty<SubcategoryListItem>(),
             MinPrice = minPrice,
@@ -162,11 +167,13 @@ public sealed class ProductsController : Controller
             Discounts = result.Discounts,
             ViewMode = !string.IsNullOrWhiteSpace(view)
                 ? view.Trim().ToLowerInvariant()
-                : ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"),
+                : (isMenClothingCategory
+                    ? "men-clothing"
+                    : ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories")),
             StudyHub = isStudyCategory
                         ? await _studyHubService.GetConfigAsync(cancellationToken)
                         : null,
-            FashionHub = isFashionCategory
+            FashionHub = (isFashionCategory || isMenClothingCategory)
                         ? await _fashionHubService.GetConfigAsync(cancellationToken)
                         : null,
             HealthHub = isHealthCategory

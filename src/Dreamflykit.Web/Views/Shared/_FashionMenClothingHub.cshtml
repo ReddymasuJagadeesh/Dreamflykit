@@ -1,0 +1,1274 @@
+@model Dreamflykit.Application.FashionHub.Models.FashionMenClothingDto
+@{
+    var men = Model ?? Dreamflykit.Application.FashionHub.Models.FashionMenClothingDto.CreateDefault();
+    var hero = men.HeroBanner ?? new();
+    var catSection = men.CategoriesSection ?? new();
+    var picksSection = men.TopPicksSection ?? new();
+    var trustSection = men.TrustBadgesSection ?? new();
+    var bottomBanner = men.BottomBanner ?? new();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="dk-men-hub-container" id="men-clothing-hub-root">
+
+    @if (canManage)
+    {
+        <div class="dk-men-admin-bar">
+            <div class="dk-men-admin-bar-left">
+                <span class="dk-men-admin-badge">⚡ Admin Mode</span>
+                <span class="dk-men-admin-hint">Men Clothing Template Active &bull; Customize banner, categories, products, text, &amp; upload images</span>
+            </div>
+            <a href="/Admin/FashionHub#tab-men-clothing" class="dk-men-admin-btn" id="btnManageMenClothing">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Edit Men Clothing Template
+            </a>
+        </div>
+    }
+
+    <!-- ============================================================
+         1. HERO BANNER (MATCHES USER IMAGE 2: FULL-WIDTH IMAGE HERO)
+    ============================================================ -->
+    @if (hero.IsEnabled)
+    {
+        var minHeight = hero.BannerHeight > 0 ? hero.BannerHeight : 440;
+        var titleColor = !string.IsNullOrWhiteSpace(hero.TitleColor) ? hero.TitleColor : "#063f91";
+        var highlightColor = !string.IsNullOrWhiteSpace(hero.TitleHighlightColor) ? hero.TitleHighlightColor : "#ea580c";
+        var subtitleColor = !string.IsNullOrWhiteSpace(hero.SubtitleColor) ? hero.SubtitleColor : "#ea580c";
+        var hasHeroImage = !string.IsNullOrWhiteSpace(hero.ImageUrl) && !hero.IsUploadingSoon;
+
+        var subtitleClean = hero.Subtitle ?? "";
+        if (!string.IsNullOrWhiteSpace(hero.TitleHighlight) && subtitleClean.EndsWith(hero.TitleHighlight, StringComparison.OrdinalIgnoreCase))
+        {
+            subtitleClean = subtitleClean.Substring(0, subtitleClean.Length - hero.TitleHighlight.Length).Trim();
+        }
+
+        <section class="dk-men-hero-section" style="min-height: @(minHeight)px;" aria-label="Men Clothing Hero Banner">
+            
+            <!-- Full-Width Background Image Layer -->
+            <div class="dk-men-hero-bg-layer">
+                @if (hasHeroImage)
+                {
+                    <img src="@hero.ImageUrl" 
+                         alt="@hero.Title" 
+                         class="dk-men-hero-full-img"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                    <div class="dk-men-soon-full-layer" style="display: none;">
+                        <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon Placeholder" class="dk-men-soon-svg" />
+                        <div class="dk-men-soon-badge-text">⏳ HERO BANNER UPLOADING SOON</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="dk-men-soon-full-layer">
+                        <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon Placeholder" class="dk-men-soon-svg" />
+                        <div class="dk-men-soon-badge-text">⏳ HERO BANNER UPLOADING SOON</div>
+                    </div>
+                }
+                <!-- High-definition readable gradient overlay -->
+                <div class="dk-men-hero-gradient-overlay"></div>
+            </div>
+
+            <!-- Content Grid Layer Floating on Top of Full-Width Image -->
+            <div class="dk-men-hero-content-layer">
+                
+                <!-- Col 1: Left Copy & Badges -->
+                <div class="dk-men-hero-left">
+                    <h1 class="dk-men-hero-title" style="color: @titleColor;">
+                        @hero.Title
+                    </h1>
+                    
+                    <div class="dk-men-hero-tagline">
+                        @if (!string.IsNullOrWhiteSpace(subtitleClean))
+                        {
+                            <span class="dk-men-tagline-sub" style="color: @highlightColor;">@subtitleClean</span> 
+                        }
+                        @if (!string.IsNullOrWhiteSpace(hero.TitleHighlight))
+                        {
+                            <span class="dk-men-highlight" style="color: @highlightColor;">@hero.TitleHighlight</span>
+                        }
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(hero.Description))
+                    {
+                        <p class="dk-men-hero-desc">
+                            @hero.Description
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="dk-men-hero-desc">
+                            Trendy, durable &amp; travel-ready outfits for every student and explorer.
+                        </p>
+                    }
+
+                    <!-- 4 Badges Row -->
+                    @if (hero.Badges != null && hero.Badges.Count > 0)
+                    {
+                        <div class="dk-men-badges-row">
+                            @foreach (var badge in hero.Badges.Where(b => b.IsActive))
+                            {
+                                <div class="dk-men-badge-pill">
+                                    <span class="dk-men-badge-icon">
+                                        @if (badge.Icon == "shirt")
+                                        {
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                                        }
+                                        else if (badge.Icon == "shield")
+                                        {
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                                        }
+                                        else if (badge.Icon == "tag")
+                                        {
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                                        }
+                                        else
+                                        {
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                        }
+                                    </span>
+                                    <span class="dk-men-badge-text">@badge.Label</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- Center Spacer - Model visual remains fully unblocked and visible -->
+                <div class="dk-men-hero-center-spacer"></div>
+
+                <!-- Col 3: Right Feature Checklist -->
+                <div class="dk-men-hero-right">
+                    <div class="dk-men-checklist-glass">
+                        @if (hero.RightCard?.Features != null && hero.RightCard.Features.Count > 0)
+                        {
+                            @foreach (var feat in hero.RightCard.Features.Where(f => f.IsActive))
+                            {
+                                <div class="dk-men-check-item">
+                                    <div class="dk-men-check-icon">
+                                        @if (feat.Icon == "shirt")
+                                        {
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                                        }
+                                        else if (feat.Icon == "luggage")
+                                        {
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="6" width="14" height="15" rx="3"></rect><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path><circle cx="8" cy="21" r="1"></circle><circle cx="16" cy="21" r="1"></circle></svg>
+                                        }
+                                        else if (feat.Icon == "clock")
+                                        {
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                        }
+                                        else
+                                        {
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                        }
+                                    </div>
+                                    <span class="dk-men-check-label">@feat.Title</span>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="dk-men-check-item">
+                                <div class="dk-men-check-icon">👕</div>
+                                <span class="dk-men-check-label">Everyday Comfort</span>
+                            </div>
+                            <div class="dk-men-check-item">
+                                <div class="dk-men-check-icon">🧳</div>
+                                <span class="dk-men-check-label">Easy to Pack</span>
+                            </div>
+                            <div class="dk-men-check-item">
+                                <div class="dk-men-check-icon">⏱️</div>
+                                <span class="dk-men-check-label">All-Season Wear</span>
+                            </div>
+                            <div class="dk-men-check-item">
+                                <div class="dk-men-check-icon">✈️</div>
+                                <span class="dk-men-check-label">Perfect for Travel</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         2. SHOP BY CATEGORY (10 SUBCATEGORIES)
+    ============================================================ -->
+    @if (catSection.IsEnabled && catSection.Categories != null && catSection.Categories.Count > 0)
+    {
+        <section class="dk-men-section" aria-label="Shop Men Clothing by Subcategory">
+            <div class="dk-men-section-header">
+                <h2 class="dk-men-section-heading">@catSection.Title</h2>
+                <a href="@catSection.ViewAllUrl" class="dk-men-section-link">
+                    @catSection.ViewAllText
+                </a>
+            </div>
+
+            <div class="dk-men-categories-grid">
+                @foreach (var cat in catSection.Categories.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder))
+                {
+                    var catUrl = !string.IsNullOrWhiteSpace(cat.Slug) 
+                        ? $"/category/fashion/men-clothing?subcategory={cat.Slug}" 
+                        : "/category/fashion/men-clothing";
+                    var hasImg = !string.IsNullOrWhiteSpace(cat.ImageUrl) && !cat.IsUploadingSoon && !cat.ImageUrl.Contains("uploading-soon");
+
+                    <a href="@catUrl" class="dk-men-cat-card" title="@cat.Name">
+                        <div class="dk-men-cat-img-box">
+                            @if (hasImg)
+                            {
+                                <img src="@cat.ImageUrl" 
+                                     alt="@cat.Name" 
+                                     loading="lazy" 
+                                     class="dk-men-cat-img" 
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-men-cat-placeholder" style="display: none;">
+                                    <span class="dk-men-cat-emoji">@GetMenCategoryEmoji(cat.Slug)</span>
+                                    <span class="dk-men-soon-pill">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="dk-men-cat-placeholder">
+                                    <span class="dk-men-cat-emoji">@GetMenCategoryEmoji(cat.Slug)</span>
+                                    <span class="dk-men-soon-pill">Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+                        <span class="dk-men-cat-title">@cat.Name</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         3. TOP PICKS FOR MEN (8 PRODUCTS FROM IMAGE 2)
+    ============================================================ -->
+    @if (picksSection.IsEnabled && picksSection.Products != null && picksSection.Products.Count > 0)
+    {
+        <section class="dk-men-section" aria-label="Top Picks for Men">
+            <div class="dk-men-section-header">
+                <h2 class="dk-men-section-heading">@picksSection.Title</h2>
+                <div class="dk-men-slider-controls">
+                    <button type="button" class="dk-men-arrow-btn" id="dkMenPicksPrev" aria-label="Previous products">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <button type="button" class="dk-men-arrow-btn" id="dkMenPicksNext" aria-label="Next products">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                    <a href="@picksSection.ViewAllUrl" class="dk-men-section-link" style="margin-left: 12px;">
+                        @picksSection.ViewAllText
+                    </a>
+                </div>
+            </div>
+
+            <div class="dk-men-products-track-wrapper" id="dkMenProductsTrackWrapper">
+                <div class="dk-men-products-track" id="dkMenProductsTrack">
+                    @foreach (var prod in picksSection.Products.Where(p => p.IsActive))
+                    {
+                        var hasImg = !string.IsNullOrWhiteSpace(prod.ImageUrl) && !prod.IsUploadingSoon && !prod.ImageUrl.Contains("uploading-soon");
+                        var targetUrl = !string.IsNullOrWhiteSpace(prod.ProductUrl) ? prod.ProductUrl : "/category/fashion/men-clothing";
+
+                        <div class="dk-men-product-card">
+                            <!-- Wishlist Heart Button -->
+                            <button type="button" class="dk-men-wishlist-btn" onclick="toggleMenWishlist(this, '@prod.Id')" title="Add to wishlist">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                            </button>
+
+                            <!-- Product Visual -->
+                            <a href="@targetUrl" class="dk-men-product-img-box">
+                                @if (hasImg)
+                                {
+                                    <img src="@prod.ImageUrl" 
+                                         alt="@prod.Name" 
+                                         loading="lazy" 
+                                         class="dk-men-product-img"
+                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                    <div class="dk-men-product-placeholder" style="display: none;">
+                                        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                                        <span class="dk-men-soon-pill">Uploading Soon</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="dk-men-product-placeholder">
+                                        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                                        <span class="dk-men-soon-pill">Uploading Soon</span>
+                                    </div>
+                                }
+                            </a>
+
+                            <!-- Product Details -->
+                            <div class="dk-men-product-info">
+                                <h3 class="dk-men-product-title">
+                                    <a href="@targetUrl">@prod.Name</a>
+                                </h3>
+
+                                <div class="dk-men-price-cart-row">
+                                    <div>
+                                        <div class="dk-men-product-price">₹@prod.Price.ToString("N0")</div>
+                                        <div class="dk-men-product-rating">
+                                            <span class="dk-men-stars">★★★★★</span>
+                                            <span class="dk-men-reviews">(@prod.ReviewsCount)</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="dk-men-cart-btn" onclick="addMenToCart(this, '@prod.Name')" title="Add to cart">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                            <circle cx="9" cy="21" r="1"></circle>
+                                            <circle cx="20" cy="21" r="1"></circle>
+                                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         4. STUDENT VALUE PROPOSITIONS (6 TRUST CARDS)
+    ============================================================ -->
+    @if (trustSection.IsEnabled && trustSection.Badges != null && trustSection.Badges.Count > 0)
+    {
+        <section class="dk-men-trust-section" aria-label="Student Value Propositions">
+            <div class="dk-men-trust-grid">
+                @foreach (var badge in trustSection.Badges.Where(b => b.IsActive))
+                {
+                    <div class="dk-men-trust-card">
+                        <div class="dk-men-trust-icon">
+                            @if (badge.Icon == "box")
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                            }
+                            else if (badge.Icon == "shield")
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                            }
+                            else if (badge.Icon == "tag")
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                            }
+                            else if (badge.Icon == "truck")
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            }
+                            else if (badge.Icon == "return")
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                            }
+                            else
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                            }
+                        </div>
+                        <div class="dk-men-trust-info">
+                            <strong class="dk-men-trust-title">@badge.Title</strong>
+                            <span class="dk-men-trust-sub">@badge.Subtitle</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         5. BOTTOM DESTINATION & QUIZ BAR (NAVY BLUE)
+    ============================================================ -->
+    @if (bottomBanner.IsEnabled)
+    {
+        <section class="dk-men-bottom-bar" aria-label="Destination and Custom Kit Assistant">
+            <div class="dk-men-bottom-inner">
+                
+                <!-- Col 1: Quiz -->
+                <div class="dk-men-bottom-col">
+                    <div class="dk-men-bottom-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    </div>
+                    <div class="dk-men-bottom-text">
+                        <strong class="dk-men-bottom-heading">@bottomBanner.QuizTitle</strong>
+                        <span class="dk-men-bottom-sub">@bottomBanner.QuizSubtitle</span>
+                    </div>
+                    <a href="@bottomBanner.QuizButtonUrl" class="dk-men-bottom-btn">
+                        @bottomBanner.QuizButtonText
+                    </a>
+                </div>
+
+                <div class="dk-men-bottom-divider"></div>
+
+                <!-- Col 2: Destinations -->
+                <div class="dk-men-bottom-col">
+                    <div class="dk-men-bottom-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    </div>
+                    <div class="dk-men-bottom-text">
+                        <strong class="dk-men-bottom-heading">@bottomBanner.DestinationsTitle</strong>
+                        <span class="dk-men-bottom-sub">@bottomBanner.DestinationsSubtitle</span>
+                    </div>
+                    <div class="dk-men-flags-row">
+                        <span class="dk-men-flag-emoji" title="United States">🇺🇸</span>
+                        <span class="dk-men-flag-emoji" title="United Kingdom">🇬🇧</span>
+                        <span class="dk-men-flag-emoji" title="Canada">🇨🇦</span>
+                        <span class="dk-men-flag-emoji" title="Australia">🇦🇺</span>
+                        <span class="dk-men-flag-more">+ More</span>
+                    </div>
+                </div>
+
+                <div class="dk-men-bottom-divider"></div>
+
+                <!-- Col 3: Bulk Orders -->
+                <div class="dk-men-bottom-col">
+                    <div class="dk-men-bottom-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    </div>
+                    <div class="dk-men-bottom-text">
+                        <strong class="dk-men-bottom-heading">@bottomBanner.BulkTitle</strong>
+                        <span class="dk-men-bottom-sub">@bottomBanner.BulkSubtitle</span>
+                    </div>
+                    <a href="@bottomBanner.BulkButtonUrl" class="dk-men-bottom-btn">
+                        @bottomBanner.BulkButtonText
+                    </a>
+                </div>
+
+            </div>
+        </section>
+    }
+
+</div>
+
+@functions {
+    public static string GetMenCategoryEmoji(string? slug)
+    {
+        if (string.IsNullOrWhiteSpace(slug)) return "👕";
+        var s = slug.ToLowerInvariant();
+        if (s.Contains("polo") || s.Contains("t-shirt") || s.Contains("tee")) return "👕";
+        if (s.Contains("shirt")) return "👔";
+        if (s.Contains("hoodie") || s.Contains("sweat")) return "🧥";
+        if (s.Contains("jacket") || s.Contains("coat")) return "🧥";
+        if (s.Contains("jean")) return "👖";
+        if (s.Contains("trouser") || s.Contains("chino") || s.Contains("pant")) return "👖";
+        if (s.Contains("short")) return "🩳";
+        if (s.Contains("inner") || s.Contains("sleep")) return "🩲";
+        if (s.Contains("active") || s.Contains("gym") || s.Contains("dry")) return "🏃";
+        if (s.Contains("access") || s.Contains("cap") || s.Contains("hat")) return "🧢";
+        return "👕";
+    }
+}
+
+<style>
+/* ========================================================
+   DREAMFLYKIT MEN CLOTHING TEMPLATE STYLES
+======================================================== */
+.dk-men-hub-container {
+    width: 100%;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+}
+
+/* Admin floating control bar */
+.dk-men-admin-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid #334155;
+    padding: 10px 20px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.dk-men-admin-badge {
+    background: #f59e0b;
+    color: #000;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.dk-men-admin-hint {
+    color: #94a3b8;
+    font-size: 13px;
+    margin-left: 8px;
+}
+.dk-men-admin-btn {
+    background: #0284c7;
+    color: #fff !important;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px 16px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+.dk-men-admin-btn:hover {
+    background: #0369a1;
+    transform: translateY(-1px);
+}
+
+/* 1. HERO BANNER SECTION (FULL-WIDTH IMAGE HERO) */
+.dk-men-hero-section {
+    position: relative;
+    width: 100%;
+    border-radius: 18px;
+    margin-bottom: 32px;
+    overflow: hidden;
+    min-height: 440px;
+    box-shadow: 0 4px 20px rgba(6, 63, 145, 0.06);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: stretch;
+    background: #f8fafc;
+}
+
+.dk-men-hero-bg-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.dk-men-hero-full-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 62% center;
+    display: block;
+    transition: transform 0.6s ease;
+}
+
+.dk-men-hero-section:hover .dk-men-hero-full-img {
+    transform: scale(1.015);
+}
+
+.dk-men-hero-gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        rgba(255, 255, 255, 0.98) 0%, 
+        rgba(255, 255, 255, 0.92) 28%, 
+        rgba(255, 255, 255, 0.65) 44%, 
+        rgba(255, 255, 255, 0.0) 58%, 
+        rgba(255, 255, 255, 0.15) 75%, 
+        rgba(255, 255, 255, 0.82) 100%
+    );
+    pointer-events: none;
+}
+
+.dk-men-soon-full-layer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    gap: 14px;
+}
+
+.dk-men-soon-svg {
+    max-width: 130px;
+    opacity: 0.8;
+}
+
+.dk-men-soon-badge-text {
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 6px 16px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+.dk-men-hero-content-layer {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(360px, 480px) 1fr auto;
+    align-items: center;
+    padding: 38px 44px;
+    gap: 20px;
+}
+
+.dk-men-hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.dk-men-hero-title {
+    font-size: 2.85rem;
+    font-weight: 900;
+    line-height: 1.1;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.5px;
+}
+
+.dk-men-hero-tagline {
+    font-size: 1.35rem;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 12px;
+}
+
+.dk-men-tagline-sub {
+    color: #ea580c;
+}
+
+.dk-men-highlight {
+    color: #ea580c;
+}
+
+.dk-men-hero-desc {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #475569;
+    margin: 0 0 24px 0;
+    max-width: 440px;
+}
+
+.dk-men-badges-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.dk-men-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #1e293b;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    transition: all 0.2s ease;
+}
+
+.dk-men-badge-pill:hover {
+    background: #ffffff;
+    border-color: #0284c7;
+    transform: translateY(-1px);
+}
+
+.dk-men-badge-icon {
+    display: flex;
+    align-items: center;
+    color: #0284c7;
+}
+
+/* Center Spacer leaves image completely clear */
+.dk-men-hero-center-spacer {
+    min-width: 60px;
+}
+
+/* Right Feature Checklist */
+.dk-men-hero-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.dk-men-checklist-glass {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 22px 26px;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.dk-men-check-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.dk-men-check-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    color: #0284c7;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.dk-men-check-item:hover .dk-men-check-icon {
+    transform: scale(1.08);
+    border-color: #0284c7;
+    background: #f0f9ff;
+}
+
+.dk-men-check-label {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+}
+
+/* 2. SECTION COMMON STYLES */
+.dk-men-section {
+    margin-bottom: 36px;
+}
+.dk-men-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.dk-men-section-heading {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+.dk-men-section-link {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0284c7;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.dk-men-section-link:hover {
+    color: #0369a1;
+    text-decoration: underline;
+}
+
+/* Categories Grid (10 Subcategories) */
+.dk-men-categories-grid {
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+.dk-men-cat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 12px 6px 14px;
+    transition: all 0.2s ease;
+    text-align: center;
+    min-width: 95px;
+}
+.dk-men-cat-card:hover {
+    transform: translateY(-3px);
+    border-color: #0284c7;
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.12);
+}
+.dk-men-cat-img-box {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+.dk-men-cat-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+.dk-men-cat-card:hover .dk-men-cat-img {
+    transform: scale(1.08);
+}
+.dk-men-cat-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    gap: 3px;
+}
+.dk-men-cat-emoji {
+    font-size: 24px;
+    line-height: 1;
+}
+.dk-men-soon-pill {
+    font-size: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: #0284c7;
+    color: #ffffff;
+    padding: 2px 4px;
+    border-radius: 4px;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+}
+.dk-men-cat-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* 3. TOP PICKS FOR MEN */
+.dk-men-slider-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dk-men-arrow-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.dk-men-arrow-btn:hover {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+}
+.dk-men-products-track-wrapper {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding: 4px 2px 14px;
+}
+.dk-men-products-track {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(160px, 1fr));
+    gap: 16px;
+}
+.dk-men-product-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+.dk-men-product-card:hover {
+    transform: translateY(-3px);
+    border-color: #0284c7;
+    box-shadow: 0 8px 22px rgba(2, 132, 199, 0.12);
+}
+.dk-men-wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: all 0.2s ease;
+}
+.dk-men-wishlist-btn:hover {
+    color: #ef4444;
+    border-color: #fca5a5;
+    background: #fef2f2;
+}
+.dk-men-wishlist-btn.active {
+    color: #ef4444;
+    border-color: #ef4444;
+    background: #fee2e2;
+}
+.dk-men-wishlist-btn.active svg {
+    fill: #ef4444;
+}
+.dk-men-product-img-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 180px;
+    border-radius: 12px;
+    background: #f8fafc;
+    margin-bottom: 12px;
+    overflow: hidden;
+    text-decoration: none;
+}
+.dk-men-product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.dk-men-product-card:hover .dk-men-product-img {
+    transform: scale(1.05);
+}
+.dk-men-product-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    gap: 8px;
+    background: #f1f5f9;
+}
+.dk-men-product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.dk-men-product-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+}
+.dk-men-product-title a {
+    color: #1e293b;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.dk-men-product-title a:hover {
+    color: #0284c7;
+}
+.dk-men-price-cart-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+.dk-men-product-price {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+.dk-men-product-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+}
+.dk-men-stars {
+    color: #f59e0b;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+.dk-men-reviews {
+    font-size: 11.5px;
+    color: #64748b;
+    font-weight: 600;
+}
+.dk-men-cart-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #ff7900;
+    border: none;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(255, 121, 0, 0.25);
+}
+.dk-men-cart-btn:hover {
+    background: #ea580c;
+    transform: scale(1.06);
+}
+
+/* 4. TRUST PROPOSITIONS */
+.dk-men-trust-section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+.dk-men-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+}
+.dk-men-trust-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+.dk-men-trust-icon {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #f0f9ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-men-trust-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.dk-men-trust-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.25;
+}
+.dk-men-trust-sub {
+    font-size: 11.5px;
+    color: #64748b;
+    line-height: 1.35;
+}
+
+/* 5. BOTTOM NAVY BAR */
+.dk-men-bottom-bar {
+    background: linear-gradient(135deg, #0a192f 0%, #063f91 100%);
+    border-radius: 18px;
+    padding: 22px 28px;
+    color: #ffffff;
+    box-shadow: 0 8px 24px rgba(6, 63, 145, 0.18);
+}
+.dk-men-bottom-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.dk-men-bottom-col {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 250px;
+}
+.dk-men-bottom-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.dk-men-bottom-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.dk-men-bottom-heading {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #ffffff;
+}
+.dk-men-bottom-sub {
+    font-size: 12px;
+    color: #94a3b8;
+}
+.dk-men-bottom-btn {
+    background: #0284c7;
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 7px 16px;
+    border-radius: 8px;
+    white-space: nowrap;
+    margin-left: auto;
+    transition: all 0.2s ease;
+}
+.dk-men-bottom-btn:hover {
+    background: #0369a1;
+    transform: translateY(-1px);
+}
+.dk-men-bottom-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.15);
+}
+.dk-men-flags-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+}
+.dk-men-flag-emoji {
+    font-size: 18px;
+}
+.dk-men-flag-more {
+    font-size: 11px;
+    font-weight: 700;
+    color: #93c5fd;
+    background: rgba(255, 255, 255, 0.12);
+    padding: 2px 7px;
+    border-radius: 4px;
+}
+
+/* RESPONSIVE BREAKPOINTS */
+@@media (max-width: 1200px) {
+    .dk-men-hero-content-layer {
+        grid-template-columns: minmax(320px, 440px) 1fr auto;
+        padding: 30px 32px;
+    }
+    .dk-men-hero-center-spacer {
+        min-width: 20px;
+    }
+}
+
+@@media (max-width: 992px) {
+    .dk-men-hero-content-layer {
+        grid-template-columns: 1fr;
+        padding: 28px 24px;
+        gap: 20px;
+    }
+    .dk-men-hero-center-spacer {
+        display: none;
+    }
+    .dk-men-hero-right {
+        justify-content: flex-start;
+        width: 100%;
+    }
+    .dk-men-checklist-glass {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        width: 100%;
+        gap: 12px;
+        padding: 16px 20px;
+    }
+    .dk-men-hero-gradient-overlay {
+        background: linear-gradient(
+            180deg, 
+            rgba(255, 255, 255, 0.96) 0%, 
+            rgba(255, 255, 255, 0.88) 55%, 
+            rgba(255, 255, 255, 0.95) 100%
+        );
+    }
+    .dk-men-categories-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .dk-men-trust-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .dk-men-bottom-divider {
+        display: none;
+    }
+}
+
+@@media (max-width: 768px) {
+    .dk-men-hero-title {
+        font-size: 2.1rem;
+    }
+    .dk-men-hero-tagline {
+        font-size: 1.15rem;
+    }
+    .dk-men-checklist-glass {
+        grid-template-columns: 1fr;
+    }
+    .dk-men-categories-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .dk-men-trust-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dk-men-bottom-col {
+        min-width: 100%;
+    }
+}
+</style>
+
+<script>
+function toggleMenWishlist(btn, id) {
+    btn.classList.toggle('active');
+}
+
+function addMenToCart(btn, name) {
+    btn.style.transform = 'scale(0.85)';
+    setTimeout(() => {
+        btn.style.transform = 'scale(1.1)';
+        btn.style.backgroundColor = '#16a34a';
+        setTimeout(() => {
+            btn.style.transform = '';
+            btn.style.backgroundColor = '';
+        }, 1000);
+    }, 150);
+}
+
+document.getElementById('dkMenPicksPrev')?.addEventListener('click', function() {
+    const track = document.getElementById('dkMenProductsTrackWrapper');
+    if (track) track.scrollBy({ left: -260, behavior: 'smooth' });
+});
+
+document.getElementById('dkMenPicksNext')?.addEventListener('click', function() {
+    const track = document.getElementById('dkMenProductsTrackWrapper');
+    if (track) track.scrollBy({ left: 260, behavior: 'smooth' });
+});
+</script>
