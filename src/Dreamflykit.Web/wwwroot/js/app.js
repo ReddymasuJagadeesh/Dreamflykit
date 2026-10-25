@@ -13,6 +13,24 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. Refresh Header Badges (Cart & Wishlist)
     updateHeaderCounters();
 
+    // 2b. Bank of Baroda Style Dynamic Sticky Header Scroll Collapse
+    const header = document.querySelector(".dk-header");
+    if (header) {
+        let ticking = false;
+        const onScroll = () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrolled = window.scrollY > 35;
+                    header.classList.toggle("is-scrolled", scrolled);
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll(); // Run immediately on page load
+    }
+
     // 3. Wishlist Heart Toggle Listener (Event Delegation)
     document.addEventListener("click", async (e) => {
         const btn = e.target.closest(".dk-wishlist-toggle-btn");

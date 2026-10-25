@@ -1,0 +1,461 @@
+@model Dreamflykit.Web.Areas.Admin.Models.LogoSettingsViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Header & Logo Branding (Bank of Baroda Style)";
+}
+
+<div class="dk-admin-content-shell" style="max-width: 1200px; margin: 0 auto; padding: 24px 16px;">
+
+    <!-- TOP HEADER BAR -->
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #f26522, #ea580c); color: #fff; font-size: 18px; font-weight: 800; box-shadow: 0 4px 12px rgba(242, 101, 34, 0.35);">
+                    D
+                </span>
+                <h1 style="font-size: 24px; font-weight: 800; color: #ffffff; margin: 0; letter-spacing: -0.02em;">
+                    Header Branding: Section 1 ('D') &amp; Section 2 ('Dreamflykit')
+                </h1>
+            </div>
+            <p style="font-size: 14px; color: rgba(255, 255, 255, 0.65); margin: 0;">
+                Configure the Bank of Baroda orange header bar: Left side Section 1 ('D' Logo), Section 2 ('Dreamflykit' Brand Logo), search bar, accounts, cart, and the white category bar below.
+            </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <a href="/" target="_blank" rel="noopener" class="dk-btn" style="background: rgba(255, 255, 255, 0.08); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.15); padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                View Public Store ↗
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(5, 150, 105, 0.25)); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; padding: 14px 18px; border-radius: 10px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 14px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>@TempData["SuccessMessage"]</span>
+        </div>
+    }
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 14px 18px; border-radius: 10px; margin-bottom: 24px; font-size: 14px;">
+            <div asp-validation-summary="All" style="margin: 0; padding-left: 18px;"></div>
+        </div>
+    }
+
+    <!-- ========================================================
+         INTERACTIVE LIVE PREVIEW (Exact Bank of Baroda Architecture)
+         ======================================================== -->
+    <div style="background: #0d1b2e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.08); flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #f26522;">
+                    Live Header Simulation
+                </span>
+                <span style="font-size: 11px; background: rgba(242, 101, 34, 0.2); color: #f97316; padding: 2px 8px; border-radius: 4px; font-weight: 700;">
+                    Bank of Baroda Template
+                </span>
+            </div>
+
+            <!-- TOGGLE STATE BUTTONS -->
+            <div style="display: inline-flex; background: rgba(0, 0, 0, 0.3); padding: 4px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <button type="button" id="btnPreviewExpanded" onclick="switchPreviewMode('expanded')"
+                        style="background: #f26522; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+                    1. Top View (Section 1 'D' + Section 2 'Dreamflykit')
+                </button>
+                <button type="button" id="btnPreviewScrolled" onclick="switchPreviewMode('scrolled')"
+                        style="background: transparent; color: rgba(255, 255, 255, 0.65); border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+                    2. Scrolled Sticky View (Section 1 'D' Only)
+                </button>
+            </div>
+        </div>
+
+        <!-- SIMULATOR VIEWPORT (EXACT BANK OF BARODA TEMPLATE) -->
+        <div id="simulatorViewport" style="background: #ffffff; padding: 0; transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+            
+            <!-- SIMULATOR ROW 1: ORANGE LOGO WING + CURVE + WHITE PROFILES STRIP -->
+            <div id="simRowTop" style="display: flex; align-items: stretch; height: 48px; background: #f26522; position: relative; overflow: hidden; transition: all 0.25s ease;">
+                
+                <!-- ORANGE LOGO WING (LEFT) -->
+                <div id="simLogoWing" style="display: inline-flex; align-items: flex-end; gap: 8px; background: #f26522; padding: 0 0 0 18px; height: 48px; flex-shrink: 0; z-index: 2; transition: all 0.35s ease;">
+                    
+                    <!-- SECTION 1: 'D' LOGO -->
+                    <div id="simSection1Wrap" style="background: #ffffff; padding: 2px; border-radius: 8px 8px 0 0; width: 48px; height: 46px; display: flex; align-items: center; justify-content: center; box-shadow: 0 -2px 6px rgba(0,0,0,0.15);">
+                        <img id="simSection1Img" src="@Model.Section1DLogoUrl" alt="Section 1 D Logo"
+                             style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px 6px 0 0;" />
+                    </div>
+
+                    <!-- SECTION 2: 'DREAMFLYKIT' BRAND LOGO -->
+                    <div id="simSection2Wrap" style="background: #ffffff; padding: 2px 14px; border-radius: 8px 8px 0 0; height: 46px; display: flex; align-items: center; justify-content: center; box-shadow: 0 -2px 6px rgba(0,0,0,0.15); transition: all 0.25s ease;">
+                        <img id="simSection2Img" src="@Model.Section2BrandLogoUrl" alt="Section 2 Dreamflykit Logo"
+                             style="height: 38px; width: auto; max-width: 200px; object-fit: contain;" />
+                    </div>
+
+                </div>
+
+                <!-- THE BANK OF BARODA C-SHAPE CURVE -->
+                <div id="simCurve" style="width: 44px; height: 48px; flex-shrink: 0; position: relative; z-index: 2; margin-left: -1px; margin-right: -1px; transition: all 0.35s ease;">
+                    <svg viewBox="0 0 44 48" preserveAspectRatio="none" style="width: 100%; height: 100%; display: block;">
+                        <path d="M 0 0 C 30 0, 42 12, 42 24 C 42 36, 30 48, 0 48 L 44 48 L 44 0 Z" fill="#ffffff" />
+                        <path d="M 0 0 C 30 0, 42 12, 42 24 C 42 36, 30 48, 0 48 Z" fill="#f26522" />
+                    </svg>
+                </div>
+
+                <!-- RIGHT WHITE TOP STRIP (AFTER CURVE: PROFILES & UTILITIES) -->
+                <div id="simWhiteTop" style="flex: 1; background: #ffffff; display: flex; align-items: center; justify-content: space-between; padding: 0 20px 0 8px; height: 48px;">
+                    <div style="display: flex; align-items: center; gap: 8px; height: 100%;">
+                        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; font-weight: 800; color: #f26522; border-bottom: 3px solid #f26522; height: 100%; font-size: 13px; background: rgba(242, 101, 34, 0.06);">
+                            <span>🛍️</span> Dreamflykit Store
+                        </div>
+                        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; font-weight: 600; color: #475569; height: 100%; font-size: 13px;">
+                            <span>🌐</span> Study Abroad Hub
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 16px; color: #64748b; font-size: 12px; font-weight: 600;">
+                        <span>📞 24x7 Support: 1800-DREAMFLY</span>
+                        <span>🇮🇳 India (INR ₹)</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SIMULATOR ROW 2: MAIN FULL-WIDTH ORANGE ACTION LINE -->
+            <div id="simOrangeLine" style="background: linear-gradient(90deg, #f26522 0%, #ea580c 50%, #f26522 100%); padding: 8px 24px; display: flex; align-items: center; gap: 18px; box-shadow: 0 4px 14px rgba(242, 101, 34, 0.28); transition: all 0.3s ease;">
+                
+                <!-- SEARCH BAR ON ORANGE LINE -->
+                <div style="flex: 1; min-width: 200px;">
+                    <div style="display: flex; align-items: center; background: #ffffff; border-radius: 8px; overflow: hidden; height: 38px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <span style="padding: 0 12px; color: #94a3b8; font-size: 15px;">🔍</span>
+                        <input type="text" placeholder="Search for products, brands and more..." disabled
+                               style="border: none; outline: none; width: 100%; font-size: 13px; color: #1e293b; background: transparent;" />
+                        <button type="button" style="background: #002b49; color: #fff; border: none; padding: 0 18px; height: 100%; font-size: 13px; font-weight: 700; cursor: default;">
+                            Search
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ACTIONS ON ORANGE LINE: ACCOUNT, MORE MENU, WISHLIST, CART -->
+                <div style="display: flex; align-items: center; gap: 16px; color: #ffffff; font-size: 13px; font-weight: 700; flex-shrink: 0;">
+                    
+                    <!-- ACCOUNT -->
+                    <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 5px 12px; border-radius: 8px; cursor: default;">
+                        <span>👤</span>
+                        <div style="line-height: 1.15; text-align: left;">
+                            <div style="font-size: 9.5px; opacity: 0.85;">Login / Sign Up</div>
+                            <div style="font-size: 12px;">My Account ▾</div>
+                        </div>
+                    </div>
+
+                    <!-- MORE MENU -->
+                    <div style="display: inline-flex; align-items: center; gap: 5px; cursor: default;">
+                        <span>☰</span>
+                        <span>More Menu</span>
+                    </div>
+
+                    <!-- WISHLIST -->
+                    <div style="display: inline-flex; align-items: center; gap: 5px; cursor: default;">
+                        <span>🤍</span>
+                        <span style="background: #ffffff; color: #f26522; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">0</span>
+                        <span>Wishlist</span>
+                    </div>
+
+                    <!-- CART -->
+                    <div style="display: inline-flex; align-items: center; gap: 5px; cursor: default;">
+                        <span>🛒</span>
+                        <span style="background: #ffffff; color: #f26522; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">0</span>
+                        <span>Cart</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- SIMULATOR CATEGORIES ROW BELOW: WHITE BACKGROUND -->
+            <div style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 0 24px; height: 42px; display: flex; align-items: center; gap: 18px; overflow-x: auto; color: #1e293b; font-size: 12.5px; font-weight: 700; white-space: nowrap;">
+                <span style="color: #f26522; border-bottom: 2.5px solid #f26522; padding: 10px 0;">🏠 Home</span>
+                <span style="color: #475569;">🎓 Study Essentials</span>
+                <span style="color: #475569;">👗 Fashion</span>
+                <span style="color: #475569;">✈ Travel Gear</span>
+                <span style="color: #475569;">📱 Mobiles</span>
+                <span style="color: #475569;">💻 Electronics</span>
+                <span style="color: #475569;">🔌 Appliances</span>
+                <span style="color: #475569;">💄 Beauty</span>
+                <span style="color: #475569;">💊 Health Care</span>
+                <span style="color: #475569;">★ Offers Zone</span>
+                <span style="margin-left: auto; background: #f26522; color: #fff; padding: 5px 14px; border-radius: 6px; font-size: 11.5px; font-weight: 800;">
+                    🎒 Find My Kit
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ========================================================
+         MAIN CONFIGURATION FORM
+         ======================================================== -->
+    <form asp-action="Save" method="post" enctype="multipart/form-data" id="logoSettingsForm">
+        @Html.AntiForgeryToken()
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 24px; margin-bottom: 28px;">
+
+            <!-- CARD 1: SECTION 1: 'D' LOGO SECTION -->
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 24px; position: relative;">
+                
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <div>
+                        <span style="font-size: 11px; font-weight: 800; color: #f26522; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 4px;">
+                            SECTION 1 (LEFT EMBLEM)
+                        </span>
+                        <h2 style="font-size: 18px; font-weight: 700; color: #ffffff; margin: 0;">
+                            1. Left Side 'D' Logo Section
+                        </h2>
+                    </div>
+                    <span style="background: rgba(242, 101, 34, 0.2); color: #f97316; font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: 700;">
+                        Shown Always (Top &amp; Sticky Scroll)
+                    </span>
+                </div>
+
+                <p style="font-size: 13px; color: rgba(255, 255, 255, 0.65); margin: 0 0 16px; line-height: 1.5;">
+                    The 3D stylish 'D' symbol displayed on the left side of the orange line. When customers scroll down, this 'D' logo remains sticky.
+                </p>
+
+                <!-- PREVIEW BOX -->
+                <div style="background: #ffffff; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 16px; border: 2px dashed rgba(255, 255, 255, 0.15); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 120px;">
+                    <div style="width: 80px; height: 80px; padding: 6px; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); display: flex; align-items: center; justify-content: center;">
+                        <img id="s1LivePreview" src="@Model.Section1DLogoUrl" alt="Section 1 'D' Logo"
+                             style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px;" />
+                    </div>
+                    <span style="font-size: 11px; color: #64748b; margin-top: 8px; font-weight: 600;">
+                        Current: @Model.Section1DLogoUrl
+                    </span>
+                </div>
+
+                <!-- FILE INPUT -->
+                <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, 0.85); margin-bottom: 6px;">
+                        Upload Image for Section 1 ('D' Logo):
+                    </label>
+                    <input type="file" name="Section1File" id="s1FileInput" accept=".png,.webp,.svg,.jpg,.jpeg,.gif"
+                           style="display: block; width: 100%; font-size: 13px; color: rgba(255, 255, 255, 0.7); background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 8px 12px;" />
+                    <small style="display: block; margin-top: 4px; color: rgba(255, 255, 255, 0.45); font-size: 11.5px;">
+                        Square 1:1 ratio PNG/JPG/WebP, minimum 96x96px, under 5MB.
+                    </small>
+                </div>
+
+                <!-- DIRECT URL INPUT -->
+                <div style="margin-bottom: 14px;">
+                    <label asp-for="Section1DLogoUrl" style="display: block; font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, 0.85); margin-bottom: 6px;">
+                        Or Image URL Path:
+                    </label>
+                    <input asp-for="Section1DLogoUrl" id="inputS1Url"
+                           style="width: 100%; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 9px 12px; color: #ffffff; font-size: 13px;" />
+                </div>
+
+                <!-- UPLOADING SOON TOGGLE -->
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                    <input asp-for="Section1UploadingSoon" type="checkbox" id="checkS1UploadingSoon"
+                           style="width: 16px; height: 16px; accent-color: #f26522;" />
+                    <label asp-for="Section1UploadingSoon" style="font-size: 12.5px; color: rgba(255, 255, 255, 0.85); cursor: pointer;">
+                        Show "Uploading Soon" placeholder for Section 1
+                    </label>
+                </div>
+
+                <!-- RESET BUTTON -->
+                <button type="button" onclick="submitReset('section1')"
+                        style="background: transparent; color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                    ↺ Reset Section 1 to Default 'D' Symbol
+                </button>
+            </div>
+
+
+            <!-- CARD 2: SECTION 2: 'DREAMFLYKIT' LOGO SECTION -->
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 24px; position: relative;">
+                
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <div>
+                        <span style="font-size: 11px; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 4px;">
+                            SECTION 2 (BRAND TEXT LOGO)
+                        </span>
+                        <h2 style="font-size: 18px; font-weight: 700; color: #ffffff; margin: 0;">
+                            2. Dreamflykit Logo Section
+                        </h2>
+                    </div>
+                    <span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: 700;">
+                        Shown at Top (Collapses on Scroll)
+                    </span>
+                </div>
+
+                <p style="font-size: 13px; color: rgba(255, 255, 255, 0.65); margin: 0 0 16px; line-height: 1.5;">
+                    Positioned immediately after Section 1. Displays the full "Dreamflykit" horizontal logo. Smoothly collapses when scrolling down.
+                </p>
+
+                <!-- PREVIEW BOX -->
+                <div style="background: #ffffff; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 16px; border: 2px dashed rgba(255, 255, 255, 0.15); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 120px;">
+                    <div style="max-height: 70px; padding: 6px 16px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); display: flex; align-items: center; justify-content: center;">
+                        <img id="s2LivePreview" src="@Model.Section2BrandLogoUrl" alt="Section 2 Dreamflykit Logo"
+                             style="max-height: 48px; max-width: 260px; object-fit: contain;" />
+                    </div>
+                    <span style="font-size: 11px; color: #64748b; margin-top: 8px; font-weight: 600;">
+                        Current: @Model.Section2BrandLogoUrl
+                    </span>
+                </div>
+
+                <!-- FILE INPUT -->
+                <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, 0.85); margin-bottom: 6px;">
+                        Upload Image for Section 2 (Dreamflykit Brand Logo):
+                    </label>
+                    <input type="file" name="Section2File" id="s2FileInput" accept=".png,.webp,.svg,.jpg,.jpeg,.gif"
+                           style="display: block; width: 100%; font-size: 13px; color: rgba(255, 255, 255, 0.7); background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 8px 12px;" />
+                    <small style="display: block; margin-top: 4px; color: rgba(255, 255, 255, 0.45); font-size: 11.5px;">
+                        Horizontal logo, PNG/JPG/WebP, max width 350px, under 5MB.
+                    </small>
+                </div>
+
+                <!-- DIRECT URL INPUT -->
+                <div style="margin-bottom: 14px;">
+                    <label asp-for="Section2BrandLogoUrl" style="display: block; font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, 0.85); margin-bottom: 6px;">
+                        Or Image URL Path:
+                    </label>
+                    <input asp-for="Section2BrandLogoUrl" id="inputS2Url"
+                           style="width: 100%; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 9px 12px; color: #ffffff; font-size: 13px;" />
+                </div>
+
+                <!-- UPLOADING SOON TOGGLE -->
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                    <input asp-for="Section2UploadingSoon" type="checkbox" id="checkS2UploadingSoon"
+                           style="width: 16px; height: 16px; accent-color: #38bdf8;" />
+                    <label asp-for="Section2UploadingSoon" style="font-size: 12.5px; color: rgba(255, 255, 255, 0.85); cursor: pointer;">
+                        Show "Uploading Soon" placeholder for Section 2
+                    </label>
+                </div>
+
+                <!-- RESET BUTTON -->
+                <button type="button" onclick="submitReset('section2')"
+                        style="background: transparent; color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                    ↺ Reset Section 2 to Default Dreamflykit Brand Logo
+                </button>
+            </div>
+
+        </div>
+
+
+        <!-- CARD 3: BRANDING TEXT & SUBTITLES -->
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 24px; margin-bottom: 30px;">
+            <h2 style="font-size: 18px; font-weight: 700; color: #ffffff; margin: 0 0 16px;">
+                3. Brand Metadata
+            </h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
+                <div>
+                    <label asp-for="SiteTitle" style="display: block; font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, 0.85); margin-bottom: 6px;">
+                        Site Brand Title
+                    </label>
+                    <input asp-for="SiteTitle" id="inputSiteTitle"
+                           style="width: 100%; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 10px 12px; color: #ffffff; font-size: 14px;" />
+                </div>
+
+                <div>
+                    <label asp-for="Tagline" style="display: block; font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, 0.85); margin-bottom: 6px;">
+                        Brand Tagline
+                    </label>
+                    <input asp-for="Tagline" id="inputTagline"
+                           style="width: 100%; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 10px 12px; color: #ffffff; font-size: 14px;" />
+                </div>
+            </div>
+        </div>
+
+        <!-- SUBMIT BAR -->
+        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 14px;">
+            <a href="/Admin" class="dk-btn" style="background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 0.15); padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 14px;">
+                Cancel
+            </a>
+            <button type="submit" class="dk-btn dk-btn-primary" style="background: linear-gradient(135deg, #f26522, #ea580c); color: #ffffff; border: none; padding: 11px 28px; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 4px 16px rgba(242, 101, 34, 0.4); display: inline-flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Save &amp; Publish Header Changes
+            </button>
+        </div>
+
+    </form>
+
+    <!-- HIDDEN RESET FORM -->
+    <form asp-action="Reset" method="post" id="resetForm" style="display: none;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="logoType" id="resetLogoType" value="" />
+    </form>
+
+</div>
+
+@section Scripts {
+<script>
+    function switchPreviewMode(mode) {
+        const btnExp = document.getElementById("btnPreviewExpanded");
+        const btnScrl = document.getElementById("btnPreviewScrolled");
+        const s2Wrap = document.getElementById("simSection2Wrap");
+        const rowTop = document.getElementById("simRowTop");
+        const curve = document.getElementById("simCurve");
+        const whiteTop = document.getElementById("simWhiteTop");
+
+        if (mode === "scrolled") {
+            btnScrl.style.background = "#f26522";
+            btnScrl.style.color = "#ffffff";
+            btnExp.style.background = "transparent";
+            btnExp.style.color = "rgba(255, 255, 255, 0.65)";
+
+            s2Wrap.style.display = "none"; // Section 2 collapses on scroll, leaving Section 1 ('D')
+            if (rowTop) rowTop.style.height = "42px";
+            if (curve) curve.style.height = "42px";
+            if (whiteTop) whiteTop.style.height = "42px";
+        } else {
+            btnExp.style.background = "#f26522";
+            btnExp.style.color = "#ffffff";
+            btnScrl.style.background = "transparent";
+            btnScrl.style.color = "rgba(255, 255, 255, 0.65)";
+
+            s2Wrap.style.display = "flex"; // Both Section 1 and Section 2 visible at top
+            if (rowTop) rowTop.style.height = "48px";
+            if (curve) curve.style.height = "48px";
+            if (whiteTop) whiteTop.style.height = "48px";
+        }
+    }
+
+    // Live file previews
+    const s1Input = document.getElementById("s1FileInput");
+    if (s1Input) {
+        s1Input.addEventListener("change", function(e) {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    document.getElementById("s1LivePreview").src = ev.target.result;
+                    document.getElementById("simSection1Img").src = ev.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+
+    const s2Input = document.getElementById("s2FileInput");
+    if (s2Input) {
+        s2Input.addEventListener("change", function(e) {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    document.getElementById("s2LivePreview").src = ev.target.result;
+                    document.getElementById("simSection2Img").src = ev.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+
+    function submitReset(type) {
+        if (confirm("Reset " + type + " to default brand image?")) {
+            document.getElementById("resetLogoType").value = type;
+            document.getElementById("resetForm").submit();
+        }
+    }
+</script>
+}

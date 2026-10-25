@@ -274,6 +274,9 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddMemoryCache();
         services.AddScoped<Dreamflykit.Application.Theme.IThemeSettingService, Dreamflykit.Infrastructure.Theme.ThemeSettingService>();
 
+        // Header & Logo Branding Management
+        services.AddScoped<Dreamflykit.Application.Logo.ILogoSettingService, Dreamflykit.Infrastructure.Logo.LogoSettingService>();
+
         // Study Essentials Hub Service
         services.AddScoped<Dreamflykit.Application.StudyHub.Interfaces.IStudyHubService, Dreamflykit.Infrastructure.StudyHub.StudyHubService>();
 
