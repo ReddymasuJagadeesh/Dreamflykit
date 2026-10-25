@@ -1,0 +1,905 @@
+@model Dreamflykit.Application.StudyHub.Models.AbroadFiveSectionCarouselDto
+@{
+    var carousel = Model ?? new Dreamflykit.Application.StudyHub.Models.AbroadFiveSectionCarouselDto();
+    var slides = carousel.Slides != null && carousel.Slides.Count > 0
+        ? carousel.Slides
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultAbroadProfile().FiveSectionCarousel.Slides;
+    
+    var intervalSec = carousel.SlideIntervalSeconds > 0 ? carousel.SlideIntervalSeconds : 5;
+    var intervalMs = intervalSec * 1000;
+}
+
+<section class="dk-abroad-sync-carousel-section" 
+         id="abroadSyncCarousel"
+         data-interval="@intervalMs"
+         data-autoplay="@(carousel.AutoPlay ? "true" : "false")"
+         aria-label="Synchronized Global Services Showcase">
+
+    <div class="dk-abroad-carousel-shell">
+
+        <!-- Section Header -->
+        <div class="dk-abroad-sync-header">
+            <h2 class="dk-abroad-sync-title">@carousel.SectionTitle</h2>
+            <p class="dk-abroad-sync-subtitle">@carousel.SectionSubtitle</p>
+        </div>
+
+        <!-- Carousel Slide Sets Container -->
+        <div class="dk-abroad-sync-viewport" id="abroadSyncViewport">
+            @for (int sIdx = 0; sIdx < slides.Count; sIdx++)
+            {
+                var slide = slides[sIdx];
+                var isActive = sIdx == 0;
+                var spot = slide.Spotlight ?? new Dreamflykit.Application.StudyHub.Models.AbroadCarouselSpotlightDto();
+                var c1 = slide.Card1 ?? new Dreamflykit.Application.StudyHub.Models.AbroadCarouselCardDto();
+                var c2 = slide.Card2 ?? new Dreamflykit.Application.StudyHub.Models.AbroadCarouselCardDto();
+                var c3 = slide.Card3 ?? new Dreamflykit.Application.StudyHub.Models.AbroadCarouselCardDto();
+                var c4 = slide.Card4 ?? new Dreamflykit.Application.StudyHub.Models.AbroadCarouselCardDto();
+
+                <div class="dk-abroad-sync-slide-set @(isActive ? "active" : "")" 
+                     data-slide-index="@sIdx"
+                     role="tabpanel" 
+                     aria-hidden="@(isActive ? "false" : "true")">
+
+                    <!-- SECTION 1: LEFT TALL SPOTLIGHT / AMBASSADOR CARD (Image 3 Style) -->
+                    <div class="dk-sync-col-spotlight">
+                        <a href="@spot.ButtonUrl" class="dk-sync-spotlight-card" style="background: @spot.BackgroundGradient;">
+                            <div class="dk-sync-spot-pattern" aria-hidden="true"></div>
+                            
+                            <div class="dk-sync-spot-header">
+                                <span class="dk-sync-spot-tag">@spot.TagText</span>
+                            </div>
+
+                            <div class="dk-sync-spot-media">
+                                @if (!string.IsNullOrWhiteSpace(spot.ImageUrl))
+                                {
+                                    <img src="@spot.ImageUrl" alt="@spot.Title" class="dk-sync-spot-img" onerror="this.style.display='none';" />
+                                }
+                                else
+                                {
+                                    <div class="dk-sync-spot-placeholder">
+                                        <div class="dk-sync-spot-avatar-circle">
+                                            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                        </div>
+                                        <span class="dk-sync-u-badge">📷 Photo: Uploading Soon</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="dk-sync-spot-footer">
+                                <h3 class="dk-sync-spot-title">@spot.Title</h3>
+                                <p class="dk-sync-spot-sub">@spot.Subtitle</p>
+                                <span class="dk-sync-spot-btn">
+                                    <span>@spot.ButtonText</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- SECTIONS 2, 3, 4, 5: COMPANION 4 CARDS (Staircase Heights Stepping Down to Right) -->
+                    <div class="dk-sync-col-cards">
+
+                        <!-- SECTION 2: CARD 1 (Height: 440px) -->
+                        <div class="dk-sync-card-wrapper card-sec-2">
+                            <a href="@c1.ButtonUrl" class="dk-sync-service-card card-sec-2 @(c1.IsHighlighted ? "highlighted-card" : "")" id="sync-card-1-@sIdx">
+                                <div class="dk-sync-card-media-box media-box-2">
+                                    @if (!string.IsNullOrWhiteSpace(c1.ImageUrl))
+                                    {
+                                        <img src="@c1.ImageUrl" alt="@c1.Title" class="dk-sync-sec-img img-sec-2" onerror="this.style.display='none';" />
+                                    }
+                                    else
+                                    {
+                                        <div class="dk-sync-card-emblem-wrap">
+                                            <div class="dk-sync-card-emblem">
+                                                @if (c1.IconType == "loan")
+                                                {
+                                                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                                                }
+                                                else if (c1.IconType == "test")
+                                                {
+                                                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                                                }
+                                                else if (c1.IconType == "accommodation" || c1.IconType == "home")
+                                                {
+                                                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                                                }
+                                                else
+                                                {
+                                                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="dk-sync-card-info">
+                                    <h4 class="dk-sync-card-title">@c1.Title</h4>
+                                    <p class="dk-sync-card-desc">@c1.Subtitle</p>
+                                    <span class="dk-sync-card-pill-btn">@c1.ButtonText</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- SECTION 3: CARD 2 (Height: 380px) -->
+                        <div class="dk-sync-card-wrapper card-sec-3">
+                            <a href="@c2.ButtonUrl" class="dk-sync-service-card card-sec-3 standard-card" id="sync-card-2-@sIdx">
+                                <div class="dk-sync-card-media-box media-box-3">
+                                    @if (!string.IsNullOrWhiteSpace(c2.ImageUrl))
+                                    {
+                                        <img src="@c2.ImageUrl" alt="@c2.Title" class="dk-sync-sec-img img-sec-3" onerror="this.style.display='none';" />
+                                    }
+                                    else
+                                    {
+                                        <div class="dk-sync-icon-small bg-purple">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="dk-sync-card-info">
+                                    <h4 class="dk-sync-card-title">@c2.Title</h4>
+                                    <p class="dk-sync-card-desc">@c2.Subtitle</p>
+                                    <span class="dk-sync-card-link-arrow">@(c2.ButtonText ?? "Know More") →</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- SECTION 4: CARD 3 (Height: 325px) -->
+                        <div class="dk-sync-card-wrapper card-sec-4">
+                            <a href="@c3.ButtonUrl" class="dk-sync-service-card card-sec-4 standard-card" id="sync-card-3-@sIdx">
+                                <div class="dk-sync-card-media-box media-box-4">
+                                    @if (!string.IsNullOrWhiteSpace(c3.ImageUrl))
+                                    {
+                                        <img src="@c3.ImageUrl" alt="@c3.Title" class="dk-sync-sec-img img-sec-4" onerror="this.style.display='none';" />
+                                    }
+                                    else
+                                    {
+                                        <div class="dk-sync-icon-small bg-teal">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="dk-sync-card-info">
+                                    <h4 class="dk-sync-card-title">@c3.Title</h4>
+                                    <p class="dk-sync-card-desc">@c3.Subtitle</p>
+                                    <span class="dk-sync-card-link-arrow">@(c3.ButtonText ?? "Know More") →</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- SECTION 5: CARD 4 (Height: 275px - Smallest on Right) -->
+                        <div class="dk-sync-card-wrapper card-sec-5">
+                            <a href="@c4.ButtonUrl" class="dk-sync-service-card card-sec-5 standard-card" id="sync-card-4-@sIdx">
+                                <div class="dk-sync-card-media-box media-box-5">
+                                    @if (!string.IsNullOrWhiteSpace(c4.ImageUrl))
+                                    {
+                                        <img src="@c4.ImageUrl" alt="@c4.Title" class="dk-sync-sec-img img-sec-5" onerror="this.style.display='none';" />
+                                    }
+                                    else
+                                    {
+                                        <div class="dk-sync-icon-small bg-amber">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="dk-sync-card-info">
+                                    <h4 class="dk-sync-card-title">@c4.Title</h4>
+                                    <p class="dk-sync-card-desc">@c4.Subtitle</p>
+                                    <span class="dk-sync-card-link-arrow">@(c4.ButtonText ?? "Know More") →</span>
+                                </div>
+                            </a>
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+        </div>
+
+        <!-- CAROUSEL CONTROLS BAR: ORANGE PLAY/PAUSE BUTTON & INDICATOR DOTS (Image 3 Style) -->
+        <div class="dk-abroad-carousel-ctrls">
+            
+            <button type="button" class="dk-abroad-nav-arrow prev" id="btnSyncPrev" aria-label="Previous Slide Set">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+
+            <!-- ORANGE CIRCLE PLAY / PAUSE BUTTON (Image 3) -->
+            <button type="button" class="dk-abroad-pause-btn" id="btnSyncPauseToggle" aria-label="Pause Slides">
+                <svg class="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+                    <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+                </svg>
+                <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: none; margin-left: 2px;">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+            </button>
+
+            <button type="button" class="dk-abroad-nav-arrow next" id="btnSyncNext" aria-label="Next Slide Set">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+
+            <!-- Indicators for Slide Sets -->
+            <div class="dk-abroad-sync-dots" id="syncDotsContainer">
+                @for (int dIdx = 0; dIdx < slides.Count; dIdx++)
+                {
+                    <button type="button" 
+                            class="dk-sync-dot @(dIdx == 0 ? "active" : "")" 
+                            data-goto="@dIdx" 
+                            aria-label="Go to Slide Set @(dIdx + 1)"></button>
+                }
+            </div>
+
+            <!-- Slide Timing Badge (Configured by Admin) -->
+            <span class="dk-sync-timing-badge" title="Configured by Super Admin">
+                ⏱ @(intervalSec)s Interval &bull; All 5 Sections Move Synchronized
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ========================================================
+     CSS STYLES FOR SYNCHRONIZED 5-SECTION CAROUSEL (Image 3 Style)
+========================================================= -->
+<style>
+    .dk-abroad-sync-carousel-section {
+        width: 100%;
+        max-width: 1780px;
+        margin: 28px auto 36px auto;
+        padding: 0 24px;
+        box-sizing: border-box;
+    }
+
+    .dk-abroad-carousel-shell {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 26px;
+        padding: 36px 36px 28px 36px;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.05);
+        position: relative;
+    }
+
+    .dk-abroad-sync-header {
+        margin-bottom: 28px;
+    }
+    .dk-abroad-sync-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #e0f2fe;
+        color: #0284c7;
+        font-weight: 800;
+        font-size: 11.5px;
+        padding: 5px 14px;
+        border-radius: 999px;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+    }
+    .dk-sync-pulse {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #0284c7;
+        box-shadow: 0 0 8px #0284c7;
+        animation: syncPulse 2s infinite;
+    }
+    @@keyframes syncPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(1.3); }
+    }
+    .dk-abroad-sync-title {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+        letter-spacing: -0.5px;
+    }
+    .dk-abroad-sync-subtitle {
+        font-size: 1rem;
+        color: #64748b;
+        margin: 0;
+    }
+
+    /* VIEWPORT & SYNCHRONIZED SLIDE SETS (Guaranteed 1 Line across All Zoom Levels & Devices) */
+    .dk-abroad-sync-viewport {
+        position: relative;
+        min-height: 480px;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .dk-abroad-sync-slide-set {
+        display: none;
+        grid-template-columns: minmax(190px, 1.25fr) minmax(155px, 1.05fr) minmax(150px, 1fr) minmax(145px, 0.95fr) minmax(135px, 0.88fr);
+        gap: 12px;
+        align-items: center;
+        width: 100%;
+        min-width: 820px;
+        animation: syncSlideSetIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .dk-abroad-sync-slide-set.active {
+        display: grid;
+    }
+
+    @@keyframes syncSlideSetIn {
+        from {
+            opacity: 0;
+            transform: translateY(14px) scale(0.99);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* SECTION 1: LEFT SPOTLIGHT CARD (Image 3 Sachin Tendulkar Style) */
+    .dk-sync-col-spotlight {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+    .dk-sync-spotlight-card {
+        flex: 1;
+        width: 100%;
+        height: 520px;
+        min-height: 520px;
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 24px 22px;
+        text-decoration: none;
+        color: #ffffff;
+        box-shadow: 0 10px 24px rgba(245, 158, 11, 0.25);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .dk-sync-spotlight-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 36px rgba(245, 158, 11, 0.35);
+    }
+    .dk-sync-spot-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1.5px, transparent 1.5px);
+        background-size: 18px 18px;
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .dk-sync-spot-header {
+        position: relative;
+        z-index: 2;
+    }
+    .dk-sync-spot-tag {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(8px);
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 11px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .dk-sync-spot-media {
+        position: relative;
+        z-index: 2;
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 220px;
+    }
+    .dk-sync-spot-img {
+        max-width: 100%;
+        max-height: 250px;
+        object-fit: contain;
+        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.25));
+    }
+    .dk-sync-spot-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+    .dk-sync-spot-avatar-circle {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px dashed rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dk-sync-u-badge {
+        font-size: 11px;
+        font-weight: 700;
+        color: #ffffff;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 4px 10px;
+        border-radius: 6px;
+    }
+
+    .dk-sync-spot-footer {
+        position: relative;
+        z-index: 2;
+    }
+    .dk-sync-spot-title {
+        font-size: 1.45rem;
+        font-weight: 900;
+        line-height: 1.25;
+        color: #ffffff;
+        margin: 0 0 6px 0;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    }
+    .dk-sync-spot-sub {
+        font-size: 0.88rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0 0 16px 0;
+        line-height: 1.4;
+    }
+    .dk-sync-spot-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #ffffff;
+        color: #0f172a;
+        font-size: 13px;
+        font-weight: 800;
+        padding: 8px 18px;
+        border-radius: 999px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: transform 0.2s ease;
+    }
+    .dk-sync-spotlight-card:hover .dk-sync-spot-btn {
+        transform: scale(1.05);
+    }
+
+    /* SECTIONS 2, 3, 4, 5: COMPANION CARDS GRID (Unified Single Line with Section 1) */
+    .dk-sync-col-cards {
+        display: contents !important;
+    }
+
+    .dk-sync-card-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* Staircase Height Progression (Left large, decreasing rightwards) */
+    .dk-sync-card-wrapper.card-sec-2,
+    .dk-sync-service-card.card-sec-2 {
+        height: 440px;
+        min-height: 440px;
+    }
+    .media-box-2 {
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .img-sec-2 {
+        max-height: 170px;
+        max-width: 100%;
+        object-fit: contain;
+        border-radius: 12px;
+    }
+
+    .dk-sync-card-wrapper.card-sec-3,
+    .dk-sync-service-card.card-sec-3 {
+        height: 380px;
+        min-height: 380px;
+    }
+    .media-box-3 {
+        height: 135px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .img-sec-3 {
+        max-height: 125px;
+        max-width: 100%;
+        object-fit: contain;
+        border-radius: 10px;
+    }
+
+    .dk-sync-card-wrapper.card-sec-4,
+    .dk-sync-service-card.card-sec-4 {
+        height: 325px;
+        min-height: 325px;
+    }
+    .media-box-4 {
+        height: 95px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .img-sec-4 {
+        max-height: 85px;
+        max-width: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+
+    .dk-sync-card-wrapper.card-sec-5,
+    .dk-sync-service-card.card-sec-5 {
+        height: 275px;
+        min-height: 275px;
+    }
+    .media-box-5 {
+        height: 65px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .img-sec-5 {
+        max-height: 55px;
+        max-width: 100%;
+        object-fit: contain;
+        border-radius: 6px;
+    }
+
+    .dk-sync-service-card {
+        flex: 1;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 18px 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+        text-decoration: none;
+        color: #0f172a;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        min-width: 0;
+        overflow: hidden;
+    }
+    .dk-sync-service-card:hover {
+        transform: translateY(-5px);
+        border-color: #0284c7;
+        box-shadow: 0 14px 30px rgba(2, 132, 199, 0.12);
+    }
+
+    /* Active Highlighted Card in Middle (Like "Global Brand Ambassador" in Image 3) */
+    .dk-sync-service-card.highlighted-card {
+        border-color: #bae6fd;
+        background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+        box-shadow: 0 8px 24px rgba(2, 132, 199, 0.08);
+        transform: scale(1.02);
+    }
+    .dk-sync-service-card.highlighted-card:hover {
+        transform: scale(1.02) translateY(-5px);
+    }
+
+    .dk-sync-card-emblem-wrap {
+        margin-bottom: 12px;
+    }
+    .dk-sync-card-emblem {
+        width: 74px;
+        height: 74px;
+        border-radius: 50%;
+        background: #e0f2fe;
+        border: 2px solid #bae6fd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.12);
+        transition: transform 0.25s ease;
+    }
+    .dk-sync-service-card:hover .dk-sync-card-emblem {
+        transform: scale(1.1);
+    }
+
+    .dk-sync-icon-small {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+        transition: transform 0.25s ease;
+    }
+    .dk-sync-service-card:hover .dk-sync-icon-small {
+        transform: scale(1.1);
+    }
+    .bg-purple { background: #f3e8ff; }
+    .bg-teal { background: #ccfbf1; }
+    .bg-amber { background: #fef3c7; }
+
+    .dk-sync-card-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        justify-content: space-between;
+        width: 100%;
+        min-width: 0;
+    }
+    .dk-sync-card-title {
+        font-size: 0.98rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+        line-height: 1.25;
+        word-break: break-word;
+    }
+    .dk-sync-card-desc {
+        font-size: 0.78rem;
+        color: #64748b;
+        margin: 0 0 10px 0;
+        line-height: 1.35;
+        word-break: break-word;
+    }
+
+    .dk-sync-card-pill-btn {
+        display: inline-block;
+        padding: 7px 22px;
+        border-radius: 999px;
+        border: 1.5px solid #0284c7;
+        color: #0284c7;
+        font-size: 12.5px;
+        font-weight: 800;
+        transition: all 0.2s ease;
+    }
+    .dk-sync-service-card:hover .dk-sync-card-pill-btn {
+        background: #0284c7;
+        color: #ffffff;
+    }
+
+    .dk-sync-card-link-arrow {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #0284c7;
+        transition: transform 0.2s ease;
+    }
+    .dk-sync-service-card:hover .dk-sync-card-link-arrow {
+        transform: translateX(3px);
+    }
+
+    /* CONTROLS BAR: ORANGE PLAY/PAUSE (Image 3) & DOTS */
+    .dk-abroad-carousel-ctrls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 26px;
+        padding-top: 20px;
+        border-top: 1px solid #f1f5f9;
+        position: relative;
+    }
+
+    /* ORANGE CIRCLE PLAY/PAUSE BUTTON (Bank of Baroda Image 3) */
+    .dk-abroad-pause-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f97316;
+        border: none;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(249, 115, 22, 0.4);
+        transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .dk-abroad-pause-btn:hover {
+        background: #ea580c;
+        transform: scale(1.08);
+    }
+    .dk-abroad-pause-btn:active {
+        transform: scale(0.95);
+    }
+
+    .dk-abroad-nav-arrow {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .dk-abroad-nav-arrow:hover {
+        background: #0284c7;
+        color: #ffffff;
+        border-color: #0284c7;
+    }
+
+    .dk-abroad-sync-dots {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    .dk-sync-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #cbd5e1;
+        border: none;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        padding: 0;
+    }
+    .dk-sync-dot.active {
+        width: 26px;
+        border-radius: 999px;
+        background: #f97316;
+        box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+    }
+
+    .dk-sync-timing-badge {
+        position: absolute;
+        right: 0;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #64748b;
+        background: #f8fafc;
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+    }
+
+    @@media (max-width: 900px) {
+        .dk-sync-timing-badge { position: static; margin-top: 10px; }
+        .dk-abroad-carousel-ctrls { flex-wrap: wrap; }
+    }
+</style>
+
+<!-- ========================================================
+     JAVASCRIPT: SYNCHRONIZED MULTI-SECTION CAROUSEL INTERACTION
+========================================================= -->
+<script>
+    (function () {
+        var carouselEl = document.getElementById("abroadSyncCarousel");
+        if (!carouselEl) return;
+
+        var slideSets = carouselEl.querySelectorAll(".dk-abroad-sync-slide-set");
+        var dots = carouselEl.querySelectorAll(".dk-sync-dot");
+        var btnPause = document.getElementById("btnSyncPauseToggle");
+        var btnPrev = document.getElementById("btnSyncPrev");
+        var btnNext = document.getElementById("btnSyncNext");
+
+        var iconPause = btnPause ? btnPause.querySelector(".icon-pause") : null;
+        var iconPlay = btnPause ? btnPause.querySelector(".icon-play") : null;
+
+        var totalSets = slideSets.length;
+        if (totalSets <= 1) {
+            if (btnPause) btnPause.style.display = "none";
+            return;
+        }
+
+        var currentIndex = 0;
+        var intervalMs = parseInt(carouselEl.getAttribute("data-interval"), 10) || 5000;
+        var isAutoPlayEnabled = carouselEl.getAttribute("data-autoplay") !== "false";
+        var isPausedByUser = false;
+        var timer = null;
+
+        function showSlideSet(index) {
+            if (index < 0) index = totalSets - 1;
+            if (index >= totalSets) index = 0;
+            currentIndex = index;
+
+            slideSets.forEach(function (el, idx) {
+                if (idx === currentIndex) {
+                    el.classList.add("active");
+                    el.setAttribute("aria-hidden", "false");
+                } else {
+                    el.classList.remove("active");
+                    el.setAttribute("aria-hidden", "true");
+                }
+            });
+
+            dots.forEach(function (d, idx) {
+                if (idx === currentIndex) {
+                    d.classList.add("active");
+                } else {
+                    d.classList.remove("active");
+                }
+            });
+        }
+
+        function nextSlideSet() {
+            showSlideSet(currentIndex + 1);
+        }
+
+        function prevSlideSet() {
+            showSlideSet(currentIndex - 1);
+        }
+
+        function startTimer() {
+            stopTimer();
+            if (isAutoPlayEnabled && !isPausedByUser) {
+                timer = setInterval(nextSlideSet, intervalMs);
+                if (iconPause && iconPlay) {
+                    iconPause.style.display = "block";
+                    iconPlay.style.display = "none";
+                }
+                if (btnPause) btnPause.setAttribute("aria-label", "Pause Slides");
+            }
+        }
+
+        function stopTimer() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+        }
+
+        function togglePause() {
+            if (isPausedByUser) {
+                isPausedByUser = false;
+                startTimer();
+            } else {
+                isPausedByUser = true;
+                stopTimer();
+                if (iconPause && iconPlay) {
+                    iconPause.style.display = "none";
+                    iconPlay.style.display = "block";
+                }
+                if (btnPause) btnPause.setAttribute("aria-label", "Resume Slides");
+            }
+        }
+
+        if (btnPause) {
+            btnPause.addEventListener("click", togglePause);
+        }
+
+        if (btnNext) {
+            btnNext.addEventListener("click", function () {
+                nextSlideSet();
+                if (!isPausedByUser) startTimer();
+            });
+        }
+
+        if (btnPrev) {
+            btnPrev.addEventListener("click", function () {
+                prevSlideSet();
+                if (!isPausedByUser) startTimer();
+            });
+        }
+
+        dots.forEach(function (dot) {
+            dot.addEventListener("click", function () {
+                var targetIdx = parseInt(dot.getAttribute("data-goto"), 10);
+                if (!isNaN(targetIdx)) {
+                    showSlideSet(targetIdx);
+                    if (!isPausedByUser) startTimer();
+                }
+            });
+        });
+
+        // Hover pause
+        carouselEl.addEventListener("mouseenter", function () {
+            if (!isPausedByUser) stopTimer();
+        });
+        carouselEl.addEventListener("mouseleave", function () {
+            if (!isPausedByUser) startTimer();
+        });
+
+        // Initialize
+        startTimer();
+    })();
+</script>

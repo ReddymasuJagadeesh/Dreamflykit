@@ -910,7 +910,177 @@ public sealed class StudyHubDto
                 new() { Icon = "users", Title = "Happy Students", Description = "10,000+ students and growing" },
                 new() { Icon = "headset", Title = "24/7 Support", Description = "We're here when you need us" }
             },
-            FooterSlogan = "Your Global Education Partner ♡"
+            FooterSlogan = "Your Global Education Partner ♡",
+            FiveSectionCarousel = new AbroadFiveSectionCarouselDto
+            {
+                IsEnabled = true,
+                SlideIntervalSeconds = 5,
+                AutoPlay = true,
+                SectionTitle = "Featured Opportunities & Global Services",
+                SectionSubtitle = "Synchronized study abroad offerings curated for international students.",
+                Slides = new List<AbroadFiveSectionSlideDto>
+                {
+                    // SLIDE SET 1
+                    new()
+                    {
+                        SlideIndex = 0,
+                        SlideLabel = "Slide 1 - University Finance & Support",
+                        Spotlight = new AbroadCarouselSpotlightDto
+                        {
+                            Title = "Global Education Ambassador",
+                            Subtitle = "Guiding students to world-class universities & verified careers",
+                            TagText = "Official Partner",
+                            ImageUrl = "",
+                            ButtonText = "Meet Ambassador →",
+                            ButtonUrl = "/study-abroad-hub/global-ambassador",
+                            BackgroundGradient = "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)"
+                        },
+                        Card1 = new AbroadCarouselCardDto
+                        {
+                            Title = "Educational Loans",
+                            Subtitle = "Student financing up to ₹1.5 Cr with low interest & fast sanction",
+                            BadgeText = "Low Interest",
+                            ButtonText = "Know More",
+                            ButtonUrl = "/study-abroad-hub/education-loans",
+                            IconType = "loan",
+                            IsHighlighted = true
+                        },
+                        Card2 = new AbroadCarouselCardDto
+                        {
+                            Title = "Consultancy Details",
+                            Subtitle = "Certified study abroad counsellors & university matching",
+                            BadgeText = "Trusted",
+                            ButtonText = "Know More",
+                            ButtonUrl = "/study-abroad-hub/consultancies",
+                            IconType = "consultancy"
+                        },
+                        Card3 = new AbroadCarouselCardDto
+                        {
+                            Title = "Health Insurance",
+                            Subtitle = "Comprehensive international medical & emergency travel cover",
+                            BadgeText = "Global",
+                            ButtonText = "Know More",
+                            ButtonUrl = "/study-abroad-hub/health-insurance",
+                            IconType = "insurance"
+                        },
+                        Card4 = new AbroadCarouselCardDto
+                        {
+                            Title = "Scholarships & Grants",
+                            Subtitle = "Merit-based financial aid & government university grants",
+                            BadgeText = "Deadlines Open",
+                            ButtonText = "Know More",
+                            ButtonUrl = "/study-abroad-hub/scholarships",
+                            IconType = "scholarship"
+                        }
+                    },
+                    // SLIDE SET 2
+                    new()
+                    {
+                        SlideIndex = 1,
+                        SlideLabel = "Slide 2 - Visa & Language Readiness",
+                        Spotlight = new AbroadCarouselSpotlightDto
+                        {
+                            Title = "Embassy Visa Support",
+                            Subtitle = "Expert mock interviews with 99.2% student visa success rate",
+                            TagText = "Visa Guidance",
+                            ImageUrl = "",
+                            ButtonText = "Visa Guide →",
+                            ButtonUrl = "/study-abroad-hub/visa-support",
+                            BackgroundGradient = "linear-gradient(135deg, #0284c7 0%, #1e40af 100%)"
+                        },
+                        Card1 = new AbroadCarouselCardDto
+                        {
+                            Title = "Language Tests",
+                            Subtitle = "IELTS, TOEFL, PTE mock tests & booking vouchers",
+                            BadgeText = "Test Prep",
+                            ButtonText = "Know More",
+                            ButtonUrl = "/study-abroad-hub/language-tests",
+                            IconType = "test",
+                            IsHighlighted = true
+                        },
+                        Card2 = new AbroadCarouselCardDto
+                        {
+                            Title = "Booking Slots",
+                            Subtitle = "Direct 1-on-1 advisor video consultation slots",
+                            BadgeText = "Instant Booking",
+                            ButtonText = "Know More",
+                            ButtonUrl = "/study-abroad-hub/booking",
+                            IconType = "booking"
+                        },
+                        Card3 = new AbroadCarouselCardDto
+                        {
+                            Title = "Special GR Loans",
+                            Subtitle = "Collateral-free government student loan schemes (GR Loans)",
+                            BadgeText = "Government Scheme",
+                            ButtonText = "Know More",
+                            ButtonUrl = "/study-abroad-hub/gr-loans",
+                            IconType = "gr_loan"
+                        },
+                        Card4 = new AbroadCarouselCardDto
+                        {
+                            Title = "Consultancies Near Me",
+                            Subtitle = "Find verified counsellors in your state, district or city",
+                            BadgeText = "Local Support",
+                            ButtonText = "Know More",
+                            ButtonUrl = "/study-abroad-hub/consultancies#near-me",
+                            IconType = "near_me"
+                        }
+                    },
+                    // SLIDE SET 3
+                    new()
+                    {
+                        SlideIndex = 2,
+                        SlideLabel = "Slide 3 - Campus Living & Forex",
+                        Spotlight = new AbroadCarouselSpotlightDto
+                        {
+                            Title = "Campus Life & Housing",
+                            Subtitle = "Safe student dorms, campus living and international peer network",
+                            TagText = "Student Housing",
+                            ImageUrl = "",
+                            ButtonText = "Explore Housing →",
+                            ButtonUrl = "/study-abroad-hub/accommodation",
+                            BackgroundGradient = "linear-gradient(135deg, #0d9488 0%, #065f46 100%)"
+                        },
+                        Card1 = new AbroadCarouselCardDto
+                        {
+                            Title = "Student Accommodation",
+                            Subtitle = "Verified student apartments & homestays near campus",
+                            BadgeText = "Safe Stay",
+                            ButtonText = "Know More",
+                            ButtonUrl = "/study-abroad-hub/accommodation",
+                            IconType = "accommodation",
+                            IsHighlighted = true
+                        },
+                        Card2 = new AbroadCarouselCardDto
+                        {
+                            Title = "Forex & Bank Accounts",
+                            Subtitle = "Zero-markup multi-currency student forex cards & bank accounts",
+                            BadgeText = "Best Rates",
+                            ButtonText = "Know More",
+                            ButtonUrl = "/study-abroad-hub/forex",
+                            IconType = "forex"
+                        },
+                        Card3 = new AbroadCarouselCardDto
+                        {
+                            Title = "Student Flight Savings",
+                            Subtitle = "Exclusive student airfares with extra 23kg luggage allowance",
+                            BadgeText = "Extra Luggage",
+                            ButtonText = "Know More",
+                            ButtonUrl = "/study-abroad-hub/flights",
+                            IconType = "flight"
+                        },
+                        Card4 = new AbroadCarouselCardDto
+                        {
+                            Title = "Abroad Packing Checklist",
+                            Subtitle = "Smart travel and university readiness packing checklist",
+                            BadgeText = "100% Free",
+                            ButtonText = "Know More",
+                            ButtonUrl = "/abroad-packing-checklist",
+                            IconType = "checklist"
+                        }
+                    }
+                }
+            }
         };
     }
 
@@ -1529,9 +1699,14 @@ public sealed class StudyAbroadHubProfileDto
     public string HeroCtaText { get; set; } = "Explore Study Abroad Hub →";
     public string HeroCtaUrl { get; set; } = "#explore-services";
     public string HeroImageUrl { get; set; } = string.Empty;
+    public string HeroVideoUrl { get; set; } = string.Empty;
+    public bool HeroEnableVideo { get; set; } = false;
+    public bool HeroShowText { get; set; } = false;
     public string HeroHandwrittenNote { get; set; } = "Study Explore Grow ♡";
 
     public List<AbroadHeroServiceItemDto> HeroServices { get; set; } = new();
+
+    public AbroadFiveSectionCarouselDto FiveSectionCarousel { get; set; } = new();
 
     public string ServicesSectionTitle { get; set; } = "Explore Our Services";
     public string ServicesSectionSubtitle { get; set; } = "Your complete guide to financial support, trusted consultancies and health coverage for a global education.";
@@ -1540,6 +1715,52 @@ public sealed class StudyAbroadHubProfileDto
     public List<AbroadTrustPillarDto> TrustPillars { get; set; } = new();
     public string FooterSlogan { get; set; } = "Your Global Education Partner ♡";
     public string TrustTagline { get => FooterSlogan; set => FooterSlogan = value; }
+}
+
+public sealed class AbroadFiveSectionCarouselDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public int SlideIntervalSeconds { get; set; } = 5;
+    public bool AutoPlay { get; set; } = true;
+    public string SectionTitle { get; set; } = "Featured Opportunities & Global Services";
+    public string SectionSubtitle { get; set; } = "Synchronized study abroad offerings curated for international students.";
+    public List<AbroadFiveSectionSlideDto> Slides { get; set; } = new();
+}
+
+public sealed class AbroadFiveSectionSlideDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public int SlideIndex { get; set; } = 0;
+    public string SlideLabel { get; set; } = "Slide 1";
+
+    public AbroadCarouselSpotlightDto Spotlight { get; set; } = new();
+    public AbroadCarouselCardDto Card1 { get; set; } = new();
+    public AbroadCarouselCardDto Card2 { get; set; } = new();
+    public AbroadCarouselCardDto Card3 { get; set; } = new();
+    public AbroadCarouselCardDto Card4 { get; set; } = new();
+}
+
+public sealed class AbroadCarouselSpotlightDto
+{
+    public string Title { get; set; } = "Global Study Ambassador";
+    public string Subtitle { get; set; } = "Guiding students to top world universities";
+    public string TagText { get; set; } = "Official Partner";
+    public string ImageUrl { get; set; } = "";
+    public string ButtonText { get; set; } = "Meet Ambassador →";
+    public string ButtonUrl { get; set; } = "/study-abroad-hub/global-ambassador";
+    public string BackgroundGradient { get; set; } = "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)";
+}
+
+public sealed class AbroadCarouselCardDto
+{
+    public string Title { get; set; } = "Education Loans";
+    public string Subtitle { get; set; } = "Low interest student financing";
+    public string BadgeText { get; set; } = "";
+    public string ButtonText { get; set; } = "Know More";
+    public string ButtonUrl { get; set; } = "/study-abroad-hub/education-loans";
+    public string IconType { get; set; } = "loan";
+    public string ImageUrl { get; set; } = "";
+    public bool IsHighlighted { get; set; } = false;
 }
 
 public sealed class AbroadHeroServiceItemDto

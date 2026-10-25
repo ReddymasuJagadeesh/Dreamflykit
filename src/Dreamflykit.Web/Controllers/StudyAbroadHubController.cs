@@ -39,4 +39,12 @@ public sealed class StudyAbroadHubController : Controller
         var page = config.ChecklistPage ?? Application.StudyHub.Models.StudyHubDto.CreateDefaultChecklistPage();
         return View("Checklist", page);
     }
+
+    [HttpGet("{slug}")]
+    public async Task<IActionResult> ServiceDetail(string slug, CancellationToken cancellationToken)
+    {
+        var config = await _studyHubService.GetConfigAsync(cancellationToken);
+        ViewData["Slug"] = slug;
+        return View("ServiceDetail", config);
+    }
 }

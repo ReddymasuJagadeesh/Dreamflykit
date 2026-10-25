@@ -1,0 +1,256 @@
+@model Dreamflykit.Application.StudyHub.Models.StudyHubDto
+@{
+    Layout = "_Layout";
+    var slug = ViewData["Slug"]?.ToString() ?? "service";
+    
+    // Convert slug to clean title
+    var rawTitle = slug.Replace("-", " ").Replace("_", " ");
+    var formattedTitle = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(rawTitle);
+
+    ViewData["Title"] = $"{formattedTitle} — Study Abroad Hub";
+}
+
+<div class="dk-abroad-service-page">
+    
+    <!-- Top Breadcrumb & Return Bar -->
+    <div class="dk-abroad-service-topbar">
+        <div class="dk-abroad-service-shell">
+            <nav class="dk-abroad-breadcrumbs" aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span class="dk-sep">›</span>
+                <a href="/study-abroad-hub">Study Abroad Hub</a>
+                <span class="dk-sep">›</span>
+                <span class="dk-current">@formattedTitle</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Service Hero / Placeholder Card -->
+    <main class="dk-abroad-service-shell" style="padding: 40px 20px 80px 20px;">
+        <div class="dk-abroad-detail-card">
+            
+            <div class="dk-abroad-detail-badge">
+                <span class="dk-pulse-dot"></span>
+                <span>🎓 STUDY ABROAD HUB &bull; VERIFIED GLOBAL SERVICE</span>
+            </div>
+
+            <h1 class="dk-abroad-detail-heading">@formattedTitle</h1>
+            <p class="dk-abroad-detail-sub">
+                Official international student guidance, application support, and university partner portal.
+            </p>
+
+            <div class="dk-abroad-detail-status-box">
+                <div class="dk-status-icon">🚀</div>
+                <div>
+                    <h3 class="dk-status-title">Service Details &amp; Portal Under Active Configuration</h3>
+                    <p class="dk-status-desc">
+                        Super Admin can upload comprehensive guides, application forms, partner documents, and direct integration links for <strong>@formattedTitle</strong> via the Study Abroad Hub Admin Panel.
+                    </p>
+                </div>
+            </div>
+
+            <div class="dk-abroad-detail-actions">
+                <a href="/study-abroad-hub" class="dk-abroad-btn-back">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    <span>Back to Study Abroad Hub</span>
+                </a>
+                <a href="/study-abroad-hub#explore-services" class="dk-abroad-btn-explore">
+                    <span>Explore Other Services</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+
+            <!-- Trust Verification Strip -->
+            <div class="dk-abroad-detail-trust-row">
+                <span class="dk-trust-item">🔒 Verified Global Partners</span>
+                <span class="dk-trust-dot">•</span>
+                <span class="dk-trust-item">🌍 50+ Destination Countries</span>
+                <span class="dk-trust-dot">•</span>
+                <span class="dk-trust-item">💬 24/7 Student Advisory</span>
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
+<style>
+    .dk-abroad-service-page {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: #f8fafc;
+        min-height: 70vh;
+        color: #0f172a;
+    }
+    .dk-abroad-service-topbar {
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 14px 0;
+    }
+    .dk-abroad-service-shell {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    .dk-abroad-breadcrumbs {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13.5px;
+        font-weight: 600;
+    }
+    .dk-abroad-breadcrumbs a {
+        color: #0284c7;
+        text-decoration: none;
+    }
+    .dk-abroad-breadcrumbs a:hover {
+        text-decoration: underline;
+    }
+    .dk-sep {
+        color: #94a3b8;
+    }
+    .dk-current {
+        color: #475569;
+    }
+
+    .dk-abroad-detail-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 56px 48px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+        text-align: center;
+        max-width: 860px;
+        margin: 0 auto;
+    }
+
+    .dk-abroad-detail-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #e0f2fe;
+        color: #0284c7;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        padding: 6px 16px;
+        border-radius: 999px;
+        margin-bottom: 20px;
+    }
+    .dk-pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #0284c7;
+        box-shadow: 0 0 8px #0284c7;
+    }
+
+    .dk-abroad-detail-heading {
+        font-size: 2.8rem;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0 0 14px 0;
+        letter-spacing: -0.6px;
+    }
+    .dk-abroad-detail-sub {
+        font-size: 1.15rem;
+        color: #64748b;
+        margin: 0 auto 36px auto;
+        max-width: 620px;
+        line-height: 1.55;
+    }
+
+    .dk-abroad-detail-status-box {
+        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+        border: 1.5px solid #86efac;
+        border-radius: 16px;
+        padding: 24px 28px;
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        text-align: left;
+        margin-bottom: 36px;
+    }
+    .dk-status-icon {
+        font-size: 32px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+    .dk-status-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #166534;
+        margin: 0 0 6px 0;
+    }
+    .dk-status-desc {
+        font-size: 13.5px;
+        color: #334155;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .dk-abroad-detail-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 36px;
+    }
+    .dk-abroad-btn-back {
+        background: #0284c7;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 14.5px;
+        padding: 13px 26px;
+        border-radius: 12px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+        transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .dk-abroad-btn-back:hover {
+        background: #0369a1;
+        transform: translateY(-2px);
+        color: #ffffff;
+    }
+    .dk-abroad-btn-explore {
+        background: #ffffff;
+        color: #334155;
+        font-weight: 700;
+        font-size: 14.5px;
+        padding: 13px 24px;
+        border-radius: 12px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1.5px solid #cbd5e1;
+        transition: all 0.2s ease;
+    }
+    .dk-abroad-btn-explore:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+    }
+
+    .dk-abroad-detail-trust-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 600;
+        flex-wrap: wrap;
+    }
+    .dk-trust-dot {
+        color: #cbd5e1;
+    }
+
+    @@media (max-width: 640px) {
+        .dk-abroad-detail-card { padding: 36px 20px; }
+        .dk-abroad-detail-heading { font-size: 2.1rem; }
+        .dk-abroad-detail-status-box { flex-direction: column; gap: 12px; text-align: center; align-items: center; }
+    }
+</style>
