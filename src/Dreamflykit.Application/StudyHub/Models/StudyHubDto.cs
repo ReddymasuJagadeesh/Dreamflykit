@@ -918,6 +918,7 @@ public sealed class StudyHubDto
                 AutoPlay = true,
                 SectionTitle = "Featured Opportunities & Global Services",
                 SectionSubtitle = "Synchronized study abroad offerings curated for international students.",
+                TransitionDirection = "rtl",
                 Slides = new List<AbroadFiveSectionSlideDto>
                 {
                     // SLIDE SET 1
@@ -1724,6 +1725,7 @@ public sealed class AbroadFiveSectionCarouselDto
     public bool AutoPlay { get; set; } = true;
     public string SectionTitle { get; set; } = "Featured Opportunities & Global Services";
     public string SectionSubtitle { get; set; } = "Synchronized study abroad offerings curated for international students.";
+    public string TransitionDirection { get; set; } = "rtl"; // "rtl", "ltr", "btt", "ttb"
     public List<AbroadFiveSectionSlideDto> Slides { get; set; } = new();
 }
 
