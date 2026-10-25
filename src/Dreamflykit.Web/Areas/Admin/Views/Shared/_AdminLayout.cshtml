@@ -138,12 +138,21 @@
                     <span>Landing Pages</span>
                 </a>
 
+                <a href="/Admin/StudyAbroadHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "StudyAbroadHub" ? "active" : "")" style="color: #6366f1;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                    <span>🌐 Study Abroad Hub Profile</span>
+                </a>
+
                 <a href="/Admin/StudyHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "StudyHub" ? "active" : "")" style="color: #38bdf8;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
                         <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
                     </svg>
-                    <span>🎓 Study Essentials Hub</span>
+                    <span>🎓 Study Essentials (Dreamflykit Profile)</span>
                 </a>
 
                 <a href="/Admin/FashionHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "FashionHub" ? "active" : "")" style="color: #ec4899;">

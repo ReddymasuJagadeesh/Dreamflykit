@@ -24,7 +24,10 @@
         </div>
 
         <!-- Carousel Slide Sets Container -->
-        <div class="dk-abroad-sync-viewport" id="abroadSyncViewport">
+        @{
+            var transDir = carousel.TransitionDirection?.ToLowerInvariant() ?? "rtl";
+        }
+        <div class="dk-abroad-sync-viewport dir-@transDir" id="abroadSyncViewport">
             @for (int sIdx = 0; sIdx < slides.Count; sIdx++)
             {
                 var slide = slides[sIdx];
@@ -318,21 +321,40 @@
         align-items: center;
         width: 100%;
         min-width: 820px;
-        animation: syncSlideSetIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        animation: syncSlideSetRTL 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     .dk-abroad-sync-slide-set.active {
         display: grid;
     }
 
-    @@keyframes syncSlideSetIn {
-        from {
-            opacity: 0;
-            transform: translateY(14px) scale(0.99);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
+    .dir-rtl .dk-abroad-sync-slide-set.active {
+        animation: syncSlideSetRTL 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .dir-ltr .dk-abroad-sync-slide-set.active {
+        animation: syncSlideSetLTR 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .dir-btt .dk-abroad-sync-slide-set.active {
+        animation: syncSlideSetBTT 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .dir-ttb .dk-abroad-sync-slide-set.active {
+        animation: syncSlideSetTTB 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @@keyframes syncSlideSetRTL {
+        from { opacity: 0; transform: translateX(50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    @@keyframes syncSlideSetLTR {
+        from { opacity: 0; transform: translateX(-50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    @@keyframes syncSlideSetBTT {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @@keyframes syncSlideSetTTB {
+        from { opacity: 0; transform: translateY(-40px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     /* SECTION 1: LEFT SPOTLIGHT CARD (Image 3 Sachin Tendulkar Style) */

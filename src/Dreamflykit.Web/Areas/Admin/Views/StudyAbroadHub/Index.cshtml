@@ -1,0 +1,891 @@
+@model Dreamflykit.Application.StudyHub.Models.StudyAbroadHubProfileDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Study Abroad Hub Profile Management";
+    var carousel = Model.FiveSectionCarousel ?? new Dreamflykit.Application.StudyHub.Models.AbroadFiveSectionCarouselDto();
+    var slides = carousel.Slides ?? new List<Dreamflykit.Application.StudyHub.Models.AbroadFiveSectionSlideDto>();
+}
+
+<div class="dk-admin-page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+            <span style="background: #0284c7; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px;">
+                Dedicated Portal
+            </span>
+            <h1 class="dk-admin-page-title" style="margin: 0; font-size: 1.6rem; font-weight: 900; color: #0f172a;">
+                🌐 Study Abroad Hub Profile Management
+            </h1>
+        </div>
+        <p style="margin: 0; color: #64748b; font-size: 13.5px; max-width: 850px;">
+            Manage the dedicated Study Abroad Hub portal (<a href="/study-abroad-hub" target="_blank" style="color: #0284c7; font-weight: 700; text-decoration: underline;">/study-abroad-hub</a>), panoramic hero banner, synchronized 5-section carousel with movement direction, and high-speed photo uploading.
+        </p>
+    </div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/study-abroad-hub" target="_blank" class="dk-btn" style="background: #e0f2fe; color: #0369a1; font-weight: 700; border: 1px solid #bae6fd; padding: 8px 16px; border-radius: 8px;">
+            ↗ View Live Study Abroad Hub
+        </a>
+        <form method="post" action="/Admin/StudyAbroadHub/ResetDefaults" style="display: inline;" onsubmit="return confirm('Reset Study Abroad Hub Profile to original factory defaults?');">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-weight: 700; border: 1px solid #fecaca; padding: 8px 14px; border-radius: 8px;">
+                🔄 Reset to Defaults
+            </button>
+        </form>
+        <button type="button" class="dk-btn dk-btn-primary" onclick="saveAbroadProfile()" style="padding: 9px 22px; font-weight: 800; border-radius: 8px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
+            💾 Save All Changes
+        </button>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px; font-weight: 700;">
+        ✓ @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px; font-weight: 700;">
+        ⚠ @TempData["ErrorMessage"]
+    </div>
+}
+
+<!-- Hidden Global Image / Video Uploader for High-Speed Direct Upload -->
+<input type="file" id="globalHubImageUploader" accept="image/*,video/mp4,video/webm" style="display: none;" />
+
+<!-- ========================================================
+     1. FULL-WIDTH HERO BANNER CONFIGURATION
+========================================================= -->
+<div class="dk-admin-card" style="margin-bottom: 24px; border-top: 4px solid #0284c7; background: #ffffff; border-radius: 14px; padding: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+        <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0 0 4px 0;">
+                1. Full-Width Panoramic Hero Visual
+            </h2>
+            <p style="margin: 0; color: #64748b; font-size: 13px;">
+                Directly touches the dual profile switcher. Admin can choose to show text overlay or completely hide text for a clean, unobstructed visual view.
+            </p>
+        </div>
+        <div style="display: flex; gap: 16px; align-items: center;">
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; color: #0284c7; cursor: pointer; background: #f0f9ff; padding: 6px 14px; border-radius: 8px; border: 1px solid #bae6fd;">
+                <input type="checkbox" id="abroad_hero_show_text" @(Model.HeroShowText ? "checked" : "") style="width: 17px; height: 17px; accent-color: #0284c7;" />
+                <span>Show Text Overlay on Banner</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; color: #7c3aed; cursor: pointer; background: #faf5ff; padding: 6px 14px; border-radius: 8px; border: 1px solid #e9d5ff;">
+                <input type="checkbox" id="abroad_hero_enable_video" @(Model.HeroEnableVideo ? "checked" : "") style="width: 17px; height: 17px; accent-color: #7c3aed;" />
+                <span>Enable Background Video</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Text Fields (Only relevant if text is shown) -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div>
+            <label class="dk-sh-form-label">Hero Badge Pill</label>
+            <input type="text" id="abroad_hero_badge" class="dk-admin-form-input" value="@Model.HeroBadge" placeholder="Study Abroad Hub" />
+        </div>
+        <div>
+            <label class="dk-sh-form-label">Hero Title Part 1</label>
+            <input type="text" id="abroad_hero_title" class="dk-admin-form-input" value="@Model.HeroTitle" placeholder="Your Dreams Abroad." />
+        </div>
+        <div>
+            <label class="dk-sh-form-label">Hero Title Part 2 (Highlight)</label>
+            <input type="text" id="abroad_hero_highlight" class="dk-admin-form-input" value="@Model.HeroTitleHighlight" placeholder="Our Support." />
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div>
+            <label class="dk-sh-form-label">Hero Subtitle</label>
+            <input type="text" id="abroad_hero_sub" class="dk-admin-form-input" value="@Model.HeroSubtitle" placeholder="Everything you need to plan your international education journey..." />
+        </div>
+        <div>
+            <label class="dk-sh-form-label">Hero CTA Button Text</label>
+            <input type="text" id="abroad_hero_cta_text" class="dk-admin-form-input" value="@Model.HeroCtaText" placeholder="Explore Study Abroad Hub →" />
+        </div>
+        <div>
+            <label class="dk-sh-form-label">Hero CTA Target URL</label>
+            <input type="text" id="abroad_hero_cta_url" class="dk-admin-form-input" value="@Model.HeroCtaUrl" placeholder="#abroad-carousel" />
+        </div>
+    </div>
+
+    <!-- Image & Video Media Controls -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 18px;">
+        <!-- Banner Image -->
+        <div>
+            <label class="dk-sh-form-label">Full-Width Hero Image (Background Visual)</label>
+            <div style="display: flex; gap: 14px; align-items: center; margin-top: 6px;">
+                <div class="dk-sh-img-preview-box" style="width: 130px; height: 80px; border-radius: 8px; overflow: hidden; border: 1.5px solid #cbd5e1; background: #0f172a; flex-shrink: 0;">
+                    <img id="preview_abroad_hero_img" src="@(string.IsNullOrWhiteSpace(Model.HeroImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : Model.HeroImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                </div>
+                <div style="flex: 1;">
+                    <input type="text" id="abroad_hero_img_url" class="dk-admin-form-input" value="@Model.HeroImageUrl" placeholder="S3 Image URL or leave empty for 'Uploading Soon'" style="margin-bottom: 8px; font-size: 12px;" oninput="updateLivePreview('abroad_hero_img_url', 'preview_abroad_hero_img')" />
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 5px 14px;" onclick="triggerHubUpload('abroad_hero_img_url', 'preview_abroad_hero_img')">
+                            📷 Upload Hero Image
+                        </button>
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 12px; padding: 5px 12px;" onclick="clearHubPhoto('abroad_hero_img_url', 'preview_abroad_hero_img')">
+                            Set as 'Uploading Soon'
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Banner Video -->
+        <div>
+            <label class="dk-sh-form-label">Hero Background Video URL (MP4 / WEBM)</label>
+            <div style="margin-top: 6px;">
+                <input type="text" id="abroad_hero_video_url" class="dk-admin-form-input" value="@Model.HeroVideoUrl" placeholder="e.g. /videos/study-abroad-banner.mp4 or S3 URL" style="margin-bottom: 8px; font-size: 12px;" />
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="dk-btn" style="background: #7c3aed; color: #fff; font-size: 12px; padding: 5px 14px;" onclick="triggerHubUpload('abroad_hero_video_url')">
+                        📹 Upload Video (MP4/WEBM)
+                    </button>
+                    <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 12px; padding: 5px 12px;" onclick="document.getElementById('abroad_hero_video_url').value=''">
+                        Clear Video
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================
+     2. SYNCHRONIZED 5-SECTION CAROUSEL (Image 1 & 2 Style)
+========================================================= -->
+<div class="dk-admin-card" style="margin-bottom: 24px; border-top: 4px solid #f97316; background: #ffffff; border-radius: 14px; padding: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);" id="abroad-carousel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="background: #f97316; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px;">
+                    5 Synchronized Sections
+                </span>
+                <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0;">
+                    2. Synchronized 5-Section Carousel
+                </h2>
+            </div>
+            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">
+                All 5 sections move together at once. Admin controls slide timing, <strong>movement direction</strong>, image uploads, and destination URLs for every section.
+            </p>
+        </div>
+        <div style="display: flex; gap: 14px; align-items: center;">
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; color: #0f172a; cursor: pointer;">
+                <input type="checkbox" id="abroad_sync_enabled" @(carousel.IsEnabled ? "checked" : "") style="width: 17px; height: 17px; accent-color: #f97316;" />
+                <span>Enable Carousel</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; color: #0f172a; cursor: pointer;">
+                <input type="checkbox" id="abroad_sync_autoplay" @(carousel.AutoPlay ? "checked" : "") style="width: 17px; height: 17px; accent-color: #f97316;" />
+                <span>Auto-Play</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Carousel Global Settings: Timing, Direction, Titles -->
+    <div style="display: grid; grid-template-columns: 1fr 1.3fr 2fr 2fr; gap: 16px; background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: 12px; padding: 16px; margin-bottom: 22px;">
+        <div>
+            <label class="dk-sh-form-label" style="color: #c2410c;">⏱ Slide Timing (Seconds)</label>
+            <input type="number" id="abroad_sync_interval" class="dk-admin-form-input" value="@carousel.SlideIntervalSeconds" min="2" max="60" style="font-weight: 800; font-size: 15px; color: #c2410c;" />
+        </div>
+
+        <div>
+            <label class="dk-sh-form-label" style="color: #c2410c;">🔄 Slide Movement Direction</label>
+            <select id="abroad_sync_direction" class="dk-admin-form-input" style="font-weight: 800; font-size: 13px; color: #0f172a;">
+                <option value="rtl" selected="@(carousel.TransitionDirection == "rtl" ? "selected" : null)">➡️ Right to Left (Standard)</option>
+                <option value="ltr" selected="@(carousel.TransitionDirection == "ltr" ? "selected" : null)">⬅️ Left to Right (Reverse)</option>
+                <option value="btt" selected="@(carousel.TransitionDirection == "btt" ? "selected" : null)">⬆️ Bottom to Top (Elevate)</option>
+                <option value="ttb" selected="@(carousel.TransitionDirection == "ttb" ? "selected" : null)">⬇️ Top to Bottom (Cascade)</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="dk-sh-form-label" style="color: #c2410c;">Section Heading Title</label>
+            <input type="text" id="abroad_sync_title" class="dk-admin-form-input" value="@carousel.SectionTitle" placeholder="Featured Opportunities & Global Services" />
+        </div>
+
+        <div>
+            <label class="dk-sh-form-label" style="color: #c2410c;">Section Subtitle</label>
+            <input type="text" id="abroad_sync_sub" class="dk-admin-form-input" value="@carousel.SectionSubtitle" placeholder="Synchronized study abroad offerings..." />
+        </div>
+    </div>
+
+    <!-- Slide Sets Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">
+            Slide Sets (Each Set contains 5 Synchronized Sections with Direct Image Uploading)
+        </h3>
+        <button type="button" class="dk-btn" onclick="addSyncSlideSet()" style="background: #f97316; color: #fff; font-weight: 800; font-size: 12.5px; padding: 7px 16px; border-radius: 8px;">
+            + Add New 5-Section Slide Set
+        </button>
+    </div>
+
+    <!-- Slide Sets Container -->
+    <div id="abroad_sync_slide_sets_wrap">
+        @for (int idx = 0; idx < slides.Count; idx++)
+        {
+            var s = slides[idx];
+            var spot = s.Spotlight ?? new Dreamflykit.Application.StudyHub.Models.AbroadCarouselSpotlightDto();
+            var c1 = s.Card1 ?? new Dreamflykit.Application.StudyHub.Models.AbroadCarouselCardDto();
+            var c2 = s.Card2 ?? new Dreamflykit.Application.StudyHub.Models.AbroadCarouselCardDto();
+            var c3 = s.Card3 ?? new Dreamflykit.Application.StudyHub.Models.AbroadCarouselCardDto();
+            var c4 = s.Card4 ?? new Dreamflykit.Application.StudyHub.Models.AbroadCarouselCardDto();
+
+            <div class="abroad-sync-slide-set-card" data-slide-id="@s.Id" style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="background: #f97316; color: #fff; font-weight: 800; font-size: 12px; padding: 3px 10px; border-radius: 999px;">
+                            Slide Set #@(idx + 1)
+                        </span>
+                        <input type="text" class="dk-admin-form-input abroad-slide-label-input" value="@s.SlideLabel" style="width: 280px; font-weight: 700;" placeholder="Slide Label" />
+                    </div>
+                    @if (slides.Count > 1)
+                    {
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 12px; font-weight: 700; padding: 4px 10px;" onclick="this.closest('.abroad-sync-slide-set-card').remove()">
+                            🗑️ Delete Slide Set
+                        </button>
+                    }
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1.25fr 1fr 1fr 1fr 1fr; gap: 12px;">
+                    <!-- Section 1: Spotlight (Tall) -->
+                    <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; padding: 12px;">
+                        <div style="font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 8px;">
+                            Section 1: Spotlight (Left)
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Title</label>
+                            <input type="text" class="dk-admin-form-input spot-title-input" value="@spot.Title" style="font-size: 12px; padding: 4px 8px;" />
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label>
+                            <input type="text" class="dk-admin-form-input spot-sub-input" value="@spot.Subtitle" style="font-size: 12px; padding: 4px 8px;" />
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Tag</label>
+                            <input type="text" class="dk-admin-form-input spot-tag-input" value="@spot.TagText" style="font-size: 12px; padding: 4px 8px;" />
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
+                            <input type="text" class="dk-admin-form-input spot-btn-input" value="@spot.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                            <input type="text" class="dk-admin-form-input spot-link-input" value="@spot.ButtonUrl" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Photo (Image URL / Fast Upload)</label>
+                            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                    <img id="prev_spot_@(idx)" src="@(string.IsNullOrWhiteSpace(spot.ImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : spot.ImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                </div>
+                                <input type="text" id="inp_spot_@(idx)" class="dk-admin-form-input spot-img-input" value="@spot.ImageUrl" placeholder="Leave empty for avatar" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="updateLivePreview('inp_spot_@(idx)', 'prev_spot_@(idx)')" />
+                            </div>
+                            <div style="display: flex; gap: 4px;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerHubUpload('inp_spot_@(idx)', 'prev_spot_@(idx)')">
+                                    📷 Upload Photo
+                                </button>
+                                <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="clearHubPhoto('inp_spot_@(idx)', 'prev_spot_@(idx)')">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Card 1 -->
+                    <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 12px;">
+                        <div style="font-size: 11px; font-weight: 800; color: #0369a1; text-transform: uppercase; margin-bottom: 8px;">
+                            Section 2: Card 1
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Title</label>
+                            <input type="text" class="dk-admin-form-input c1-title-input" value="@c1.Title" style="font-size: 12px; padding: 4px 8px;" />
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label>
+                            <input type="text" class="dk-admin-form-input c1-sub-input" value="@c1.Subtitle" style="font-size: 12px; padding: 4px 8px;" />
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label>
+                            <select class="dk-admin-form-input c1-icon-select" style="font-size: 11px; padding: 3px 6px;">
+                                <option value="loan" selected="@(c1.IconType == "loan" ? "selected" : null)">🎓 Education Loan</option>
+                                <option value="test" selected="@(c1.IconType == "test" ? "selected" : null)">📖 Language Test</option>
+                                <option value="accommodation" selected="@(c1.IconType == "accommodation" ? "selected" : null)">🏠 Accommodation</option>
+                                <option value="star" selected="@(c1.IconType == "star" ? "selected" : null)">⭐ Star Feature</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
+                            <input type="text" class="dk-admin-form-input c1-btn-input" value="@c1.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                            <input type="text" class="dk-admin-form-input c1-link-input" value="@c1.ButtonUrl" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Photo (Image URL / Fast Upload)</label>
+                            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                    <img id="prev_c1_@(idx)" src="@(string.IsNullOrWhiteSpace(c1.ImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : c1.ImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                </div>
+                                <input type="text" id="inp_c1_@(idx)" class="dk-admin-form-input c1-img-input" value="@c1.ImageUrl" placeholder="Leave empty for emblem" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="updateLivePreview('inp_c1_@(idx)', 'prev_c1_@(idx)')" />
+                            </div>
+                            <div style="display: flex; gap: 4px;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerHubUpload('inp_c1_@(idx)', 'prev_c1_@(idx)')">
+                                    📷 Upload Photo
+                                </button>
+                                <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="clearHubPhoto('inp_c1_@(idx)', 'prev_c1_@(idx)')">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Card 2 -->
+                    <div style="background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 10px; padding: 12px;">
+                        <div style="font-size: 11px; font-weight: 800; color: #7e22ce; text-transform: uppercase; margin-bottom: 8px;">
+                            Section 3: Card 2
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Title</label>
+                            <input type="text" class="dk-admin-form-input c2-title-input" value="@c2.Title" style="font-size: 12px; padding: 4px 8px;" />
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label>
+                            <input type="text" class="dk-admin-form-input c2-sub-input" value="@c2.Subtitle" style="font-size: 12px; padding: 4px 8px;" />
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label>
+                            <select class="dk-admin-form-input c2-icon-select" style="font-size: 11px; padding: 3px 6px;">
+                                <option value="consultancy" selected="@(c2.IconType == "consultancy" ? "selected" : null)">👥 Consultancy</option>
+                                <option value="booking" selected="@(c2.IconType == "booking" ? "selected" : null)">📅 Booking Slots</option>
+                                <option value="forex" selected="@(c2.IconType == "forex" ? "selected" : null)">💳 Forex Card</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
+                            <input type="text" class="dk-admin-form-input c2-btn-input" value="@c2.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                            <input type="text" class="dk-admin-form-input c2-link-input" value="@c2.ButtonUrl" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Photo (Image URL / Fast Upload)</label>
+                            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                    <img id="prev_c2_@(idx)" src="@(string.IsNullOrWhiteSpace(c2.ImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : c2.ImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                </div>
+                                <input type="text" id="inp_c2_@(idx)" class="dk-admin-form-input c2-img-input" value="@c2.ImageUrl" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="updateLivePreview('inp_c2_@(idx)', 'prev_c2_@(idx)')" />
+                            </div>
+                            <div style="display: flex; gap: 4px;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerHubUpload('inp_c2_@(idx)', 'prev_c2_@(idx)')">
+                                    📷 Upload Photo
+                                </button>
+                                <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="clearHubPhoto('inp_c2_@(idx)', 'prev_c2_@(idx)')">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Card 3 -->
+                    <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 10px; padding: 12px;">
+                        <div style="font-size: 11px; font-weight: 800; color: #0f766e; text-transform: uppercase; margin-bottom: 8px;">
+                            Section 4: Card 3
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Title</label>
+                            <input type="text" class="dk-admin-form-input c3-title-input" value="@c3.Title" style="font-size: 12px; padding: 4px 8px;" />
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label>
+                            <input type="text" class="dk-admin-form-input c3-sub-input" value="@c3.Subtitle" style="font-size: 12px; padding: 4px 8px;" />
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label>
+                            <select class="dk-admin-form-input c3-icon-select" style="font-size: 11px; padding: 3px 6px;">
+                                <option value="insurance" selected="@(c3.IconType == "insurance" ? "selected" : null)">🛡️ Health Insurance</option>
+                                <option value="gr_loan" selected="@(c3.IconType == "gr_loan" ? "selected" : null)">🏦 GR Loans</option>
+                                <option value="flight" selected="@(c3.IconType == "flight" ? "selected" : null)">✈️ Flight Savings</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
+                            <input type="text" class="dk-admin-form-input c3-btn-input" value="@c3.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                            <input type="text" class="dk-admin-form-input c3-link-input" value="@c3.ButtonUrl" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Photo (Image URL / Fast Upload)</label>
+                            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                    <img id="prev_c3_@(idx)" src="@(string.IsNullOrWhiteSpace(c3.ImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : c3.ImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                </div>
+                                <input type="text" id="inp_c3_@(idx)" class="dk-admin-form-input c3-img-input" value="@c3.ImageUrl" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="updateLivePreview('inp_c3_@(idx)', 'prev_c3_@(idx)')" />
+                            </div>
+                            <div style="display: flex; gap: 4px;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerHubUpload('inp_c3_@(idx)', 'prev_c3_@(idx)')">
+                                    📷 Upload Photo
+                                </button>
+                                <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="clearHubPhoto('inp_c3_@(idx)', 'prev_c3_@(idx)')">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 5: Card 4 -->
+                    <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 10px; padding: 12px;">
+                        <div style="font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 8px;">
+                            Section 5: Card 4 (Right)
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Title</label>
+                            <input type="text" class="dk-admin-form-input c4-title-input" value="@c4.Title" style="font-size: 12px; padding: 4px 8px;" />
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label>
+                            <input type="text" class="dk-admin-form-input c4-sub-input" value="@c4.Subtitle" style="font-size: 12px; padding: 4px 8px;" />
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label>
+                            <select class="dk-admin-form-input c4-icon-select" style="font-size: 11px; padding: 3px 6px;">
+                                <option value="scholarship" selected="@(c4.IconType == "scholarship" ? "selected" : null)">🎓 Scholarships</option>
+                                <option value="near_me" selected="@(c4.IconType == "near_me" ? "selected" : null)">📍 Near Me</option>
+                                <option value="checklist" selected="@(c4.IconType == "checklist" ? "selected" : null)">📋 Checklist</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
+                            <input type="text" class="dk-admin-form-input c4-btn-input" value="@c4.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
+                            <input type="text" class="dk-admin-form-input c4-link-input" value="@c4.ButtonUrl" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 11px;">Photo (Image URL / Fast Upload)</label>
+                            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                    <img id="prev_c4_@(idx)" src="@(string.IsNullOrWhiteSpace(c4.ImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : c4.ImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                </div>
+                                <input type="text" id="inp_c4_@(idx)" class="dk-admin-form-input c4-img-input" value="@c4.ImageUrl" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="updateLivePreview('inp_c4_@(idx)', 'prev_c4_@(idx)')" />
+                            </div>
+                            <div style="display: flex; gap: 4px;">
+                                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerHubUpload('inp_c4_@(idx)', 'prev_c4_@(idx)')">
+                                    📷 Upload Photo
+                                </button>
+                                <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="clearHubPhoto('inp_c4_@(idx)', 'prev_c4_@(idx)')">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- ========================================================
+     3. TRUST PILLARS & SLOGAN
+========================================================= -->
+<div class="dk-admin-card" style="margin-bottom: 30px; border-top: 4px solid #10b981; background: #ffffff; border-radius: 14px; padding: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+    <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0 0 16px 0;">
+        3. Trust Pillars &amp; Footer Branding
+    </h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div>
+            <label class="dk-sh-form-label">Footer Slogan / Tagline</label>
+            <input type="text" id="abroad_footer_slogan" class="dk-admin-form-input" value="@Model.FooterSlogan" placeholder="Your Global Education Partner ♡" />
+        </div>
+        <div>
+            <label class="dk-sh-form-label">Handwritten Note on Hero Banner</label>
+            <input type="text" id="abroad_hero_note" class="dk-admin-form-input" value="@Model.HeroHandwrittenNote" placeholder="Study Explore Grow ♡" />
+        </div>
+    </div>
+</div>
+
+<!-- Sticky Bottom Save Bar -->
+<div style="position: sticky; bottom: 20px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); padding: 14px 24px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 100; margin-top: 30px;">
+    <div style="font-size: 13.5px; font-weight: 600;">
+        ⚡ Ready to update Study Abroad Hub Profile live across the website.
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <button type="button" id="btnBottomSave" class="dk-btn dk-btn-primary" onclick="saveAbroadProfile()" style="padding: 10px 24px; font-size: 14px; font-weight: 800; border-radius: 8px; cursor: pointer;">
+            💾 Save All Changes Now
+        </button>
+    </div>
+</div>
+
+<style>
+    .dk-sh-form-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+</style>
+
+<script>
+    let activeUploadTargetInputId = null;
+    let activeUploadPreviewImgId = null;
+
+    function triggerHubUpload(inputId, imgId) {
+        activeUploadTargetInputId = inputId;
+        activeUploadPreviewImgId = imgId;
+        const uploader = document.getElementById("globalHubImageUploader");
+        if (uploader) {
+            uploader.value = "";
+            uploader.click();
+        }
+    }
+
+    function updateLivePreview(inputId, imgId) {
+        const inp = document.getElementById(inputId);
+        const img = document.getElementById(imgId);
+        if (inp && img) {
+            img.src = inp.value || "/images/study-hub/test-pic-placeholder.svg";
+        }
+    }
+
+    function clearHubPhoto(inputId, imgId) {
+        const inp = document.getElementById(inputId);
+        const img = document.getElementById(imgId);
+        if (inp) inp.value = "";
+        if (img) img.src = "/images/study-hub/test-pic-placeholder.svg";
+    }
+
+    // High-Speed Direct Upload Handler with Stopwatch metrics
+    document.getElementById("globalHubImageUploader")?.addEventListener("change", async function () {
+        if (!this.files || this.files.length === 0) return;
+        const file = this.files[0];
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        if (token) formData.append("__RequestVerificationToken", token);
+
+        showHubToast("⏳ Uploading high-res file to storage...", false);
+
+        try {
+            const startTime = performance.now();
+            const res = await fetch("/Admin/StudyAbroadHub/UploadImage", {
+                method: "POST",
+                body: formData,
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            });
+            const data = await res.json();
+            const elapsed = Math.round(performance.now() - startTime);
+
+            if (data.success && data.url) {
+                if (activeUploadTargetInputId) {
+                    const input = document.getElementById(activeUploadTargetInputId);
+                    if (input) input.value = data.url;
+                }
+                if (activeUploadPreviewImgId) {
+                    const img = document.getElementById(activeUploadPreviewImgId);
+                    if (img) img.src = data.url;
+                }
+                showHubToast(`✓ Uploaded successfully in ${elapsed}ms!`, true);
+            } else {
+                alert("Upload failed: " + (data.message || "Unknown error"));
+            }
+        } catch (err) {
+            alert("Upload failed: " + err.message);
+        }
+    });
+
+    let newSlideIdx = 100;
+    function addSyncSlideSet() {
+        newSlideIdx++;
+        const sIdx = newSlideIdx;
+        const wrap = document.getElementById("abroad_sync_slide_sets_wrap");
+        if (!wrap) return;
+        const count = wrap.querySelectorAll(".abroad-sync-slide-set-card").length + 1;
+        const newSet = document.createElement("div");
+        newSet.className = "abroad-sync-slide-set-card";
+        newSet.dataset.slideId = "sync-slide-" + Date.now();
+        newSet.style.cssText = "background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px;";
+        newSet.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #f97316; color: #fff; font-weight: 800; font-size: 12px; padding: 3px 10px; border-radius: 999px;">
+                        Slide Set #\${count}
+                    </span>
+                    <input type="text" class="dk-admin-form-input abroad-slide-label-input" value="Slide \${count} - New Showcase" style="width: 280px; font-weight: 700;" placeholder="Slide Label" />
+                </div>
+                <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 12px; font-weight: 700; padding: 4px 10px;" onclick="this.closest('.abroad-sync-slide-set-card').remove()">
+                    🗑️ Delete Slide Set
+                </button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1.25fr 1fr 1fr 1fr 1fr; gap: 12px;">
+                <!-- Section 1 -->
+                <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; padding: 12px;">
+                    <div style="font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 8px;">Section 1: Spotlight (Left)</div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Title</label><input type="text" class="dk-admin-form-input spot-title-input" value="Campus Ambassador" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label><input type="text" class="dk-admin-form-input spot-sub-input" value="Empowering Your Global Journey" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Tag</label><input type="text" class="dk-admin-form-input spot-tag-input" value="Featured Showcase" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label><input type="text" class="dk-admin-form-input spot-btn-input" value="Know More" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" /><input type="text" class="dk-admin-form-input spot-link-input" value="/study-abroad-hub/ambassador-showcase" style="font-size: 11px; padding: 3px 6px;" /></div>
+                    <div>
+                        <label class="dk-sh-form-label" style="font-size: 11px;">Photo</label>
+                        <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                            <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                <img id="prev_spot_\${sIdx}" src="/images/study-hub/test-pic-placeholder.svg" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                            </div>
+                            <input type="text" id="inp_spot_\${sIdx}" class="dk-admin-form-input spot-img-input" value="" placeholder="Leave empty for avatar" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="updateLivePreview('inp_spot_\${sIdx}', 'prev_spot_\${sIdx}')" />
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerHubUpload('inp_spot_\${sIdx}', 'prev_spot_\${sIdx}')">📷 Upload Photo</button>
+                            <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="clearHubPhoto('inp_spot_\${sIdx}', 'prev_spot_\${sIdx}')">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Card 1 -->
+                <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 12px;">
+                    <div style="font-size: 11px; font-weight: 800; color: #0369a1; text-transform: uppercase; margin-bottom: 8px;">Section 2: Card 1</div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Title</label><input type="text" class="dk-admin-form-input c1-title-input" value="Educational Loans" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label><input type="text" class="dk-admin-form-input c1-sub-input" value="Up to 100% funding" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label><select class="dk-admin-form-input c1-icon-select" style="font-size: 11px; padding: 3px 6px;"><option value="loan">🎓 Education Loan</option><option value="test">📖 Language Test</option><option value="accommodation">🏠 Accommodation</option></select></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label><input type="text" class="dk-admin-form-input c1-btn-input" value="Know More" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" /><input type="text" class="dk-admin-form-input c1-link-input" value="/study-abroad-hub/educational-loans" style="font-size: 11px; padding: 3px 6px;" /></div>
+                    <div>
+                        <label class="dk-sh-form-label" style="font-size: 11px;">Photo</label>
+                        <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                            <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                <img id="prev_c1_\${sIdx}" src="/images/study-hub/test-pic-placeholder.svg" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                            </div>
+                            <input type="text" id="inp_c1_\${sIdx}" class="dk-admin-form-input c1-img-input" value="" placeholder="Leave empty for emblem" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="updateLivePreview('inp_c1_\${sIdx}', 'prev_c1_\${sIdx}')" />
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerHubUpload('inp_c1_\${sIdx}', 'prev_c1_\${sIdx}')">📷 Upload Photo</button>
+                            <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="clearHubPhoto('inp_c1_\${sIdx}', 'prev_c1_\${sIdx}')">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Card 2 -->
+                <div style="background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 10px; padding: 12px;">
+                    <div style="font-size: 11px; font-weight: 800; color: #7e22ce; text-transform: uppercase; margin-bottom: 8px;">Section 3: Card 2</div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Title</label><input type="text" class="dk-admin-form-input c2-title-input" value="Consultancy Details" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label><input type="text" class="dk-admin-form-input c2-sub-input" value="Top rated experts" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label><select class="dk-admin-form-input c2-icon-select" style="font-size: 11px; padding: 3px 6px;"><option value="consultancy">👥 Consultancy</option><option value="booking">📅 Booking Slots</option><option value="forex">💳 Forex Card</option></select></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label><input type="text" class="dk-admin-form-input c2-btn-input" value="Know More" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" /><input type="text" class="dk-admin-form-input c2-link-input" value="/study-abroad-hub/consultancy-details" style="font-size: 11px; padding: 3px 6px;" /></div>
+                    <div>
+                        <label class="dk-sh-form-label" style="font-size: 11px;">Photo</label>
+                        <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                            <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                <img id="prev_c2_\${sIdx}" src="/images/study-hub/test-pic-placeholder.svg" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                            </div>
+                            <input type="text" id="inp_c2_\${sIdx}" class="dk-admin-form-input c2-img-input" value="" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="updateLivePreview('inp_c2_\${sIdx}', 'prev_c2_\${sIdx}')" />
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerHubUpload('inp_c2_\${sIdx}', 'prev_c2_\${sIdx}')">📷 Upload Photo</button>
+                            <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="clearHubPhoto('inp_c2_\${sIdx}', 'prev_c2_\${sIdx}')">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Card 3 -->
+                <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 10px; padding: 12px;">
+                    <div style="font-size: 11px; font-weight: 800; color: #0f766e; text-transform: uppercase; margin-bottom: 8px;">Section 4: Card 3</div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Title</label><input type="text" class="dk-admin-form-input c3-title-input" value="Health Insurance" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label><input type="text" class="dk-admin-form-input c3-sub-input" value="Global coverage" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label><select class="dk-admin-form-input c3-icon-select" style="font-size: 11px; padding: 3px 6px;"><option value="insurance">🛡️ Health Insurance</option><option value="gr_loan">🏦 GR Loans</option><option value="flight">✈️ Flight Savings</option></select></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label><input type="text" class="dk-admin-form-input c3-btn-input" value="Know More" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" /><input type="text" class="dk-admin-form-input c3-link-input" value="/study-abroad-hub/health-insurance" style="font-size: 11px; padding: 3px 6px;" /></div>
+                    <div>
+                        <label class="dk-sh-form-label" style="font-size: 11px;">Photo</label>
+                        <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                            <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                <img id="prev_c3_\${sIdx}" src="/images/study-hub/test-pic-placeholder.svg" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                            </div>
+                            <input type="text" id="inp_c3_\${sIdx}" class="dk-admin-form-input c3-img-input" value="" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="updateLivePreview('inp_c3_\${sIdx}', 'prev_c3_\${sIdx}')" />
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerHubUpload('inp_c3_\${sIdx}', 'prev_c3_\${sIdx}')">📷 Upload Photo</button>
+                            <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="clearHubPhoto('inp_c3_\${sIdx}', 'prev_c3_\${sIdx}')">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: Card 4 -->
+                <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 10px; padding: 12px;">
+                    <div style="font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 8px;">Section 5: Card 4 (Right)</div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Title</label><input type="text" class="dk-admin-form-input c4-title-input" value="Scholarships &amp; Grants" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Subtitle</label><input type="text" class="dk-admin-form-input c4-sub-input" value="Merit-based assistance" style="font-size: 12px; padding: 4px 8px;" /></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Icon Type</label><select class="dk-admin-form-input c4-icon-select" style="font-size: 11px; padding: 3px 6px;"><option value="scholarship">🎓 Scholarships</option><option value="near_me">📍 Near Me</option><option value="checklist">📋 Checklist</option></select></div>
+                    <div style="margin-bottom: 6px;"><label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label><input type="text" class="dk-admin-form-input c4-btn-input" value="Know More" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" /><input type="text" class="dk-admin-form-input c4-link-input" value="/study-abroad-hub/scholarships" style="font-size: 11px; padding: 3px 6px;" /></div>
+                    <div>
+                        <label class="dk-sh-form-label" style="font-size: 11px;">Photo</label>
+                        <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                            <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                <img id="prev_c4_\${sIdx}" src="/images/study-hub/test-pic-placeholder.svg" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                            </div>
+                            <input type="text" id="inp_c4_\${sIdx}" class="dk-admin-form-input c4-img-input" value="" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="updateLivePreview('inp_c4_\${sIdx}', 'prev_c4_\${sIdx}')" />
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerHubUpload('inp_c4_\${sIdx}', 'prev_c4_\${sIdx}')">📷 Upload Photo</button>
+                            <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="clearHubPhoto('inp_c4_\${sIdx}', 'prev_c4_\${sIdx}')">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        wrap.appendChild(newSet);
+    }
+
+    async function saveAbroadProfile() {
+        const btn = document.getElementById("btnBottomSave");
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = "Saving...";
+        }
+
+        const slideSets = [];
+        document.querySelectorAll("#abroad_sync_slide_sets_wrap .abroad-sync-slide-set-card").forEach((setCard, idx) => {
+            const slideLabel = setCard.querySelector(".abroad-slide-label-input")?.value || ("Slide Set #" + (idx + 1));
+            const slideId = setCard.dataset.slideId || ("sync-slide-" + (idx + 1));
+
+            // Section 1: Spotlight
+            const spotTitle = setCard.querySelector(".spot-title-input")?.value || "";
+            const spotSub = setCard.querySelector(".spot-sub-input")?.value || "";
+            const spotTag = setCard.querySelector(".spot-tag-input")?.value || "";
+            const spotBtn = setCard.querySelector(".spot-btn-input")?.value || "Know More";
+            const spotLink = setCard.querySelector(".spot-link-input")?.value || "/study-abroad-hub/ambassador-showcase";
+            const spotImg = setCard.querySelector(".spot-img-input")?.value || "";
+
+            // Section 2: Card 1
+            const c1Title = setCard.querySelector(".c1-title-input")?.value || "";
+            const c1Sub = setCard.querySelector(".c1-sub-input")?.value || "";
+            const c1Icon = setCard.querySelector(".c1-icon-select")?.value || "loan";
+            const c1Btn = setCard.querySelector(".c1-btn-input")?.value || "Know More";
+            const c1Link = setCard.querySelector(".c1-link-input")?.value || "/study-abroad-hub/educational-loans";
+            const c1Img = setCard.querySelector(".c1-img-input")?.value || "";
+
+            // Section 3: Card 2
+            const c2Title = setCard.querySelector(".c2-title-input")?.value || "";
+            const c2Sub = setCard.querySelector(".c2-sub-input")?.value || "";
+            const c2Icon = setCard.querySelector(".c2-icon-select")?.value || "consultancy";
+            const c2Btn = setCard.querySelector(".c2-btn-input")?.value || "Know More";
+            const c2Link = setCard.querySelector(".c2-link-input")?.value || "/study-abroad-hub/consultancy-details";
+            const c2Img = setCard.querySelector(".c2-img-input")?.value || "";
+
+            // Section 4: Card 3
+            const c3Title = setCard.querySelector(".c3-title-input")?.value || "";
+            const c3Sub = setCard.querySelector(".c3-sub-input")?.value || "";
+            const c3Icon = setCard.querySelector(".c3-icon-select")?.value || "insurance";
+            const c3Btn = setCard.querySelector(".c3-btn-input")?.value || "Know More";
+            const c3Link = setCard.querySelector(".c3-link-input")?.value || "/study-abroad-hub/health-insurance";
+            const c3Img = setCard.querySelector(".c3-img-input")?.value || "";
+
+            // Section 5: Card 4
+            const c4Title = setCard.querySelector(".c4-title-input")?.value || "";
+            const c4Sub = setCard.querySelector(".c4-sub-input")?.value || "";
+            const c4Icon = setCard.querySelector(".c4-icon-select")?.value || "scholarship";
+            const c4Btn = setCard.querySelector(".c4-btn-input")?.value || "Know More";
+            const c4Link = setCard.querySelector(".c4-link-input")?.value || "/study-abroad-hub/find-consultancies-near-me";
+            const c4Img = setCard.querySelector(".c4-img-input")?.value || "";
+
+            slideSets.push({
+                Id: slideId,
+                SlideLabel: slideLabel,
+                Spotlight: {
+                    Title: spotTitle,
+                    Subtitle: spotSub,
+                    TagText: spotTag,
+                    ButtonText: spotBtn,
+                    ButtonUrl: spotLink,
+                    ImageUrl: spotImg
+                },
+                Card1: {
+                    Title: c1Title,
+                    Subtitle: c1Sub,
+                    IconType: c1Icon,
+                    ButtonText: c1Btn,
+                    ButtonUrl: c1Link,
+                    ImageUrl: c1Img
+                },
+                Card2: {
+                    Title: c2Title,
+                    Subtitle: c2Sub,
+                    IconType: c2Icon,
+                    ButtonText: c2Btn,
+                    ButtonUrl: c2Link,
+                    ImageUrl: c2Img
+                },
+                Card3: {
+                    Title: c3Title,
+                    Subtitle: c3Sub,
+                    IconType: c3Icon,
+                    ButtonText: c3Btn,
+                    ButtonUrl: c3Link,
+                    ImageUrl: c3Img
+                },
+                Card4: {
+                    Title: c4Title,
+                    Subtitle: c4Sub,
+                    IconType: c4Icon,
+                    ButtonText: c4Btn,
+                    ButtonUrl: c4Link,
+                    ImageUrl: c4Img
+                }
+            });
+        });
+
+        const payload = {
+            HeroBadge: document.getElementById("abroad_hero_badge")?.value || "Study Abroad Hub",
+            HeroTitle: document.getElementById("abroad_hero_title")?.value || "Your Dreams Abroad.",
+            HeroTitleHighlight: document.getElementById("abroad_hero_highlight")?.value || "Our Support.",
+            HeroSubtitle: document.getElementById("abroad_hero_sub")?.value || "Everything you need to plan your international education journey — all in one place.",
+            HeroShowText: document.getElementById("abroad_hero_show_text") ? document.getElementById("abroad_hero_show_text").checked : false,
+            HeroCtaText: document.getElementById("abroad_hero_cta_text")?.value || "Explore Study Abroad Hub →",
+            HeroCtaUrl: document.getElementById("abroad_hero_cta_url")?.value || "#abroad-carousel",
+            HeroImageUrl: document.getElementById("abroad_hero_img_url")?.value || "",
+            HeroVideoUrl: document.getElementById("abroad_hero_video_url")?.value || "",
+            HeroEnableVideo: document.getElementById("abroad_hero_enable_video") ? document.getElementById("abroad_hero_enable_video").checked : false,
+            HeroHandwrittenNote: document.getElementById("abroad_hero_note")?.value || "Study Explore Grow ♡",
+            FooterSlogan: document.getElementById("abroad_footer_slogan")?.value || "Your Global Education Partner ♡",
+            FiveSectionCarousel: {
+                IsEnabled: document.getElementById("abroad_sync_enabled") ? document.getElementById("abroad_sync_enabled").checked : true,
+                AutoPlay: document.getElementById("abroad_sync_autoplay") ? document.getElementById("abroad_sync_autoplay").checked : true,
+                SlideIntervalSeconds: parseInt(document.getElementById("abroad_sync_interval")?.value || "5", 10),
+                TransitionDirection: document.getElementById("abroad_sync_direction")?.value || "rtl",
+                SectionTitle: document.getElementById("abroad_sync_title")?.value || "Featured Opportunities & Global Services",
+                SectionSubtitle: document.getElementById("abroad_sync_sub")?.value || "Synchronized study abroad offerings curated for international students.",
+                Slides: slideSets
+            },
+            TrustPillars: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TrustPillars, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = null }))
+        };
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+        try {
+            const res = await fetch("/Admin/StudyAbroadHub/SaveConfig", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "RequestVerificationToken": token || ""
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.success) {
+                showHubToast("✓ Study Abroad Hub Profile saved successfully!", true);
+            } else {
+                alert("Save failed: " + (data.message || "Unknown error"));
+            }
+        } catch (err) {
+            alert("Save failed: " + err.message);
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = "💾 Save All Changes Now";
+            }
+        }
+    }
+
+    function showHubToast(message, isSuccess = true) {
+        let toast = document.getElementById("hubToast");
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "hubToast";
+            toast.style.cssText = "position: fixed; top: 24px; right: 24px; padding: 12px 24px; border-radius: 10px; font-weight: 800; font-size: 14px; z-index: 99999; box-shadow: 0 8px 24px rgba(0,0,0,0.2); transition: all 0.3s ease;";
+            document.body.appendChild(toast);
+        }
+        toast.style.background = isSuccess ? "#059669" : "#d97706";
+        toast.style.color = "#ffffff";
+        toast.textContent = message;
+        toast.style.display = "block";
+        setTimeout(() => { toast.style.display = "none"; }, 3500);
+    }
+</script>
