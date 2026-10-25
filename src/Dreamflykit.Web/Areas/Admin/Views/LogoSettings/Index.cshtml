@@ -74,104 +74,109 @@
         <!-- SIMULATOR VIEWPORT (EXACT BANK OF BARODA TEMPLATE) -->
         <div id="simulatorViewport" style="background: #ffffff; padding: 0; transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
             
-            <!-- SIMULATOR ROW 1: ORANGE LOGO WING + CURVE + WHITE PROFILES STRIP -->
-            <div id="simRowTop" style="display: flex; align-items: stretch; height: 48px; background: #f26522; position: relative; overflow: hidden; transition: all 0.25s ease;">
+            <!-- COMPOSITE HEADER CONTAINER -->
+            <div style="display: flex; align-items: stretch; width: 100%; background: #f26522; position: relative;">
                 
-                <!-- ORANGE LOGO WING (LEFT) -->
-                <div id="simLogoWing" style="display: inline-flex; align-items: flex-end; gap: 8px; background: #f26522; padding: 0 0 0 18px; height: 48px; flex-shrink: 0; z-index: 2; transition: all 0.35s ease;">
+                <!-- LEFT TALL LOGO WING (EXTENDS FROM TOP DOWN TO BASE OF SEARCH BAR) -->
+                <div id="simLogoWing" style="display: inline-flex; align-items: center; gap: 14px; background: #f26522; padding: 6px 14px 6px 20px; flex-shrink: 0; position: relative; z-index: 10; transition: all 0.35s ease;">
                     
-                    <!-- SECTION 1: 'D' LOGO -->
-                    <div id="simSection1Wrap" style="background: #ffffff; padding: 2px; border-radius: 8px 8px 0 0; width: 48px; height: 46px; display: flex; align-items: center; justify-content: center; box-shadow: 0 -2px 6px rgba(0,0,0,0.15);">
+                    <!-- SECTION 1: 'D' LOGO (TALL BOX) -->
+                    <div id="simSection1Wrap" style="background: #ffffff; padding: 6px; border-radius: 12px; width: 82px; height: 82px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.22); transition: all 0.25s ease;">
                         <img id="simSection1Img" src="@Model.Section1DLogoUrl" alt="Section 1 D Logo"
-                             style="width: 100%; height: 100%; object-fit: contain; border-radius: 6px 6px 0 0;" />
+                             style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" />
                     </div>
 
-                    <!-- SECTION 2: 'DREAMFLYKIT' BRAND LOGO -->
-                    <div id="simSection2Wrap" style="background: #ffffff; padding: 2px 14px; border-radius: 8px 8px 0 0; height: 46px; display: flex; align-items: center; justify-content: center; box-shadow: 0 -2px 6px rgba(0,0,0,0.15); transition: all 0.25s ease;">
+                    <!-- SECTION 2: 'DREAMFLYKIT' BRAND LOGO (TALL BOX, COLLAPSES ON SCROLL) -->
+                    <div id="simSection2Wrap" style="background: #ffffff; padding: 6px 18px; border-radius: 12px; height: 82px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.22); transition: all 0.35s ease;">
                         <img id="simSection2Img" src="@Model.Section2BrandLogoUrl" alt="Section 2 Dreamflykit Logo"
-                             style="height: 38px; width: auto; max-width: 200px; object-fit: contain;" />
+                             style="height: 64px; width: auto; max-width: 240px; object-fit: contain;" />
+                    </div>
+
+                    <!-- THE BANK OF BARODA REVERSE INWARD C-SHAPE CURVE (MIDDLE SCOOPS INSIDE) -->
+                    <div id="simCurve" style="position: absolute; right: -28px; top: 0; width: 32px; height: 40px; flex-shrink: 0; z-index: 10; pointer-events: none; transition: all 0.35s ease;">
+                        <svg viewBox="0 0 32 40" preserveAspectRatio="none" style="width: 100%; height: 100%; display: block;">
+                            <path d="M 0 0 L 28 0 C 14 0, 4 8, 4 20 C 4 32, 14 40, 28 40 L 0 40 Z" fill="#f26522" />
+                            <path d="M 28 0 C 14 0, 4 8, 4 20 C 4 32, 14 40, 28 40 L 32 40 L 32 0 Z" fill="#ffffff" />
+                        </svg>
                     </div>
 
                 </div>
 
-                <!-- THE BANK OF BARODA C-SHAPE CURVE -->
-                <div id="simCurve" style="width: 44px; height: 48px; flex-shrink: 0; position: relative; z-index: 2; margin-left: -1px; margin-right: -1px; transition: all 0.35s ease;">
-                    <svg viewBox="0 0 44 48" preserveAspectRatio="none" style="width: 100%; height: 100%; display: block;">
-                        <path d="M 0 0 C 30 0, 42 12, 42 24 C 42 36, 30 48, 0 48 L 44 48 L 44 0 Z" fill="#ffffff" />
-                        <path d="M 0 0 C 30 0, 42 12, 42 24 C 42 36, 30 48, 0 48 Z" fill="#f26522" />
-                    </svg>
-                </div>
+                <!-- RIGHT 2-TIER PANEL: PROFILES (TOP) + SEARCH BAR & ACTIONS (BOTTOM) -->
+                <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
 
-                <!-- RIGHT WHITE TOP STRIP (AFTER CURVE: PROFILES & UTILITIES) -->
-                <div id="simWhiteTop" style="flex: 1; background: #ffffff; display: flex; align-items: center; justify-content: space-between; padding: 0 20px 0 8px; height: 48px;">
-                    <div style="display: flex; align-items: center; gap: 8px; height: 100%;">
-                        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; font-weight: 800; color: #f26522; border-bottom: 3px solid #f26522; height: 100%; font-size: 13px; background: rgba(242, 101, 34, 0.06);">
-                            <span>🛍️</span> Dreamflykit Store
+                    <!-- ROW 1: WHITE STRIP (PROFILES & UTILITIES) -->
+                    <div id="simWhiteTop" style="height: 40px; background: #ffffff; display: flex; align-items: center; justify-content: space-between; padding: 0 24px 0 36px; transition: all 0.25s ease;">
+                        <div style="display: flex; align-items: center; gap: 8px; height: 100%;">
+                            <div style="display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; font-weight: 800; color: #f26522; border-bottom: 3px solid #f26522; height: 100%; font-size: 13px; background: rgba(242, 101, 34, 0.06);">
+                                <span>🛍️</span> Dreamflykit Store
+                            </div>
+                            <div style="display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; font-weight: 600; color: #475569; height: 100%; font-size: 13px;">
+                                <span>🌐</span> Study Abroad Hub
+                            </div>
                         </div>
-                        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; font-weight: 600; color: #475569; height: 100%; font-size: 13px;">
-                            <span>🌐</span> Study Abroad Hub
+
+                        <div style="display: flex; align-items: center; gap: 16px; color: #64748b; font-size: 12px; font-weight: 600;">
+                            <span>📞 24x7 Support: 1800-DREAMFLY</span>
+                            <span>🇮🇳 India (INR ₹)</span>
                         </div>
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 16px; color: #64748b; font-size: 12px; font-weight: 600;">
-                        <span>📞 24x7 Support: 1800-DREAMFLY</span>
-                        <span>🇮🇳 India (INR ₹)</span>
+                    <!-- ROW 2: MAIN FULL-WIDTH ORANGE ACTION LINE -->
+                    <div id="simOrangeLine" style="background: linear-gradient(90deg, #f26522 0%, #ea580c 50%, #f26522 100%); padding: 7px 24px 7px 12px; display: flex; align-items: center; gap: 18px; box-shadow: 0 4px 14px rgba(242, 101, 34, 0.28); transition: all 0.3s ease;">
+                        
+                        <!-- SEARCH BAR ON ORANGE LINE -->
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="display: flex; align-items: center; background: #ffffff; border-radius: 8px; overflow: hidden; height: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                <span style="padding: 0 12px; color: #94a3b8; font-size: 15px;">🔍</span>
+                                <input type="text" placeholder="Search for products, brands and more..." disabled
+                                       style="border: none; outline: none; width: 100%; font-size: 13px; color: #1e293b; background: transparent;" />
+                                <button type="button" style="background: #002b49; color: #fff; border: none; padding: 0 18px; height: 100%; font-size: 13px; font-weight: 700; cursor: default;">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ACTIONS ON ORANGE LINE: ACCOUNT, MORE MENU, WISHLIST, CART -->
+                        <div style="display: flex; align-items: center; gap: 14px; color: #ffffff; font-size: 13px; font-weight: 700; flex-shrink: 0;">
+                            
+                            <!-- ACCOUNT -->
+                            <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 5px 12px; border-radius: 8px; cursor: default;">
+                                <span>👤</span>
+                                <div style="line-height: 1.15; text-align: left;">
+                                    <div style="font-size: 9.5px; opacity: 0.85;">Login / Sign Up</div>
+                                    <div style="font-size: 12px;">My Account ▾</div>
+                                </div>
+                            </div>
+
+                            <!-- MORE MENU -->
+                            <div style="display: inline-flex; align-items: center; gap: 5px; cursor: default;">
+                                <span>☰</span>
+                                <span>More Menu</span>
+                            </div>
+
+                            <!-- WISHLIST -->
+                            <div style="display: inline-flex; align-items: center; gap: 5px; cursor: default;">
+                                <span>🤍</span>
+                                <span style="background: #ffffff; color: #f26522; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">0</span>
+                                <span>Wishlist</span>
+                            </div>
+
+                            <!-- CART -->
+                            <div style="display: inline-flex; align-items: center; gap: 5px; cursor: default;">
+                                <span>🛒</span>
+                                <span style="background: #ffffff; color: #f26522; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">0</span>
+                                <span>Cart</span>
+                            </div>
+
+                        </div>
+
                     </div>
+
                 </div>
 
             </div>
-
-            <!-- SIMULATOR ROW 2: MAIN FULL-WIDTH ORANGE ACTION LINE -->
-            <div id="simOrangeLine" style="background: linear-gradient(90deg, #f26522 0%, #ea580c 50%, #f26522 100%); padding: 8px 24px; display: flex; align-items: center; gap: 18px; box-shadow: 0 4px 14px rgba(242, 101, 34, 0.28); transition: all 0.3s ease;">
                 
-                <!-- SEARCH BAR ON ORANGE LINE -->
-                <div style="flex: 1; min-width: 200px;">
-                    <div style="display: flex; align-items: center; background: #ffffff; border-radius: 8px; overflow: hidden; height: 38px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <span style="padding: 0 12px; color: #94a3b8; font-size: 15px;">🔍</span>
-                        <input type="text" placeholder="Search for products, brands and more..." disabled
-                               style="border: none; outline: none; width: 100%; font-size: 13px; color: #1e293b; background: transparent;" />
-                        <button type="button" style="background: #002b49; color: #fff; border: none; padding: 0 18px; height: 100%; font-size: 13px; font-weight: 700; cursor: default;">
-                            Search
-                        </button>
-                    </div>
-                </div>
-
-                <!-- ACTIONS ON ORANGE LINE: ACCOUNT, MORE MENU, WISHLIST, CART -->
-                <div style="display: flex; align-items: center; gap: 16px; color: #ffffff; font-size: 13px; font-weight: 700; flex-shrink: 0;">
-                    
-                    <!-- ACCOUNT -->
-                    <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 5px 12px; border-radius: 8px; cursor: default;">
-                        <span>👤</span>
-                        <div style="line-height: 1.15; text-align: left;">
-                            <div style="font-size: 9.5px; opacity: 0.85;">Login / Sign Up</div>
-                            <div style="font-size: 12px;">My Account ▾</div>
-                        </div>
-                    </div>
-
-                    <!-- MORE MENU -->
-                    <div style="display: inline-flex; align-items: center; gap: 5px; cursor: default;">
-                        <span>☰</span>
-                        <span>More Menu</span>
-                    </div>
-
-                    <!-- WISHLIST -->
-                    <div style="display: inline-flex; align-items: center; gap: 5px; cursor: default;">
-                        <span>🤍</span>
-                        <span style="background: #ffffff; color: #f26522; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">0</span>
-                        <span>Wishlist</span>
-                    </div>
-
-                    <!-- CART -->
-                    <div style="display: inline-flex; align-items: center; gap: 5px; cursor: default;">
-                        <span>🛒</span>
-                        <span style="background: #ffffff; color: #f26522; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">0</span>
-                        <span>Cart</span>
-                    </div>
-
-                </div>
-
-            </div>
-
             <!-- SIMULATOR CATEGORIES ROW BELOW: WHITE BACKGROUND -->
             <div style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 0 24px; height: 42px; display: flex; align-items: center; gap: 18px; overflow-x: auto; color: #1e293b; font-size: 12.5px; font-weight: 700; white-space: nowrap;">
                 <span style="color: #f26522; border-bottom: 2.5px solid #f26522; padding: 10px 0;">🏠 Home</span>
@@ -399,6 +404,8 @@
         const curve = document.getElementById("simCurve");
         const whiteTop = document.getElementById("simWhiteTop");
 
+        const s1Wrap = document.getElementById("simSection1Wrap");
+
         if (mode === "scrolled") {
             btnScrl.style.background = "#f26522";
             btnScrl.style.color = "#ffffff";
@@ -406,9 +413,12 @@
             btnExp.style.color = "rgba(255, 255, 255, 0.65)";
 
             s2Wrap.style.display = "none"; // Section 2 collapses on scroll, leaving Section 1 ('D')
-            if (rowTop) rowTop.style.height = "42px";
-            if (curve) curve.style.height = "42px";
-            if (whiteTop) whiteTop.style.height = "42px";
+            if (s1Wrap) {
+                s1Wrap.style.width = "72px";
+                s1Wrap.style.height = "72px";
+            }
+            if (curve) curve.style.height = "38px";
+            if (whiteTop) whiteTop.style.height = "38px";
         } else {
             btnExp.style.background = "#f26522";
             btnExp.style.color = "#ffffff";
@@ -416,9 +426,12 @@
             btnScrl.style.color = "rgba(255, 255, 255, 0.65)";
 
             s2Wrap.style.display = "flex"; // Both Section 1 and Section 2 visible at top
-            if (rowTop) rowTop.style.height = "48px";
-            if (curve) curve.style.height = "48px";
-            if (whiteTop) whiteTop.style.height = "48px";
+            if (s1Wrap) {
+                s1Wrap.style.width = "82px";
+                s1Wrap.style.height = "82px";
+            }
+            if (curve) curve.style.height = "40px";
+            if (whiteTop) whiteTop.style.height = "40px";
         }
     }
 
