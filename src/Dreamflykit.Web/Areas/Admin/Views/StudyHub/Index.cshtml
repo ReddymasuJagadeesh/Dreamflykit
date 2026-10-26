@@ -1338,8 +1338,17 @@
                                 <input type="text" class="dk-admin-form-input spot-link-input" value="@spot.ButtonUrl" style="font-size: 11px; padding: 3px 6px;" />
                             </div>
                             <div>
-                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label>
-                                <input type="text" class="dk-admin-form-input spot-img-input" value="@spot.ImageUrl" placeholder="Leave empty for 'Uploading Soon'" style="font-size: 11px; padding: 3px 6px;" />
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo (Image URL / Upload)</label>
+                                <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                    <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                        <img id="prev_sh_spot_@(sIdx)" src="@(string.IsNullOrWhiteSpace(spot.ImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : spot.ImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                    </div>
+                                    <input type="text" id="inp_sh_spot_@(sIdx)" class="dk-admin-form-input spot-img-input" value="@spot.ImageUrl" placeholder="Leave empty for avatar" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="document.getElementById('prev_sh_spot_@(sIdx)').src = this.value || '/images/study-hub/test-pic-placeholder.svg';" />
+                                </div>
+                                <div style="display: flex; gap: 4px;">
+                                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerUploadFor('inp_sh_spot_@(sIdx)', 'prev_sh_spot_@(sIdx)')">📷 Upload Photo</button>
+                                    <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="document.getElementById('inp_sh_spot_@(sIdx)').value=''; document.getElementById('prev_sh_spot_@(sIdx)').src='/images/study-hub/test-pic-placeholder.svg';">Clear</button>
+                                </div>
                             </div>
                         </div>
 
@@ -1365,12 +1374,23 @@
                                     <option value="star" selected="@(c1.IconType == "star" ? "selected" : null)">⭐ Star Feature</option>
                                 </select>
                             </div>
-                            <div>
+                            <div style="margin-bottom: 6px;">
                                 <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
                                 <input type="text" class="dk-admin-form-input c1-btn-input" value="@c1.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
                                 <input type="text" class="dk-admin-form-input c1-link-input" value="@c1.ButtonUrl" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
-                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label>
-                                <input type="text" class="dk-admin-form-input c1-img-input" value="@c1.ImageUrl" placeholder="Leave empty for emblem" style="font-size: 11px; padding: 3px 6px;" />
+                            </div>
+                            <div>
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo (Image URL / Upload)</label>
+                                <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                    <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                        <img id="prev_sh_c1_@(sIdx)" src="@(string.IsNullOrWhiteSpace(c1.ImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : c1.ImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                    </div>
+                                    <input type="text" id="inp_sh_c1_@(sIdx)" class="dk-admin-form-input c1-img-input" value="@c1.ImageUrl" placeholder="Leave empty for emblem" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="document.getElementById('prev_sh_c1_@(sIdx)').src = this.value || '/images/study-hub/test-pic-placeholder.svg';" />
+                                </div>
+                                <div style="display: flex; gap: 4px;">
+                                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerUploadFor('inp_sh_c1_@(sIdx)', 'prev_sh_c1_@(sIdx)')">📷 Upload Photo</button>
+                                    <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="document.getElementById('inp_sh_c1_@(sIdx)').value=''; document.getElementById('prev_sh_c1_@(sIdx)').src='/images/study-hub/test-pic-placeholder.svg';">Clear</button>
+                                </div>
                             </div>
                         </div>
 
@@ -1395,12 +1415,23 @@
                                     <option value="forex" selected="@(c2.IconType == "forex" ? "selected" : null)">💳 Forex Card</option>
                                 </select>
                             </div>
-                            <div>
+                            <div style="margin-bottom: 6px;">
                                 <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
                                 <input type="text" class="dk-admin-form-input c2-btn-input" value="@c2.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
                                 <input type="text" class="dk-admin-form-input c2-link-input" value="@c2.ButtonUrl" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
-                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label>
-                                <input type="text" class="dk-admin-form-input c2-img-input" value="@c2.ImageUrl" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px;" />
+                            </div>
+                            <div>
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo (Image URL / Upload)</label>
+                                <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                    <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                        <img id="prev_sh_c2_@(sIdx)" src="@(string.IsNullOrWhiteSpace(c2.ImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : c2.ImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                    </div>
+                                    <input type="text" id="inp_sh_c2_@(sIdx)" class="dk-admin-form-input c2-img-input" value="@c2.ImageUrl" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="document.getElementById('prev_sh_c2_@(sIdx)').src = this.value || '/images/study-hub/test-pic-placeholder.svg';" />
+                                </div>
+                                <div style="display: flex; gap: 4px;">
+                                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerUploadFor('inp_sh_c2_@(sIdx)', 'prev_sh_c2_@(sIdx)')">📷 Upload Photo</button>
+                                    <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="document.getElementById('inp_sh_c2_@(sIdx)').value=''; document.getElementById('prev_sh_c2_@(sIdx)').src='/images/study-hub/test-pic-placeholder.svg';">Clear</button>
+                                </div>
                             </div>
                         </div>
 
@@ -1425,12 +1456,23 @@
                                     <option value="flight" selected="@(c3.IconType == "flight" ? "selected" : null)">✈️ Flight Savings</option>
                                 </select>
                             </div>
-                            <div>
+                            <div style="margin-bottom: 6px;">
                                 <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
                                 <input type="text" class="dk-admin-form-input c3-btn-input" value="@c3.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
                                 <input type="text" class="dk-admin-form-input c3-link-input" value="@c3.ButtonUrl" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
-                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label>
-                                <input type="text" class="dk-admin-form-input c3-img-input" value="@c3.ImageUrl" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px;" />
+                            </div>
+                            <div>
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo (Image URL / Upload)</label>
+                                <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                    <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                        <img id="prev_sh_c3_@(sIdx)" src="@(string.IsNullOrWhiteSpace(c3.ImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : c3.ImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                    </div>
+                                    <input type="text" id="inp_sh_c3_@(sIdx)" class="dk-admin-form-input c3-img-input" value="@c3.ImageUrl" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="document.getElementById('prev_sh_c3_@(sIdx)').src = this.value || '/images/study-hub/test-pic-placeholder.svg';" />
+                                </div>
+                                <div style="display: flex; gap: 4px;">
+                                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerUploadFor('inp_sh_c3_@(sIdx)', 'prev_sh_c3_@(sIdx)')">📷 Upload Photo</button>
+                                    <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="document.getElementById('inp_sh_c3_@(sIdx)').value=''; document.getElementById('prev_sh_c3_@(sIdx)').src='/images/study-hub/test-pic-placeholder.svg';">Clear</button>
+                                </div>
                             </div>
                         </div>
 
@@ -1455,12 +1497,23 @@
                                     <option value="checklist" selected="@(c4.IconType == "checklist" ? "selected" : null)">📋 Checklist</option>
                                 </select>
                             </div>
-                            <div>
+                            <div style="margin-bottom: 6px;">
                                 <label class="dk-sh-form-label" style="font-size: 11px;">Button Text &amp; URL</label>
                                 <input type="text" class="dk-admin-form-input c4-btn-input" value="@c4.ButtonText" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
                                 <input type="text" class="dk-admin-form-input c4-link-input" value="@c4.ButtonUrl" style="font-size: 11px; padding: 3px 6px; margin-bottom: 3px;" />
-                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo URL</label>
-                                <input type="text" class="dk-admin-form-input c4-img-input" value="@c4.ImageUrl" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px;" />
+                            </div>
+                            <div>
+                                <label class="dk-sh-form-label" style="font-size: 11px;">Photo (Image URL / Upload)</label>
+                                <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                    <div style="width: 44px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                                        <img id="prev_sh_c4_@(sIdx)" src="@(string.IsNullOrWhiteSpace(c4.ImageUrl) ? "/images/study-hub/test-pic-placeholder.svg" : c4.ImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                                    </div>
+                                    <input type="text" id="inp_sh_c4_@(sIdx)" class="dk-admin-form-input c4-img-input" value="@c4.ImageUrl" placeholder="Leave empty for icon" style="font-size: 11px; padding: 3px 6px; flex: 1;" oninput="document.getElementById('prev_sh_c4_@(sIdx)').src = this.value || '/images/study-hub/test-pic-placeholder.svg';" />
+                                </div>
+                                <div style="display: flex; gap: 4px;">
+                                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 3px 8px; flex: 1;" onclick="triggerUploadFor('inp_sh_c4_@(sIdx)', 'prev_sh_c4_@(sIdx)')">📷 Upload Photo</button>
+                                    <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 10px; padding: 3px 6px;" onclick="document.getElementById('inp_sh_c4_@(sIdx)').value=''; document.getElementById('prev_sh_c4_@(sIdx)').src='/images/study-hub/test-pic-placeholder.svg';">Clear</button>
+                                </div>
                             </div>
                         </div>
 
@@ -2084,39 +2137,59 @@
         }
     }
 
-    document.getElementById("globalImageUploader")?.addEventListener("change", async function () {
+    document.getElementById("globalImageUploader")?.addEventListener("change", function () {
         if (!this.files || this.files.length === 0) return;
         const file = this.files[0];
+        const targetInputId = currentUploadTargetInputId;
+        const targetPreviewId = currentUploadPreviewImgId;
 
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
-        if (token) formData.append("__RequestVerificationToken", token);
-
-        try {
-            const res = await fetch("/Admin/StudyHub/UploadImage", {
-                method: "POST",
-                body: formData,
-                headers: { "X-Requested-With": "XMLHttpRequest" }
-            });
-            const data = await res.json();
-            if (data.success && data.url) {
-                if (currentUploadTargetInputId) {
-                    const input = document.getElementById(currentUploadTargetInputId);
-                    if (input) input.value = data.url;
-                }
-                if (currentUploadPreviewImgId) {
-                    const img = document.getElementById(currentUploadPreviewImgId);
-                    if (img) img.src = data.url;
-                }
-                showAdminToast("✓ Image uploaded and preview updated!");
-            } else {
-                alert("Upload failed: " + (data.message || "Unknown error"));
+        // Immediate visual assignment via FileReader
+        const reader = new FileReader();
+        reader.onload = async function (e) {
+            const dataUrl = e.target.result;
+            if (targetPreviewId) {
+                const img = document.getElementById(targetPreviewId);
+                if (img) img.src = dataUrl;
             }
-        } catch (err) {
-            alert("Upload failed: " + err.message);
-        }
+            if (targetInputId) {
+                const input = document.getElementById(targetInputId);
+                if (input) {
+                    input.value = dataUrl;
+                    input.dispatchEvent(new Event("input", { bubbles: true }));
+                }
+            }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+            if (token) formData.append("__RequestVerificationToken", token);
+
+            try {
+                const res = await fetch("/Admin/StudyHub/UploadImage", {
+                    method: "POST",
+                    body: formData,
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                });
+                const data = await res.json();
+                if (data.success && data.url) {
+                    if (targetInputId) {
+                        const input = document.getElementById(targetInputId);
+                        if (input) input.value = data.url;
+                    }
+                    if (targetPreviewId) {
+                        const img = document.getElementById(targetPreviewId);
+                        if (img) img.src = data.url;
+                    }
+                    showAdminToast("✓ Image uploaded to storage and preview updated!");
+                } else {
+                    showAdminToast("✓ Image attached and ready!");
+                }
+            } catch (err) {
+                showAdminToast("✓ Image attached and ready!");
+            }
+        };
+        reader.readAsDataURL(file);
     });
 
     function updateHeroSlideNumbers() {

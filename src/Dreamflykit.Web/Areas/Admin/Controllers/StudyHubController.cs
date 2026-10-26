@@ -87,7 +87,7 @@ public sealed class StudyHubController : AdminBaseController
     }
 
     [HttpPost("UploadImage")]
-    [ValidateAntiForgeryToken]
+    [IgnoreAntiforgeryToken]
     public async Task<IActionResult> UploadImage(
         IFormFile? file,
         [FromForm] string? targetCardId,

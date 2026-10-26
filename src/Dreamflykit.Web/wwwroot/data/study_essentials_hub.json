@@ -32,7 +32,28 @@
       }
     ]
   },
-  "TrustItems": [],
+  "TrustItems": [
+    {
+      "Title": "Quality Products",
+      "Subtitle": "Handpicked for Students",
+      "Icon": "quality"
+    },
+    {
+      "Title": "Affordable Bundles",
+      "Subtitle": "Save More, Study More",
+      "Icon": "bundle"
+    },
+    {
+      "Title": "Secure Checkout",
+      "Subtitle": "Multiple Payment Options",
+      "Icon": "lock"
+    },
+    {
+      "Title": "Fast & Reliable Delivery",
+      "Subtitle": "To Your Doorstep",
+      "Icon": "truck"
+    }
+  ],
   "Section1": {
     "Title": "Shop by Category",
     "Subtitle": "Find everything you need, all in one place.",
@@ -174,7 +195,7 @@
         "Description": "Keep your stationery, academic planner and essential study tools ready for your new university.",
         "IconType": "study",
         "ImageUrl": "/images/study-hub/card-study-ready.png",
-        "LinkUrl": "/category/study-essentials?subcategory=stationery-study-supplies",
+        "LinkUrl": "/study-guide/stay-study-ready",
         "ButtonText": "Explore Essentials →"
       },
       {
@@ -183,7 +204,7 @@
         "Description": "Prepare your laptop accessories, headphones, chargers and other digital essentials for your studies.",
         "IconType": "tech",
         "ImageUrl": "/images/study-hub/card-connected.png",
-        "LinkUrl": "/category/study-essentials?subcategory=tech-for-study",
+        "LinkUrl": "/study-guide/stay-connected",
         "ButtonText": "Explore Essentials →"
       },
       {
@@ -192,7 +213,7 @@
         "Description": "Keep your passport, visa documents, admission letter and academic certificates safely organized.",
         "IconType": "documents",
         "ImageUrl": "/images/study-hub/card-documents.png",
-        "LinkUrl": "/category/study-essentials?subcategory=document-organization",
+        "LinkUrl": "/study-guide/keep-documents-organized",
         "ButtonText": "Explore Essentials →"
       },
       {
@@ -201,7 +222,7 @@
         "Description": "Discover useful everyday essentials for your campus, accommodation and comfortable student life abroad.",
         "IconType": "life",
         "ImageUrl": "/images/study-hub/card-student-life.png",
-        "LinkUrl": "/category/study-essentials?subcategory=college-campus-essentials",
+        "LinkUrl": "/study-guide/set-up-your-student-life",
         "ButtonText": "Explore Essentials →"
       }
     ]
@@ -214,7 +235,56 @@
     "TitleFontSize": "large",
     "ButtonText": "Build My Study Kit →",
     "TargetUrl": "/cart",
-    "Items": []
+    "Items": [
+      {
+        "Id": "item-notebook",
+        "Name": "Notebook",
+        "Price": 100,
+        "ImageUrl": "/images/study-hub/item-notebook.png",
+        "IsSelected": false,
+        "SortOrder": 1
+      },
+      {
+        "Id": "item-pens",
+        "Name": "Pen Set",
+        "Price": 150,
+        "ImageUrl": "/images/study-hub/item-pens.png",
+        "IsSelected": false,
+        "SortOrder": 2
+      },
+      {
+        "Id": "item-sleeve",
+        "Name": "Laptop Sleeve",
+        "Price": 499,
+        "ImageUrl": "/images/study-hub/item-sleeve.png",
+        "IsSelected": false,
+        "SortOrder": 3
+      },
+      {
+        "Id": "item-organizer",
+        "Name": "Document Organizer",
+        "Price": 199,
+        "ImageUrl": "/images/study-hub/item-organizer.png",
+        "IsSelected": false,
+        "SortOrder": 4
+      },
+      {
+        "Id": "item-planner",
+        "Name": "Study Planner",
+        "Price": 149,
+        "ImageUrl": "/images/study-hub/item-planner.png",
+        "IsSelected": false,
+        "SortOrder": 5
+      },
+      {
+        "Id": "item-adapter",
+        "Name": "Universal Adapter",
+        "Price": 799,
+        "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
+        "IsSelected": false,
+        "SortOrder": 6
+      }
+    ]
   },
   "Section4": {
     "Title": "Abroad Packing Checklist",
@@ -222,9 +292,40 @@
     "Subtitle": "Make sure you don't forget anything important.",
     "TitleFontSize": "large",
     "ButtonText": "View Full Checklist →",
-    "ButtonUrl": "/category/study-essentials",
+    "ButtonUrl": "/abroad-packing-checklist",
     "ImageUrl": "/images/study-hub/checklist-hero.jpg",
-    "Items": []
+    "Items": [
+      {
+        "Id": "chk-1",
+        "Text": "Study Materials",
+        "IsChecked": true,
+        "TargetUrl": "/abroad-packing-checklist"
+      },
+      {
+        "Id": "chk-2",
+        "Text": "Electronics & Accessories",
+        "IsChecked": true,
+        "TargetUrl": "/abroad-packing-checklist"
+      },
+      {
+        "Id": "chk-3",
+        "Text": "Travel Essentials",
+        "IsChecked": false,
+        "TargetUrl": "/abroad-packing-checklist"
+      },
+      {
+        "Id": "chk-4",
+        "Text": "Documents & Organizers",
+        "IsChecked": false,
+        "TargetUrl": "/abroad-packing-checklist"
+      },
+      {
+        "Id": "chk-5",
+        "Text": "Personal Essentials",
+        "IsChecked": false,
+        "TargetUrl": "/abroad-packing-checklist"
+      }
+    ]
   },
   "Section5": {
     "Title": "Shop by Destination",
@@ -403,13 +504,75 @@
     "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
     "ButtonText": "Shop Study Setup →",
     "ButtonUrl": "/category/study-essentials",
-    "Items": []
+    "Items": [
+      {
+        "Id": "st-stand",
+        "Name": "Laptop Stand",
+        "Price": 1299,
+        "IconType": "laptop"
+      },
+      {
+        "Id": "st-organizer",
+        "Name": "Desk Organizer",
+        "Price": 689,
+        "IconType": "file"
+      },
+      {
+        "Id": "st-lamp",
+        "Name": "Study Lamp",
+        "Price": 1099,
+        "IconType": "lamp"
+      },
+      {
+        "Id": "st-headphones",
+        "Name": "Headphones",
+        "Price": 1499,
+        "IconType": "headphones"
+      },
+      {
+        "Id": "st-planner",
+        "Name": "Notebook & Planner",
+        "Price": 499,
+        "IconType": "pen"
+      },
+      {
+        "Id": "st-cable",
+        "Name": "Cable Organizer",
+        "Price": 399,
+        "IconType": "cable"
+      }
+    ]
   },
   "Section9": {
     "Title": "Why Choose DreamFlyKit?",
     "Subtitle": "More than a store — we're your study partner.",
     "TitleFontSize": "large",
-    "Pillars": []
+    "Pillars": [
+      {
+        "Id": "p-bundles",
+        "Title": "Student-Friendly Bundles",
+        "Description": "Curated specifically for international student needs with massive bundle discounts.",
+        "IconType": "gift"
+      },
+      {
+        "Id": "p-easy",
+        "Title": "Easy Shopping",
+        "Description": "Everything in one place — avoid multiple shipments and missing university items.",
+        "IconType": "check"
+      },
+      {
+        "Id": "p-destination",
+        "Title": "Destination-Based Essentials",
+        "Description": "Country-specific plug adapters, luggage specifications, and university-aligned kits.",
+        "IconType": "globe"
+      },
+      {
+        "Id": "p-delivery",
+        "Title": "Convenient Delivery",
+        "Description": "On-time doorstep delivery right before your flight or directly to your campus dorm.",
+        "IconType": "truck"
+      }
+    ]
   },
   "Section10": {
     "Title": "Frequently Asked Questions",
@@ -1212,135 +1375,79 @@
     "HeroSubtitle": "Everything you need to plan your international education journey — all in one place.",
     "HeroCtaText": "Explore Study Abroad Hub →",
     "HeroCtaUrl": "#explore-services",
-    "HeroImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/20f05177a85b4e8fa68f34c9ae9731ae.webp",
+    "HeroImageUrl": "",
+    "HeroVideoUrl": "",
+    "HeroEnableVideo": false,
+    "HeroShowText": false,
     "HeroHandwrittenNote": "Study Explore Grow ♡",
-    "HeroServices": [
-      {
-        "Id": "120f0627",
-        "Title": "Educational Loans",
-        "IconType": "loan",
-        "TargetUrl": "#service-loans",
-        "IsEnabled": true
-      },
-      {
-        "Id": "154ed342",
-        "Title": "GR Loans",
-        "IconType": "gr_loan",
-        "TargetUrl": "#service-loans",
-        "IsEnabled": true
-      },
-      {
-        "Id": "4fe424d9",
-        "Title": "Consultancy Details",
-        "IconType": "consultancy",
-        "TargetUrl": "#service-consultancies",
-        "IsEnabled": true
-      },
-      {
-        "Id": "90347398",
-        "Title": "Find Consultancies Near Me",
-        "IconType": "near_me",
-        "TargetUrl": "#service-consultancies",
-        "IsEnabled": true
-      },
-      {
-        "Id": "13ffea09",
-        "Title": "Health Insurance",
-        "IconType": "insurance",
-        "TargetUrl": "#service-insurance",
-        "IsEnabled": true
-      }
-    ],
+    "HeroServices": [],
+    "FiveSectionCarousel": {
+      "IsEnabled": true,
+      "SlideIntervalSeconds": 5,
+      "AutoPlay": true,
+      "SectionTitle": "Featured Opportunities & Global Services",
+      "SectionSubtitle": "Synchronized study abroad offerings curated for international students.",
+      "TransitionDirection": "rtl",
+      "Slides": [
+        {
+          "Id": "20ef055e",
+          "SlideIndex": 0,
+          "SlideLabel": "Slide 1 - University Finance & Support",
+          "Spotlight": {
+            "Title": "Global Education Ambassador",
+            "Subtitle": "Guiding students to world-class universities & verified careers",
+            "TagText": "Official Partner",
+            "ImageUrl": "",
+            "ButtonText": "Meet Ambassador →",
+            "ButtonUrl": "/study-abroad-hub/global-ambassador",
+            "BackgroundGradient": "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)"
+          },
+          "Card1": {
+            "Title": "Educational Loans",
+            "Subtitle": "Student financing up to ₹1.5 Cr with low interest & fast sanction",
+            "BadgeText": "",
+            "ButtonText": "Know More",
+            "ButtonUrl": "/study-abroad-hub/education-loans",
+            "IconType": "loan",
+            "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/fabd1cfc843c4c6baa6d7e86b5141919.webp",
+            "IsHighlighted": false
+          },
+          "Card2": {
+            "Title": "Consultancy Details",
+            "Subtitle": "Certified study abroad counsellors & university matching",
+            "BadgeText": "",
+            "ButtonText": "Know More",
+            "ButtonUrl": "/study-abroad-hub/consultancies",
+            "IconType": "consultancy",
+            "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/abd540c01a764a7986566ece8b89c1da.webp",
+            "IsHighlighted": false
+          },
+          "Card3": {
+            "Title": "Health Insurance",
+            "Subtitle": "Comprehensive international medical & emergency travel cover",
+            "BadgeText": "",
+            "ButtonText": "Know More",
+            "ButtonUrl": "/study-abroad-hub/health-insurance",
+            "IconType": "insurance",
+            "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/405a974476814c8e9fe5a156d70c320c.webp",
+            "IsHighlighted": false
+          },
+          "Card4": {
+            "Title": "Scholarships & Grants",
+            "Subtitle": "Merit-based financial aid & government university grants",
+            "BadgeText": "",
+            "ButtonText": "Know More",
+            "ButtonUrl": "/study-abroad-hub/scholarships",
+            "IconType": "scholarship",
+            "ImageUrl": "/media/banner/1f3dea9758c249e9a2610049e2f881cf/d3c3908ed13049ac938be9260f70abc0.webp",
+            "IsHighlighted": false
+          }
+        }
+      ]
+    },
     "ServicesSectionTitle": "Explore Our Services",
     "ServicesSectionSubtitle": "Your complete guide to financial support, trusted consultancies and health coverage for a global education.",
-    "Services": [
-      {
-        "Id": "srv-loans",
-        "Title": "Educational Loans",
-        "Description": "Finance your dreams with the right education loan options from trusted banks and lenders.",
-        "ButtonText": "Get Started →",
-        "ButtonUrl": "/study-abroad-hub/education-loans",
-        "IconType": "loan",
-        "ThemeColor": "blue",
-        "ImageUrl": "",
-        "Bullets": [],
-        "SubService": {
-          "Title": "GR Loans",
-          "Description": "Explore special loan schemes and financial assistance (GR Loans).",
-          "ButtonUrl": "/study-abroad-hub/gr-loans",
-          "IconType": "bank"
-        }
-      },
-      {
-        "Id": "srv-consultancy",
-        "Title": "Consultancy Details",
-        "Description": "Find trusted study abroad consultancies and get expert guidance.",
-        "ButtonText": "Get Started →",
-        "ButtonUrl": "/study-abroad-hub/consultancies",
-        "IconType": "consultancy",
-        "ThemeColor": "purple",
-        "ImageUrl": "",
-        "Bullets": [],
-        "SubService": {
-          "Title": "Find Consultancies Near Me",
-          "Description": "Select your state, district or village to find the best consultancies near you.",
-          "ButtonUrl": "/study-abroad-hub/consultancies#near-me",
-          "IconType": "pin"
-        }
-      },
-      {
-        "Id": "srv-insurance",
-        "Title": "Health Insurance",
-        "Description": "Stay protected during your international journey.",
-        "ButtonText": "Get Started →",
-        "ButtonUrl": "/study-abroad-hub/health-insurance",
-        "IconType": "insurance",
-        "ThemeColor": "teal",
-        "ImageUrl": "",
-        "Bullets": [
-          "Global Coverage",
-          "Medical & Emergency",
-          "Compare Plans"
-        ],
-        "SubService": null
-      },
-      {
-        "Id": "srv-booking",
-        "Title": "Booking Slots",
-        "Description": "Book appointment slots for consultancy sessions, visa guidance and student counselling.",
-        "ButtonText": "Get Started →",
-        "ButtonUrl": "/study-abroad-hub/booking",
-        "IconType": "calendar",
-        "ThemeColor": "blue",
-        "ImageUrl": "",
-        "Bullets": [],
-        "SubService": null
-      },
-      {
-        "Id": "srv-tests",
-        "Title": "Language Tests",
-        "Description": "IELTS, PTE, TOEFL preparation and test booking guidance.",
-        "ButtonText": "Get Started →",
-        "ButtonUrl": "/study-abroad-hub/language-tests",
-        "IconType": "test",
-        "ThemeColor": "teal",
-        "ImageUrl": "",
-        "Bullets": [],
-        "SubService": null
-      },
-      {
-        "Id": "srv-scholarships",
-        "Title": "Scholarships & Grants",
-        "Description": "Discover scholarships, grants, eligibility and deadlines.",
-        "ButtonText": "Get Started →",
-        "ButtonUrl": "/study-abroad-hub/scholarships",
-        "IconType": "scholarship",
-        "ThemeColor": "purple",
-        "ImageUrl": "",
-        "Bullets": [],
-        "SubService": null
-      }
-    ],
+    "Services": [],
     "TrustPillars": [
       {
         "Icon": "shield",
@@ -1363,7 +1470,494 @@
         "Description": "We're here when you need us"
       }
     ],
-    "FooterSlogan": "Your Global Education Partner &#x2661;",
-    "TrustTagline": "Your Global Education Partner &#x2661;"
-  }
+    "FooterSlogan": "Your Global Education Partner ♡",
+    "TrustTagline": "Your Global Education Partner ♡"
+  },
+  "GuidePages": [
+    {
+      "Slug": "stay-study-ready",
+      "BadgeText": "STUDY GUIDE",
+      "Title": "Stay Study-Ready",
+      "Subtitle": "Prepare for your academic journey abroad.",
+      "Description": "Get the right study materials, stay organized, and build good study habits for a successful university experience.",
+      "HeroImageUrl": "/images/study-hub/checklist-study.jpg",
+      "HeroCursiveNote": "Better Preparation Brighter Future ➹",
+      "TrustPillars": [
+        {
+          "Icon": "academic",
+          "Title": "Academic Success",
+          "Subtitle": "Start with the right tools"
+        },
+        {
+          "Icon": "brand",
+          "Title": "Trusted Brands",
+          "Subtitle": "Quality you can rely on"
+        },
+        {
+          "Icon": "price",
+          "Title": "Student-Friendly Prices",
+          "Subtitle": "More value, less stress"
+        },
+        {
+          "Icon": "delivery",
+          "Title": "Fast & Reliable Delivery",
+          "Subtitle": "To Your Doorstep"
+        }
+      ],
+      "Section1Title": "What Do You Need for Your Studies?",
+      "Section1Subtitle": "Before you head abroad, make sure you have the right study essentials and check your university's guidelines for specific requirements.",
+      "PrepGuideTitle": "Your Study Preparation Guide",
+      "PrepGuideItems": [
+        "Check if your university recommends specific books or materials",
+        "Carry essential notebooks and writing supplies",
+        "Keep an academic planner to manage assignments and deadlines",
+        "Organize your certificates and study documents",
+        "Check if your course requires a calculator or other tools"
+      ],
+      "ChecklistTitle": "Study Essentials Checklist",
+      "ChecklistItems": [
+        "Notebooks & writing pads",
+        "Pens & highlighters",
+        "Academic planner / diary",
+        "Pencil pouch",
+        "Files & folders",
+        "Calculator (if required)"
+      ],
+      "ProTipTitle": "Pro Tip",
+      "ProTipContent": "Always check your university's website for a detailed list of recommended materials for your course.",
+      "ShowMistakesSection": true,
+      "MistakesSectionTitle": "Common Mistakes to Avoid",
+      "MistakesSectionSubtitle": "Tips to help international students succeed.",
+      "Mistakes": [
+        {
+          "Title": "Overpacking",
+          "Description": "Only carry what you really need"
+        },
+        {
+          "Title": "Forgetting important documents",
+          "Description": "Keep digital and physical copies"
+        },
+        {
+          "Title": "Ignoring climate needs",
+          "Description": "Pack suitable clothing for your destination"
+        },
+        {
+          "Title": "Not checking power compatibility",
+          "Description": "Use the right adapters and converters"
+        }
+      ],
+      "IsCategoryMode": false,
+      "ProductsSectionTitle": "Recommended Study Essentials",
+      "ViewAllLinkText": "View All Study Essentials →",
+      "ViewAllLinkUrl": "/category/study-essentials",
+      "Products": [
+        {
+          "Id": "sr-prod-1",
+          "Title": "Spiral Notebook Set",
+          "ImageUrl": "/images/study-hub/item-notebook.png",
+          "Price": 349,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "sr-prod-2",
+          "Title": "Gel Pen Set",
+          "ImageUrl": "/images/study-hub/item-pens.png",
+          "Price": 299,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "sr-prod-3",
+          "Title": "Academic Planner",
+          "ImageUrl": "/images/study-hub/item-planner.png",
+          "Price": 599,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "sr-prod-4",
+          "Title": "Scientific Calculator",
+          "ImageUrl": "/images/study-hub/item-sleeve.png",
+          "Price": 899,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "sr-prod-5",
+          "Title": "Pencil Pouch",
+          "ImageUrl": "/images/study-hub/item-organizer.png",
+          "Price": 249,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "sr-prod-6",
+          "Title": "File Folder Set",
+          "ImageUrl": "/images/study-hub/card-study-ready.png",
+          "Price": 399,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        }
+      ],
+      "Categories": [],
+      "BottomBannerTitle": "Build Your Study Kit",
+      "BottomBannerSubtitle": "Customize your perfect study kit with essentials for your course and destination.",
+      "BottomBannerButtonText": "Create Your Kit →",
+      "BottomBannerButtonUrl": "/study-abroad-hub#kits-section",
+      "BottomBannerImageUrl": "/images/study-hub/kit-complete.png"
+    },
+    {
+      "Slug": "stay-connected",
+      "BadgeText": "GUIDE",
+      "Title": "Stay Connected",
+      "Subtitle": "Get your digital essentials ready before departure.",
+      "Description": "Stay connected, stay productive and make the most of your online classes, research and campus life.",
+      "HeroImageUrl": "/images/study-hub/checklist-electronics.jpg",
+      "HeroCursiveNote": "Better Tech Bigger Opportunities ➹",
+      "TrustPillars": [
+        {
+          "Icon": "tech",
+          "Title": "Stay Connected",
+          "Subtitle": "For a seamless experience"
+        },
+        {
+          "Icon": "brand",
+          "Title": "Trusted Brands",
+          "Subtitle": "Top global brands"
+        },
+        {
+          "Icon": "price",
+          "Title": "Student-Friendly Prices",
+          "Subtitle": "More value, less stress"
+        },
+        {
+          "Icon": "delivery",
+          "Title": "Fast & Reliable Delivery",
+          "Subtitle": "To Your Doorstep"
+        }
+      ],
+      "Section1Title": "What Technology Will You Need?",
+      "Section1Subtitle": "From online classes to research and assignments, the right tech makes it easier to stay productive and connected.",
+      "PrepGuideTitle": "Your Digital Preparation Guide",
+      "PrepGuideItems": [
+        "Check if your laptop meets your course requirements",
+        "Verify charger and voltage compatibility with your destination",
+        "Choose a mouse and headphones for comfortable study",
+        "Check if you need a USB hub or external storage",
+        "Get a travel adapter for your destination's plug type"
+      ],
+      "ChecklistTitle": "Digital Essentials Checklist",
+      "ChecklistItems": [
+        "Laptop and charger",
+        "Mouse",
+        "Headphones / earphones",
+        "USB hub",
+        "Charging cables",
+        "Travel adapter"
+      ],
+      "ProTipTitle": "Pro Tip",
+      "ProTipContent": "Check your destination's plug type and voltage (e.g. 110V/220V) before buying electronics.",
+      "ShowMistakesSection": false,
+      "MistakesSectionTitle": "Common Mistakes to Avoid",
+      "MistakesSectionSubtitle": "Tips to help international students succeed.",
+      "Mistakes": [],
+      "IsCategoryMode": false,
+      "ProductsSectionTitle": "Popular Digital Essentials",
+      "ViewAllLinkText": "View All Electronics →",
+      "ViewAllLinkUrl": "/category/electronics",
+      "Products": [
+        {
+          "Id": "sc-prod-1",
+          "Title": "Laptop Sleeve",
+          "ImageUrl": "/images/study-hub/item-sleeve.png",
+          "Price": 1299,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "sc-prod-2",
+          "Title": "Wireless Mouse",
+          "ImageUrl": "/images/study-hub/card-connected.png",
+          "Price": 799,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "sc-prod-3",
+          "Title": "Headphones",
+          "ImageUrl": "/images/study-hub/checklist-electronics.jpg",
+          "Price": 2499,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "sc-prod-4",
+          "Title": "USB Hub",
+          "ImageUrl": "/images/study-hub/test-pic-placeholder.svg",
+          "Price": 1099,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "sc-prod-5",
+          "Title": "Power Bank",
+          "ImageUrl": "/images/study-hub/card-connected.png",
+          "Price": 1499,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "sc-prod-6",
+          "Title": "Travel Adapter",
+          "ImageUrl": "/images/study-hub/checklist-electronics.jpg",
+          "Price": 1199,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        }
+      ],
+      "Categories": [],
+      "BottomBannerTitle": "Need Help Choosing?",
+      "BottomBannerSubtitle": "Use our tech guide to find the right devices for your study needs.",
+      "BottomBannerButtonText": "View Tech Guide →",
+      "BottomBannerButtonUrl": "/category/electronics",
+      "BottomBannerImageUrl": "/images/study-hub/card-connected.png"
+    },
+    {
+      "Slug": "keep-documents-organized",
+      "BadgeText": "GUIDE",
+      "Title": "Keep Documents Organized",
+      "Subtitle": "Keep your important documents safe and accessible.",
+      "Description": "From passports to admission letters, make sure you have everything ready for a smooth journey.",
+      "HeroImageUrl": "/images/study-hub/checklist-documents.jpg",
+      "HeroCursiveNote": "Your Documents Your Journey ➹",
+      "TrustPillars": [
+        {
+          "Icon": "documents",
+          "Title": "Stay Organized",
+          "Subtitle": "No last minute stress"
+        },
+        {
+          "Icon": "brand",
+          "Title": "Trusted Brands",
+          "Subtitle": "Quality you can rely on"
+        },
+        {
+          "Icon": "price",
+          "Title": "Student-Friendly Prices",
+          "Subtitle": "More value, less stress"
+        },
+        {
+          "Icon": "delivery",
+          "Title": "Fast & Reliable Delivery",
+          "Subtitle": "To Your Doorstep"
+        }
+      ],
+      "Section1Title": "Which Documents Should You Prepare?",
+      "Section1Subtitle": "Each country and university may have different requirements. Check the official guidelines and plan accordingly.",
+      "PrepGuideTitle": "Document Preparation Guide",
+      "PrepGuideItems": [
+        "Keep your passport and visa documents accessible",
+        "Carry your university admission letter",
+        "Organize academic certificates and transcripts",
+        "Keep accommodation and travel details available",
+        "Store secure digital copies of important documents",
+        "Check official instructions for your destination"
+      ],
+      "ChecklistTitle": "Document Checklist",
+      "ChecklistItems": [
+        "Passport",
+        "Visa documents",
+        "Admission letter",
+        "Academic certificates",
+        "Accommodation details",
+        "Travel insurance (if applicable)"
+      ],
+      "ProTipTitle": "Pro Tip",
+      "ProTipContent": "Keep both physical and digital copies of your important documents in a safe place.",
+      "ShowMistakesSection": false,
+      "MistakesSectionTitle": "Common Mistakes to Avoid",
+      "MistakesSectionSubtitle": "Tips to help international students succeed.",
+      "Mistakes": [],
+      "IsCategoryMode": false,
+      "ProductsSectionTitle": "Recommended Document Organizers",
+      "ViewAllLinkText": "View All Travel Accessories →",
+      "ViewAllLinkUrl": "/category/travel-gear",
+      "Products": [
+        {
+          "Id": "kd-prod-1",
+          "Title": "Passport Holder",
+          "ImageUrl": "/images/study-hub/card-documents.png",
+          "Price": 249,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "kd-prod-2",
+          "Title": "Document Organizer",
+          "ImageUrl": "/images/study-hub/item-organizer.png",
+          "Price": 899,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "kd-prod-3",
+          "Title": "Certificate Folder",
+          "ImageUrl": "/images/study-hub/card-documents.png",
+          "Price": 399,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "kd-prod-4",
+          "Title": "Travel Pouch",
+          "ImageUrl": "/images/study-hub/card-documents.png",
+          "Price": 259,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "kd-prod-5",
+          "Title": "Luggage Tag",
+          "ImageUrl": "/images/study-hub/card-documents.png",
+          "Price": 349,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        },
+        {
+          "Id": "kd-prod-6",
+          "Title": "Waterproof Bag",
+          "ImageUrl": "/images/study-hub/checklist-documents.jpg",
+          "Price": 449,
+          "Rating": 5.0,
+          "ButtonText": "Add to Cart",
+          "TargetUrl": "/cart"
+        }
+      ],
+      "Categories": [],
+      "BottomBannerTitle": "Travel with Confidence",
+      "BottomBannerSubtitle": "Organized documents = less stress and more time for what matters.",
+      "BottomBannerButtonText": "Shop Document Organizers →",
+      "BottomBannerButtonUrl": "/category/travel-gear",
+      "BottomBannerImageUrl": "/images/study-hub/card-documents.png"
+    },
+    {
+      "Slug": "set-up-your-student-life",
+      "BadgeText": "GUIDE",
+      "Title": "Set Up Your Student Life",
+      "Subtitle": "Make your new student life abroad comfortable and convenient.",
+      "Description": "From campus essentials to everyday living, get everything you need to feel at home, wherever you are.",
+      "HeroImageUrl": "/images/study-hub/checklist-living.jpg",
+      "HeroCursiveNote": "New Place New Routine Same You ➹",
+      "TrustPillars": [
+        {
+          "Icon": "life",
+          "Title": "Comfort & Convenience",
+          "Subtitle": "For everyday living"
+        },
+        {
+          "Icon": "brand",
+          "Title": "Trusted Brands",
+          "Subtitle": "Quality you can rely on"
+        },
+        {
+          "Icon": "price",
+          "Title": "Student-Friendly Prices",
+          "Subtitle": "More value, less stress"
+        },
+        {
+          "Icon": "delivery",
+          "Title": "Fast & Reliable Delivery",
+          "Subtitle": "To Your Doorstep"
+        }
+      ],
+      "Section1Title": "What Will Make Your Daily Life Easier?",
+      "Section1Subtitle": "Be prepared for campus, accommodation and daily routines with the right essentials.",
+      "PrepGuideTitle": "Student Life Preparation Guide",
+      "PrepGuideItems": [
+        "Check what your accommodation already provides",
+        "Choose a comfortable backpack for your campus",
+        "Carry a reusable water bottle and lunch box",
+        "Consider a desk lamp and organizer for your room",
+        "Check the local climate before packing clothes",
+        "Avoid bulky items you can easily buy there"
+      ],
+      "ChecklistTitle": "Everyday Essentials Checklist",
+      "ChecklistItems": [
+        "Backpack",
+        "Water bottle",
+        "Lunch box",
+        "Compact umbrella",
+        "Desk organizer",
+        "Laundry bag"
+      ],
+      "ProTipTitle": "Pro Tip",
+      "ProTipContent": "Pack versatile items that work for both campus and daily life. Keep it light and organized.",
+      "ShowMistakesSection": false,
+      "MistakesSectionTitle": "Common Mistakes to Avoid",
+      "MistakesSectionSubtitle": "Tips to help international students succeed.",
+      "Mistakes": [],
+      "IsCategoryMode": true,
+      "ProductsSectionTitle": "Essential Categories for Student Life",
+      "ViewAllLinkText": "View All Student Life Essentials →",
+      "ViewAllLinkUrl": "/category/study-essentials",
+      "Products": [],
+      "Categories": [
+        {
+          "Id": "sl-cat-1",
+          "Title": "Campus Essentials",
+          "Subtitle": "Backpacks, bottles, ID holders",
+          "ImageUrl": "/images/study-hub/card-student-life.png",
+          "ButtonText": "View Items →",
+          "TargetUrl": "/category/study-essentials?subcategory=college-campus-essentials"
+        },
+        {
+          "Id": "sl-cat-2",
+          "Title": "Study Room Essentials",
+          "Subtitle": "Desk lamps, organizers",
+          "ImageUrl": "/images/study-hub/checklist-living.jpg",
+          "ButtonText": "View Items →",
+          "TargetUrl": "/category/study-essentials?subcategory=desk-room-study-essential"
+        },
+        {
+          "Id": "sl-cat-3",
+          "Title": "Everyday Living Essentials",
+          "Subtitle": "Bags, laundry, room organizers",
+          "ImageUrl": "/images/study-hub/checklist-living.jpg",
+          "ButtonText": "View Items →",
+          "TargetUrl": "/category/study-essentials"
+        },
+        {
+          "Id": "sl-cat-4",
+          "Title": "Comfort Essentials",
+          "Subtitle": "Neck pillows, eye masks...",
+          "ImageUrl": "/images/study-hub/checklist-travel.jpg",
+          "ButtonText": "View Items →",
+          "TargetUrl": "/category/travel-gear"
+        }
+      ],
+      "BottomBannerTitle": "Ready for a Better Student Life?",
+      "BottomBannerSubtitle": "Find all the essentials you need for a comfortable and productive stay abroad.",
+      "BottomBannerButtonText": "Shop Student Life Essentials →",
+      "BottomBannerButtonUrl": "/category/study-essentials",
+      "BottomBannerImageUrl": "/images/study-hub/card-student-life.png"
+    }
+  ]
 }
