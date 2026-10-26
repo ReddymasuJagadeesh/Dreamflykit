@@ -31,9 +31,8 @@
 
     <!-- ============================================================
          1. HERO BANNER (FULL WIDTH, BRIGHT, HIGH AESTHETICS)
-    ============================================================ -->
-    <!-- ============================================================
-         1. HERO BANNER (FULL WIDTH, BRIGHT, TEXT OVERLAYED ON IMAGE)
+    ============================================================ -->    <!-- ============================================================
+         1. HERO BANNER (FULL WIDTH, BRIGHT, HIGH AESTHETICS - MATCHES SCREENSHOT 1)
     ============================================================ -->
     @if (hero.IsEnabled)
     {
@@ -47,9 +46,15 @@
             ? hero.OverlayGradient 
             : "linear-gradient(90deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.32) 36%, rgba(255, 255, 255, 0.0) 58%, rgba(255, 255, 255, 0.28) 85%, rgba(255, 255, 255, 0.65) 100%)";
 
-        <section class="dk-fashion-hero-section full-width-hero" style="min-height: @(minHeight)px;" aria-label="Fashion Category Hero">
-            <!-- Full Width Panoramic Banner Image -->
-            @if (hero.IsUploadingSoon || string.IsNullOrWhiteSpace(hero.ImageUrl))
+        var isSoon = hero.IsUploadingSoon || string.IsNullOrWhiteSpace(hero.ImageUrl);
+
+        <section class="dk-fashion-hero-section full-width-hero" 
+                 id="dkFashionHeroSection" 
+                 style="min-height: @(minHeight)px;" 
+                 aria-label="Fashion Category Hero Banner">
+            
+            <!-- Full Width Background Visual Layer -->
+            @if (isSoon)
             {
                 <div class="dk-fashion-hero-bg-soon">
                     <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon Placeholder" class="dk-fashion-soon-watermark-img" />
@@ -59,21 +64,18 @@
             else
             {
                 <img src="@hero.ImageUrl" 
-                     alt="Fashion for Every Journey" 
+                     alt="@hero.Title @hero.TitleHighlight" 
                      class="dk-fashion-hero-bg-img" 
                      onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
                 <div class="dk-fashion-hero-bg-soon" style="display: none;">
+                    <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon Placeholder" class="dk-fashion-soon-watermark-img" />
                     <div class="dk-fashion-soon-badge-banner">⏳ HERO BANNER UPLOADING SOON</div>
                 </div>
             }
-
-            <!-- High-Brightness Gradient Overlay for Contrast & Text Readability -->
             <div class="dk-fashion-hero-overlay" style="background: @overlayGrad;"></div>
 
-            <!-- Content Overlayed Directly on Top of the Full-Width Banner Image -->
+            <!-- Content Overlayed on Top of Background -->
             <div class="dk-fashion-hero-overlay-content">
-                
-                <!-- Left Content Area -->
                 <div class="dk-fashion-hero-left">
                     <h1 class="dk-fashion-hero-headline" style="color: @titleColor;">
                         @hero.Title <span class="dk-fashion-highlight" style="color: @highlightColor; -webkit-text-fill-color: @highlightColor; background: none;">@hero.TitleHighlight</span>
@@ -83,7 +85,13 @@
                         @hero.Subtitle
                     </p>
 
-                    <!-- Badges Row (4 Pill Badges on Top of Banner) -->
+                    <div style="margin-bottom: 18px;">
+                        <a href="/category/fashion/women-clothing" class="dk-fashion-hero-cta-link" id="linkHeroShopWomenClothing">
+                            <span>Shop Women Clothing &rarr;</span>
+                        </a>
+                    </div>
+
+                    <!-- Badges Row -->
                     @if (hero.Badges != null && hero.Badges.Count > 0)
                     {
                         <div class="dk-fashion-badges-row">
@@ -115,7 +123,7 @@
                     }
                 </div>
 
-                <!-- Right Feature Callout Box ("Look Good. Travel Smart.") Overlayed on Right Side -->
+                <!-- Right Feature Callout Box -->
                 @if (hero.RightCard != null)
                 {
                     <div class="dk-fashion-hero-right">
@@ -151,8 +159,8 @@
                         </div>
                     </div>
                 }
-
             </div>
+
         </section>
     }
 
@@ -172,7 +180,14 @@
             <div class="dk-fashion-categories-grid">
                 @foreach (var cat in catSection.Categories.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder))
                 {
-                    var catUrl = !string.IsNullOrWhiteSpace(cat.Slug) ? $"/category/fashion/{cat.Slug}" : "/products?category=fashion";
+                    var catUrl = cat.Slug switch
+                    {
+                        "women-clothing" => "/category/fashion/women-clothing",
+                        "men-clothing" => "/category/fashion/men-clothing",
+                        "hoodies" or "hoodies-sweatshirts" => "/category/fashion/hoodies",
+                        "sweatshirts" => "/category/fashion/sweatshirts",
+                        _ => !string.IsNullOrWhiteSpace(cat.Slug) ? $"/category/fashion/{cat.Slug}" : "/products?category=fashion"
+                    };
                     <a href="@catUrl" class="dk-fashion-cat-card" title="@cat.Name">
                         <div class="dk-fashion-cat-img-box">
                             @if (cat.IsUploadingSoon || string.IsNullOrWhiteSpace(cat.ImageUrl) || cat.ImageUrl.Contains("uploading-soon"))
@@ -229,7 +244,16 @@
                 <div class="dk-fashion-products-track" id="dkFashionProductsTrack">
                     @foreach (var prod in picksSection.Products.Where(p => p.IsActive))
                     {
-                        var prodLink = !string.IsNullOrWhiteSpace(prod.ProductUrl) ? prod.ProductUrl : "/products?category=fashion";
+                        var prodLink = prod.Name.ToLowerInvariant() switch
+                        {
+                            var n when n.Contains("hoodie") => "/category/fashion/hoodies",
+                            var n when n.Contains("sweatshirt") => "/category/fashion/sweatshirts",
+                            _ => (!string.IsNullOrWhiteSpace(prod.ProductUrl) && !prod.ProductUrl.EndsWith("category=fashion"))
+                                    ? prod.ProductUrl
+                                    : (prod.CategoryName?.ToLowerInvariant().Contains("women") == true
+                                        ? "/category/fashion/women-clothing"
+                                        : "/category/fashion/men-clothing")
+                        };
                         <div class="dk-fashion-product-card">
                             <!-- Wishlist button -->
                             <button type="button" class="dk-fashion-wish-btn" aria-label="Add @prod.Name to wishlist" onclick="event.preventDefault(); event.stopPropagation(); this.classList.toggle('active');">
@@ -593,10 +617,24 @@
     font-size: 16px;
     line-height: 1.5;
     color: #334155;
-    margin: 0 0 24px 0;
+    margin: 0 0 16px 0;
     max-width: 440px;
     font-weight: 500;
     text-shadow: 0 1px 2px rgba(255,255,255,0.7);
+}
+.dk-fashion-hero-cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #063f91;
+    text-decoration: none;
+    transition: color 0.2s ease, transform 0.15s ease;
+}
+.dk-fashion-hero-cta-link:hover {
+    color: #ea580c;
+    transform: translateX(4px);
 }
 .dk-fashion-badges-row {
     display: grid;
@@ -1179,11 +1217,133 @@
     .dk-fashion-trust-grid {
         grid-template-columns: 1fr;
     }
+/* Hero Slider Styles */
+.dk-fashion-hero-slider-section {
+    position: relative;
+    width: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 30px rgba(6, 63, 145, 0.08);
+}
+.dk-fashion-slides-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+}
+.dk-fashion-slide-item {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+    display: flex;
+    align-items: center;
+    z-index: 1;
+}
+.dk-fashion-slide-item.active {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+}
+.dk-fashion-slide-bg-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+.dk-fashion-slide-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #063f91 0%, #0369a1 100%);
+    color: #ffffff;
+    font-size: 13.5px;
+    font-weight: 800;
+    padding: 10px 22px;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(6, 63, 145, 0.25);
+    transition: all 0.2s ease;
+}
+.dk-fashion-slide-cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(6, 63, 145, 0.35);
+    color: #ffffff;
+}
+
+/* Slide Nav Buttons */
+.dk-fashion-slide-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transition: all 0.2s ease;
+}
+.dk-fashion-slide-nav-btn:hover {
+    background: #ffffff;
+    color: #ea580c;
+    transform: translateY(-50%) scale(1.08);
+}
+.dk-slide-prev {
+    left: 20px;
+}
+.dk-slide-next {
+    right: 20px;
+}
+
+/* Dots */
+.dk-fashion-slider-dots {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(6px);
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+.dk-fashion-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+.dk-fashion-dot.active {
+    width: 26px;
+    border-radius: 5px;
+    background: #ea580c;
 }
 </style>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    // 1. Top Picks Scroll
     const track = document.getElementById("dkFashionProductsTrackWrapper");
     const prevBtn = document.getElementById("dkFashionPicksPrev");
     const nextBtn = document.getElementById("dkFashionPicksNext");
@@ -1196,5 +1356,81 @@ document.addEventListener("DOMContentLoaded", function () {
             track.scrollBy({ left: 260, behavior: "smooth" });
         });
     }
+
+    // 2. Full Width Hero Banner Slides with Timeframe
+    const slider = document.getElementById("dkFashionHeroSlider");
+    if (!slider) return;
+
+    const slides = slider.querySelectorAll(".dk-fashion-slide-item");
+    const dots = slider.querySelectorAll(".dk-fashion-dot");
+    const slidePrev = document.getElementById("dkFashionSlidePrev");
+    const slideNext = document.getElementById("dkFashionSlideNext");
+
+    if (!slides || slides.length <= 1) return;
+
+    let currentIndex = 0;
+    const intervalTime = parseInt(slider.getAttribute("data-interval") || "5000", 10);
+    let slideTimer = null;
+
+    function showSlide(index) {
+        if (index < 0) index = slides.length - 1;
+        if (index >= slides.length) index = 0;
+        currentIndex = index;
+
+        slides.forEach((s, idx) => {
+            s.classList.toggle("active", idx === currentIndex);
+        });
+
+        dots.forEach((d, idx) => {
+            d.classList.toggle("active", idx === currentIndex);
+        });
+    }
+
+    function startAutoSlide() {
+        stopAutoSlide();
+        slideTimer = setInterval(function () {
+            showSlide(currentIndex + 1);
+        }, intervalTime);
+    }
+
+    function stopAutoSlide() {
+        if (slideTimer) {
+            clearInterval(slideTimer);
+            slideTimer = null;
+        }
+    }
+
+    if (slidePrev) {
+        slidePrev.addEventListener("click", function (e) {
+            e.preventDefault();
+            stopAutoSlide();
+            showSlide(currentIndex - 1);
+            startAutoSlide();
+        });
+    }
+
+    if (slideNext) {
+        slideNext.addEventListener("click", function (e) {
+            e.preventDefault();
+            stopAutoSlide();
+            showSlide(currentIndex + 1);
+            startAutoSlide();
+        });
+    }
+
+    dots.forEach((dot, idx) => {
+        dot.addEventListener("click", function (e) {
+            e.preventDefault();
+            stopAutoSlide();
+            showSlide(idx);
+            startAutoSlide();
+        });
+    });
+
+    slider.addEventListener("mouseenter", stopAutoSlide);
+    slider.addEventListener("mouseleave", startAutoSlide);
+
+    // Initial start
+    startAutoSlide();
 });
 </script>

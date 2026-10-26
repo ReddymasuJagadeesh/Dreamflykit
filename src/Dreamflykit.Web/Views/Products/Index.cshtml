@@ -151,8 +151,28 @@
         <nav class="dk-catalog-breadcrumb" aria-label="Breadcrumb">
             <a href="/" class="dk-breadcrumb-item">Home</a>
             <span class="dk-breadcrumb-separator">›</span>
-            @if (Model.IsMenClothing || Model.ViewMode == "men-clothing")
+            @if (Model.IsWomenClothing || Model.ViewMode == "women-clothing")
             {
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">Women Clothing</span>
+            }
+            else if (Model.IsHoodiesHub || Model.ViewMode == "hoodies")
+            {
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">Hoodies</span>
+            }
+            else if (Model.IsSweatshirtsHub || Model.ViewMode == "sweatshirts")
+            {
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">Sweatshirts</span>
+            }
+            else if (Model.IsMenClothing || Model.ViewMode == "men-clothing")
+            {
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
                 <span class="dk-breadcrumb-current">Men Clothing</span>
             }
             else if (Model.IsFashionHub && Model.ViewMode == "hub")
@@ -195,10 +215,28 @@
         </nav>
     </div>
 
-    @if ((Model.IsMenClothing || Model.ViewMode == "men-clothing") && Model.FashionHub?.MenClothing != null)
+    @if (Model.IsWomenClothing || Model.ViewMode == "women-clothing")
     {
         <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
-            <partial name="_FashionMenClothingHub" model="Model.FashionHub.MenClothing" />
+            <partial name="_FashionWomenClothingHub" model="@(Model.FashionHub?.WomenClothing ?? Dreamflykit.Application.FashionHub.Models.FashionWomenClothingDto.CreateDefault())" />
+        </div>
+    }
+    else if (Model.IsHoodiesHub || Model.ViewMode == "hoodies")
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_FashionHoodiesHub" model="@(Model.FashionHub?.Hoodies ?? Dreamflykit.Application.FashionHub.Models.FashionHoodiesHubDto.CreateDefault())" />
+        </div>
+    }
+    else if (Model.IsSweatshirtsHub || Model.ViewMode == "sweatshirts")
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_FashionSweatshirtsHub" model="@(Model.FashionHub?.Sweatshirts ?? Dreamflykit.Application.FashionHub.Models.FashionSweatshirtsHubDto.CreateDefault())" />
+        </div>
+    }
+    else if (Model.IsMenClothing || Model.ViewMode == "men-clothing")
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_FashionMenClothingHub" model="@(Model.FashionHub?.MenClothing ?? Dreamflykit.Application.FashionHub.Models.FashionMenClothingDto.CreateDefault())" />
         </div>
     }
     else if (Model.IsFashionHub && Model.FashionHub != null && Model.ViewMode == "hub")
@@ -263,7 +301,18 @@
         </div>
     }
 
-    @if (!Model.IsStudyEssentialsHub && (!Model.IsFashionHub || Model.ViewMode != "hub") && !Model.IsMenClothing && Model.ViewMode != "men-clothing" && (!Model.IsHealthCareHub || Model.ViewMode != "hub") && (!Model.IsMobilesHub || Model.ViewMode != "hub"))
+    @{
+        var isSpecializedHub = (Model.IsFashionHub && Model.ViewMode == "hub") ||
+                               Model.IsWomenClothing || Model.ViewMode == "women-clothing" ||
+                               Model.IsHoodiesHub || Model.ViewMode == "hoodies" ||
+                               Model.IsSweatshirtsHub || Model.ViewMode == "sweatshirts" ||
+                               Model.IsMenClothing || Model.ViewMode == "men-clothing" ||
+                               Model.IsStudyEssentialsHub ||
+                               (Model.IsHealthCareHub && Model.ViewMode == "hub") ||
+                               (Model.IsMobilesHub && Model.ViewMode == "hub");
+    }
+
+    @if (!isSpecializedHub)
     {
         <!-- Main 2-Column Catalog Container -->
         <div class="dk-shell dk-catalog-layout">

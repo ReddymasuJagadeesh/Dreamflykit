@@ -1,0 +1,561 @@
+@model Dreamflykit.Application.FashionHub.Models.FashionHoodiesHubDto
+@{
+    var hoodies = Model ?? Dreamflykit.Application.FashionHub.Models.FashionHoodiesHubDto.CreateDefault();
+    var promoCards = hoodies.PromoCards ?? new();
+    var fits = hoodies.FitSection?.Items ?? new();
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="dk-hoodies-hub-container" id="hoodies-hub-root">
+
+    @if (canManage)
+    {
+        <div class="dk-hoodies-admin-bar">
+            <div class="dk-hoodies-admin-bar-left">
+                <span class="dk-hoodies-admin-badge">⚡ Admin Mode</span>
+                <span class="dk-hoodies-admin-hint">Hoodies Template Active &bull; Customize hero banner, promo collections, and shop by fit</span>
+            </div>
+            <a href="/Admin/FashionHub#tab-hoodies" class="dk-hoodies-admin-btn" id="btnManageHoodies">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Edit Hoodies Template
+            </a>
+        </div>
+    }
+
+    <!-- ============================================================
+         1. HERO BANNER (MATCHES SCREENSHOT 3)
+    ============================================================ -->
+    @if (hoodies.IsEnabled)
+    {
+        var hasHeroImage = !string.IsNullOrWhiteSpace(hoodies.HeroImageUrl) && !hoodies.IsUploadingSoon;
+
+        <section class="dk-hoodies-hero" aria-label="Hoodies Collection Hero Banner">
+            <!-- Full Width Background Layer -->
+            <div class="dk-hoodies-hero-bg">
+                @if (hasHeroImage)
+                {
+                    <img src="@hoodies.HeroImageUrl" 
+                         alt="@hoodies.Title" 
+                         class="dk-hoodies-hero-img"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                    <div class="dk-hoodies-soon-bg" style="display: none;">
+                        <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon" class="dk-hoodies-soon-svg" />
+                        <div class="dk-hoodies-soon-badge">⏳ HERO BANNER UPLOADING SOON</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="dk-hoodies-soon-bg">
+                        <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon" class="dk-hoodies-soon-svg" />
+                        <div class="dk-hoodies-soon-badge">⏳ HERO BANNER UPLOADING SOON</div>
+                    </div>
+                }
+                <!-- Subtle contrast gradient -->
+                <div class="dk-hoodies-hero-gradient"></div>
+            </div>
+
+            <!-- Content floating on left -->
+            <div class="dk-hoodies-hero-content">
+                <span class="dk-hoodies-tag">@hoodies.Tag</span>
+                <h1 class="dk-hoodies-title">@hoodies.Title</h1>
+                <div class="dk-hoodies-highlight">@hoodies.TitleHighlight</div>
+                <p class="dk-hoodies-sub">@hoodies.Subtitle</p>
+
+                <div class="dk-hoodies-btn-group">
+                    <a href="@hoodies.PrimaryButtonUrl" class="dk-hoodies-btn-primary">
+                        @hoodies.PrimaryButtonText
+                    </a>
+                    <a href="@hoodies.SecondaryButtonUrl" class="dk-hoodies-btn-secondary">
+                        @hoodies.SecondaryButtonText
+                    </a>
+                </div>
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         2. 3 PROMO FEATURE CARDS (MATCHES SCREENSHOT 3)
+    ============================================================ -->
+    @if (promoCards.Count > 0)
+    {
+        <section class="dk-hoodies-promo-grid" aria-label="Featured Hoodie Collections">
+            @foreach (var card in promoCards.Where(c => c.IsActive))
+            {
+                <div class="dk-hoodies-promo-card">
+                    <div class="dk-hoodies-promo-text">
+                        <h3 class="dk-hoodies-promo-title">@card.Title</h3>
+                        <p class="dk-hoodies-promo-sub">@card.Subtitle</p>
+                        <a href="@card.ActionUrl" class="dk-hoodies-promo-link">
+                            @card.ActionText
+                        </a>
+                    </div>
+                    <div class="dk-hoodies-promo-visual">
+                        @if (card.IsUploadingSoon || string.IsNullOrWhiteSpace(card.ImageUrl) || card.ImageUrl.Contains("uploading-soon"))
+                        {
+                            <div class="dk-hoodies-promo-placeholder">
+                                <span class="dk-hoodies-promo-emoji">🧥</span>
+                                <span class="dk-hoodies-promo-soon">Uploading Soon</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <img src="@card.ImageUrl" 
+                                 alt="@card.Title" 
+                                 class="dk-hoodies-promo-img" 
+                                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                            <div class="dk-hoodies-promo-placeholder" style="display: none;">
+                                <span class="dk-hoodies-promo-emoji">🧥</span>
+                                <span class="dk-hoodies-promo-soon">Uploading Soon</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </section>
+    }
+
+    <!-- ============================================================
+         3. SHOP BY FIT (MATCHES SCREENSHOT 3)
+    ============================================================ -->
+    @if (fits.Count > 0)
+    {
+        <section class="dk-hoodies-fits-section" aria-label="Shop Hoodies by Fit">
+            <div class="dk-hoodies-section-header">
+                <h2 class="dk-hoodies-section-title">@(hoodies.FitSection?.Title ?? "SHOP BY FIT")</h2>
+                <a href="@(hoodies.FitSection?.ViewAllUrl ?? "/products?q=hoodie")" class="dk-hoodies-section-link">
+                    @(hoodies.FitSection?.ViewAllText ?? "VIEW ALL")
+                </a>
+            </div>
+
+            <div class="dk-hoodies-fits-grid">
+                @foreach (var fit in fits.Where(f => f.IsActive))
+                {
+                    var fitLink = $"/products?q={Uri.EscapeDataString(fit.Name)}";
+                    <a href="@fitLink" class="dk-hoodies-fit-card" title="@fit.Name">
+                        <div class="dk-hoodies-fit-img-box">
+                            @if (fit.IsUploadingSoon || string.IsNullOrWhiteSpace(fit.ImageUrl) || fit.ImageUrl.Contains("uploading-soon"))
+                            {
+                                <div class="dk-hoodies-fit-placeholder">
+                                    <span class="dk-hoodies-fit-emoji">🧥</span>
+                                    <span class="dk-hoodies-fit-soon">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@fit.ImageUrl" 
+                                     alt="@fit.Name" 
+                                     class="dk-hoodies-fit-img" 
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-hoodies-fit-placeholder" style="display: none;">
+                                    <span class="dk-hoodies-fit-emoji">🧥</span>
+                                    <span class="dk-hoodies-fit-soon">Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+                        <span class="dk-hoodies-fit-name">@fit.Name</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+</div>
+
+<style>
+/* ============================================================
+   HOODIES TEMPLATE STYLING (MATCHES SCREENSHOT 3)
+============================================================ */
+.dk-hoodies-hub-container {
+    width: 100%;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+}
+
+/* Admin Bar */
+.dk-hoodies-admin-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    padding: 10px 16px;
+    border-radius: 12px;
+    margin-bottom: 14px;
+}
+.dk-hoodies-admin-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dk-hoodies-admin-badge {
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+.dk-hoodies-admin-hint {
+    font-size: 12.5px;
+    color: #334155;
+    font-weight: 600;
+}
+.dk-hoodies-admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1.5px solid #0f172a;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.dk-hoodies-admin-btn:hover {
+    background: #0f172a;
+    color: #ffffff;
+}
+
+/* 1. HERO BANNER */
+.dk-hoodies-hero {
+    position: relative;
+    width: 100%;
+    min-height: 480px;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    background: #eceae6;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+.dk-hoodies-hero-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+.dk-hoodies-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center right;
+}
+.dk-hoodies-soon-bg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+.dk-hoodies-soon-svg {
+    max-width: 220px;
+    opacity: 0.8;
+}
+.dk-hoodies-soon-badge {
+    margin-top: 12px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 8px 18px;
+    border-radius: 20px;
+}
+.dk-hoodies-hero-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(243, 241, 238, 0.95) 0%, rgba(243, 241, 238, 0.85) 40%, rgba(243, 241, 238, 0.2) 65%, rgba(243, 241, 238, 0.7) 100%);
+    z-index: 2;
+}
+
+/* Content */
+.dk-hoodies-hero-content {
+    position: relative;
+    z-index: 3;
+    padding: 48px;
+    max-width: 580px;
+}
+.dk-hoodies-tag {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #475569;
+    display: block;
+    margin-bottom: 8px;
+}
+.dk-hoodies-title {
+    font-size: 54px;
+    font-weight: 950;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: #0f172a;
+    margin: 0;
+}
+.dk-hoodies-highlight {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: #0f172a;
+    margin: 4px 0 12px;
+}
+.dk-hoodies-sub {
+    font-size: 15px;
+    color: #475569;
+    margin: 0 0 24px;
+    line-height: 1.5;
+}
+.dk-hoodies-btn-group {
+    display: flex;
+    gap: 12px;
+}
+.dk-hoodies-btn-primary {
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.dk-hoodies-btn-primary:hover {
+    background: #334155;
+    transform: translateY(-2px);
+}
+.dk-hoodies-btn-secondary {
+    background: transparent;
+    color: #0f172a;
+    border: 1.5px solid #0f172a;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.dk-hoodies-btn-secondary:hover {
+    background: #0f172a;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* 2. 3 PROMO FEATURE CARDS */
+.dk-hoodies-promo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+}
+.dk-hoodies-promo-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    min-height: 220px;
+    transition: all 0.25s ease;
+}
+.dk-hoodies-promo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    border-color: #cbd5e1;
+}
+.dk-hoodies-promo-text {
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.dk-hoodies-promo-title {
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #0f172a;
+    margin: 0 0 6px;
+}
+.dk-hoodies-promo-sub {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0 0 16px;
+    line-height: 1.4;
+}
+.dk-hoodies-promo-link {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #0f172a;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.2s ease;
+}
+.dk-hoodies-promo-link:hover {
+    transform: translateX(4px);
+    text-decoration: underline;
+}
+.dk-hoodies-promo-visual {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #e2e8f0;
+}
+.dk-hoodies-promo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.dk-hoodies-promo-card:hover .dk-hoodies-promo-img {
+    transform: scale(1.06);
+}
+.dk-hoodies-promo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #e2e8f0;
+    gap: 6px;
+}
+.dk-hoodies-promo-emoji {
+    font-size: 32px;
+}
+.dk-hoodies-promo-soon {
+    font-size: 10px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+/* 3. SHOP BY FIT */
+.dk-hoodies-fits-section {
+    margin-bottom: 36px;
+}
+.dk-hoodies-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+.dk-hoodies-section-title {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #0f172a;
+    margin: 0;
+}
+.dk-hoodies-section-link {
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #64748b;
+    text-decoration: none;
+}
+.dk-hoodies-section-link:hover {
+    color: #0f172a;
+}
+.dk-hoodies-fits-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+}
+.dk-hoodies-fit-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+.dk-hoodies-fit-card:hover {
+    transform: translateY(-4px);
+}
+.dk-hoodies-fit-img-box {
+    width: 100%;
+    aspect-ratio: 0.85;
+    background: #f1f5f9;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    border: 1px solid #e2e8f0;
+}
+.dk-hoodies-fit-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.dk-hoodies-fit-card:hover .dk-hoodies-fit-img {
+    transform: scale(1.05);
+}
+.dk-hoodies-fit-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    gap: 6px;
+}
+.dk-hoodies-fit-emoji {
+    font-size: 28px;
+}
+.dk-hoodies-fit-soon {
+    font-size: 10px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+}
+.dk-hoodies-fit-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    text-align: center;
+}
+
+/* Responsive */
+@@media (max-width: 992px) {
+    .dk-hoodies-promo-grid {
+        grid-template-columns: 1fr;
+    }
+    .dk-hoodies-fits-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@@media (max-width: 600px) {
+    .dk-hoodies-hero-content {
+        padding: 24px;
+    }
+    .dk-hoodies-title {
+        font-size: 38px;
+    }
+    .dk-hoodies-highlight {
+        font-size: 22px;
+    }
+    .dk-hoodies-fits-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>

@@ -1,0 +1,791 @@
+@model Dreamflykit.Application.FashionHub.Models.FashionSweatshirtsHubDto
+@{
+    var sweatshirts = Model ?? Dreamflykit.Application.FashionHub.Models.FashionSweatshirtsHubDto.CreateDefault();
+    var promoCards = sweatshirts.PromoCards ?? new();
+    var styles = sweatshirts.StyleSection?.Items ?? new();
+    var badges = sweatshirts.Badges ?? new();
+    var trustBadges = sweatshirts.TrustBadgesSection?.Badges ?? new();
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="dk-sweat-hub-container" id="sweatshirts-hub-root">
+
+    @if (canManage)
+    {
+        <div class="dk-sweat-admin-bar">
+            <div class="dk-sweat-admin-bar-left">
+                <span class="dk-sweat-admin-badge">⚡ Admin Mode</span>
+                <span class="dk-sweat-admin-hint">Men's Sweatshirt Template Active &bull; Customize hero banner, outlet tabs, promo cards, and shop by style</span>
+            </div>
+            <a href="/Admin/FashionHub#tab-sweatshirts" class="dk-sweat-admin-btn" id="btnManageSweatshirts">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Edit Sweatshirts Template
+            </a>
+        </div>
+    }
+
+    <!-- ============================================================
+         OUTLET SUB-NAVIGATION BAR (MATCHES SCREENSHOT 4)
+    ============================================================ -->
+    <div class="dk-outlet-nav-bar">
+        <div class="dk-outlet-title-box">
+            <span class="dk-outlet-brand">DREAMFLYKIT</span>
+            <span class="dk-outlet-tagline">OUTLET</span>
+        </div>
+        <div class="dk-outlet-tabs">
+            <a href="/category/fashion/men-clothing" class="dk-outlet-tab active">Men</a>
+            <a href="/category/fashion/women-clothing" class="dk-outlet-tab">Women</a>
+            <a href="/products?category=fashion" class="dk-outlet-tab">Divided</a>
+            <a href="/products?category=fashion" class="dk-outlet-tab">Baby</a>
+            <a href="/products?category=fashion" class="dk-outlet-tab">Kids</a>
+            <a href="/products?category=room-living" class="dk-outlet-tab">Home</a>
+            <a href="/products?category=fashion&sort=DiscountHighToLow" class="dk-outlet-tab dk-outlet-tab-sale">Sale</a>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         1. HERO BANNER (MATCHES SCREENSHOT 4)
+    ============================================================ -->
+    @if (sweatshirts.IsEnabled)
+    {
+        var hasHeroImage = !string.IsNullOrWhiteSpace(sweatshirts.HeroImageUrl) && !sweatshirts.IsUploadingSoon;
+
+        <section class="dk-sweat-hero" aria-label="Men's Sweatshirt Hero Banner">
+            <!-- Full Width Background Layer -->
+            <div class="dk-sweat-hero-bg">
+                @if (hasHeroImage)
+                {
+                    <img src="@sweatshirts.HeroImageUrl" 
+                         alt="@sweatshirts.Title" 
+                         class="dk-sweat-hero-img"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                    <div class="dk-sweat-soon-bg" style="display: none;">
+                        <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon" class="dk-sweat-soon-svg" />
+                        <div class="dk-sweat-soon-badge">⏳ HERO BANNER UPLOADING SOON</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="dk-sweat-soon-bg">
+                        <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon" class="dk-sweat-soon-svg" />
+                        <div class="dk-sweat-soon-badge">⏳ HERO BANNER UPLOADING SOON</div>
+                    </div>
+                }
+                <!-- Readable gradient overlay -->
+                <div class="dk-sweat-hero-gradient"></div>
+            </div>
+
+            <!-- Content floating on left -->
+            <div class="dk-sweat-hero-content">
+                <span class="dk-sweat-tag">@sweatshirts.Tag</span>
+                <h1 class="dk-sweat-title">@sweatshirts.Title</h1>
+                <p class="dk-sweat-sub">@sweatshirts.Subtitle</p>
+
+                <div class="dk-sweat-btn-group">
+                    <a href="@sweatshirts.PrimaryButtonUrl" class="dk-sweat-btn-primary">
+                        @sweatshirts.PrimaryButtonText
+                    </a>
+                    <a href="@sweatshirts.SecondaryButtonUrl" class="dk-sweat-btn-secondary">
+                        @sweatshirts.SecondaryButtonText
+                    </a>
+                </div>
+
+                <!-- 4 Badges in a single row -->
+                @if (badges.Count > 0)
+                {
+                    <div class="dk-sweat-badges-row">
+                        @foreach (var badge in badges.Where(b => b.IsActive))
+                        {
+                            <div class="dk-sweat-badge-pill">
+                                <span class="dk-sweat-badge-icon">
+                                    @if (badge.Icon == "shirt" || badge.Label.Contains("Soft"))
+                                    {
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                                    }
+                                    else if (badge.Icon == "shield" || badge.Label.Contains("Quality"))
+                                    {
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                                    }
+                                    else if (badge.Icon == "tag" || badge.Label.Contains("Price"))
+                                    {
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                                    }
+                                    else
+                                    {
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><circle cx="12" cy="14" r="4"></circle><line x1="8" y1="6" x2="8.01" y2="6"></line></svg>
+                                    }
+                                </span>
+                                <span class="dk-sweat-badge-label">@badge.Label</span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         2. 3 PROMO FEATURE CARDS (MATCHES SCREENSHOT 4)
+    ============================================================ -->
+    @if (promoCards.Count > 0)
+    {
+        <section class="dk-sweat-promo-grid" aria-label="Sweatshirt Promo Collections">
+            @foreach (var card in promoCards.Where(c => c.IsActive))
+            {
+                <div class="dk-sweat-promo-card">
+                    <div class="dk-sweat-promo-text">
+                        <h3 class="dk-sweat-promo-title">@card.Title</h3>
+                        <p class="dk-sweat-promo-sub">@card.Subtitle</p>
+                        <a href="@card.ActionUrl" class="dk-sweat-promo-link">
+                            @card.ActionText
+                        </a>
+                    </div>
+                    <div class="dk-sweat-promo-visual">
+                        @if (card.IsUploadingSoon || string.IsNullOrWhiteSpace(card.ImageUrl) || card.ImageUrl.Contains("uploading-soon"))
+                        {
+                            <div class="dk-sweat-promo-placeholder">
+                                <span class="dk-sweat-promo-emoji">👕</span>
+                                <span class="dk-sweat-promo-soon">Uploading Soon</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <img src="@card.ImageUrl" 
+                                 alt="@card.Title" 
+                                 class="dk-sweat-promo-img" 
+                                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                            <div class="dk-sweat-promo-placeholder" style="display: none;">
+                                <span class="dk-sweat-promo-emoji">👕</span>
+                                <span class="dk-sweat-promo-soon">Uploading Soon</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </section>
+    }
+
+    <!-- ============================================================
+         3. SHOP BY STYLE (MATCHES SCREENSHOT 4: 10 CARDS)
+    ============================================================ -->
+    @if (styles.Count > 0)
+    {
+        <section class="dk-sweat-style-section" aria-label="Shop Sweatshirts by Style">
+            <div class="dk-sweat-section-header">
+                <h2 class="dk-sweat-section-title">@(sweatshirts.StyleSection?.Title ?? "SHOP BY STYLE")</h2>
+                <a href="@(sweatshirts.StyleSection?.ViewAllUrl ?? "/products?q=sweatshirt")" class="dk-sweat-section-link">
+                    @(sweatshirts.StyleSection?.ViewAllText ?? "VIEW ALL")
+                </a>
+            </div>
+
+            <div class="dk-sweat-styles-grid">
+                @foreach (var item in styles.Where(s => s.IsActive))
+                {
+                    var itemLink = $"/products?q={Uri.EscapeDataString(item.Name)}";
+                    <a href="@itemLink" class="dk-sweat-style-card" title="@item.Name">
+                        <div class="dk-sweat-style-img-box">
+                            @if (item.IsUploadingSoon || string.IsNullOrWhiteSpace(item.ImageUrl) || item.ImageUrl.Contains("uploading-soon"))
+                            {
+                                <div class="dk-sweat-style-placeholder">
+                                    <span class="dk-sweat-style-emoji">@GetStyleEmoji(item.Slug)</span>
+                                    <span class="dk-sweat-style-soon">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@item.ImageUrl" 
+                                     alt="@item.Name" 
+                                     class="dk-sweat-style-img" 
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-sweat-style-placeholder" style="display: none;">
+                                    <span class="dk-sweat-style-emoji">@GetStyleEmoji(item.Slug)</span>
+                                    <span class="dk-sweat-style-soon">Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+                        <span class="dk-sweat-style-name">@item.Name</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         4. TRUST STRIP (MATCHES SCREENSHOT 4)
+    ============================================================ -->
+    @if (trustBadges.Count > 0)
+    {
+        <section class="dk-sweat-trust-strip" aria-label="Customer Benefits">
+            <div class="dk-sweat-trust-grid">
+                @foreach (var badge in trustBadges.Where(b => b.IsActive))
+                {
+                    <div class="dk-sweat-trust-item">
+                        <div class="dk-sweat-trust-icon">
+                            @if (badge.Icon == "tag" || badge.Title.Contains("Price"))
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            }
+                            else if (badge.Icon == "shield" || badge.Title.Contains("Quality"))
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                            }
+                            else if (badge.Icon == "truck" || badge.Title.Contains("Delivery"))
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            }
+                            else
+                            {
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                            }
+                        </div>
+                        <div class="dk-sweat-trust-info">
+                            <h4 class="dk-sweat-trust-title">@badge.Title</h4>
+                            <p class="dk-sweat-trust-sub">@badge.Subtitle</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+</div>
+
+@functions {
+    private static string GetStyleEmoji(string? slug)
+    {
+        if (string.IsNullOrWhiteSpace(slug)) return "👕";
+        var s = slug.ToLowerInvariant();
+        if (s.Contains("crew")) return "👕";
+        if (s.Contains("hoodie")) return "🧥";
+        if (s.Contains("zip")) return "🧥";
+        if (s.Contains("oversize")) return "👕";
+        if (s.Contains("print")) return "🎨";
+        if (s.Contains("fleece")) return "🧶";
+        return "👕";
+    }
+}
+
+<style>
+/* ============================================================
+   SWEATSHIRTS TEMPLATE STYLING (MATCHES SCREENSHOT 4)
+============================================================ */
+.dk-sweat-hub-container {
+    width: 100%;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+}
+
+/* Admin Bar */
+.dk-sweat-admin-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff7ed;
+    border: 1px solid #ffedd5;
+    padding: 10px 16px;
+    border-radius: 12px;
+    margin-bottom: 14px;
+}
+.dk-sweat-admin-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dk-sweat-admin-badge {
+    background: #ea580c;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+.dk-sweat-admin-hint {
+    font-size: 12.5px;
+    color: #9a3412;
+    font-weight: 600;
+}
+.dk-sweat-admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    color: #ea580c;
+    border: 1.5px solid #ea580c;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.dk-sweat-admin-btn:hover {
+    background: #ea580c;
+    color: #ffffff;
+}
+
+/* OUTLET SUB-NAV BAR */
+.dk-outlet-nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0 16px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.dk-outlet-title-box {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+.dk-outlet-brand {
+    font-size: 18px;
+    font-weight: 900;
+    color: #ea580c;
+    letter-spacing: 0.5px;
+}
+.dk-outlet-tagline {
+    font-size: 11px;
+    font-weight: 800;
+    color: #475569;
+    letter-spacing: 1.5px;
+}
+.dk-outlet-tabs {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+.dk-outlet-tab {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #475569;
+    text-decoration: none;
+    padding-bottom: 4px;
+    position: relative;
+    transition: color 0.2s ease;
+}
+.dk-outlet-tab:hover {
+    color: #0f172a;
+}
+.dk-outlet-tab.active {
+    color: #ea580c;
+    font-weight: 800;
+}
+.dk-outlet-tab.active::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #ea580c;
+    border-radius: 2px;
+}
+.dk-outlet-tab-sale {
+    color: #e11d48;
+}
+
+/* 1. HERO BANNER */
+.dk-sweat-hero {
+    position: relative;
+    width: 100%;
+    min-height: 480px;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    background: #e9e6e1;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+.dk-sweat-hero-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+.dk-sweat-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center right;
+}
+.dk-sweat-soon-bg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+}
+.dk-sweat-soon-svg {
+    max-width: 220px;
+    opacity: 0.8;
+}
+.dk-sweat-soon-badge {
+    margin-top: 12px;
+    background: #ea580c;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 8px 18px;
+    border-radius: 20px;
+}
+.dk-sweat-hero-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(239, 237, 233, 0.95) 0%, rgba(239, 237, 233, 0.82) 42%, rgba(239, 237, 233, 0.2) 65%, rgba(239, 237, 233, 0.7) 100%);
+    z-index: 2;
+}
+
+/* Content */
+.dk-sweat-hero-content {
+    position: relative;
+    z-index: 3;
+    padding: 48px;
+    max-width: 580px;
+}
+.dk-sweat-tag {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #ea580c;
+    display: block;
+    margin-bottom: 8px;
+}
+.dk-sweat-title {
+    font-size: 52px;
+    font-weight: 950;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    color: #0f172a;
+    margin: 0 0 10px;
+}
+.dk-sweat-sub {
+    font-size: 15px;
+    color: #475569;
+    margin: 0 0 24px;
+    line-height: 1.5;
+}
+.dk-sweat-btn-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.dk-sweat-btn-primary {
+    background: #ea580c;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.dk-sweat-btn-primary:hover {
+    background: #c2410c;
+    transform: translateY(-2px);
+}
+.dk-sweat-btn-secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: #0f172a;
+    border: 1.5px solid #cbd5e1;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.dk-sweat-btn-secondary:hover {
+    background: #ffffff;
+    border-color: #0f172a;
+    transform: translateY(-2px);
+}
+.dk-sweat-badges-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.dk-sweat-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.94);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+.dk-sweat-badge-icon {
+    color: #ea580c;
+    display: flex;
+    align-items: center;
+}
+.dk-sweat-badge-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+/* 2. 3 PROMO FEATURE CARDS */
+.dk-sweat-promo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+}
+.dk-sweat-promo-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    min-height: 220px;
+    transition: all 0.25s ease;
+}
+.dk-sweat-promo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    border-color: #cbd5e1;
+}
+.dk-sweat-promo-text {
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.dk-sweat-promo-title {
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #0f172a;
+    margin: 0 0 6px;
+}
+.dk-sweat-promo-sub {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0 0 16px;
+    line-height: 1.4;
+}
+.dk-sweat-promo-link {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #0f172a;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.dk-sweat-promo-link:hover {
+    text-decoration: underline;
+    color: #ea580c;
+}
+.dk-sweat-promo-visual {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #e2e8f0;
+}
+.dk-sweat-promo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.dk-sweat-promo-card:hover .dk-sweat-promo-img {
+    transform: scale(1.06);
+}
+.dk-sweat-promo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #e2e8f0;
+    gap: 6px;
+}
+.dk-sweat-promo-emoji {
+    font-size: 32px;
+}
+.dk-sweat-promo-soon {
+    font-size: 10px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+/* 3. SHOP BY STYLE (10 CARDS) */
+.dk-sweat-style-section {
+    margin-bottom: 36px;
+}
+.dk-sweat-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+.dk-sweat-section-title {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #0f172a;
+    margin: 0;
+}
+.dk-sweat-section-link {
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #64748b;
+    text-decoration: none;
+}
+.dk-sweat-section-link:hover {
+    color: #ea580c;
+}
+.dk-sweat-styles-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 12px;
+}
+.dk-sweat-style-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+.dk-sweat-style-card:hover {
+    transform: translateY(-4px);
+}
+.dk-sweat-style-img-box {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #f1f5f9;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    border: 1px solid #e2e8f0;
+}
+.dk-sweat-style-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.dk-sweat-style-card:hover .dk-sweat-style-img {
+    transform: scale(1.06);
+}
+.dk-sweat-style-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    gap: 4px;
+}
+.dk-sweat-style-emoji {
+    font-size: 26px;
+}
+.dk-sweat-style-soon {
+    font-size: 9px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+}
+.dk-sweat-style-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    text-align: center;
+}
+
+/* 4. TRUST STRIP */
+.dk-sweat-trust-strip {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 32px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+.dk-sweat-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+.dk-sweat-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.dk-sweat-trust-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #fff7ed;
+    color: #ea580c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.dk-sweat-trust-title {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 3px;
+}
+.dk-sweat-trust-sub {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Responsive */
+@@media (max-width: 1200px) {
+    .dk-sweat-styles-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+@@media (max-width: 992px) {
+    .dk-sweat-promo-grid {
+        grid-template-columns: 1fr;
+    }
+    .dk-sweat-trust-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@@media (max-width: 600px) {
+    .dk-sweat-hero-content {
+        padding: 24px;
+    }
+    .dk-sweat-title {
+        font-size: 38px;
+    }
+    .dk-sweat-styles-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .dk-sweat-trust-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
