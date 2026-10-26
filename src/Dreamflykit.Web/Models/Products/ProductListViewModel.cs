@@ -74,15 +74,45 @@ public sealed class ProductListViewModel
         string.Equals(CategorySlug, "study-essentials", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "study_essentials", StringComparison.OrdinalIgnoreCase);
 
-    public bool IsFashionHub =>
-        string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase);
-
     public bool IsMenClothing =>
-        (IsFashionHub && (string.Equals(CurrentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
-                          string.Equals(CurrentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase))) ||
+        string.Equals(ViewMode, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(ViewMode, "men-clothing", StringComparison.OrdinalIgnoreCase);
+        (string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
+         (string.Equals(CurrentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(CurrentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase)));
+
+    public bool IsWomenClothing =>
+        string.Equals(ViewMode, "women-clothing", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "women-clothing", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "women_clothing", StringComparison.OrdinalIgnoreCase) ||
+        (string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
+         (string.Equals(CurrentSubcategorySlug, "women-clothing", StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(CurrentSubcategorySlug, "women_clothing", StringComparison.OrdinalIgnoreCase)));
+
+    public bool IsHoodiesHub =>
+        string.Equals(ViewMode, "hoodies", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "hoodies", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "hoodie", StringComparison.OrdinalIgnoreCase) ||
+        (string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
+         (string.Equals(CurrentSubcategorySlug, "hoodies", StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(CurrentSubcategorySlug, "hoodie", StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(CurrentSubcategorySlug, "hoodies-sweatshirts", StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(CurrentSubcategorySlug, "mens-hoodies", StringComparison.OrdinalIgnoreCase)));
+
+    public bool IsSweatshirtsHub =>
+        string.Equals(ViewMode, "sweatshirts", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "sweatshirts", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "sweatshirt", StringComparison.OrdinalIgnoreCase) ||
+        (string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
+         (string.Equals(CurrentSubcategorySlug, "sweatshirts", StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(CurrentSubcategorySlug, "sweatshirt", StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(CurrentSubcategorySlug, "mens-sweatshirts", StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(CurrentSubcategorySlug, "mens-sweatshirt", StringComparison.OrdinalIgnoreCase)));
+
+    public bool IsFashionHub =>
+        string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
+        !IsMenClothing && !IsWomenClothing && !IsHoodiesHub && !IsSweatshirtsHub;
 
     public bool IsHealthCareHub =>
         string.Equals(CategorySlug, "health-care", StringComparison.OrdinalIgnoreCase) ||

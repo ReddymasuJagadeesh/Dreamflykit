@@ -136,6 +136,29 @@ public sealed class ProductsController : Controller
                                     (isFashionCategory && (string.Equals(currentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
                                                            string.Equals(currentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase)));
 
+        var isWomenClothingCategory = string.Equals(effectiveCategory, "women-clothing", StringComparison.OrdinalIgnoreCase) ||
+                                      string.Equals(effectiveCategory, "women_clothing", StringComparison.OrdinalIgnoreCase) ||
+                                      (isFashionCategory && (string.Equals(currentSubcategorySlug, "women-clothing", StringComparison.OrdinalIgnoreCase) ||
+                                                             string.Equals(currentSubcategorySlug, "women_clothing", StringComparison.OrdinalIgnoreCase)));
+
+        var isHoodiesCategory = string.Equals(effectiveCategory, "hoodies", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(effectiveCategory, "hoodie", StringComparison.OrdinalIgnoreCase) ||
+                                (isFashionCategory && (string.Equals(currentSubcategorySlug, "hoodies", StringComparison.OrdinalIgnoreCase) ||
+                                                       string.Equals(currentSubcategorySlug, "hoodie", StringComparison.OrdinalIgnoreCase) ||
+                                                       string.Equals(currentSubcategorySlug, "hoodies-sweatshirts", StringComparison.OrdinalIgnoreCase) ||
+                                                       string.Equals(currentSubcategorySlug, "mens-hoodies", StringComparison.OrdinalIgnoreCase)));
+
+        var isSweatshirtsCategory = string.Equals(effectiveCategory, "sweatshirts", StringComparison.OrdinalIgnoreCase) ||
+                                    string.Equals(effectiveCategory, "sweatshirt", StringComparison.OrdinalIgnoreCase) ||
+                                    string.Equals(effectiveCategory, "mens-sweatshirts", StringComparison.OrdinalIgnoreCase) ||
+                                    string.Equals(effectiveCategory, "mens-sweatshirt", StringComparison.OrdinalIgnoreCase) ||
+                                    (isFashionCategory && (string.Equals(currentSubcategorySlug, "sweatshirts", StringComparison.OrdinalIgnoreCase) ||
+                                                           string.Equals(currentSubcategorySlug, "sweatshirt", StringComparison.OrdinalIgnoreCase) ||
+                                                           string.Equals(currentSubcategorySlug, "mens-sweatshirts", StringComparison.OrdinalIgnoreCase) ||
+                                                           string.Equals(currentSubcategorySlug, "mens-sweatshirt", StringComparison.OrdinalIgnoreCase)));
+
+        var isAnyFashionTemplate = isFashionCategory || isMenClothingCategory || isWomenClothingCategory || isHoodiesCategory || isSweatshirtsCategory;
+
         var model = new ProductListViewModel
         {
             Products = result.Items,
@@ -148,13 +171,20 @@ public sealed class ProductsController : Controller
             SearchTerm = effectiveSearch,
             CategoryId = categoryId,
             CategorySlug = result.CurrentCategorySlug ?? effectiveCategory,
-            CategoryName = isMenClothingCategory ? "Men Clothing" : (result.CurrentCategoryName ?? catDetails?.Name),
+            CategoryName = isHoodiesCategory ? "Hoodies" :
+                           (isSweatshirtsCategory ? "Sweatshirts" :
+                           (isWomenClothingCategory ? "Women Clothing" :
+                           (isMenClothingCategory ? "Men Clothing" :
+                           (result.CurrentCategoryName ?? catDetails?.Name)))),
             CategoryImageUrl = catDetails?.ImageUrl,
             CategoryDescription = !string.IsNullOrWhiteSpace(catDetails?.Name)
                 ? $"Explore premium {catDetails.Name} student essentials, verified university supplies, and travel-ready gear curated for international students."
                 : null,
             SubcategoryId = subcategoryId,
-            CurrentSubcategoryName = isMenClothingCategory ? "Men Clothing" : currentSubcategoryName,
+            CurrentSubcategoryName = isHoodiesCategory ? "Hoodies" :
+                                     (isSweatshirtsCategory ? "Sweatshirts" :
+                                     (isWomenClothingCategory ? "Women Clothing" :
+                                     (isMenClothingCategory ? "Men Clothing" : currentSubcategoryName))),
             CurrentSubcategorySlug = currentSubcategorySlug,
             Subcategories = catDetails?.Subcategories ?? Array.Empty<SubcategoryListItem>(),
             MinPrice = minPrice,
@@ -167,13 +197,15 @@ public sealed class ProductsController : Controller
             Discounts = result.Discounts,
             ViewMode = !string.IsNullOrWhiteSpace(view)
                 ? view.Trim().ToLowerInvariant()
-                : (isMenClothingCategory
-                    ? "men-clothing"
-                    : ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories")),
+                : (isHoodiesCategory ? "hoodies" :
+                  (isSweatshirtsCategory ? "sweatshirts" :
+                  (isWomenClothingCategory ? "women-clothing" :
+                  (isMenClothingCategory ? "men-clothing" :
+                  ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"))))),
             StudyHub = isStudyCategory
                         ? await _studyHubService.GetConfigAsync(cancellationToken)
                         : null,
-            FashionHub = (isFashionCategory || isMenClothingCategory)
+            FashionHub = isAnyFashionTemplate
                         ? await _fashionHubService.GetConfigAsync(cancellationToken)
                         : null,
             HealthHub = isHealthCategory

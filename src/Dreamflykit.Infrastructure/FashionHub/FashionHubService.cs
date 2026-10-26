@@ -71,11 +71,22 @@ public sealed class FashionHubService : IFashionHubService
                     {
                         var def = FashionHubDto.CreateDefault();
                         dto.HeroBanner ??= def.HeroBanner;
+                        if (dto.HeroBanner.Slides == null || dto.HeroBanner.Slides.Count == 0)
+                        {
+                            dto.HeroBanner.Slides = def.HeroBanner.Slides;
+                        }
+                        if (dto.HeroBanner.SlideIntervalSeconds <= 0)
+                        {
+                            dto.HeroBanner.SlideIntervalSeconds = 5;
+                        }
                         dto.CategoriesSection ??= def.CategoriesSection;
                         dto.TopPicksSection ??= def.TopPicksSection;
                         dto.TrustBadgesSection ??= def.TrustBadgesSection;
                         dto.BottomBanner ??= def.BottomBanner;
                         dto.MenClothing ??= def.MenClothing;
+                        dto.WomenClothing ??= def.WomenClothing;
+                        dto.Hoodies ??= def.Hoodies;
+                        dto.Sweatshirts ??= def.Sweatshirts;
 
                         _cache.Set(CacheKey, dto, TimeSpan.FromHours(4));
                         return dto;
