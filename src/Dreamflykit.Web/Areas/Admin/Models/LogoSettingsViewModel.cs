@@ -7,14 +7,14 @@ public sealed class LogoSettingsViewModel
 {
     // Section 1: Left 'D' Logo Symbol
     [Display(Name = "Section 1: 'D' Logo Image URL")]
-    public string Section1DLogoUrl { get; set; } = "/images/branding/dreamflykit-d-symbol.jpg";
+    public string Section1DLogoUrl { get; set; } = "/images/branding/dreamflykit-d-symbol-transparent.png";
 
     [Display(Name = "Section 1: Show 'Uploading Soon' Placeholder")]
     public bool Section1UploadingSoon { get; set; } = false;
 
     // Section 2: Dreamflykit Brand Text Logo
     [Display(Name = "Section 2: 'Dreamflykit' Brand Logo Image URL")]
-    public string Section2BrandLogoUrl { get; set; } = "/images/branding/dreamflykit-brand-text.jpg";
+    public string Section2BrandLogoUrl { get; set; } = "/images/branding/dreamflykit-brand-transparent.png";
 
     [Display(Name = "Section 2: Show 'Uploading Soon' Placeholder")]
     public bool Section2UploadingSoon { get; set; } = false;
@@ -29,7 +29,7 @@ public sealed class LogoSettingsViewModel
     public string? ScrolledLogoUrl
     {
         get => Section1DLogoUrl;
-        set => Section1DLogoUrl = value ?? "/images/branding/dreamflykit-d-symbol.jpg";
+        set => Section1DLogoUrl = value ?? "/images/branding/dreamflykit-d-symbol-transparent.png";
     }
 
     [Required(ErrorMessage = "Site title is required.")]

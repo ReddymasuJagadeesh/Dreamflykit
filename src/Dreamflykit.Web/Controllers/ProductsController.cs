@@ -41,17 +41,18 @@ public sealed class ProductsController : Controller
     [HttpGet("/categories/{category}")]
     [HttpGet("/categories/{category}/{subcategorySlug}")]
     public async Task<IActionResult> Index(
-        [FromQuery(Name = "q")] string? q,
-        [FromQuery] string? search,
-        [FromQuery] Guid? categoryId,
-        [FromRoute] string? category,
-        [FromQuery(Name = "category")] string? queryCategory,
-        [FromRoute] string? subcategorySlug,
-        [FromQuery] Guid? subcategoryId,
-        [FromQuery] decimal? minPrice,
-        [FromQuery] decimal? maxPrice,
-        [FromQuery] bool? inStockOnly,
-        [FromQuery] int? minDiscount,
+        [FromQuery(Name = "q")] string? q = null,
+        [FromQuery] string? search = null,
+        [FromQuery] Guid? categoryId = null,
+        [FromRoute] string? category = null,
+        [FromQuery(Name = "category")] string? queryCategory = null,
+        [FromRoute] string? subcategorySlug = null,
+        [FromQuery(Name = "subcategory")] string? querySubcategory = null,
+        [FromQuery] Guid? subcategoryId = null,
+        [FromQuery] decimal? minPrice = null,
+        [FromQuery] decimal? maxPrice = null,
+        [FromQuery] bool? inStockOnly = null,
+        [FromQuery] int? minDiscount = null,
         [FromQuery] ProductSortOption sort = ProductSortOption.Relevance,
         [FromQuery] string? view = null,
         [FromQuery] int page = 1,
@@ -76,7 +77,9 @@ public sealed class ProductsController : Controller
 
         CategoryDetails? catDetails = null;
         string? currentSubcategoryName = null;
-        string? currentSubcategorySlug = subcategorySlug;
+        string? currentSubcategorySlug = !string.IsNullOrWhiteSpace(subcategorySlug)
+            ? subcategorySlug.Trim().ToLowerInvariant()
+            : (!string.IsNullOrWhiteSpace(querySubcategory) ? querySubcategory.Trim().ToLowerInvariant() : null);
 
         if (!string.IsNullOrWhiteSpace(effectiveCategory))
         {
@@ -85,10 +88,10 @@ public sealed class ProductsController : Controller
             {
                 categoryId = catDetails.CategoryId;
 
-                if (!string.IsNullOrWhiteSpace(subcategorySlug))
+                if (!string.IsNullOrWhiteSpace(currentSubcategorySlug))
                 {
                     var matchingSub = catDetails.Subcategories
-                        .FirstOrDefault(s => s.Slug.Equals(subcategorySlug, StringComparison.OrdinalIgnoreCase));
+                        .FirstOrDefault(s => s.Slug.Equals(currentSubcategorySlug, StringComparison.OrdinalIgnoreCase));
                     if (matchingSub != null)
                     {
                         subcategoryId = matchingSub.SubcategoryId;
@@ -131,10 +134,23 @@ public sealed class ProductsController : Controller
             query,
             cancellationToken);
 
-        var isMenClothingCategory = string.Equals(effectiveCategory, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
-                                    string.Equals(effectiveCategory, "men_clothing", StringComparison.OrdinalIgnoreCase) ||
-                                    (isFashionCategory && (string.Equals(currentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
-                                                           string.Equals(currentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase)));
+        var isEthnicWearCategory = string.Equals(effectiveCategory, "ethnic-wear", StringComparison.OrdinalIgnoreCase) ||
+                                   string.Equals(effectiveCategory, "ethnic_wear", StringComparison.OrdinalIgnoreCase) ||
+                                   string.Equals(effectiveCategory, "ethnic", StringComparison.OrdinalIgnoreCase) ||
+                                   (isFashionCategory && (string.Equals(currentSubcategorySlug, "ethnic-wear", StringComparison.OrdinalIgnoreCase) ||
+                                                          string.Equals(currentSubcategorySlug, "ethnic_wear", StringComparison.OrdinalIgnoreCase) ||
+                                                          string.Equals(currentSubcategorySlug, "ethnic", StringComparison.OrdinalIgnoreCase)));
+
+        var isThermalsCategory = string.Equals(effectiveCategory, "thermals", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(effectiveCategory, "thermal", StringComparison.OrdinalIgnoreCase) ||
+                                 (isFashionCategory && (string.Equals(currentSubcategorySlug, "thermals", StringComparison.OrdinalIgnoreCase) ||
+                                                        string.Equals(currentSubcategorySlug, "thermal", StringComparison.OrdinalIgnoreCase)));
+
+        var isMenClothingCategory = !isEthnicWearCategory && !isThermalsCategory &&
+                                    (string.Equals(effectiveCategory, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+                                     string.Equals(effectiveCategory, "men_clothing", StringComparison.OrdinalIgnoreCase) ||
+                                     (isFashionCategory && (string.Equals(currentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+                                                            string.Equals(currentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase))));
 
         var isWomenClothingCategory = string.Equals(effectiveCategory, "women-clothing", StringComparison.OrdinalIgnoreCase) ||
                                       string.Equals(effectiveCategory, "women_clothing", StringComparison.OrdinalIgnoreCase) ||
@@ -157,7 +173,7 @@ public sealed class ProductsController : Controller
                                                            string.Equals(currentSubcategorySlug, "mens-sweatshirts", StringComparison.OrdinalIgnoreCase) ||
                                                            string.Equals(currentSubcategorySlug, "mens-sweatshirt", StringComparison.OrdinalIgnoreCase)));
 
-        var isAnyFashionTemplate = isFashionCategory || isMenClothingCategory || isWomenClothingCategory || isHoodiesCategory || isSweatshirtsCategory;
+        var isAnyFashionTemplate = isFashionCategory || isMenClothingCategory || isWomenClothingCategory || isHoodiesCategory || isSweatshirtsCategory || isEthnicWearCategory || isThermalsCategory;
 
         var model = new ProductListViewModel
         {
@@ -171,20 +187,24 @@ public sealed class ProductsController : Controller
             SearchTerm = effectiveSearch,
             CategoryId = categoryId,
             CategorySlug = result.CurrentCategorySlug ?? effectiveCategory,
-            CategoryName = isHoodiesCategory ? "Hoodies" :
+            CategoryName = isEthnicWearCategory ? "Ethnic Wear" :
+                           (isThermalsCategory ? "Thermals" :
+                           (isHoodiesCategory ? "Hoodies" :
                            (isSweatshirtsCategory ? "Sweatshirts" :
                            (isWomenClothingCategory ? "Women Clothing" :
                            (isMenClothingCategory ? "Men Clothing" :
-                           (result.CurrentCategoryName ?? catDetails?.Name)))),
+                           (result.CurrentCategoryName ?? catDetails?.Name)))))),
             CategoryImageUrl = catDetails?.ImageUrl,
             CategoryDescription = !string.IsNullOrWhiteSpace(catDetails?.Name)
                 ? $"Explore premium {catDetails.Name} student essentials, verified university supplies, and travel-ready gear curated for international students."
                 : null,
             SubcategoryId = subcategoryId,
-            CurrentSubcategoryName = isHoodiesCategory ? "Hoodies" :
+            CurrentSubcategoryName = isEthnicWearCategory ? "Ethnic Wear" :
+                                     (isThermalsCategory ? "Thermals" :
+                                     (isHoodiesCategory ? "Hoodies" :
                                      (isSweatshirtsCategory ? "Sweatshirts" :
                                      (isWomenClothingCategory ? "Women Clothing" :
-                                     (isMenClothingCategory ? "Men Clothing" : currentSubcategoryName))),
+                                     (isMenClothingCategory ? "Men Clothing" : currentSubcategoryName))))),
             CurrentSubcategorySlug = currentSubcategorySlug,
             Subcategories = catDetails?.Subcategories ?? Array.Empty<SubcategoryListItem>(),
             MinPrice = minPrice,
@@ -197,11 +217,13 @@ public sealed class ProductsController : Controller
             Discounts = result.Discounts,
             ViewMode = !string.IsNullOrWhiteSpace(view)
                 ? view.Trim().ToLowerInvariant()
-                : (isHoodiesCategory ? "hoodies" :
+                : (isEthnicWearCategory ? "ethnic-wear" :
+                  (isThermalsCategory ? "thermals" :
+                  (isHoodiesCategory ? "hoodies" :
                   (isSweatshirtsCategory ? "sweatshirts" :
                   (isWomenClothingCategory ? "women-clothing" :
                   (isMenClothingCategory ? "men-clothing" :
-                  ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"))))),
+                  ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"))))))),
             StudyHub = isStudyCategory
                         ? await _studyHubService.GetConfigAsync(cancellationToken)
                         : null,

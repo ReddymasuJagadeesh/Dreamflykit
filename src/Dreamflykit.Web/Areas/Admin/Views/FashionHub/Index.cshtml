@@ -26,6 +26,9 @@
 
     var sweatshirts = hub.Sweatshirts ?? Dreamflykit.Application.FashionHub.Models.FashionSweatshirtsHubDto.CreateDefault();
     var sweatStyles = sweatshirts.StyleSection?.Items ?? new();
+
+    var ethnic = hub.EthnicWear ?? Dreamflykit.Application.FashionHub.Models.FashionEthnicWearDto.CreateDefault();
+    var thermals = hub.Thermals ?? Dreamflykit.Application.FashionHub.Models.FashionThermalsDto.CreateDefault();
 }
 
 <div class="dk-admin-hub-wrapper">
@@ -51,6 +54,12 @@
             </a>
             <a href="/category/fashion/men-clothing" target="_blank" class="dk-btn-view-live" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; font-weight: 700;" title="Preview Men Clothing template in new tab">
                 👔 Men Clothing
+            </a>
+            <a href="/category/fashion/ethnic-wear" target="_blank" class="dk-btn-view-live" style="background: #fdf4ff; color: #a21caf; border: 1.5px solid #f0abfc; font-weight: 700;" title="Preview Ethnic Wear template in new tab">
+                👑 Ethnic Wear
+            </a>
+            <a href="/category/fashion/thermals" target="_blank" class="dk-btn-view-live" style="background: #f0fdf4; color: #15803d; border: 1.5px solid #86efac; font-weight: 700;" title="Preview Thermals template in new tab">
+                ❄️ Thermals
             </a>
             <a href="/category/fashion" target="_blank" class="dk-btn-view-live" title="Preview live page in new tab">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
@@ -106,6 +115,12 @@
         </button>
         <button type="button" class="dk-tab-btn" data-tab="tab-men-clothing" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #93c5fd; font-weight: 800;">
             👔 Men Clothing Template
+        </button>
+        <button type="button" class="dk-tab-btn" data-tab="tab-ethnic-wear" style="background: #fdf4ff; color: #a21caf; border: 1.5px solid #f0abfc; font-weight: 800;">
+            👑 Ethnic Wear Template
+        </button>
+        <button type="button" class="dk-tab-btn" data-tab="tab-thermals" style="background: #f0fdf4; color: #15803d; border: 1.5px solid #86efac; font-weight: 800;">
+            ❄️ Thermals Template
         </button>
     </div>
 
@@ -1886,6 +1901,298 @@
                                 </div>
                             </div>
                         }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB: MEN CLOTHING TEMPLATE (MATCHES USER IMAGE 5)
+        ========================================================= -->
+        <div class="dk-tab-pane" id="tab-men-clothing">
+            <div class="dk-card">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">1. Men Clothing Hero Banner</h2>
+                        <p class="dk-card-desc">Full-width edge-to-edge hero banner (100vw). Style. Comfort. Wherever You Go.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <a href="/category/fashion/men-clothing" target="_blank" class="dk-btn-secondary" style="text-decoration: none;">
+                            👁️ View Live Page
+                        </a>
+                        <label class="dk-switch">
+                            <input type="checkbox" id="menIsEnabled" @(men.IsEnabled ? "checked" : "") />
+                            <span class="dk-slider"></span>
+                            <span class="dk-switch-label">Template Enabled</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="dk-card-body">
+                    <div class="dk-form-grid-2">
+                        <div class="dk-form-group">
+                            <label class="dk-label" for="menHeroTitle">Title</label>
+                            <input type="text" id="menHeroTitle" class="dk-input" value="@menHero.Title" placeholder="e.g. Men Clothing" />
+                        </div>
+                        <div class="dk-form-group">
+                            <label class="dk-label" for="menHeroTitleHighlight">Title Highlight</label>
+                            <input type="text" id="menHeroTitleHighlight" class="dk-input" value="@menHero.TitleHighlight" placeholder="e.g. Wherever You Go." />
+                        </div>
+                    </div>
+
+                    <div class="dk-form-grid-2">
+                        <div class="dk-form-group">
+                            <label class="dk-label" for="menHeroSubtitle">Subtitle</label>
+                            <input type="text" id="menHeroSubtitle" class="dk-input" value="@menHero.Subtitle" placeholder="e.g. Style. Comfort. Wherever You Go." />
+                        </div>
+                        <div class="dk-form-group">
+                            <label class="dk-label" for="menHeroBannerHeight">Banner Height (px)</label>
+                            <input type="number" id="menHeroBannerHeight" class="dk-input" value="@(menHero.BannerHeight > 0 ? menHero.BannerHeight : 480)" />
+                        </div>
+                    </div>
+
+                    <div class="dk-form-group">
+                        <label class="dk-label" for="menHeroDesc">Description</label>
+                        <textarea id="menHeroDesc" class="dk-textarea" rows="2">@menHero.Description</textarea>
+                    </div>
+
+                    <div class="dk-form-group" style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 14px; padding: 18px; margin-top: 14px;">
+                        <label class="dk-label" style="color: #1d4ed8; font-size: 14px; font-weight: 800; margin-bottom: 8px;">
+                            📷 Men Clothing Hero Photo
+                        </label>
+                        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: center;">
+                            <div style="width: 200px; height: 130px; border-radius: 12px; overflow: hidden; background: #e2e8f0; border: 1.5px solid #cbd5e1; display: flex; align-items: center; justify-content: center;">
+                                <img id="menHeroImagePreview" src="@(!string.IsNullOrWhiteSpace(menHero.ImageUrl) ? menHero.ImageUrl : "/images/fashion-hub/men_clothing_hero.jpg")" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                            </div>
+                            <div>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                                    <input type="file" id="menHeroFileInput" accept="image/png,image/jpeg,image/webp" style="display: none;" onchange="uploadTargetField(this, 'menHeroBanner', 'menHeroImageUrl', 'menHeroImagePreview', 'menHeroIsUploadingSoon')" />
+                                    <button type="button" class="dk-btn-upload-lg" onclick="document.getElementById('menHeroFileInput').click()">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                        Upload Men Hero Photo
+                                    </button>
+                                </div>
+                                <div style="margin-bottom: 8px;">
+                                    <input type="text" id="menHeroImageUrl" class="dk-input" value="@menHero.ImageUrl" placeholder="/images/fashion-hub/men_clothing_hero.jpg" />
+                                </div>
+                                <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; font-weight: 700; color: #334155;">
+                                    <input type="checkbox" id="menHeroIsUploadingSoon" @(menHero.IsUploadingSoon ? "checked" : "") style="width: 16px; height: 16px; cursor: pointer;" />
+                                    <span>Display 'Uploading Soon' placeholder</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="menHeroBadgesContainer" style="display: none;">
+                        @foreach (var badge in (menHero.Badges ?? new List<Dreamflykit.Application.FashionHub.Models.FashionHeroBadgeDto>()))
+                        {
+                            <div class="dk-badge-edit-card" data-badge-id="@badge.Id">
+                                <input type="hidden" class="badge-label" value="@badge.Label" />
+                                <input type="hidden" class="badge-icon" value="@badge.Icon" />
+                                <input type="checkbox" class="badge-active" @(badge.IsActive ? "checked" : "") style="display:none;" />
+                            </div>
+                        }
+                    </div>
+                    <div id="menRightFeaturesContainer" style="display: none;">
+                        @foreach (var feat in (menHero.RightCard?.Features ?? new List<Dreamflykit.Application.FashionHub.Models.FashionHeroFeatureDto>()))
+                        {
+                            <div class="dk-feat-edit-card" data-feat-id="@feat.Id">
+                                <input type="hidden" class="feat-title" value="@feat.Title" />
+                                <input type="hidden" class="feat-icon" value="@feat.Icon" />
+                                <input type="checkbox" class="feat-active" @(feat.IsActive ? "checked" : "") style="display:none;" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Men Clothing Shop by Category -->
+            <div class="dk-card">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">2. Shop by Category (17 Categories - Image 5)</h2>
+                        <p class="dk-card-desc">1. Ethnic Wear, 2. Thermals, 3. T-Shirts, 4. Shirts, 5. Jackets &amp; Coats, 6. Hoodies, etc.</p>
+                    </div>
+                    <label class="dk-switch">
+                        <input type="checkbox" id="menCategoriesIsEnabled" @(menCat.IsEnabled ? "checked" : "") />
+                        <span class="dk-slider"></span>
+                        <span class="dk-switch-label">Enabled</span>
+                    </label>
+                </div>
+                <div class="dk-card-body">
+                    <div class="dk-form-group" style="margin-bottom: 16px;">
+                        <label class="dk-label" for="menCategoriesTitle">Section Title</label>
+                        <input type="text" id="menCategoriesTitle" class="dk-input" value="@menCat.Title" style="max-width: 380px;" />
+                    </div>
+                    <div id="menCategoryRowsContainer" class="dk-items-list">
+                        @foreach (var cat in (menCat.Categories ?? new List<Dreamflykit.Application.FashionHub.Models.FashionCategoryItemDto>()).OrderBy(c => c.DisplayOrder))
+                        {
+                            <div class="dk-item-row" data-id="@cat.Id">
+                                <span class="dk-row-handle">☰</span>
+                                <div class="dk-thumb-box">
+                                    <img src="@(!string.IsNullOrWhiteSpace(cat.ImageUrl) ? cat.ImageUrl : "/images/fashion-hub/uploading-soon-placeholder.svg")" 
+                                         class="dk-row-thumb cat-thumb-preview" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                                    <input type="file" class="dk-row-file-input" accept="image/*" onchange="uploadRowImage(this, 'category')" />
+                                    <button type="button" class="dk-btn-upload-icon" onclick="this.previousElementSibling.click()" title="Upload Image">📷</button>
+                                </div>
+                                <div class="dk-row-fields" style="grid-template-columns: 2fr 1.5fr 1fr 2fr;">
+                                    <div>
+                                        <label class="dk-mini-label">Category Name</label>
+                                        <input type="text" class="dk-input cat-name" value="@cat.Name" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Slug</label>
+                                        <input type="text" class="dk-input cat-slug" value="@cat.Slug" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Order</label>
+                                        <input type="number" class="dk-input cat-order" value="@cat.DisplayOrder" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Image URL</label>
+                                        <input type="text" class="dk-input cat-image-url" value="@cat.ImageUrl" placeholder="URL" />
+                                    </div>
+                                </div>
+                                <div class="dk-row-toggles">
+                                    <label class="dk-soon-check" title="Show 'Uploading Soon' placeholder">
+                                        <input type="checkbox" class="cat-soon" @(cat.IsUploadingSoon ? "checked" : "") />
+                                        <span>Soon</span>
+                                    </label>
+                                    <label class="dk-soon-check">
+                                        <input type="checkbox" class="cat-active" @(cat.IsActive ? "checked" : "") />
+                                        <span>Active</span>
+                                    </label>
+                                </div>
+                                <button type="button" class="dk-btn-delete-row" onclick="this.closest('.dk-item-row').remove()" title="Delete">✕</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Men Clothing Top Picks -->
+            <div class="dk-card">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">3. Top Picks for Men</h2>
+                        <p class="dk-card-desc">Featured products carousel with direct navigation to Casual Shirts, Hoodies, etc.</p>
+                    </div>
+                    <label class="dk-switch">
+                        <input type="checkbox" id="menPicksIsEnabled" @(menPicks.IsEnabled ? "checked" : "") />
+                        <span class="dk-slider"></span>
+                        <span class="dk-switch-label">Enabled</span>
+                    </label>
+                </div>
+                <div class="dk-card-body">
+                    <div class="dk-form-group" style="margin-bottom: 16px;">
+                        <label class="dk-label" for="menPicksTitle">Section Title</label>
+                        <input type="text" id="menPicksTitle" class="dk-input" value="@menPicks.Title" style="max-width: 380px;" />
+                    </div>
+                    <div id="menProductRowsContainer" class="dk-items-list">
+                        @foreach (var prod in (menPicks.Products ?? new List<Dreamflykit.Application.FashionHub.Models.FashionProductItemDto>()))
+                        {
+                            <div class="dk-item-row" data-id="@prod.Id">
+                                <span class="dk-row-handle">☰</span>
+                                <div class="dk-thumb-box">
+                                    <img src="@(!string.IsNullOrWhiteSpace(prod.ImageUrl) ? prod.ImageUrl : "/images/fashion-hub/uploading-soon-placeholder.svg")" 
+                                         class="dk-row-thumb prod-thumb-preview" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                                    <input type="file" class="dk-row-file-input" accept="image/*" onchange="uploadRowImage(this, 'product')" />
+                                    <button type="button" class="dk-btn-upload-icon" onclick="this.previousElementSibling.click()" title="Upload Image">📷</button>
+                                </div>
+                                <div class="dk-row-fields" style="grid-template-columns: 2fr 1fr 1fr 2fr;">
+                                    <div>
+                                        <label class="dk-mini-label">Product Name</label>
+                                        <input type="text" class="dk-input prod-name" value="@prod.Name" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Price (₹)</label>
+                                        <input type="number" step="0.01" class="dk-input prod-price" value="@prod.Price" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Original Price (₹)</label>
+                                        <input type="number" step="0.01" class="dk-input prod-orig-price" value="@prod.OriginalPrice" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-mini-label">Product / Category Link</label>
+                                        <input type="text" class="dk-input prod-url" value="@prod.ProductUrl" />
+                                    </div>
+                                </div>
+                                <input type="hidden" class="prod-image-url" value="@prod.ImageUrl" />
+                                <input type="hidden" class="prod-rating" value="@prod.Rating" />
+                                <input type="hidden" class="prod-reviews" value="@prod.ReviewsCount" />
+                                <div class="dk-row-toggles">
+                                    <label class="dk-soon-check" title="Show 'Uploading Soon' placeholder">
+                                        <input type="checkbox" class="prod-soon" @(prod.IsUploadingSoon ? "checked" : "") />
+                                        <span>Soon</span>
+                                    </label>
+                                    <label class="dk-soon-check">
+                                        <input type="checkbox" class="prod-active" @(prod.IsActive ? "checked" : "") />
+                                        <span>Active</span>
+                                    </label>
+                                </div>
+                                <button type="button" class="dk-btn-delete-row" onclick="this.closest('.dk-item-row').remove()" title="Delete">✕</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB: ETHNIC WEAR TEMPLATE (MATCHES USER IMAGE 3)
+        ========================================================= -->
+        <div class="dk-tab-pane" id="tab-ethnic-wear">
+            <div class="dk-card">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">👑 Ethnic Wear Template Configuration (Image 3)</h2>
+                        <p class="dk-card-desc">Royal Indian festive banner, 15 ethnic categories (Sherwanis, Nehru Jackets, etc.), and top picks.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <a href="/category/fashion/ethnic-wear" target="_blank" class="dk-btn-secondary" style="text-decoration: none;">
+                            👁️ View Live Page
+                        </a>
+                        <span style="font-size: 13px; font-weight: 800; color: #a21caf; background: #fdf4ff; padding: 4px 10px; border-radius: 6px; border: 1px solid #f0abfc;">Dedicated Template Active</span>
+                    </div>
+                </div>
+                <div class="dk-card-body">
+                    <p style="font-size: 13.5px; color: #475569; margin-bottom: 16px;">
+                        Ethnic Wear uses the dedicated template layout matching Image 3 with a full-width panoramic festive hero banner, 15 subcategories, 8 men's ethnic picks, and verified student trust propositions.
+                    </p>
+                    <div style="display: flex; gap: 12px;">
+                        <a href="/category/fashion/ethnic-wear" target="_blank" class="dk-btn-upload-lg" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                            <span>👑 Preview Ethnic Wear Live Page</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB: THERMALS TEMPLATE (MATCHES USER IMAGE 4)
+        ========================================================= -->
+        <div class="dk-tab-pane" id="tab-thermals">
+            <div class="dk-card">
+                <div class="dk-card-header">
+                    <div>
+                        <h2 class="dk-card-title">❄️ Thermals Template Configuration (Image 4)</h2>
+                        <p class="dk-card-desc">Subnav strip, Alpine winter hero banner, Shop Thermals, Winter Essentials, Accessories, Warmth Levels, and Best Selling Thermals.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <a href="/category/fashion/thermals" target="_blank" class="dk-btn-secondary" style="text-decoration: none;">
+                            👁️ View Live Page
+                        </a>
+                        <span style="font-size: 13px; font-weight: 800; color: #15803d; background: #f0fdf4; padding: 4px 10px; border-radius: 6px; border: 1px solid #86efac;">Dedicated Template Active</span>
+                    </div>
+                </div>
+                <div class="dk-card-body">
+                    <p style="font-size: 13.5px; color: #475569; margin-bottom: 16px;">
+                        Thermals uses the high-performance winter collection template matching Image 4 with full-width panoramic alpine hero, warmth level selectors, and 6 best-selling products.
+                    </p>
+                    <div style="display: flex; gap: 12px;">
+                        <a href="/category/fashion/thermals" target="_blank" class="dk-btn-upload-lg" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: #0f172a;">
+                            <span>❄️ Preview Thermals Live Page</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -3729,7 +4036,9 @@ async function saveFashionHub() {
                 items: sweatStyles
             },
             trustBadges: sweatTrust
-        }
+        },
+        ethnicWear: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ethnic, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase })),
+        thermals: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(thermals, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }))
     };
 
     const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || "";

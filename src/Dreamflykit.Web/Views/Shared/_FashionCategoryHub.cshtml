@@ -248,6 +248,7 @@
                         {
                             var n when n.Contains("hoodie") => "/category/fashion/hoodies",
                             var n when n.Contains("sweatshirt") => "/category/fashion/sweatshirts",
+                            var n when n.Contains("casual shirt") || n.Contains("shirt") => "/category/fashion/men-clothing?subcategory=shirts",
                             _ => (!string.IsNullOrWhiteSpace(prod.ProductUrl) && !prod.ProductUrl.EndsWith("category=fashion"))
                                     ? prod.ProductUrl
                                     : (prod.CategoryName?.ToLowerInvariant().Contains("women") == true

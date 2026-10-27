@@ -80,16 +80,16 @@
                 <!-- LEFT TALL LOGO WING (EXTENDS FROM TOP DOWN TO BASE OF SEARCH BAR) -->
                 <div id="simLogoWing" style="display: inline-flex; align-items: center; gap: 14px; background: #f26522; padding: 6px 14px 6px 20px; flex-shrink: 0; position: relative; z-index: 10; transition: all 0.35s ease;">
                     
-                    <!-- SECTION 1: 'D' LOGO (TALL BOX) -->
-                    <div id="simSection1Wrap" style="background: #ffffff; padding: 6px; border-radius: 12px; width: 82px; height: 82px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.22); transition: all 0.25s ease;">
+                    <!-- SECTION 1: 'D' LOGO (SEAMLESS BANK OF BARODA INTEGRATION) -->
+                    <div id="simSection1Wrap" style="background: transparent; padding: 0 4px; border-radius: 0; height: 84px; display: flex; align-items: center; justify-content: center; box-shadow: none; transition: all 0.25s ease;">
                         <img id="simSection1Img" src="@Model.Section1DLogoUrl" alt="Section 1 D Logo"
-                             style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" />
+                             style="height: 76px; width: auto; max-width: 94px; object-fit: contain; filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.85)) drop-shadow(0 2px 6px rgba(0,0,0,0.28));" />
                     </div>
 
-                    <!-- SECTION 2: 'DREAMFLYKIT' BRAND LOGO (TALL BOX, COLLAPSES ON SCROLL) -->
-                    <div id="simSection2Wrap" style="background: #ffffff; padding: 6px 18px; border-radius: 12px; height: 82px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.22); transition: all 0.35s ease;">
+                    <!-- SECTION 2: 'DREAMFLYKIT' BRAND LOGO (SEAMLESS BANK OF BARODA INTEGRATION) -->
+                    <div id="simSection2Wrap" style="background: transparent; padding: 0 6px; border-radius: 0; height: 84px; display: flex; align-items: center; justify-content: center; box-shadow: none; transition: all 0.35s ease;">
                         <img id="simSection2Img" src="@Model.Section2BrandLogoUrl" alt="Section 2 Dreamflykit Logo"
-                             style="height: 64px; width: auto; max-width: 240px; object-fit: contain;" />
+                             style="height: 66px; width: auto; max-width: 320px; object-fit: contain; filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.85)) drop-shadow(0 2px 6px rgba(0,0,0,0.28));" />
                     </div>
 
                     <!-- THE BANK OF BARODA REVERSE INWARD C-SHAPE CURVE (MIDDLE SCOOPS INSIDE) -->
@@ -413,9 +413,14 @@
             btnExp.style.color = "rgba(255, 255, 255, 0.65)";
 
             s2Wrap.style.display = "none"; // Section 2 collapses on scroll, leaving Section 1 ('D')
+            const s1Img = document.getElementById("simSection1Img");
             if (s1Wrap) {
-                s1Wrap.style.width = "72px";
-                s1Wrap.style.height = "72px";
+                s1Wrap.style.width = "auto";
+                s1Wrap.style.height = "48px";
+            }
+            if (s1Img) {
+                s1Img.style.height = "46px";
+                s1Img.style.maxWidth = "58px";
             }
             if (curve) curve.style.height = "38px";
             if (whiteTop) whiteTop.style.height = "38px";
@@ -426,9 +431,14 @@
             btnScrl.style.color = "rgba(255, 255, 255, 0.65)";
 
             s2Wrap.style.display = "flex"; // Both Section 1 and Section 2 visible at top
+            const s1Img = document.getElementById("simSection1Img");
             if (s1Wrap) {
-                s1Wrap.style.width = "82px";
-                s1Wrap.style.height = "82px";
+                s1Wrap.style.width = "auto";
+                s1Wrap.style.height = "84px";
+            }
+            if (s1Img) {
+                s1Img.style.height = "76px";
+                s1Img.style.maxWidth = "94px";
             }
             if (curve) curve.style.height = "40px";
             if (whiteTop) whiteTop.style.height = "40px";

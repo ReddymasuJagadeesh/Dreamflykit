@@ -110,9 +110,25 @@ public sealed class ProductListViewModel
           string.Equals(CurrentSubcategorySlug, "mens-sweatshirts", StringComparison.OrdinalIgnoreCase) ||
           string.Equals(CurrentSubcategorySlug, "mens-sweatshirt", StringComparison.OrdinalIgnoreCase)));
 
+    public bool IsEthnicWearHub =>
+        string.Equals(ViewMode, "ethnic-wear", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "ethnic-wear", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "ethnic", StringComparison.OrdinalIgnoreCase) ||
+        (string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
+         (string.Equals(CurrentSubcategorySlug, "ethnic-wear", StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(CurrentSubcategorySlug, "ethnic", StringComparison.OrdinalIgnoreCase)));
+
+    public bool IsThermalsHub =>
+        string.Equals(ViewMode, "thermals", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "thermals", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "thermal", StringComparison.OrdinalIgnoreCase) ||
+        (string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
+         (string.Equals(CurrentSubcategorySlug, "thermals", StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(CurrentSubcategorySlug, "thermal", StringComparison.OrdinalIgnoreCase)));
+
     public bool IsFashionHub =>
         string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
-        !IsMenClothing && !IsWomenClothing && !IsHoodiesHub && !IsSweatshirtsHub;
+        !IsMenClothing && !IsWomenClothing && !IsHoodiesHub && !IsSweatshirtsHub && !IsEthnicWearHub && !IsThermalsHub;
 
     public bool IsHealthCareHub =>
         string.Equals(CategorySlug, "health-care", StringComparison.OrdinalIgnoreCase) ||

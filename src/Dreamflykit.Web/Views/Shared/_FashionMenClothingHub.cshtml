@@ -14,27 +14,29 @@
 
     @if (canManage)
     {
-        <div class="dk-men-admin-bar">
-            <div class="dk-men-admin-bar-left">
-                <span class="dk-men-admin-badge">⚡ Admin Mode</span>
-                <span class="dk-men-admin-hint">Men Clothing Template Active &bull; Customize banner, categories, products, text, &amp; upload images</span>
+        <div class="dk-shell" style="padding-top: 4px;">
+            <div class="dk-men-admin-bar">
+                <div class="dk-men-admin-bar-left">
+                    <span class="dk-men-admin-badge">⚡ Admin Mode</span>
+                    <span class="dk-men-admin-hint">Men Clothing Template Active &bull; Customize banner, categories, products, text, &amp; upload images</span>
+                </div>
+                <a href="/Admin/FashionHub#tab-men-clothing" class="dk-men-admin-btn" id="btnManageMenClothing">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Edit Men Clothing Template
+                </a>
             </div>
-            <a href="/Admin/FashionHub#tab-men-clothing" class="dk-men-admin-btn" id="btnManageMenClothing">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
-                Edit Men Clothing Template
-            </a>
         </div>
     }
 
     <!-- ============================================================
-         1. HERO BANNER (MATCHES USER IMAGE 2: FULL-WIDTH IMAGE HERO)
+         1. HERO BANNER (TRUE FULL-WIDTH EDGE-TO-EDGE)
     ============================================================ -->
     @if (hero.IsEnabled)
     {
-        var minHeight = hero.BannerHeight > 0 ? hero.BannerHeight : 440;
+        var minHeight = hero.BannerHeight > 0 ? hero.BannerHeight : 460;
         var titleColor = !string.IsNullOrWhiteSpace(hero.TitleColor) ? hero.TitleColor : "#063f91";
         var highlightColor = !string.IsNullOrWhiteSpace(hero.TitleHighlightColor) ? hero.TitleHighlightColor : "#ea580c";
         var subtitleColor = !string.IsNullOrWhiteSpace(hero.SubtitleColor) ? hero.SubtitleColor : "#ea580c";
@@ -197,251 +199,271 @@
     }
 
     <!-- ============================================================
-         2. SHOP BY CATEGORY (10 SUBCATEGORIES)
+         INNER CONTAINER FOR SECTIONS BELOW HERO
     ============================================================ -->
-    @if (catSection.IsEnabled && catSection.Categories != null && catSection.Categories.Count > 0)
-    {
-        <section class="dk-men-section" aria-label="Shop Men Clothing by Subcategory">
-            <div class="dk-men-section-header">
-                <h2 class="dk-men-section-heading">@catSection.Title</h2>
-                <a href="@catSection.ViewAllUrl" class="dk-men-section-link">
-                    @catSection.ViewAllText
-                </a>
-            </div>
+    <div class="dk-shell">
 
-            <div class="dk-men-categories-grid">
-                @foreach (var cat in catSection.Categories.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder))
-                {
-                    var catUrl = !string.IsNullOrWhiteSpace(cat.Slug) 
-                        ? $"/category/fashion/men-clothing?subcategory={cat.Slug}" 
-                        : "/category/fashion/men-clothing";
-                    var hasImg = !string.IsNullOrWhiteSpace(cat.ImageUrl) && !cat.IsUploadingSoon && !cat.ImageUrl.Contains("uploading-soon");
-
-                    <a href="@catUrl" class="dk-men-cat-card" title="@cat.Name">
-                        <div class="dk-men-cat-img-box">
-                            @if (hasImg)
-                            {
-                                <img src="@cat.ImageUrl" 
-                                     alt="@cat.Name" 
-                                     loading="lazy" 
-                                     class="dk-men-cat-img" 
-                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-                                <div class="dk-men-cat-placeholder" style="display: none;">
-                                    <span class="dk-men-cat-emoji">@GetMenCategoryEmoji(cat.Slug)</span>
-                                    <span class="dk-men-soon-pill">Uploading Soon</span>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="dk-men-cat-placeholder">
-                                    <span class="dk-men-cat-emoji">@GetMenCategoryEmoji(cat.Slug)</span>
-                                    <span class="dk-men-soon-pill">Uploading Soon</span>
-                                </div>
-                            }
-                        </div>
-                        <span class="dk-men-cat-title">@cat.Name</span>
-                    </a>
-                }
-            </div>
-        </section>
-    }
-
-    <!-- ============================================================
-         3. TOP PICKS FOR MEN (8 PRODUCTS FROM IMAGE 2)
-    ============================================================ -->
-    @if (picksSection.IsEnabled && picksSection.Products != null && picksSection.Products.Count > 0)
-    {
-        <section class="dk-men-section" aria-label="Top Picks for Men">
-            <div class="dk-men-section-header">
-                <h2 class="dk-men-section-heading">@picksSection.Title</h2>
-                <div class="dk-men-slider-controls">
-                    <button type="button" class="dk-men-arrow-btn" id="dkMenPicksPrev" aria-label="Previous products">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                    </button>
-                    <button type="button" class="dk-men-arrow-btn" id="dkMenPicksNext" aria-label="Next products">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </button>
-                    <a href="@picksSection.ViewAllUrl" class="dk-men-section-link" style="margin-left: 12px;">
-                        @picksSection.ViewAllText
+        <!-- ============================================================
+             2. SHOP BY CATEGORY (17 SUBCATEGORIES)
+        ============================================================ -->
+        @if (catSection.IsEnabled && catSection.Categories != null && catSection.Categories.Count > 0)
+        {
+            <section class="dk-men-section" aria-label="Shop Men Clothing by Subcategory">
+                <div class="dk-men-section-header">
+                    <h2 class="dk-men-section-heading">@catSection.Title</h2>
+                    <a href="@catSection.ViewAllUrl" class="dk-men-section-link">
+                        @catSection.ViewAllText
                     </a>
                 </div>
-            </div>
 
-            <div class="dk-men-products-track-wrapper" id="dkMenProductsTrackWrapper">
-                <div class="dk-men-products-track" id="dkMenProductsTrack">
-                    @foreach (var prod in picksSection.Products.Where(p => p.IsActive))
+                <div class="dk-men-categories-grid">
+                    @foreach (var cat in catSection.Categories.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder))
                     {
-                        var hasImg = !string.IsNullOrWhiteSpace(prod.ImageUrl) && !prod.IsUploadingSoon && !prod.ImageUrl.Contains("uploading-soon");
-                        var targetUrl = !string.IsNullOrWhiteSpace(prod.ProductUrl) ? prod.ProductUrl : "/category/fashion/men-clothing";
+                        var catUrl = cat.Slug switch
+                        {
+                            "ethnic-wear" or "ethnic" => "/category/fashion/ethnic-wear",
+                            "thermals" or "thermal" => "/category/fashion/thermals",
+                            "hoodies" or "hoodies-sweatshirts" or "mens-hoodies" => "/category/fashion/hoodies",
+                            "sweatshirts" or "mens-sweatshirts" => "/category/fashion/sweatshirts",
+                            _ => !string.IsNullOrWhiteSpace(cat.Slug) 
+                                ? $"/category/fashion/men-clothing?subcategory={cat.Slug}" 
+                                : "/category/fashion/men-clothing"
+                        };
+                        var hasImg = !string.IsNullOrWhiteSpace(cat.ImageUrl) && !cat.IsUploadingSoon && !cat.ImageUrl.Contains("uploading-soon");
 
-                        <div class="dk-men-product-card">
-                            <!-- Wishlist Heart Button -->
-                            <button type="button" class="dk-men-wishlist-btn" onclick="toggleMenWishlist(this, '@prod.Id')" title="Add to wishlist">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                </svg>
-                            </button>
-
-                            <!-- Product Visual -->
-                            <a href="@targetUrl" class="dk-men-product-img-box">
+                        <a href="@catUrl" class="dk-men-cat-card" title="@cat.Name">
+                            <div class="dk-men-cat-img-box">
                                 @if (hasImg)
                                 {
-                                    <img src="@prod.ImageUrl" 
-                                         alt="@prod.Name" 
+                                    <img src="@cat.ImageUrl" 
+                                         alt="@cat.Name" 
                                          loading="lazy" 
-                                         class="dk-men-product-img"
+                                         class="dk-men-cat-img" 
                                          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-                                    <div class="dk-men-product-placeholder" style="display: none;">
-                                        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                                    <div class="dk-men-cat-placeholder" style="display: none;">
+                                        <span class="dk-men-cat-emoji">@GetMenCategoryEmoji(cat.Slug)</span>
                                         <span class="dk-men-soon-pill">Uploading Soon</span>
                                     </div>
                                 }
                                 else
                                 {
-                                    <div class="dk-men-product-placeholder">
-                                        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                                    <div class="dk-men-cat-placeholder">
+                                        <span class="dk-men-cat-emoji">@GetMenCategoryEmoji(cat.Slug)</span>
                                         <span class="dk-men-soon-pill">Uploading Soon</span>
                                     </div>
                                 }
-                            </a>
+                            </div>
+                            <span class="dk-men-cat-title">@cat.Name</span>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
 
-                            <!-- Product Details -->
-                            <div class="dk-men-product-info">
-                                <h3 class="dk-men-product-title">
-                                    <a href="@targetUrl">@prod.Name</a>
-                                </h3>
+        <!-- ============================================================
+             3. TOP PICKS FOR MEN (8 PRODUCTS)
+        ============================================================ -->
+        @if (picksSection.IsEnabled && picksSection.Products != null && picksSection.Products.Count > 0)
+        {
+            <section class="dk-men-section" aria-label="Top Picks for Men">
+                <div class="dk-men-section-header">
+                    <h2 class="dk-men-section-heading">@picksSection.Title</h2>
+                    <div class="dk-men-slider-controls">
+                        <button type="button" class="dk-men-arrow-btn" id="dkMenPicksPrev" aria-label="Previous products">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        <button type="button" class="dk-men-arrow-btn" id="dkMenPicksNext" aria-label="Next products">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                        <a href="@picksSection.ViewAllUrl" class="dk-men-section-link" style="margin-left: 12px;">
+                            @picksSection.ViewAllText
+                        </a>
+                    </div>
+                </div>
 
-                                <div class="dk-men-price-cart-row">
-                                    <div>
-                                        <div class="dk-men-product-price">₹@prod.Price.ToString("N0")</div>
-                                        <div class="dk-men-product-rating">
-                                            <span class="dk-men-stars">★★★★★</span>
-                                            <span class="dk-men-reviews">(@prod.ReviewsCount)</span>
+                <div class="dk-men-products-track-wrapper" id="dkMenProductsTrackWrapper">
+                    <div class="dk-men-products-track" id="dkMenProductsTrack">
+                        @foreach (var prod in picksSection.Products.Where(p => p.IsActive))
+                        {
+                            var hasImg = !string.IsNullOrWhiteSpace(prod.ImageUrl) && !prod.IsUploadingSoon && !prod.ImageUrl.Contains("uploading-soon");
+                            var targetUrl = prod.Name.ToLowerInvariant() switch
+                            {
+                                var n when n.Contains("hoodie") => "/category/fashion/hoodies",
+                                var n when n.Contains("sweatshirt") => "/category/fashion/sweatshirts",
+                                var n when n.Contains("casual shirt") || n.Contains("checked shirt") || n.Contains("shirt") => "/category/fashion/men-clothing?subcategory=shirts",
+                                _ => !string.IsNullOrWhiteSpace(prod.ProductUrl) ? prod.ProductUrl : "/category/fashion/men-clothing"
+                            };
+
+                            <div class="dk-men-product-card">
+                                <!-- Wishlist Heart Button -->
+                                <button type="button" class="dk-men-wishlist-btn" onclick="toggleMenWishlist(this, '@prod.Id')" title="Add to wishlist">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                    </svg>
+                                </button>
+
+                                <!-- Product Visual -->
+                                <a href="@targetUrl" class="dk-men-product-img-box">
+                                    @if (hasImg)
+                                    {
+                                        <img src="@prod.ImageUrl" 
+                                             alt="@prod.Name" 
+                                             loading="lazy" 
+                                             class="dk-men-product-img" 
+                                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                        <div class="dk-men-product-placeholder" style="display: none;">
+                                            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                                            <span class="dk-men-soon-pill">Uploading Soon</span>
                                         </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="dk-men-product-placeholder">
+                                            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                                            <span class="dk-men-soon-pill">Uploading Soon</span>
+                                        </div>
+                                    }
+                                </a>
+
+                                <!-- Product Details -->
+                                <div class="dk-men-product-info">
+                                    <h3 class="dk-men-product-title">
+                                        <a href="@targetUrl">@prod.Name</a>
+                                    </h3>
+
+                                    <div class="dk-men-price-cart-row">
+                                        <div>
+                                            <div class="dk-men-product-price">₹@prod.Price.ToString("N0")</div>
+                                            <div class="dk-men-product-rating">
+                                                <span class="dk-men-stars">★★★★★</span>
+                                                <span class="dk-men-reviews">(@prod.ReviewsCount)</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="dk-men-cart-btn" onclick="addMenToCart(this, '@prod.Name')" title="Add to cart">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                                <circle cx="9" cy="21" r="1"></circle>
+                                                <circle cx="20" cy="21" r="1"></circle>
+                                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                            </svg>
+                                        </button>
                                     </div>
-                                    <button type="button" class="dk-men-cart-btn" onclick="addMenToCart(this, '@prod.Name')" title="Add to cart">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                                            <circle cx="9" cy="21" r="1"></circle>
-                                            <circle cx="20" cy="21" r="1"></circle>
-                                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                        </svg>
-                                    </button>
                                 </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </section>
+        }
+
+        <!-- ============================================================
+             4. STUDENT VALUE PROPOSITIONS (6 TRUST CARDS)
+        ============================================================ -->
+        @if (trustSection.IsEnabled && trustSection.Badges != null && trustSection.Badges.Count > 0)
+        {
+            <section class="dk-men-trust-section" aria-label="Student Value Propositions">
+                <div class="dk-men-trust-grid">
+                    @foreach (var badge in trustSection.Badges.Where(b => b.IsActive))
+                    {
+                        <div class="dk-men-trust-card">
+                            <div class="dk-men-trust-icon">
+                                @if (badge.Icon == "box")
+                                {
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                }
+                                else if (badge.Icon == "shield")
+                                {
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                                }
+                                else if (badge.Icon == "tag")
+                                {
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                                }
+                                else if (badge.Icon == "truck")
+                                {
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                }
+                                else if (badge.Icon == "return")
+                                {
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                                }
+                                else
+                                {
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                                }
+                            </div>
+                            <div class="dk-men-trust-info">
+                                <strong class="dk-men-trust-title">@badge.Title</strong>
+                                <span class="dk-men-trust-sub">@badge.Subtitle</span>
                             </div>
                         </div>
                     }
                 </div>
-            </div>
-        </section>
-    }
+            </section>
+        }
 
-    <!-- ============================================================
-         4. STUDENT VALUE PROPOSITIONS (6 TRUST CARDS)
-    ============================================================ -->
-    @if (trustSection.IsEnabled && trustSection.Badges != null && trustSection.Badges.Count > 0)
-    {
-        <section class="dk-men-trust-section" aria-label="Student Value Propositions">
-            <div class="dk-men-trust-grid">
-                @foreach (var badge in trustSection.Badges.Where(b => b.IsActive))
-                {
-                    <div class="dk-men-trust-card">
-                        <div class="dk-men-trust-icon">
-                            @if (badge.Icon == "box")
-                            {
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-                            }
-                            else if (badge.Icon == "shield")
-                            {
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
-                            }
-                            else if (badge.Icon == "tag")
-                            {
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-                            }
-                            else if (badge.Icon == "truck")
-                            {
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                            }
-                            else if (badge.Icon == "return")
-                            {
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
-                            }
-                            else
-                            {
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
-                            }
+        <!-- ============================================================
+             5. BOTTOM DESTINATION & QUIZ BAR (NAVY BLUE)
+        ============================================================ -->
+        @if (bottomBanner.IsEnabled)
+        {
+            <section class="dk-men-bottom-bar" aria-label="Destination and Custom Kit Assistant">
+                <div class="dk-men-bottom-inner">
+                    
+                    <!-- Col 1: Quiz -->
+                    <div class="dk-men-bottom-col">
+                        <div class="dk-men-bottom-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                         </div>
-                        <div class="dk-men-trust-info">
-                            <strong class="dk-men-trust-title">@badge.Title</strong>
-                            <span class="dk-men-trust-sub">@badge.Subtitle</span>
+                        <div class="dk-men-bottom-text">
+                            <strong class="dk-men-bottom-heading">@bottomBanner.QuizTitle</strong>
+                            <span class="dk-men-bottom-sub">@bottomBanner.QuizSubtitle</span>
+                        </div>
+                        <a href="@bottomBanner.QuizButtonUrl" class="dk-men-bottom-btn">
+                            @bottomBanner.QuizButtonText
+                        </a>
+                    </div>
+
+                    <div class="dk-men-bottom-divider"></div>
+
+                    <!-- Col 2: Destinations -->
+                    <div class="dk-men-bottom-col">
+                        <div class="dk-men-bottom-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        </div>
+                        <div class="dk-men-bottom-text">
+                            <strong class="dk-men-bottom-heading">@bottomBanner.DestinationsTitle</strong>
+                            <span class="dk-men-bottom-sub">@bottomBanner.DestinationsSubtitle</span>
+                        </div>
+                        <div class="dk-men-flags-row">
+                            <span class="dk-men-flag-emoji" title="United States">🇺🇸</span>
+                            <span class="dk-men-flag-emoji" title="United Kingdom">🇬🇧</span>
+                            <span class="dk-men-flag-emoji" title="Canada">🇨🇦</span>
+                            <span class="dk-men-flag-emoji" title="Australia">🇦🇺</span>
+                            <span class="dk-men-flag-more">+ More</span>
                         </div>
                     </div>
-                }
-            </div>
-        </section>
-    }
 
-    <!-- ============================================================
-         5. BOTTOM DESTINATION & QUIZ BAR (NAVY BLUE)
-    ============================================================ -->
-    @if (bottomBanner.IsEnabled)
-    {
-        <section class="dk-men-bottom-bar" aria-label="Destination and Custom Kit Assistant">
-            <div class="dk-men-bottom-inner">
-                
-                <!-- Col 1: Quiz -->
-                <div class="dk-men-bottom-col">
-                    <div class="dk-men-bottom-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <div class="dk-men-bottom-divider"></div>
+
+                    <!-- Col 3: Bulk Orders -->
+                    <div class="dk-men-bottom-col">
+                        <div class="dk-men-bottom-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                        </div>
+                        <div class="dk-men-bottom-text">
+                            <strong class="dk-men-bottom-heading">@bottomBanner.BulkTitle</strong>
+                            <span class="dk-men-bottom-sub">@bottomBanner.BulkSubtitle</span>
+                        </div>
+                        <a href="@bottomBanner.BulkButtonUrl" class="dk-men-bottom-btn">
+                            @bottomBanner.BulkButtonText
+                        </a>
                     </div>
-                    <div class="dk-men-bottom-text">
-                        <strong class="dk-men-bottom-heading">@bottomBanner.QuizTitle</strong>
-                        <span class="dk-men-bottom-sub">@bottomBanner.QuizSubtitle</span>
-                    </div>
-                    <a href="@bottomBanner.QuizButtonUrl" class="dk-men-bottom-btn">
-                        @bottomBanner.QuizButtonText
-                    </a>
+
                 </div>
+            </section>
+        }
 
-                <div class="dk-men-bottom-divider"></div>
-
-                <!-- Col 2: Destinations -->
-                <div class="dk-men-bottom-col">
-                    <div class="dk-men-bottom-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                    </div>
-                    <div class="dk-men-bottom-text">
-                        <strong class="dk-men-bottom-heading">@bottomBanner.DestinationsTitle</strong>
-                        <span class="dk-men-bottom-sub">@bottomBanner.DestinationsSubtitle</span>
-                    </div>
-                    <div class="dk-men-flags-row">
-                        <span class="dk-men-flag-emoji" title="United States">🇺🇸</span>
-                        <span class="dk-men-flag-emoji" title="United Kingdom">🇬🇧</span>
-                        <span class="dk-men-flag-emoji" title="Canada">🇨🇦</span>
-                        <span class="dk-men-flag-emoji" title="Australia">🇦🇺</span>
-                        <span class="dk-men-flag-more">+ More</span>
-                    </div>
-                </div>
-
-                <div class="dk-men-bottom-divider"></div>
-
-                <!-- Col 3: Bulk Orders -->
-                <div class="dk-men-bottom-col">
-                    <div class="dk-men-bottom-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                    </div>
-                    <div class="dk-men-bottom-text">
-                        <strong class="dk-men-bottom-heading">@bottomBanner.BulkTitle</strong>
-                        <span class="dk-men-bottom-sub">@bottomBanner.BulkSubtitle</span>
-                    </div>
-                    <a href="@bottomBanner.BulkButtonUrl" class="dk-men-bottom-btn">
-                        @bottomBanner.BulkButtonText
-                    </a>
-                </div>
-
-            </div>
-        </section>
-    }
+    </div>
 
 </div>
 
@@ -522,16 +544,22 @@
     transform: translateY(-1px);
 }
 
-/* 1. HERO BANNER SECTION (FULL-WIDTH IMAGE HERO) */
+/* 1. HERO BANNER SECTION (TRUE FULL-WIDTH EDGE-TO-EDGE) */
 .dk-men-hero-section {
     position: relative;
-    width: 100%;
-    border-radius: 18px;
-    margin-bottom: 32px;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    border-radius: 0;
+    margin-top: 0;
+    margin-bottom: 36px;
     overflow: hidden;
-    min-height: 440px;
+    min-height: 480px;
     box-shadow: 0 4px 20px rgba(6, 63, 145, 0.06);
-    border: 1px solid #e2e8f0;
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
     display: flex;
     align-items: stretch;
     background: #f8fafc;
@@ -613,10 +641,12 @@
     position: relative;
     z-index: 2;
     width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
     display: grid;
     grid-template-columns: minmax(360px, 480px) 1fr auto;
     align-items: center;
-    padding: 38px 44px;
+    padding: 44px 28px;
     gap: 20px;
 }
 
@@ -783,13 +813,22 @@
     text-decoration: underline;
 }
 
-/* Categories Grid (10 Subcategories) */
+/* Categories Grid (17 Subcategories) */
 .dk-men-categories-grid {
     display: grid;
     grid-template-columns: repeat(10, minmax(0, 1fr));
     gap: 12px;
-    overflow-x: auto;
-    padding-bottom: 6px;
+}
+@@media (max-width: 1280px) {
+    .dk-men-categories-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+}
+@@media (max-width: 768px) {
+    .dk-men-categories-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
 }
 .dk-men-cat-card {
     display: flex;

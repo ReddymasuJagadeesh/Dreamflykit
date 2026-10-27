@@ -547,10 +547,12 @@
         height: 100%;
         box-sizing: border-box;
         will-change: transform;
-        transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        transform: translate3d(0, 0, 0);
+        transition: none !important;
     }
     .dk-sync-slot-track.is-sliding {
-        transform: translateX(-50%);
+        transform: translate3d(-50%, 0, 0);
+        transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1) !important;
     }
     .dk-sync-slot-track > .dk-sync-service-card {
         width: 50% !important;
@@ -991,6 +993,12 @@
             if (track4) track4.insertAdjacentHTML("beforeend", buildCardHtml(nextSec4, 4));
             if (track5) track5.insertAdjacentHTML("beforeend", buildCardHtml(nextSec5, 5));
 
+            // Force reflow before adding transition class to guarantee smooth right-to-left movement
+            if (track2) void track2.offsetWidth;
+            if (track3) void track3.offsetWidth;
+            if (track4) void track4.offsetWidth;
+            if (track5) void track5.offsetWidth;
+
             // 2. Trigger simultaneous conveyor slide across all 4 sections
             requestAnimationFrame(function () {
                 if (track2) track2.classList.add("is-sliding");
@@ -1002,7 +1010,7 @@
                 updateSection1(nextSec2);
             });
 
-            // 3. Complete slide and reset tracks
+            // 3. Complete slide and reset tracks seamlessly WITHOUT any backward bounce
             setTimeout(function () {
                 [
                     { track: track2, nextItem: nextSec2, sec: 2 },
@@ -1011,9 +1019,17 @@
                     { track: track5, nextItem: nextSec5, sec: 5 }
                 ].forEach(function (slot) {
                     if (slot.track) {
+                        // Immediately disable transitions so it cannot animate backwards
+                        slot.track.style.transition = "none";
                         slot.track.classList.remove("is-sliding");
+                        slot.track.style.transform = "translate3d(0, 0, 0)";
                         // Keep only the incoming card as the active card
                         slot.track.innerHTML = buildCardHtml(slot.nextItem, slot.sec);
+                        // Flush reflow
+                        void slot.track.offsetWidth;
+                        // Clean up inline styles
+                        slot.track.style.transition = "";
+                        slot.track.style.transform = "";
                     }
                 });
 
