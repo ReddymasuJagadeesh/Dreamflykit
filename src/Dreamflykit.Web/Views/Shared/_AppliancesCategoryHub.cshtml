@@ -1,0 +1,1648 @@
+@model Dreamflykit.Application.AppliancesHub.Models.AppliancesHubDto
+@{
+    var hub = Model ?? Dreamflykit.Application.AppliancesHub.Models.AppliancesHubDto.CreateDefault();
+    var theme = hub.ThemeSettings ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesThemeSettingsDto();
+    var hero = hub.HeroBanner ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesHeroBannerDto();
+    var slides = hero.Slides?.Where(s => s != null).ToList() 
+                 ?? new List<Dreamflykit.Application.AppliancesHub.Models.AppliancesHeroSlideDto>();
+    if (slides.Count == 0)
+    {
+        slides = Dreamflykit.Application.AppliancesHub.Models.AppliancesHubDto.CreateDefault().HeroBanner.Slides;
+    }
+
+    var bankOffer = hub.BankOffer ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesBankOfferDto();
+    var subCats = hub.SubCategories?.Items ?? new List<Dreamflykit.Application.AppliancesHub.Models.AppliancesSubCategoryItemDto>();
+    var spotlight = hub.BrandSpotlight ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandSpotlightDto();
+    var creditPromos = hub.CreditPromos ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesCreditPromoDto();
+    var limitedDeals = hub.LimitedTimeDeals ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesLimitedDealsDto();
+    var goldenHighlights = hub.GoldenHighlights ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesGoldenHighlightsDto();
+    var homeDeals = hub.HomeAppliancesDeals ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesTabbedDealsDto();
+    var kitchenDeals = hub.KitchenAppliancesDeals ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesTabbedDealsDto();
+    var emiSection = hub.NoCostEmiSection ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesEmiSectionDto();
+    var everydayLiving = hub.EverydayLivingSection ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesEverydayLivingDto();
+
+    var isAdmin = User.IsInRole("Admin") || User.IsInRole("SuperAdmin");
+    var slideDuration = hero.IntervalSeconds > 0 ? hero.IntervalSeconds : 4;
+}
+
+<div class="dk-appliances-hub-root" id="appliances-hub-root" 
+     style="--app-gold: @theme.AccentGold; --app-bg: @theme.PrimaryBgGradient;">
+
+    <!-- ========================================================
+         ADMIN BAR (Visible to Admin & SuperAdmin)
+    ========================================================= -->
+    @if (isAdmin)
+    {
+        <div class="dk-app-admin-bar">
+            <div class="dk-app-admin-info">
+                <span class="dk-app-admin-badge">⚡ Admin Mode Active</span>
+                <span>Flipkart Appliances Store &bull; Festival Mode: <strong>@(theme.IsFestiveEnabled ? theme.ThemeName : "Off")</strong> &bull; Slides: <strong>@slides.Count</strong> &bull; Interval: <strong>@(slideDuration)s</strong></span>
+            </div>
+            <a href="/Admin/AppliancesHub" class="dk-app-admin-btn" id="btnManageAppliancesHub">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                Manage Appliances Hub &amp; Upload Images
+            </a>
+        </div>
+    }
+
+    <!-- ========================================================
+         1. FULL WIDTH HERO BANNER CAROUSEL
+         Edge-to-edge, Admin customizable slides, timeframes, upload soon
+    ========================================================= -->
+    @if (hero.IsEnabled && slides.Count > 0)
+    {
+        <section class="dk-app-hero-wrapper" 
+                 id="appHeroCarousel" 
+                 data-autoplay="@(hero.AutoPlay ? "true" : "false")" 
+                 data-interval="@(slideDuration * 1000)">
+            <div class="dk-app-hero-slider" id="appHeroSlider">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    var slide = slides[i];
+                    var isActive = i == 0;
+                    <div class="dk-app-hero-slide @(isActive ? "active" : "")" 
+                         data-index="@i">
+                        <a href="@slide.TargetUrl" class="dk-app-hero-slide-link" title="@slide.Title">
+                            @if (slide.IsUploadingSoon || string.IsNullOrWhiteSpace(slide.ImageUrl))
+                            {
+                                <div class="dk-app-placeholder-banner">
+                                    <div class="dk-app-placeholder-content">
+                                        <div class="dk-app-badge-pill">⏳ Uploading Soon</div>
+                                        <h2>@slide.Title</h2>
+                                        @if (!string.IsNullOrWhiteSpace(slide.Subtitle))
+                                        {
+                                            <p>@slide.Subtitle</p>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(slide.PriceHighlight))
+                                        {
+                                            <div class="dk-app-banner-price">@slide.PriceHighlight</div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@slide.ImageUrl" 
+                                     alt="@slide.Title" 
+                                     class="dk-app-hero-img" 
+                                     loading="@(i == 0 ? "eager" : "lazy")" />
+                            }
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <!-- Slide Navigation Indicators (Dots) -->
+            <div class="dk-app-hero-indicators" id="appHeroDots">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    <button class="dk-app-hero-dot @(i == 0 ? "active" : "")" 
+                            data-target="@i" 
+                            aria-label="Slide @(i + 1)"></button>
+                }
+            </div>
+
+            <!-- Prev / Next Controls -->
+            <button class="dk-app-hero-nav dk-app-hero-prev" id="appHeroPrev" aria-label="Previous Slide">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <button class="dk-app-hero-nav dk-app-hero-next" id="appHeroNext" aria-label="Next Slide">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+        </section>
+    }
+
+    <div class="dk-app-content-container">
+
+        <!-- ========================================================
+             2. BANK / PAYMENT DISCOUNT STRIP (SBI Card 10% Instant Discount)
+        ========================================================= -->
+        @if (bankOffer.IsEnabled)
+        {
+            <section class="dk-app-bank-strip" aria-label="Bank Discount Offer">
+                <div class="dk-app-bank-content">
+                    <div class="dk-app-bank-logo">
+                        @if (!string.IsNullOrWhiteSpace(bankOffer.BankLogoUrl))
+                        {
+                            <img src="@bankOffer.BankLogoUrl" alt="SBI Card" class="dk-app-sbi-logo" onerror="this.style.display='none'; document.getElementById('sbiFallback').style.display='inline-flex';" />
+                        }
+                        <span id="sbiFallback" class="dk-app-sbi-fallback" style="@(string.IsNullOrWhiteSpace(bankOffer.BankLogoUrl) ? "display: inline-flex;" : "display: none;")">
+                            <span class="dk-app-sbi-circle"></span>
+                            <strong>SBI Card</strong>
+                        </span>
+                    </div>
+                    <div class="dk-app-bank-divider"></div>
+                    <div class="dk-app-bank-text">
+                        <span class="dk-app-bank-highlight">@bankOffer.OfferText</span>
+                        <span class="dk-app-bank-sub">@bankOffer.OfferSubtext</span>
+                    </div>
+                </div>
+            </section>
+        }
+
+        <!-- ========================================================
+             3. SUB-CATEGORY ICON GRID (16 Items: TV, Laundry, ACs, Fans, etc.)
+        ========================================================= -->
+        @if (subCats.Count > 0)
+        {
+            <section class="dk-app-subcats-section" aria-label="Appliances Categories">
+                <div class="dk-app-subcats-grid">
+                    @foreach (var sub in subCats)
+                    {
+                        <a href="@sub.TargetUrl" class="dk-app-subcat-card" title="@sub.Title">
+                            <div class="dk-app-subcat-icon-box">
+                                @if (sub.IsUploadingSoon || string.IsNullOrWhiteSpace(sub.ImageUrl))
+                                {
+                                    <div class="dk-app-subcat-fallback-icon">
+                                        <span>@sub.Icon</span>
+                                        <small class="dk-app-tiny-soon">Soon</small>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <img src="@sub.ImageUrl" alt="@sub.Title" class="dk-app-subcat-img" loading="lazy" />
+                                }
+                                @if (!string.IsNullOrWhiteSpace(sub.Badge))
+                                {
+                                    <span class="dk-app-subcat-badge">@sub.Badge</span>
+                                }
+                            </div>
+                            <span class="dk-app-subcat-title">@sub.Title</span>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+
+        <!-- ========================================================
+             4. BRAND IN SPOTLIGHT (TCL 85" QLED TV Banner)
+        ========================================================= -->
+        @if (spotlight.IsEnabled)
+        {
+            <section class="dk-app-spotlight-section" aria-label="Brand in Spotlight">
+                <div class="dk-app-section-header">
+                    <h3 class="dk-app-section-title">Brand in spotlight</h3>
+                </div>
+                <div class="dk-app-spotlight-banner-wrap">
+                    <a href="@spotlight.TargetUrl" class="dk-app-spotlight-banner" title="@spotlight.BrandName">
+                        @if (spotlight.IsUploadingSoon || string.IsNullOrWhiteSpace(spotlight.ImageUrl))
+                        {
+                            <div class="dk-app-spotlight-placeholder">
+                                <span class="dk-app-badge-ad">AD</span>
+                                <div class="dk-app-spotlight-inner">
+                                    <div class="dk-app-spotlight-txt">
+                                        <h4>@spotlight.ProductTitle</h4>
+                                        <div class="dk-app-spotlight-price">@spotlight.PriceHighlight</div>
+                                    </div>
+                                    <div class="dk-app-spotlight-brand">
+                                        <div class="dk-app-spotlight-brand-name">@spotlight.BrandName</div>
+                                        <small>@spotlight.BrandTagline</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="dk-app-spotlight-img-box">
+                                <span class="dk-app-badge-ad">AD</span>
+                                <img src="@spotlight.ImageUrl" alt="@spotlight.ProductTitle" class="dk-app-spotlight-img" loading="lazy" />
+                            </div>
+                        }
+                    </a>
+                </div>
+            </section>
+        }
+
+        <!-- ========================================================
+             5. DUAL CREDIT / EMI PROMO CARDS (Axis Bank & Flipkart EMI)
+        ========================================================= -->
+        @if (creditPromos.IsEnabled)
+        {
+            <section class="dk-app-credit-section" aria-label="Finance and Credit Offers">
+                <div class="dk-app-credit-grid">
+                    <a href="@creditPromos.Card1Link" class="dk-app-credit-card" title="@creditPromos.Card1Title">
+                        <div class="dk-app-credit-left">
+                            <div class="dk-app-credit-icon-fallback">
+                                <span>💳</span>
+                            </div>
+                        </div>
+                        <div class="dk-app-credit-info">
+                            <div class="dk-app-credit-title">
+                                <span class="dk-app-credit-head">@creditPromos.Card1Badge</span>
+                            </div>
+                            <div class="dk-app-credit-sub">
+                                <span>@creditPromos.Card1Sub</span>
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="@creditPromos.Card2Link" class="dk-app-credit-card" title="@creditPromos.Card2Title">
+                        <div class="dk-app-credit-left">
+                            <div class="dk-app-credit-icon-fallback" style="background: #fef08a; color: #854d0e;">
+                                <span>🏷️</span>
+                            </div>
+                        </div>
+                        <div class="dk-app-credit-info">
+                            <div class="dk-app-credit-title">
+                                <span class="dk-app-credit-head">@creditPromos.Card2Badge</span>
+                            </div>
+                            <div class="dk-app-credit-sub">
+                                <span>@creditPromos.Card2Sub</span>
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+        }
+
+        <!-- ========================================================
+             6. LIMITED TIME DEAL (Flash Sale Timed Slots with Lock Icons)
+        ========================================================= -->
+        @if (limitedDeals.IsEnabled && limitedDeals.Slots.Count > 0)
+        {
+            <section class="dk-app-limited-section" aria-label="Limited Time Deals">
+                <div class="dk-app-limited-canopy">
+                    <div class="dk-app-limited-header">
+                        <div class="dk-app-limited-lights">
+                            <span class="dk-app-bulb"></span>
+                            <span class="dk-app-bulb"></span>
+                            <span class="dk-app-bulb"></span>
+                            <span class="dk-app-bulb"></span>
+                            <span class="dk-app-bulb"></span>
+                        </div>
+                        <h3 class="dk-app-limited-title">@limitedDeals.Title</h3>
+                    </div>
+
+                    <div class="dk-app-limited-carousel" id="limitedDealsCarousel">
+                        <div class="dk-app-limited-track">
+                            @foreach (var item in limitedDeals.Slots)
+                            {
+                                <div class="dk-app-limited-slot @(item.IsLocked ? "is-locked" : "is-unlocked")">
+                                    <div class="dk-app-limited-arch">
+                                        <div class="dk-app-slot-img-wrap">
+                                            @if (item.IsUploadingSoon || string.IsNullOrWhiteSpace(item.ImageUrl))
+                                            {
+                                                <div class="dk-app-slot-placeholder">
+                                                    <span class="dk-app-slot-emoji">📺</span>
+                                                    <span class="dk-app-slot-soon">Uploading Soon</span>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <img src="@item.ImageUrl" alt="@item.ItemTitle" class="dk-app-slot-img" loading="lazy" />
+                                            }
+
+                                            @if (item.IsLocked)
+                                            {
+                                                <div class="dk-app-lock-overlay">
+                                                    <div class="dk-app-lock-badge">
+                                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                                            <path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 5a3 3 0 0 1 6 0v3H9V7zm3 7a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/>
+                                                        </svg>
+                                                    </div>
+                                                    <div class="dk-app-lock-time">@item.TimeSlot</div>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <div class="dk-app-slot-bottom">
+                                            <div class="dk-app-slot-price">@item.PriceText</div>
+                                            <div class="dk-app-slot-name">@item.ItemTitle</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+        }
+
+        <!-- ========================================================
+             7. GOLDEN FRAME BLOCKBUSTER DEALS (Solid Red Festive Grid with 6 items)
+        ========================================================= -->
+        @if (goldenHighlights.IsEnabled && goldenHighlights.Items.Count > 0)
+        {
+            <section class="dk-app-golden-section" aria-label="Festival Blockbuster Deals">
+                <div class="dk-app-golden-banner-wrap">
+                    <div class="dk-app-golden-grid">
+                        @foreach (var card in goldenHighlights.Items)
+                        {
+                            <a href="@card.TargetUrl" class="dk-app-golden-card" title="@card.Title">
+                                <div class="dk-app-golden-inner">
+                                    <div class="dk-app-golden-img-box">
+                                        @if (card.IsUploadingSoon || string.IsNullOrWhiteSpace(card.ImageUrl))
+                                        {
+                                            <div class="dk-app-golden-placeholder">
+                                                <span>⚡</span>
+                                                <small>Uploading Soon</small>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <img src="@card.ImageUrl" alt="@card.Title" class="dk-app-golden-img" loading="lazy" />
+                                        }
+                                    </div>
+                                    <div class="dk-app-golden-banner-pill">
+                                        <span class="dk-app-golden-price">@card.PriceText</span>
+                                        <span class="dk-app-golden-name">@card.Title</span>
+                                    </div>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </section>
+        }
+
+        <!-- ========================================================
+             8. DEALS ON HOME APPLIANCES (Tabbed Carousel)
+        ========================================================= -->
+        @if (homeDeals.IsEnabled && homeDeals.Items.Count > 0)
+        {
+            <section class="dk-app-deals-card-section" id="homeAppliancesSection" aria-label="Deals on Home Appliances">
+                <div class="dk-app-deals-box" style="background: linear-gradient(180deg, #ff6a00 0%, #ee5a00 100%);">
+                    <div class="dk-app-deals-header">
+                        <div class="dk-app-deals-title-row">
+                            <h3 class="dk-app-deals-heading">@homeDeals.SectionHeader</h3>
+                        </div>
+                        <div class="dk-app-deals-tabs">
+                            @foreach (var tab in homeDeals.Tabs)
+                            {
+                                <button class="dk-app-deals-tab-btn @(tab == "Best picks" ? "active" : "")" 
+                                        onclick="filterApplianceDeals('homeAppliancesSection', '@tab')">
+                                    @tab
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="dk-app-deals-track-wrap">
+                        <div class="dk-app-deals-track">
+                            @foreach (var item in homeDeals.Items)
+                            {
+                                <a href="@item.TargetUrl" 
+                                   class="dk-app-deal-item-card" 
+                                   data-tab="@item.TabCategory"
+                                   title="@item.Title">
+                                    <div class="dk-app-deal-item-top">
+                                        @if (item.IsUploadingSoon || string.IsNullOrWhiteSpace(item.ImageUrl))
+                                        {
+                                            <div class="dk-app-deal-placeholder">
+                                                <span>🏠</span>
+                                                <small>Uploading Soon</small>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <img src="@item.ImageUrl" alt="@item.Title" class="dk-app-deal-item-img" loading="lazy" />
+                                        }
+                                    </div>
+                                    <div class="dk-app-deal-item-bottom">
+                                        <div class="dk-app-deal-item-price">@item.PriceText</div>
+                                        <div class="dk-app-deal-item-title">@item.Title</div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+        }
+
+        <!-- ========================================================
+             9. DEALS ON KITCHEN APPLIANCES (Tabbed Carousel)
+        ========================================================= -->
+        @if (kitchenDeals.IsEnabled && kitchenDeals.Items.Count > 0)
+        {
+            <section class="dk-app-deals-card-section" id="kitchenAppliancesSection" aria-label="Deals on Kitchen Appliances">
+                <div class="dk-app-deals-box" style="background: linear-gradient(180deg, #d84315 0%, #bf360c 100%);">
+                    <div class="dk-app-deals-header">
+                        <div class="dk-app-deals-title-row">
+                            <h3 class="dk-app-deals-heading">@kitchenDeals.SectionHeader</h3>
+                        </div>
+                        <div class="dk-app-deals-tabs">
+                            @foreach (var tab in kitchenDeals.Tabs)
+                            {
+                                <button class="dk-app-deals-tab-btn @(tab == "Best picks" ? "active" : "")" 
+                                        onclick="filterApplianceDeals('kitchenAppliancesSection', '@tab')">
+                                    @tab
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="dk-app-deals-track-wrap">
+                        <div class="dk-app-deals-track">
+                            @foreach (var item in kitchenDeals.Items)
+                            {
+                                <a href="@item.TargetUrl" 
+                                   class="dk-app-deal-item-card" 
+                                   data-tab="@item.TabCategory"
+                                   title="@item.Title">
+                                    <div class="dk-app-deal-item-top">
+                                        @if (item.IsUploadingSoon || string.IsNullOrWhiteSpace(item.ImageUrl))
+                                        {
+                                            <div class="dk-app-deal-placeholder">
+                                                <span>🍳</span>
+                                                <small>Uploading Soon</small>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <img src="@item.ImageUrl" alt="@item.Title" class="dk-app-deal-item-img" loading="lazy" />
+                                        }
+                                    </div>
+                                    <div class="dk-app-deal-item-bottom">
+                                        <div class="dk-app-deal-item-price">@item.PriceText</div>
+                                        <div class="dk-app-deal-item-title">@item.Title</div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+        }
+
+        <!-- ========================================================
+             10. NO COST EMI SECTION (Arched Cards with Monthly EMI)
+        ========================================================= -->
+        @if (emiSection.IsEnabled && emiSection.Items.Count > 0)
+        {
+            <section class="dk-app-emi-section" aria-label="No Cost EMI Offers">
+                <div class="dk-app-emi-canopy">
+                    <div class="dk-app-emi-header">
+                        <h3 class="dk-app-emi-title">@emiSection.Title</h3>
+                    </div>
+                    <div class="dk-app-emi-track-wrap">
+                        <div class="dk-app-emi-track">
+                            @foreach (var item in emiSection.Items)
+                            {
+                                <a href="@item.TargetUrl" class="dk-app-emi-card" title="@item.Title">
+                                    <div class="dk-app-emi-arch">
+                                        <div class="dk-app-emi-img-wrap">
+                                            @if (item.IsUploadingSoon || string.IsNullOrWhiteSpace(item.ImageUrl))
+                                            {
+                                                <div class="dk-app-emi-placeholder">
+                                                    <span>💳</span>
+                                                    <small>Soon</small>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <img src="@item.ImageUrl" alt="@item.Title" class="dk-app-emi-img" loading="lazy" />
+                                            }
+                                        </div>
+                                        <div class="dk-app-emi-bottom">
+                                            <div class="dk-app-emi-rate">@item.EmiText</div>
+                                            <div class="dk-app-emi-name">@item.Title</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+        }
+
+        <!-- ========================================================
+             11. FOR EVERYDAY LIVING! (Pastel Rounded Essentials)
+        ========================================================= -->
+        @if (everydayLiving.IsEnabled && everydayLiving.Items.Count > 0)
+        {
+            <section class="dk-app-living-section" aria-label="Everyday Living Appliances">
+                <div class="dk-app-section-header">
+                    <h3 class="dk-app-section-title">@everydayLiving.Title</h3>
+                </div>
+                <div class="dk-app-living-grid">
+                    @foreach (var item in everydayLiving.Items)
+                    {
+                        <a href="@item.TargetUrl" class="dk-app-living-card" title="@item.Title">
+                            <div class="dk-app-living-img-box">
+                                @if (item.IsUploadingSoon || string.IsNullOrWhiteSpace(item.ImageUrl))
+                                {
+                                    <div class="dk-app-living-placeholder">
+                                        <span>✨</span>
+                                        <small>Uploading Soon</small>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <img src="@item.ImageUrl" alt="@item.Title" class="dk-app-living-img" loading="lazy" />
+                                }
+                            </div>
+                            <span class="dk-app-living-name">@item.Title</span>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+
+    </div>
+</div>
+
+<style>
+/* ===============================================================
+   FLIPKART APPLIANCES HUB STYLES (INDUSTRY STANDARD & RESPONSIVE)
+================================================================ */
+.dk-appliances-hub-root {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #111827;
+    background: #f1f2f4;
+}
+
+/* ADMIN BAR */
+.dk-app-admin-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1e293b;
+    color: #ffffff;
+    padding: 10px 24px;
+    font-size: 13px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.dk-app-admin-badge {
+    background: #ea580c;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-right: 8px;
+}
+.dk-app-admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ea580c;
+    color: #ffffff;
+    padding: 7px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 12.5px;
+    transition: all 0.2s;
+}
+.dk-app-admin-btn:hover {
+    background: #c2410c;
+    color: #ffffff;
+}
+
+/* 1. HERO BANNER CAROUSEL (Edge to Edge Full Width) */
+.dk-app-hero-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 380px;
+    overflow: hidden;
+    background: #111;
+}
+.dk-app-hero-slider {
+    display: flex;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    width: 100%;
+}
+.dk-app-hero-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-app-hero-slide-link {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+}
+.dk-app-hero-img {
+    width: 100%;
+    height: auto;
+    max-height: 480px;
+    object-fit: cover;
+    display: block;
+}
+.dk-app-placeholder-banner {
+    min-height: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, #ea580c 0%, #b91c1c 100%);
+    color: #ffffff;
+    padding: 40px 20px;
+    text-align: center;
+}
+.dk-app-placeholder-content h2 {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 12px 0 6px 0;
+    letter-spacing: -0.5px;
+}
+.dk-app-placeholder-content p {
+    font-size: 18px;
+    opacity: 0.95;
+    margin: 0 0 16px 0;
+}
+.dk-app-banner-price {
+    display: inline-block;
+    background: #facc15;
+    color: #111827;
+    font-weight: 800;
+    font-size: 20px;
+    padding: 6px 18px;
+    border-radius: 30px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+}
+.dk-app-badge-pill {
+    display: inline-block;
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.dk-app-hero-indicators {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+.dk-app-hero-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.45);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+}
+.dk-app-hero-dot.active {
+    width: 24px;
+    border-radius: 6px;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.dk-app-hero-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 70px;
+    background: rgba(255,255,255,0.85);
+    border: none;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 9;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: background 0.2s;
+}
+.dk-app-hero-nav:hover {
+    background: #ffffff;
+}
+.dk-app-hero-prev {
+    left: 0;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+.dk-app-hero-next {
+    right: 0;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+.dk-app-hero-nav svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* CONTENT CONTAINER */
+.dk-app-content-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 16px 14px 40px 14px;
+}
+
+/* 2. BANK DISCOUNT STRIP */
+.dk-app-bank-strip {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 14px 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.dk-app-bank-content {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.dk-app-sbi-logo {
+    height: 38px;
+    max-width: 180px;
+    object-fit: contain;
+}
+.dk-app-sbi-fallback {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    color: #0b78c2;
+}
+.dk-app-sbi-circle {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #0b78c2;
+    display: inline-block;
+}
+.dk-app-bank-divider {
+    width: 1.5px;
+    height: 36px;
+    background: #cbd5e1;
+}
+.dk-app-bank-text {
+    font-size: 18px;
+    color: #1e293b;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+.dk-app-bank-highlight {
+    font-weight: 800;
+    color: #0f172a;
+    font-size: 20px;
+}
+.dk-app-bank-sub {
+    color: #475569;
+    font-weight: 500;
+}
+
+/* 3. SUB-CATEGORY ICON GRID (16 Items) */
+.dk-app-subcats-section {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    margin-bottom: 22px;
+}
+.dk-app-subcats-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 14px 10px;
+    text-align: center;
+}
+.dk-app-subcat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #1e293b;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+.dk-app-subcat-card:hover {
+    transform: translateY(-3px);
+    color: #ea580c;
+}
+.dk-app-subcat-icon-box {
+    position: relative;
+    width: 82px;
+    height: 82px;
+    border-radius: 16px;
+    background: #fce7cf;
+    border: 1px solid #fbd3aa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.dk-app-subcat-card:hover .dk-app-subcat-icon-box {
+    box-shadow: 0 6px 14px rgba(234, 88, 12, 0.2);
+    border-color: #ea580c;
+}
+.dk-app-subcat-img {
+    width: 76%;
+    height: 76%;
+    object-fit: contain;
+}
+.dk-app-subcat-fallback-icon {
+    font-size: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.dk-app-tiny-soon {
+    font-size: 9px;
+    background: #fef08a;
+    color: #854d0e;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+.dk-app-subcat-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 4px;
+}
+.dk-app-subcat-title {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px;
+}
+
+/* 4. BRAND IN SPOTLIGHT */
+.dk-app-spotlight-section {
+    margin-bottom: 24px;
+}
+.dk-app-section-header {
+    margin-bottom: 12px;
+}
+.dk-app-section-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #111827;
+    margin: 0;
+}
+.dk-app-spotlight-banner-wrap {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+.dk-app-spotlight-banner {
+    display: block;
+    text-decoration: none;
+    position: relative;
+}
+.dk-app-spotlight-img-box {
+    position: relative;
+    width: 100%;
+}
+.dk-app-badge-ad {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: rgba(0,0,0,0.6);
+    color: #f1f5f9;
+    border: 1px solid rgba(255,255,255,0.4);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    z-index: 5;
+}
+.dk-app-spotlight-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.dk-app-spotlight-placeholder {
+    padding: 30px 40px;
+    background: radial-gradient(circle at center, #1e1b4b 0%, #030712 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+.dk-app-spotlight-inner {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+.dk-app-spotlight-txt h4 {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0 0 6px 0;
+    color: #f8fafc;
+}
+.dk-app-spotlight-price {
+    font-size: 22px;
+    font-weight: 800;
+    color: #facc15;
+}
+.dk-app-spotlight-brand-name {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #ffffff;
+    text-align: right;
+}
+
+/* 5. DUAL CREDIT / EMI PROMO CARDS */
+.dk-app-credit-section {
+    margin-bottom: 24px;
+}
+.dk-app-credit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.dk-app-credit-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: #1e293b;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.dk-app-credit-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+.dk-app-credit-icon-fallback {
+    width: 60px;
+    height: 44px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+.dk-app-credit-info {
+    flex: 1;
+}
+.dk-app-credit-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 2px;
+}
+.dk-app-credit-sub {
+    font-size: 13px;
+    color: #334155;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* 6. LIMITED TIME DEALS (Flash Sale Timed Slots) */
+.dk-app-limited-section {
+    margin-bottom: 24px;
+}
+.dk-app-limited-canopy {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
+    border-radius: 12px;
+    padding: 16px 16px 20px 16px;
+    box-shadow: 0 4px 18px rgba(234, 88, 12, 0.25);
+}
+.dk-app-limited-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+.dk-app-limited-lights {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+.dk-app-bulb {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fef08a;
+    box-shadow: 0 0 8px #fef08a;
+}
+.dk-app-limited-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+    text-transform: capitalize;
+}
+.dk-app-limited-track {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+}
+.dk-app-limited-slot {
+    flex: 0 0 160px;
+}
+.dk-app-limited-arch {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 2px solid #facc15;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    height: 100%;
+}
+.dk-app-slot-img-wrap {
+    position: relative;
+    height: 120px;
+    background: #fff8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.dk-app-slot-img {
+    max-height: 100px;
+    max-width: 90%;
+    object-fit: contain;
+}
+.dk-app-slot-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+}
+.dk-app-slot-emoji {
+    font-size: 32px;
+}
+.dk-app-slot-soon {
+    font-size: 10px;
+    font-weight: 700;
+    color: #854d0e;
+    background: #fef08a;
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+.dk-app-lock-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+}
+.dk-app-lock-badge {
+    color: #facc15;
+    margin-bottom: 4px;
+}
+.dk-app-lock-time {
+    font-size: 11px;
+    font-weight: 800;
+    background: rgba(0,0,0,0.7);
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+}
+.dk-app-slot-bottom {
+    padding: 10px 8px;
+    text-align: center;
+    background: #ffffff;
+    border-top: 1px solid #fed7aa;
+}
+.dk-app-slot-price {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #111827;
+}
+.dk-app-slot-name {
+    font-size: 12px;
+    color: #475569;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+
+/* 7. GOLDEN FRAME BLOCKBUSTER DEALS (Red Festive Grid) */
+.dk-app-golden-section {
+    margin-bottom: 24px;
+}
+.dk-app-golden-banner-wrap {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 4px 18px rgba(185, 28, 28, 0.3);
+}
+.dk-app-golden-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+.dk-app-golden-card {
+    text-decoration: none;
+    display: block;
+    transition: transform 0.2s;
+}
+.dk-app-golden-card:hover {
+    transform: translateY(-3px);
+}
+.dk-app-golden-inner {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 3px solid #facc15;
+    box-shadow: 0 0 12px rgba(250, 204, 21, 0.4);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.dk-app-golden-img-box {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    padding: 12px;
+}
+.dk-app-golden-img {
+    max-height: 156px;
+    max-width: 90%;
+    object-fit: contain;
+}
+.dk-app-golden-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: #f59e0b;
+}
+.dk-app-golden-placeholder small {
+    font-size: 11px;
+    font-weight: 700;
+    color: #854d0e;
+    background: #fef08a;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 6px;
+}
+.dk-app-golden-banner-pill {
+    background: #facc15;
+    padding: 10px;
+    text-align: center;
+    color: #111827;
+}
+.dk-app-golden-price {
+    display: block;
+    font-size: 16px;
+    font-weight: 900;
+    color: #b91c1c;
+    letter-spacing: -0.3px;
+}
+.dk-app-golden-name {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 8 & 9. TABBED DEALS CAROUSELS (Home & Kitchen) */
+.dk-app-deals-card-section {
+    margin-bottom: 24px;
+}
+.dk-app-deals-box {
+    border-radius: 14px;
+    padding: 18px 18px 22px 18px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+}
+.dk-app-deals-header {
+    margin-bottom: 14px;
+}
+.dk-app-deals-heading {
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+}
+.dk-app-deals-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+}
+.dk-app-deals-tab-btn {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+.dk-app-deals-tab-btn.active, .dk-app-deals-tab-btn:hover {
+    background: #ffffff;
+    color: #c2410c;
+    border-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.dk-app-deals-track {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+}
+.dk-app-deal-item-card {
+    flex: 0 0 170px;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: #1e293b;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+}
+.dk-app-deal-item-card:hover {
+    transform: translateY(-2px);
+}
+.dk-app-deal-item-top {
+    height: 130px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+.dk-app-deal-item-img {
+    max-height: 110px;
+    max-width: 90%;
+    object-fit: contain;
+}
+.dk-app-deal-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 32px;
+    color: #94a3b8;
+}
+.dk-app-deal-placeholder small {
+    font-size: 10px;
+    font-weight: 700;
+    color: #854d0e;
+    background: #fef08a;
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+.dk-app-deal-item-bottom {
+    padding: 10px 8px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+}
+.dk-app-deal-item-price {
+    font-size: 14px;
+    font-weight: 800;
+    color: #b91c1c;
+}
+.dk-app-deal-item-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 10. NO COST EMI SECTION */
+.dk-app-emi-section {
+    margin-bottom: 24px;
+}
+.dk-app-emi-canopy {
+    background: linear-gradient(135deg, #be123c 0%, #9f1239 100%);
+    border-radius: 14px;
+    padding: 16px 16px 20px 16px;
+    box-shadow: 0 4px 18px rgba(159, 18, 57, 0.25);
+}
+.dk-app-emi-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 12px 0;
+}
+.dk-app-emi-track {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+}
+.dk-app-emi-card {
+    flex: 0 0 160px;
+    text-decoration: none;
+    display: block;
+}
+.dk-app-emi-arch {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 2px solid #facc15;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.dk-app-emi-img-wrap {
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    padding: 8px;
+}
+.dk-app-emi-img {
+    max-height: 94px;
+    max-width: 90%;
+    object-fit: contain;
+}
+.dk-app-emi-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 28px;
+}
+.dk-app-emi-placeholder small {
+    font-size: 9px;
+    font-weight: 700;
+    background: #fef08a;
+    color: #854d0e;
+    padding: 1px 5px;
+    border-radius: 3px;
+}
+.dk-app-emi-bottom {
+    background: #fef08a;
+    padding: 8px 6px;
+    text-align: center;
+}
+.dk-app-emi-rate {
+    font-size: 13px;
+    font-weight: 800;
+    color: #9f1239;
+}
+.dk-app-emi-name {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 11. FOR EVERYDAY LIVING! */
+.dk-app-living-section {
+    margin-bottom: 24px;
+}
+.dk-app-living-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+}
+.dk-app-living-card {
+    background: #fff0f3;
+    border: 1px solid #fecdd3;
+    border-radius: 14px;
+    padding: 16px 12px;
+    text-align: center;
+    text-decoration: none;
+    color: #1e293b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.dk-app-living-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 14px rgba(225, 29, 72, 0.12);
+}
+.dk-app-living-img-box {
+    width: 100%;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.dk-app-living-img {
+    max-height: 110px;
+    max-width: 90%;
+    object-fit: contain;
+}
+.dk-app-living-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 32px;
+}
+.dk-app-living-placeholder small {
+    font-size: 10px;
+    font-weight: 700;
+    background: #fef08a;
+    color: #854d0e;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-top: 4px;
+}
+.dk-app-living-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #334155;
+    line-height: 1.25;
+}
+
+/* RESPONSIVE BREAKPOINTS */
+@@media (max-width: 1024px) {
+    .dk-app-subcats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .dk-app-living-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@@media (max-width: 768px) {
+    .dk-app-hero-wrapper {
+        min-height: 200px !important;
+    }
+    .dk-app-bank-content {
+        gap: 12px;
+    }
+    .dk-app-bank-divider {
+        display: none;
+    }
+    .dk-app-bank-text {
+        font-size: 14px;
+        text-align: center;
+    }
+    .dk-app-bank-highlight {
+        font-size: 16px;
+    }
+    .dk-app-credit-grid {
+        grid-template-columns: 1fr;
+    }
+    .dk-app-golden-grid {
+        grid-template-columns: 1fr;
+    }
+    .dk-app-subcats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px 6px;
+    }
+    .dk-app-subcat-icon-box {
+        width: 66px;
+        height: 66px;
+    }
+    .dk-app-subcat-title {
+        font-size: 11px;
+    }
+    .dk-app-living-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+
+<script>
+(function() {
+    // 1. Hero Carousel Controller
+    const carousel = document.getElementById('appHeroCarousel');
+    if (carousel) {
+        const slider = document.getElementById('appHeroSlider');
+        const dots = document.querySelectorAll('.dk-app-hero-dot');
+        const slides = document.querySelectorAll('.dk-app-hero-slide');
+        const prevBtn = document.getElementById('appHeroPrev');
+        const nextBtn = document.getElementById('appHeroNext');
+        
+        let currentIndex = 0;
+        const total = slides.length;
+        const isAutoplay = carousel.getAttribute('data-autoplay') === 'true';
+        const interval = parseInt(carousel.getAttribute('data-interval') || '4000', 10);
+        let timer = null;
+
+        function goToSlide(index) {
+            if (index < 0) index = total - 1;
+            if (index >= total) index = 0;
+            currentIndex = index;
+            if (slider) {
+                slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === currentIndex);
+            });
+            slides.forEach((slide, idx) => {
+                slide.classList.toggle('active', idx === currentIndex);
+            });
+        }
+
+        function startAutoplay() {
+            if (isAutoplay && total > 1) {
+                stopAutoplay();
+                timer = setInterval(() => {
+                    goToSlide(currentIndex + 1);
+                }, interval);
+            }
+        }
+
+        function stopAutoplay() {
+            if (timer) clearInterval(timer);
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                goToSlide(currentIndex - 1);
+                startAutoplay();
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                goToSlide(currentIndex + 1);
+                startAutoplay();
+            });
+        }
+
+        dots.forEach((dot) => {
+            dot.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = parseInt(dot.getAttribute('data-target') || '0', 10);
+                goToSlide(target);
+                startAutoplay();
+            });
+        });
+
+        carousel.addEventListener('mouseenter', stopAutoplay);
+        carousel.addEventListener('mouseleave', startAutoplay);
+
+        startAutoplay();
+    }
+
+    // 2. Deals Tab Filter
+    window.filterApplianceDeals = function(sectionId, tabName) {
+        const section = document.getElementById(sectionId);
+        if (!section) return;
+
+        const tabButtons = section.querySelectorAll('.dk-app-deals-tab-btn');
+        tabButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.textContent.trim().toLowerCase() === tabName.trim().toLowerCase());
+        });
+
+        const cards = section.querySelectorAll('.dk-app-deal-item-card');
+        cards.forEach(card => {
+            const cardTab = (card.getAttribute('data-tab') || '').trim().toLowerCase();
+            const targetTab = tabName.trim().toLowerCase();
+            if (targetTab === 'best picks' || targetTab === 'all' || cardTab === targetTab) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    };
+})();
+</script>
