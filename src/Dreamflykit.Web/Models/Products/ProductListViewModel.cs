@@ -68,6 +68,8 @@ public sealed class ProductListViewModel
 
     public Dreamflykit.Application.MobilesHub.Models.MobilesHubDto? MobilesHub { get; init; }
 
+    public Dreamflykit.Application.AppliancesHub.Models.AppliancesHubDto? AppliancesHub { get; init; }
+
     public string? ViewMode { get; init; }
 
     public bool IsStudyEssentialsHub =>
@@ -138,6 +140,13 @@ public sealed class ProductListViewModel
     public bool IsMobilesHub =>
         string.Equals(CategorySlug, "mobiles", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "mobile", StringComparison.OrdinalIgnoreCase);
+
+    public bool IsAppliancesHub =>
+        string.Equals(CategorySlug, "appliances", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "appliance", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "kitchen-appliances", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "kitchen_appliances", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "tv-and-appliances", StringComparison.OrdinalIgnoreCase);
 
     public bool IsElectronicsCategory =>
         string.Equals(CategorySlug, "electronics", StringComparison.OrdinalIgnoreCase) ||

@@ -1,0 +1,482 @@
+@model Dreamflykit.Application.AppliancesHub.Models.AppliancesHubDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Flipkart TV & Appliances Hub Management";
+    var hub = Model ?? Dreamflykit.Application.AppliancesHub.Models.AppliancesHubDto.CreateDefault();
+    var theme = hub.ThemeSettings ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesThemeSettingsDto();
+    var hero = hub.HeroBanner ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesHeroBannerDto();
+    var slides = hero.Slides ?? new List<Dreamflykit.Application.AppliancesHub.Models.AppliancesHeroSlideDto>();
+    var bankOffer = hub.BankOffer ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesBankOfferDto();
+    var subCats = hub.SubCategories?.Items ?? new List<Dreamflykit.Application.AppliancesHub.Models.AppliancesSubCategoryItemDto>();
+    var spotlight = hub.BrandSpotlight ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandSpotlightDto();
+    var goldenHighlights = hub.GoldenHighlights ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesGoldenHighlightsDto();
+}
+
+@Html.AntiForgeryToken()
+
+<div class="dk-admin-content-container" style="max-width: 1400px; margin: 0 auto; padding: 24px 20px;">
+
+    <!-- HEADER & ACTION BAR -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                <span style="background: #ea580c; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 6px; letter-spacing: 0.5px;">FLIPKART APPLIANCES HUB</span>
+                <span style="background: #fef08a; color: #854d0e; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">FESTIVAL / DIWALI THEME</span>
+            </div>
+            <h1 style="font-size: 24px; font-weight: 900; color: #0f172a; margin: 0;">Appliances Store &amp; Offers Management</h1>
+            <p style="font-size: 13.5px; color: #64748b; margin: 4px 0 0 0;">
+                Full control over hero banners, bank offers, 16 sub-category icons, golden blockbuster frames, flash deals, and everyday living items.
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="/category/appliances" target="_blank" class="dk-btn" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 9px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <span>👁️</span> Preview Live Store
+            </a>
+            <button type="button" class="dk-btn" id="btnSaveAppliancesTop" style="background: #ea580c; color: #ffffff; border: none; padding: 10px 24px; font-size: 13.5px; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save All Changes
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-weight: 600;">
+            ✅ @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- 0. FESTIVAL THEME SETTINGS -->
+    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <div>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">0. Festival Theme &amp; Styling Control</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Toggle festival theme (Diwali/Festive), choose accent colors, and background.</p>
+            </div>
+            <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 800; color: #ea580c; cursor: pointer;">
+                <input type="checkbox" id="themeIsFestiveEnabled" @(theme.IsFestiveEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #ea580c;" />
+                🎉 Enable Festival / Diwali Mode
+            </label>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+            <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Theme Title</label>
+                <input type="text" id="themeName" value="@theme.ThemeName" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+            </div>
+            <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Badge Text</label>
+                <input type="text" id="themeBadgeText" value="@theme.BadgeText" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+            </div>
+            <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Accent Gold Color</label>
+                <input type="color" id="themeAccentGold" value="@theme.AccentGold" style="width: 100%; height: 42px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px;" />
+            </div>
+            <div>
+                <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Tagline</label>
+                <input type="text" id="themeTagline" value="@theme.ThemeTagline" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. HERO BANNER CAROUSEL -->
+    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <div>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">1. Full-Width Big Hero Banner (Carousel)</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Slide interval seconds, auto-play, image upload, and "Uploading Soon" marker.</p>
+            </div>
+            <div style="display: flex; gap: 16px; align-items: center;">
+                <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
+                    <input type="checkbox" id="heroIsEnabled" @(hero.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" />
+                    Enabled
+                </label>
+                <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
+                    <input type="checkbox" id="heroAutoPlay" @(hero.AutoPlay ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" />
+                    Auto-Rotate
+                </label>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <div>
+                <label style="display: block; font-size: 13px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">⏱️ Slide Duration / Interval (Seconds)</label>
+                <input type="number" id="heroIntervalSeconds" value="@hero.IntervalSeconds" min="1" max="60" style="width: 100%; padding: 9px 12px; border: 2px solid #ea580c; border-radius: 8px; font-size: 14px; font-weight: 800;" />
+            </div>
+            <div>
+                <span style="font-size: 12.5px; color: #64748b; margin-top: 28px; display: block;">Total slides configured: <strong>@slides.Count</strong></span>
+            </div>
+        </div>
+
+        <!-- Hero Slides List -->
+        <div id="heroSlidesList" style="display: flex; flex-direction: column; gap: 16px;">
+            @for (int i = 0; i < slides.Count; i++)
+            {
+                var s = slides[i];
+                <div class="hero-slide-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="font-weight: 800; font-size: 13px; color: #0f172a;">Slide #@(i + 1)</span>
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <label style="font-size: 12px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 2px 8px; border-radius: 6px; cursor: pointer;">
+                                <input type="checkbox" class="slide-uploading-soon" @(s.IsUploadingSoon ? "checked" : "") /> ⏳ Uploading Soon
+                            </label>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1.5fr 1fr; gap: 12px; margin-bottom: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Slide Title</label>
+                            <input type="text" class="slide-title" value="@s.Title" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Subtitle</label>
+                            <input type="text" class="slide-subtitle" value="@s.Subtitle" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Price Highlight</label>
+                            <input type="text" class="slide-price" value="@s.PriceHighlight" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 3fr 1.5fr; gap: 12px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Image URL</label>
+                            <div style="display: flex; gap: 6px;">
+                                <input type="text" class="slide-image-url" value="@s.ImageUrl" style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                                <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">Upload</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Target URL</label>
+                            <input type="text" class="slide-target-url" value="@s.TargetUrl" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 2. BANK OFFER STRIP -->
+    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">2. Bank Offer Strip (SBI 10% Instant Discount)</h2>
+            <label style="font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
+                <input type="checkbox" id="bankIsEnabled" @(bankOffer.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" /> Enabled
+            </label>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">
+            <div>
+                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Offer Text</label>
+                <input type="text" id="bankOfferText" value="@bankOffer.OfferText" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+            </div>
+            <div>
+                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Offer Subtext</label>
+                <input type="text" id="bankOfferSubtext" value="@bankOffer.OfferSubtext" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+            </div>
+        </div>
+        <div>
+            <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Bank Logo Image URL</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="bankLogoUrl" value="@bankOffer.BankLogoUrl" style="flex: 1; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+                <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 16px; border-radius: 8px; font-size: 13px; cursor: pointer;">Upload Logo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. SUB-CATEGORY ICONS (16 Items) -->
+    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <div>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">3. Sub-Category Icons Grid (16 Items)</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Television, Laundry, ACs, Fans, Microwaves, Geysers, Stabilizers, Fridges, etc.</p>
+            </div>
+        </div>
+        <div id="subCatsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+            @for (int i = 0; i < subCats.Count; i++)
+            {
+                var sc = subCats[i];
+                <div class="subcat-item-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: 800; font-size: 13px; color: #1e293b;">@sc.Title</span>
+                        <label style="font-size: 11px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 1px 6px; border-radius: 4px; cursor: pointer;">
+                            <input type="checkbox" class="subcat-uploading-soon" @(sc.IsUploadingSoon ? "checked" : "") /> Soon
+                        </label>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
+                        <div>
+                            <label style="font-size: 11px; font-weight: 700;">Title</label>
+                            <input type="text" class="subcat-title" value="@sc.Title" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                        </div>
+                        <div>
+                            <label style="font-size: 11px; font-weight: 700;">Badge</label>
+                            <input type="text" class="subcat-badge" value="@sc.Badge" placeholder="e.g. Value 365" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-size: 11px; font-weight: 700;">Image URL</label>
+                        <div style="display: flex; gap: 4px;">
+                            <input type="text" class="subcat-image-url" value="@sc.ImageUrl" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                            <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 8px; border-radius: 4px; font-size: 11px; cursor: pointer;">Upload</button>
+                        </div>
+                    </div>
+                    <input type="hidden" class="subcat-target-url" value="@sc.TargetUrl" />
+                    <input type="hidden" class="subcat-icon" value="@sc.Icon" />
+                    <input type="hidden" class="subcat-slug" value="@sc.Slug" />
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 4. BRAND IN SPOTLIGHT -->
+    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">4. Brand in Spotlight (e.g., TCL 85" QLED TV)</h2>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <label style="font-size: 12px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 2px 8px; border-radius: 6px; cursor: pointer;">
+                    <input type="checkbox" id="spotlightIsUploadingSoon" @(spotlight.IsUploadingSoon ? "checked" : "") /> ⏳ Uploading Soon
+                </label>
+                <label style="font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
+                    <input type="checkbox" id="spotlightIsEnabled" @(spotlight.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" /> Enabled
+                </label>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div>
+                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Product Title</label>
+                <input type="text" id="spotlightTitle" value="@spotlight.ProductTitle" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px;" />
+            </div>
+            <div>
+                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Price Highlight</label>
+                <input type="text" id="spotlightPrice" value="@spotlight.PriceHighlight" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px;" />
+            </div>
+            <div>
+                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Brand Name</label>
+                <input type="text" id="spotlightBrand" value="@spotlight.BrandName" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px;" />
+            </div>
+        </div>
+        <div>
+            <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Spotlight Banner Image URL</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="spotlightImageUrl" value="@spotlight.ImageUrl" style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 16px; border-radius: 6px; font-size: 12.5px; cursor: pointer;">Upload Banner</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. GOLDEN BLOCKBUSTER DEALS (6 Cards) -->
+    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+            <div>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">5. Golden Frame Blockbuster Deals (6 Highlight Cards)</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Solid red festive frame with yellow price pill, Samsung TV, Bespoke AI Washer, Exide Inverter, etc.</p>
+            </div>
+            <label style="font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
+                <input type="checkbox" id="goldenIsEnabled" @(goldenHighlights.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" /> Enabled
+            </label>
+        </div>
+        <div id="goldenCardsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+            @for (int i = 0; i < goldenHighlights.Items.Count; i++)
+            {
+                var g = goldenHighlights.Items[i];
+                <div class="golden-item-row" style="background: #fff8f8; border: 1px solid #fecdd3; border-radius: 8px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: 800; font-size: 13px; color: #b91c1c;">Card #@(i + 1)</span>
+                        <label style="font-size: 11px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 1px 6px; border-radius: 4px; cursor: pointer;">
+                            <input type="checkbox" class="golden-uploading-soon" @(g.IsUploadingSoon ? "checked" : "") /> Soon
+                        </label>
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label style="font-size: 11px; font-weight: 700;">Title</label>
+                        <input type="text" class="golden-name" value="@g.Title" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label style="font-size: 11px; font-weight: 700;">Price Text</label>
+                        <input type="text" class="golden-price" value="@g.PriceText" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                    </div>
+                    <div>
+                        <label style="font-size: 11px; font-weight: 700;">Image URL</label>
+                        <div style="display: flex; gap: 4px;">
+                            <input type="text" class="golden-image-url" value="@g.ImageUrl" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                            <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 8px; border-radius: 4px; font-size: 11px; cursor: pointer;">Upload</button>
+                        </div>
+                    </div>
+                    <input type="hidden" class="golden-target-url" value="@g.TargetUrl" />
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- BOTTOM SAVE BUTTON -->
+    <div style="display: flex; justify-content: flex-end; margin-top: 32px;">
+        <button type="button" class="dk-btn" id="btnSaveAppliancesBottom" style="background: #ea580c; color: #ffffff; border: none; padding: 12px 32px; font-size: 15px; font-weight: 800; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 16px rgba(234, 88, 12, 0.4);">
+            Save All Changes
+        </button>
+    </div>
+
+    <!-- Hidden File Input for universal upload -->
+    <input type="file" id="universalHubFileInput" accept="image/*" style="display: none;" />
+</div>
+
+<script>
+let currentTargetInput = null;
+
+function triggerHubUpload(btn) {
+    const parent = btn.parentElement;
+    currentTargetInput = parent.querySelector('input[type="text"]');
+    document.getElementById('universalHubFileInput').click();
+}
+
+document.getElementById('universalHubFileInput').addEventListener('change', async function() {
+    if (!this.files || this.files.length === 0 || !currentTargetInput) return;
+    const file = this.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+    try {
+        const resp = await fetch('/Admin/AppliancesHub/UploadImage', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': token
+            },
+            body: formData
+        });
+
+        const data = await resp.json();
+        if (data.success && data.url) {
+            currentTargetInput.value = data.url;
+            alert('Image uploaded successfully!');
+        } else {
+            alert('Upload failed: ' + (data.message || 'Unknown error'));
+        }
+    } catch (err) {
+        alert('Upload error: ' + err.message);
+    } finally {
+        this.value = '';
+    }
+});
+
+// Master Save Function
+async function saveAllAppliancesConfig() {
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+    // Collect slides
+    const slideRows = document.querySelectorAll('.hero-slide-row');
+    const slides = [];
+    slideRows.forEach((row, idx) => {
+        slides.push({
+            id: 'app-slide-' + (idx + 1),
+            title: row.querySelector('.slide-title')?.value || '',
+            subtitle: row.querySelector('.slide-subtitle')?.value || '',
+            priceHighlight: row.querySelector('.slide-price')?.value || '',
+            imageUrl: row.querySelector('.slide-image-url')?.value || '',
+            targetUrl: row.querySelector('.slide-target-url')?.value || '/category/appliances',
+            buttonText: 'Grab Deals →',
+            isUploadingSoon: row.querySelector('.slide-uploading-soon')?.checked || false
+        });
+    });
+
+    // Collect subcats
+    const subcatRows = document.querySelectorAll('.subcat-item-row');
+    const subCats = [];
+    subcatRows.forEach((row, idx) => {
+        subCats.push({
+            title: row.querySelector('.subcat-title')?.value || '',
+            badge: row.querySelector('.subcat-badge')?.value || '',
+            imageUrl: row.querySelector('.subcat-image-url')?.value || '',
+            targetUrl: row.querySelector('.subcat-target-url')?.value || '/category/appliances',
+            icon: row.querySelector('.subcat-icon')?.value || '🔌',
+            slug: row.querySelector('.subcat-slug')?.value || '',
+            isUploadingSoon: row.querySelector('.subcat-uploading-soon')?.checked || false
+        });
+    });
+
+    // Collect golden cards
+    const goldenRows = document.querySelectorAll('.golden-item-row');
+    const goldenItems = [];
+    goldenRows.forEach((row, idx) => {
+        goldenItems.push({
+            title: row.querySelector('.golden-name')?.value || '',
+            priceText: row.querySelector('.golden-price')?.value || '',
+            originalPrice: '',
+            discountBadge: '',
+            subtitle: '',
+            imageUrl: row.querySelector('.golden-image-url')?.value || '',
+            targetUrl: row.querySelector('.golden-target-url')?.value || '/category/appliances',
+            isUploadingSoon: row.querySelector('.golden-uploading-soon')?.checked || false
+        });
+    });
+
+    const payload = {
+        themeSettings: {
+            isFestiveEnabled: document.getElementById('themeIsFestiveEnabled')?.checked || false,
+            themeName: document.getElementById('themeName')?.value || 'Big Bang Diwali',
+            badgeText: document.getElementById('themeBadgeText')?.value || '⚡ FESTIVE DHAMAKA DEALS',
+            themeTagline: document.getElementById('themeTagline')?.value || 'SALE IS LIVE',
+            primaryBgGradient: 'linear-gradient(135deg, #7c1212 0%, #b91c1c 45%, #ea580c 100%)',
+            accentGold: document.getElementById('themeAccentGold')?.value || '#fbbf24',
+            noticeBarText: ''
+        },
+        heroBanner: {
+            isEnabled: document.getElementById('heroIsEnabled')?.checked || false,
+            autoPlay: document.getElementById('heroAutoPlay')?.checked || false,
+            intervalSeconds: parseInt(document.getElementById('heroIntervalSeconds')?.value || '4', 10),
+            slides: slides
+        },
+        bankOffer: {
+            isEnabled: document.getElementById('bankIsEnabled')?.checked || false,
+            bankName: 'SBI Card & SBI Debit Card',
+            bankLogoUrl: document.getElementById('bankLogoUrl')?.value || '',
+            offerText: document.getElementById('bankOfferText')?.value || '',
+            offerSubtext: document.getElementById('bankOfferSubtext')?.value || '',
+            termsText: '*T&C Apply'
+        },
+        subCategories: {
+            isEnabled: true,
+            title: 'Shop by Category',
+            items: subCats
+        },
+        brandSpotlight: {
+            isEnabled: document.getElementById('spotlightIsEnabled')?.checked || false,
+            productTitle: document.getElementById('spotlightTitle')?.value || '',
+            priceHighlight: document.getElementById('spotlightPrice')?.value || '',
+            brandName: document.getElementById('spotlightBrand')?.value || '',
+            brandTagline: 'Master the Moment',
+            imageUrl: document.getElementById('spotlightImageUrl')?.value || '',
+            targetUrl: '/category/appliances',
+            isUploadingSoon: document.getElementById('spotlightIsUploadingSoon')?.checked || false
+        },
+        goldenHighlights: {
+            isEnabled: document.getElementById('goldenIsEnabled')?.checked || false,
+            title: 'Blockbuster Deals',
+            subtitle: '',
+            items: goldenItems
+        }
+    };
+
+    try {
+        const resp = await fetch('/Admin/AppliancesHub/Save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await resp.json();
+        if (data.success) {
+            alert('Appliances Hub settings saved successfully!');
+            window.location.reload();
+        } else {
+            alert('Failed to save: ' + (data.message || 'Unknown error'));
+        }
+    } catch (err) {
+        alert('Error saving configuration: ' + err.message);
+    }
+}
+
+document.getElementById('btnSaveAppliancesTop').addEventListener('click', saveAllAppliancesConfig);
+document.getElementById('btnSaveAppliancesBottom').addEventListener('click', saveAllAppliancesConfig);
+</script>
