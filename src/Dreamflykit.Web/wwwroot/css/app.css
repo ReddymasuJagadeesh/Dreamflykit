@@ -8841,7 +8841,7 @@ img {
 }
 
 .dk-logo-s1-box {
-    height: 72px;
+    height: 84px;
     width: auto;
     background: transparent !important;
     border-radius: 0 !important;
@@ -8860,9 +8860,9 @@ img {
 }
 
 .dk-logo-s1-img {
-    height: 64px;
+    height: 76px;
     width: auto;
-    max-width: 78px;
+    max-width: 94px;
     object-fit: contain;
     border-radius: 0;
     display: block;
@@ -8881,7 +8881,7 @@ img {
     align-items: center;
     text-decoration: none !important;
     flex-shrink: 0;
-    max-width: 320px;
+    max-width: 380px;
     opacity: 1;
     transform: scale(1);
     transform-origin: left center;
@@ -8891,7 +8891,7 @@ img {
 }
 
 .dk-logo-s2-box {
-    height: 72px;
+    height: 84px;
     padding: 0 4px !important;
     background: transparent !important;
     border-radius: 0 !important;
@@ -8910,9 +8910,9 @@ img {
 }
 
 .dk-logo-s2-img {
-    height: 52px;
+    height: 66px;
     width: auto;
-    max-width: 260px;
+    max-width: 320px;
     object-fit: contain;
     display: block;
     background: transparent;
@@ -9302,7 +9302,7 @@ img {
 
 .dk-header.is-scrolled .dk-logo-s1-box {
     width: auto !important;
-    height: 38px !important;
+    height: 48px !important;
     background: transparent !important;
     box-shadow: none !important;
     border-radius: 0 !important;
@@ -9310,9 +9310,9 @@ img {
 }
 
 .dk-header.is-scrolled .dk-logo-s1-img {
-    height: 34px !important;
+    height: 46px !important;
     width: auto !important;
-    max-width: 40px !important;
+    max-width: 58px !important;
 }
 
 .dk-header.is-scrolled .dk-search-orange-bar {
