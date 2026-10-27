@@ -1,0 +1,1247 @@
+@model Dreamflykit.Application.FashionHub.Models.FashionThermalsDto
+@{
+    var thermals = Model ?? Dreamflykit.Application.FashionHub.Models.FashionThermalsDto.CreateDefault();
+    var hero = thermals.HeroBanner ?? new();
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="dk-thermals-hub-container" id="thermals-hub-root">
+
+    @if (canManage)
+    {
+        <div class="dk-shell" style="padding-top: 4px;">
+            <div class="dk-thermals-admin-bar">
+                <div class="dk-thermals-admin-bar-left">
+                    <span class="dk-thermals-admin-badge">⚡ Admin Mode</span>
+                    <span class="dk-thermals-admin-hint">Thermals &amp; Winter Essentials Active &bull; Customize hero, warmth levels, collections, &amp; products</span>
+                </div>
+                <a href="/Admin/FashionHub#tab-thermals" class="dk-thermals-admin-btn" id="btnManageThermals">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Edit Thermals Template
+                </a>
+            </div>
+        </div>
+    }
+
+    <!-- ============================================================
+         SUB-NAVIGATION STRIP (MATCHING USER IMAGE 4)
+    ============================================================ -->
+    <div class="dk-thermals-subnav">
+        <div class="dk-shell dk-thermals-subnav-inner">
+            <a href="/category/fashion?filter=new" class="dk-tnav-item">NEW ARRIVALS</a>
+            <a href="/category/fashion/thermals" class="dk-tnav-item active">THERMALS</a>
+            <a href="/category/fashion/thermals#winter-essentials" class="dk-tnav-item">WINTER ESSENTIALS</a>
+            <a href="/category/fashion/men-clothing" class="dk-tnav-item">CLOTHING</a>
+            <a href="/category/fashion?subcategory=footwear" class="dk-tnav-item">FOOTWEAR</a>
+            <a href="/category/fashion?subcategory=accessories" class="dk-tnav-item">ACCESSORIES</a>
+            <a href="/category/fashion?filter=sale" class="dk-tnav-item dk-tnav-sale">SALE</a>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         1. HERO BANNER (TRUE FULL-WIDTH EDGE-TO-EDGE)
+    ============================================================ -->
+    @if (hero.IsEnabled)
+    {
+        var minHeight = hero.BannerHeight > 0 ? hero.BannerHeight : 500;
+        var hasHeroImage = !string.IsNullOrWhiteSpace(hero.ImageUrl) && !hero.IsUploadingSoon;
+
+        <section class="dk-thermals-hero-section" style="min-height: @(minHeight)px;" aria-label="Thermals Hero Banner">
+            
+            <!-- Full-Width Background Image Layer -->
+            <div class="dk-thermals-hero-bg-layer">
+                @if (hasHeroImage)
+                {
+                    <img src="@hero.ImageUrl" 
+                         alt="@hero.Title" 
+                         class="dk-thermals-hero-full-img"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                    <div class="dk-thermals-soon-full-layer" style="display: none;">
+                        <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Placeholder" class="dk-thermals-soon-svg" />
+                        <div class="dk-thermals-soon-badge-text">⏳ THERMALS HERO BANNER UPLOADING SOON</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="dk-thermals-soon-full-layer">
+                        <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Placeholder" class="dk-thermals-soon-svg" />
+                        <div class="dk-thermals-soon-badge-text">⏳ THERMALS HERO BANNER UPLOADING SOON</div>
+                    </div>
+                }
+                <!-- High-definition readable crisp winter gradient overlay -->
+                <div class="dk-thermals-hero-gradient-overlay"></div>
+            </div>
+
+            <!-- Content Grid Layer Floating on Top of Full-Width Image -->
+            <div class="dk-thermals-hero-content-layer">
+                <div class="dk-thermals-hero-left">
+                    <h1 class="dk-thermals-hero-title">
+                        @hero.Title
+                    </h1>
+                    
+                    <div class="dk-thermals-hero-tagline">
+                        @hero.Subtitle
+                    </div>
+
+                    <div class="dk-thermals-hero-cta-wrap">
+                        <a href="@hero.ButtonUrl" class="dk-thermals-hero-btn">
+                            @hero.ButtonText
+                        </a>
+                    </div>
+
+                    <!-- 3 Feature Highlights Row -->
+                    @if (hero.Badges != null && hero.Badges.Count > 0)
+                    {
+                        <div class="dk-thermals-badges-row">
+                            @foreach (var badge in hero.Badges.Where(b => b.IsActive))
+                            {
+                                <div class="dk-thermals-badge-item">
+                                    <div class="dk-thermals-badge-icon">
+                                        @if (badge.Icon == "thermometer")
+                                        {
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path></svg>
+                                        }
+                                        else if (badge.Icon == "wind")
+                                        {
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path></svg>
+                                        }
+                                        else
+                                        {
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>
+                                        }
+                                    </div>
+                                    <div class="dk-thermals-badge-text">
+                                        <strong class="dk-thermals-badge-label">@badge.Label</strong>
+                                        <span class="dk-thermals-badge-desc">@badge.Description</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         INNER CONTAINER FOR SECTIONS BELOW HERO
+    ============================================================ -->
+    <div class="dk-shell">
+
+        <!-- ============================================================
+             SECTION 1: SHOP THERMALS (4 CIRCLE CARDS)
+        ============================================================ -->
+        @if (thermals.CircleItems != null && thermals.CircleItems.Count > 0)
+        {
+            <section class="dk-thermals-section" aria-label="Shop Thermals">
+                <h2 class="dk-thermals-center-heading">SHOP THERMALS</h2>
+
+                <div class="dk-thermals-circles-grid">
+                    @foreach (var item in thermals.CircleItems.Where(i => i.IsActive))
+                    {
+                        var hasImg = !string.IsNullOrWhiteSpace(item.ImageUrl) && !item.ImageUrl.Contains("uploading-soon");
+
+                        <a href="@item.Url" class="dk-thermals-circle-card">
+                            <div class="dk-thermals-circle-img-box">
+                                @if (hasImg)
+                                {
+                                    <img src="@item.ImageUrl" 
+                                         alt="@item.Title" 
+                                         loading="lazy" 
+                                         class="dk-thermals-circle-img" 
+                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                    <div class="dk-thermals-circle-fallback" style="display: none;">
+                                        <span>❄️</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="dk-thermals-circle-fallback">
+                                        <span>❄️</span>
+                                    </div>
+                                }
+                            </div>
+                            <strong class="dk-thermals-circle-title">@item.Title</strong>
+                            <span class="dk-thermals-circle-sub">@item.Subtitle</span>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+
+        <!-- ============================================================
+             SECTION 2: WINTER ESSENTIALS (4 CARDS)
+        ============================================================ -->
+        @if (thermals.WinterEssentials != null && thermals.WinterEssentials.Count > 0)
+        {
+            <section class="dk-thermals-section" id="winter-essentials" aria-label="Winter Essentials">
+                <h2 class="dk-thermals-center-heading">WINTER ESSENTIALS</h2>
+
+                <div class="dk-thermals-rect-grid">
+                    @foreach (var item in thermals.WinterEssentials.Where(i => i.IsActive))
+                    {
+                        var hasImg = !string.IsNullOrWhiteSpace(item.ImageUrl) && !item.ImageUrl.Contains("uploading-soon");
+
+                        <a href="@item.Url" class="dk-thermals-rect-card">
+                            <div class="dk-thermals-rect-img-box">
+                                @if (hasImg)
+                                {
+                                    <img src="@item.ImageUrl" 
+                                         alt="@item.Title" 
+                                         loading="lazy" 
+                                         class="dk-thermals-rect-img" 
+                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                    <div class="dk-thermals-rect-fallback" style="display: none;">
+                                        <span>🧥</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="dk-thermals-rect-fallback">
+                                        <span>🧥</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="dk-thermals-rect-info">
+                                <strong class="dk-thermals-rect-title">@item.Title</strong>
+                                <span class="dk-thermals-rect-sub">@item.Subtitle</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+
+        <!-- ============================================================
+             SECTION 3: WINTER ACCESSORIES (4 CARDS)
+        ============================================================ -->
+        @if (thermals.WinterAccessories != null && thermals.WinterAccessories.Count > 0)
+        {
+            <section class="dk-thermals-section" aria-label="Winter Accessories">
+                <h2 class="dk-thermals-center-heading">WINTER ACCESSORIES</h2>
+
+                <div class="dk-thermals-rect-grid">
+                    @foreach (var item in thermals.WinterAccessories.Where(i => i.IsActive))
+                    {
+                        var hasImg = !string.IsNullOrWhiteSpace(item.ImageUrl) && !item.ImageUrl.Contains("uploading-soon");
+
+                        <a href="@item.Url" class="dk-thermals-rect-card">
+                            <div class="dk-thermals-rect-img-box">
+                                @if (hasImg)
+                                {
+                                    <img src="@item.ImageUrl" 
+                                         alt="@item.Title" 
+                                         loading="lazy" 
+                                         class="dk-thermals-rect-img" 
+                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                    <div class="dk-thermals-rect-fallback" style="display: none;">
+                                        <span>🧤</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="dk-thermals-rect-fallback">
+                                        <span>🧤</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="dk-thermals-rect-info">
+                                <strong class="dk-thermals-rect-title">@item.Title</strong>
+                                <span class="dk-thermals-rect-sub">@item.Subtitle</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+
+        <!-- ============================================================
+             SECTION 4: SHOP BY WARMTH LEVEL (3 THEMED TILES)
+        ============================================================ -->
+        @if (thermals.WarmthLevels != null && thermals.WarmthLevels.Count > 0)
+        {
+            <section class="dk-thermals-section" aria-label="Shop by Warmth Level">
+                <h2 class="dk-thermals-center-heading">SHOP BY WARMTH LEVEL</h2>
+
+                <div class="dk-thermals-warmth-grid">
+                    @foreach (var level in thermals.WarmthLevels.Where(l => l.IsActive))
+                    {
+                        <div class="dk-thermals-warmth-card" style="background: linear-gradient(135deg, @level.BackgroundColor 0%, #0f172a 100%);">
+                            <div class="dk-thermals-warmth-content">
+                                <div class="dk-thermals-warmth-header">
+                                    <div class="dk-thermals-warmth-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path></svg>
+                                    </div>
+                                    <strong class="dk-thermals-warmth-title">@level.Title</strong>
+                                </div>
+                                <p class="dk-thermals-warmth-sub">@level.Subtitle</p>
+                                <a href="@level.ButtonUrl" class="dk-thermals-warmth-btn">
+                                    SHOP NOW &rarr;
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+
+        <!-- ============================================================
+             SECTION 5: FEATURED COLLECTIONS (3 SCENIC CARDS)
+        ============================================================ -->
+        @if (thermals.FeaturedCollections != null && thermals.FeaturedCollections.Count > 0)
+        {
+            <section class="dk-thermals-section" aria-label="Featured Collections">
+                <h2 class="dk-thermals-center-heading">FEATURED COLLECTIONS</h2>
+
+                <div class="dk-thermals-collections-grid">
+                    @foreach (var col in thermals.FeaturedCollections.Where(c => c.IsActive))
+                    {
+                        var hasImg = !string.IsNullOrWhiteSpace(col.ImageUrl) && !col.ImageUrl.Contains("uploading-soon");
+
+                        <div class="dk-thermals-col-card">
+                            @if (hasImg)
+                            {
+                                <img src="@col.ImageUrl" alt="@col.Title" class="dk-thermals-col-bg" onerror="this.style.display='none';" />
+                            }
+                            <div class="dk-thermals-col-overlay">
+                                <strong class="dk-thermals-col-title">@col.Title</strong>
+                                <p class="dk-thermals-col-sub">@col.Subtitle</p>
+                                <a href="@col.ButtonUrl" class="dk-thermals-col-btn">
+                                    SHOP NOW &rarr;
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+
+        <!-- ============================================================
+             SECTION 6: BEST SELLING THERMALS (6 PRODUCTS)
+        ============================================================ -->
+        @if (thermals.TopPicksSection?.Products != null && thermals.TopPicksSection.Products.Count > 0)
+        {
+            <section class="dk-thermals-section" aria-label="Best Selling Thermals">
+                <div class="dk-thermals-section-header">
+                    <h2 class="dk-thermals-center-heading" style="margin-bottom: 0;">BEST SELLING THERMALS</h2>
+                    <div class="dk-thermals-slider-controls">
+                        <button type="button" class="dk-thermals-arrow-btn" id="dkThermalsPrev" aria-label="Previous">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        <button type="button" class="dk-thermals-arrow-btn" id="dkThermalsNext" aria-label="Next">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                        <a href="/category/fashion/thermals" class="dk-thermals-section-link" style="margin-left: 12px;">
+                            VIEW ALL &rarr;
+                        </a>
+                    </div>
+                </div>
+
+                <div class="dk-thermals-products-wrapper" id="dkThermalsTrackWrapper">
+                    <div class="dk-thermals-products-grid">
+                        @foreach (var prod in thermals.TopPicksSection.Products.Where(p => p.IsActive))
+                        {
+                            var hasImg = !string.IsNullOrWhiteSpace(prod.ImageUrl) && !prod.IsUploadingSoon && !prod.ImageUrl.Contains("uploading-soon");
+
+                            <div class="dk-thermals-product-card">
+                                <button type="button" class="dk-thermals-wishlist-btn" onclick="toggleThermalsWishlist(this, '@prod.Id')" title="Add to wishlist">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                </button>
+
+                                <div class="dk-thermals-product-img-box">
+                                    @if (hasImg)
+                                    {
+                                        <img src="@prod.ImageUrl" alt="@prod.Name" class="dk-thermals-product-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                        <div class="dk-thermals-product-fallback" style="display: none;">
+                                            <span>🧥</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="dk-thermals-product-fallback">
+                                            <span>🧥</span>
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="dk-thermals-product-info">
+                                    <h3 class="dk-thermals-product-title">@prod.Name</h3>
+                                    <div class="dk-thermals-product-rating">
+                                        <span class="dk-thermals-stars">★★★★★</span>
+                                        <span class="dk-thermals-reviews">4.7 (@prod.ReviewsCount)</span>
+                                    </div>
+                                    <div class="dk-thermals-product-price">₹@prod.Price.ToString("N0")</div>
+                                    <button type="button" class="dk-thermals-bag-btn" onclick="addThermalsToCart(this, '@prod.Name')">
+                                        ADD TO BAG
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </section>
+        }
+
+        <!-- ============================================================
+             SECTION 7: TRUST FEATURES (4 TILES MATCHING IMAGE 4)
+        ============================================================ -->
+        <section class="dk-thermals-trust-section" aria-label="Product Features">
+            <div class="dk-thermals-trust-grid">
+                <div class="dk-thermals-trust-card">
+                    <div class="dk-thermals-trust-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    </div>
+                    <div class="dk-thermals-trust-info">
+                        <strong>PREMIUM QUALITY</strong>
+                        <span>High quality fabric built to last</span>
+                    </div>
+                </div>
+                <div class="dk-thermals-trust-card">
+                    <div class="dk-thermals-trust-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path></svg>
+                    </div>
+                    <div class="dk-thermals-trust-info">
+                        <strong>BREATHABLE FABRIC</strong>
+                        <span>Keeps you warm yet let your skin breathe</span>
+                    </div>
+                </div>
+                <div class="dk-thermals-trust-card">
+                    <div class="dk-thermals-trust-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path></svg>
+                    </div>
+                    <div class="dk-thermals-trust-info">
+                        <strong>LIGHTWEIGHT &amp; FLEXIBLE</strong>
+                        <span>Move freely with comfort all day</span>
+                    </div>
+                </div>
+                <div class="dk-thermals-trust-card">
+                    <div class="dk-thermals-trust-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="12" cy="12" r="5"></circle></svg>
+                    </div>
+                    <div class="dk-thermals-trust-info">
+                        <strong>EASY CARE</strong>
+                        <span>Machine washable &amp; easy to maintain</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+<style>
+/* ========================================================
+   DREAMFLYKIT THERMALS TEMPLATE STYLES
+======================================================== */
+.dk-thermals-hub-container {
+    width: 100%;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+}
+
+/* Admin floating control bar */
+.dk-thermals-admin-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid #334155;
+    padding: 10px 20px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.dk-thermals-admin-badge {
+    background: #38bdf8;
+    color: #000;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.dk-thermals-admin-hint {
+    color: #cbd5e1;
+    font-size: 13px;
+    margin-left: 8px;
+}
+.dk-thermals-admin-btn {
+    background: #0284c7;
+    color: #fff !important;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px 16px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+.dk-thermals-admin-btn:hover {
+    background: #0369a1;
+    transform: translateY(-1px);
+}
+
+/* Sub-Navigation Strip */
+.dk-thermals-subnav {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 10px 0;
+    margin-bottom: 0;
+}
+.dk-thermals-subnav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    flex-wrap: wrap;
+}
+.dk-tnav-item {
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: #475569;
+    text-decoration: none;
+    padding: 4px 0;
+    position: relative;
+    transition: color 0.15s ease;
+}
+.dk-tnav-item:hover, .dk-tnav-item.active {
+    color: #0f172a;
+}
+.dk-tnav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #0f172a;
+}
+.dk-tnav-sale {
+    color: #ef4444 !important;
+}
+
+/* 1. HERO BANNER SECTION (TRUE FULL-WIDTH EDGE-TO-EDGE) */
+.dk-thermals-hero-section {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    border-radius: 0;
+    margin-top: 0;
+    margin-bottom: 40px;
+    overflow: hidden;
+    min-height: 500px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: stretch;
+    background: #0b1329;
+}
+
+.dk-thermals-hero-bg-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.dk-thermals-hero-full-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    display: block;
+    transition: transform 0.6s ease;
+}
+
+.dk-thermals-hero-section:hover .dk-thermals-hero-full-img {
+    transform: scale(1.015);
+}
+
+.dk-thermals-hero-gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        rgba(255, 255, 255, 0.96) 0%, 
+        rgba(255, 255, 255, 0.90) 36%, 
+        rgba(255, 255, 255, 0.5) 54%, 
+        rgba(255, 255, 255, 0.05) 72%, 
+        rgba(255, 255, 255, 0.2) 100%
+    );
+    pointer-events: none;
+}
+
+.dk-thermals-soon-full-layer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    gap: 14px;
+}
+
+.dk-thermals-soon-svg {
+    max-width: 130px;
+    opacity: 0.8;
+}
+
+.dk-thermals-soon-badge-text {
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 6px 16px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+.dk-thermals-hero-content-layer {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 48px 32px;
+}
+
+.dk-thermals-hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 540px;
+}
+
+.dk-thermals-hero-title {
+    font-size: 3.8rem;
+    font-weight: 950;
+    line-height: 1.0;
+    margin: 0 0 14px 0;
+    letter-spacing: 1.5px;
+    color: #0f172a;
+    text-transform: uppercase;
+}
+
+.dk-thermals-hero-tagline {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 24px;
+    color: #334155;
+}
+
+.dk-thermals-hero-cta-wrap {
+    margin-bottom: 36px;
+}
+
+.dk-thermals-hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 30px;
+    background: #0f172a;
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    transition: all 0.2s ease;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+}
+
+.dk-thermals-hero-btn:hover {
+    background: #1e293b;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.35);
+}
+
+.dk-thermals-badges-row {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.dk-thermals-badge-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.dk-thermals-badge-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0284c7;
+    flex-shrink: 0;
+}
+
+.dk-thermals-badge-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.dk-thermals-badge-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    color: #0f172a;
+    text-transform: uppercase;
+}
+
+.dk-thermals-badge-desc {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 1px;
+}
+
+/* Common Section Heading */
+.dk-thermals-section {
+    margin-bottom: 48px;
+}
+
+.dk-thermals-center-heading {
+    text-align: center;
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #0f172a;
+    margin: 0 0 24px 0;
+    text-transform: uppercase;
+}
+
+.dk-thermals-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.dk-thermals-section-link {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #0f172a;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.dk-thermals-section-link:hover {
+    color: #0284c7;
+}
+
+/* SECTION 1: CIRCLE CARDS */
+.dk-thermals-circles-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+@@media (max-width: 800px) {
+    .dk-thermals-circles-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+.dk-thermals-circle-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+.dk-thermals-circle-card:hover {
+    transform: translateY(-4px);
+}
+.dk-thermals-circle-img-box {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f1f5f9;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-thermals-circle-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.dk-thermals-circle-card:hover .dk-thermals-circle-img {
+    transform: scale(1.08);
+}
+.dk-thermals-circle-fallback {
+    font-size: 40px;
+}
+.dk-thermals-circle-title {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    color: #0f172a;
+    text-transform: uppercase;
+}
+.dk-thermals-circle-sub {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 3px;
+}
+
+/* SECTION 2 & 3: RECTANGLE CARDS */
+.dk-thermals-rect-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+@@media (max-width: 800px) {
+    .dk-thermals-rect-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+.dk-thermals-rect-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.dk-thermals-rect-card:hover {
+    background: #ffffff;
+    border-color: #0f172a;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    transform: translateY(-2px);
+}
+.dk-thermals-rect-img-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    background: #ffffff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.dk-thermals-rect-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.dk-thermals-rect-fallback {
+    font-size: 28px;
+}
+.dk-thermals-rect-info {
+    display: flex;
+    flex-direction: column;
+}
+.dk-thermals-rect-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #0f172a;
+    text-transform: uppercase;
+    line-height: 1.25;
+}
+.dk-thermals-rect-sub {
+    font-size: 11.5px;
+    color: #64748b;
+    margin-top: 3px;
+    line-height: 1.3;
+}
+
+/* SECTION 4: WARMTH LEVELS */
+.dk-thermals-warmth-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+@@media (max-width: 768px) {
+    .dk-thermals-warmth-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.dk-thermals-warmth-card {
+    border-radius: 16px;
+    overflow: hidden;
+    color: #ffffff;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+    position: relative;
+}
+.dk-thermals-warmth-content {
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 170px;
+}
+.dk-thermals-warmth-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-thermals-warmth-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-thermals-warmth-title {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+.dk-thermals-warmth-sub {
+    font-size: 12.5px;
+    color: #cbd5e1;
+    margin: 10px 0 16px 0;
+}
+.dk-thermals-warmth-btn {
+    align-self: flex-start;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    color: #ffffff !important;
+    text-decoration: none;
+    border-bottom: 2px solid #38bdf8;
+    padding-bottom: 2px;
+}
+
+/* SECTION 5: FEATURED COLLECTIONS */
+.dk-thermals-collections-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+@@media (max-width: 768px) {
+    .dk-thermals-collections-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.dk-thermals-col-card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    height: 220px;
+    background: #0f172a;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+}
+.dk-thermals-col-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+    transition: transform 0.4s ease;
+}
+.dk-thermals-col-card:hover .dk-thermals-col-bg {
+    transform: scale(1.05);
+}
+.dk-thermals-col-overlay {
+    position: absolute;
+    inset: 0;
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%);
+    color: #ffffff;
+}
+.dk-thermals-col-title {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+.dk-thermals-col-sub {
+    font-size: 12.5px;
+    color: #e2e8f0;
+    margin: 6px 0 14px 0;
+}
+.dk-thermals-col-btn {
+    align-self: flex-start;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    color: #ffffff !important;
+    text-decoration: none;
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 2px;
+}
+
+/* SECTION 6: BEST SELLING CAROUSEL */
+.dk-thermals-slider-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.dk-thermals-arrow-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.dk-thermals-arrow-btn:hover {
+    background: #0f172a;
+    border-color: #0f172a;
+    color: #ffffff;
+}
+.dk-thermals-products-wrapper {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding-bottom: 8px;
+}
+.dk-thermals-products-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(180px, 1fr));
+    gap: 16px;
+}
+.dk-thermals-product-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 12px;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+.dk-thermals-product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+.dk-thermals-wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+}
+.dk-thermals-wishlist-btn.active {
+    color: #ef4444;
+    border-color: #ef4444;
+}
+.dk-thermals-product-img-box {
+    width: 100%;
+    height: 190px;
+    border-radius: 10px;
+    background: #f8fafc;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+.dk-thermals-product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.dk-thermals-product-card:hover .dk-thermals-product-img {
+    transform: scale(1.05);
+}
+.dk-thermals-product-fallback {
+    font-size: 36px;
+}
+.dk-thermals-product-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.dk-thermals-product-title {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 6px 0;
+    color: #1e293b;
+}
+.dk-thermals-product-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+.dk-thermals-stars {
+    color: #f59e0b;
+}
+.dk-thermals-reviews {
+    color: #64748b;
+}
+.dk-thermals-product-price {
+    font-size: 15px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 12px;
+}
+.dk-thermals-bag-btn {
+    margin-top: auto;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1.5px solid #0f172a;
+    color: #0f172a;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.dk-thermals-bag-btn:hover {
+    background: #0f172a;
+    color: #ffffff;
+}
+
+/* SECTION 7: TRUST SECTION */
+.dk-thermals-trust-section {
+    margin-bottom: 40px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+}
+.dk-thermals-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+@@media (max-width: 900px) {
+    .dk-thermals-trust-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@@media (max-width: 500px) {
+    .dk-thermals-trust-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.dk-thermals-trust-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+.dk-thermals-trust-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.dk-thermals-trust-info {
+    display: flex;
+    flex-direction: column;
+}
+.dk-thermals-trust-info strong {
+    font-size: 12px;
+    font-weight: 850;
+    letter-spacing: 0.5px;
+    color: #0f172a;
+    text-transform: uppercase;
+    line-height: 1.3;
+}
+.dk-thermals-trust-info span {
+    font-size: 11.5px;
+    color: #64748b;
+    margin-top: 2px;
+    line-height: 1.35;
+}
+</style>
+
+<script>
+function toggleThermalsWishlist(btn, id) {
+    btn.classList.toggle('active');
+    var isFilled = btn.classList.contains('active');
+    var path = btn.querySelector('svg path');
+    if (path) {
+        path.setAttribute('fill', isFilled ? '#ef4444' : 'none');
+    }
+}
+function addThermalsToCart(btn, name) {
+    btn.style.transform = 'scale(0.95)';
+    btn.innerText = 'ADDED ✓';
+    btn.style.background = '#0f172a';
+    btn.style.color = '#ffffff';
+    setTimeout(function() {
+        btn.style.transform = '';
+        if (typeof showToast === 'function') {
+            showToast(name + ' added to kit!');
+        }
+    }, 200);
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var track = document.getElementById('dkThermalsTrackWrapper');
+    var prev = document.getElementById('dkThermalsPrev');
+    var next = document.getElementById('dkThermalsNext');
+    if (track && prev && next) {
+        prev.addEventListener('click', function() { track.scrollBy({ left: -280, behavior: 'smooth' }); });
+        next.addEventListener('click', function() { track.scrollBy({ left: 280, behavior: 'smooth' }); });
+    }
+});
+</script>
+

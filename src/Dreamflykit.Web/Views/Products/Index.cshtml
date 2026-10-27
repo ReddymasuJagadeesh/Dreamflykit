@@ -151,7 +151,23 @@
         <nav class="dk-catalog-breadcrumb" aria-label="Breadcrumb">
             <a href="/" class="dk-breadcrumb-item">Home</a>
             <span class="dk-breadcrumb-separator">›</span>
-            @if (Model.IsWomenClothing || Model.ViewMode == "women-clothing")
+            @if (Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear")
+            {
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <a href="/category/fashion/men-clothing" class="dk-breadcrumb-item">Men Clothing</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">Ethnic Wear</span>
+            }
+            else if (Model.IsThermalsHub || Model.ViewMode == "thermals")
+            {
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <a href="/category/fashion/men-clothing" class="dk-breadcrumb-item">Men Clothing</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">Thermals</span>
+            }
+            else if (Model.IsWomenClothing || Model.ViewMode == "women-clothing")
             {
                 <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
                 <span class="dk-breadcrumb-separator">›</span>
@@ -215,7 +231,19 @@
         </nav>
     </div>
 
-    @if (Model.IsWomenClothing || Model.ViewMode == "women-clothing")
+    @if (Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear")
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_FashionEthnicWearHub" model="@(Model.FashionHub?.EthnicWear ?? Dreamflykit.Application.FashionHub.Models.FashionEthnicWearDto.CreateDefault())" />
+        </div>
+    }
+    else if (Model.IsThermalsHub || Model.ViewMode == "thermals")
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_FashionThermalsHub" model="@(Model.FashionHub?.Thermals ?? Dreamflykit.Application.FashionHub.Models.FashionThermalsDto.CreateDefault())" />
+        </div>
+    }
+    else if (Model.IsWomenClothing || Model.ViewMode == "women-clothing")
     {
         <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
             <partial name="_FashionWomenClothingHub" model="@(Model.FashionHub?.WomenClothing ?? Dreamflykit.Application.FashionHub.Models.FashionWomenClothingDto.CreateDefault())" />
@@ -235,7 +263,7 @@
     }
     else if (Model.IsMenClothing || Model.ViewMode == "men-clothing")
     {
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+        <div style="width: 100%; margin-bottom: 24px;">
             <partial name="_FashionMenClothingHub" model="@(Model.FashionHub?.MenClothing ?? Dreamflykit.Application.FashionHub.Models.FashionMenClothingDto.CreateDefault())" />
         </div>
     }
@@ -303,6 +331,8 @@
 
     @{
         var isSpecializedHub = (Model.IsFashionHub && Model.ViewMode == "hub") ||
+                               Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear" ||
+                               Model.IsThermalsHub || Model.ViewMode == "thermals" ||
                                Model.IsWomenClothing || Model.ViewMode == "women-clothing" ||
                                Model.IsHoodiesHub || Model.ViewMode == "hoodies" ||
                                Model.IsSweatshirtsHub || Model.ViewMode == "sweatshirts" ||

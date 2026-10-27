@@ -83,10 +83,21 @@ public sealed class FashionHubService : IFashionHubService
                         dto.TopPicksSection ??= def.TopPicksSection;
                         dto.TrustBadgesSection ??= def.TrustBadgesSection;
                         dto.BottomBanner ??= def.BottomBanner;
-                        dto.MenClothing ??= def.MenClothing;
+                        if (dto.MenClothing == null || dto.MenClothing.CategoriesSection == null || dto.MenClothing.CategoriesSection.Categories.Count < 17)
+                        {
+                            dto.MenClothing = def.MenClothing;
+                        }
                         dto.WomenClothing ??= def.WomenClothing;
                         dto.Hoodies ??= def.Hoodies;
                         dto.Sweatshirts ??= def.Sweatshirts;
+                        if (dto.EthnicWear == null || dto.EthnicWear.CategoriesSection == null || dto.EthnicWear.CategoriesSection.Categories.Count < 15)
+                        {
+                            dto.EthnicWear = def.EthnicWear;
+                        }
+                        if (dto.Thermals == null || dto.Thermals.CircleItems == null || dto.Thermals.CircleItems.Count < 4)
+                        {
+                            dto.Thermals = def.Thermals;
+                        }
 
                         _cache.Set(CacheKey, dto, TimeSpan.FromHours(4));
                         return dto;
@@ -117,6 +128,14 @@ public sealed class FashionHubService : IFashionHubService
     public async Task UpdateConfigAsync(FashionHubDto dto, Guid updatedBy, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(dto);
+
+        if (dto.EthnicWear == null || dto.Thermals == null || dto.MenClothing == null)
+        {
+            var existing = await GetConfigAsync(cancellationToken);
+            dto.EthnicWear ??= existing.EthnicWear ?? FashionEthnicWearDto.CreateDefault();
+            dto.Thermals ??= existing.Thermals ?? FashionThermalsDto.CreateDefault();
+            dto.MenClothing ??= existing.MenClothing ?? FashionMenClothingDto.CreateDefault();
+        }
 
         try
         {

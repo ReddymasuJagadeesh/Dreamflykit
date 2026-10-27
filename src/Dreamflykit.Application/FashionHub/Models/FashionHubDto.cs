@@ -11,6 +11,8 @@ public sealed class FashionHubDto
     public FashionWomenClothingDto WomenClothing { get; set; } = FashionWomenClothingDto.CreateDefault();
     public FashionHoodiesHubDto Hoodies { get; set; } = FashionHoodiesHubDto.CreateDefault();
     public FashionSweatshirtsHubDto Sweatshirts { get; set; } = FashionSweatshirtsHubDto.CreateDefault();
+    public FashionEthnicWearDto EthnicWear { get; set; } = FashionEthnicWearDto.CreateDefault();
+    public FashionThermalsDto Thermals { get; set; } = FashionThermalsDto.CreateDefault();
 
     public static FashionHubDto CreateDefault()
     {
@@ -20,6 +22,8 @@ public sealed class FashionHubDto
             WomenClothing = FashionWomenClothingDto.CreateDefault(),
             Hoodies = FashionHoodiesHubDto.CreateDefault(),
             Sweatshirts = FashionSweatshirtsHubDto.CreateDefault(),
+            EthnicWear = FashionEthnicWearDto.CreateDefault(),
+            Thermals = FashionThermalsDto.CreateDefault(),
             HeroBanner = new FashionHeroBannerDto
             {
                 IsEnabled = true,
@@ -166,6 +170,8 @@ public sealed class FashionHeroBannerDto
     public string TitleHighlight { get; set; } = "Every Journey";
     public string Subtitle { get; set; } = "Stylish, comfortable & travel-ready fashion for students and explorers.";
     public string? Description { get; set; }
+    public string? ButtonText { get; set; }
+    public string? ButtonUrl { get; set; }
     public string? ImageUrl { get; set; } = "/images/fashion-hub/fashion_hero_banner.jpg";
     public bool IsUploadingSoon { get; set; } = false;
 
@@ -206,6 +212,7 @@ public sealed class FashionHeroBadgeDto
     public string Label { get; set; } = string.Empty;
     public string Title { get => Label; set => Label = value; }
     public string Subtitle { get; set; } = string.Empty;
+    public string? Description { get; set; }
     public string Icon { get; set; } = "check";
     public bool IsActive { get; set; } = true;
 }
@@ -357,16 +364,23 @@ public sealed class FashionMenClothingDto
                 ViewAllUrl = "/category/fashion/men-clothing",
                 Categories = new List<FashionCategoryItemDto>
                 {
-                    new() { Id = "mc1", Name = "T-Shirts & Polos", Slug = "t-shirts-polos", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 1, IsUploadingSoon = true },
-                    new() { Id = "mc2", Name = "Shirts", Slug = "shirts", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 2, IsUploadingSoon = true },
-                    new() { Id = "mc3", Name = "Hoodies & Sweatshirts", Slug = "hoodies-sweatshirts", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 3, IsUploadingSoon = true },
-                    new() { Id = "mc4", Name = "Jackets & Coats", Slug = "jackets-coats", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 4, IsUploadingSoon = true },
-                    new() { Id = "mc5", Name = "Jeans", Slug = "jeans", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 5, IsUploadingSoon = true },
-                    new() { Id = "mc6", Name = "Trousers & Chinos", Slug = "trousers-chinos", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 6, IsUploadingSoon = true },
-                    new() { Id = "mc7", Name = "Shorts", Slug = "shorts", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 7, IsUploadingSoon = true },
-                    new() { Id = "mc8", Name = "Innerwear & Sleepwear", Slug = "innerwear-sleepwear", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 8, IsUploadingSoon = true },
-                    new() { Id = "mc9", Name = "Activewear", Slug = "activewear", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 9, IsUploadingSoon = true },
-                    new() { Id = "mc10", Name = "Accessories", Slug = "accessories", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 10, IsUploadingSoon = true }
+                    new() { Id = "mc1", Name = "1. Ethnic Wear", Slug = "ethnic-wear", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 1, IsUploadingSoon = false },
+                    new() { Id = "mc2", Name = "2. Thermals", Slug = "thermals", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 2, IsUploadingSoon = false },
+                    new() { Id = "mc3", Name = "3. T-Shirts", Slug = "t-shirts", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 3, IsUploadingSoon = false },
+                    new() { Id = "mc4", Name = "4. Shirts", Slug = "shirts", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 4, IsUploadingSoon = false },
+                    new() { Id = "mc5", Name = "5. Jackets & Coats", Slug = "jackets-coats", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 5, IsUploadingSoon = false },
+                    new() { Id = "mc6", Name = "6. Hoodies", Slug = "hoodies", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 6, IsUploadingSoon = false },
+                    new() { Id = "mc7", Name = "7. Sweatshirts", Slug = "sweatshirts", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 7, IsUploadingSoon = false },
+                    new() { Id = "mc8", Name = "8. Jeans", Slug = "jeans", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 8, IsUploadingSoon = false },
+                    new() { Id = "mc9", Name = "9. Trousers", Slug = "trousers", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 9, IsUploadingSoon = false },
+                    new() { Id = "mc10", Name = "10. Pants", Slug = "pants", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 10, IsUploadingSoon = false },
+                    new() { Id = "mc11", Name = "11. Innerwear", Slug = "innerwear", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 11, IsUploadingSoon = false },
+                    new() { Id = "mc12", Name = "12. Sleepwear", Slug = "sleepwear", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 12, IsUploadingSoon = false },
+                    new() { Id = "mc13", Name = "13. Shorts", Slug = "shorts", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 13, IsUploadingSoon = false },
+                    new() { Id = "mc14", Name = "14. Socks", Slug = "socks", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 14, IsUploadingSoon = false },
+                    new() { Id = "mc15", Name = "15. Caps", Slug = "caps", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 15, IsUploadingSoon = false },
+                    new() { Id = "mc16", Name = "16. Towels", Slug = "towels", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 16, IsUploadingSoon = false },
+                    new() { Id = "mc17", Name = "17. Belts", Slug = "belts", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 17, IsUploadingSoon = false }
                 }
             },
             TopPicksSection = new FashionTopPicksSectionDto
@@ -377,14 +391,14 @@ public sealed class FashionMenClothingDto
                 ViewAllUrl = "/category/fashion/men-clothing",
                 Products = new List<FashionProductItemDto>
                 {
-                    new() { Id = "mp1", Name = "Men's Polo T-Shirt", CategoryName = "Men Clothing", Price = 599, OriginalPrice = 1199, Rating = 4.8m, ReviewsCount = 128, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing", IsUploadingSoon = true },
-                    new() { Id = "mp2", Name = "Men's Casual Shirt", CategoryName = "Men Clothing", Price = 849, OriginalPrice = 1699, Rating = 4.7m, ReviewsCount = 96, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing", IsUploadingSoon = true },
-                    new() { Id = "mp3", Name = "Men's Hoodie", CategoryName = "Men Clothing", Price = 899, OriginalPrice = 1799, Rating = 4.8m, ReviewsCount = 87, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/hoodies", IsUploadingSoon = true },
-                    new() { Id = "mp4", Name = "Men's Slim Fit Jeans", CategoryName = "Men Clothing", Price = 1199, OriginalPrice = 2399, Rating = 4.9m, ReviewsCount = 76, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing", IsUploadingSoon = true },
-                    new() { Id = "mp5", Name = "Men's Bomber Jacket", CategoryName = "Men Clothing", Price = 1499, OriginalPrice = 2999, Rating = 4.9m, ReviewsCount = 98, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing", IsUploadingSoon = true },
-                    new() { Id = "mp6", Name = "Men's Chino Pants", CategoryName = "Men Clothing", Price = 999, OriginalPrice = 1999, Rating = 4.7m, ReviewsCount = 84, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing", IsUploadingSoon = true },
-                    new() { Id = "mp7", Name = "Men's Dry Fit T-Shirt", CategoryName = "Men Clothing", Price = 599, OriginalPrice = 1199, Rating = 4.8m, ReviewsCount = 65, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing", IsUploadingSoon = true },
-                    new() { Id = "mp8", Name = "Men's Checked Shirt", CategoryName = "Men Clothing", Price = 749, OriginalPrice = 1499, Rating = 4.7m, ReviewsCount = 78, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing", IsUploadingSoon = true }
+                    new() { Id = "mp1", Name = "Men's Polo T-Shirt", CategoryName = "Men Clothing", Price = 599, OriginalPrice = 1199, Rating = 4.8m, ReviewsCount = 128, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing?subcategory=t-shirts", IsUploadingSoon = false },
+                    new() { Id = "mp2", Name = "Men's Casual Shirt", CategoryName = "Men Clothing", Price = 849, OriginalPrice = 1699, Rating = 4.7m, ReviewsCount = 96, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing?subcategory=shirts", IsUploadingSoon = false },
+                    new() { Id = "mp3", Name = "Men's Hoodie", CategoryName = "Men Clothing", Price = 899, OriginalPrice = 1799, Rating = 4.8m, ReviewsCount = 87, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/hoodies", IsUploadingSoon = false },
+                    new() { Id = "mp4", Name = "Men's Slim Fit Jeans", CategoryName = "Men Clothing", Price = 1199, OriginalPrice = 2399, Rating = 4.9m, ReviewsCount = 76, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing?subcategory=jeans", IsUploadingSoon = false },
+                    new() { Id = "mp5", Name = "Men's Bomber Jacket", CategoryName = "Men Clothing", Price = 1499, OriginalPrice = 2999, Rating = 4.9m, ReviewsCount = 98, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing?subcategory=jackets-coats", IsUploadingSoon = false },
+                    new() { Id = "mp6", Name = "Men's Chino Pants", CategoryName = "Men Clothing", Price = 999, OriginalPrice = 1999, Rating = 4.7m, ReviewsCount = 84, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing?subcategory=pants", IsUploadingSoon = false },
+                    new() { Id = "mp7", Name = "Men's Dry Fit T-Shirt", CategoryName = "Men Clothing", Price = 599, OriginalPrice = 1199, Rating = 4.8m, ReviewsCount = 65, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing?subcategory=t-shirts", IsUploadingSoon = false },
+                    new() { Id = "mp8", Name = "Men's Checked Shirt", CategoryName = "Men Clothing", Price = 749, OriginalPrice = 1499, Rating = 4.7m, ReviewsCount = 78, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/men-clothing?subcategory=shirts", IsUploadingSoon = false }
                 }
             },
             TrustBadgesSection = new FashionTrustBadgesSectionDto
@@ -845,4 +859,272 @@ public sealed class FashionStyleItemDto
     public bool IsUploadingSoon { get; set; } = true;
     public bool IsActive { get; set; } = true;
 }
+
+// -------------------------------------------------------------
+// ETHNIC WEAR DTO (MATCHES IMAGE 3)
+// -------------------------------------------------------------
+public sealed class FashionEthnicWearDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public FashionHeroBannerDto HeroBanner { get; set; } = new();
+    public FashionCategoriesSectionDto CategoriesSection { get; set; } = new();
+    public FashionTopPicksSectionDto TopPicksSection { get; set; } = new();
+    public FashionTrustBadgesSectionDto TrustBadgesSection { get; set; } = new();
+    public FashionBottomBannerDto BottomBanner { get; set; } = new();
+
+    public static FashionEthnicWearDto CreateDefault()
+    {
+        return new FashionEthnicWearDto
+        {
+            IsEnabled = true,
+            HeroBanner = new FashionHeroBannerDto
+            {
+                IsEnabled = true,
+                Title = "Ethnic Wear",
+                TitleHighlight = "For Every Celebration.",
+                Subtitle = "Style. Tradition.",
+                Description = "Traditional and contemporary styles for every student, explorer, and occassion.",
+                ImageUrl = "/images/fashion-hub/ethnic_wear_hero.jpg",
+                IsUploadingSoon = false,
+                TitleColor = "#ffffff",
+                TitleHighlightColor = "#f59e0b",
+                SubtitleColor = "#e2e8f0",
+                BannerHeight = 440,
+                Badges = new List<FashionHeroBadgeDto>
+                {
+                    new() { Id = "eb1", Label = "Handcrafted Traditions", Icon = "sparkles" },
+                    new() { Id = "eb2", Label = "Premium Fabrics", Icon = "shield" },
+                    new() { Id = "eb3", Label = "Affordable Elegance", Icon = "tag" },
+                    new() { Id = "eb4", Label = "Loved for Special Days", Icon = "heart" }
+                },
+                RightCard = new FashionHeroRightCardDto
+                {
+                    Title = "Festive",
+                    TitleHighlight = "Elegance",
+                    Features = new List<FashionHeroFeatureDto>
+                    {
+                        new() { Id = "ef1", Title = "Authentic Craftsmanship", Icon = "star" },
+                        new() { Id = "ef2", Title = "Festive & Wedding Ready", Icon = "gift" },
+                        new() { Id = "ef3", Title = "Comfortable Fit", Icon = "shirt" },
+                        new() { Id = "ef4", Title = "Global Delivery", Icon = "plane" }
+                    }
+                }
+            },
+            CategoriesSection = new FashionCategoriesSectionDto
+            {
+                IsEnabled = true,
+                Title = "Shop by Category",
+                ViewAllText = "View All Products →",
+                ViewAllUrl = "/category/fashion/ethnic-wear",
+                Categories = new List<FashionCategoryItemDto>
+                {
+                    new() { Id = "ec1", Name = "1. Sherwanis", Slug = "sherwanis", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 1, IsUploadingSoon = false },
+                    new() { Id = "ec2", Name = "2. Nehru Jackets", Slug = "nehru-jackets", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 2, IsUploadingSoon = false },
+                    new() { Id = "ec3", Name = "3. Bandhgala Suits", Slug = "bandhgala-suits", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 3, IsUploadingSoon = false },
+                    new() { Id = "ec4", Name = "4. Traditional Dhotis", Slug = "traditional-dhotis", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 4, IsUploadingSoon = false },
+                    new() { Id = "ec5", Name = "5. Pajamas", Slug = "pajamas", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 5, IsUploadingSoon = false },
+                    new() { Id = "ec6", Name = "6. Jodhpuri Suits", Slug = "jodhpuri-suits", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 6, IsUploadingSoon = false },
+                    new() { Id = "ec7", Name = "7. Kurta Sets", Slug = "kurta-sets", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 7, IsUploadingSoon = false },
+                    new() { Id = "ec8", Name = "8. Ethnic Footwear", Slug = "ethnic-footwear", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 8, IsUploadingSoon = false },
+                    new() { Id = "ec9", Name = "9. Brooches & Aura Pins", Slug = "brooches-aura-pins", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 9, IsUploadingSoon = false },
+                    new() { Id = "ec10", Name = "10. Sherwani Sets", Slug = "sherwani-sets", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 10, IsUploadingSoon = false },
+                    new() { Id = "ec11", Name = "11. Turbans (Pagris)", Slug = "turbans-pagris", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 11, IsUploadingSoon = false },
+                    new() { Id = "ec12", Name = "12. Traditional Shawls", Slug = "traditional-shawls", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 12, IsUploadingSoon = false },
+                    new() { Id = "ec13", Name = "13. Ethnic Pocket Squares", Slug = "ethnic-pocket-squares", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 13, IsUploadingSoon = false },
+                    new() { Id = "ec14", Name = "14. Traditional Accessories", Slug = "traditional-accessories", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 14, IsUploadingSoon = false },
+                    new() { Id = "ec15", Name = "15. Festive Wear Gifting", Slug = "festive-wear-gifting", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", DisplayOrder = 15, IsUploadingSoon = false }
+                }
+            },
+            TopPicksSection = new FashionTopPicksSectionDto
+            {
+                IsEnabled = true,
+                Title = "Top Picks for Men",
+                ViewAllText = "View All Products →",
+                ViewAllUrl = "/category/fashion/ethnic-wear",
+                Products = new List<FashionProductItemDto>
+                {
+                    new() { Id = "ep1", Name = "Silk Kurta Set (Red)", CategoryName = "Ethnic Wear", Price = 1499, OriginalPrice = 2999, Rating = 4.8m, ReviewsCount = 128, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/ethnic-wear", IsUploadingSoon = false },
+                    new() { Id = "ep2", Name = "Silk Kurta Set (Gold)", CategoryName = "Ethnic Wear", Price = 1499, OriginalPrice = 2999, Rating = 4.8m, ReviewsCount = 96, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/ethnic-wear", IsUploadingSoon = false },
+                    new() { Id = "ep3", Name = "Brocade Nehru Jacket", CategoryName = "Ethnic Wear", Price = 1599, OriginalPrice = 3199, Rating = 4.9m, ReviewsCount = 187, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/ethnic-wear", IsUploadingSoon = false },
+                    new() { Id = "ep4", Name = "Bandhgala Suit", CategoryName = "Ethnic Wear", Price = 2999, OriginalPrice = 5999, Rating = 4.8m, ReviewsCount = 76, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/ethnic-wear", IsUploadingSoon = false },
+                    new() { Id = "ep5", Name = "Premium Sherwani", CategoryName = "Ethnic Wear", Price = 4999, OriginalPrice = 9999, Rating = 4.9m, ReviewsCount = 398, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/ethnic-wear", IsUploadingSoon = false },
+                    new() { Id = "ep6", Name = "Embroidered Mojari", CategoryName = "Ethnic Wear", Price = 999, OriginalPrice = 1999, Rating = 4.7m, ReviewsCount = 84, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/ethnic-wear", IsUploadingSoon = false },
+                    new() { Id = "ep7", Name = "Traditional Shawl", CategoryName = "Ethnic Wear", Price = 1299, OriginalPrice = 2599, Rating = 4.9m, ReviewsCount = 128, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/ethnic-wear", IsUploadingSoon = false },
+                    new() { Id = "ep8", Name = "Elegant Brooch", CategoryName = "Ethnic Wear", Price = 799, OriginalPrice = 1599, Rating = 4.8m, ReviewsCount = 78, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/ethnic-wear", IsUploadingSoon = false }
+                }
+            },
+            TrustBadgesSection = new FashionTrustBadgesSectionDto
+            {
+                IsEnabled = true,
+                Badges = new List<FashionTrustBadgeDto>
+                {
+                    new() { Id = "et1", Title = "Curated for Students", Subtitle = "Handpicked styles for every student's journey", Icon = "box" },
+                    new() { Id = "et2", Title = "Quality You Can Trust", Subtitle = "100% genuine & premium quality", Icon = "shield" },
+                    new() { Id = "et3", Title = "Affordable for Everyone", Subtitle = "Best value fashion for students", Icon = "tag" },
+                    new() { Id = "et4", Title = "Fast & Reliable Delivery", Subtitle = "On-time delivery worldwide", Icon = "truck" },
+                    new() { Id = "et5", Title = "Easy Returns", Subtitle = "Hassle-free returns within 7 days", Icon = "return" },
+                    new() { Id = "et6", Title = "24/7 Customer Support", Subtitle = "We're always here to help you", Icon = "headset" }
+                }
+            }
+        };
+    }
+}
+
+// -------------------------------------------------------------
+// THERMALS DTO (MATCHES IMAGE 4)
+// -------------------------------------------------------------
+public sealed class FashionThermalsDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public List<string> SubNavItems { get; set; } = new() { "NEW ARRIVALS", "THERMALS", "WINTER ESSENTIALS", "CLOTHING", "FOOTWEAR", "ACCESSORIES", "SALE" };
+    public FashionHeroBannerDto HeroBanner { get; set; } = new();
+    public List<ThermalsCircleItemDto> ShopThermals { get; set; } = new();
+    public List<ThermalsCircleItemDto> CircleItems { get => ShopThermals; set => ShopThermals = value; }
+    public List<ThermalsCardItemDto> WinterEssentials { get; set; } = new();
+    public List<ThermalsCardItemDto> WinterAccessories { get; set; } = new();
+    public List<ThermalsWarmthLevelDto> WarmthLevels { get; set; } = new();
+    public List<ThermalsCollectionDto> FeaturedCollections { get; set; } = new();
+    public List<FashionProductItemDto> BestSellingProducts { get; set; } = new();
+    public FashionTopPicksSectionDto TopPicksSection { get; set; } = new();
+    public List<FashionTrustBadgeDto> FeaturesBar { get; set; } = new();
+
+    public static FashionThermalsDto CreateDefault()
+    {
+        return new FashionThermalsDto
+        {
+            IsEnabled = true,
+            SubNavItems = new List<string> { "NEW ARRIVALS", "THERMALS", "WINTER ESSENTIALS", "CLOTHING", "FOOTWEAR", "ACCESSORIES", "SALE" },
+            HeroBanner = new FashionHeroBannerDto
+            {
+                IsEnabled = true,
+                Title = "THERMALS",
+                TitleHighlight = "Designed for everyday comfort.",
+                Subtitle = "Built for warmth.",
+                ButtonText = "SHOP THERMALS →",
+                ButtonUrl = "#shop-thermals",
+                ImageUrl = "/images/fashion-hub/thermals_hero.jpg",
+                IsUploadingSoon = false,
+                BannerHeight = 460,
+                Badges = new List<FashionHeroBadgeDto>
+                {
+                    new() { Id = "tb1", Label = "LOCKS HEAT — Keeps you warm in cold weather", Icon = "thermometer" },
+                    new() { Id = "tb2", Label = "BREATHABLE — Moisture-wicking for all-day comfort", Icon = "wind" },
+                    new() { Id = "tb3", Label = "LIGHTWEIGHT — Easy layering without bulk", Icon = "feather" }
+                }
+            },
+            ShopThermals = new List<ThermalsCircleItemDto>
+            {
+                new() { Id = "st1", Title = "THERMAL TOPS", Subtitle = "Stay warm, stay active", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/thermals?sub=tops" },
+                new() { Id = "st2", Title = "THERMAL BOTTOMS", Subtitle = "Warmth from within", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/thermals?sub=bottoms" },
+                new() { Id = "st3", Title = "THERMAL SETS", Subtitle = "Complete warmth", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/thermals?sub=sets" },
+                new() { Id = "st4", Title = "SLEEVELESS THERMALS", Subtitle = "For extra comfort", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/thermals?sub=sleeveless" }
+            },
+            WinterEssentials = new List<ThermalsCardItemDto>
+            {
+                new() { Id = "we1", Title = "JACKETS & COATS", Subtitle = "Shield yourself from the cold", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/men-clothing?subcategory=jackets-coats", Icon = "jacket" },
+                new() { Id = "we2", Title = "HOODIES", Subtitle = "Comfort meets warmth", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/hoodies", Icon = "hoodie" },
+                new() { Id = "we3", Title = "SWEATSHIRTS", Subtitle = "Everyday warmth you'll love", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/sweatshirts", Icon = "sweatshirt" },
+                new() { Id = "we4", Title = "SWEATERS", Subtitle = "Classic warmth for winters", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/men-clothing?subcategory=sweaters", Icon = "sweater" }
+            },
+            WinterAccessories = new List<ThermalsCardItemDto>
+            {
+                new() { Id = "wa1", Title = "GLOVES", Subtitle = "Keep your hands warm", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/men-clothing?subcategory=gloves", Icon = "hand" },
+                new() { Id = "wa2", Title = "BEANIES & CAPS", Subtitle = "Warmth for your head", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/men-clothing?subcategory=caps", Icon = "cap" },
+                new() { Id = "wa3", Title = "SCARVES", Subtitle = "Wrap up in warmth", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/men-clothing?subcategory=scarves", Icon = "scarf" },
+                new() { Id = "wa4", Title = "WARM SOCKS", Subtitle = "Cozy comfort all day", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/men-clothing?subcategory=socks", Icon = "socks" }
+            },
+            WarmthLevels = new List<ThermalsWarmthLevelDto>
+            {
+                new() { Id = "wl1", Level = "LIGHT WARMTH", Description = "For everyday comfort & mild cold", ButtonText = "SHOP NOW →", Url = "/category/fashion/thermals?level=light" },
+                new() { Id = "wl2", Level = "COLD WEATHER", Description = "For colder days & travel", ButtonText = "SHOP NOW →", Url = "/category/fashion/thermals?level=cold" },
+                new() { Id = "wl3", Level = "EXTREME COLD", Description = "Extra protection for harsh weather", ButtonText = "SHOP NOW →", Url = "/category/fashion/thermals?level=extreme" }
+            },
+            FeaturedCollections = new List<ThermalsCollectionDto>
+            {
+                new() { Id = "fc1", Title = "EVERYDAY THERMALS", Subtitle = "Soft, comfortable & perfect for daily wear", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/thermals" },
+                new() { Id = "fc2", Title = "TRAVEL & WINTER TRIPS", Subtitle = "Pack warmth wherever you go", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/thermals" },
+                new() { Id = "fc3", Title = "OUTDOOR ESSENTIALS", Subtitle = "Made for colder outdoor conditions", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", Url = "/category/fashion/thermals" }
+            },
+            BestSellingProducts = new List<FashionProductItemDto>
+            {
+                new() { Id = "tp1", Name = "Striped Thermal Top", CategoryName = "Thermals", Price = 699, OriginalPrice = 1399, Rating = 4.6m, ReviewsCount = 120, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/thermals", IsUploadingSoon = false },
+                new() { Id = "tp2", Name = "Solid Thermal Bottom", CategoryName = "Thermals", Price = 599, OriginalPrice = 1199, Rating = 4.7m, ReviewsCount = 98, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/thermals", IsUploadingSoon = false },
+                new() { Id = "tp3", Name = "Premium Thermal Set", CategoryName = "Thermals", Price = 1199, OriginalPrice = 2399, Rating = 4.8m, ReviewsCount = 154, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/thermals", IsUploadingSoon = false },
+                new() { Id = "tp4", Name = "Sleeveless Thermal Vest", CategoryName = "Thermals", Price = 449, OriginalPrice = 899, Rating = 4.5m, ReviewsCount = 76, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/thermals", IsUploadingSoon = false },
+                new() { Id = "tp5", Name = "Waffle Thermal Top", CategoryName = "Thermals", Price = 799, OriginalPrice = 1599, Rating = 4.6m, ReviewsCount = 63, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/thermals", IsUploadingSoon = false },
+                new() { Id = "tp6", Name = "Brushed Thermal Bottom", CategoryName = "Thermals", Price = 649, OriginalPrice = 1299, Rating = 4.7m, ReviewsCount = 82, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/thermals", IsUploadingSoon = false }
+            },
+            TopPicksSection = new FashionTopPicksSectionDto
+            {
+                IsEnabled = true,
+                Title = "BEST SELLING THERMALS",
+                ViewAllText = "VIEW ALL →",
+                ViewAllUrl = "/category/fashion/thermals",
+                Products = new List<FashionProductItemDto>
+                {
+                    new() { Id = "tp1", Name = "Striped Thermal Top", CategoryName = "Thermals", Price = 699, OriginalPrice = 1399, Rating = 4.6m, ReviewsCount = 120, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/thermals", IsUploadingSoon = false },
+                    new() { Id = "tp2", Name = "Solid Thermal Bottom", CategoryName = "Thermals", Price = 599, OriginalPrice = 1199, Rating = 4.7m, ReviewsCount = 98, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/thermals", IsUploadingSoon = false },
+                    new() { Id = "tp3", Name = "Premium Thermal Set", CategoryName = "Thermals", Price = 1199, OriginalPrice = 2399, Rating = 4.8m, ReviewsCount = 154, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/thermals", IsUploadingSoon = false },
+                    new() { Id = "tp4", Name = "Sleeveless Thermal Vest", CategoryName = "Thermals", Price = 449, OriginalPrice = 899, Rating = 4.5m, ReviewsCount = 76, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/thermals", IsUploadingSoon = false },
+                    new() { Id = "tp5", Name = "Waffle Thermal Top", CategoryName = "Thermals", Price = 799, OriginalPrice = 1599, Rating = 4.6m, ReviewsCount = 63, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/thermals", IsUploadingSoon = false },
+                    new() { Id = "tp6", Name = "Brushed Thermal Bottom", CategoryName = "Thermals", Price = 649, OriginalPrice = 1299, Rating = 4.7m, ReviewsCount = 82, ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", ProductUrl = "/category/fashion/thermals", IsUploadingSoon = false }
+                }
+            },
+            FeaturesBar = new List<FashionTrustBadgeDto>
+            {
+                new() { Id = "tf1", Title = "PREMIUM QUALITY", Subtitle = "High quality fabric built to last", Icon = "shield" },
+                new() { Id = "tf2", Title = "BREATHABLE FABRIC", Subtitle = "Keeps you warm yet let your skin breathe", Icon = "wind" },
+                new() { Id = "tf3", Title = "LIGHTWEIGHT & FLEXIBLE", Subtitle = "Move freely with comfort all day", Icon = "feather" },
+                new() { Id = "tf4", Title = "EASY CARE", Subtitle = "Machine washable & easy to maintain", Icon = "refresh" }
+            }
+        };
+    }
+}
+
+public sealed class ThermalsCircleItemDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N");
+    public string Title { get; set; } = string.Empty;
+    public string Subtitle { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
+    public string Url { get; set; } = string.Empty;
+    public bool IsActive { get; set; } = true;
+}
+
+public sealed class ThermalsCardItemDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N");
+    public string Title { get; set; } = string.Empty;
+    public string Subtitle { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
+    public string Url { get; set; } = string.Empty;
+    public string Icon { get; set; } = string.Empty;
+    public bool IsActive { get; set; } = true;
+}
+
+public sealed class ThermalsWarmthLevelDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N");
+    public string Title { get; set; } = string.Empty;
+    public string Level { get => Title; set => Title = value; }
+    public string Subtitle { get; set; } = string.Empty;
+    public string Description { get => Subtitle; set => Subtitle = value; }
+    public string BackgroundColor { get; set; } = "#1e293b";
+    public string ButtonText { get; set; } = "SHOP NOW →";
+    public string ButtonUrl { get; set; } = "/category/fashion/thermals";
+    public string Url { get => ButtonUrl; set => ButtonUrl = value; }
+    public bool IsActive { get; set; } = true;
+}
+
+public sealed class ThermalsCollectionDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N");
+    public string Title { get; set; } = string.Empty;
+    public string Subtitle { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
+    public string ButtonUrl { get; set; } = "/category/fashion/thermals";
+    public string Url { get => ButtonUrl; set => ButtonUrl = value; }
+    public bool IsActive { get; set; } = true;
+}
+
 

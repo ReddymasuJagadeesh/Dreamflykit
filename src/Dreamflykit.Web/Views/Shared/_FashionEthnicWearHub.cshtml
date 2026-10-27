@@ -1,0 +1,912 @@
+@model Dreamflykit.Application.FashionHub.Models.FashionEthnicWearDto
+@{
+    var ethnic = Model ?? Dreamflykit.Application.FashionHub.Models.FashionEthnicWearDto.CreateDefault();
+    var hero = ethnic.HeroBanner ?? new();
+    var catSection = ethnic.CategoriesSection ?? new();
+    var picksSection = ethnic.TopPicksSection ?? new();
+    var trustSection = ethnic.TrustBadgesSection ?? new();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="dk-ethnic-hub-container" id="ethnic-wear-hub-root">
+
+    @if (canManage)
+    {
+        <div class="dk-shell" style="padding-top: 4px;">
+            <div class="dk-ethnic-admin-bar">
+                <div class="dk-ethnic-admin-bar-left">
+                    <span class="dk-ethnic-admin-badge">⚡ Admin Mode</span>
+                    <span class="dk-ethnic-admin-hint">Ethnic Wear Template Active &bull; Customize banner, 15 ethnic categories, top picks, &amp; pricing</span>
+                </div>
+                <a href="/Admin/FashionHub#tab-ethnic-wear" class="dk-ethnic-admin-btn" id="btnManageEthnicWear">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Edit Ethnic Wear Template
+                </a>
+            </div>
+        </div>
+    }
+
+    <!-- ============================================================
+         1. HERO BANNER (TRUE FULL-WIDTH EDGE-TO-EDGE)
+    ============================================================ -->
+    @if (hero.IsEnabled)
+    {
+        var minHeight = hero.BannerHeight > 0 ? hero.BannerHeight : 480;
+        var titleColor = !string.IsNullOrWhiteSpace(hero.TitleColor) ? hero.TitleColor : "#ffffff";
+        var highlightColor = !string.IsNullOrWhiteSpace(hero.TitleHighlightColor) ? hero.TitleHighlightColor : "#f59e0b";
+        var subtitleColor = !string.IsNullOrWhiteSpace(hero.SubtitleColor) ? hero.SubtitleColor : "#f59e0b";
+        var hasHeroImage = !string.IsNullOrWhiteSpace(hero.ImageUrl) && !hero.IsUploadingSoon;
+
+        <section class="dk-ethnic-hero-section" style="min-height: @(minHeight)px;" aria-label="Ethnic Wear Hero Banner">
+            
+            <!-- Full-Width Background Image Layer -->
+            <div class="dk-ethnic-hero-bg-layer">
+                @if (hasHeroImage)
+                {
+                    <img src="@hero.ImageUrl" 
+                         alt="@hero.Title" 
+                         class="dk-ethnic-hero-full-img"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                    <div class="dk-ethnic-soon-full-layer" style="display: none;">
+                        <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Placeholder" class="dk-ethnic-soon-svg" />
+                        <div class="dk-ethnic-soon-badge-text">⏳ ETHNIC WEAR HERO UPLOADING SOON</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="dk-ethnic-soon-full-layer">
+                        <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Placeholder" class="dk-ethnic-soon-svg" />
+                        <div class="dk-ethnic-soon-badge-text">⏳ ETHNIC WEAR HERO UPLOADING SOON</div>
+                    </div>
+                }
+                <!-- High-definition readable dark rich gradient overlay for ethnic royal aesthetic -->
+                <div class="dk-ethnic-hero-gradient-overlay"></div>
+            </div>
+
+            <!-- Content Grid Layer Floating on Top of Full-Width Image -->
+            <div class="dk-ethnic-hero-content-layer">
+                <div class="dk-ethnic-hero-left">
+                    <h1 class="dk-ethnic-hero-title" style="color: @titleColor;">
+                        @hero.Title
+                    </h1>
+                    
+                    <div class="dk-ethnic-hero-tagline">
+                        <span style="color: @highlightColor;">@hero.Subtitle</span>
+                        @if (!string.IsNullOrWhiteSpace(hero.TitleHighlight))
+                        {
+                            <span style="color: @highlightColor;"> @hero.TitleHighlight</span>
+                        }
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(hero.Description))
+                    {
+                        <p class="dk-ethnic-hero-desc">
+                            @hero.Description
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="dk-ethnic-hero-desc">
+                            Traditional and contemporary styles for every student, explorer, and occasion.
+                        </p>
+                    }
+
+                    <!-- 4 Badges Row -->
+                    @if (hero.Badges != null && hero.Badges.Count > 0)
+                    {
+                        <div class="dk-ethnic-badges-row">
+                            @foreach (var badge in hero.Badges.Where(b => b.IsActive))
+                            {
+                                <div class="dk-ethnic-badge-pill">
+                                    <span class="dk-ethnic-badge-icon">
+                                        @if (badge.Icon == "sparkles" || badge.Icon == "craft")
+                                        {
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                                        }
+                                        else if (badge.Icon == "fabric")
+                                        {
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                                        }
+                                        else if (badge.Icon == "tag")
+                                        {
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                                        }
+                                        else
+                                        {
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                                        }
+                                    </span>
+                                    <span class="dk-ethnic-badge-text">@badge.Label</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         INNER CONTAINER FOR SECTIONS BELOW HERO
+    ============================================================ -->
+    <div class="dk-shell">
+
+        <!-- ============================================================
+             2. SHOP BY CATEGORY (15 ETHNIC SUBCATEGORIES)
+        ============================================================ -->
+        @if (catSection.IsEnabled && catSection.Categories != null && catSection.Categories.Count > 0)
+        {
+            <section class="dk-ethnic-section" aria-label="Shop Ethnic Wear by Category">
+                <div class="dk-ethnic-section-header">
+                    <h2 class="dk-ethnic-section-heading">@catSection.Title</h2>
+                    <a href="@catSection.ViewAllUrl" class="dk-ethnic-section-link">
+                        @catSection.ViewAllText
+                    </a>
+                </div>
+
+                <div class="dk-ethnic-categories-grid">
+                    @foreach (var cat in catSection.Categories.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder))
+                    {
+                        var catUrl = !string.IsNullOrWhiteSpace(cat.Slug)
+                            ? $"/category/fashion/ethnic-wear?subcategory={cat.Slug}"
+                            : "/category/fashion/ethnic-wear";
+                        var hasImg = !string.IsNullOrWhiteSpace(cat.ImageUrl) && !cat.IsUploadingSoon && !cat.ImageUrl.Contains("uploading-soon");
+
+                        <a href="@catUrl" class="dk-ethnic-cat-card" title="@cat.Name">
+                            <div class="dk-ethnic-cat-img-box">
+                                @if (hasImg)
+                                {
+                                    <img src="@cat.ImageUrl" 
+                                         alt="@cat.Name" 
+                                         loading="lazy" 
+                                         class="dk-ethnic-cat-img" 
+                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                    <div class="dk-ethnic-cat-placeholder" style="display: none;">
+                                        <span class="dk-ethnic-cat-emoji">✨</span>
+                                        <span class="dk-ethnic-soon-pill">Uploading Soon</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="dk-ethnic-cat-placeholder">
+                                        <span class="dk-ethnic-cat-emoji">✨</span>
+                                        <span class="dk-ethnic-soon-pill">Uploading Soon</span>
+                                    </div>
+                                }
+                            </div>
+                            <span class="dk-ethnic-cat-title">@cat.Name</span>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+
+        <!-- ============================================================
+             3. TOP PICKS FOR MEN (8 ETHNIC PRODUCTS)
+        ============================================================ -->
+        @if (picksSection.IsEnabled && picksSection.Products != null && picksSection.Products.Count > 0)
+        {
+            <section class="dk-ethnic-section" aria-label="Top Picks for Men Ethnic Wear">
+                <div class="dk-ethnic-section-header">
+                    <h2 class="dk-ethnic-section-heading">@picksSection.Title</h2>
+                    <div class="dk-ethnic-slider-controls">
+                        <button type="button" class="dk-ethnic-arrow-btn" id="dkEthnicPicksPrev" aria-label="Previous products">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        <button type="button" class="dk-ethnic-arrow-btn" id="dkEthnicPicksNext" aria-label="Next products">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                        <a href="@picksSection.ViewAllUrl" class="dk-ethnic-section-link" style="margin-left: 12px;">
+                            @picksSection.ViewAllText
+                        </a>
+                    </div>
+                </div>
+
+                <div class="dk-ethnic-products-track-wrapper" id="dkEthnicProductsTrackWrapper">
+                    <div class="dk-ethnic-products-track" id="dkEthnicProductsTrack">
+                        @foreach (var prod in picksSection.Products.Where(p => p.IsActive))
+                        {
+                            var hasImg = !string.IsNullOrWhiteSpace(prod.ImageUrl) && !prod.IsUploadingSoon && !prod.ImageUrl.Contains("uploading-soon");
+                            var targetUrl = !string.IsNullOrWhiteSpace(prod.ProductUrl) ? prod.ProductUrl : "/category/fashion/ethnic-wear";
+
+                            <div class="dk-ethnic-product-card">
+                                <!-- Wishlist Heart Button -->
+                                <button type="button" class="dk-ethnic-wishlist-btn" onclick="toggleEthnicWishlist(this, '@prod.Id')" title="Add to wishlist">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                    </svg>
+                                </button>
+
+                                <!-- Product Visual -->
+                                <a href="@targetUrl" class="dk-ethnic-product-img-box">
+                                    @if (hasImg)
+                                    {
+                                        <img src="@prod.ImageUrl" 
+                                             alt="@prod.Name" 
+                                             loading="lazy" 
+                                             class="dk-ethnic-product-img" 
+                                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                        <div class="dk-ethnic-product-placeholder" style="display: none;">
+                                            <span style="font-size: 28px;">🥻</span>
+                                            <span class="dk-ethnic-soon-pill">Uploading Soon</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="dk-ethnic-product-placeholder">
+                                            <span style="font-size: 28px;">🥻</span>
+                                            <span class="dk-ethnic-soon-pill">Uploading Soon</span>
+                                        </div>
+                                    }
+                                </a>
+
+                                <!-- Product Details -->
+                                <div class="dk-ethnic-product-info">
+                                    <h3 class="dk-ethnic-product-title">
+                                        <a href="@targetUrl">@prod.Name</a>
+                                    </h3>
+
+                                    <div class="dk-ethnic-price-cart-row">
+                                        <div>
+                                            <div class="dk-ethnic-product-price">₹@prod.Price.ToString("N0")</div>
+                                            <div class="dk-ethnic-product-rating">
+                                                <span class="dk-ethnic-stars">★★★★★</span>
+                                                <span class="dk-ethnic-reviews">(@prod.ReviewsCount)</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="dk-ethnic-cart-btn" onclick="addEthnicToCart(this, '@prod.Name')" title="Add to cart">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                                <circle cx="9" cy="21" r="1"></circle>
+                                                <circle cx="20" cy="21" r="1"></circle>
+                                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </section>
+        }
+
+        <!-- ============================================================
+             4. VALUE PROPOSITIONS (6 TRUST CARDS)
+        ============================================================ -->
+        @if (trustSection.IsEnabled && trustSection.Badges != null && trustSection.Badges.Count > 0)
+        {
+            <section class="dk-ethnic-trust-section" aria-label="Student Value Propositions">
+                <div class="dk-ethnic-trust-grid">
+                    @foreach (var badge in trustSection.Badges.Where(b => b.IsActive))
+                    {
+                        <div class="dk-ethnic-trust-card">
+                            <div class="dk-ethnic-trust-icon">
+                                @if (badge.Icon == "box")
+                                {
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                }
+                                else if (badge.Icon == "shield")
+                                {
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                                }
+                                else if (badge.Icon == "tag")
+                                {
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                                }
+                                else if (badge.Icon == "truck")
+                                {
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                }
+                                else if (badge.Icon == "return")
+                                {
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                                }
+                                else
+                                {
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                                }
+                            </div>
+                            <div class="dk-ethnic-trust-info">
+                                <strong class="dk-ethnic-trust-title">@badge.Title</strong>
+                                <span class="dk-ethnic-trust-sub">@badge.Subtitle</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+
+    </div>
+
+</div>
+
+<style>
+/* ========================================================
+   DREAMFLYKIT ETHNIC WEAR TEMPLATE STYLES
+======================================================== */
+.dk-ethnic-hub-container {
+    width: 100%;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+}
+
+/* Admin floating control bar */
+.dk-ethnic-admin-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    border: 1px solid #4338ca;
+    padding: 10px 20px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.dk-ethnic-admin-badge {
+    background: #f59e0b;
+    color: #000;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.dk-ethnic-admin-hint {
+    color: #c7d2fe;
+    font-size: 13px;
+    margin-left: 8px;
+}
+.dk-ethnic-admin-btn {
+    background: #ea580c;
+    color: #fff !important;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px 16px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+.dk-ethnic-admin-btn:hover {
+    background: #c2410c;
+    transform: translateY(-1px);
+}
+
+/* 1. HERO BANNER SECTION (TRUE FULL-WIDTH EDGE-TO-EDGE) */
+.dk-ethnic-hero-section {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    border-radius: 0;
+    margin-top: 0;
+    margin-bottom: 36px;
+    overflow: hidden;
+    min-height: 480px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: stretch;
+    background: #18181b;
+}
+
+.dk-ethnic-hero-bg-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.dk-ethnic-hero-full-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+    display: block;
+    transition: transform 0.6s ease;
+}
+
+.dk-ethnic-hero-section:hover .dk-ethnic-hero-full-img {
+    transform: scale(1.015);
+}
+
+.dk-ethnic-hero-gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        rgba(15, 23, 42, 0.95) 0%, 
+        rgba(15, 23, 42, 0.88) 35%, 
+        rgba(15, 23, 42, 0.45) 55%, 
+        rgba(15, 23, 42, 0.1) 75%, 
+        rgba(15, 23, 42, 0.3) 100%
+    );
+    pointer-events: none;
+}
+
+.dk-ethnic-soon-full-layer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #27272a 0%, #18181b 100%);
+    gap: 14px;
+}
+
+.dk-ethnic-soon-svg {
+    max-width: 130px;
+    opacity: 0.8;
+}
+
+.dk-ethnic-soon-badge-text {
+    background: #ea580c;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 6px 16px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);
+}
+
+.dk-ethnic-hero-content-layer {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 48px 32px;
+}
+
+.dk-ethnic-hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 580px;
+}
+
+.dk-ethnic-hero-title {
+    font-size: 3.2rem;
+    font-weight: 900;
+    line-height: 1.05;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.dk-ethnic-hero-tagline {
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 14px;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+}
+
+.dk-ethnic-hero-desc {
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: #e2e8f0;
+    margin: 0 0 26px 0;
+    max-width: 500px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+.dk-ethnic-badges-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.dk-ethnic-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: all 0.2s ease;
+}
+
+.dk-ethnic-badge-pill:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: #f59e0b;
+    transform: translateY(-1px);
+}
+
+.dk-ethnic-badge-icon {
+    display: flex;
+    align-items: center;
+    color: #f59e0b;
+}
+
+/* 2. SECTION COMMON STYLES */
+.dk-ethnic-section {
+    margin-bottom: 40px;
+}
+.dk-ethnic-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.dk-ethnic-section-heading {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+.dk-ethnic-section-link {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #ea580c;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.dk-ethnic-section-link:hover {
+    color: #c2410c;
+    text-decoration: underline;
+}
+
+/* Categories Grid (15 Subcategories) */
+.dk-ethnic-categories-grid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 14px;
+}
+@@media (max-width: 1200px) {
+    .dk-ethnic-categories-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+}
+@@media (max-width: 768px) {
+    .dk-ethnic-categories-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
+}
+.dk-ethnic-cat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 10px 4px 14px;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+.dk-ethnic-cat-card:hover {
+    transform: translateY(-3px);
+    border-color: #ea580c;
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.12);
+}
+.dk-ethnic-cat-img-box {
+    width: 76px;
+    height: 76px;
+    border-radius: 10px;
+    background: #fff7ed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    overflow: hidden;
+    position: relative;
+}
+.dk-ethnic-cat-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+}
+.dk-ethnic-cat-card:hover .dk-ethnic-cat-img {
+    transform: scale(1.08);
+}
+.dk-ethnic-cat-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+.dk-ethnic-soon-pill {
+    font-size: 9px;
+    font-weight: 700;
+    color: #9a3412;
+    background: #ffedd5;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 4px;
+}
+.dk-ethnic-cat-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.25;
+    text-align: center;
+    padding: 0 4px;
+}
+
+/* 3. TOP PICKS PRODUCTS */
+.dk-ethnic-slider-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.dk-ethnic-arrow-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.dk-ethnic-arrow-btn:hover {
+    background: #ea580c;
+    border-color: #ea580c;
+    color: #ffffff;
+}
+.dk-ethnic-products-track-wrapper {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding-bottom: 8px;
+}
+.dk-ethnic-products-track {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(160px, 1fr));
+    gap: 14px;
+}
+.dk-ethnic-product-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 12px;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+.dk-ethnic-product-card:hover {
+    transform: translateY(-3px);
+    border-color: #ea580c;
+    box-shadow: 0 8px 24px rgba(234, 88, 12, 0.1);
+}
+.dk-ethnic-wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.dk-ethnic-wishlist-btn:hover, .dk-ethnic-wishlist-btn.active {
+    color: #ef4444;
+    border-color: #ef4444;
+    background: #fff;
+}
+.dk-ethnic-product-img-box {
+    width: 100%;
+    height: 180px;
+    border-radius: 10px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 10px;
+    text-decoration: none;
+}
+.dk-ethnic-product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.dk-ethnic-product-card:hover .dk-ethnic-product-img {
+    transform: scale(1.05);
+}
+.dk-ethnic-product-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.dk-ethnic-product-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+.dk-ethnic-product-title {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 8px 0;
+}
+.dk-ethnic-product-title a {
+    color: #1e293b;
+    text-decoration: none;
+}
+.dk-ethnic-product-title a:hover {
+    color: #ea580c;
+}
+.dk-ethnic-price-cart-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.dk-ethnic-product-price {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.dk-ethnic-product-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+}
+.dk-ethnic-stars {
+    color: #f59e0b;
+}
+.dk-ethnic-reviews {
+    color: #64748b;
+}
+.dk-ethnic-cart-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #ea580c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.dk-ethnic-cart-btn:hover {
+    background: #ea580c;
+    color: #ffffff;
+    border-color: #ea580c;
+}
+
+/* 4. VALUE PROPOSITIONS */
+.dk-ethnic-trust-section {
+    margin-bottom: 40px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+}
+.dk-ethnic-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+}
+@@media (max-width: 1024px) {
+    .dk-ethnic-trust-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@@media (max-width: 640px) {
+    .dk-ethnic-trust-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.dk-ethnic-trust-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+.dk-ethnic-trust-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #fff7ed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-ethnic-trust-info {
+    display: flex;
+    flex-direction: column;
+}
+.dk-ethnic-trust-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.3;
+}
+.dk-ethnic-trust-sub {
+    font-size: 11.5px;
+    color: #64748b;
+    line-height: 1.35;
+    margin-top: 2px;
+}
+</style>
+
+<script>
+function toggleEthnicWishlist(btn, id) {
+    btn.classList.toggle('active');
+    var isFilled = btn.classList.contains('active');
+    var path = btn.querySelector('svg path');
+    if (path) {
+        path.setAttribute('fill', isFilled ? '#ef4444' : 'none');
+    }
+}
+function addEthnicToCart(btn, name) {
+    btn.style.transform = 'scale(0.9)';
+    setTimeout(function() {
+        btn.style.transform = '';
+        if (typeof showToast === 'function') {
+            showToast(name + ' added to kit!');
+        } else {
+            alert(name + ' added to kit!');
+        }
+    }, 150);
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var track = document.getElementById('dkEthnicProductsTrackWrapper');
+    var prev = document.getElementById('dkEthnicPicksPrev');
+    var next = document.getElementById('dkEthnicPicksNext');
+    if (track && prev && next) {
+        prev.addEventListener('click', function() { track.scrollBy({ left: -260, behavior: 'smooth' }); });
+        next.addEventListener('click', function() { track.scrollBy({ left: 260, behavior: 'smooth' }); });
+    }
+});
+</script>
