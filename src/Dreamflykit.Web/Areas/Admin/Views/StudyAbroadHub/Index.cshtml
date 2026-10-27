@@ -4,6 +4,10 @@
     ViewData["Title"] = "Study Abroad Hub Profile Management";
     var carousel = Model.FiveSectionCarousel ?? new Dreamflykit.Application.StudyHub.Models.AbroadFiveSectionCarouselDto();
     var slides = carousel.Slides ?? new List<Dreamflykit.Application.StudyHub.Models.AbroadFiveSectionSlideDto>();
+    var edu = Model.EducationLoansPage ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage();
+    var eduPartners = edu.Partners ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanPartnerDto>();
+    var eduSteps = edu.Steps ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanStepDto>();
+    var eduCourses = edu.Courses ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanCourseDto>();
 }
 
 <div class="dk-admin-page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
@@ -23,6 +27,12 @@
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
         <a href="/study-abroad-hub" target="_blank" class="dk-btn" style="background: #e0f2fe; color: #0369a1; font-weight: 700; border: 1px solid #bae6fd; padding: 8px 16px; border-radius: 8px;">
             ↗ View Live Study Abroad Hub
+        </a>
+        <a href="/study-abroad-hub/education-loans" target="_blank" class="dk-btn" style="background: #dcfce7; color: #166534; font-weight: 700; border: 1px solid #bbf7d0; padding: 8px 16px; border-radius: 8px;">
+            🎓 View Live Education Loans
+        </a>
+        <a href="#tab-edu-loans" class="dk-btn" style="background: #f0fdf4; color: #15803d; font-weight: 700; border: 1px solid #86efac; padding: 8px 14px; border-radius: 8px;">
+            ↓ Jump to Education Loans Settings
         </a>
         <form method="post" action="/Admin/StudyAbroadHub/ResetDefaults" style="display: inline;" onsubmit="return confirm('Reset Study Abroad Hub Profile to original factory defaults?');">
             @Html.AntiForgeryToken()
@@ -491,6 +501,432 @@
     </div>
 </div>
 
+<!-- ========================================================
+     4. 🎓 EDUCATION LOANS DEDICATED PAGE CONFIGURATION (Images 2, 3, 4, 5)
+========================================================= -->
+<div class="dk-admin-card" id="tab-edu-loans" style="margin-bottom: 30px; border-top: 4px solid #16a34a; background: #ffffff; border-radius: 14px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.05);">
+    
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 22px;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <span style="background: #16a34a; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px; text-transform: uppercase;">
+                    Dedicated Page Portal
+                </span>
+                <h2 style="font-size: 1.35rem; font-weight: 900; color: #0f172a; margin: 0;">
+                    4. 🎓 Education Loans Page Configuration
+                </h2>
+            </div>
+            <p style="margin: 0; color: #64748b; font-size: 13.5px;">
+                Live URL: <a href="/study-abroad-hub/education-loans" target="_blank" style="color: #16a34a; font-weight: 800; text-decoration: underline;">/study-abroad-hub/education-loans</a> (also accessible via <a href="/education-loans" target="_blank" style="color: #16a34a; font-weight: 700;">/education-loans</a>).
+                Full control over Hero Banner, Achievements, Loan Partners, 5-Step Process, and Cyber-Themed Course Financing Carousel.
+            </p>
+        </div>
+        <div>
+            <a href="/study-abroad-hub/education-loans" target="_blank" class="dk-btn" style="background: #dcfce7; color: #166534; font-weight: 800; border: 1px solid #86efac; padding: 8px 18px; border-radius: 8px;">
+                ↗ Open Live Education Loans Page
+            </a>
+        </div>
+    </div>
+
+    <!-- 4.1 TOP NAVIGATION & BRANDING -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+        <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0 0 12px 0;">
+            4.1 Top Navigation Bar (Student Accommodation Removed per Request)
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Brand Name</label>
+                <input type="text" id="edu_top_brand" class="dk-admin-form-input" value="@edu.TopNavBrandName" placeholder="UniCreds" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Sub-Title / Slogan</label>
+                <input type="text" id="edu_top_subtitle" class="dk-admin-form-input" value="@edu.TopNavBrandSubtitle" placeholder="Global Student Financing" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Top CTA Button Text</label>
+                <input type="text" id="edu_top_cta_text" class="dk-admin-form-input" value="@edu.TopNavCtaText" placeholder="Apply For Loan" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Top CTA Target URL</label>
+                <input type="text" id="edu_top_cta_url" class="dk-admin-form-input" value="@edu.TopNavCtaUrl" placeholder="#apply-loan-modal" />
+            </div>
+        </div>
+        <div style="margin-top: 10px; font-size: 12px; color: #64748b; font-style: italic;">
+            Note: "Student Accommodation" is intentionally excluded from the top navigation as explicitly specified.
+        </div>
+    </div>
+
+    <!-- 4.2 FULL HERO BANNER (Image 2 Style) -->
+    <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 20px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #166534; margin: 0;">
+                4.2 Full Hero Banner (Image 2: High &amp; Wide Panoramic Banner)
+            </h3>
+            <span style="background: #16a34a; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px;">
+                Full-Height &amp; Full-Width
+            </span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Top Tagline</label>
+                <input type="text" id="edu_hero_tagline" class="dk-admin-form-input" value="@edu.HeroTagline" placeholder="FUNDING DREAMS. FUELLING CAREERS." />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Main Heading</label>
+                <input type="text" id="edu_hero_title" class="dk-admin-form-input" value="@edu.HeroTitle" placeholder="Get Abroad Education Loan in" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Heading Highlight (Green)</label>
+                <input type="text" id="edu_hero_highlight" class="dk-admin-form-input" value="@edu.HeroTitleHighlight" placeholder="48 hours*" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Background Pastel Tint</label>
+                <input type="text" id="edu_hero_bg_color" class="dk-admin-form-input" value="@edu.HeroBgColor" placeholder="#e8f8f2" />
+            </div>
+        </div>
+
+        <!-- 4 Checklist Bullets -->
+        <div style="margin-bottom: 16px;">
+            <label class="dk-sh-form-label">Checklist Bullet Points (Displayed with Green Ticks)</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px;">
+                <div>
+                    <input type="text" id="edu_bullet_1" class="dk-admin-form-input" value="@(edu.HeroBullets != null && edu.HeroBullets.Count > 0 ? edu.HeroBullets[0] : "Interest Rate Starting at 8.33%*")" placeholder="Bullet 1" />
+                </div>
+                <div>
+                    <input type="text" id="edu_bullet_2" class="dk-admin-form-input" value="@(edu.HeroBullets != null && edu.HeroBullets.Count > 1 ? edu.HeroBullets[1] : "Sanctions in 48 Hours*")" placeholder="Bullet 2" />
+                </div>
+                <div>
+                    <input type="text" id="edu_bullet_3" class="dk-admin-form-input" value="@(edu.HeroBullets != null && edu.HeroBullets.Count > 2 ? edu.HeroBullets[2] : "Savings up to ₹15 lacs")" placeholder="Bullet 3" />
+                </div>
+                <div>
+                    <input type="text" id="edu_bullet_4" class="dk-admin-form-input" value="@(edu.HeroBullets != null && edu.HeroBullets.Count > 3 ? edu.HeroBullets[3] : "Non Collateral Loans")" placeholder="Bullet 4" />
+                </div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 14px; align-items: flex-end;">
+            <div>
+                <label class="dk-sh-form-label">Hero CTA Button Text</label>
+                <input type="text" id="edu_hero_cta_text" class="dk-admin-form-input" value="@edu.HeroCtaText" placeholder="Check your Eligibility" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Hero CTA Target URL</label>
+                <input type="text" id="edu_hero_cta_url" class="dk-admin-form-input" value="@edu.HeroCtaUrl" placeholder="#apply-loan-modal" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Hero Panoramic Banner Graphic (Full-Width &amp; Tall Height)</label>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <div style="width: 50px; height: 42px; border-radius: 8px; overflow: hidden; border: 1.5px solid #cbd5e1; background: #0f172a; flex-shrink: 0;">
+                        <img id="prev_edu_hero_img" src="@edu.HeroImageUrl" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/upload-soon.svg';" />
+                    </div>
+                    <input type="text" id="edu_hero_img_url" class="dk-admin-form-input" value="@edu.HeroImageUrl" placeholder="/images/study-hub/gr-loans-hero-banner.jpg" style="flex: 1;" oninput="updateLivePreview('edu_hero_img_url', 'prev_edu_hero_img')" />
+                    <button type="button" class="dk-btn dk-btn-primary" style="padding: 7px 12px; font-size: 12px; white-space: nowrap;" onclick="triggerHubUpload('edu_hero_img_url', 'prev_edu_hero_img')">
+                        📷 Upload Photo
+                    </button>
+                    <button type="button" class="dk-btn" style="padding: 7px 10px; font-size: 11px; background: #fee2e2; color: #b91c1c; font-weight: 700; white-space: nowrap;" onclick="setUploadingSoon('edu_hero_img_url', 'prev_edu_hero_img')">
+                        ⏳ Upload Soon
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4.3 OUR ACHIEVEMENTS STRIP (Image 3 Style) -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 22px;">
+        <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0 0 14px 0;">
+            4.3 Our Achievements Strip (Google Reviews &amp; 4 Key Metrics)
+        </h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Google Review Rating Text</label>
+                <input type="text" id="edu_review_rating" class="dk-admin-form-input" value="@edu.ReviewRating" placeholder="4.8 out of 5" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Google Reviews Badge Text</label>
+                <input type="text" id="edu_review_text" class="dk-admin-form-input" value="@edu.ReviewCountText" placeholder="Google Reviews Rated 4.8 out of 5" />
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                <label class="dk-sh-form-label" style="font-size: 11px;">Metric 1 Label &amp; Value</label>
+                <input type="text" id="edu_m1_label" class="dk-admin-form-input" value="@edu.Metric1Label" placeholder="Loan Partners" style="margin-bottom: 6px;" />
+                <input type="text" id="edu_m1_val" class="dk-admin-form-input" value="@edu.Metric1Value" placeholder="20+" style="font-weight: 800; color: #0284c7;" />
+            </div>
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                <label class="dk-sh-form-label" style="font-size: 11px;">Metric 2 Label &amp; Value</label>
+                <input type="text" id="edu_m2_label" class="dk-admin-form-input" value="@edu.Metric2Label" placeholder="Amount Disbursed" style="margin-bottom: 6px;" />
+                <input type="text" id="edu_m2_val" class="dk-admin-form-input" value="@edu.Metric2Value" placeholder="₹ 2,000 Cr+" style="font-weight: 800; color: #16a34a;" />
+            </div>
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                <label class="dk-sh-form-label" style="font-size: 11px;">Metric 3 Label &amp; Value</label>
+                <input type="text" id="edu_m3_label" class="dk-admin-form-input" value="@edu.Metric3Label" placeholder="Countries Served" style="margin-bottom: 6px;" />
+                <input type="text" id="edu_m3_val" class="dk-admin-form-input" value="@edu.Metric3Value" placeholder="50+" style="font-weight: 800; color: #ea580c;" />
+            </div>
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                <label class="dk-sh-form-label" style="font-size: 11px;">Metric 4 Label &amp; Value</label>
+                <input type="text" id="edu_m4_label" class="dk-admin-form-input" value="@edu.Metric4Label" placeholder="Students Supported" style="margin-bottom: 6px;" />
+                <input type="text" id="edu_m4_val" class="dk-admin-form-input" value="@edu.Metric4Value" placeholder="20,000+" style="font-weight: 800; color: #7c3aed;" />
+            </div>
+        </div>
+    </div>
+
+    <!-- 4.4 OUR LOAN PARTNERS SECTION (Image 4 Style) -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">
+                4.4 Our Loan Partners (Bank Cards &amp; Rates)
+            </h3>
+            <button type="button" class="dk-btn" onclick="addEduPartner()" style="background: #16a34a; color: #fff; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 6px;">
+                + Add Bank Partner
+            </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 14px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Section Heading Title</label>
+                <input type="text" id="edu_partners_title" class="dk-admin-form-input" value="@edu.PartnersTitle" placeholder="Our Loan Partners" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Section Subtitle</label>
+                <input type="text" id="edu_partners_sub" class="dk-admin-form-input" value="@edu.PartnersSubtitle" placeholder="Find Your Fit: Top Interest Rates from 20+ Lenders" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">View More Button Text</label>
+                <input type="text" id="edu_partners_viewmore" class="dk-admin-form-input" value="@edu.PartnersViewMoreText" placeholder="View More ⌵" />
+            </div>
+        </div>
+
+        <div id="edu_partners_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">
+            @for (int pIdx = 0; pIdx < eduPartners.Count; pIdx++)
+            {
+                var p = eduPartners[pIdx];
+                <div class="edu-partner-admin-card" data-partner-id="@p.Id" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 11px; font-weight: 800; color: #16a34a; text-transform: uppercase;">Bank Partner #@(pIdx + 1)</span>
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="this.closest('.edu-partner-admin-card').remove()">
+                            ✕ Remove
+                        </button>
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Bank Name</label>
+                        <input type="text" class="dk-admin-form-input edu-partner-name" value="@p.Name" placeholder="e.g. ICICI Bank" style="font-size: 12px; padding: 4px 8px;" />
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Interest Rate Tag Text</label>
+                        <input type="text" class="dk-admin-form-input edu-partner-rate" value="@p.InterestRateText" placeholder="e.g. Interest rate 10.25% p.a* >" style="font-size: 12px; padding: 4px 8px;" />
+                    </div>
+                    <div>
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Bank Logo Image URL (Optional)</label>
+                        <input type="text" class="dk-admin-form-input edu-partner-logo" value="@p.LogoUrl" placeholder="Leave blank to show stylized bank name" style="font-size: 11px; padding: 4px 8px;" />
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 4.5 HOW IT WORKS: 5 EASY STEPS (Image 4 Style) -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 22px;">
+        <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0 0 14px 0;">
+            4.5 How It Works (5 Easy Digital Steps)
+        </h3>
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 14px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Section Heading Title</label>
+                <input type="text" id="edu_how_title" class="dk-admin-form-input" value="@edu.HowItWorksTitle" placeholder="How it Works?" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Section Subtitle</label>
+                <input type="text" id="edu_how_sub" class="dk-admin-form-input" value="@edu.HowItWorksSubtitle" placeholder="Take advantage of our 100% digital process in just 5 easy steps" />
+            </div>
+        </div>
+
+        <div id="edu_steps_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px;">
+            @for (int sIdx = 0; sIdx < eduSteps.Count; sIdx++)
+            {
+                var st = eduSteps[sIdx];
+                <div class="edu-step-admin-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px;">
+                    <span style="background: #0284c7; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 999px;">
+                        Step #@(sIdx + 1)
+                    </span>
+                    <div style="margin-top: 8px; margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Step Title</label>
+                        <input type="text" class="dk-admin-form-input edu-step-title" value="@st.Title" style="font-size: 12px; padding: 4px 8px;" />
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Step Subtitle</label>
+                        <input type="text" class="dk-admin-form-input edu-step-sub" value="@st.Subtitle" style="font-size: 11px; padding: 4px 8px;" />
+                    </div>
+                    <div>
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Icon</label>
+                        <select class="dk-admin-form-input edu-step-icon" style="font-size: 11px; padding: 3px 6px;">
+                            <option value="check-circle" selected="@(st.Icon == "check-circle" ? "selected" : null)">✅ Verification / Eligibility</option>
+                            <option value="headset" selected="@(st.Icon == "headset" ? "selected" : null)">🎧 Expert Consultation</option>
+                            <option value="file-text" selected="@(st.Icon == "file-text" ? "selected" : null)">📄 Digital Documents</option>
+                            <option value="coins" selected="@(st.Icon == "coins" ? "selected" : null)">💰 Best Interest Rates</option>
+                            <option value="check-badge" selected="@(st.Icon == "check-badge" ? "selected" : null)">🏆 Sanction Approval</option>
+                        </select>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 4.6 FEATURED COURSES & TECH FINANCING CAROUSEL (Image 5 Style) -->
+    <div style="background: #0f172a; color: #ffffff; border-radius: 14px; padding: 22px; margin-bottom: 22px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 12px;">
+            <div>
+                <span style="background: #38bdf8; color: #0f172a; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px; text-transform: uppercase;">
+                    Get Future-Ready with AI • Up to 12 Photos
+                </span>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #ffffff; margin: 6px 0 0 0;">
+                    4.6 Featured Courses &amp; AI Programs (Up to 12 Photos • 4 Displayed At A Time • Slides Right to Left)
+                </h3>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span id="eduCoursesCountBadge" style="background: #0ea5e9; color: #fff; font-size: 12px; font-weight: 800; padding: 5px 12px; border-radius: 999px;">
+                    @eduCourses.Count / 12 Courses
+                </span>
+                <button type="button" class="dk-btn" onclick="addEduCourse()" style="background: #ea580c; color: #fff; font-size: 12px; font-weight: 800; padding: 7px 16px; border-radius: 8px;">
+                    + Add Course Program (Up to 12)
+                </button>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr 1fr; gap: 14px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label" style="color: #94a3b8;">Section Tag Pill</label>
+                <input type="text" id="edu_courses_tag" class="dk-admin-form-input" value="@edu.CoursesTag" placeholder="TRENDING COURSES & FINANCING" style="background: #1e293b; color: #fff; border-color: #334155;" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label" style="color: #94a3b8;">Section Main Title</label>
+                <input type="text" id="edu_courses_title" class="dk-admin-form-input" value="@edu.CoursesTitle" placeholder="Get Future-Ready with AI" style="background: #1e293b; color: #fff; border-color: #334155;" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label" style="color: #94a3b8;">Section Subtitle</label>
+                <input type="text" id="edu_courses_sub" class="dk-admin-form-input" value="@edu.CoursesSubtitle" placeholder="Fund high-impact degrees & certifications..." style="background: #1e293b; color: #fff; border-color: #334155;" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label" style="color: #38bdf8;">Conveyor Speed (Sec)</label>
+                <input type="number" min="1" max="60" id="edu_courses_interval" class="dk-admin-form-input" value="@(edu.CoursesSlideIntervalSec > 0 ? edu.CoursesSlideIntervalSec : 3)" placeholder="3" style="background: #1e293b; color: #fff; border-color: #334155;" />
+            </div>
+        </div>
+
+        <!-- Futuristic Cyber Background Image -->
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px; margin-bottom: 18px;">
+            <label class="dk-sh-form-label" style="color: #38bdf8;">Section Cyber Background Image (Futuristic Grid / Network)</label>
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 6px;">
+                <div style="width: 70px; height: 42px; border-radius: 6px; overflow: hidden; border: 1px solid #475569; background: #0b1528; flex-shrink: 0;">
+                    <img id="prev_edu_courses_bg" src="@edu.CoursesBgImageUrl" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/upload-soon.svg';" />
+                </div>
+                <input type="text" id="edu_courses_bg_url" class="dk-admin-form-input" value="@edu.CoursesBgImageUrl" placeholder="/images/study-hub/edu-courses-tech-bg.jpg" style="background: #0f172a; color: #fff; border-color: #475569; flex: 1;" oninput="updateLivePreview('edu_courses_bg_url', 'prev_edu_courses_bg')" />
+                <button type="button" class="dk-btn" style="background: #38bdf8; color: #0f172a; font-weight: 800; font-size: 12px; padding: 6px 14px;" onclick="triggerHubUpload('edu_courses_bg_url', 'prev_edu_courses_bg')">
+                    📷 Upload Cyber BG
+                </button>
+                <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-weight: 700; font-size: 11px; padding: 6px 10px;" onclick="setUploadingSoon('edu_courses_bg_url', 'prev_edu_courses_bg')">
+                    ⏳ Upload Soon
+                </button>
+            </div>
+        </div>
+
+        <!-- Course Cards List -->
+        <div id="edu_courses_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;">
+            @for (int cIdx = 0; cIdx < eduCourses.Count; cIdx++)
+            {
+                var c = eduCourses[cIdx];
+                <div class="edu-course-admin-card" data-course-id="@c.Id" style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 11px; font-weight: 800; color: #38bdf8; text-transform: uppercase;">Course Program #@(cIdx + 1)</span>
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="removeEduCourseCard(this)">
+                            ✕ Remove
+                        </button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Institution Name</label>
+                            <input type="text" class="dk-admin-form-input edu-course-inst" value="@c.Institution" placeholder="e.g. IIIT Bangalore" style="font-size: 11.5px; padding: 4px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Degree / Badge 1</label>
+                            <input type="text" class="dk-admin-form-input edu-course-b1" value="@c.Badge1" placeholder="Certification" style="font-size: 11.5px; padding: 4px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Program / Course Title</label>
+                        <input type="text" class="dk-admin-form-input edu-course-title" value="@c.Title" placeholder="EPGP in Applied AI and Agentic AI" style="font-size: 12px; padding: 4px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Duration / Badge 2</label>
+                            <input type="text" class="dk-admin-form-input edu-course-b2" value="@c.Badge2" placeholder="6 Months" style="font-size: 11.5px; padding: 4px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Institution Logo (Circular)</label>
+                            <input type="text" class="dk-admin-form-input edu-course-logo" value="@c.LogoUrl" placeholder="Optional Logo URL" style="font-size: 11.5px; padding: 4px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                        </div>
+                    </div>
+
+                    <!-- Campus Image with Fast Upload -->
+                    <div style="margin-bottom: 8px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Campus Photo</label>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <div style="width: 44px; height: 32px; border-radius: 4px; overflow: hidden; border: 1px solid #475569; background: #0b1528; flex-shrink: 0;">
+                                <img id="prev_cimg_@(cIdx)" src="@c.ImageUrl" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                            </div>
+                            <input type="text" id="inp_cimg_@(cIdx)" class="dk-admin-form-input edu-course-img" value="@c.ImageUrl" placeholder="Campus Image URL" style="font-size: 11px; padding: 3px 6px; background: #0f172a; color: #fff; border-color: #475569; flex: 1;" oninput="updateLivePreview('inp_cimg_@(cIdx)', 'prev_cimg_@(cIdx)')" />
+                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 8px;" onclick="triggerHubUpload('inp_cimg_@(cIdx)', 'prev_cimg_@(cIdx)')">📷 Upload</button>
+                            <button type="button" class="dk-btn" style="font-size: 10px; padding: 4px 6px; background: #fee2e2; color: #b91c1c; font-weight: 700;" onclick="setUploadingSoon('inp_cimg_@(cIdx)', 'prev_cimg_@(cIdx)')">⏳ Upload Soon</button>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Button 1 (More Information)</label>
+                            <input type="text" class="dk-admin-form-input edu-course-info-btn" value="@c.InfoButtonText" placeholder="More Information" style="font-size: 11px; padding: 3px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Button 2 (Apply Now)</label>
+                            <input type="text" class="dk-admin-form-input edu-course-apply-btn" value="@c.ApplyButtonText" placeholder="Apply Now" style="font-size: 11px; padding: 3px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 4.7 FLOATING ASSISTANCE BUBBLE (Image 5 Bottom Right) -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px;">
+        <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0 0 12px 0;">
+            4.7 Floating Loan Assistance Bubble &amp; Contact Widget
+        </h3>
+        <div style="display: grid; grid-template-columns: 2fr 3fr 1fr 1fr; gap: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Prompt Title</label>
+                <input type="text" id="edu_float_title" class="dk-admin-form-input" value="@edu.FloatingPromptTitle" placeholder="Start your degree or diploma at 10k per month!" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Prompt Description</label>
+                <input type="text" id="edu_float_desc" class="dk-admin-form-input" value="@edu.FloatingPromptDesc" placeholder="Best-in-class courses in Data Science, Management..." />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Support Phone</label>
+                <input type="text" id="edu_float_phone" class="dk-admin-form-input" value="@edu.FloatingPromptPhone" placeholder="1800-DREAMFLY" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">WhatsApp Number</label>
+                <input type="text" id="edu_float_wa" class="dk-admin-form-input" value="@edu.FloatingPromptWhatsApp" placeholder="+919163012345" />
+            </div>
+        </div>
+    </div>
+
+</div>
+
 <!-- Sticky Bottom Save Bar -->
 <div style="position: sticky; bottom: 20px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); padding: 14px 24px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 100; margin-top: 30px;">
     <div style="font-size: 13.5px; font-weight: 600;">
@@ -903,7 +1339,55 @@
                 SectionSubtitle: document.getElementById("abroad_sync_sub")?.value || "Synchronized study abroad offerings curated for international students.",
                 Slides: slideSets
             },
-            TrustPillars: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TrustPillars, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = null }))
+            TrustPillars: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TrustPillars, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = null })),
+            EducationLoansPage: {
+                ShowTopNav: true,
+                TopNavBrandName: document.getElementById("edu_top_brand")?.value || "UniCreds",
+                TopNavBrandSubtitle: document.getElementById("edu_top_subtitle")?.value || "Global Student Financing",
+                TopNavLinks: ["Abroad Education Loan", "Student Loan", "Study Abroad", "Contact Us"],
+                TopNavCtaText: document.getElementById("edu_top_cta_text")?.value || "Apply For Loan",
+                TopNavCtaUrl: document.getElementById("edu_top_cta_url")?.value || "#apply-loan-modal",
+                HeroTagline: document.getElementById("edu_hero_tagline")?.value || "FUNDING DREAMS. FUELLING CAREERS.",
+                HeroTitle: document.getElementById("edu_hero_title")?.value || "Get Abroad Education Loan in",
+                HeroTitleHighlight: document.getElementById("edu_hero_highlight")?.value || "48 hours*",
+                HeroBgColor: document.getElementById("edu_hero_bg_color")?.value || "#e8f8f2",
+                HeroBullets: [
+                    document.getElementById("edu_bullet_1")?.value || "Interest Rate Starting at 8.33%*",
+                    document.getElementById("edu_bullet_2")?.value || "Sanctions in 48 Hours*",
+                    document.getElementById("edu_bullet_3")?.value || "Savings up to ₹15 lacs",
+                    document.getElementById("edu_bullet_4")?.value || "Non Collateral Loans"
+                ],
+                HeroCtaText: document.getElementById("edu_hero_cta_text")?.value || "Check your Eligibility",
+                HeroCtaUrl: document.getElementById("edu_hero_cta_url")?.value || "#apply-loan-modal",
+                HeroImageUrl: document.getElementById("edu_hero_img_url")?.value || "/images/study-hub/edu-loan-student.jpg",
+                ReviewRating: document.getElementById("edu_review_rating")?.value || "4.8 out of 5",
+                ReviewCountText: document.getElementById("edu_review_text")?.value || "Google Reviews Rated 4.8 out of 5",
+                Metric1Label: document.getElementById("edu_m1_label")?.value || "Loan Partners",
+                Metric1Value: document.getElementById("edu_m1_val")?.value || "20+",
+                Metric2Label: document.getElementById("edu_m2_label")?.value || "Amount Disbursed",
+                Metric2Value: document.getElementById("edu_m2_val")?.value || "₹ 2,000 Cr+",
+                Metric3Label: document.getElementById("edu_m3_label")?.value || "Countries Served",
+                Metric3Value: document.getElementById("edu_m3_val")?.value || "50+",
+                Metric4Label: document.getElementById("edu_m4_label")?.value || "Students Supported",
+                Metric4Value: document.getElementById("edu_m4_val")?.value || "20,000+",
+                PartnersTitle: document.getElementById("edu_partners_title")?.value || "Our Loan Partners",
+                PartnersSubtitle: document.getElementById("edu_partners_sub")?.value || "Find Your Fit: Top Interest Rates from 20+ Lenders",
+                PartnersViewMoreText: document.getElementById("edu_partners_viewmore")?.value || "View More ⌵",
+                Partners: gatherEduPartners(),
+                HowItWorksTitle: document.getElementById("edu_how_title")?.value || "How it Works?",
+                HowItWorksSubtitle: document.getElementById("edu_how_sub")?.value || "Take advantage of our 100% digital process in just 5 easy steps",
+                Steps: gatherEduSteps(),
+                CoursesTag: document.getElementById("edu_courses_tag")?.value || "TRENDING COURSES & FINANCING",
+                CoursesTitle: document.getElementById("edu_courses_title")?.value || "Get Future-Ready with AI",
+                CoursesSubtitle: document.getElementById("edu_courses_sub")?.value || "Fund high-impact degrees & certifications...",
+                CoursesBgImageUrl: document.getElementById("edu_courses_bg_url")?.value || "/images/study-hub/edu-courses-tech-bg.jpg",
+                CoursesSlideIntervalSec: parseInt(document.getElementById("edu_courses_interval")?.value || "3", 10),
+                Courses: gatherEduCourses(),
+                FloatingPromptTitle: document.getElementById("edu_float_title")?.value || "Start your degree or diploma at 10k per month!",
+                FloatingPromptDesc: document.getElementById("edu_float_desc")?.value || "Best-in-class courses in Data Science, Management and Technology",
+                FloatingPromptPhone: document.getElementById("edu_float_phone")?.value || "1800-DREAMFLY",
+                FloatingPromptWhatsApp: document.getElementById("edu_float_wa")?.value || "+919163012345"
+            }
         };
 
         const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
@@ -947,5 +1431,181 @@
         toast.textContent = message;
         toast.style.display = "block";
         setTimeout(() => { toast.style.display = "none"; }, 3500);
+    }
+
+    function setUploadingSoon(inputId, previewId) {
+        const inp = document.getElementById(inputId);
+        if (inp) {
+            inp.value = "/images/study-hub/upload-soon.svg";
+            updateLivePreview(inputId, previewId);
+            showHubToast("⏳ Image set to 'Uploading Soon' placeholder");
+        }
+    }
+
+    // Dynamic Helper Functions for Education Loans Admin Panel
+    function gatherEduPartners() {
+        const list = [];
+        document.querySelectorAll("#edu_partners_container .edu-partner-admin-card").forEach(c => {
+            list.push({
+                Id: c.dataset.partnerId || ("partner-" + Math.random().toString(36).substr(2, 6)),
+                Name: c.querySelector(".edu-partner-name")?.value || "Bank Partner",
+                InterestRateText: c.querySelector(".edu-partner-rate")?.value || "Interest rate 10.25% p.a* >",
+                LogoUrl: c.querySelector(".edu-partner-logo")?.value || "",
+                BadgeColor: "#16a34a",
+                LinkUrl: "#apply-loan-modal"
+            });
+        });
+        return list;
+    }
+
+    function addEduPartner() {
+        const wrap = document.getElementById("edu_partners_container");
+        if (!wrap) return;
+        const count = wrap.querySelectorAll(".edu-partner-admin-card").length + 1;
+        const div = document.createElement("div");
+        div.className = "edu-partner-admin-card";
+        div.dataset.partnerId = "partner-" + Math.random().toString(36).substr(2, 6);
+        div.style.cssText = "background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; position: relative;";
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 800; color: #16a34a; text-transform: uppercase;">Bank Partner #\${count}</span>
+                <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="this.closest('.edu-partner-admin-card').remove()">✕ Remove</button>
+            </div>
+            <div style="margin-bottom: 6px;">
+                <label class="dk-sh-form-label" style="font-size: 10px;">Bank Name</label>
+                <input type="text" class="dk-admin-form-input edu-partner-name" value="New Bank Partner" placeholder="e.g. HDFC Bank" style="font-size: 12px; padding: 4px 8px;" />
+            </div>
+            <div style="margin-bottom: 6px;">
+                <label class="dk-sh-form-label" style="font-size: 10px;">Interest Rate Tag Text</label>
+                <input type="text" class="dk-admin-form-input edu-partner-rate" value="Interest rate 9.75% p.a* >" placeholder="Interest rate..." style="font-size: 12px; padding: 4px 8px;" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label" style="font-size: 10px;">Bank Logo Image URL (Optional)</label>
+                <input type="text" class="dk-admin-form-input edu-partner-logo" value="" placeholder="Leave blank to show text" style="font-size: 11px; padding: 4px 8px;" />
+            </div>
+        `;
+        wrap.appendChild(div);
+    }
+
+    function gatherEduSteps() {
+        const list = [];
+        document.querySelectorAll("#edu_steps_container .edu-step-admin-card").forEach((c, idx) => {
+            list.push({
+                StepNumber: idx + 1,
+                Title: c.querySelector(".edu-step-title")?.value || "Step " + (idx + 1),
+                Subtitle: c.querySelector(".edu-step-sub")?.value || "",
+                Icon: c.querySelector(".edu-step-icon")?.value || "check-circle"
+            });
+        });
+        return list;
+    }
+
+    function gatherEduCourses() {
+        const list = [];
+        document.querySelectorAll("#edu_courses_container .edu-course-admin-card").forEach(c => {
+            list.push({
+                Id: c.dataset.courseId || ("course-" + Math.random().toString(36).substr(2, 6)),
+                Institution: c.querySelector(".edu-course-inst")?.value || "",
+                Title: c.querySelector(".edu-course-title")?.value || "",
+                ImageUrl: c.querySelector(".edu-course-img")?.value || "/images/study-hub/checklist-study.jpg",
+                LogoUrl: c.querySelector(".edu-course-logo")?.value || "",
+                Badge1: c.querySelector(".edu-course-b1")?.value || "Certification",
+                Badge2: c.querySelector(".edu-course-b2")?.value || "6 Months",
+                InfoButtonText: c.querySelector(".edu-course-info-btn")?.value || "More Information",
+                InfoButtonUrl: "#apply-loan-modal",
+                ApplyButtonText: c.querySelector(".edu-course-apply-btn")?.value || "Apply Now",
+                ApplyButtonUrl: "#apply-loan-modal"
+            });
+        });
+        return list;
+    }
+
+    let dynamicCourseIndex = 100;
+    function updateEduCoursesBadge() {
+        const wrap = document.getElementById("edu_courses_container");
+        const badge = document.getElementById("eduCoursesCountBadge");
+        if (wrap && badge) {
+            const count = wrap.querySelectorAll(".edu-course-admin-card").length;
+            badge.textContent = count + " / 12 Courses";
+            badge.style.background = count >= 12 ? "#ea580c" : "#0ea5e9";
+        }
+    }
+
+    function removeEduCourseCard(btn) {
+        if (!btn) return;
+        const card = btn.closest(".edu-course-admin-card");
+        if (card) {
+            card.remove();
+            updateEduCoursesBadge();
+        }
+    }
+
+    function addEduCourse() {
+        const wrap = document.getElementById("edu_courses_container");
+        if (!wrap) return;
+        const currentCount = wrap.querySelectorAll(".edu-course-admin-card").length;
+        if (currentCount >= 12) {
+            alert("Maximum of 12 course photos / programs reached. You can upload up to 12 items for this section.");
+            return;
+        }
+        dynamicCourseIndex++;
+        const count = currentCount + 1;
+        const div = document.createElement("div");
+        div.className = "edu-course-admin-card";
+        div.dataset.courseId = "course-" + Math.random().toString(36).substr(2, 6);
+        div.style.cssText = "background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 14px;";
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 800; color: #38bdf8; text-transform: uppercase;">Course Program #\${count}</span>
+                <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="removeEduCourseCard(this)">✕ Remove</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Institution Name</label>
+                    <input type="text" class="dk-admin-form-input edu-course-inst" value="Premier AI Institute" placeholder="e.g. Stanford University" style="font-size: 11.5px; padding: 4px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                </div>
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Degree / Badge 1</label>
+                    <input type="text" class="dk-admin-form-input edu-course-b1" value="Certification" placeholder="Degree" style="font-size: 11.5px; padding: 4px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                </div>
+            </div>
+            <div style="margin-bottom: 6px;">
+                <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Program / Course Title</label>
+                <input type="text" class="dk-admin-form-input edu-course-title" value="Advanced Applied AI and Machine Learning" placeholder="Course Title" style="font-size: 12px; padding: 4px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Duration / Badge 2</label>
+                    <input type="text" class="dk-admin-form-input edu-course-b2" value="6 Months" placeholder="Duration" style="font-size: 11.5px; padding: 4px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                </div>
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Institution Logo (Circular)</label>
+                    <input type="text" class="dk-admin-form-input edu-course-logo" value="" placeholder="Optional Logo URL" style="font-size: 11.5px; padding: 4px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                </div>
+            </div>
+            <div style="margin-bottom: 8px;">
+                <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Campus Photo (Admin can upload up to 12)</label>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                    <div style="width: 44px; height: 32px; border-radius: 4px; overflow: hidden; border: 1px solid #475569; background: #0b1528; flex-shrink: 0;">
+                        <img id="prev_cimg_\${dynamicCourseIndex}" src="/images/study-hub/edu-campus-iiit.jpg" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                    </div>
+                    <input type="text" id="inp_cimg_\${dynamicCourseIndex}" class="dk-admin-form-input edu-course-img" value="/images/study-hub/edu-campus-iiit.jpg" placeholder="Campus Image URL" style="font-size: 11px; padding: 3px 6px; background: #0f172a; color: #fff; border-color: #475569; flex: 1;" oninput="updateLivePreview('inp_cimg_\${dynamicCourseIndex}', 'prev_cimg_\${dynamicCourseIndex}')" />
+                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 8px;" onclick="triggerHubUpload('inp_cimg_\${dynamicCourseIndex}', 'prev_cimg_\${dynamicCourseIndex}')">📷 Upload</button>
+                    <button type="button" class="dk-btn" style="font-size: 10px; padding: 4px 6px; background: #fee2e2; color: #b91c1c; font-weight: 700;" onclick="setUploadingSoon('inp_cimg_\${dynamicCourseIndex}', 'prev_cimg_\${dynamicCourseIndex}')">⏳ Upload Soon</button>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Button 1 (More Information)</label>
+                    <input type="text" class="dk-admin-form-input edu-course-info-btn" value="More Information" style="font-size: 11px; padding: 3px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                </div>
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Button 2 (Apply Now)</label>
+                    <input type="text" class="dk-admin-form-input edu-course-apply-btn" value="Apply Now" style="font-size: 11px; padding: 3px 6px; background: #0f172a; color: #fff; border-color: #475569;" />
+                </div>
+            </div>
+        `;
+        wrap.appendChild(div);
+        updateEduCoursesBadge();
     }
 </script>
