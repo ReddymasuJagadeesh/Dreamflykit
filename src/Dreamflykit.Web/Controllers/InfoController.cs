@@ -77,6 +77,6 @@ public sealed class InfoController : Controller
     [HttpGet("EducationLoans")]
     public IActionResult EducationLoans()
     {
-        return View();
+        return RedirectToAction("EducationLoans", "StudyAbroadHub");
     }
 }

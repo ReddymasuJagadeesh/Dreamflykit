@@ -20,6 +20,7 @@ public sealed class StudyHubDto
 
     public StudyHubCategoriesPageDto CategoriesPage { get; set; } = new();
     public AbroadChecklistPageDto ChecklistPage { get; set; } = new();
+    public EducationLoansPageDto EducationLoansPage { get; set; } = new();
     public StudyAbroadHubProfileDto AbroadProfile { get; set; } = new();
     public List<StudyGuideDetailPageDto> GuidePages { get; set; } = new();
 
@@ -531,6 +532,7 @@ public sealed class StudyHubDto
         };
 
         dto.ChecklistPage = CreateDefaultChecklistPage();
+        dto.EducationLoansPage = CreateDefaultEducationLoansPage();
         dto.AbroadProfile = CreateDefaultAbroadProfile();
         dto.GuidePages = CreateDefaultGuidePages();
 
@@ -789,6 +791,230 @@ public sealed class StudyHubDto
             BottomBannerButtonText = "Shop Study Essentials →",
             BottomBannerButtonUrl = "/category/study-essentials",
             BottomBannerImageUrl = "/images/study-hub/checklist-bottom-banner.jpg"
+        };
+    }
+
+    public static EducationLoansPageDto CreateDefaultEducationLoansPage()
+    {
+        return new EducationLoansPageDto
+        {
+            TopNavBrandName = "UniCreds",
+            TopNavBrandSubtitle = "Global Student Financing",
+            TopNavLogoUrl = "",
+            TopNavLinks = new List<string> { "Abroad Education Loan", "Student Loan", "Study Abroad", "Contact Us" },
+            TopNavCtaText = "Apply For Loan",
+            TopNavCtaUrl = "#apply-loan-modal",
+
+            HeroTagline = "FUNDING DREAMS. FUELLING CAREERS.",
+            HeroTitle = "Get Abroad Education Loan in",
+            HeroTitleHighlight = "48 hours*",
+            HeroBullets = new List<string>
+            {
+                "Interest Rate Starting at 8.33%*",
+                "Sanctions in 48 Hours*",
+                "Savings up to ₹15 lacs",
+                "Non Collateral Loans"
+            },
+            HeroCtaText = "Check your Eligibility",
+            HeroCtaUrl = "#apply-loan-modal",
+            HeroImageUrl = "/images/study-hub/gr-loans-hero-banner.jpg",
+            HeroBgColor = "#022340",
+            HeroMinHeightPx = 620,
+
+            ReviewRating = "4.8 out of 5",
+            ReviewCountText = "Google Reviews Rated 4.8 out of 5",
+            Metric1Value = "20+",
+            Metric1Label = "Loan Partners",
+            Metric2Value = "₹ 2,000 Cr+",
+            Metric2Label = "Amount Disbursed",
+            Metric3Value = "50+",
+            Metric3Label = "Countries Served",
+            Metric4Value = "20,000+",
+            Metric4Label = "Students Supported",
+
+            PartnersTitle = "Our Loan Partners",
+            PartnersSubtitle = "Find Your Fit: Top Interest Rates from 20+ Lenders",
+            PartnersViewMoreText = "View More ⌵",
+            Partners = new List<EducationLoanPartnerDto>
+            {
+                new() { Name = "ICICI Bank", InterestRateText = "Interest rate 10.25% p.a* >", BadgeColor = "#ea580c" },
+                new() { Name = "Credila", InterestRateText = "Interest rate 10.00% p.a* >", BadgeColor = "#0284c7" },
+                new() { Name = "AVANSE", InterestRateText = "Interest rate 10.5% p.a* >", BadgeColor = "#16a34a" },
+                new() { Name = "Union Bank", InterestRateText = "Interest rate 8.99% p.a* >", BadgeColor = "#dc2626" },
+                new() { Name = "InCred!", InterestRateText = "Interest rate 11.4% p.a* >", BadgeColor = "#ea580c" },
+                new() { Name = "Axis Bank", InterestRateText = "Interest rate 10.15% p.a* >", BadgeColor = "#9333ea" },
+                new() { Name = "State Bank of India", InterestRateText = "Interest rate 8.65% p.a* >", BadgeColor = "#0284c7" },
+                new() { Name = "HDFC Bank", InterestRateText = "Interest rate 9.75% p.a* >", BadgeColor = "#2563eb" }
+            },
+
+            HowItWorksTitle = "How it Works?",
+            HowItWorksSubtitle = "Take advantage of our 100% digital process in just 5 easy steps",
+            Steps = new List<EducationLoanStepDto>
+            {
+                new() { StepNumber = 1, Title = "Check Loan Eligibility", Subtitle = "Quickly verify your loan", Icon = "check-circle" },
+                new() { StepNumber = 2, Title = "Talk to Our Loan Experts", Subtitle = "Speak with our loan specialists", Icon = "headset" },
+                new() { StepNumber = 3, Title = "Submit Your Documents & Get Verified", Subtitle = "100% digital paperless verification", Icon = "file-text" },
+                new() { StepNumber = 4, Title = "Unlock the Best Interest Rates", Subtitle = "Our experts negotiate top rates", Icon = "coins" },
+                new() { StepNumber = 5, Title = "Loan Approval & Sanction in 48 Hours*", Subtitle = "Direct sanction & speedy disbursement", Icon = "check-badge" }
+            },
+
+            CoursesTag = "TRENDING COURSES & FINANCING",
+            CoursesTitle = "Get Future-Ready with AI",
+            CoursesSubtitle = "Fund high-impact degrees & certifications with flexible student financing at low interest rates.",
+            CoursesBgImageUrl = "/images/study-hub/edu-courses-tech-bg.jpg",
+            CoursesSlideIntervalSec = 3,
+            Courses = new List<EducationLoanCourseDto>
+            {
+                new()
+                {
+                    Institution = "IIIT Bangalore",
+                    Title = "EPGP in Applied AI and Agentic AI",
+                    ImageUrl = "/images/study-hub/edu-campus-iiit.jpg",
+                    Badge1 = "Certification",
+                    Badge2 = "Building AI Agent",
+                    InfoButtonText = "More Information",
+                    InfoButtonUrl = "#apply-loan-modal",
+                    ApplyButtonText = "Apply Now",
+                    ApplyButtonUrl = "#apply-loan-modal"
+                },
+                new()
+                {
+                    Institution = "IIT Kharagpur",
+                    Title = "EPGC in Building AI Products, Systems & Services",
+                    ImageUrl = "/images/study-hub/edu-campus-iit.jpg",
+                    Badge1 = "Executive Post Graduate Certificate",
+                    Badge2 = "6 Months",
+                    InfoButtonText = "More Information",
+                    InfoButtonUrl = "#apply-loan-modal",
+                    ApplyButtonText = "Apply Now",
+                    ApplyButtonUrl = "#apply-loan-modal"
+                },
+                new()
+                {
+                    Institution = "IIT Delhi",
+                    Title = "Certificate Programme in Cybersecurity and AI Security",
+                    ImageUrl = "/images/study-hub/edu-campus-iiit.jpg",
+                    Badge1 = "Certification",
+                    Badge2 = "6 Months",
+                    InfoButtonText = "More Information",
+                    InfoButtonUrl = "#apply-loan-modal",
+                    ApplyButtonText = "Apply Now",
+                    ApplyButtonUrl = "#apply-loan-modal"
+                },
+                new()
+                {
+                    Institution = "IIM Kozhikode",
+                    Title = "PCP in AI for Business Professionals",
+                    ImageUrl = "/images/study-hub/edu-campus-iit.jpg",
+                    Badge1 = "Certification",
+                    Badge2 = "6 Months",
+                    InfoButtonText = "More Information",
+                    InfoButtonUrl = "#apply-loan-modal",
+                    ApplyButtonText = "Apply Now",
+                    ApplyButtonUrl = "#apply-loan-modal"
+                },
+                new()
+                {
+                    Institution = "IIT Madras",
+                    Title = "Advanced Certification in Generative AI & Deep Learning",
+                    ImageUrl = "/images/study-hub/edu-campus-iiit.jpg",
+                    Badge1 = "PG Certification",
+                    Badge2 = "9 Months",
+                    InfoButtonText = "More Information",
+                    InfoButtonUrl = "#apply-loan-modal",
+                    ApplyButtonText = "Apply Now",
+                    ApplyButtonUrl = "#apply-loan-modal"
+                },
+                new()
+                {
+                    Institution = "IIT Bombay",
+                    Title = "Executive Programme in Machine Learning & AI",
+                    ImageUrl = "/images/study-hub/edu-campus-iit.jpg",
+                    Badge1 = "Executive Diploma",
+                    Badge2 = "1 Year",
+                    InfoButtonText = "More Information",
+                    InfoButtonUrl = "#apply-loan-modal",
+                    ApplyButtonText = "Apply Now",
+                    ApplyButtonUrl = "#apply-loan-modal"
+                },
+                new()
+                {
+                    Institution = "BITS Pilani",
+                    Title = "M.Tech in Artificial Intelligence & Data Science",
+                    ImageUrl = "/images/study-hub/edu-campus-iiit.jpg",
+                    Badge1 = "Master of Technology",
+                    Badge2 = "2 Years",
+                    InfoButtonText = "More Information",
+                    InfoButtonUrl = "#apply-loan-modal",
+                    ApplyButtonText = "Apply Now",
+                    ApplyButtonUrl = "#apply-loan-modal"
+                },
+                new()
+                {
+                    Institution = "IISc Bangalore",
+                    Title = "Computational Data Science & Autonomous Systems",
+                    ImageUrl = "/images/study-hub/edu-campus-iit.jpg",
+                    Badge1 = "Executive Track",
+                    Badge2 = "10 Months",
+                    InfoButtonText = "More Information",
+                    InfoButtonUrl = "#apply-loan-modal",
+                    ApplyButtonText = "Apply Now",
+                    ApplyButtonUrl = "#apply-loan-modal"
+                },
+                new()
+                {
+                    Institution = "Stanford Online",
+                    Title = "Artificial Intelligence Graduate Certification",
+                    ImageUrl = "/images/study-hub/edu-campus-iiit.jpg",
+                    Badge1 = "Graduate Certificate",
+                    Badge2 = "Self-Paced",
+                    InfoButtonText = "More Information",
+                    InfoButtonUrl = "#apply-loan-modal",
+                    ApplyButtonText = "Apply Now",
+                    ApplyButtonUrl = "#apply-loan-modal"
+                },
+                new()
+                {
+                    Institution = "Carnegie Mellon",
+                    Title = "Executive Certificate in Agentic AI Systems",
+                    ImageUrl = "/images/study-hub/edu-campus-iit.jpg",
+                    Badge1 = "Professional Track",
+                    Badge2 = "8 Months",
+                    InfoButtonText = "More Information",
+                    InfoButtonUrl = "#apply-loan-modal",
+                    ApplyButtonText = "Apply Now",
+                    ApplyButtonUrl = "#apply-loan-modal"
+                },
+                new()
+                {
+                    Institution = "MIT Professional",
+                    Title = "Machine Learning: Algorithms & Practice",
+                    ImageUrl = "/images/study-hub/edu-campus-iiit.jpg",
+                    Badge1 = "Professional Certificate",
+                    Badge2 = "6 Months",
+                    InfoButtonText = "More Information",
+                    InfoButtonUrl = "#apply-loan-modal",
+                    ApplyButtonText = "Apply Now",
+                    ApplyButtonUrl = "#apply-loan-modal"
+                },
+                new()
+                {
+                    Institution = "Oxford Saïd",
+                    Title = "AI in FinTech and Financial Innovation",
+                    ImageUrl = "/images/study-hub/edu-campus-iit.jpg",
+                    Badge1 = "Executive Programme",
+                    Badge2 = "6 Months",
+                    InfoButtonText = "More Information",
+                    InfoButtonUrl = "#apply-loan-modal",
+                    ApplyButtonText = "Apply Now",
+                    ApplyButtonUrl = "#apply-loan-modal"
+                }
+            },
+
+            FloatingPromptTitle = "Start your degree or diploma at 10k per month!",
+            FloatingPromptDesc = "Best-in-class courses in Data Science, Management and Technology",
+            FloatingPromptPhone = "1800-DREAMFLY",
+            FloatingPromptWhatsApp = "+919163012345"
         };
     }
 
@@ -1714,6 +1940,7 @@ public sealed class StudyAbroadHubProfileDto
 
     public List<AbroadPrimaryServiceDto> Services { get; set; } = new();
     public List<AbroadTrustPillarDto> TrustPillars { get; set; } = new();
+    public EducationLoansPageDto? EducationLoansPage { get; set; }
     public string FooterSlogan { get; set; } = "Your Global Education Partner ♡";
     public string TrustTagline { get => FooterSlogan; set => FooterSlogan = value; }
 }
@@ -1883,4 +2110,120 @@ public sealed class StudyGuideCategoryCardDto
     public string ButtonText { get; set; } = "View Items →";
     public string TargetUrl { get; set; } = "/category/study-essentials";
 }
+
+// -------------------------------------------------------------
+// DTOs for Dedicated Education Loans Portal
+// -------------------------------------------------------------
+
+public sealed class EducationLoansPageDto
+{
+    // Top Navigation (Student Accommodation removed as requested)
+    public bool ShowTopNav { get; set; } = true;
+    public string TopNavBrandName { get; set; } = "UniCreds";
+    public string TopNavBrandSubtitle { get; set; } = "Global Student Financing";
+    public string TopNavLogoUrl { get; set; } = "";
+    public List<string> TopNavLinks { get; set; } = new() { "Abroad Education Loan", "Student Loan", "Study Abroad", "Contact Us" };
+    public string TopNavCtaText { get; set; } = "Apply For Loan";
+    public string TopNavCtaUrl { get; set; } = "#apply-loan-modal";
+
+    // Full Hero Banner (Image 2)
+    public string HeroTagline { get; set; } = "FUNDING DREAMS. FUELLING CAREERS.";
+    public string HeroTitle { get; set; } = "Get Abroad Education Loan in";
+    public string HeroTitleHighlight { get; set; } = "48 hours*";
+    public List<string> HeroBullets { get; set; } = new()
+    {
+        "Interest Rate Starting at 8.33%*",
+        "Sanctions in 48 Hours*",
+        "Savings up to ₹15 lacs",
+        "Non Collateral Loans"
+    };
+    public string HeroCtaText { get; set; } = "Check your Eligibility";
+    public string HeroCtaUrl { get; set; } = "#apply-loan-modal";
+    public string HeroImageUrl { get; set; } = "/images/study-hub/gr-loans-hero-banner.jpg";
+    public string HeroBgColor { get; set; } = "#f0fdf4";
+    public int HeroMinHeightPx { get; set; } = 620;
+
+    // Our Achievements (Image 3)
+    public string ReviewRating { get; set; } = "4.8 out of 5";
+    public string ReviewCountText { get; set; } = "Google Reviews Rated 4.8 out of 5";
+    public string Metric1Value { get; set; } = "20+";
+    public string Metric1Label { get; set; } = "Loan Partners";
+    public string Metric2Value { get; set; } = "₹ 2,000 Cr+";
+    public string Metric2Label { get; set; } = "Amount Disbursed";
+    public string Metric3Value { get; set; } = "50+";
+    public string Metric3Label { get; set; } = "Countries Served";
+    public string Metric4Value { get; set; } = "20,000+";
+    public string Metric4Label { get; set; } = "Students Supported";
+
+    // Our Loan Partners (Image 4)
+    public string PartnersTitle { get; set; } = "Our Loan Partners";
+    public string PartnersSubtitle { get; set; } = "Find Your Fit: Top Interest Rates from 20+ Lenders";
+    public string PartnersViewMoreText { get; set; } = "View More ⌵";
+    public List<EducationLoanPartnerDto> Partners { get; set; } = new();
+
+    // How It Works (Image 4)
+    public string HowItWorksTitle { get; set; } = "How it Works?";
+    public string HowItWorksSubtitle { get; set; } = "Take advantage of our 100% digital process in just 5 easy steps";
+    public List<EducationLoanStepDto> Steps { get; set; } = new();
+
+    // Featured / Trending Courses & Loan Schemes (Image 5)
+    public string CoursesTag { get; set; } = "TRENDING COURSES & FINANCING";
+    public string CoursesTitle { get; set; } = "Get Future-Ready with AI";
+    public string CoursesSubtitle { get; set; } = "Fund high-impact degrees & certifications with flexible student financing at low interest rates.";
+    public string CoursesBgImageUrl { get; set; } = "/images/study-hub/edu-courses-tech-bg.jpg";
+    public int CoursesSlideIntervalSec { get; set; } = 3;
+    public List<EducationLoanCourseDto> Courses { get; set; } = new();
+
+    // Floating Loan Assistance Bubble (Image 5 bottom right)
+    public string FloatingPromptTitle { get; set; } = "Start your degree or diploma at 10k per month!";
+    public string FloatingPromptDesc { get; set; } = "Best-in-class courses in Data Science, Management and Technology";
+    public string FloatingPromptPhone { get; set; } = "1800-DREAMFLY";
+    public string FloatingPromptWhatsApp { get; set; } = "+919163012345";
+}
+
+public sealed class EducationLoanPartnerDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Name { get; set; } = string.Empty;
+    public string LogoUrl { get; set; } = string.Empty;
+    public string InterestRateText { get; set; } = string.Empty;
+    public string BadgeColor { get; set; } = "#16a34a";
+    public string LinkUrl { get; set; } = "#apply-loan-modal";
+}
+
+public sealed class EducationLoanStepDto
+{
+    public int StepNumber { get; set; } = 1;
+    public string Title { get; set; } = string.Empty;
+    public string Subtitle { get; set; } = string.Empty;
+    public string Icon { get; set; } = "check-circle";
+}
+
+public sealed class EducationLoanCourseDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Institution { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
+    public string LogoUrl { get; set; } = string.Empty;
+    public string Badge1 { get; set; } = string.Empty;
+    public string Badge2 { get; set; } = string.Empty;
+    public string InfoButtonText { get; set; } = "More Information";
+    public string InfoButtonUrl { get; set; } = "#apply-loan-modal";
+    public string ApplyButtonText { get; set; } = "Apply Now";
+    public string ApplyButtonUrl { get; set; } = "#apply-loan-modal";
+}
+
+public sealed class EducationLoanApplicationLeadDto
+{
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
+    public string TargetCountry { get; set; } = string.Empty;
+    public string DesiredLoanAmount { get; set; } = string.Empty;
+    public string CourseOrProgram { get; set; } = string.Empty;
+    public string CollateralType { get; set; } = "Non-Collateral";
+    public string Notes { get; set; } = string.Empty;
+}
+
 

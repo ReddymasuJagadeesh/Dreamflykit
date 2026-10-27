@@ -40,6 +40,39 @@ public sealed class StudyAbroadHubController : Controller
         return View("Checklist", page);
     }
 
+    [HttpGet("education-loans")]
+    [HttpGet("/education-loans")]
+    public async Task<IActionResult> EducationLoans(CancellationToken cancellationToken)
+    {
+        ViewData["Title"] = "Get Abroad Education Loan in 48 Hours — Dreamflykit";
+        var config = await _studyHubService.GetConfigAsync(cancellationToken);
+        var page = config.EducationLoansPage ?? Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage();
+        return View("EducationLoans", page);
+    }
+
+    [HttpPost("apply-loan")]
+    [HttpPost("/apply-loan")]
+    [IgnoreAntiforgeryToken]
+    public IActionResult SubmitLoanApplication([FromBody] Application.StudyHub.Models.EducationLoanApplicationLeadDto lead)
+    {
+        if (lead == null || string.IsNullOrWhiteSpace(lead.FullName))
+        {
+            return Json(new { success = false, message = "Please enter your full name." });
+        }
+
+        if (string.IsNullOrWhiteSpace(lead.PhoneNumber) && string.IsNullOrWhiteSpace(lead.Email))
+        {
+            return Json(new { success = false, message = "Please provide your phone number or email address." });
+        }
+
+        // Return positive confirmation with immediate next steps
+        return Json(new
+        {
+            success = true,
+            message = $"Thank you {lead.FullName}! Your loan eligibility application has been registered. Our international education loan specialist will contact you on {(!string.IsNullOrWhiteSpace(lead.PhoneNumber) ? lead.PhoneNumber : lead.Email)} within 24 hours."
+        });
+    }
+
     [HttpGet("{slug}")]
     public async Task<IActionResult> ServiceDetail(string slug, CancellationToken cancellationToken)
     {

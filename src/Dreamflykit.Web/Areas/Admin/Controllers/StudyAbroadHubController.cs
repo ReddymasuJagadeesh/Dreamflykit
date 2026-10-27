@@ -49,6 +49,7 @@ public sealed class StudyAbroadHubController : AdminBaseController
     {
         var config = await _studyHubService.GetConfigAsync(cancellationToken);
         var abroadProfile = config.AbroadProfile ?? StudyHubDto.CreateDefaultAbroadProfile();
+        abroadProfile.EducationLoansPage = config.EducationLoansPage ?? StudyHubDto.CreateDefaultEducationLoansPage();
         return View(abroadProfile);
     }
 
@@ -68,6 +69,10 @@ public sealed class StudyAbroadHubController : AdminBaseController
             var sw = Stopwatch.StartNew();
             var config = await _studyHubService.GetConfigAsync(cancellationToken);
             config.AbroadProfile = payload;
+            if (payload.EducationLoansPage != null)
+            {
+                config.EducationLoansPage = payload.EducationLoansPage;
+            }
 
             await _studyHubService.UpdateConfigAsync(config, CurrentUserId, cancellationToken);
             sw.Stop();
@@ -78,7 +83,7 @@ public sealed class StudyAbroadHubController : AdminBaseController
             return Json(new
             {
                 success = true,
-                message = "Study Abroad Hub Profile saved successfully!",
+                message = "Study Abroad Hub Profile & Education Loans settings saved successfully!",
                 elapsedMs = sw.ElapsedMilliseconds
             });
         }

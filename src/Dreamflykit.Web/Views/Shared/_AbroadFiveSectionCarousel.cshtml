@@ -50,12 +50,18 @@
                 ? card.ImageUrl
                 : GetFallbackImage(iconType);
 
+            string cardBtnUrl = !string.IsNullOrWhiteSpace(card.ButtonUrl) ? card.ButtonUrl : "/study-abroad-hub/education-loans";
+            if (card.Title.Contains("Loan", StringComparison.OrdinalIgnoreCase))
+            {
+                cardBtnUrl = "/study-abroad-hub/education-loans";
+            }
+
             // Section 1 / Spotlight metadata for this item
             string spotTitle = !string.IsNullOrWhiteSpace(spot.Title) ? spot.Title : (card.Title + " Ambassador");
             string spotSub = !string.IsNullOrWhiteSpace(spot.Subtitle) ? spot.Subtitle : card.Subtitle;
             string spotTag = !string.IsNullOrWhiteSpace(spot.TagText) ? spot.TagText : "Official Partner";
             string spotBtnText = !string.IsNullOrWhiteSpace(spot.ButtonText) ? spot.ButtonText : "Meet Ambassador →";
-            string spotBtnUrl = !string.IsNullOrWhiteSpace(spot.ButtonUrl) ? spot.ButtonUrl : card.ButtonUrl;
+            string spotBtnUrl = !string.IsNullOrWhiteSpace(spot.ButtonUrl) ? spot.ButtonUrl : cardBtnUrl;
             
             // Spotlight photo: admin uploaded spot image OR card image OR fallback
             string spotImg = !string.IsNullOrWhiteSpace(spot.ImageUrl)
@@ -66,13 +72,22 @@
                 ? spot.BackgroundGradient 
                 : "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)";
 
-            if (cIdx == 1)
+            if (card.Title.Contains("Loan", StringComparison.OrdinalIgnoreCase))
+            {
+                spotTitle = card.Title + " Partner";
+                spotSub = card.Subtitle;
+                spotTag = "Official Financing Partner";
+                spotBtnText = "Explore " + card.Title + " →";
+                spotBtnUrl = "/study-abroad-hub/education-loans";
+                spotGrad = "linear-gradient(135deg, #059669 0%, #047857 100%)";
+            }
+            else if (cIdx == 1)
             {
                 spotTitle = card.Title + " Partner";
                 spotSub = card.Subtitle;
                 spotTag = "Certified Partner";
                 spotBtnText = "Explore " + card.Title + " →";
-                spotBtnUrl = card.ButtonUrl;
+                spotBtnUrl = cardBtnUrl;
                 spotGrad = "linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%)";
             }
             else if (cIdx == 2)
@@ -101,7 +116,7 @@
                 subtitle = card.Subtitle,
                 badgeText = card.BadgeText,
                 buttonText = card.ButtonText ?? "Know More",
-                buttonUrl = card.ButtonUrl,
+                buttonUrl = cardBtnUrl,
                 iconType = iconType,
                 imageUrl = cardImg,
                 hasCustomImage = !string.IsNullOrWhiteSpace(card.ImageUrl),

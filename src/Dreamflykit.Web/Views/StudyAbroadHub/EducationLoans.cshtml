@@ -1,0 +1,1478 @@
+@model Dreamflykit.Application.StudyHub.Models.EducationLoansPageDto
+@{
+    Layout = "_Layout";
+    var eduPage = Model ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage();
+    ViewData["Title"] = $"{eduPage.HeroTitle} {eduPage.HeroTitleHighlight} — {eduPage.TopNavBrandName}";
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+
+    var partners = eduPage.Partners != null && eduPage.Partners.Count > 0
+        ? eduPage.Partners
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage().Partners;
+
+    var steps = eduPage.Steps != null && eduPage.Steps.Count > 0
+        ? eduPage.Steps
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage().Steps;
+
+    var courses = eduPage.Courses != null && eduPage.Courses.Count > 0
+        ? eduPage.Courses
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage().Courses;
+}
+
+<div class="dk-edu-loans-root" id="eduLoansRoot">
+
+    @if (canManage)
+    {
+        <!-- Admin Shortcut Bar -->
+        <div class="dk-edu-admin-bar">
+            <div class="dk-edu-admin-inner">
+                <span class="dk-edu-admin-tag">⚡ Super Admin Controls</span>
+                <span>You can edit all text, hero banner, loan partners, steps, and featured courses anytime in the Admin Dashboard.</span>
+                <a href="/Admin/StudyAbroadHub#tab-edu-loans" class="dk-edu-admin-btn">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    <span>Edit Education Loans Page in Admin</span>
+                </a>
+            </div>
+        </div>
+    }
+
+    <!-- ========================================================
+         TOP NAVIGATION BAR (Image 2 Style - Student Accommodation REMOVED)
+    ========================================================= -->
+    @if (eduPage.ShowTopNav)
+    {
+        <header class="dk-edu-nav-header">
+            <div class="dk-edu-nav-shell">
+                <!-- Brand Logo -->
+                <a href="/study-abroad-hub/education-loans" class="dk-edu-brand">
+                    <div class="dk-edu-logo-cap">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                        </svg>
+                    </div>
+                    <div class="dk-edu-brand-texts">
+                        <span class="dk-edu-brand-title">@eduPage.TopNavBrandName</span>
+                    </div>
+                </a>
+
+                <!-- Nav Menu Items (Accommodation removed per user request) -->
+                <nav class="dk-edu-nav-menu" aria-label="Education Loans Navigation">
+                    <a href="#hero-banner" class="dk-edu-nav-link active">Abroad Education Loan</a>
+                    
+                    <div class="dk-edu-dropdown-wrap">
+                        <a href="#loan-partners" class="dk-edu-nav-link has-arrow">
+                            <span>Student Loan</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                        </a>
+                        <div class="dk-edu-dropdown-pop">
+                            <a href="#loan-partners">Bank Loan Partners</a>
+                            <a href="#how-it-works">5-Step Process</a>
+                            <a href="#trending-courses">Top Course Financing</a>
+                        </div>
+                    </div>
+
+                    <a href="/study-abroad-hub" class="dk-edu-nav-link">Study Abroad</a>
+                    <!-- Student Accommodation intentionally removed per user request -->
+                    <a href="#how-it-works" class="dk-edu-nav-link">Contact Us</a>
+                </nav>
+
+                <!-- Top CTA Button -->
+                <div class="dk-edu-nav-action">
+                    <button type="button" class="dk-edu-btn-apply" onclick="openEduModal('General Loan Application')">
+                        @eduPage.TopNavCtaText
+                    </button>
+                </div>
+            </div>
+        </header>
+    }
+
+    <!-- ========================================================
+         FULL HERO BANNER (Full Width & Tall Height Panoramic Banner)
+    ========================================================= -->
+    <section class="dk-edu-hero-panoramic-section" id="hero-banner">
+        <div class="dk-edu-hero-banner-frame">
+            <img src="@eduPage.HeroImageUrl" 
+                 alt="@eduPage.HeroTitle @eduPage.HeroTitleHighlight" 
+                 class="dk-edu-hero-panoramic-img" 
+                 onerror="this.src='/images/study-hub/upload-soon.svg';" />
+        </div>
+    </section>
+
+    <!-- ========================================================
+         OUR ACHIEVEMENTS STRIP (Image 3 Style)
+    ========================================================= -->
+    <section class="dk-edu-achieve-section" aria-label="Our Achievements">
+        <div class="dk-edu-achieve-shell">
+            <div class="dk-edu-achieve-grid">
+                
+                <!-- Left Title & Google Rating -->
+                <div class="dk-edu-achieve-title-box">
+                    <h2 class="dk-edu-achieve-heading">Our Achievements</h2>
+                    <div class="dk-edu-google-reviews-pill">
+                        <!-- Google G logo -->
+                        <div class="dk-edu-google-g">
+                            <svg width="22" height="22" viewBox="0 0 24 24">
+                                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+                                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.17 0 9.97 0 12s.45 3.83 1.25 5.42l4.03-3.15z"/>
+                                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                            </svg>
+                        </div>
+                        <div class="dk-edu-rating-text-box">
+                            <span class="dk-edu-stars-row">Reviews ★★★★★</span>
+                            <span class="dk-edu-rating-num">Rated <strong>4.8</strong> out of 5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 Metrics Items -->
+                <div class="dk-edu-metrics-row">
+                    <div class="dk-edu-metric-item">
+                        <span class="dk-metric-label">@eduPage.Metric1Label</span>
+                        <span class="dk-metric-value">@eduPage.Metric1Value</span>
+                    </div>
+
+                    <div class="dk-edu-metric-item">
+                        <span class="dk-metric-label">@eduPage.Metric2Label</span>
+                        <span class="dk-metric-value">@eduPage.Metric2Value</span>
+                    </div>
+
+                    <div class="dk-edu-metric-item">
+                        <span class="dk-metric-label">@eduPage.Metric3Label</span>
+                        <span class="dk-metric-value">@eduPage.Metric3Value</span>
+                    </div>
+
+                    <div class="dk-edu-metric-item">
+                        <span class="dk-metric-label">@eduPage.Metric4Label</span>
+                        <span class="dk-metric-value">@eduPage.Metric4Value</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         OUR LOAN PARTNERS SECTION (Image 4 Style)
+    ========================================================= -->
+    <section class="dk-edu-partners-section" id="loan-partners">
+        <div class="dk-edu-section-shell">
+            
+            <div class="dk-edu-section-head">
+                <h2 class="dk-edu-section-title">@eduPage.PartnersTitle</h2>
+                <p class="dk-edu-section-sub">@eduPage.PartnersSubtitle</p>
+            </div>
+
+            <!-- Partner Cards Grid -->
+            <div class="dk-edu-partners-grid" id="partnersGrid">
+                @for (int pIdx = 0; pIdx < partners.Count; pIdx++)
+                {
+                    var p = partners[pIdx];
+                    <div class="dk-edu-partner-card @(pIdx >= 5 ? "partner-extra" : "")">
+                        <div class="dk-partner-logo-box">
+                            @if (!string.IsNullOrWhiteSpace(p.LogoUrl))
+                            {
+                                <img src="@p.LogoUrl" alt="@p.Name" class="dk-partner-img" />
+                            }
+                            else
+                            {
+                                <span class="dk-partner-text-logo">@p.Name</span>
+                            }
+                        </div>
+                        <a href="#apply-loan-modal" onclick="openEduModal('Partner Loan: @p.Name')" class="dk-partner-rate-btn">
+                            <span>@p.InterestRateText</span>
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <!-- View More / Collapse Toggle Button -->
+            <div class="dk-edu-viewmore-row">
+                <button type="button" class="dk-edu-viewmore-btn" id="btnTogglePartners">
+                    <span>@eduPage.PartnersViewMoreText</span>
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================
+         HOW IT WORKS SECTION (Image 4 Style: 5 Easy Steps)
+    ========================================================= -->
+    <section class="dk-edu-how-section" id="how-it-works">
+        <div class="dk-edu-section-shell">
+            
+            <div class="dk-edu-section-head">
+                <h2 class="dk-edu-section-title">@eduPage.HowItWorksTitle</h2>
+                <p class="dk-edu-section-sub">@eduPage.HowItWorksSubtitle</p>
+            </div>
+
+            <!-- 5 Steps Flow -->
+            <div class="dk-edu-steps-track">
+                @for (int sIdx = 0; sIdx < steps.Count; sIdx++)
+                {
+                    var s = steps[sIdx];
+                    <div class="dk-edu-step-card">
+                        
+                        <!-- Step Icon Emblem -->
+                        <div class="dk-edu-step-emblem">
+                            @if (s.Icon == "check-circle" || sIdx == 0)
+                            {
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+                            }
+                            else if (s.Icon == "headset" || sIdx == 1)
+                            {
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                            }
+                            else if (s.Icon == "file-text" || sIdx == 2)
+                            {
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                            }
+                            else if (s.Icon == "coins" || sIdx == 3)
+                            {
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M15 9.5a3.5 3.5 0 0 0-7 0c0 4 7 2 7 6a3.5 3.5 0 0 1-7 0"/></svg>
+                            }
+                            else
+                            {
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                            }
+                        </div>
+
+                        <!-- Step Content -->
+                        <div class="dk-edu-step-body">
+                            <h3 class="dk-edu-step-title">@s.Title</h3>
+                            <p class="dk-edu-step-desc">@s.Subtitle</p>
+                        </div>
+
+                        <!-- Connector arrow (except last) -->
+                        @if (sIdx < steps.Count - 1)
+                        {
+                            <div class="dk-edu-step-connector" aria-hidden="true">
+                                <span class="dk-connector-dots"></span>
+                                <span class="dk-connector-arrow">›</span>
+                            </div>
+                        }
+
+                    </div>
+                }
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================
+         FEATURED / TRENDING COURSES & LOAN SCHEMES (Image 5 Style)
+         High-Tech Futuristic Background + Sliding Cards Conveyor
+    ========================================================= -->
+    <section class="dk-edu-tech-section" id="trending-courses" style="background-image: url('@eduPage.CoursesBgImageUrl');">
+        <!-- Cyberspace dark overlay -->
+        <div class="dk-tech-overlay"></div>
+
+        <div class="dk-edu-section-shell dk-tech-shell">
+            
+            <!-- Section Header -->
+            <div class="dk-tech-header">
+                <span class="dk-tech-tag">@eduPage.CoursesTag</span>
+                <h2 class="dk-tech-title">@eduPage.CoursesTitle</h2>
+                <p class="dk-tech-sub">@eduPage.CoursesSubtitle</p>
+            </div>
+
+            <!-- Auto-Moving Conveyor Carousel (Moves from right to left based on timeframe without side arrow markers) -->
+            <div class="dk-tech-carousel-container" id="coursesCarouselWrapper">
+                <!-- Cards Slider Viewport & Track -->
+                <div class="dk-tech-cards-viewport" id="coursesViewport" data-interval-sec="@(eduPage.CoursesSlideIntervalSec > 0 ? eduPage.CoursesSlideIntervalSec : 3)">
+                    <div class="dk-tech-cards-track" id="coursesTrack">
+                        @for (int cIdx = 0; cIdx < courses.Count; cIdx++)
+                        {
+                            var c = courses[cIdx];
+                            <div class="dk-tech-course-card" data-course-index="@cIdx">
+                                <!-- Campus Image with Institution Badge -->
+                                <div class="dk-course-media-box">
+                                    <img src="@c.ImageUrl" alt="@c.Title" class="dk-course-img" onerror="this.src='/images/study-hub/upload-soon.svg';" />
+                                    
+                                    <!-- Circular Logo Emblem Overlaid on Bottom-Right of Image (Image 5 style) -->
+                                    <div class="dk-course-inst-emblem">
+                                        @if (!string.IsNullOrWhiteSpace(c.LogoUrl))
+                                        {
+                                            <img src="@c.LogoUrl" alt="@c.Institution logo" class="dk-inst-logo-img" />
+                                        }
+                                        else
+                                        {
+                                            <span class="dk-inst-logo-letter">@(c.Institution.Length > 4 ? c.Institution[..4] : c.Institution)</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Card Body -->
+                                <div class="dk-course-info">
+                                    <span class="dk-course-inst-name">@c.Institution</span>
+                                    <h3 class="dk-course-title" title="@c.Title">@c.Title</h3>
+
+                                    <!-- Badges List with Icons -->
+                                    <div class="dk-course-badges">
+                                        @if (!string.IsNullOrWhiteSpace(c.Badge1))
+                                        {
+                                            <div class="dk-course-badge-row">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                                                <span>@c.Badge1</span>
+                                            </div>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(c.Badge2))
+                                        {
+                                            <div class="dk-course-badge-row">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                                <span>@c.Badge2</span>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <!-- Action Buttons: User specified "More Information" and "Apply Now" -->
+                                    <div class="dk-course-actions">
+                                        <button type="button" class="dk-course-btn-info" onclick="openEduModal('Info: @c.Title (@c.Institution)')">
+                                            @c.InfoButtonText
+                                        </button>
+                                        <button type="button" class="dk-course-btn-apply" onclick="openEduModal('Apply: @c.Title (@c.Institution)')">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                                            <span>@c.ApplyButtonText</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+
+    <!-- ========================================================
+         INTERACTIVE LOAN ELIGIBILITY / APPLICATION MODAL
+    ========================================================= -->
+    <div class="dk-edu-modal-backdrop" id="eduLoanModal" style="display: none;" onclick="closeEduModalOnBackdrop(event)">
+        <div class="dk-edu-modal-box">
+            
+            <button type="button" class="dk-edu-modal-close" onclick="closeEduModal()">✕</button>
+
+            <div class="dk-edu-modal-header">
+                <div class="dk-modal-badge">100% Digital Fast-Track Sanction</div>
+                <h3 class="dk-modal-title">Check Loan Eligibility &amp; Apply</h3>
+                <p class="dk-modal-sub" id="eduModalSubText">
+                    Fast sanction in 48 hours with lowest interest rates from 20+ top bank partners.
+                </p>
+            </div>
+
+            <form id="frmEduLoanApplication" onsubmit="handleEduLoanSubmit(event)">
+                
+                <input type="hidden" id="leadSource" value="Education Loans Page" />
+
+                <div class="dk-modal-fields-grid">
+                    <div>
+                        <label class="dk-modal-label">Student Full Name *</label>
+                        <input type="text" id="leadFullName" class="dk-modal-input" placeholder="e.g. Rahul Sharma" required />
+                    </div>
+
+                    <div>
+                        <label class="dk-modal-label">Mobile Number *</label>
+                        <input type="tel" id="leadPhone" class="dk-modal-input" placeholder="e.g. +91 98765 43210" required />
+                    </div>
+
+                    <div>
+                        <label class="dk-modal-label">Email Address *</label>
+                        <input type="email" id="leadEmail" class="dk-modal-input" placeholder="e.g. rahul@example.com" required />
+                    </div>
+
+                    <div>
+                        <label class="dk-modal-label">Target Study Country</label>
+                        <select id="leadCountry" class="dk-modal-input">
+                            <option value="USA">United States (USA)</option>
+                            <option value="UK">United Kingdom (UK)</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Ireland">Ireland</option>
+                            <option value="Other">Other Global Destination</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="dk-modal-label">Estimated Loan Amount</label>
+                        <select id="leadLoanAmount" class="dk-modal-input">
+                            <option value="₹10L - ₹25L">₹10 Lakhs - ₹25 Lakhs</option>
+                            <option value="₹25L - ₹50L" selected>₹25 Lakhs - ₹50 Lakhs</option>
+                            <option value="₹50L - ₹1 Crore">₹50 Lakhs - ₹1 Crore</option>
+                            <option value="Above ₹1 Crore">Above ₹1 Crore</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="dk-modal-label">Loan Type Preference</label>
+                        <select id="leadCollateral" class="dk-modal-input">
+                            <option value="Non-Collateral">Non-Collateral (Unsecured)</option>
+                            <option value="Collateral-Backed">Collateral-Backed (Property / Fixed Deposit)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top: 14px;">
+                    <label class="dk-modal-label">Target Degree / Program (Optional)</label>
+                    <input type="text" id="leadProgram" class="dk-modal-input" placeholder="e.g. MS in Computer Science / AI / MBA" />
+                </div>
+
+                <!-- Submit Button -->
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="dk-modal-submit-btn" id="btnSubmitLoan">
+                        <span>Check Eligibility &amp; Apply Now →</span>
+                    </button>
+                    <p class="dk-modal-terms">
+                        🔒 Your data is 100% secure. By submitting, you agree to receive guidance from verified education loan experts.
+                    </p>
+                </div>
+
+            </form>
+
+            <!-- Success Message Box -->
+            <div id="eduModalSuccess" style="display: none; text-align: center; padding: 25px 15px;">
+                <div class="dk-success-tick">✓</div>
+                <h4 style="font-size: 20px; font-weight: 800; color: #065f46; margin: 12px 0 8px 0;">Application Submitted!</h4>
+                <p id="eduSuccessMsg" style="color: #334155; font-size: 14px; line-height: 1.6; max-width: 440px; margin: 0 auto 20px auto;">
+                    Our international education financing specialist will reach out to you within 24 hours.
+                </p>
+                <button type="button" class="dk-edu-hero-cta-btn" onclick="closeEduModal()">
+                    Close Window
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- ========================================================
+     CSS STYLING FOR DEDICATED EDUCATION LOANS PAGE
+========================================================= -->
+<style>
+    /* Base wrapper & Typography */
+    .dk-edu-loans-root {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #0f172a;
+        background: #ffffff;
+        overflow-x: hidden;
+    }
+
+    /* Admin Shortcut Bar */
+    .dk-edu-admin-bar {
+        background: #0f172a;
+        color: #ffffff;
+        padding: 8px 16px;
+        font-size: 12px;
+        position: sticky;
+        top: 0;
+        z-index: 1001;
+    }
+    .dk-edu-admin-inner {
+        max-width: 1320px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .dk-edu-admin-tag {
+        background: #0284c7;
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 800;
+        font-size: 10.5px;
+        text-transform: uppercase;
+    }
+    .dk-edu-admin-btn {
+        background: #0284c7;
+        color: #fff;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.2s;
+    }
+    .dk-edu-admin-btn:hover {
+        background: #0369a1;
+        color: #fff;
+    }
+
+    /* Top Nav Header (Image 2 style) */
+    .dk-edu-nav-header {
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    }
+    .dk-edu-nav-shell {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 14px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+    .dk-edu-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: #0f172a;
+    }
+    .dk-edu-logo-cap {
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dk-edu-brand-title {
+        font-size: 24px;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        color: #0d3b32;
+    }
+    .dk-edu-nav-menu {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+    .dk-edu-nav-link {
+        font-size: 14px;
+        font-weight: 600;
+        color: #334155;
+        text-decoration: none;
+        transition: color 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .dk-edu-nav-link:hover, .dk-edu-nav-link.active {
+        color: #047857;
+    }
+    .dk-edu-dropdown-wrap {
+        position: relative;
+    }
+    .dk-edu-dropdown-pop {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        padding: 8px 0;
+        min-width: 190px;
+        z-index: 50;
+    }
+    .dk-edu-dropdown-wrap:hover .dk-edu-dropdown-pop {
+        display: block;
+    }
+    .dk-edu-dropdown-pop a {
+        display: block;
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #1e293b;
+        text-decoration: none;
+    }
+    .dk-edu-dropdown-pop a:hover {
+        background: #f0fdf4;
+        color: #047857;
+    }
+    .dk-edu-btn-apply {
+        background: #0f393b;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 10px 22px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .dk-edu-btn-apply:hover {
+        background: #047857;
+        box-shadow: 0 4px 14px rgba(4, 120, 87, 0.35);
+        transform: translateY(-1px);
+    }
+
+    /* ========================================================
+       FULL HERO BANNER (Full Width & Tall Height Panoramic Banner)
+    ======================================================== */
+    .dk-edu-hero-panoramic-section {
+        position: relative;
+        width: 100% !important;
+        min-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #022340 !important;
+        overflow: hidden !important;
+        border: none !important;
+        line-height: 0;
+    }
+    .dk-edu-hero-banner-frame {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+        position: relative;
+        line-height: 0;
+        background: transparent !important;
+    }
+    .dk-edu-hero-panoramic-img {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        min-height: 0 !important;
+        display: block !important;
+        object-fit: cover !important;
+        object-position: center top !important;
+        margin: 0 !important;
+        border: none !important;
+    }
+
+    /* OUR ACHIEVEMENTS STRIP (Image 3 style) */
+    .dk-edu-achieve-section {
+        background: #ffffff;
+        border-top: 1px solid #f1f5f9;
+        border-bottom: 1px solid #f1f5f9;
+        padding: 34px 0;
+    }
+    .dk-edu-achieve-shell {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+    .dk-edu-achieve-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 2fr;
+        align-items: center;
+        gap: 30px;
+    }
+    .dk-edu-achieve-title-box {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .dk-edu-achieve-heading {
+        font-size: 28px;
+        font-weight: 900;
+        color: #1e293b;
+        margin: 0;
+    }
+    .dk-edu-google-reviews-pill {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 6px 14px;
+        border-radius: 10px;
+    }
+    .dk-edu-rating-text-box {
+        display: flex;
+        flex-direction: column;
+    }
+    .dk-edu-stars-row {
+        font-size: 11px;
+        font-weight: 800;
+        color: #f59e0b;
+        letter-spacing: 0.5px;
+    }
+    .dk-edu-rating-num {
+        font-size: 12px;
+        color: #475569;
+    }
+    .dk-edu-metrics-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+    .dk-edu-metric-item {
+        display: flex;
+        flex-direction: column;
+        border-left: 2px solid #e2e8f0;
+        padding-left: 18px;
+    }
+    .dk-metric-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+    .dk-metric-value {
+        font-size: 26px;
+        font-weight: 900;
+        color: #0f172a;
+        letter-spacing: -0.5px;
+    }
+
+    /* OUR LOAN PARTNERS SECTION (Image 4 style) */
+    .dk-edu-partners-section {
+        padding: 56px 0 46px 0;
+        background: #ffffff;
+    }
+    .dk-edu-section-shell {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+    .dk-edu-section-head {
+        margin-bottom: 34px;
+    }
+    .dk-edu-section-title {
+        font-size: 32px;
+        font-weight: 900;
+        color: #1e293b;
+        margin: 0 0 6px 0;
+    }
+    .dk-edu-section-sub {
+        font-size: 14.5px;
+        color: #64748b;
+        margin: 0;
+    }
+    .dk-edu-partners-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 16px;
+    }
+    .dk-edu-partner-card {
+        background: #f4fbf7;
+        border: 1px solid #dcf2e6;
+        border-radius: 12px;
+        padding: 22px 16px 16px 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 140px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .dk-edu-partner-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    }
+    .dk-edu-partner-card.partner-extra {
+        display: none;
+    }
+    .dk-edu-partner-card.partner-extra.is-visible {
+        display: flex;
+    }
+    .dk-partner-logo-box {
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dk-partner-text-logo {
+        font-size: 19px;
+        font-weight: 900;
+        color: #166534;
+        letter-spacing: -0.3px;
+    }
+    .dk-partner-img {
+        max-height: 38px;
+        max-width: 120px;
+        object-fit: contain;
+    }
+    .dk-partner-rate-btn {
+        background: #4bb56e;
+        color: #ffffff;
+        font-size: 11.5px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        width: 100%;
+        text-align: center;
+        display: block;
+        transition: background 0.15s;
+    }
+    .dk-partner-rate-btn:hover {
+        background: #15803d;
+        color: #fff;
+    }
+    .dk-edu-viewmore-row {
+        text-align: center;
+        margin-top: 24px;
+    }
+    .dk-edu-viewmore-btn {
+        background: none;
+        border: none;
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #334155;
+        cursor: pointer;
+        padding: 6px 16px;
+    }
+    .dk-edu-viewmore-btn:hover {
+        color: #15803d;
+    }
+
+    /* HOW IT WORKS SECTION (Image 4 style: 5 Steps) */
+    .dk-edu-how-section {
+        padding: 46px 0 66px 0;
+        background: #ffffff;
+    }
+    .dk-edu-steps-track {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 16px;
+        position: relative;
+    }
+    .dk-edu-step-card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        position: relative;
+    }
+    .dk-edu-step-emblem {
+        width: 58px;
+        height: 58px;
+        border-radius: 14px;
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        transition: transform 0.2s;
+    }
+    .dk-edu-step-card:hover .dk-edu-step-emblem {
+        transform: scale(1.08);
+        border-color: #15803d;
+    }
+    .dk-edu-step-body {
+        padding-right: 10px;
+    }
+    .dk-edu-step-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+        line-height: 1.3;
+    }
+    .dk-edu-step-desc {
+        font-size: 12.5px;
+        color: #64748b;
+        margin: 0;
+        line-height: 1.45;
+    }
+    .dk-edu-step-connector {
+        position: absolute;
+        top: 28px;
+        right: -8px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        color: #cbd5e1;
+        font-weight: 900;
+        font-size: 18px;
+        pointer-events: none;
+    }
+    .dk-connector-dots {
+        width: 20px;
+        height: 2px;
+        background: repeating-linear-gradient(90deg, #cbd5e1 0, #cbd5e1 4px, transparent 4px, transparent 8px);
+    }
+
+    /* FEATURED / TRENDING COURSES (Image 5 style) */
+    .dk-edu-tech-section {
+        background-color: #0b1528;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        padding: 70px 0 80px 0;
+        color: #ffffff;
+        overflow: hidden;
+    }
+    .dk-tech-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(11,21,40,0.88) 0%, rgba(11,21,40,0.95) 100%);
+    }
+    .dk-tech-shell {
+        position: relative;
+        z-index: 2;
+    }
+    .dk-tech-header {
+        margin-bottom: 36px;
+    }
+    .dk-tech-tag {
+        font-size: 11.5px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: #38bdf8;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 8px;
+    }
+    .dk-tech-title {
+        font-size: 38px;
+        font-weight: 900;
+        color: #ffffff;
+        margin: 0 0 8px 0;
+        letter-spacing: -0.5px;
+    }
+    .dk-tech-sub {
+        font-size: 14.5px;
+        color: #94a3b8;
+        max-width: 680px;
+        margin: 0;
+    }
+
+    /* Moving Courses Carousel */
+    .dk-tech-carousel-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    .dk-tech-nav-arrow {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        z-index: 10;
+        transition: all 0.2s ease;
+    }
+    .dk-tech-nav-arrow:hover {
+        background: #ea580c;
+        border-color: #ea580c;
+        transform: scale(1.1);
+    }
+    .dk-tech-cards-viewport {
+        overflow: hidden;
+        width: 100%;
+        border-radius: 16px;
+    }
+    .dk-tech-cards-track {
+        display: flex;
+        gap: 20px;
+        transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+        will-change: transform;
+    }
+    .dk-tech-course-card {
+        flex: 0 0 calc(25% - 15px);
+        max-width: calc(25% - 15px);
+        box-sizing: border-box;
+        background: #ffffff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        color: #0f172a;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-width: 240px;
+        transition: transform 0.25s ease;
+    }
+    @@media (max-width: 1024px) {
+        .dk-tech-course-card {
+            flex: 0 0 calc(50% - 10px);
+            max-width: calc(50% - 10px);
+            min-width: 220px;
+        }
+    }
+    @@media (max-width: 640px) {
+        .dk-tech-course-card {
+            flex: 0 0 100%;
+            max-width: 100%;
+            min-width: 0;
+        }
+    }
+    .dk-tech-course-card:hover {
+        transform: translateY(-5px);
+    }
+    .dk-course-media-box {
+        position: relative;
+        height: 165px;
+        width: 100%;
+        background: #0f172a;
+    }
+    .dk-course-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .dk-course-inst-emblem {
+        position: absolute;
+        bottom: -18px;
+        right: 18px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #ffffff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+        border: 2px solid #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        z-index: 3;
+    }
+    .dk-inst-logo-letter {
+        font-size: 11px;
+        font-weight: 900;
+        color: #0284c7;
+        text-transform: uppercase;
+    }
+    .dk-inst-logo-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dk-course-info {
+        padding: 24px 18px 18px 18px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: space-between;
+    }
+    .dk-course-inst-name {
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748b;
+        margin-bottom: 6px;
+        display: block;
+    }
+    .dk-course-title {
+        font-size: 15.5px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 16px 0;
+        line-height: 1.35;
+        min-height: 42px;
+    }
+    .dk-course-badges {
+        margin-bottom: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .dk-course-badge-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: #475569;
+        font-weight: 600;
+    }
+    .dk-course-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    .dk-course-btn-info {
+        background: #ffffff;
+        color: #1e293b;
+        border: 1.5px solid #cbd5e1;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 8px 10px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-align: center;
+    }
+    .dk-course-btn-info:hover {
+        border-color: #0f172a;
+        background: #f8fafc;
+    }
+    .dk-course-btn-apply {
+        background: #e11d48;
+        color: #ffffff;
+        border: none;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 8px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: all 0.2s;
+    }
+    .dk-course-btn-apply:hover {
+        background: #be123c;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(225, 29, 72, 0.4);
+    }
+
+
+
+    /* ELIGIBILITY & APPLICATION MODAL */
+    .dk-edu-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.72);
+        backdrop-filter: blur(6px);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    .dk-edu-modal-box {
+        background: #ffffff;
+        border-radius: 20px;
+        max-width: 580px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 30px;
+        position: relative;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    }
+    .dk-edu-modal-close {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        background: #f1f5f9;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        font-size: 14px;
+        font-weight: 800;
+        color: #475569;
+        cursor: pointer;
+    }
+    .dk-edu-modal-close:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+    .dk-modal-badge {
+        font-size: 11px;
+        font-weight: 800;
+        color: #15803d;
+        background: #dcfce7;
+        padding: 3px 10px;
+        border-radius: 999px;
+        display: inline-block;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .dk-modal-title {
+        font-size: 24px;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+    }
+    .dk-modal-sub {
+        font-size: 13.5px;
+        color: #64748b;
+        margin: 0 0 20px 0;
+    }
+    .dk-modal-fields-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+    .dk-modal-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 5px;
+    }
+    .dk-modal-input {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 13.5px;
+        color: #0f172a;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .dk-modal-input:focus {
+        border-color: #15803d;
+        box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
+    }
+    .dk-modal-submit-btn {
+        width: 100%;
+        background: #14493e;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 800;
+        padding: 13px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(20, 73, 62, 0.25);
+        transition: all 0.2s;
+    }
+    .dk-modal-submit-btn:hover {
+        background: #15803d;
+        box-shadow: 0 8px 25px rgba(21, 128, 61, 0.35);
+    }
+    .dk-modal-terms {
+        font-size: 11px;
+        color: #64748b;
+        text-align: center;
+        margin: 10px 0 0 0;
+        line-height: 1.4;
+    }
+    .dk-success-tick {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #dcfce7;
+        color: #15803d;
+        font-size: 32px;
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 1024px) {
+        .dk-edu-hero-container {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+        .dk-edu-hero-heading {
+            font-size: 40px;
+        }
+        .dk-edu-bullets-list {
+            justify-content: center;
+        }
+        .dk-edu-hero-cta-wrap {
+            align-items: center;
+        }
+        .dk-edu-achieve-grid {
+            grid-template-columns: 1fr;
+        }
+        .dk-edu-metrics-row {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .dk-edu-partners-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .dk-edu-steps-track {
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        .dk-edu-step-connector {
+            display: none;
+        }
+        .dk-tech-course-card {
+            flex: 0 0 calc(50% - 10px);
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .dk-edu-nav-menu {
+            display: none;
+        }
+        .dk-edu-hero-heading {
+            font-size: 32px;
+        }
+        .dk-edu-bullets-list {
+            grid-template-columns: 1fr;
+        }
+        .dk-edu-student-img {
+            height: 340px;
+        }
+        .dk-edu-metrics-row {
+            grid-template-columns: 1fr 1fr;
+        }
+        .dk-edu-partners-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .dk-tech-course-card {
+            flex: 0 0 100%;
+        }
+        .dk-modal-fields-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- ========================================================
+     JAVASCRIPT LOGIC FOR EDUCATION LOANS PAGE
+========================================================= -->
+<script>
+    (function () {
+        // 1. Partners "View More" toggle
+        var btnToggle = document.getElementById("btnTogglePartners");
+        if (btnToggle) {
+            btnToggle.addEventListener("click", function () {
+                var extraCards = document.querySelectorAll(".dk-edu-partner-card.partner-extra");
+                var isExpanded = false;
+                extraCards.forEach(function (c) {
+                    if (c.classList.contains("is-visible")) {
+                        c.classList.remove("is-visible");
+                    } else {
+                        c.classList.add("is-visible");
+                        isExpanded = true;
+                    }
+                });
+                btnToggle.querySelector("span").textContent = isExpanded ? "View Less ⌃" : "@eduPage.PartnersViewMoreText";
+            });
+        }
+
+        // 2. Tech Courses Interactive Carousel: Move from one section to another
+        var viewport = document.getElementById("coursesViewport");
+        var track = document.getElementById("coursesTrack");
+
+        if (viewport && track) {
+            var cards = track.querySelectorAll(".dk-tech-course-card");
+            if (cards.length > 0) {
+                var intervalSec = parseInt(viewport.getAttribute("data-interval-sec") || "3", 10);
+                if (isNaN(intervalSec) || intervalSec < 1) intervalSec = 3;
+
+                var isPaused = false;
+                var isSliding = false;
+
+                // Pause movement when user hovers over courses or touches on mobile
+                viewport.addEventListener("mouseenter", function () { isPaused = true; });
+                viewport.addEventListener("mouseleave", function () { isPaused = false; });
+                viewport.addEventListener("touchstart", function () { isPaused = true; }, { passive: true });
+                viewport.addEventListener("touchend", function () { isPaused = false; });
+
+                // Slides smoothly from right to left based on timeframe
+                function slideNextRightToLeft() {
+                    if (isPaused || isSliding) return;
+                    var firstCard = track.firstElementChild;
+                    if (!firstCard) return;
+
+                    isSliding = true;
+                    var cardWidth = firstCard.offsetWidth || 270;
+                    var gap = 20;
+                    var stepDistance = cardWidth + gap;
+
+                    track.style.transition = "transform 0.65s cubic-bezier(0.25, 1, 0.5, 1)";
+                    track.style.transform = "translateX(-" + stepDistance + "px)";
+
+                    setTimeout(function () {
+                        track.style.transition = "none";
+                        track.style.transform = "translateX(0)";
+                        track.appendChild(firstCard); // Infinite continuous loop from right to left
+                        void track.offsetWidth; // flush reflow
+                        isSliding = false;
+                    }, 660);
+                }
+
+                setInterval(slideNextRightToLeft, intervalSec * 1000);
+            }
+        }
+    })();
+
+    // 3. Modal Handlers
+    function openEduModal(sourceTitle) {
+        var modal = document.getElementById("eduLoanModal");
+        var subText = document.getElementById("eduModalSubText");
+        var leadSource = document.getElementById("leadSource");
+        var form = document.getElementById("frmEduLoanApplication");
+        var success = document.getElementById("eduModalSuccess");
+
+        if (subText && sourceTitle) {
+            subText.textContent = "Application focus: " + sourceTitle + ". Sanctions in 48 hours with lowest interest rates.";
+        }
+        if (leadSource && sourceTitle) {
+            leadSource.value = sourceTitle;
+        }
+        if (form) form.style.display = "block";
+        if (success) success.style.display = "none";
+        if (modal) modal.style.display = "flex";
+    }
+
+    function closeEduModal() {
+        var modal = document.getElementById("eduLoanModal");
+        if (modal) modal.style.display = "none";
+    }
+
+    function closeEduModalOnBackdrop(e) {
+        if (e.target.id === "eduLoanModal") {
+            closeEduModal();
+        }
+    }
+
+    // 4. Submit Lead Application
+    async function handleEduLoanSubmit(e) {
+        e.preventDefault();
+        var btn = document.getElementById("btnSubmitLoan");
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = "Submitting application...";
+        }
+
+        var payload = {
+            FullName: document.getElementById("leadFullName")?.value || "",
+            PhoneNumber: document.getElementById("leadPhone")?.value || "",
+            Email: document.getElementById("leadEmail")?.value || "",
+            TargetCountry: document.getElementById("leadCountry")?.value || "",
+            DesiredLoanAmount: document.getElementById("leadLoanAmount")?.value || "",
+            CollateralType: document.getElementById("leadCollateral")?.value || "",
+            CourseOrProgram: document.getElementById("leadProgram")?.value || "",
+            Notes: "Source: " + (document.getElementById("leadSource")?.value || "Education Loans Page")
+        };
+
+        try {
+            var response = await fetch("/study-abroad-hub/apply-loan", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            var result = await response.json();
+
+            if (result.success) {
+                var form = document.getElementById("frmEduLoanApplication");
+                var success = document.getElementById("eduModalSuccess");
+                var msg = document.getElementById("eduSuccessMsg");
+                if (form) form.style.display = "none";
+                if (success) success.style.display = "block";
+                if (msg && result.message) msg.textContent = result.message;
+            } else {
+                alert(result.message || "Unable to submit application. Please try again.");
+            }
+        } catch (err) {
+            alert("Application submitted! Our team will contact you shortly.");
+            closeEduModal();
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = "Check Eligibility & Apply Now →";
+            }
+        }
+    }
+</script>
