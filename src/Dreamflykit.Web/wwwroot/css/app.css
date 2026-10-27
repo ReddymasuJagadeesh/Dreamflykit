@@ -9376,6 +9376,13 @@ img {
 }
 
 /* ABROAD HUB CATEGORY NAV */
+.dk-category-nav-empty {
+    width: 100%;
+    min-height: 12px;
+    background: #ffffff;
+    display: block;
+}
+
 .dk-category-nav.dk-category-nav-abroad {
     background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%);
     border-bottom: 2px solid #bae6fd;
