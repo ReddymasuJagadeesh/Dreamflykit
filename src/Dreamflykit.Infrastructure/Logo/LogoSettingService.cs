@@ -196,21 +196,21 @@ public sealed class LogoSettingService : ILogoSettingService
             string.Equals(logoType, "scrolled", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(logoType, "d", StringComparison.OrdinalIgnoreCase))
         {
-            settings.Section1DLogoUrl = "/images/branding/dreamflykit-d-symbol.jpg";
+            settings.Section1DLogoUrl = "/images/branding/dreamflykit-d-symbol-transparent.png";
             settings.Section1UploadingSoon = false;
         }
         else if (string.Equals(logoType, "section2", StringComparison.OrdinalIgnoreCase) ||
                  string.Equals(logoType, "main", StringComparison.OrdinalIgnoreCase) ||
                  string.Equals(logoType, "brand", StringComparison.OrdinalIgnoreCase))
         {
-            settings.Section2BrandLogoUrl = "/images/branding/dreamflykit-brand-text.jpg";
+            settings.Section2BrandLogoUrl = "/images/branding/dreamflykit-brand-transparent.png";
             settings.Section2UploadingSoon = false;
         }
         else
         {
-            settings.Section1DLogoUrl = "/images/branding/dreamflykit-d-symbol.jpg";
+            settings.Section1DLogoUrl = "/images/branding/dreamflykit-d-symbol-transparent.png";
             settings.Section1UploadingSoon = false;
-            settings.Section2BrandLogoUrl = "/images/branding/dreamflykit-brand-text.jpg";
+            settings.Section2BrandLogoUrl = "/images/branding/dreamflykit-brand-transparent.png";
             settings.Section2UploadingSoon = false;
             settings.SiteTitle = "Dreamflykit";
             settings.Tagline = "Your Journey. Our Kit.";

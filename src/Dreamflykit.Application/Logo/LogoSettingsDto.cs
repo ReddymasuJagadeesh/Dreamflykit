@@ -3,11 +3,11 @@ namespace Dreamflykit.Application.Logo;
 public sealed class LogoSettingsDto
 {
     // Section 1: Left 'D' Logo Symbol
-    public string Section1DLogoUrl { get; set; } = "/images/branding/dreamflykit-d-symbol.jpg";
+    public string Section1DLogoUrl { get; set; } = "/images/branding/dreamflykit-d-symbol-transparent.png";
     public bool Section1UploadingSoon { get; set; } = false;
 
     // Section 2: Dreamflykit Brand Logo (Right after Section 1)
-    public string Section2BrandLogoUrl { get; set; } = "/images/branding/dreamflykit-brand-text.jpg";
+    public string Section2BrandLogoUrl { get; set; } = "/images/branding/dreamflykit-brand-transparent.png";
     public bool Section2UploadingSoon { get; set; } = false;
 
     // Backward-compat aliases
@@ -20,7 +20,7 @@ public sealed class LogoSettingsDto
     public string? ScrolledLogoUrl
     {
         get => Section1DLogoUrl;
-        set => Section1DLogoUrl = value ?? "/images/branding/dreamflykit-d-symbol.jpg";
+        set => Section1DLogoUrl = value ?? "/images/branding/dreamflykit-d-symbol-transparent.png";
     }
 
     public string SiteTitle { get; set; } = "Dreamflykit";

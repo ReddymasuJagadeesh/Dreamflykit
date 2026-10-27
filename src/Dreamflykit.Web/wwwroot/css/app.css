@@ -8832,6 +8832,7 @@ img {
 }
 
 /* SECTION 1: 'D' LOGO SECTION (TALL BOX EXTENDING TO BASE OF SEARCH BAR) */
+/* SECTION 1: 'D' LOGO SECTION (SEAMLESS BANK OF BARODA INTEGRATION) */
 .dk-logo-section-1 {
     display: inline-flex;
     align-items: center;
@@ -8840,73 +8841,88 @@ img {
 }
 
 .dk-logo-s1-box {
-    width: 82px;
-    height: 82px;
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 6px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+    height: 72px;
+    width: auto;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: visible;
     transition: all 0.25s ease;
 }
 
 .dk-logo-s1-box:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.32);
+    transform: translateY(-1px);
+    box-shadow: none !important;
 }
 
 .dk-logo-s1-img {
-    width: 100%;
-    height: 100%;
+    height: 64px;
+    width: auto;
+    max-width: 78px;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 0;
     display: block;
+    background: transparent;
+    filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.85)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.28));
+    transition: filter 0.2s ease, transform 0.2s ease;
 }
 
-/* SECTION 2: 'DREAMFLYKIT' BRAND LOGO SECTION (TALL BOX, COLLAPSES ON SCROLL) */
+.dk-logo-s1-box:hover .dk-logo-s1-img {
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.95)) drop-shadow(0 3px 8px rgba(0, 0, 0, 0.38));
+}
+
+/* SECTION 2: 'DREAMFLYKIT' BRAND LOGO SECTION (SEAMLESS BANK OF BARODA INTEGRATION) */
 .dk-logo-section-2 {
     display: inline-flex;
     align-items: center;
     text-decoration: none !important;
     flex-shrink: 0;
-    max-width: 300px;
+    max-width: 320px;
     opacity: 1;
     transform: scale(1);
     transform-origin: left center;
     transition: max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, transform 0.25s ease, margin 0.35s ease, padding 0.35s ease;
-    overflow: hidden;
+    overflow: visible;
     white-space: nowrap;
 }
 
 .dk-logo-s2-box {
-    height: 82px;
-    padding: 6px 18px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+    height: 72px;
+    padding: 0 4px !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: visible;
     transition: all 0.25s ease;
     white-space: nowrap;
 }
 
 .dk-logo-s2-box:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.32);
+    transform: translateY(-1px);
+    box-shadow: none !important;
 }
 
 .dk-logo-s2-img {
-    height: 64px;
+    height: 52px;
     width: auto;
-    max-width: 250px;
+    max-width: 260px;
     object-fit: contain;
     display: block;
+    background: transparent;
     image-rendering: -webkit-optimize-contrast;
+    filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.85)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.28));
+    transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.dk-logo-s2-box:hover .dk-logo-s2-img {
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.95)) drop-shadow(0 3px 8px rgba(0, 0, 0, 0.38));
 }
 
 /* UPLOADING SOON PLACEHOLDER BADGE */
@@ -9285,9 +9301,18 @@ img {
 }
 
 .dk-header.is-scrolled .dk-logo-s1-box {
-    width: 72px !important;
-    height: 72px !important;
-    border-radius: 10px !important;
+    width: auto !important;
+    height: 38px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+.dk-header.is-scrolled .dk-logo-s1-img {
+    height: 34px !important;
+    width: auto !important;
+    max-width: 40px !important;
 }
 
 .dk-header.is-scrolled .dk-search-orange-bar {

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" fill="none">
+    <!-- Outer booster streak swooshing under the D in pure white with subtle opacity -->
+    <path d="M 16 100 C 22 100, 32 94, 46 80 C 60 66, 88 56, 108 50 C 90 58, 64 68, 44 86 C 30 98, 20 102, 16 100 Z" 
+          fill="#ffffff" opacity="0.88" />
+    
+    <!-- Flame tip in pure white -->
+    <path d="M 18 100 L 40 82 C 34 76, 28 82, 22 92 Z" 
+          fill="#ffffff" opacity="0.95" />
+
+    <!-- The Bold Stylized 'D' Glyph in crisp white -->
+    <path d="M 28 20 
+             L 66 20 
+             C 92 20, 106 36, 106 58 
+             C 106 80, 88 96, 60 96 
+             L 24 96 
+             L 36 78 
+             L 54 78 
+             C 72 78, 84 70, 84 58 
+             C 84 46, 74 38, 56 38 
+             L 40 38 
+             Z" 
+          fill="#ffffff" />
+
+    <!-- White Airplane Soaring Inside the 'D' Counter Space -->
+    <g transform="translate(46, 42) rotate(-22) scale(0.95)">
+        <path d="M 12 0 
+                 C 14 -3, 17 -3, 19 0 
+                 L 22 12 
+                 L 38 18 
+                 L 38 22 
+                 L 22 19 
+                 L 21 28 
+                 L 27 33 
+                 L 27 36 
+                 L 15 34 
+                 L 4 36 
+                 L 4 33 
+                 L 10 28 
+                 L 9 19 
+                 L -7 22 
+                 L -7 18 
+                 L 9 12 
+                 Z" 
+              fill="#ffffff" 
+              stroke="#f26522" 
+              stroke-width="1.8" 
+              stroke-linejoin="round" />
+    </g>
+</svg>
