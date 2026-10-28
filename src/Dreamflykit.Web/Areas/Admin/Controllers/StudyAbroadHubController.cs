@@ -50,6 +50,7 @@ public sealed class StudyAbroadHubController : AdminBaseController
         var config = await _studyHubService.GetConfigAsync(cancellationToken);
         var abroadProfile = config.AbroadProfile ?? StudyHubDto.CreateDefaultAbroadProfile();
         abroadProfile.EducationLoansPage = config.EducationLoansPage ?? StudyHubDto.CreateDefaultEducationLoansPage();
+        abroadProfile.ConsultancyDetailsPage = config.ConsultancyDetailsPage ?? abroadProfile.ConsultancyDetailsPage ?? StudyHubDto.CreateDefaultConsultancyDetailsPage();
         return View(abroadProfile);
     }
 
@@ -73,17 +74,21 @@ public sealed class StudyAbroadHubController : AdminBaseController
             {
                 config.EducationLoansPage = payload.EducationLoansPage;
             }
+            if (payload.ConsultancyDetailsPage != null)
+            {
+                config.ConsultancyDetailsPage = payload.ConsultancyDetailsPage;
+            }
 
             await _studyHubService.UpdateConfigAsync(config, CurrentUserId, cancellationToken);
             sw.Stop();
 
-            _logger.LogInformation("Study Abroad Hub Profile updated successfully by {UserId} in {ElapsedMs}ms",
+            _logger.LogInformation("Study Abroad Hub Profile & Consultancy Details updated successfully by {UserId} in {ElapsedMs}ms",
                 CurrentUserId, sw.ElapsedMilliseconds);
 
             return Json(new
             {
                 success = true,
-                message = "Study Abroad Hub Profile & Education Loans settings saved successfully!",
+                message = "Study Abroad Hub Profile, Education Loans & Consultancy Portal settings saved successfully!",
                 elapsedMs = sw.ElapsedMilliseconds
             });
         }

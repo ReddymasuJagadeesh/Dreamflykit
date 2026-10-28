@@ -8,6 +8,13 @@
     var eduPartners = edu.Partners ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanPartnerDto>();
     var eduSteps = edu.Steps ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanStepDto>();
     var eduCourses = edu.Courses ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanCourseDto>();
+    var consult = Model.ConsultancyDetailsPage ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultConsultancyDetailsPage();
+    var consultPills = consult.CategoryPills ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyCategoryPillDto>();
+    var consultPartners = consult.Partners ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyPartnerLogoDto>();
+    var consultTrending = consult.TrendingCourses ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyCourseDto>();
+    var consultPopular = consult.PopularPrograms ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyCourseDto>();
+    var consultCountries = consult.Countries ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyCountryDto>();
+    var activeCountry = consultCountries.FirstOrDefault(c => c.IsActive) ?? consultCountries.FirstOrDefault() ?? new Dreamflykit.Application.StudyHub.Models.ConsultancyCountryDto();
 }
 
 <div class="dk-admin-page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
@@ -21,18 +28,24 @@
             </h1>
         </div>
         <p style="margin: 0; color: #64748b; font-size: 13.5px; max-width: 850px;">
-            Manage the dedicated Study Abroad Hub portal (<a href="/study-abroad-hub" target="_blank" style="color: #0284c7; font-weight: 700; text-decoration: underline;">/study-abroad-hub</a>), panoramic hero banner, synchronized 5-section carousel with movement direction, and high-speed photo uploading.
+            Manage the dedicated Study Abroad Hub portal (<a href="/study-abroad-hub" target="_blank" style="color: #0284c7; font-weight: 700; text-decoration: underline;">/study-abroad-hub</a>), panoramic hero banner, synchronized 5-section carousel, Education Loans portal (<a href="/study-abroad-hub/education-loans" target="_blank" style="color: #16a34a; font-weight: 700;">/education-loans</a>), and the new upGrad-style Consultancy Details portal (<a href="/study-abroad-hub/consultancy" target="_blank" style="color: #dc2626; font-weight: 700;">/consultancy</a>).
         </p>
     </div>
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
         <a href="/study-abroad-hub" target="_blank" class="dk-btn" style="background: #e0f2fe; color: #0369a1; font-weight: 700; border: 1px solid #bae6fd; padding: 8px 16px; border-radius: 8px;">
-            ↗ View Live Study Abroad Hub
+            ↗ View Study Abroad Hub
         </a>
         <a href="/study-abroad-hub/education-loans" target="_blank" class="dk-btn" style="background: #dcfce7; color: #166534; font-weight: 700; border: 1px solid #bbf7d0; padding: 8px 16px; border-radius: 8px;">
-            🎓 View Live Education Loans
+            🎓 View Education Loans
+        </a>
+        <a href="/study-abroad-hub/consultancy" target="_blank" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-weight: 700; border: 1px solid #fecaca; padding: 8px 16px; border-radius: 8px;">
+            💼 View Consultancy Portal
+        </a>
+        <a href="#tab-consultancy" class="dk-btn" style="background: #fff1f2; color: #be123c; font-weight: 700; border: 1px solid #fecdd3; padding: 8px 14px; border-radius: 8px;">
+            ↓ Jump to Consultancy Settings
         </a>
         <a href="#tab-edu-loans" class="dk-btn" style="background: #f0fdf4; color: #15803d; font-weight: 700; border: 1px solid #86efac; padding: 8px 14px; border-radius: 8px;">
-            ↓ Jump to Education Loans Settings
+            ↓ Jump to Education Loans
         </a>
         <form method="post" action="/Admin/StudyAbroadHub/ResetDefaults" style="display: inline;" onsubmit="return confirm('Reset Study Abroad Hub Profile to original factory defaults?');">
             @Html.AntiForgeryToken()
@@ -927,6 +940,413 @@
 
 </div>
 
+<!-- ========================================================
+     5. 🎓 STUDY ABROAD CONSULTANCY & UPSKILLING PORTAL (upGrad Style)
+========================================================= -->
+<div class="dk-admin-card" id="tab-consultancy" style="margin-bottom: 24px; border-top: 4px solid #e52d27; background: #ffffff; border-radius: 14px; padding: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; flex-wrap: wrap; gap: 12px;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <span style="background: #e52d27; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px; text-transform: uppercase;">
+                    Dedicated Page Portal
+                </span>
+                <h2 style="font-size: 1.35rem; font-weight: 900; color: #0f172a; margin: 0;">
+                    5. 💼 Consultancy Details &amp; Upskilling Portal (upGrad Style)
+                </h2>
+            </div>
+            <p style="margin: 0; color: #64748b; font-size: 13.5px;">
+                Live URL: <a href="/study-abroad-hub/consultancy" target="_blank" style="color: #e52d27; font-weight: 800; text-decoration: underline;">/study-abroad-hub/consultancy</a> (also accessible via <a href="/consultancy" target="_blank" style="color: #e52d27; font-weight: 700;">/consultancy</a>).
+                Replace upGrad with Dreamflykit logo, choose hero background video or image, configure category pills, trending AI courses, and destination showcase.
+            </p>
+        </div>
+        <div>
+            <a href="/study-abroad-hub/consultancy" target="_blank" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-weight: 800; border: 1px solid #fecaca; padding: 8px 18px; border-radius: 8px;">
+                ↗ Open Live Consultancy Portal
+            </a>
+        </div>
+    </div>
+
+    <!-- 5.1 BRANDING & LOGO UPLOAD -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+        <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0 0 12px 0;">
+            5.1 Top Navigation &amp; Dreamflykit Logo Upload
+        </h3>
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 14px; align-items: end;">
+            <div>
+                <label class="dk-sh-form-label">Brand Logo (Replaces upGrad with Dreamflykit Logo)</label>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <div style="width: 70px; height: 38px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 3px;">
+                        <img id="prev_consult_logo" src="@(string.IsNullOrWhiteSpace(consult.LogoUrl) ? "/images/branding/dreamflykit-logo-clean.webp" : consult.LogoUrl)" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.src='/images/branding/dreamflykit-logo-clean.webp';" />
+                    </div>
+                    <input type="text" id="consult_logo_url" class="dk-admin-form-input" value="@consult.LogoUrl" placeholder="/images/branding/dreamflykit-logo-clean.webp" style="flex: 1;" oninput="updateLivePreview('consult_logo_url', 'prev_consult_logo')" />
+                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 8px 12px;" onclick="triggerHubUpload('consult_logo_url', 'prev_consult_logo')">📷 Upload Logo</button>
+                    <button type="button" class="dk-btn" style="background: #f1f5f9; font-size: 12px; padding: 8px 10px;" onclick="document.getElementById('consult_logo_url').value='/images/branding/dreamflykit-logo-clean.webp'; updateLivePreview('consult_logo_url', 'prev_consult_logo');">Default</button>
+                </div>
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Brand Name</label>
+                <input type="text" id="consult_brand_name" class="dk-admin-form-input" value="@consult.BrandName" placeholder="Dreamflykit" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Sign Up Button Text</label>
+                <input type="text" id="consult_signup_text" class="dk-admin-form-input" value="@consult.SignUpButtonText" placeholder="SIGN UP" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Sign Up Target URL</label>
+                <input type="text" id="consult_signup_url" class="dk-admin-form-input" value="@consult.SignUpButtonUrl" placeholder="#consultancy-lead-modal" />
+            </div>
+        </div>
+    </div>
+
+    <!-- 5.2 HERO BANNER (SECURE VIDEO OR IMAGE SELECTION) -->
+    <div style="background: #fef2f2; border: 1px solid #fee2e2; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: #991b1b; margin: 0;">
+                5.2 Hero Banner Media &amp; Headlines (Image or Video)
+            </h3>
+            <div style="display: flex; gap: 12px; align-items: center; background: #ffffff; padding: 6px 14px; border-radius: 8px; border: 1px solid #fecaca;">
+                <span style="font-size: 12px; font-weight: 800; color: #991b1b;">Hero Media Mode:</span>
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">
+                    <input type="radio" name="consult_hero_media_type" value="image" @(consult.HeroMediaType != "video" ? "checked" : "") onchange="toggleConsultHeroMedia('image')" />
+                    <span>🖼️ Background Image</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">
+                    <input type="radio" name="consult_hero_media_type" value="video" @(consult.HeroMediaType == "video" ? "checked" : "") onchange="toggleConsultHeroMedia('video')" />
+                    <span>🎥 Background Video</span>
+                </label>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <!-- Hero Image Field -->
+            <div id="wrap_consult_hero_img" style="display: @(consult.HeroMediaType != "video" ? "block" : "none");">
+                <label class="dk-sh-form-label">Hero Background Image</label>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <div style="width: 80px; height: 44px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                        <img id="prev_consult_hero_img" src="@consult.HeroImageUrl" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/consultancy-hero-campus.jpg';" />
+                    </div>
+                    <input type="text" id="consult_hero_img" class="dk-admin-form-input" value="@consult.HeroImageUrl" placeholder="/images/study-hub/consultancy-hero-campus.jpg" style="flex: 1;" oninput="updateLivePreview('consult_hero_img', 'prev_consult_hero_img')" />
+                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 8px 12px;" onclick="triggerHubUpload('consult_hero_img', 'prev_consult_hero_img')">📷 Upload Image</button>
+                </div>
+            </div>
+
+            <!-- Hero Video Field -->
+            <div id="wrap_consult_hero_video" style="display: @(consult.HeroMediaType == "video" ? "block" : "none");">
+                <label class="dk-sh-form-label">Hero Background Video URL / MP4 (Secure direct upload or URL)</label>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="text" id="consult_hero_video" class="dk-admin-form-input" value="@consult.HeroVideoUrl" placeholder="/uploads/study-hub/consultancy-hero.mp4" style="flex: 1;" />
+                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 8px 12px; background: #7c3aed;" onclick="triggerHubUpload('consult_hero_video', null)">🎥 Upload Video</button>
+                </div>
+            </div>
+
+            <div>
+                <label class="dk-sh-form-label">Search Input Placeholder Text</label>
+                <input type="text" id="consult_search_placeholder" class="dk-admin-form-input" value="@consult.SearchPlaceholder" placeholder="Tell us what you're looking to learn..." />
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Headline Part 1 (Serif Italic Red)</label>
+                <input type="text" id="consult_hero_headline" class="dk-admin-form-input" value="@consult.HeroHeadline" placeholder="For Your Every Next" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Headline Highlight (Bold Sans Navy)</label>
+                <input type="text" id="consult_hero_highlight" class="dk-admin-form-input" value="@consult.HeroHeadlineHighlight" placeholder="Opportunity" />
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Sub-Banner Prefix (Red Bold)</label>
+                <input type="text" id="consult_subbanner_prefix" class="dk-admin-form-input" value="@consult.SubBannerPrefix" placeholder="Master tomorrow's skills" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Sub-Banner Highlight Text</label>
+                <input type="text" id="consult_subbanner_highlight" class="dk-admin-form-input" value="@consult.SubBannerHighlight" placeholder="with India's top upskilling platform." />
+            </div>
+        </div>
+    </div>
+
+    <!-- 5.3 CATEGORY PILLS BAR -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">
+                5.3 Category Search Pills (Interactive Filter Chips)
+            </h3>
+            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 6px 12px;" onclick="addConsultancyPill()">
+                + Add Filter Pill
+            </button>
+        </div>
+        <div id="consult_pills_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px;">
+            @for (int pi = 0; pi < consultPills.Count; pi++)
+            {
+                var pill = consultPills[pi];
+                <div class="consult-pill-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 8px;">
+                    <input type="text" class="dk-admin-form-input consult-pill-icon" value="@pill.Icon" style="width: 40px; text-align: center; padding: 4px;" title="Icon / Emoji" />
+                    <input type="text" class="dk-admin-form-input consult-pill-title" value="@pill.Title" placeholder="Title" style="flex: 1; padding: 4px 8px; font-weight: 700;" />
+                    <input type="hidden" class="consult-pill-tag" value="@pill.FilterTag" />
+                    <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 11px; padding: 4px 8px;" onclick="this.closest('.consult-pill-card').remove()">✕</button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 5.4 PARTNER UNIVERSITIES & TOP FIRMS BAR -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div>
+                <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0 0 4px 0;">
+                    5.4 Partner Universities &amp; Top Firms Marquee
+                </h3>
+                <input type="text" id="consult_partner_title" class="dk-admin-form-input" value="@consult.PartnerTitle" placeholder="Great universities, top firms" style="font-size: 12px; width: 300px; padding: 4px 8px;" />
+            </div>
+            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 6px 12px;" onclick="addConsultancyPartner()">
+                + Add Partner Brand
+            </button>
+        </div>
+        <div id="consult_partners_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
+            @for (int pti = 0; pti < consultPartners.Count; pti++)
+            {
+                var pt = consultPartners[pti];
+                <div class="consult-partner-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 50px; height: 32px; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 2px;">
+                        <img id="prev_pt_@pti" src="@pt.LogoUrl" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                    </div>
+                    <input type="text" class="dk-admin-form-input consult-pt-name" value="@pt.Name" placeholder="Brand Name" style="width: 90px; font-weight: 700; font-size: 11.5px; padding: 4px 6px;" />
+                    <input type="text" id="inp_pt_@pti" class="dk-admin-form-input consult-pt-logo" value="@pt.LogoUrl" placeholder="SVG/PNG Logo URL" style="flex: 1; font-size: 11px; padding: 4px 6px;" oninput="updateLivePreview('inp_pt_@pti', 'prev_pt_@pti')" />
+                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 6px;" onclick="triggerHubUpload('inp_pt_@pti', 'prev_pt_@pti')">📷</button>
+                    <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 4px 6px;" onclick="this.closest('.consult-partner-card').remove()">✕</button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 5.5 TRENDING AI COURSES SECTION -->
+    <div style="background: #0b132b; color: #ffffff; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #1e293b; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <span style="font-size: 11px; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px;">Cyber Dark Theme</span>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #ffffff; margin: 2px 0 0 0;">
+                    5.5 Trending Courses — Get Future-Ready with AI (Image 3)
+                </h3>
+            </div>
+            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 6px 14px; background: #0284c7;" onclick="addConsultancyTrendingCourse()">
+                + Add AI Course
+            </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr 2fr; gap: 12px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label" style="color: #94a3b8;">Section Tag Badge</label>
+                <input type="text" id="consult_trending_badge" class="dk-admin-form-input" value="@consult.TrendingBadge" style="background: #080f24; color: #fff; border-color: #334155;" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label" style="color: #94a3b8;">Section Title</label>
+                <input type="text" id="consult_trending_title" class="dk-admin-form-input" value="@consult.TrendingTitle" style="background: #080f24; color: #fff; border-color: #334155;" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label" style="color: #94a3b8;">Section Subtitle</label>
+                <input type="text" id="consult_trending_sub" class="dk-admin-form-input" value="@consult.TrendingSubtitle" style="background: #080f24; color: #fff; border-color: #334155;" />
+            </div>
+        </div>
+
+        <div id="consult_trending_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px;">
+            @for (int ti = 0; ti < consultTrending.Count; ti++)
+            {
+                var tr = consultTrending[ti];
+                <div class="consult-trend-card" style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 11px; font-weight: 800; color: #38bdf8;">AI Course #@(ti + 1)</span>
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="this.closest('.consult-trend-card').remove()">✕ Remove</button>
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Institution</label>
+                        <input type="text" class="dk-admin-form-input ct-inst" value="@tr.Institution" style="font-size: 12px; padding: 4px 6px; background: #0b132b; color: #fff; border-color: #475569;" />
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Course Title</label>
+                        <input type="text" class="dk-admin-form-input ct-title" value="@tr.Title" style="font-size: 12px; padding: 4px 6px; background: #0b132b; color: #fff; border-color: #475569;" />
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Photo</label>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <div style="width: 44px; height: 32px; border-radius: 4px; overflow: hidden; background: #0b132b; border: 1px solid #475569; flex-shrink: 0;">
+                                <img id="prev_tr_@ti" src="@tr.ImageUrl" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/edu-campus-iiit.jpg';" />
+                            </div>
+                            <input type="text" id="inp_tr_@ti" class="dk-admin-form-input ct-img" value="@tr.ImageUrl" style="font-size: 11px; padding: 4px 6px; background: #0b132b; color: #fff; border-color: #475569; flex: 1;" oninput="updateLivePreview('inp_tr_@ti', 'prev_tr_@ti')" />
+                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 8px;" onclick="triggerHubUpload('inp_tr_@ti', 'prev_tr_@ti')">📷 Upload</button>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Feature Badge</label>
+                            <input type="text" class="dk-admin-form-input ct-tag" value="@tr.BadgeTag" placeholder="Building AI Agent" style="font-size: 11px; padding: 3px 6px; background: #0b132b; color: #fff; border-color: #475569;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Duration</label>
+                            <input type="text" class="dk-admin-form-input ct-duration" value="@tr.Duration" placeholder="6 Months" style="font-size: 11px; padding: 3px 6px; background: #0b132b; color: #fff; border-color: #475569;" />
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Button 1</label>
+                            <input type="text" class="dk-admin-form-input ct-btn1" value="@tr.Button1Text" style="font-size: 11px; padding: 3px 6px; background: #0b132b; color: #fff; border-color: #475569;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Button 2</label>
+                            <input type="text" class="dk-admin-form-input ct-btn2" value="@tr.Button2Text" style="font-size: 11px; padding: 3px 6px; background: #0b132b; color: #fff; border-color: #475569;" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 5.6 EXPLORE OUR MOST POPULAR PROGRAMS -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">
+                    5.6 Explore Our Most Popular Programs (Image 4)
+                </h3>
+            </div>
+            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="addConsultancyPopularProgram()">
+                + Add Popular Program
+            </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Section Title</label>
+                <input type="text" id="consult_popular_title" class="dk-admin-form-input" value="@consult.PopularTitle" placeholder="Explore our most popular programs" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Section Subtitle</label>
+                <input type="text" id="consult_popular_sub" class="dk-admin-form-input" value="@consult.PopularSubtitle" placeholder="Curated programs for career growth..." />
+            </div>
+        </div>
+
+        <div id="consult_popular_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px;">
+            @for (int pi = 0; pi < consultPopular.Count; pi++)
+            {
+                var pop = consultPopular[pi];
+                <div class="consult-pop-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 11px; font-weight: 800; color: #e52d27;">Popular Program #@(pi + 1)</span>
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="this.closest('.consult-pop-card').remove()">✕ Remove</button>
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Institution</label>
+                        <input type="text" class="dk-admin-form-input cp-inst" value="@pop.Institution" style="font-size: 12px; padding: 4px 6px;" />
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Program Title</label>
+                        <input type="text" class="dk-admin-form-input cp-title" value="@pop.Title" style="font-size: 12px; padding: 4px 6px;" />
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Campus Photo</label>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <div style="width: 44px; height: 32px; border-radius: 4px; overflow: hidden; background: #0f172a; border: 1px solid #cbd5e1; flex-shrink: 0;">
+                                <img id="prev_cp_@pi" src="@pop.ImageUrl" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/campus-paris-school.jpg';" />
+                            </div>
+                            <input type="text" id="inp_cp_@pi" class="dk-admin-form-input cp-img" value="@pop.ImageUrl" style="font-size: 11px; padding: 4px 6px; flex: 1;" oninput="updateLivePreview('inp_cp_@pi', 'prev_cp_@pi')" />
+                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 8px;" onclick="triggerHubUpload('inp_cp_@pi', 'prev_cp_@pi')">📷 Upload</button>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px;">Highlight Badge</label>
+                            <input type="text" class="dk-admin-form-input cp-tag" value="@pop.BadgeTag" placeholder="IIT Alumni Centre" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px;">Duration / Date</label>
+                            <input type="text" class="dk-admin-form-input cp-duration" value="@pop.Duration" placeholder="12 Months" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px;">Button 1</label>
+                            <input type="text" class="dk-admin-form-input cp-btn1" value="@pop.Button1Text" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px;">Button 2</label>
+                            <input type="text" class="dk-admin-form-input cp-btn2" value="@pop.Button2Text" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 5.7 STUDY ABROAD DESTINATIONS & STATS (Image 5) -->
+    <div style="background: #fafaf9; border: 1px solid #e7e5e4; border-radius: 12px; padding: 18px; margin-bottom: 12px;">
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0 0 12px 0;">
+            5.7 Study Abroad Destination Showcase &amp; Stats (Image 5)
+        </h3>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Destination Section Title</label>
+                <input type="text" id="consult_dest_title" class="dk-admin-form-input" value="@consult.DestinationSectionTitle" placeholder="Study in France for Indian Students" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Active Showcase Country</label>
+                <input type="text" id="consult_country_name" class="dk-admin-form-input" value="@(activeCountry.CountryName)" placeholder="France" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Slide Counter Badge</label>
+                <input type="text" id="consult_country_slide_num" class="dk-admin-form-input" value="@(activeCountry.SlideNumber)" placeholder="03 / 9" />
+            </div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+            <label class="dk-sh-form-label">Destination Panoramic Landscape Photo (Pont Alexandre III Paris)</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <div style="width: 80px; height: 44px; border-radius: 6px; border: 1px solid #cbd5e1; overflow: hidden; background: #0f172a; flex-shrink: 0;">
+                    <img id="prev_consult_dest_hero" src="@(activeCountry.HeroImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/study-france-alexandre.jpg';" />
+                </div>
+                <input type="text" id="consult_dest_hero_img" class="dk-admin-form-input" value="@(activeCountry.HeroImageUrl)" placeholder="/images/study-hub/study-france-alexandre.jpg" style="flex: 1;" oninput="updateLivePreview('consult_dest_hero_img', 'prev_consult_dest_hero')" />
+                <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 8px 12px;" onclick="triggerHubUpload('consult_dest_hero_img', 'prev_consult_dest_hero')">📷 Upload Photo</button>
+            </div>
+        </div>
+
+        <!-- 4 Key Stat Metrics -->
+        @{
+            var stats = activeCountry.Stats ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyStatDto>();
+            var s1 = stats.Count > 0 ? stats[0] : new Dreamflykit.Application.StudyHub.Models.ConsultancyStatDto { Value = "98%", Label = "Admit Rate" };
+            var s2 = stats.Count > 1 ? stats[1] : new Dreamflykit.Application.StudyHub.Models.ConsultancyStatDto { Value = "2-5 Years", Label = "Post Study Visa" };
+            var s3 = stats.Count > 2 ? stats[2] : new Dreamflykit.Application.StudyHub.Models.ConsultancyStatDto { Value = "₹10L+", Label = "Scholarships" };
+            var s4 = stats.Count > 3 ? stats[3] : new Dreamflykit.Application.StudyHub.Models.ConsultancyStatDto { Value = "2", Label = "Available Intakes" };
+        }
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 14px;">
+            <span style="font-size: 11px; font-weight: 800; color: #e52d27; text-transform: uppercase;">Key Destination Stats Counter</span>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 8px;">
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px;">Stat 1 (Value &amp; Label)</label>
+                    <input type="text" id="consult_stat_1_val" class="dk-admin-form-input" value="@s1.Value" style="margin-bottom: 4px; font-weight: 800; color: #e52d27;" />
+                    <input type="text" id="consult_stat_1_lbl" class="dk-admin-form-input" value="@s1.Label" style="font-size: 11px;" />
+                </div>
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px;">Stat 2 (Value &amp; Label)</label>
+                    <input type="text" id="consult_stat_2_val" class="dk-admin-form-input" value="@s2.Value" style="margin-bottom: 4px; font-weight: 800; color: #e52d27;" />
+                    <input type="text" id="consult_stat_2_lbl" class="dk-admin-form-input" value="@s2.Label" style="font-size: 11px;" />
+                </div>
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px;">Stat 3 (Value &amp; Label)</label>
+                    <input type="text" id="consult_stat_3_val" class="dk-admin-form-input" value="@s3.Value" style="margin-bottom: 4px; font-weight: 800; color: #e52d27;" />
+                    <input type="text" id="consult_stat_3_lbl" class="dk-admin-form-input" value="@s3.Label" style="font-size: 11px;" />
+                </div>
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px;">Stat 4 (Value &amp; Label)</label>
+                    <input type="text" id="consult_stat_4_val" class="dk-admin-form-input" value="@s4.Value" style="margin-bottom: 4px; font-weight: 800; color: #e52d27;" />
+                    <input type="text" id="consult_stat_4_lbl" class="dk-admin-form-input" value="@s4.Label" style="font-size: 11px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Sticky Bottom Save Bar -->
 <div style="position: sticky; bottom: 20px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); padding: 14px 24px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 100; margin-top: 30px;">
     <div style="font-size: 13.5px; font-weight: 600;">
@@ -1387,7 +1807,8 @@
                 FloatingPromptDesc: document.getElementById("edu_float_desc")?.value || "Best-in-class courses in Data Science, Management and Technology",
                 FloatingPromptPhone: document.getElementById("edu_float_phone")?.value || "1800-DREAMFLY",
                 FloatingPromptWhatsApp: document.getElementById("edu_float_wa")?.value || "+919163012345"
-            }
+            },
+            ConsultancyDetailsPage: gatherConsultancyConfig()
         };
 
         const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
@@ -1607,5 +2028,375 @@
         `;
         wrap.appendChild(div);
         updateEduCoursesBadge();
+    }
+
+    // ==========================================
+    // 5. CONSULTANCY PORTAL JAVASCRIPT HANDLERS
+    // ==========================================
+    function toggleConsultHeroMedia(mode) {
+        const wrapImg = document.getElementById("wrap_consult_hero_img");
+        const wrapVideo = document.getElementById("wrap_consult_hero_video");
+        if (wrapImg) wrapImg.style.display = (mode === "video") ? "none" : "block";
+        if (wrapVideo) wrapVideo.style.display = (mode === "video") ? "block" : "none";
+    }
+
+    let dynConsultPillIdx = 100;
+    function addConsultancyPill() {
+        const wrap = document.getElementById("consult_pills_container");
+        if (!wrap) return;
+        dynConsultPillIdx++;
+        const div = document.createElement("div");
+        div.className = "consult-pill-card";
+        div.style.cssText = "background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 8px;";
+        div.innerHTML = `
+            <input type="text" class="dk-admin-form-input consult-pill-icon" value="⚡" style="width: 40px; text-align: center; padding: 4px;" title="Icon / Emoji" />
+            <input type="text" class="dk-admin-form-input consult-pill-title" value="New Category" placeholder="Title" style="flex: 1; padding: 4px 8px; font-weight: 700;" />
+            <input type="hidden" class="consult-pill-tag" value="custom" />
+            <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 11px; padding: 4px 8px;" onclick="this.closest('.consult-pill-card').remove()">✕</button>
+        `;
+        wrap.appendChild(div);
+    }
+
+    let dynConsultPtIdx = 100;
+    function addConsultancyPartner() {
+        const wrap = document.getElementById("consult_partners_container");
+        if (!wrap) return;
+        dynConsultPtIdx++;
+        const div = document.createElement("div");
+        div.className = "consult-partner-card";
+        div.style.cssText = "background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; display: flex; align-items: center; gap: 8px;";
+        div.innerHTML = `
+            <div style="width: 50px; height: 32px; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 2px;">
+                <img id="prev_pt_\${dynConsultPtIdx}" src="/images/study-hub/partners/microsoft.svg" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+            </div>
+            <input type="text" class="dk-admin-form-input consult-pt-name" value="Partner Brand" placeholder="Brand Name" style="width: 90px; font-weight: 700; font-size: 11.5px; padding: 4px 6px;" />
+            <input type="text" id="inp_pt_\${dynConsultPtIdx}" class="dk-admin-form-input consult-pt-logo" value="/images/study-hub/partners/microsoft.svg" placeholder="SVG/PNG Logo URL" style="flex: 1; font-size: 11px; padding: 4px 6px;" oninput="updateLivePreview('inp_pt_\${dynConsultPtIdx}', 'prev_pt_\${dynConsultPtIdx}')" />
+            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 6px;" onclick="triggerHubUpload('inp_pt_\${dynConsultPtIdx}', 'prev_pt_\${dynConsultPtIdx}')">📷</button>
+            <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 4px 6px;" onclick="this.closest('.consult-partner-card').remove()">✕</button>
+        `;
+        wrap.appendChild(div);
+    }
+
+    let dynConsultTrendIdx = 100;
+    function addConsultancyTrendingCourse() {
+        const wrap = document.getElementById("consult_trending_container");
+        if (!wrap) return;
+        dynConsultTrendIdx++;
+        const div = document.createElement("div");
+        div.className = "consult-trend-card";
+        div.style.cssText = "background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 12px;";
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 800; color: #38bdf8;">New AI Program</span>
+                <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="this.closest('.consult-trend-card').remove()">✕ Remove</button>
+            </div>
+            <div style="margin-bottom: 6px;">
+                <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Institution</label>
+                <input type="text" class="dk-admin-form-input ct-inst" value="Premier AI Institute" style="font-size: 12px; padding: 4px 6px; background: #0b132b; color: #fff; border-color: #475569;" />
+            </div>
+            <div style="margin-bottom: 6px;">
+                <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Course Title</label>
+                <input type="text" class="dk-admin-form-input ct-title" value="Agentic AI &amp; Generative Systems" style="font-size: 12px; padding: 4px 6px; background: #0b132b; color: #fff; border-color: #475569;" />
+            </div>
+            <div style="margin-bottom: 8px;">
+                <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Photo</label>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                    <div style="width: 44px; height: 32px; border-radius: 4px; overflow: hidden; background: #0b132b; border: 1px solid #475569; flex-shrink: 0;">
+                        <img id="prev_tr_\${dynConsultTrendIdx}" src="/images/study-hub/edu-campus-iiit.jpg" style="width: 100%; height: 100%; object-fit: cover;" />
+                    </div>
+                    <input type="text" id="inp_tr_\${dynConsultTrendIdx}" class="dk-admin-form-input ct-img" value="/images/study-hub/edu-campus-iiit.jpg" style="font-size: 11px; padding: 4px 6px; background: #0b132b; color: #fff; border-color: #475569; flex: 1;" oninput="updateLivePreview('inp_tr_\${dynConsultTrendIdx}', 'prev_tr_\${dynConsultTrendIdx}')" />
+                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 8px;" onclick="triggerHubUpload('inp_tr_\${dynConsultTrendIdx}', 'prev_tr_\${dynConsultTrendIdx}')">📷 Upload</button>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Feature Badge</label>
+                    <input type="text" class="dk-admin-form-input ct-tag" value="Building AI Agent" style="font-size: 11px; padding: 3px 6px; background: #0b132b; color: #fff; border-color: #475569;" />
+                </div>
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Duration</label>
+                    <input type="text" class="dk-admin-form-input ct-duration" value="6 Months" style="font-size: 11px; padding: 3px 6px; background: #0b132b; color: #fff; border-color: #475569;" />
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Button 1</label>
+                    <input type="text" class="dk-admin-form-input ct-btn1" value="View Program" style="font-size: 11px; padding: 3px 6px; background: #0b132b; color: #fff; border-color: #475569;" />
+                </div>
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px; color: #94a3b8;">Button 2</label>
+                    <input type="text" class="dk-admin-form-input ct-btn2" value="Syllabus" style="font-size: 11px; padding: 3px 6px; background: #0b132b; color: #fff; border-color: #475569;" />
+                </div>
+            </div>
+        `;
+        wrap.appendChild(div);
+    }
+
+    let dynConsultPopIdx = 100;
+    function addConsultancyPopularProgram() {
+        const wrap = document.getElementById("consult_popular_container");
+        if (!wrap) return;
+        dynConsultPopIdx++;
+        const div = document.createElement("div");
+        div.className = "consult-pop-card";
+        div.style.cssText = "background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px;";
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 800; color: #e52d27;">New Program</span>
+                <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="this.closest('.consult-pop-card').remove()">✕ Remove</button>
+            </div>
+            <div style="margin-bottom: 6px;">
+                <label class="dk-sh-form-label" style="font-size: 10px;">Institution</label>
+                <input type="text" class="dk-admin-form-input cp-inst" value="Global Business School" style="font-size: 12px; padding: 4px 6px;" />
+            </div>
+            <div style="margin-bottom: 6px;">
+                <label class="dk-sh-form-label" style="font-size: 10px;">Program Title</label>
+                <input type="text" class="dk-admin-form-input cp-title" value="Executive MBA &amp; Global Strategy" style="font-size: 12px; padding: 4px 6px;" />
+            </div>
+            <div style="margin-bottom: 8px;">
+                <label class="dk-sh-form-label" style="font-size: 10px;">Campus Photo</label>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                    <div style="width: 44px; height: 32px; border-radius: 4px; overflow: hidden; background: #0f172a; border: 1px solid #cbd5e1; flex-shrink: 0;">
+                        <img id="prev_cp_\${dynConsultPopIdx}" src="/images/study-hub/campus-paris-school.jpg" style="width: 100%; height: 100%; object-fit: cover;" />
+                    </div>
+                    <input type="text" id="inp_cp_\${dynConsultPopIdx}" class="dk-admin-form-input cp-img" value="/images/study-hub/campus-paris-school.jpg" style="font-size: 11px; padding: 4px 6px; flex: 1;" oninput="updateLivePreview('inp_cp_\${dynConsultPopIdx}', 'prev_cp_\${dynConsultPopIdx}')" />
+                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 8px;" onclick="triggerHubUpload('inp_cp_\${dynConsultPopIdx}', 'prev_cp_\${dynConsultPopIdx}')">📷 Upload</button>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px;">Highlight Badge</label>
+                    <input type="text" class="dk-admin-form-input cp-tag" value="AACSB Accredited" style="font-size: 11px; padding: 3px 6px;" />
+                </div>
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px;">Duration / Date</label>
+                    <input type="text" class="dk-admin-form-input cp-duration" value="18 Months" style="font-size: 11px; padding: 3px 6px;" />
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px;">Button 1</label>
+                    <input type="text" class="dk-admin-form-input cp-btn1" value="View Program" style="font-size: 11px; padding: 3px 6px;" />
+                </div>
+                <div>
+                    <label class="dk-sh-form-label" style="font-size: 10px;">Button 2</label>
+                    <input type="text" class="dk-admin-form-input cp-btn2" value="Syllabus" style="font-size: 11px; padding: 3px 6px;" />
+                </div>
+            </div>
+        `;
+        wrap.appendChild(div);
+    }
+
+    function gatherConsultancyConfig() {
+        const mediaTypeRadio = document.querySelector('input[name="consult_hero_media_type"]:checked');
+        const mediaType = mediaTypeRadio ? mediaTypeRadio.value : "image";
+
+        // Pills
+        const pills = [];
+        document.querySelectorAll("#consult_pills_container .consult-pill-card").forEach(c => {
+            pills.push({
+                Icon: c.querySelector(".consult-pill-icon")?.value || "🤖",
+                Title: c.querySelector(".consult-pill-title")?.value || "",
+                FilterTag: c.querySelector(".consult-pill-tag")?.value || "ai"
+            });
+        });
+
+        // Partners
+        const partners = [];
+        document.querySelectorAll("#consult_partners_container .consult-partner-card").forEach(c => {
+            partners.push({
+                Name: c.querySelector(".consult-pt-name")?.value || "",
+                LogoUrl: c.querySelector(".consult-pt-logo")?.value || ""
+            });
+        });
+
+        // Trending
+        const trending = [];
+        document.querySelectorAll("#consult_trending_container .consult-trend-card").forEach(c => {
+            trending.push({
+                Institution: c.querySelector(".ct-inst")?.value || "",
+                Title: c.querySelector(".ct-title")?.value || "",
+                ImageUrl: c.querySelector(".ct-img")?.value || "/images/study-hub/edu-campus-iiit.jpg",
+                BadgeTag: c.querySelector(".ct-tag")?.value || "Certification",
+                BadgeType: "Certification",
+                Duration: c.querySelector(".ct-duration")?.value || "6 Months",
+                Button1Text: c.querySelector(".ct-btn1")?.value || "View Program",
+                Button1Url: "#consultancy-lead-modal",
+                Button2Text: c.querySelector(".ct-btn2")?.value || "Syllabus",
+                Button2Url: "#consultancy-lead-modal"
+            });
+        });
+
+        // Popular
+        const popular = [];
+        document.querySelectorAll("#consult_popular_container .consult-pop-card").forEach(c => {
+            popular.push({
+                Institution: c.querySelector(".cp-inst")?.value || "",
+                Title: c.querySelector(".cp-title")?.value || "",
+                ImageUrl: c.querySelector(".cp-img")?.value || "/images/study-hub/campus-paris-school.jpg",
+                BadgeTag: c.querySelector(".cp-tag")?.value || "",
+                BadgeType: "Degree / Diploma",
+                Duration: c.querySelector(".cp-duration")?.value || "12 Months",
+                Button1Text: c.querySelector(".cp-btn1")?.value || "View Program",
+                Button1Url: "#consultancy-lead-modal",
+                Button2Text: c.querySelector(".cp-btn2")?.value || "Apply Now",
+                Button2Url: "#consultancy-lead-modal"
+            });
+        });
+
+        // Active country stats
+        const stats = [
+            { Value: document.getElementById("consult_stat_1_val")?.value || "98%", Label: document.getElementById("consult_stat_1_lbl")?.value || "Admit Rate" },
+            { Value: document.getElementById("consult_stat_2_val")?.value || "2-5 Years", Label: document.getElementById("consult_stat_2_lbl")?.value || "Post Study Visa" },
+            { Value: document.getElementById("consult_stat_3_val")?.value || "₹10L+", Label: document.getElementById("consult_stat_3_lbl")?.value || "Scholarships" },
+            { Value: document.getElementById("consult_stat_4_val")?.value || "2", Label: document.getElementById("consult_stat_4_lbl")?.value || "Available Intakes" }
+        ];
+
+        // Countries list
+        const countryName = document.getElementById("consult_country_name")?.value || "France";
+        const destHeroImg = document.getElementById("consult_dest_hero_img")?.value || "/images/study-hub/study-france-alexandre.jpg";
+        const slideNum = document.getElementById("consult_country_slide_num")?.value || "03 / 9";
+
+        const countries = [
+            {
+                CountryCode: "FR",
+                CountryName: countryName,
+                HeroImageUrl: destHeroImg,
+                SlideNumber: slideNum,
+                IsActive: true,
+                Stats: stats,
+                Programs: [
+                    {
+                        Institution: "Paris School of Business",
+                        Title: "MSc in Luxury and Fashion Management",
+                        ImageUrl: "/images/study-hub/campus-paris-school.jpg",
+                        BadgeTag: "AACSB, EFMD & AMBA Accredited",
+                        BadgeType: "Degree",
+                        Duration: "20 Months",
+                        Button1Text: "View Program",
+                        Button1Url: "#consultancy-lead-modal"
+                    },
+                    {
+                        Institution: "Paris School of Business",
+                        Title: "MSc Supply Chain Management at PSB France",
+                        ImageUrl: "/images/study-hub/campus-paris-school.jpg",
+                        BadgeTag: "#43 by Subject (FT 2025)",
+                        BadgeType: "Degree",
+                        Duration: "20 Months",
+                        Button1Text: "View Program",
+                        Button1Url: "#consultancy-lead-modal"
+                    }
+                ]
+            },
+            {
+                CountryCode: "CA",
+                CountryName: "Canada",
+                HeroImageUrl: "/images/study-hub/checklist-travel.jpg",
+                SlideNumber: "01 / 9",
+                IsActive: false,
+                Stats: [
+                    { Value: "95%", Label: "Admit Rate" },
+                    { Value: "3 Years", Label: "Post Study Work Visa" },
+                    { Value: "₹8L+", Label: "Scholarships" },
+                    { Value: "3", Label: "Available Intakes" }
+                ],
+                Programs: [
+                    {
+                        Institution: "University of Windsor",
+                        Title: "Master of Applied Computing (AI & Systems)",
+                        ImageUrl: "/images/study-hub/edu-campus-iiit.jpg",
+                        BadgeTag: "Co-op Work Term Included",
+                        BadgeType: "Degree",
+                        Duration: "16 Months",
+                        Button1Text: "View Program",
+                        Button1Url: "#consultancy-lead-modal"
+                    }
+                ]
+            },
+            {
+                CountryCode: "FI",
+                CountryName: "Finland",
+                HeroImageUrl: "/images/study-hub/checklist-hero.jpg",
+                SlideNumber: "02 / 9",
+                IsActive: false,
+                Stats: [
+                    { Value: "94%", Label: "Admit Rate" },
+                    { Value: "2 Years", Label: "Post Study Visa" },
+                    { Value: "100%", Label: "Tuition Waiver Option" },
+                    { Value: "2", Label: "Available Intakes" }
+                ],
+                Programs: [
+                    {
+                        Institution: "Aalto University",
+                        Title: "MSc in Computer Science & Autonomous AI",
+                        ImageUrl: "/images/study-hub/campus-tech-institute.jpg",
+                        BadgeTag: "Nordic Tech Leader",
+                        BadgeType: "Degree",
+                        Duration: "24 Months",
+                        Button1Text: "View Program",
+                        Button1Url: "#consultancy-lead-modal"
+                    }
+                ]
+            },
+            {
+                CountryCode: "GB",
+                CountryName: "United Kingdom",
+                HeroImageUrl: "/images/study-hub/checklist-living.jpg",
+                SlideNumber: "04 / 9",
+                IsActive: false,
+                Stats: [
+                    { Value: "97%", Label: "Admit Rate" },
+                    { Value: "2 Years", Label: "Graduate Route Visa" },
+                    { Value: "£10K+", Label: "Vice Chancellor Grants" },
+                    { Value: "3", Label: "Available Intakes" }
+                ],
+                Programs: [
+                    {
+                        Institution: "University of Bristol",
+                        Title: "MSc Data Science & Artificial Intelligence",
+                        ImageUrl: "/images/study-hub/edu-campus-iit.jpg",
+                        BadgeTag: "Russell Group University",
+                        BadgeType: "Degree",
+                        Duration: "12 Months",
+                        Button1Text: "View Program",
+                        Button1Url: "#consultancy-lead-modal"
+                    }
+                ]
+            }
+        ];
+
+        return {
+            BrandName: document.getElementById("consult_brand_name")?.value || "Dreamflykit",
+            LogoUrl: document.getElementById("consult_logo_url")?.value || "/images/branding/dreamflykit-logo-clean.webp",
+            SignUpButtonText: document.getElementById("consult_signup_text")?.value || "SIGN UP",
+            SignUpButtonUrl: document.getElementById("consult_signup_url")?.value || "#consultancy-lead-modal",
+            HeroMediaType: mediaType,
+            HeroImageUrl: document.getElementById("consult_hero_img")?.value || "/images/study-hub/consultancy-hero-campus.jpg",
+            HeroVideoUrl: document.getElementById("consult_hero_video")?.value || "",
+            HeroHeadline: document.getElementById("consult_hero_headline")?.value || "For Your Every Next",
+            HeroHeadlineHighlight: document.getElementById("consult_hero_highlight")?.value || "Opportunity",
+            SearchPlaceholder: document.getElementById("consult_search_placeholder")?.value || "Tell us what you're looking to learn...",
+            SearchButtonUrl: "#trending-courses",
+            SubBannerPrefix: document.getElementById("consult_subbanner_prefix")?.value || "Master tomorrow's skills",
+            SubBannerHighlight: document.getElementById("consult_subbanner_highlight")?.value || "with India's top upskilling platform.",
+            CategoryPills: pills,
+            PartnerTitle: document.getElementById("consult_partner_title")?.value || "Great universities, top firms",
+            Partners: partners,
+            TrendingBadge: document.getElementById("consult_trending_badge")?.value || "TRENDING COURSES",
+            TrendingTitle: document.getElementById("consult_trending_title")?.value || "Get Future-Ready with AI",
+            TrendingSubtitle: document.getElementById("consult_trending_sub")?.value || "Equip yourself with breakthrough Agentic AI and ML expertise from world-class institutions.",
+            TrendingCourses: trending,
+            PopularTitle: document.getElementById("consult_popular_title")?.value || "Explore our most popular programs",
+            PopularSubtitle: document.getElementById("consult_popular_sub")?.value || "Top-rated global degree & certificate pathways empowering career transitions.",
+            PopularPrograms: popular,
+            DestinationSectionTitle: document.getElementById("consult_dest_title")?.value || "Study in France for Indian Students",
+            DestinationExploreText: "Explore programs >",
+            DestinationExploreUrl: "#consultancy-lead-modal",
+            Countries: countries,
+            FloatingCallButtonText: "Free Counselling",
+            FloatingContactPhone: "1800-DREAMFLY",
+            LeadModalTitle: "Book Free 1-on-1 Study Abroad & Career Counselling",
+            LeadModalSubtitle: "Speak with certified advisors for university matching, visa guidance & scholarships."
+        };
     }
 </script>
