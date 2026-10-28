@@ -1,0 +1,1866 @@
+@model Dreamflykit.Application.StudyHub.Models.ConsultancyDetailsPageDto
+@{
+    Layout = "_Layout";
+    var cPage = Model ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultConsultancyDetailsPage();
+    ViewData["Title"] = $"{cPage.HeroHeadline} {cPage.HeroHeadlineHighlight} — {cPage.BrandName} Global Programs";
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+
+    var pills = cPage.CategoryPills != null && cPage.CategoryPills.Count > 0
+        ? cPage.CategoryPills
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultConsultancyDetailsPage().CategoryPills;
+
+    var partners = cPage.Partners != null && cPage.Partners.Count > 0
+        ? cPage.Partners
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultConsultancyDetailsPage().Partners;
+
+    var trending = cPage.TrendingCourses != null && cPage.TrendingCourses.Count > 0
+        ? cPage.TrendingCourses
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultConsultancyDetailsPage().TrendingCourses;
+
+    var popular = cPage.PopularPrograms != null && cPage.PopularPrograms.Count > 0
+        ? cPage.PopularPrograms
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultConsultancyDetailsPage().PopularPrograms;
+
+    var countries = cPage.Countries != null && cPage.Countries.Count > 0
+        ? cPage.Countries
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultConsultancyDetailsPage().Countries;
+
+    var activeCountry = countries.FirstOrDefault(c => c.IsActive) ?? countries.FirstOrDefault() ?? new Dreamflykit.Application.StudyHub.Models.ConsultancyCountryDto();
+}
+
+<div class="dk-upg-root" id="consultancyRoot">
+
+    @if (canManage)
+    {
+        <!-- Admin Shortcut Bar -->
+        <div class="dk-upg-admin-bar">
+            <div class="dk-upg-admin-inner">
+                <span class="dk-upg-admin-tag">⚡ Super Admin Controls</span>
+                <span>You can edit all logos, hero image/video, programs, partner brands and destination showcases anytime in Admin.</span>
+                <a href="/Admin/StudyAbroadHub#tab-consultancy" class="dk-upg-admin-btn">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    <span>Edit Consultancy Portal in Admin</span>
+                </a>
+            </div>
+        </div>
+    }
+
+    <!-- ========================================================
+         1. TOP NAVIGATION BAR (upGrad Inspired with Dreamflykit Logo)
+    ========================================================= -->
+    <header class="dk-upg-header">
+        <div class="dk-upg-nav-container">
+            <!-- Brand Logo (Dreamflykit Logo in place of upGrad) -->
+            <a href="/study-abroad-hub/consultancy" class="dk-upg-brand" title="@cPage.BrandName Study Abroad Consultancy">
+                @if (!string.IsNullOrWhiteSpace(cPage.LogoUrl))
+                {
+                    <img src="@cPage.LogoUrl" alt="@cPage.BrandName" class="dk-upg-brand-img" onerror="this.onerror=null; this.src='/images/branding/dreamflykit-logo-clean.webp';" />
+                }
+                else
+                {
+                    <img src="/images/branding/dreamflykit-logo-clean.webp" alt="Dreamflykit" class="dk-upg-brand-img" onerror="this.style.display='none'; document.getElementById('dkFallbackBrandText').style.display='inline-block';" />
+                    <span id="dkFallbackBrandText" style="display: none; font-size: 22px; font-weight: 900; color: #e52d27; letter-spacing: -0.5px;">@cPage.BrandName</span>
+                }
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="dk-upg-nav-menu" aria-label="Main Consultancy Navigation">
+                <div class="dk-upg-dropdown">
+                    <button type="button" class="dk-upg-nav-btn has-arrow">
+                        <span>Upskilling Courses</span>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="dk-upg-dropdown-menu">
+                        <a href="#trending-courses" onclick="filterCategory('ai')">🤖 Generative &amp; Agentic AI</a>
+                        <a href="#trending-courses" onclick="filterCategory('data')">📈 Data Science &amp; Analytics</a>
+                        <a href="#popular-programs" onclick="filterCategory('ml')">💻 Machine Learning &amp; Cloud</a>
+                        <a href="#popular-programs" onclick="filterCategory('mba')">🎓 Executive MBA &amp; Leadership</a>
+                    </div>
+                </div>
+
+                <div class="dk-upg-dropdown">
+                    <button type="button" class="dk-upg-nav-btn has-arrow">
+                        <span>Study Abroad</span>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="dk-upg-dropdown-menu">
+                        <a href="#destination-showcase">🇫🇷 Study in France</a>
+                        <a href="#destination-showcase">🇨🇦 Study in Canada</a>
+                        <a href="#destination-showcase">🇬🇧 Study in United Kingdom</a>
+                        <a href="#destination-showcase">🇫🇮 Study in Finland</a>
+                        <a href="/study-abroad-hub/education-loans">💰 Abroad Education Loans</a>
+                    </div>
+                </div>
+
+                <div class="dk-upg-dropdown">
+                    <button type="button" class="dk-upg-nav-btn has-arrow">
+                        <span>Professional Certifications</span>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="dk-upg-dropdown-menu">
+                        <a href="#trending-courses">IIT / IIM Advanced Certifications</a>
+                        <a href="#trending-courses">Cybersecurity &amp; AI Security</a>
+                        <a href="#popular-programs">Semiconductor &amp; Hardware Tech</a>
+                    </div>
+                </div>
+
+                <div class="dk-upg-dropdown">
+                    <button type="button" class="dk-upg-nav-btn has-arrow">
+                        <span>Learn Offline</span>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="dk-upg-dropdown-menu">
+                        <a href="#popular-programs">In-Person Workshops (Bengaluru)</a>
+                        <a href="#popular-programs">Global Immersion Trips (Paris / UK)</a>
+                    </div>
+                </div>
+
+                <a href="#trending-courses" class="dk-upg-nav-link">School of Tech</a>
+
+                <div class="dk-upg-dropdown">
+                    <button type="button" class="dk-upg-nav-btn has-arrow">
+                        <span>More</span>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="dk-upg-dropdown-menu">
+                        <a href="/study-abroad-hub">🌐 Study Abroad Hub Profile</a>
+                        <a href="/study-abroad-hub/education-loans">🎓 Education Loans Portal</a>
+                        <a href="/abroad-packing-checklist">📋 Packing Checklist</a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Sign Up CTA Button -->
+            <div class="dk-upg-nav-action">
+                <button type="button" class="dk-upg-signup-btn" onclick="openConsultancyModal('General Sign Up')">
+                    @cPage.SignUpButtonText
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================================
+         2. HERO SECTION (Secure Image or Video Banner)
+    ========================================================= -->
+    <section class="dk-upg-hero-section" id="heroBanner">
+        <!-- Media Backdrop: Video or Image -->
+        @if (cPage.HeroMediaType == "video" && !string.IsNullOrWhiteSpace(cPage.HeroVideoUrl))
+        {
+            <div class="dk-upg-hero-media-wrapper">
+                <video class="dk-upg-hero-video" autoplay muted loop playsinline poster="@cPage.HeroImageUrl">
+                    <source src="@cPage.HeroVideoUrl" type="video/mp4" />
+                    <source src="@cPage.HeroVideoUrl" type="video/webm" />
+                </video>
+                <div class="dk-upg-hero-overlay"></div>
+            </div>
+        }
+        else
+        {
+            <div class="dk-upg-hero-media-wrapper">
+                <div class="dk-upg-hero-img-bg" style="background-image: url('@cPage.HeroImageUrl');"></div>
+                <div class="dk-upg-hero-overlay"></div>
+            </div>
+        }
+
+        <div class="dk-upg-hero-content">
+            <!-- Headline matching Image 2 -->
+            <h1 class="dk-upg-hero-title">
+                <span class="dk-upg-title-serif">@cPage.HeroHeadline</span>
+                <span class="dk-upg-title-sans">@cPage.HeroHeadlineHighlight</span>
+            </h1>
+
+            <!-- Interactive Search Box -->
+            <div class="dk-upg-search-card">
+                <div class="dk-upg-search-inner">
+                    <span class="dk-upg-search-icon">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#e52d27" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    </span>
+                    <input type="text" 
+                           id="upgCourseSearchInput" 
+                           class="dk-upg-search-input" 
+                           placeholder="@cPage.SearchPlaceholder" 
+                           oninput="handleSearchCourses(this.value)" 
+                           autocomplete="off" />
+                    <button type="button" class="dk-upg-search-action-btn" onclick="triggerSearchScroll()" aria-label="Search Programs">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Pills Bar (Image 2 style) -->
+            <div class="dk-upg-pills-row" id="pillsBar">
+                @foreach (var pill in pills)
+                {
+                    <button type="button" class="dk-upg-pill" data-tag="@pill.FilterTag" onclick="filterCategory('@pill.FilterTag', this)">
+                        <span class="dk-upg-pill-icon">@pill.Icon</span>
+                        <span class="dk-upg-pill-label">@pill.Title</span>
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Sub-Banner beneath Hero (Image 2) -->
+        <div class="dk-upg-subbanner">
+            <div class="dk-upg-subbanner-text">
+                <span class="dk-upg-highlight-red">@cPage.SubBannerPrefix</span> @cPage.SubBannerHighlight
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         3. PARTNER BRANDS & ACCREDITATION STRIP (Image 3)
+    ========================================================= -->
+    <section class="dk-upg-partners-section" aria-label="Partner Universities and Top Firms">
+        <div class="dk-upg-partners-inner">
+            <h2 class="dk-upg-partners-title">@cPage.PartnerTitle</h2>
+            <div class="dk-upg-partners-track">
+                @foreach (var partner in partners)
+                {
+                    <div class="dk-upg-partner-item" title="@partner.Name">
+                        @if (!string.IsNullOrWhiteSpace(partner.LogoUrl))
+                        {
+                            <img src="@partner.LogoUrl" alt="@partner.Name" class="dk-upg-partner-logo" loading="lazy" />
+                        }
+                        else
+                        {
+                            <span class="dk-upg-partner-fallback">@partner.Name</span>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         4. TRENDING COURSES — GET FUTURE-READY WITH AI (Image 3)
+         Deep Cyber Tech Dark Navy Theme
+    ========================================================= -->
+    <section class="dk-upg-trending-section" id="trending-courses">
+        <div class="dk-upg-container">
+            <div class="dk-upg-section-head">
+                <div class="dk-upg-sec-tag">@cPage.TrendingBadge</div>
+                <h2 class="dk-upg-sec-title">
+                    <span>Get Future-Ready with </span><span class="dk-upg-ai-glow">AI</span>
+                </h2>
+                <p class="dk-upg-sec-subtitle">@cPage.TrendingSubtitle</p>
+            </div>
+
+            <!-- Cards Carousel Controls -->
+            <div class="dk-upg-cards-wrapper">
+                <div class="dk-upg-cards-grid" id="trendingCardsGrid">
+                    @foreach (var course in trending)
+                    {
+                        <div class="dk-upg-course-card" data-title="@course.Title" data-inst="@course.Institution">
+                            <!-- Card Image -->
+                            <div class="dk-upg-card-media">
+                                <img src="@course.ImageUrl" alt="@course.Title" class="dk-upg-card-img" onerror="this.src='/images/study-hub/edu-campus-iiit.jpg';" loading="lazy" />
+                                <div class="dk-upg-card-logo-badge">
+                                    <div class="dk-upg-card-inst-circle">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="dk-upg-card-body">
+                                <div class="dk-upg-card-inst">@course.Institution</div>
+                                <h3 class="dk-upg-card-title">@course.Title</h3>
+
+                                <!-- Badges -->
+                                <div class="dk-upg-card-badges">
+                                    <div class="dk-upg-badge-line">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                                        <span>@course.BadgeType</span>
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(course.BadgeTag))
+                                    {
+                                        <div class="dk-upg-badge-line dk-highlight-badge">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                            <span>@course.BadgeTag</span>
+                                        </div>
+                                    }
+                                    <div class="dk-upg-badge-line">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                        <span>@course.Duration</span>
+                                    </div>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="dk-upg-card-actions">
+                                    <button type="button" class="dk-upg-btn-outline" onclick="openProgramDetails('@course.Institution', '@course.Title', 'overview')">
+                                        @course.Button1Text
+                                    </button>
+                                    <button type="button" class="dk-upg-btn-red" onclick="openProgramDetails('@course.Institution', '@course.Title', 'syllabus')">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                        <span>@course.Button2Text</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Carousel Navigation Arrow -->
+                <button type="button" class="dk-upg-carousel-nav next" onclick="scrollCarousel('trendingCardsGrid', 360)" aria-label="Next Courses">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         5. MOST POPULAR PROGRAMS (Image 4)
+         Crisp Modern Light Background
+    ========================================================= -->
+    <section class="dk-upg-popular-section" id="popular-programs">
+        <div class="dk-upg-container">
+            <div class="dk-upg-popular-head">
+                <h2 class="dk-upg-popular-title">
+                    <span>Explore our </span><span class="dk-upg-red-text">most popular programs</span>
+                </h2>
+                <p class="dk-upg-popular-sub">@cPage.PopularSubtitle</p>
+            </div>
+
+            <div class="dk-upg-cards-wrapper">
+                <div class="dk-upg-cards-grid" id="popularCardsGrid">
+                    @foreach (var prog in popular)
+                    {
+                        <div class="dk-upg-course-card light-theme" data-title="@prog.Title" data-inst="@prog.Institution">
+                            <div class="dk-upg-card-media">
+                                <img src="@prog.ImageUrl" alt="@prog.Title" class="dk-upg-card-img" onerror="this.src='/images/study-hub/campus-paris-school.jpg';" loading="lazy" />
+                                <div class="dk-upg-card-logo-badge">
+                                    <div class="dk-upg-card-inst-circle">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e52d27" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="dk-upg-card-body">
+                                <div class="dk-upg-card-inst">@prog.Institution</div>
+                                <h3 class="dk-upg-card-title">@prog.Title</h3>
+
+                                <div class="dk-upg-card-badges">
+                                    @if (!string.IsNullOrWhiteSpace(prog.BadgeTag))
+                                    {
+                                        <div class="dk-upg-badge-pill-cyan">
+                                            <span>@prog.BadgeTag</span>
+                                        </div>
+                                    }
+                                    <div class="dk-upg-badge-line">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                                        <span>@prog.BadgeType</span>
+                                    </div>
+                                    <div class="dk-upg-badge-line">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                        <span>@prog.Duration</span>
+                                    </div>
+                                </div>
+
+                                <div class="dk-upg-card-actions">
+                                    <button type="button" class="dk-upg-btn-outline" onclick="openProgramDetails('@prog.Institution', '@prog.Title', 'overview')">
+                                        @prog.Button1Text
+                                    </button>
+                                    <button type="button" class="dk-upg-btn-red" onclick="openProgramDetails('@prog.Institution', '@prog.Title', 'apply')">
+                                        <span>@prog.Button2Text</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <button type="button" class="dk-upg-carousel-nav next" onclick="scrollCarousel('popularCardsGrid', 360)" aria-label="Next Programs">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         6. STUDY IN FRANCE / DESTINATION COUNTRY SHOWCASE (Image 5)
+    ========================================================= -->
+    <section class="dk-upg-dest-section" id="destination-showcase">
+        <div class="dk-upg-container">
+            <div class="dk-upg-dest-head">
+                <h2 class="dk-upg-dest-title">
+                    <span>Study in </span><span class="dk-upg-red-text">@activeCountry.CountryName</span><span> for Indian Students</span>
+                </h2>
+                <a href="#consultancy-lead-modal" class="dk-upg-dest-explore-link" onclick="openConsultancyModal('@activeCountry.CountryName Study Programs')">
+                    @cPage.DestinationExploreText
+                </a>
+            </div>
+
+            <!-- Destination Layout: Left Country Rail, Center Panoramic Banner, Right Program Cards -->
+            <div class="dk-upg-dest-layout">
+                <!-- Left Vertical / Horizontal Tabs for Countries -->
+                <div class="dk-upg-country-rail">
+                    @foreach (var c in countries)
+                    {
+                        var isCurrent = (c.CountryCode == activeCountry.CountryCode);
+                        <button type="button" 
+                                class="dk-upg-country-tab @(isCurrent ? "active" : "")" 
+                                onclick="switchDestinationCountry('@c.CountryCode', this)">
+                            <span>@c.CountryName.ToUpperInvariant()</span>
+                        </button>
+                    }
+                </div>
+
+                <!-- Panoramic Hero Destination Canvas with Overlay Program Cards -->
+                <div class="dk-upg-dest-stage" style="background-image: url('@activeCountry.HeroImageUrl');" id="destHeroStage">
+                    <div class="dk-upg-dest-overlay"></div>
+
+                    <!-- Slide Index & Prev/Next Arrows -->
+                    <div class="dk-upg-dest-nav-bar">
+                        <div class="dk-upg-dest-slide-counter" id="destSlideNum">@activeCountry.SlideNumber</div>
+                        <div class="dk-upg-dest-arrow-group">
+                            <button type="button" class="dk-upg-circle-nav prev" onclick="prevDestinationCountry()" aria-label="Previous Country">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                            </button>
+                            <button type="button" class="dk-upg-circle-nav next" onclick="nextDestinationCountry()" aria-label="Next Country">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Overlay Cards (Image 5 style) -->
+                    <div class="dk-upg-dest-cards-col" id="destProgramsContainer">
+                        @foreach (var p in activeCountry.Programs)
+                        {
+                            <div class="dk-upg-dest-program-card">
+                                <div class="dk-upg-dest-card-header">
+                                    <div class="dk-upg-dest-flag-icon">🇫🇷</div>
+                                    <div class="dk-upg-dest-inst">@p.Institution</div>
+                                </div>
+                                <h4 class="dk-upg-dest-card-title">@p.Title</h4>
+                                @if (!string.IsNullOrWhiteSpace(p.BadgeTag))
+                                {
+                                    <div class="dk-upg-dest-accred-badge">@p.BadgeTag</div>
+                                }
+                                <div class="dk-upg-dest-meta-row">
+                                    <span>🎓 @p.BadgeType</span>
+                                    <span>⏱ @p.Duration</span>
+                                </div>
+                                <button type="button" class="dk-upg-dest-btn-red" onclick="openProgramDetails('@p.Institution', '@p.Title', 'destination')">
+                                    @p.Button1Text
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Key Stat Metric Counters (Image 5) -->
+            <div class="dk-upg-stats-bar" id="destStatsBar">
+                @foreach (var s in activeCountry.Stats)
+                {
+                    <div class="dk-upg-stat-item">
+                        <div class="dk-upg-stat-val">@s.Value</div>
+                        <div class="dk-upg-stat-label">@s.Label</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         7. FLOATING ACTION WIDGETS (Bottom Left & Right)
+    ========================================================= -->
+    <!-- Scroll To Top (Image 4 & 5 Bottom-Left) -->
+    <button type="button" class="dk-upg-scroll-top-btn" id="btnScrollTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Scroll to top" title="Scroll to top">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+    </button>
+
+    <!-- Floating Red Phone / Call / Consultation Button (Image 2, 3, 4, 5 Bottom-Right) -->
+    <button type="button" class="dk-upg-floating-call-btn" id="btnFloatingCall" onclick="openConsultancyModal('Floating Quick Call')" aria-label="Free Counselling" title="Book Free Counselling">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        <span class="dk-upg-call-tooltip">Free Counselling</span>
+    </button>
+
+    <!-- ========================================================
+         8. FREE 1:1 COUNSELLING & LEAD CAPTURE MODAL
+    ========================================================= -->
+    <div class="dk-upg-modal-backdrop" id="consultancyModal" style="display: none;">
+        <div class="dk-upg-modal-card">
+            <button type="button" class="dk-upg-modal-close" onclick="closeConsultancyModal()" aria-label="Close modal">✕</button>
+
+            <div class="dk-upg-modal-header">
+                <span class="dk-upg-modal-pill">🎓 100% Free 1-on-1 Consultation</span>
+                <h3 class="dk-upg-modal-title" id="modalDynamicTitle">@cPage.LeadModalTitle</h3>
+                <p class="dk-upg-modal-sub" id="modalDynamicSub">@cPage.LeadModalSubtitle</p>
+            </div>
+
+            <form id="consultancyLeadForm" onsubmit="handleLeadSubmit(event)">
+                <input type="hidden" id="leadTargetProgram" value="General Study Abroad Enquiry" />
+
+                <div class="dk-upg-form-group">
+                    <label class="dk-upg-label">Full Name *</label>
+                    <input type="text" id="leadFullName" class="dk-upg-input" placeholder="e.g. Rahul Sharma" required />
+                </div>
+
+                <div class="dk-upg-form-row">
+                    <div class="dk-upg-form-group">
+                        <label class="dk-upg-label">Mobile Number *</label>
+                        <input type="tel" id="leadPhone" class="dk-upg-input" placeholder="e.g. +91 98765 43210" required />
+                    </div>
+                    <div class="dk-upg-form-group">
+                        <label class="dk-upg-label">Email Address *</label>
+                        <input type="email" id="leadEmail" class="dk-upg-input" placeholder="e.g. rahul@example.com" required />
+                    </div>
+                </div>
+
+                <div class="dk-upg-form-row">
+                    <div class="dk-upg-form-group">
+                        <label class="dk-upg-label">Target Level</label>
+                        <select id="leadTargetDegree" class="dk-upg-input">
+                            <option value="Master's Degree">Master's Degree (MS / MSc)</option>
+                            <option value="MBA / Executive">MBA / Executive Leadership</option>
+                            <option value="Executive Diploma">Executive Diploma / Upskilling</option>
+                            <option value="Bachelor's Degree">Bachelor's Degree</option>
+                            <option value="Doctorate">Doctorate / PhD</option>
+                        </select>
+                    </div>
+                    <div class="dk-upg-form-group">
+                        <label class="dk-upg-label">Preferred Country</label>
+                        <select id="leadDestination" class="dk-upg-input">
+                            <option value="France">France 🇫🇷</option>
+                            <option value="United Kingdom">United Kingdom 🇬🇧</option>
+                            <option value="Canada">Canada 🇨🇦</option>
+                            <option value="Finland">Finland 🇫🇮</option>
+                            <option value="Germany">Germany 🇩🇪</option>
+                            <option value="USA">United States 🇺🇸</option>
+                            <option value="Other">Other Global Destinations</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="dk-upg-form-group">
+                    <label class="dk-upg-label">Your Questions / Notes (Optional)</label>
+                    <textarea id="leadNotes" class="dk-upg-input" rows="2" placeholder="Tell us your background, budget, or preferred universities..."></textarea>
+                </div>
+
+                <button type="submit" class="dk-upg-submit-btn" id="btnSubmitLead">
+                    <span>Book My Free Counselling Session →</span>
+                </button>
+                <div class="dk-upg-form-footnote">
+                    🔒 Certified privacy. We will never share your contact details. 10,000+ students counselled.
+                </div>
+            </form>
+
+            <div id="leadSuccessFeedback" style="display: none; text-align: center; padding: 24px 10px;">
+                <div style="width: 58px; height: 58px; background: #dcfce7; color: #16a34a; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 28px;">✓</div>
+                <h4 style="font-size: 20px; font-weight: 900; color: #0f172a; margin: 0 0 8px 0;">Consultation Reserved!</h4>
+                <p id="leadSuccessMessage" style="font-size: 14px; color: #475569; margin: 0 0 20px 0; line-height: 1.6;"></p>
+                <button type="button" class="dk-upg-btn-red" onclick="closeConsultancyModal()" style="margin: 0 auto;">Done</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========================================================
+     CSS STYLING FOR UPGRAD-STYLE CONSULTANCY PORTAL
+========================================================= -->
+<style>
+    .dk-upg-root {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #1e293b;
+        background: #ffffff;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* Admin Bar */
+    .dk-upg-admin-bar {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 9px 24px;
+        font-size: 13px;
+        position: sticky;
+        top: 0;
+        z-index: 10001;
+        border-bottom: 1px solid #334155;
+    }
+    .dk-upg-admin-inner {
+        max-width: 1380px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .dk-upg-admin-tag {
+        background: #0284c7;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-radius: 999px;
+        text-transform: uppercase;
+    }
+    .dk-upg-admin-btn {
+        background: #38bdf8;
+        color: #0f172a;
+        font-weight: 800;
+        text-decoration: none;
+        padding: 5px 14px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+    }
+
+    /* Header & Navigation (Image 2) */
+    .dk-upg-header {
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 9999;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .dk-upg-nav-container {
+        max-width: 1380px;
+        margin: 0 auto;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+    .dk-upg-brand {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        flex-shrink: 0;
+    }
+    .dk-upg-brand-img {
+        height: 38px;
+        width: auto;
+        max-width: 170px;
+        object-fit: contain;
+    }
+    .dk-upg-nav-menu {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+    .dk-upg-dropdown {
+        position: relative;
+    }
+    .dk-upg-nav-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 4px;
+        transition: color 0.2s;
+    }
+    .dk-upg-nav-btn:hover, .dk-upg-nav-link:hover {
+        color: #e52d27;
+    }
+    .dk-upg-nav-link {
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+        transition: color 0.2s;
+    }
+    .dk-upg-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #ffffff;
+        min-width: 240px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        padding: 8px 0;
+        z-index: 1000;
+    }
+    .dk-upg-dropdown:hover .dk-upg-dropdown-menu {
+        display: block;
+    }
+    .dk-upg-dropdown-menu a {
+        display: block;
+        padding: 10px 18px;
+        color: #334155;
+        font-size: 13.5px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.15s, color 0.15s;
+    }
+    .dk-upg-dropdown-menu a:hover {
+        background: #fef2f2;
+        color: #e52d27;
+    }
+    .dk-upg-signup-btn {
+        background: #e52d27;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+        border: none;
+        border-radius: 999px;
+        padding: 9px 24px;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        box-shadow: 0 4px 14px rgba(229, 45, 39, 0.35);
+    }
+    .dk-upg-signup-btn:hover {
+        background: #c61f1a;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(229, 45, 39, 0.45);
+    }
+
+    /* Hero Section (Image 2) */
+    .dk-upg-hero-section {
+        position: relative;
+        min-height: 480px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        background: #0f172a;
+        padding: 60px 20px 70px 20px;
+        box-sizing: border-box;
+    }
+    .dk-upg-hero-media-wrapper {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        overflow: hidden;
+    }
+    .dk-upg-hero-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .dk-upg-hero-img-bg {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center center;
+    }
+    .dk-upg-hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.85) 60%, #ffffff 100%);
+        backdrop-filter: blur(2px);
+    }
+    .dk-upg-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 960px;
+        width: 100%;
+        text-align: center;
+        margin: 0 auto;
+    }
+    .dk-upg-hero-title {
+        margin: 0 0 28px 0;
+        line-height: 1.15;
+    }
+    .dk-upg-title-serif {
+        font-family: Georgia, "Times New Roman", serif;
+        font-style: italic;
+        font-weight: 700;
+        font-size: 3.2rem;
+        color: #e52d27;
+        display: block;
+        letter-spacing: -0.02em;
+    }
+    .dk-upg-title-sans {
+        font-size: 2.8rem;
+        font-weight: 900;
+        color: #0f172a;
+        display: block;
+        letter-spacing: -0.03em;
+        margin-top: 2px;
+    }
+
+    /* Search Box */
+    .dk-upg-search-card {
+        max-width: 640px;
+        margin: 0 auto 28px auto;
+        background: #ffffff;
+        border-radius: 999px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.06);
+        padding: 5px 6px 5px 20px;
+        border: 1px solid #e2e8f0;
+    }
+    .dk-upg-search-inner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .dk-upg-search-icon {
+        display: flex;
+        align-items: center;
+        color: #e52d27;
+    }
+    .dk-upg-search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 15px;
+        color: #1e293b;
+        background: transparent;
+        font-weight: 500;
+    }
+    .dk-upg-search-input::placeholder {
+        color: #94a3b8;
+    }
+    .dk-upg-search-action-btn {
+        width: 44px;
+        height: 44px;
+        background: #e52d27;
+        color: #ffffff;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s, background 0.2s;
+        flex-shrink: 0;
+    }
+    .dk-upg-search-action-btn:hover {
+        background: #c61f1a;
+        transform: scale(1.06);
+    }
+
+    /* Category Pills */
+    .dk-upg-pills-row {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .dk-upg-pill {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 999px;
+        padding: 7px 16px;
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #334155;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        transition: all 0.2s;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .dk-upg-pill:hover, .dk-upg-pill.active {
+        background: #0f172a;
+        color: #ffffff;
+        border-color: #0f172a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+    }
+
+    /* Sub-Banner */
+    .dk-upg-subbanner {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        text-align: center;
+        margin-top: 40px;
+    }
+    .dk-upg-subbanner-text {
+        font-size: 1.55rem;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+    }
+    .dk-upg-highlight-red {
+        color: #e52d27;
+        font-weight: 900;
+    }
+
+    /* Partners Strip (Image 3) */
+    .dk-upg-partners-section {
+        background: #ffffff;
+        padding: 30px 20px 34px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        text-align: center;
+    }
+    .dk-upg-partners-title {
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #64748b;
+        margin: 0 0 20px 0;
+    }
+    .dk-upg-partners-track {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 32px;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+    .dk-upg-partner-item {
+        filter: grayscale(100%);
+        opacity: 0.75;
+        transition: all 0.25s;
+        display: flex;
+        align-items: center;
+    }
+    .dk-upg-partner-item:hover {
+        filter: grayscale(0%);
+        opacity: 1;
+        transform: translateY(-2px);
+    }
+    .dk-upg-partner-logo {
+        height: 28px;
+        width: auto;
+        max-width: 125px;
+        object-fit: contain;
+    }
+    .dk-upg-partner-fallback {
+        font-size: 13.5px;
+        font-weight: 800;
+        color: #334155;
+    }
+
+    /* Trending Courses — Dark Tech Theme (Image 3) */
+    .dk-upg-trending-section {
+        background: #080f24;
+        color: #f8fafc;
+        padding: 64px 24px 72px 24px;
+        position: relative;
+        overflow: hidden;
+        background-image: 
+            radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.12) 0%, transparent 40%),
+            radial-gradient(circle at 90% 80%, rgba(229, 45, 39, 0.12) 0%, transparent 40%);
+    }
+    .dk-upg-container {
+        max-width: 1380px;
+        margin: 0 auto;
+        position: relative;
+    }
+    .dk-upg-section-head {
+        margin-bottom: 34px;
+    }
+    .dk-upg-sec-tag {
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        color: #38bdf8;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+    .dk-upg-sec-title {
+        font-size: 2.2rem;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        margin: 0 0 6px 0;
+        color: #ffffff;
+    }
+    .dk-upg-ai-glow {
+        color: #e52d27;
+        text-shadow: 0 0 20px rgba(229, 45, 39, 0.6);
+    }
+    .dk-upg-sec-subtitle {
+        font-size: 14.5px;
+        color: #94a3b8;
+        margin: 0;
+    }
+
+    /* Cards Carousel / Grid */
+    .dk-upg-cards-wrapper {
+        position: relative;
+    }
+    .dk-upg-cards-grid {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding-bottom: 16px;
+        scrollbar-width: none;
+    }
+    .dk-upg-cards-grid::-webkit-scrollbar {
+        display: none;
+    }
+    .dk-upg-course-card {
+        background: #ffffff;
+        color: #0f172a;
+        border-radius: 16px;
+        overflow: hidden;
+        min-width: 295px;
+        max-width: 310px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .dk-upg-course-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 36px rgba(0,0,0,0.25);
+    }
+    .dk-upg-card-media {
+        position: relative;
+        height: 165px;
+        background: #1e293b;
+        overflow: hidden;
+    }
+    .dk-upg-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+    .dk-upg-course-card:hover .dk-upg-card-img {
+        transform: scale(1.04);
+    }
+    .dk-upg-card-logo-badge {
+        position: absolute;
+        bottom: -16px;
+        right: 18px;
+        z-index: 2;
+    }
+    .dk-upg-card-inst-circle {
+        width: 44px;
+        height: 44px;
+        background: #ffffff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        border: 2px solid #ffffff;
+    }
+    .dk-upg-card-body {
+        padding: 22px 18px 18px 18px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .dk-upg-card-inst {
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+    .dk-upg-card-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.35;
+        margin: 0 0 16px 0;
+        min-height: 42px;
+    }
+    .dk-upg-card-badges {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 18px;
+        flex: 1;
+    }
+    .dk-upg-badge-line {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #475569;
+        font-weight: 600;
+    }
+    .dk-upg-highlight-badge {
+        color: #b45309;
+        font-weight: 800;
+    }
+    .dk-upg-badge-pill-cyan {
+        background: #e0f2fe;
+        color: #0369a1;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 3px 8px;
+        border-radius: 6px;
+        display: inline-block;
+        width: fit-content;
+        margin-bottom: 4px;
+    }
+    .dk-upg-card-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    .dk-upg-btn-outline {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        color: #0f172a;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 8px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .dk-upg-btn-outline:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+    }
+    .dk-upg-btn-red {
+        background: #e52d27;
+        color: #ffffff;
+        border: none;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: background 0.2s, transform 0.15s;
+    }
+    .dk-upg-btn-red:hover {
+        background: #c61f1a;
+        transform: translateY(-1px);
+    }
+    .dk-upg-carousel-nav {
+        position: absolute;
+        top: 45%;
+        transform: translateY(-50%);
+        width: 44px;
+        height: 44px;
+        background: #ffffff;
+        color: #0f172a;
+        border: 1px solid #e2e8f0;
+        border-radius: 50%;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        transition: transform 0.2s, background 0.2s;
+    }
+    .dk-upg-carousel-nav.next {
+        right: -16px;
+    }
+    .dk-upg-carousel-nav:hover {
+        background: #0f172a;
+        color: #ffffff;
+        transform: translateY(-50%) scale(1.08);
+    }
+
+    /* Popular Programs (Image 4) */
+    .dk-upg-popular-section {
+        background: #ffffff;
+        padding: 64px 24px 72px 24px;
+    }
+    .dk-upg-popular-head {
+        margin-bottom: 34px;
+    }
+    .dk-upg-popular-title {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #0f172a;
+        letter-spacing: -0.03em;
+        margin: 0 0 6px 0;
+    }
+    .dk-upg-red-text {
+        color: #e52d27;
+    }
+    .dk-upg-popular-sub {
+        font-size: 14.5px;
+        color: #64748b;
+        margin: 0;
+    }
+    .dk-upg-course-card.light-theme {
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+    }
+    .dk-upg-course-card.light-theme:hover {
+        box-shadow: 0 16px 36px rgba(0,0,0,0.12);
+    }
+
+    /* Destination Showcase (Image 5) */
+    .dk-upg-dest-section {
+        background: #fafaf9;
+        padding: 64px 24px 72px 24px;
+        border-top: 1px solid #f1f5f9;
+    }
+    .dk-upg-dest-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .dk-upg-dest-title {
+        font-size: 1.95rem;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+    .dk-upg-dest-explore-link {
+        font-size: 14px;
+        font-weight: 800;
+        color: #e52d27;
+        text-decoration: none;
+        transition: transform 0.15s;
+    }
+    .dk-upg-dest-explore-link:hover {
+        text-decoration: underline;
+        transform: translateX(3px);
+    }
+    .dk-upg-dest-layout {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+    .dk-upg-country-rail {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        width: 140px;
+        flex-shrink: 0;
+    }
+    .dk-upg-country-tab {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        padding: 14px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.2s;
+    }
+    .dk-upg-country-tab:hover, .dk-upg-country-tab.active {
+        background: #0f172a;
+        color: #ffffff;
+        border-color: #0f172a;
+        transform: translateX(3px);
+    }
+    .dk-upg-dest-stage {
+        flex: 1;
+        position: relative;
+        min-height: 420px;
+        background-size: cover;
+        background-position: center;
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 24px;
+        box-sizing: border-box;
+    }
+    .dk-upg-dest-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.45) 100%);
+    }
+    .dk-upg-dest-nav-bar {
+        position: relative;
+        z-index: 2;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .dk-upg-dest-slide-counter {
+        font-size: 2.4rem;
+        font-weight: 900;
+        color: #ffffff;
+        letter-spacing: -0.03em;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .dk-upg-dest-arrow-group {
+        display: flex;
+        gap: 8px;
+    }
+    .dk-upg-circle-nav {
+        width: 38px;
+        height: 38px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #0f172a;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+    .dk-upg-circle-nav:hover {
+        background: #ffffff;
+        transform: scale(1.1);
+    }
+    .dk-upg-dest-cards-col {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        gap: 16px;
+        max-width: 65%;
+    }
+    .dk-upg-dest-program-card {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 16px;
+        flex: 1;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        display: flex;
+        flex-direction: column;
+    }
+    .dk-upg-dest-card-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+    .dk-upg-dest-flag-icon {
+        font-size: 14px;
+    }
+    .dk-upg-dest-inst {
+        font-size: 11px;
+        font-weight: 800;
+        color: #64748b;
+        text-transform: uppercase;
+    }
+    .dk-upg-dest-card-title {
+        font-size: 13.5px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+        line-height: 1.35;
+    }
+    .dk-upg-dest-accred-badge {
+        background: #f0fdf4;
+        color: #166534;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 4px;
+        width: fit-content;
+        margin-bottom: 10px;
+    }
+    .dk-upg-dest-meta-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11.5px;
+        color: #475569;
+        font-weight: 600;
+        margin-bottom: 12px;
+        margin-top: auto;
+    }
+    .dk-upg-dest-btn-red {
+        background: #e52d27;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        transition: background 0.2s;
+    }
+    .dk-upg-dest-btn-red:hover {
+        background: #c61f1a;
+    }
+
+    /* Key Stats Bar (Image 5) */
+    .dk-upg-stats-bar {
+        background: #ffffff;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        padding: 20px 24px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        text-align: center;
+    }
+    .dk-upg-stat-val {
+        font-size: 1.9rem;
+        font-weight: 900;
+        color: #e52d27;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+    }
+    .dk-upg-stat-label {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #64748b;
+        margin-top: 4px;
+    }
+
+    /* Floating Buttons */
+    .dk-upg-scroll-top-btn {
+        position: fixed;
+        bottom: 24px;
+        left: 24px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #ffffff;
+        color: #e52d27;
+        border: 1.5px solid #fecaca;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        transition: all 0.2s;
+    }
+    .dk-upg-scroll-top-btn:hover {
+        background: #e52d27;
+        color: #ffffff;
+        transform: translateY(-3px);
+    }
+    .dk-upg-floating-call-btn {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #e52d27;
+        color: #ffffff;
+        border: none;
+        box-shadow: 0 6px 20px rgba(229, 45, 39, 0.45);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        transition: all 0.25s;
+    }
+    .dk-upg-floating-call-btn:hover {
+        transform: scale(1.08);
+        background: #c61f1a;
+    }
+    .dk-upg-call-tooltip {
+        position: absolute;
+        right: 68px;
+        background: #0f172a;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 6px;
+        white-space: nowrap;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+    .dk-upg-floating-call-btn:hover .dk-upg-call-tooltip {
+        opacity: 1;
+    }
+
+    /* Modal Backdrop */
+    .dk-upg-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(4px);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        box-sizing: border-box;
+    }
+    .dk-upg-modal-card {
+        background: #ffffff;
+        border-radius: 20px;
+        max-width: 500px;
+        width: 100%;
+        padding: 30px;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+        position: relative;
+        animation: upgModalIn 0.25s ease-out;
+    }
+    @@keyframes upgModalIn {
+        from { transform: scale(0.92); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+    .dk-upg-modal-close {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        background: #f1f5f9;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 15px;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s;
+    }
+    .dk-upg-modal-close:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+    .dk-upg-modal-pill {
+        background: #fef2f2;
+        color: #e52d27;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 3px 10px;
+        border-radius: 999px;
+        display: inline-block;
+        margin-bottom: 8px;
+    }
+    .dk-upg-modal-title {
+        font-size: 20px;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0 0 4px 0;
+        line-height: 1.25;
+    }
+    .dk-upg-modal-sub {
+        font-size: 13px;
+        color: #64748b;
+        margin: 0 0 20px 0;
+    }
+    .dk-upg-form-group {
+        margin-bottom: 14px;
+    }
+    .dk-upg-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .dk-upg-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 5px;
+    }
+    .dk-upg-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 13.5px;
+        box-sizing: border-box;
+        outline: none;
+        font-family: inherit;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .dk-upg-input:focus {
+        border-color: #e52d27;
+        box-shadow: 0 0 0 3px rgba(229, 45, 39, 0.15);
+    }
+    .dk-upg-submit-btn {
+        width: 100%;
+        background: #e52d27;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 14px;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.15s;
+        margin-top: 6px;
+    }
+    .dk-upg-submit-btn:hover {
+        background: #c61f1a;
+        transform: translateY(-1px);
+    }
+    .dk-upg-form-footnote {
+        font-size: 11px;
+        color: #94a3b8;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    /* Responsive */
+    @@media (max-width: 900px) {
+        .dk-upg-nav-menu { display: none; }
+        .dk-upg-title-serif { font-size: 2.4rem; }
+        .dk-upg-title-sans { font-size: 2.1rem; }
+        .dk-upg-dest-layout { flex-direction: column; }
+        .dk-upg-country-rail { width: 100%; flex-direction: row; overflow-x: auto; }
+        .dk-upg-dest-stage { flex-direction: column; align-items: flex-start; }
+        .dk-upg-dest-cards-col { max-width: 100%; width: 100%; margin-top: 20px; flex-direction: column; }
+        .dk-upg-stats-bar { grid-template-columns: 1fr 1fr; }
+    }
+</style>
+
+<!-- ========================================================
+     CLIENT-SIDE JAVASCRIPT FOR CONSULTANCY HUB
+========================================================= -->
+<script>
+    const allCountriesData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(countries));
+    let currentCountryIndex = 0;
+
+    function scrollCarousel(gridId, distance) {
+        const grid = document.getElementById(gridId);
+        if (grid) {
+            grid.scrollBy({ left: distance, behavior: 'smooth' });
+        }
+    }
+
+    function handleSearchCourses(query) {
+        const q = (query || "").toLowerCase().trim();
+        const cards = document.querySelectorAll(".dk-upg-course-card");
+        cards.forEach(card => {
+            const title = (card.dataset.title || "").toLowerCase();
+            const inst = (card.dataset.inst || "").toLowerCase();
+            if (!q || title.includes(q) || inst.includes(q)) {
+                card.style.display = "flex";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    function triggerSearchScroll() {
+        const q = document.getElementById("upgCourseSearchInput")?.value;
+        handleSearchCourses(q);
+        const trendingSec = document.getElementById("trending-courses");
+        if (trendingSec) {
+            trendingSec.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function filterCategory(tag, pillBtn) {
+        // Toggle active pill state
+        if (pillBtn) {
+            document.querySelectorAll(".dk-upg-pill").forEach(p => p.classList.remove("active"));
+            pillBtn.classList.add("active");
+        }
+
+        const tagMap = {
+            'ai': 'ai',
+            'ml': 'machine learning',
+            'data': 'data',
+            'doctorate': 'phd',
+            'iit': 'iit',
+            'mba': 'mba',
+            'marketing': 'marketing',
+            'management': 'management'
+        };
+
+        const searchKeyword = tagMap[tag] || tag;
+        const searchInput = document.getElementById("upgCourseSearchInput");
+        if (searchInput) {
+            searchInput.value = searchKeyword;
+        }
+        handleSearchCourses(searchKeyword);
+
+        const targetSec = (tag === 'mba' || tag === 'management') 
+            ? document.getElementById("popular-programs") 
+            : document.getElementById("trending-courses");
+        if (targetSec) {
+            targetSec.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function renderDestinationCountry(c) {
+        if (!c) return;
+        const stage = document.getElementById("destHeroStage");
+        if (stage && c.HeroImageUrl) {
+            stage.style.backgroundImage = `url('\${c.HeroImageUrl}')`;
+        }
+        const slideNum = document.getElementById("destSlideNum");
+        if (slideNum) {
+            slideNum.textContent = c.SlideNumber || "01 / 9";
+        }
+
+        // Render Programs
+        const progContainer = document.getElementById("destProgramsContainer");
+        if (progContainer && c.Programs) {
+            progContainer.innerHTML = c.Programs.map(p => `
+                <div class="dk-upg-dest-program-card">
+                    <div class="dk-upg-dest-card-header">
+                        <div class="dk-upg-dest-flag-icon">🎓</div>
+                        <div class="dk-upg-dest-inst">\${p.Institution}</div>
+                    </div>
+                    <h4 class="dk-upg-dest-card-title">\${p.Title}</h4>
+                    \${p.BadgeTag ? `<div class="dk-upg-dest-accred-badge">\${p.BadgeTag}</div>` : ''}
+                    <div class="dk-upg-dest-meta-row">
+                        <span>🎓 \${p.BadgeType}</span>
+                        <span>⏱ \${p.Duration}</span>
+                    </div>
+                    <button type="button" class="dk-upg-dest-btn-red" onclick="openProgramDetails('\${p.Institution}', '\${p.Title}', 'destination')">
+                        \${p.Button1Text || 'View Program'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Render Stats
+        const statsBar = document.getElementById("destStatsBar");
+        if (statsBar && c.Stats) {
+            statsBar.innerHTML = c.Stats.map(s => `
+                <div class="dk-upg-stat-item">
+                    <div class="dk-upg-stat-val">\${s.Value}</div>
+                    <div class="dk-upg-stat-label">\${s.Label}</div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function switchDestinationCountry(code, btn) {
+        document.querySelectorAll(".dk-upg-country-tab").forEach(t => t.classList.remove("active"));
+        if (btn) btn.classList.add("active");
+
+        const foundIdx = allCountriesData.findIndex(x => x.CountryCode === code);
+        if (foundIdx >= 0) {
+            currentCountryIndex = foundIdx;
+            renderDestinationCountry(allCountriesData[currentCountryIndex]);
+        }
+    }
+
+    function prevDestinationCountry() {
+        if (!allCountriesData.length) return;
+        currentCountryIndex = (currentCountryIndex - 1 + allCountriesData.length) % allCountriesData.length;
+        const c = allCountriesData[currentCountryIndex];
+        const tabs = document.querySelectorAll(".dk-upg-country-tab");
+        if (tabs[currentCountryIndex]) {
+            document.querySelectorAll(".dk-upg-country-tab").forEach(t => t.classList.remove("active"));
+            tabs[currentCountryIndex].classList.add("active");
+        }
+        renderDestinationCountry(c);
+    }
+
+    function nextDestinationCountry() {
+        if (!allCountriesData.length) return;
+        currentCountryIndex = (currentCountryIndex + 1) % allCountriesData.length;
+        const c = allCountriesData[currentCountryIndex];
+        const tabs = document.querySelectorAll(".dk-upg-country-tab");
+        if (tabs[currentCountryIndex]) {
+            document.querySelectorAll(".dk-upg-country-tab").forEach(t => t.classList.remove("active"));
+            tabs[currentCountryIndex].classList.add("active");
+        }
+        renderDestinationCountry(c);
+    }
+
+    // Modal Controls
+    function openConsultancyModal(sourceInfo) {
+        const modal = document.getElementById("consultancyModal");
+        const programField = document.getElementById("leadTargetProgram");
+        if (programField && sourceInfo) {
+            programField.value = sourceInfo;
+        }
+        if (modal) {
+            modal.style.display = "flex";
+            document.getElementById("leadFullName")?.focus();
+        }
+    }
+
+    function openProgramDetails(institution, title, mode) {
+        const modalTitle = document.getElementById("modalDynamicTitle");
+        const modalSub = document.getElementById("modalDynamicSub");
+        const programField = document.getElementById("leadTargetProgram");
+
+        if (mode === 'syllabus') {
+            if (modalTitle) modalTitle.textContent = "Download Complete Syllabus & Curriculum";
+            if (modalSub) modalSub.textContent = `Get the official curriculum brochure for \${title} (\${institution}).`;
+        } else if (mode === 'apply') {
+            if (modalTitle) modalTitle.textContent = "Apply for Admission & Scholarship";
+            if (modalSub) modalSub.textContent = `Submit your interest for \${title} at \${institution}.`;
+        } else {
+            if (modalTitle) modalTitle.textContent = `1-on-1 Consultation: \${title}`;
+            if (modalSub) modalSub.textContent = `Speak directly with a program advisor for \${institution}.`;
+        }
+
+        if (programField) {
+            programField.value = `\${institution} - \${title}`;
+        }
+
+        const modal = document.getElementById("consultancyModal");
+        if (modal) modal.style.display = "flex";
+    }
+
+    function closeConsultancyModal() {
+        const modal = document.getElementById("consultancyModal");
+        if (modal) modal.style.display = "none";
+        const form = document.getElementById("consultancyLeadForm");
+        const feedback = document.getElementById("leadSuccessFeedback");
+        if (form) form.style.display = "block";
+        if (feedback) feedback.style.display = "none";
+    }
+
+    async function handleLeadSubmit(e) {
+        e.preventDefault();
+        const btn = document.getElementById("btnSubmitLead");
+        const oldText = btn ? btn.innerHTML : "Submit";
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = "Submitting Consultation Request...";
+        }
+
+        const payload = {
+            FullName: document.getElementById("leadFullName")?.value || "",
+            PhoneNumber: document.getElementById("leadPhone")?.value || "",
+            Email: document.getElementById("leadEmail")?.value || "",
+            TargetDegree: document.getElementById("leadTargetDegree")?.value || "",
+            DestinationCountry: document.getElementById("leadDestination")?.value || "",
+            InterestedProgram: document.getElementById("leadTargetProgram")?.value || "",
+            Message: document.getElementById("leadNotes")?.value || ""
+        };
+
+        try {
+            const resp = await fetch("/study-abroad-hub/consultancy-lead", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            const data = await resp.json();
+
+            const form = document.getElementById("consultancyLeadForm");
+            const feedback = document.getElementById("leadSuccessFeedback");
+            const msg = document.getElementById("leadSuccessMessage");
+
+            if (form) form.style.display = "none";
+            if (feedback) feedback.style.display = "block";
+            if (msg) msg.textContent = data.message || "Your consultation has been successfully booked!";
+        } catch (err) {
+            alert("Submission error: " + err.message);
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = oldText;
+            }
+        }
+    }
+
+    // Scroll to Top visibility
+    window.addEventListener("scroll", function() {
+        const btn = document.getElementById("btnScrollTop");
+        if (btn) {
+            btn.style.display = window.scrollY > 400 ? "flex" : "none";
+        }
+    });
+</script>

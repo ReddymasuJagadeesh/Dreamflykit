@@ -52,7 +52,7 @@ public sealed class InfoController : Controller
     [HttpGet("Consultancy")]
     public IActionResult Consultancy()
     {
-        return View(new ConsultancyBookingViewModel());
+        return Redirect("/study-abroad-hub/consultancy");
     }
 
     [HttpPost("Consultancy")]

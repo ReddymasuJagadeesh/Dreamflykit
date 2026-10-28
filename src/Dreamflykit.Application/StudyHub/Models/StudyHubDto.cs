@@ -21,6 +21,7 @@ public sealed class StudyHubDto
     public StudyHubCategoriesPageDto CategoriesPage { get; set; } = new();
     public AbroadChecklistPageDto ChecklistPage { get; set; } = new();
     public EducationLoansPageDto EducationLoansPage { get; set; } = new();
+    public ConsultancyDetailsPageDto ConsultancyDetailsPage { get; set; } = new();
     public StudyAbroadHubProfileDto AbroadProfile { get; set; } = new();
     public List<StudyGuideDetailPageDto> GuidePages { get; set; } = new();
 
@@ -533,6 +534,7 @@ public sealed class StudyHubDto
 
         dto.ChecklistPage = CreateDefaultChecklistPage();
         dto.EducationLoansPage = CreateDefaultEducationLoansPage();
+        dto.ConsultancyDetailsPage = CreateDefaultConsultancyDetailsPage();
         dto.AbroadProfile = CreateDefaultAbroadProfile();
         dto.GuidePages = CreateDefaultGuidePages();
 
@@ -1018,6 +1020,319 @@ public sealed class StudyHubDto
         };
     }
 
+    public static ConsultancyDetailsPageDto CreateDefaultConsultancyDetailsPage()
+    {
+        return new ConsultancyDetailsPageDto
+        {
+            BrandName = "Dreamflykit",
+            LogoUrl = "/images/branding/dreamflykit-logo-clean.webp",
+            NavLinks = new List<string>
+            {
+                "Upskilling Courses",
+                "Study Abroad",
+                "Professional Certifications",
+                "Learn Offline",
+                "School of Tech",
+                "More"
+            },
+            SignUpButtonText = "SIGN UP",
+            SignUpButtonUrl = "#consultancy-lead-modal",
+
+            HeroMediaType = "image",
+            HeroImageUrl = "/images/study-hub/consultancy-hero-campus.jpg",
+            HeroVideoUrl = "",
+            HeroHeadline = "For Your Every Next",
+            HeroHeadlineHighlight = "Opportunity",
+            SearchPlaceholder = "Tell us what you're looking to learn...",
+            SearchButtonUrl = "#trending-courses",
+            CategoryPills = new List<ConsultancyCategoryPillDto>
+            {
+                new() { Icon = "🤖", Title = "Agentic AI", FilterTag = "ai" },
+                new() { Icon = "🧠", Title = "Artificial Intelligence", FilterTag = "ai" },
+                new() { Icon = "🎓", Title = "Doctorate", FilterTag = "doctorate" },
+                new() { Icon = "💻", Title = "Machine Learning", FilterTag = "ml" },
+                new() { Icon = "🏛️", Title = "IIT/IIM Courses", FilterTag = "iit" },
+                new() { Icon = "📈", Title = "Data Science", FilterTag = "data" },
+                new() { Icon = "💼", Title = "MBA", FilterTag = "mba" },
+                new() { Icon = "📢", Title = "Marketing", FilterTag = "marketing" },
+                new() { Icon = "🏢", Title = "Management", FilterTag = "management" }
+            },
+
+            SubBannerPrefix = "Master tomorrow's skills",
+            SubBannerHighlight = "with India's top upskilling platform.",
+
+            PartnerTitle = "Great universities, top firms",
+            Partners = new List<ConsultancyPartnerLogoDto>
+            {
+                new() { Name = "PeopleCert", LogoUrl = "/images/study-hub/partners/peoplecert.svg" },
+                new() { Name = "Scrum.org", LogoUrl = "/images/study-hub/partners/scrumorg.svg" },
+                new() { Name = "AXELOS", LogoUrl = "/images/study-hub/partners/axelos.svg" },
+                new() { Name = "DevOps Institute", LogoUrl = "/images/study-hub/partners/devops.svg" },
+                new() { Name = "Scrum Alliance", LogoUrl = "/images/study-hub/partners/scrumalliance.svg" },
+                new() { Name = "Kanban University", LogoUrl = "/images/study-hub/partners/kanban.svg" },
+                new() { Name = "ICAgile", LogoUrl = "/images/study-hub/partners/icagile.svg" },
+                new() { Name = "Microsoft", LogoUrl = "/images/study-hub/partners/microsoft.svg" },
+                new() { Name = "Dell", LogoUrl = "/images/study-hub/partners/dell.svg" }
+            },
+
+            TrendingBadge = "TRENDING COURSES",
+            TrendingTitle = "Get Future-Ready with AI",
+            TrendingSubtitle = "Equip yourself with next-generation AI and systems expertise from premier institutes.",
+            TrendingCourses = new List<ConsultancyCourseDto>
+            {
+                new()
+                {
+                    Institution = "IIIT Bangalore",
+                    Title = "EPGP in Applied AI and Agentic AI",
+                    ImageUrl = "/images/study-hub/edu-campus-iiit.jpg",
+                    BadgeTag = "Building AI Agent",
+                    BadgeType = "Certification",
+                    Duration = "6 Months",
+                    Button1Text = "View Program",
+                    Button1Url = "#consultancy-lead-modal",
+                    Button2Text = "Syllabus",
+                    Button2Url = "#consultancy-lead-modal"
+                },
+                new()
+                {
+                    Institution = "IIT Kharagpur",
+                    Title = "EPGC in Building AI Products, Systems & Services",
+                    ImageUrl = "/images/study-hub/campus-tech-institute.jpg",
+                    BadgeTag = "Executive Track",
+                    BadgeType = "Executive Post Graduate Certificate",
+                    Duration = "6 Months",
+                    Button1Text = "View Program",
+                    Button1Url = "#consultancy-lead-modal",
+                    Button2Text = "Syllabus",
+                    Button2Url = "#consultancy-lead-modal"
+                },
+                new()
+                {
+                    Institution = "IIT Delhi",
+                    Title = "Certificate Programme in Cybersecurity and AI Security",
+                    ImageUrl = "/images/study-hub/edu-campus-iit.jpg",
+                    BadgeTag = "Industry Accredited",
+                    BadgeType = "Certification",
+                    Duration = "6 Months",
+                    Button1Text = "View Program",
+                    Button1Url = "#consultancy-lead-modal",
+                    Button2Text = "Syllabus",
+                    Button2Url = "#consultancy-lead-modal"
+                },
+                new()
+                {
+                    Institution = "IIM Kozhikode",
+                    Title = "PCP in AI for Business Professionals",
+                    ImageUrl = "/images/study-hub/campus-paris-school.jpg",
+                    BadgeTag = "Executive Alumni",
+                    BadgeType = "Certification",
+                    Duration = "6 Months",
+                    Button1Text = "View Program",
+                    Button1Url = "#consultancy-lead-modal",
+                    Button2Text = "Syllabus",
+                    Button2Url = "#consultancy-lead-modal"
+                }
+            },
+
+            PopularTitle = "Explore our most popular programs",
+            PopularSubtitle = "Transform your professional trajectory with globally recognized programs.",
+            PopularPrograms = new List<ConsultancyCourseDto>
+            {
+                new()
+                {
+                    Institution = "IIT Kharagpur",
+                    Title = "Advanced Semiconductor Packaging Reliability Workshop",
+                    ImageUrl = "/images/study-hub/campus-tech-institute.jpg",
+                    BadgeTag = "IIT Alumni Centre Bengaluru",
+                    BadgeType = "In person Workshop",
+                    Duration = "4th - 6th Dec 2026",
+                    Button1Text = "View Program",
+                    Button1Url = "#consultancy-lead-modal",
+                    Button2Text = "Apply Now",
+                    Button2Url = "#consultancy-lead-modal"
+                },
+                new()
+                {
+                    Institution = "IIIT Bangalore",
+                    Title = "Executive Diploma in Machine Learning and AI",
+                    ImageUrl = "/images/study-hub/edu-campus-iiit.jpg",
+                    BadgeTag = "360° Career Support",
+                    BadgeType = "Executive Diploma",
+                    Duration = "12 Months",
+                    Button1Text = "View Program",
+                    Button1Url = "#consultancy-lead-modal",
+                    Button2Text = "Syllabus",
+                    Button2Url = "#consultancy-lead-modal"
+                },
+                new()
+                {
+                    Institution = "Paris School of Business",
+                    Title = "MBA from Paris School of Business with Certification from IIM...",
+                    ImageUrl = "/images/study-hub/campus-paris-school.jpg",
+                    BadgeTag = "PSB MBA + IIML Certification",
+                    BadgeType = "Master's Degree",
+                    Duration = "18 Months",
+                    Button1Text = "View Program",
+                    Button1Url = "#consultancy-lead-modal",
+                    Button2Text = "Syllabus",
+                    Button2Url = "#consultancy-lead-modal"
+                },
+                new()
+                {
+                    Institution = "MICA",
+                    Title = "Advanced Certificate in AI-Powered Digital Marketing &...",
+                    ImageUrl = "/images/study-hub/checklist-study.jpg",
+                    BadgeTag = "MICA Executive Alumni Status",
+                    BadgeType = "Certification",
+                    Duration = "5 Specialisation",
+                    Button1Text = "View Program",
+                    Button1Url = "#consultancy-lead-modal",
+                    Button2Text = "Syllabus",
+                    Button2Url = "#consultancy-lead-modal"
+                }
+            },
+
+            DestinationSectionTitle = "Study in France for Indian Students",
+            DestinationExploreText = "Explore programs >",
+            DestinationExploreUrl = "#consultancy-lead-modal",
+            Countries = new List<ConsultancyCountryDto>
+            {
+                new()
+                {
+                    CountryCode = "FR",
+                    CountryName = "France",
+                    HeroImageUrl = "/images/study-hub/study-france-alexandre.jpg",
+                    SlideNumber = "03 / 9",
+                    IsActive = true,
+                    Stats = new List<ConsultancyStatDto>
+                    {
+                        new() { Value = "98%", Label = "Admit Rate" },
+                        new() { Value = "2-5 Years", Label = "Post Study Visa" },
+                        new() { Value = "₹10L+", Label = "Scholarships" },
+                        new() { Value = "2", Label = "Available Intakes" }
+                    },
+                    Programs = new List<ConsultancyCourseDto>
+                    {
+                        new()
+                        {
+                            Institution = "Paris School of Business",
+                            Title = "MSc in Luxury and Fashion Management",
+                            ImageUrl = "/images/study-hub/campus-paris-school.jpg",
+                            BadgeTag = "AACSB, EFMD & AMBA Accredited",
+                            BadgeType = "Degree",
+                            Duration = "20 Months",
+                            Button1Text = "View Program",
+                            Button1Url = "#consultancy-lead-modal"
+                        },
+                        new()
+                        {
+                            Institution = "Paris School of Business",
+                            Title = "MSc Supply Chain Management at PSB France",
+                            ImageUrl = "/images/study-hub/campus-paris-school.jpg",
+                            BadgeTag = "#43 by Subject (FT 2025)",
+                            BadgeType = "Degree",
+                            Duration = "20 Months",
+                            Button1Text = "View Program",
+                            Button1Url = "#consultancy-lead-modal"
+                        }
+                    }
+                },
+                new()
+                {
+                    CountryCode = "CA",
+                    CountryName = "Canada",
+                    HeroImageUrl = "/images/study-hub/checklist-travel.jpg",
+                    SlideNumber = "01 / 9",
+                    IsActive = false,
+                    Stats = new List<ConsultancyStatDto>
+                    {
+                        new() { Value = "95%", Label = "Admit Rate" },
+                        new() { Value = "3 Years", Label = "Post Study Work Visa" },
+                        new() { Value = "₹8L+", Label = "Scholarships" },
+                        new() { Value = "3", Label = "Available Intakes" }
+                    },
+                    Programs = new List<ConsultancyCourseDto>
+                    {
+                        new()
+                        {
+                            Institution = "University of Windsor",
+                            Title = "Master of Applied Computing (AI & Systems)",
+                            ImageUrl = "/images/study-hub/edu-campus-iiit.jpg",
+                            BadgeTag = "Co-op Work Term Included",
+                            BadgeType = "Degree",
+                            Duration = "16 Months",
+                            Button1Text = "View Program",
+                            Button1Url = "#consultancy-lead-modal"
+                        }
+                    }
+                },
+                new()
+                {
+                    CountryCode = "FI",
+                    CountryName = "Finland",
+                    HeroImageUrl = "/images/study-hub/checklist-hero.jpg",
+                    SlideNumber = "02 / 9",
+                    IsActive = false,
+                    Stats = new List<ConsultancyStatDto>
+                    {
+                        new() { Value = "94%", Label = "Admit Rate" },
+                        new() { Value = "2 Years", Label = "Post Study Visa" },
+                        new() { Value = "100%", Label = "Tuition Waiver Option" },
+                        new() { Value = "2", Label = "Available Intakes" }
+                    },
+                    Programs = new List<ConsultancyCourseDto>
+                    {
+                        new()
+                        {
+                            Institution = "Aalto University",
+                            Title = "MSc in Computer Science & Autonomous AI",
+                            ImageUrl = "/images/study-hub/campus-tech-institute.jpg",
+                            BadgeTag = "Nordic Tech Leader",
+                            BadgeType = "Degree",
+                            Duration = "24 Months",
+                            Button1Text = "View Program",
+                            Button1Url = "#consultancy-lead-modal"
+                        }
+                    }
+                },
+                new()
+                {
+                    CountryCode = "GB",
+                    CountryName = "United Kingdom",
+                    HeroImageUrl = "/images/study-hub/checklist-living.jpg",
+                    SlideNumber = "04 / 9",
+                    IsActive = false,
+                    Stats = new List<ConsultancyStatDto>
+                    {
+                        new() { Value = "97%", Label = "Admit Rate" },
+                        new() { Value = "2 Years", Label = "Graduate Route Visa" },
+                        new() { Value = "£10K+", Label = "Vice Chancellor Grants" },
+                        new() { Value = "3", Label = "Available Intakes" }
+                    },
+                    Programs = new List<ConsultancyCourseDto>
+                    {
+                        new()
+                        {
+                            Institution = "University of Bristol",
+                            Title = "MSc Data Science & Artificial Intelligence",
+                            ImageUrl = "/images/study-hub/edu-campus-iit.jpg",
+                            BadgeTag = "Russell Group University",
+                            BadgeType = "Degree",
+                            Duration = "12 Months",
+                            Button1Text = "View Program",
+                            Button1Url = "#consultancy-lead-modal"
+                        }
+                    }
+                }
+            },
+
+            FloatingCallButtonText = "Free Counselling",
+            FloatingContactPhone = "1800-DREAMFLY",
+            LeadModalTitle = "Book Free 1-on-1 Study Abroad & Career Counselling",
+            LeadModalSubtitle = "Get evaluated by certified consultants for profile scoring, university shortlists & scholarships."
+        };
+    }
+
     public static StudyAbroadHubProfileDto CreateDefaultAbroadProfile()
     {
         return new StudyAbroadHubProfileDto
@@ -1034,7 +1349,7 @@ public sealed class StudyHubDto
             {
                 new() { Title = "Educational Loans", IconType = "loan", TargetUrl = "#service-loans", IsEnabled = true },
                 new() { Title = "GR Loans", IconType = "gr_loan", TargetUrl = "#service-loans", IsEnabled = true },
-                new() { Title = "Consultancy Details", IconType = "consultancy", TargetUrl = "#service-consultancies", IsEnabled = true },
+                new() { Title = "Consultancy Details", IconType = "consultancy", TargetUrl = "/study-abroad-hub/consultancy", IsEnabled = true },
                 new() { Title = "Find Consultancies Near Me", IconType = "near_me", TargetUrl = "#service-consultancies", IsEnabled = true },
                 new() { Title = "Health Insurance", IconType = "insurance", TargetUrl = "#service-insurance", IsEnabled = true }
             },
@@ -1066,7 +1381,7 @@ public sealed class StudyHubDto
                     Title = "Consultancy Details",
                     Description = "Find trusted study abroad consultancies and get expert guidance.",
                     ButtonText = "Get Started →",
-                    ButtonUrl = "/study-abroad-hub/consultancies",
+                    ButtonUrl = "/study-abroad-hub/consultancy",
                     IconType = "consultancy",
                     ThemeColor = "purple",
                     ImageUrl = "",
@@ -1178,7 +1493,7 @@ public sealed class StudyHubDto
                             Subtitle = "Certified study abroad counsellors & university matching",
                             BadgeText = "Trusted",
                             ButtonText = "Know More",
-                            ButtonUrl = "/study-abroad-hub/consultancies",
+                            ButtonUrl = "/study-abroad-hub/consultancy",
                             IconType = "consultancy"
                         },
                         Card3 = new AbroadCarouselCardDto
@@ -1307,7 +1622,9 @@ public sealed class StudyHubDto
                         }
                     }
                 }
-            }
+            },
+            EducationLoansPage = CreateDefaultEducationLoansPage(),
+            ConsultancyDetailsPage = CreateDefaultConsultancyDetailsPage()
         };
     }
 
@@ -1941,6 +2258,7 @@ public sealed class StudyAbroadHubProfileDto
     public List<AbroadPrimaryServiceDto> Services { get; set; } = new();
     public List<AbroadTrustPillarDto> TrustPillars { get; set; } = new();
     public EducationLoansPageDto? EducationLoansPage { get; set; }
+    public ConsultancyDetailsPageDto? ConsultancyDetailsPage { get; set; }
     public string FooterSlogan { get; set; } = "Your Global Education Partner ♡";
     public string TrustTagline { get => FooterSlogan; set => FooterSlogan = value; }
 }
@@ -2225,5 +2543,129 @@ public sealed class EducationLoanApplicationLeadDto
     public string CollateralType { get; set; } = "Non-Collateral";
     public string Notes { get; set; } = string.Empty;
 }
+
+// -------------------------------------------------------------
+// DTOs for Dedicated Study Abroad Consultancy Portal (upGrad-style)
+// -------------------------------------------------------------
+
+public sealed class ConsultancyDetailsPageDto
+{
+    // Branding & Header
+    public string BrandName { get; set; } = "Dreamflykit";
+    public string LogoUrl { get; set; } = "/images/branding/dreamflykit-logo-clean.webp";
+    public List<string> NavLinks { get; set; } = new()
+    {
+        "Upskilling Courses",
+        "Study Abroad",
+        "Professional Certifications",
+        "Learn Offline",
+        "School of Tech",
+        "More"
+    };
+    public string SignUpButtonText { get; set; } = "SIGN UP";
+    public string SignUpButtonUrl { get; set; } = "#consultancy-lead-modal";
+
+    // Hero Visual & Media (Secure video or image chosen by Admin)
+    public string HeroMediaType { get; set; } = "image"; // "image" or "video"
+    public string HeroImageUrl { get; set; } = "/images/study-hub/consultancy-hero-campus.jpg";
+    public string HeroVideoUrl { get; set; } = "";
+    public string HeroHeadline { get; set; } = "For Your Every Next";
+    public string HeroHeadlineHighlight { get; set; } = "Opportunity";
+    public string SearchPlaceholder { get; set; } = "Tell us what you're looking to learn...";
+    public string SearchButtonUrl { get; set; } = "#trending-courses";
+    public List<ConsultancyCategoryPillDto> CategoryPills { get; set; } = new();
+
+    // Sub-Banner
+    public string SubBannerPrefix { get; set; } = "Master tomorrow's skills";
+    public string SubBannerHighlight { get; set; } = "with India's top upskilling platform.";
+
+    // Partner Universities & Top Firms Bar
+    public string PartnerTitle { get; set; } = "Great universities, top firms";
+    public List<ConsultancyPartnerLogoDto> Partners { get; set; } = new();
+
+    // Trending AI Courses Section (Image 3)
+    public string TrendingBadge { get; set; } = "TRENDING COURSES";
+    public string TrendingTitle { get; set; } = "Get Future-Ready with AI";
+    public string TrendingSubtitle { get; set; } = "Equip yourself with breakthrough Agentic AI and ML expertise from world-class institutions.";
+    public List<ConsultancyCourseDto> TrendingCourses { get; set; } = new();
+
+    // Popular Programs Section (Image 4)
+    public string PopularTitle { get; set; } = "Explore our most popular programs";
+    public string PopularSubtitle { get; set; } = "Top-rated global degree & certificate pathways empowering career transitions.";
+    public List<ConsultancyCourseDto> PopularPrograms { get; set; } = new();
+
+    // Country Showcase / Study Abroad (Image 5)
+    public string DestinationSectionTitle { get; set; } = "Study in France for Indian Students";
+    public string DestinationExploreText { get; set; } = "Explore programs >";
+    public string DestinationExploreUrl { get; set; } = "#consultancy-lead-modal";
+    public List<ConsultancyCountryDto> Countries { get; set; } = new();
+
+    // Floating Lead Capture & Free Counselling
+    public string FloatingCallButtonText { get; set; } = "Free Counselling";
+    public string FloatingContactPhone { get; set; } = "1800-DREAMFLY";
+    public string LeadModalTitle { get; set; } = "Book Free 1-on-1 Study Abroad & Career Counselling";
+    public string LeadModalSubtitle { get; set; } = "Speak with certified advisors for university matching, visa guidance & scholarships.";
+}
+
+public sealed class ConsultancyCategoryPillDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Icon { get; set; } = "🤖";
+    public string Title { get; set; } = string.Empty;
+    public string FilterTag { get; set; } = string.Empty;
+}
+
+public sealed class ConsultancyPartnerLogoDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Name { get; set; } = string.Empty;
+    public string LogoUrl { get; set; } = string.Empty;
+}
+
+public sealed class ConsultancyCourseDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Institution { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
+    public string LogoUrl { get; set; } = string.Empty;
+    public string BadgeTag { get; set; } = string.Empty;
+    public string BadgeType { get; set; } = "Certification";
+    public string Duration { get; set; } = "6 Months";
+    public string Button1Text { get; set; } = "View Program";
+    public string Button1Url { get; set; } = "#consultancy-lead-modal";
+    public string Button2Text { get; set; } = "Syllabus";
+    public string Button2Url { get; set; } = "#consultancy-lead-modal";
+}
+
+public sealed class ConsultancyCountryDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string CountryCode { get; set; } = "FR";
+    public string CountryName { get; set; } = "France";
+    public string HeroImageUrl { get; set; } = "/images/study-hub/study-france-alexandre.jpg";
+    public string SlideNumber { get; set; } = "03 / 9";
+    public bool IsActive { get; set; } = false;
+    public List<ConsultancyStatDto> Stats { get; set; } = new();
+    public List<ConsultancyCourseDto> Programs { get; set; } = new();
+}
+
+public sealed class ConsultancyStatDto
+{
+    public string Value { get; set; } = string.Empty;
+    public string Label { get; set; } = string.Empty;
+}
+
+public sealed class ConsultancyLeadDto
+{
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
+    public string TargetDegree { get; set; } = string.Empty;
+    public string DestinationCountry { get; set; } = string.Empty;
+    public string InterestedProgram { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
+}
+
 
 
