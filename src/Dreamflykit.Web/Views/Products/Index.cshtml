@@ -302,6 +302,13 @@
         </div>
     }
 
+    @if (Model.IsFoodHub && Model.FoodHub != null)
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_FoodCategoryHub" model="Model" />
+        </div>
+    }
+
     @if (Model.IsStudyEssentialsHub && Model.StudyHub != null)
     {
         <div class="dk-shell" style="padding-top: 4px; margin-bottom: 14px;">
@@ -334,7 +341,9 @@
                                Model.IsStudyEssentialsHub ||
                                (Model.IsHealthCareHub && Model.ViewMode == "hub") ||
                                (Model.IsMobilesHub && Model.ViewMode == "hub") ||
-                               (Model.IsAppliancesHub && Model.ViewMode == "hub");
+                               (Model.IsAppliancesHub && Model.ViewMode == "hub") ||
+                               Model.IsBeautyHub ||
+                               Model.IsFoodHub;
     }
 
     @if (!isSpecializedHub)

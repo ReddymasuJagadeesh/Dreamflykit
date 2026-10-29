@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#dcfce7"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="300" rx="20" fill="url(#grad)"/>
+  <circle cx="150" cy="130" r="75" fill="#dcfce7" stroke="#22c55e" stroke-width="3" stroke-dasharray="6,4"/>
+  <circle cx="150" cy="130" r="60" fill="#ffffff"/>
+  <text x="150" y="152" font-size="64" text-anchor="middle">🥣</text>
+  <text x="150" y="240" font-family="system-ui, sans-serif" font-weight="800" font-size="18" fill="#1e293b" text-anchor="middle">Breakfast Cereals</text>
+  <text x="150" y="265" font-family="system-ui, sans-serif" font-weight="500" font-size="12" fill="#64748b" text-anchor="middle">Corn Flakes, Oats & Muesli</text>
+</svg>

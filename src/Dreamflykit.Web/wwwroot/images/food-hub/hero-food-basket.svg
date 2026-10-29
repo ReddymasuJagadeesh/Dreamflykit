@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fffdfa"/>
+      <stop offset="100%" stop-color="#f5ede0"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="wheat" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect width="800" height="600" rx="24" fill="url(#bg)"/>
+  
+  <!-- Wooden Table Base -->
+  <ellipse cx="400" cy="510" rx="340" ry="60" fill="#e2d2be" opacity="0.6"/>
+  <ellipse cx="400" cy="495" rx="310" ry="45" fill="#f0e4d2" opacity="0.8"/>
+
+  <!-- Back Plants -->
+  <path d="M680,180 Q720,240 700,320 Q680,260 680,180" fill="#15803d" opacity="0.8"/>
+  <path d="M720,200 Q760,270 730,340 Q710,280 720,200" fill="#16a34a" opacity="0.7"/>
+
+  <!-- Aashirvaad Atta Bag (Center Left) -->
+  <g transform="translate(180, 160)" filter="url(#shadow)">
+    <rect x="0" y="0" width="170" height="260" rx="16" fill="#f59e0b"/>
+    <path d="M0,0 Q85,-20 170,0 L160,35 Q85,25 10,35 Z" fill="#d97706"/>
+    <rect x="15" y="45" width="140" height="195" rx="10" fill="#ffffff"/>
+    <rect x="25" y="60" width="120" height="30" rx="4" fill="#b45309"/>
+    <text x="85" y="80" font-family="system-ui, sans-serif" font-weight="900" font-size="14" fill="#ffffff" text-anchor="middle">AASHIRVAAD</text>
+    <text x="85" y="115" font-family="system-ui, sans-serif" font-weight="900" font-size="24" fill="#78350f" text-anchor="middle">ATTA</text>
+    <text x="85" y="135" font-family="system-ui, sans-serif" font-weight="700" font-size="11" fill="#b45309" text-anchor="middle">100% WHOLE WHEAT</text>
+    <circle cx="85" cy="180" r="32" fill="#fef3c7"/>
+    <text x="85" y="186" font-size="28" text-anchor="middle">🌾</text>
+    <rect x="35" y="222" width="100" height="14" rx="7" fill="#b45309"/>
+    <text x="85" y="232" font-family="system-ui, sans-serif" font-weight="700" font-size="9" fill="#ffffff" text-anchor="middle">5kg POUCH</text>
+  </g>
+
+  <!-- Daawat Rice Bag (Center) -->
+  <g transform="translate(370, 180)" filter="url(#shadow)">
+    <rect x="0" y="0" width="160" height="240" rx="14" fill="#15803d"/>
+    <rect x="12" y="30" width="136" height="190" rx="8" fill="#f8fafc"/>
+    <text x="80" y="60" font-family="system-ui, sans-serif" font-weight="900" font-size="16" fill="#166534" text-anchor="middle">DAAWAT</text>
+    <text x="80" y="85" font-family="system-ui, sans-serif" font-weight="900" font-size="20" fill="#0f172a" text-anchor="middle">Rozana</text>
+    <text x="80" y="105" font-family="system-ui, sans-serif" font-weight="600" font-size="11" fill="#64748b" text-anchor="middle">BASMATI RICE</text>
+    <circle cx="80" cy="155" r="30" fill="#dcfce7"/>
+    <text x="80" y="163" font-size="28" text-anchor="middle">🍚</text>
+  </g>
+
+  <!-- Sunflower Oil Bottle (Right Center) -->
+  <g transform="translate(545, 170)" filter="url(#shadow)">
+    <!-- Bottle neck -->
+    <rect x="35" y="0" width="24" height="40" rx="4" fill="#facc15"/>
+    <rect x="31" y="0" width="32" height="12" rx="3" fill="#ca8a04"/>
+    <!-- Bottle body -->
+    <path d="M10,40 L84,40 L94,220 L0,220 Z" fill="#fde047" opacity="0.9"/>
+    <rect x="18" y="70" width="58" height="120" rx="6" fill="#ffffff"/>
+    <text x="47" y="95" font-family="system-ui, sans-serif" font-weight="900" font-size="11" fill="#854d0e" text-anchor="middle">SUNLITE</text>
+    <text x="47" y="115" font-family="system-ui, sans-serif" font-weight="800" font-size="13" fill="#eab308" text-anchor="middle">OIL 1L</text>
+    <text x="47" y="155" font-size="24" text-anchor="middle">🌻</text>
+  </g>
+
+  <!-- Tea Agni Pack (Right) -->
+  <g transform="translate(635, 230)" filter="url(#shadow)">
+    <rect x="0" y="0" width="110" height="170" rx="10" fill="#dc2626"/>
+    <rect x="10" y="25" width="90" height="125" rx="6" fill="#7f1d1d"/>
+    <text x="55" y="55" font-family="system-ui, sans-serif" font-weight="900" font-size="11" fill="#fef08a" text-anchor="middle">TATA TEA</text>
+    <text x="55" y="80" font-family="system-ui, sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle">AGNI</text>
+    <text x="55" y="125" font-size="24" text-anchor="middle">☕</text>
+  </g>
+
+  <!-- Maggi Noodles Pack (Front Center) -->
+  <g transform="translate(430, 310)" filter="url(#shadow)">
+    <rect x="0" y="0" width="120" height="130" rx="10" fill="#facc15"/>
+    <rect x="15" y="20" width="90" height="30" rx="4" fill="#dc2626"/>
+    <text x="60" y="41" font-family="system-ui, sans-serif" font-weight="900" font-size="16" fill="#ffffff" text-anchor="middle">Maggi</text>
+    <text x="60" y="70" font-family="system-ui, sans-serif" font-weight="800" font-size="11" fill="#78350f" text-anchor="middle">2-MINUTE</text>
+    <text x="60" y="105" font-size="26" text-anchor="middle">🍜</text>
+  </g>
+
+  <!-- Nescafe Coffee Jar (Front Left) -->
+  <g transform="translate(345, 305)" filter="url(#shadow)">
+    <rect x="15" y="0" width="50" height="15" rx="3" fill="#451a03"/>
+    <rect x="5" y="15" width="70" height="120" rx="12" fill="#78350f"/>
+    <rect x="12" y="35" width="56" height="80" rx="6" fill="#dc2626"/>
+    <text x="40" y="60" font-family="system-ui, sans-serif" font-weight="900" font-size="9" fill="#ffffff" text-anchor="middle">NESCAFE</text>
+    <text x="40" y="78" font-family="system-ui, sans-serif" font-weight="800" font-size="11" fill="#fef08a" text-anchor="middle">Classic</text>
+    <text x="40" y="100" font-size="18" text-anchor="middle">☕</text>
+  </g>
+
+  <!-- Front Bowls: Almonds and Grains -->
+  <g transform="translate(230, 390)" filter="url(#shadow)">
+    <ellipse cx="60" cy="50" rx="55" ry="25" fill="#78350f"/>
+    <ellipse cx="60" cy="40" rx="50" ry="20" fill="#d97706"/>
+    <text x="60" y="45" font-size="20" text-anchor="middle">🥜</text>
+  </g>
+  <g transform="translate(560, 380)" filter="url(#shadow)">
+    <ellipse cx="50" cy="50" rx="45" ry="22" fill="#78350f"/>
+    <ellipse cx="50" cy="40" rx="40" ry="18" fill="#ca8a04"/>
+    <text x="50" y="45" font-size="20" text-anchor="middle">🌰</text>
+  </g>
+</svg>
