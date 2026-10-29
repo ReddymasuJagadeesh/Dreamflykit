@@ -426,6 +426,156 @@ public static class DatabaseSeeder
             }
         }
 
+
+        // Ensure Food Category Subcategories and Products (FreshBasket / Food Hub)
+        if (catMap.TryGetValue("food", out var foodCatId))
+        {
+            var existingFoodSubs = await context.Subcategories
+                .Where(s => s.CategoryId == foodCatId)
+                .ToListAsync(cancellationToken);
+
+            var requiredFoodSubs = new (string Name, string Slug, int Order)[]
+            {
+                ("Groceries", "groceries", 1),
+                ("Instant Noodles", "instant-noodles", 2),
+                ("Nuts & Dry Fruits", "nuts-dry-fruits", 3),
+                ("Spices & Seasonings", "spices-seasonings", 4),
+                ("Breakfast Cereals", "breakfast-cereals", 5),
+                ("Snacks", "snacks", 6),
+                ("Pickles", "pickles", 7)
+            };
+
+            foreach (var (subName, subSlug, subOrder) in requiredFoodSubs)
+            {
+                var existingSub = existingFoodSubs.FirstOrDefault(s => string.Equals(s.Slug, subSlug, StringComparison.OrdinalIgnoreCase));
+                if (existingSub == null)
+                {
+                    var newSub = new Subcategory(foodCatId, subName, subSlug, subOrder);
+                    context.Subcategories.Add(newSub);
+                }
+                else
+                {
+                    existingSub.Update(subName, subSlug, subOrder);
+                    existingSub.Activate();
+                }
+            }
+            await context.SaveChangesAsync(cancellationToken);
+
+            var foodSubList = await context.Subcategories
+                .Where(s => s.CategoryId == foodCatId)
+                .ToListAsync(cancellationToken);
+
+            var foodSeedProducts = new (string SubSlug, string Name, string Slug, string Short, string Desc, int Order, string Var, string Sku, decimal Mrp, decimal Price, string Media)[]
+            {
+                ("groceries", "Aashirvaad Superior MP Whole Wheat Atta 5kg", "aashirvaad-atta-5kg",
+                 "100% pure whole wheat grain atta with zero maida and high dietary fibre.",
+                 "Aashirvaad Atta is made from grains which are heavy on the palm, golden amber in colour and hard in bite. 4-step advantage process of sourcing, cleaning, and mechanised traditional chakki grinding.",
+                 1, "5kg Pouch", "FOOD-ATTA-5KG", 310m, 279m, "/images/food-hub/cat-groceries.webp"),
+
+                ("groceries", "Fortune Sunlite Refined Sunflower Oil 1L", "fortune-sunlite-sunflower-oil-1l",
+                 "Light, healthy and easy to digest refined sunflower cooking oil.",
+                 "Fortune Sunlite is enriched with Vitamin A and Vitamin D. Low absorb technology helps food absorb less oil, keeping your daily meals light and delicious.",
+                 2, "1L Pouch", "FOOD-OIL-1L", 165m, 145m, "/images/food-hub/promo-groceries.webp"),
+
+                ("groceries", "Daawat Rozana Super Basmati Rice 5kg", "daawat-rozana-basmati-rice-5kg",
+                 "Aromatic, fluffy long grain Basmati rice ideal for everyday cooking and biryani.",
+                 "Daawat Rozana is aged to perfection to bring out the exquisite aroma and slender grain size that stays non-sticky after cooking.",
+                 3, "5kg Bag", "FOOD-RICE-5KG", 450m, 389m, "/images/food-hub/hero-food-basket.webp"),
+
+                ("groceries", "Tata Tea Agni Strong Leaf Tea 1kg", "tata-tea-agni-1kg",
+                 "Special blend of quality tea with 10% extra long leaves for a rich, kadak chai aroma.",
+                 "Tata Tea Agni provides the energy to challenge daily tasks with strong taste and rich red liquor.",
+                 4, "1kg Pack", "FOOD-TEA-1KG", 270m, 245m, "/images/food-hub/cat-groceries.webp"),
+
+                ("groceries", "Nescafe Classic 100% Pure Instant Coffee 100g Jar", "nescafe-classic-instant-coffee-100g",
+                 "Rich signature aroma and bold coffee taste crafted from fine Robusta beans.",
+                 "Start every morning with fresh inspiration. Premium instant coffee powder in an airtight glass jar.",
+                 5, "100g Glass Jar", "FOOD-COF-100G", 340m, 295m, "/images/food-hub/hero-food-basket.webp"),
+
+                ("instant-noodles", "Maggi 2-Minute Masala Instant Noodles 280g", "maggi-2-minute-masala-noodles-280g",
+                 "Classic Indian masala seasoning with 10 authentic roasted spices.",
+                 "Maggi 2-Minute Masala noodles are fortified with iron. Quick, comforting snack for study nights and quick breaks.",
+                 1, "Pack of 4 (280g)", "FOOD-NDL-MAGGI-4PK", 65m, 55m, "/images/food-hub/cat-noodles.webp"),
+
+                ("instant-noodles", "Nissin Top Ramen Curry Instant Noodles 280g", "nissin-top-ramen-curry-noodles-280g",
+                 "Non-sticky flat noodle texture with spicy curry soup base.",
+                 "Top Ramen is loved for smooth noodles with a rich masala broth that cooks in just 3 minutes.",
+                 2, "Pack of 4 (280g)", "FOOD-NDL-RAMEN-4PK", 60m, 52m, "/images/food-hub/cat-noodles.webp"),
+
+                ("nuts-dry-fruits", "Premium California Whole Natural Almonds 200g", "california-whole-natural-almonds-200g",
+                 "Crisp, crunchy 100% natural raw almonds vacuum sealed for freshness.",
+                 "High in protein, dietary fibre and Vitamin E. Perfect healthy snack for study memory and daily vitality.",
+                 1, "200g Fresh Pouch", "FOOD-NUT-ALM-200G", 230m, 199m, "/images/food-hub/cat-nuts.webp"),
+
+                ("nuts-dry-fruits", "Crispy Whole Cashew Nuts (Kaju) 250g", "crispy-whole-cashew-nuts-250g",
+                 "Grade W320 premium unbroken white cashews with creamy crunch.",
+                 "Hand-sorted cashew nuts, zero preservatives, natural energy booster for active student lifestyle.",
+                 2, "250g Pouch", "FOOD-NUT-KAJU-250G", 330m, 285m, "/images/food-hub/cat-nuts.webp"),
+
+                ("spices-seasonings", "Everest Pure Turmeric (Haldi) Powder 200g", "everest-pure-turmeric-powder-200g",
+                 "High natural curcumin percentage for vibrant color and medicinal healing power.",
+                 "Hygienically ground from selected dry turmeric fingers under strict cold-milling technology.",
+                 1, "200g Box", "FOOD-SPC-HLD-200G", 80m, 70m, "/images/food-hub/cat-spices.webp"),
+
+                ("spices-seasonings", "Catch Super Garam Masala Powder 100g", "catch-super-garam-masala-100g",
+                 "Low temperature ground exotic spices including cardamom, clove, cinnamon and mace.",
+                 "Adds an irresistible royal aroma and rich gravy depth to curries, dals and gravies.",
+                 2, "100g Carton", "FOOD-SPC-GM-100G", 80m, 68m, "/images/food-hub/cat-spices.webp"),
+
+                ("breakfast-cereals", "Kellogg's Real Almond & Honey Corn Flakes 475g", "kelloggs-real-almond-honey-corn-flakes-475g",
+                 "Crunchy golden corn flakes with real honey coating and sliced California almonds.",
+                 "Fortified with B group vitamins, iron and calcium. Energising breakfast ready in 2 minutes with warm or chilled milk.",
+                 1, "475g Carton", "FOOD-CER-KCF-475G", 210m, 185m, "/images/food-hub/cat-cereals.webp"),
+
+                ("breakfast-cereals", "Quaker Rolled Wholegrain Oats 1kg", "quaker-rolled-wholegrain-oats-1kg",
+                 "100% natural wholegrain oats packed with soluble beta-glucan fibre.",
+                 "Supports heart health, helps control cholesterol and provides long-lasting sustained energy for long college days.",
+                 2, "1kg Pouch", "FOOD-CER-OAT-1KG", 199m, 175m, "/images/food-hub/cat-cereals.webp"),
+
+                ("snacks", "Crispy Golden Salted Potato Chips 150g", "crispy-golden-salted-potato-chips-150g",
+                 "Thinly sliced farm potatoes fried to golden crunch and lightly seasoned with rock salt.",
+                 "The timeless classic snack for study breaks, movie nights, and campus gatherings.",
+                 1, "150g Party Pack", "FOOD-SNK-CHP-150G", 50m, 45m, "/images/food-hub/promo-snacks.webp"),
+
+                ("snacks", "Haldiram's Nagpur Aloo Bhujia Namkeen 400g", "haldirams-nagpur-aloo-bhujia-400g",
+                 "Tangy spiced potato and gram flour crisp noodles with mint and red chili.",
+                 "India's favourite crunchy tea-time namkeen, hygienically prepared and sealed in nitrogen-flushed pouch.",
+                 2, "400g Pouch", "FOOD-SNK-BHU-400G", 130m, 115m, "/images/food-hub/cat-snacks.webp"),
+
+                ("pickles", "Mother's Recipe Traditional Mixed Pickle 500g Jar", "mothers-recipe-traditional-mixed-pickle-500g",
+                 "Hand-cut mango, lime, carrot, green chili and ginger marinated in mustard oil and whole spices.",
+                 "Traditional grandmother recipe that adds an explosion of tangy zest to every meal and paratha.",
+                 1, "500g Glass Jar", "FOOD-PCK-MIX-500G", 145m, 125m, "/images/food-hub/promo-pickles.webp"),
+
+                ("pickles", "Priya Spicy Mango Pickle with Garlic 300g", "priya-spicy-mango-pickle-garlic-300g",
+                 "Authentic South Indian avakaya style raw mango pieces with aromatic peeled garlic pods.",
+                 "Made with unrefined sesame oil, red Guntur chilies and fenugreek seeds.",
+                 2, "300g Jar", "FOOD-PCK-MGO-300G", 110m, 95m, "/images/food-hub/cat-pickles.webp")
+            };
+
+            foreach (var fp in foodSeedProducts)
+            {
+                var matchingSub = foodSubList.FirstOrDefault(s => string.Equals(s.Slug, fp.SubSlug, StringComparison.OrdinalIgnoreCase));
+                var exists = await context.Products.AnyAsync(p => p.Slug == fp.Slug, cancellationToken);
+                if (!exists)
+                {
+                    var product = new Product(foodCatId, fp.Name, fp.Slug, fp.Short, fp.Desc, fp.Order);
+                    if (matchingSub != null)
+                    {
+                        product.SetSubcategory(matchingSub.Id);
+                    }
+                    context.Products.Add(product);
+                    await context.SaveChangesAsync(cancellationToken);
+
+                    var variant = new ProductVariant(product.Id, fp.Var, fp.Sku, fp.Mrp, fp.Price, true);
+                    var media = new ProductMedia(product.Id, fp.Media, fp.Name, 0, true);
+                    context.ProductVariants.Add(variant);
+                    context.ProductMedia.Add(media);
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            }
+        }
+
         // B. Reassign products from obsolete categories & remove obsolete categories
         var obsoleteCategories = currentCategories.Where(c => !finalSlugs.Contains(c.Slug)).ToList();
         if (obsoleteCategories.Count > 0)

@@ -72,6 +72,7 @@ public sealed class ProductListViewModel
 
     public Dreamflykit.Application.AppliancesHub.Models.AppliancesHubDto? AppliancesHub { get; init; }
     public Dreamflykit.Application.BeautyHub.Models.BeautyHubDto? BeautyHub { get; init; }
+    public Dreamflykit.Application.FoodHub.Models.FoodHubDto? FoodHub { get; init; }
 
     public string? ViewMode { get; init; }
 
@@ -160,6 +161,12 @@ public sealed class ProductListViewModel
         string.Equals(CategorySlug, "beauty-and-personal-care", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "beauty-personal-care", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "bpc", StringComparison.OrdinalIgnoreCase);
+
+    public bool IsFoodHub =>
+        string.Equals(CategorySlug, "food", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "foods", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "groceries", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "grocery", StringComparison.OrdinalIgnoreCase);
 
     public bool HasActiveFilters =>
         !string.IsNullOrWhiteSpace(SearchTerm) ||

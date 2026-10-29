@@ -1,0 +1,1263 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.FoodHub ?? Dreamflykit.Application.FoodHub.Models.FoodHubDto.CreateDefault();
+    var theme = hub.ThemeSettings ?? new();
+    var notice = hub.TopNoticeBar ?? new();
+    var hero = hub.HeroBanner ?? new();
+    var shopCats = hub.ShopByCategories ?? new();
+    var promo = hub.PromoCards ?? new();
+    var bestSellers = hub.BestSellers ?? new();
+    var bottomTrust = hub.BottomTrustBar ?? new();
+    var stayUpdated = hub.StayUpdated ?? new();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+    var activeSubItem = Model.CurrentSubcatItem ?? "";
+    var currentSubSlug = Model.CurrentSubcategorySlug ?? "";
+
+    // Real catalog products or fallback to curated bestsellers
+    var products = Model.Products ?? new List<Dreamflykit.Application.Catalog.Models.ProductListItem>();
+}
+
+<div class="dk-food-hub-root" id="freshBasketRoot">
+
+    @if (canManage)
+    {
+        <!-- ADMIN QUICK BAR -->
+        <div class="dk-food-admin-bar">
+            <div class="dk-food-admin-pill">
+                <span class="dk-admin-badge-dot"></span>
+                <span>ADMIN CONTROLS</span>
+            </div>
+            <span class="dk-food-admin-text">
+                Managing <strong>Food Category Hub</strong> (FreshBasket Template) • Super Admin can replace hero banner, 7 categories, promo cards &amp; prices.
+            </span>
+            <a href="/Admin/FoodHub" class="dk-food-admin-link">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Manage Food Hub
+            </a>
+        </div>
+    }
+
+    <!-- ========================================================
+         1. TOP NOTICE / TRUST BAR (FULL WIDTH)
+    ========================================================= -->
+    @if (notice.IsEnabled)
+    {
+        <div class="dk-food-top-notice">
+            <div class="dk-food-notice-container">
+                <div class="dk-food-notice-item">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    <span>@notice.Item1Text</span>
+                </div>
+                <div class="dk-food-notice-item">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span>@notice.Item2Text</span>
+                </div>
+                <div class="dk-food-notice-item">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <span>@notice.Item3Text</span>
+                </div>
+                <div class="dk-food-notice-item">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+                    <span>@notice.Item4Text</span>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ========================================================
+         2. HERO BANNER (FULL WIDTH WITH INNER CONTAINER)
+    ========================================================= -->
+    @if (hero.IsEnabled)
+    {
+        <section class="dk-food-hero-section">
+            <div class="dk-food-hero-container">
+                <div class="dk-food-hero-content">
+                    <h1 class="dk-food-hero-title">@hero.Heading</h1>
+                    <p class="dk-food-hero-subtitle">@hero.Subtitle</p>
+
+                    <div class="dk-food-hero-cta">
+                        <a href="@hero.ButtonUrl" class="dk-food-btn-primary">
+                            @hero.ButtonText
+                        </a>
+                    </div>
+
+                    <!-- 4 Trust Highlights Below Button -->
+                    <div class="dk-food-hero-badges-grid">
+                        <div class="dk-food-hbadge">
+                            <div class="dk-food-hbadge-icon">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                            <span class="dk-food-hbadge-text">100% Quality Products</span>
+                        </div>
+                        <div class="dk-food-hbadge">
+                            <div class="dk-food-hbadge-icon">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                            </div>
+                            <span class="dk-food-hbadge-text">Wide Variety</span>
+                        </div>
+                        <div class="dk-food-hbadge">
+                            <div class="dk-food-hbadge-icon">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                            </div>
+                            <span class="dk-food-hbadge-text">Best Prices Everyday</span>
+                        </div>
+                        <div class="dk-food-hbadge">
+                            <div class="dk-food-hbadge-icon">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                            </div>
+                            <span class="dk-food-hbadge-text">Delivered With Care</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dk-food-hero-visual">
+                    @{
+                        var heroImg = !string.IsNullOrWhiteSpace(hero.ImageUrl) ? hero.ImageUrl : "/images/food-hub/hero-food-basket.webp";
+                        var isHeroPlaceholder = hero.IsUploadingSoon || heroImg.Contains("test-pic-placeholder");
+                    }
+
+                    @if (isHeroPlaceholder)
+                    {
+                        <div class="dk-food-test-pic-card">
+                            <div class="dk-test-cam">📷</div>
+                            <div class="dk-test-pill">TEST PIC</div>
+                            <div class="dk-test-title">Super Admin Replaceable</div>
+                            <div class="dk-test-sub">Admin dashboard can upload custom banner anytime</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="dk-food-hero-img-wrap">
+                            <img src="@heroImg" alt="Fresh Groceries &amp; Staples" loading="eager" onerror="this.onerror=null;this.src='/images/food-hub/hero-food-basket.svg';" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         3. SHOP BY CATEGORIES (7 CATEGORIES)
+    ========================================================= -->
+    <section class="dk-food-section" id="categories-section">
+        <div class="dk-food-container">
+            <div class="dk-food-section-head-center">
+                <h2 class="dk-food-section-title">
+                    <span class="dk-title-arrow">→</span> @shopCats.Heading <span class="dk-title-arrow">←</span>
+                </h2>
+            </div>
+
+            <div class="dk-food-categories-grid">
+                @foreach (var cat in shopCats.Cards)
+                {
+                    var isSelected = string.Equals(activeSubItem, cat.Title, StringComparison.OrdinalIgnoreCase) ||
+                                     string.Equals(currentSubSlug, cat.Slug, StringComparison.OrdinalIgnoreCase);
+
+                    <div class="dk-food-cat-card @(isSelected ? "is-selected" : "")"
+                         data-slug="@cat.Slug"
+                         data-title="@cat.Title"
+                         onclick="selectFoodCategory('@cat.Slug', '@cat.Title')">
+                        <div class="dk-fcc-img-wrap">
+                            <img src="@cat.ImageUrl" alt="@cat.Title" loading="lazy" onerror="this.onerror=null;this.src='/images/food-hub/cat-groceries.svg';" />
+                        </div>
+                        <div class="dk-fcc-icon-pill">
+                            @if (cat.Icon == "noodles") { <span>🍜</span> }
+                            else if (cat.Icon == "nuts") { <span>🥜</span> }
+                            else if (cat.Icon == "spices") { <span>🌶️</span> }
+                            else if (cat.Icon == "cereal") { <span>🥣</span> }
+                            else if (cat.Icon == "snacks") { <span>🥔</span> }
+                            else if (cat.Icon == "pickles") { <span>🫙</span> }
+                            else { <span>🌾</span> }
+                        </div>
+                        <h3 class="dk-fcc-title">@cat.Title</h3>
+
+                        @if (cat.Items != null && cat.Items.Count > 0)
+                        {
+                            <ul class="dk-fcc-list">
+                                @foreach (var item in cat.Items.Take(4))
+                                {
+                                    <li>@item</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         4. 3 PROMO FEATURE CARDS (TRIO BANNERS)
+    ========================================================= -->
+    @if (promo.IsEnabled && promo.Cards.Count > 0)
+    {
+        <section class="dk-food-section" style="padding-top: 10px;">
+            <div class="dk-food-container">
+                <div class="dk-food-promos-grid">
+                    @foreach (var p in promo.Cards)
+                    {
+                        <div class="dk-food-promo-card" style="background-color: @p.BgColor;">
+                            <div class="dk-fpc-content">
+                                <h3 class="dk-fpc-heading">@p.Heading</h3>
+                                <p class="dk-fpc-sub">@p.Subtitle</p>
+                                <a href="@p.ButtonUrl" class="dk-food-btn-promo" onclick="selectFoodCategoryByUrl('@p.ButtonUrl', event)">
+                                    @p.ButtonText
+                                </a>
+                            </div>
+                            <div class="dk-fpc-visual">
+                                <img src="@p.ImageUrl" alt="@p.Heading" loading="lazy" onerror="this.onerror=null;this.src='/images/food-hub/promo-groceries.svg';" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         5. BEST SELLERS PRODUCT SHOWCASE
+    ========================================================= -->
+    <section class="dk-food-section" id="best-sellers-section">
+        <div class="dk-food-container">
+            <div class="dk-food-section-head-split">
+                <div>
+                    <h2 class="dk-food-section-title" id="foodShowcaseHeading">@bestSellers.Heading</h2>
+                    <span class="dk-food-catalog-count" id="foodProductsCount">
+                        @(products.Count > 0 ? $"{products.Count} Fresh Products" : "Curated Best Sellers")
+                    </span>
+                </div>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    @if (!string.IsNullOrWhiteSpace(activeSubItem))
+                    {
+                        <button type="button" class="dk-food-clear-pill" onclick="clearFoodCategoryFilter()">
+                            Clear Filter (Showing @activeSubItem) ✕
+                        </button>
+                    }
+                    <a href="/category/food" class="dk-food-view-all-link">@bestSellers.ViewAllText →</a>
+                </div>
+            </div>
+
+            <!-- Product Cards Showcase Grid -->
+            <div class="dk-food-products-grid" id="foodProductsGrid">
+                @if (products.Count > 0)
+                {
+                    @foreach (var prod in products)
+                    {
+                        var discPct = prod.MRP > prod.SellingPrice && prod.MRP > 0
+                            ? (int)Math.Round((prod.MRP - prod.SellingPrice) / prod.MRP * 100m)
+                            : 0;
+
+                        <div class="dk-food-product-card" data-sub="@(prod.SubcategoryId?.ToString() ?? "")" data-name="@prod.Name.ToLowerInvariant()">
+                            <a href="/products/@prod.Slug" class="dk-fprod-img-wrap">
+                                <img src="@(prod.PrimaryImageUrl ?? prod.ImageUrl)" alt="@prod.Name" loading="lazy" onerror="this.onerror=null;this.src='/images/food-hub/cat-groceries.svg';" />
+                                @if (discPct > 0)
+                                {
+                                    <span class="dk-fprod-badge">@discPct% OFF</span>
+                                }
+                            </a>
+                            <div class="dk-fprod-body">
+                                <div class="dk-fprod-meta">
+                                    <span class="dk-fprod-rating">4.6 ★</span>
+                                    <span class="dk-fprod-reviews">(1.5K+)</span>
+                                </div>
+                                <h4 class="dk-fprod-title">
+                                    <a href="/products/@prod.Slug">@prod.Name</a>
+                                </h4>
+                                <p class="dk-fprod-short">@prod.Description</p>
+                                <div class="dk-fprod-pricing">
+                                    <span class="dk-fprod-price">₹@prod.SellingPrice.ToString("N0")</span>
+                                    @if (prod.MRP > prod.SellingPrice)
+                                    {
+                                        <span class="dk-fprod-mrp">₹@prod.MRP.ToString("N0")</span>
+                                    }
+                                </div>
+                                <button type="button" class="dk-food-btn-cart" onclick="addFoodToCart('@prod.ProductId', this)">
+                                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    @foreach (var item in bestSellers.Items)
+                    {
+                        <div class="dk-food-product-card" data-sub="@item.SubcategorySlug" data-name="@item.Title.ToLowerInvariant()">
+                            <div class="dk-fprod-img-wrap">
+                                <img src="@item.ImageUrl" alt="@item.Title" loading="lazy" onerror="this.onerror=null;this.src='/images/food-hub/cat-groceries.svg';" />
+                                @if (item.DiscountPercentage > 0)
+                                {
+                                    <span class="dk-fprod-badge">@item.DiscountPercentage% OFF</span>
+                                }
+                            </div>
+                            <div class="dk-fprod-body">
+                                <div class="dk-fprod-meta">
+                                    <span class="dk-fprod-rating">@item.Rating ★</span>
+                                    <span class="dk-fprod-reviews">(@item.ReviewCount)</span>
+                                </div>
+                                <h4 class="dk-fprod-title">@item.Title</h4>
+                                <p class="dk-fprod-short">@item.Subtitle</p>
+                                <div class="dk-fprod-pricing">
+                                    <span class="dk-fprod-price">₹@item.Price.ToString("N0")</span>
+                                    @if (item.OriginalPrice > item.Price)
+                                    {
+                                        <span class="dk-fprod-mrp">₹@item.OriginalPrice.ToString("N0")</span>
+                                    }
+                                </div>
+                                <button type="button" class="dk-food-btn-cart" onclick="alert('Item added to cart! Proceed to checkout.')">
+                                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         6. BOTTOM TRUST HIGHLIGHTS BAR (4 COLUMNS)
+    ========================================================= -->
+    <section class="dk-food-bottom-trust">
+        <div class="dk-food-container">
+            <div class="dk-food-btrust-grid">
+                <div class="dk-food-bt-item">
+                    <div class="dk-food-bt-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#234d20" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    </div>
+                    <div>
+                        <h4 class="dk-food-bt-title">@bottomTrust.Item1Title</h4>
+                        <p class="dk-food-bt-sub">@bottomTrust.Item1Subtitle</p>
+                    </div>
+                </div>
+
+                <div class="dk-food-bt-item">
+                    <div class="dk-food-bt-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#234d20" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="dk-food-bt-title">@bottomTrust.Item2Title</h4>
+                        <p class="dk-food-bt-sub">@bottomTrust.Item2Subtitle</p>
+                    </div>
+                </div>
+
+                <div class="dk-food-bt-item">
+                    <div class="dk-food-bt-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#234d20" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="dk-food-bt-title">@bottomTrust.Item3Title</h4>
+                        <p class="dk-food-bt-sub">@bottomTrust.Item3Subtitle</p>
+                    </div>
+                </div>
+
+                <div class="dk-food-bt-item">
+                    <div class="dk-food-bt-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#234d20" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="dk-food-bt-title">@bottomTrust.Item4Title</h4>
+                        <p class="dk-food-bt-sub">@bottomTrust.Item4Subtitle</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         7. STAY UPDATED / NEWSLETTER SUBSCRIPTION CARD
+    ========================================================= -->
+    <section class="dk-food-newsletter-section">
+        <div class="dk-food-container">
+            <div class="dk-food-newsletter-card">
+                <div class="dk-fnl-content">
+                    <h3 class="dk-fnl-title">@stayUpdated.Heading</h3>
+                    <p class="dk-fnl-sub">@stayUpdated.Subtitle</p>
+                    <form class="dk-fnl-form" onsubmit="event.preventDefault(); handleFoodNewsletter(this);">
+                        <input type="email" placeholder="Enter your email" required class="dk-fnl-input" />
+                        <button type="submit" class="dk-fnl-btn">@stayUpdated.ButtonText</button>
+                    </form>
+                    <div class="dk-fnl-msg" style="display: none; margin-top: 10px; font-weight: 700; color: #166534;">
+                        ✓ Thank you! You will receive our freshest deals &amp; updates.
+                    </div>
+                </div>
+                <div class="dk-fnl-visual">
+                    <img src="@stayUpdated.ImageUrl" alt="Fresh Produce Basket" loading="lazy" onerror="this.onerror=null;this.src='/images/food-hub/newsletter-basket.svg';" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- STYLES FOR FOOD & GROCERY HUB -->
+<style>
+    .dk-food-hub-root {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #1f2937;
+        background: #ffffff;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Admin Bar */
+    .dk-food-admin-bar {
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-size: 13px;
+        border-radius: 8px;
+        margin: 0 auto 12px auto;
+        max-width: 1320px;
+    }
+    .dk-food-admin-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #234d20;
+        color: #86efac;
+        font-weight: 800;
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        letter-spacing: 0.5px;
+    }
+    .dk-admin-badge-dot {
+        width: 6px;
+        height: 6px;
+        background: #4ade80;
+        border-radius: 50%;
+    }
+    .dk-food-admin-text {
+        flex: 1;
+        min-width: 250px;
+        color: #cbd5e1;
+    }
+    .dk-food-admin-link {
+        background: #22c55e;
+        color: #052e16;
+        text-decoration: none;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-weight: 800;
+        font-size: 12.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* 1. Top Notice Bar */
+    .dk-food-top-notice {
+        background: #1e3923;
+        color: #ffffff;
+        padding: 9px 0;
+        font-size: 12.5px;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        width: 100%;
+    }
+    .dk-food-notice-container {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .dk-food-notice-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: #e2e8f0;
+    }
+    .dk-food-notice-item svg {
+        color: #4ade80;
+    }
+
+    /* 2. Hero Section */
+    .dk-food-hero-section {
+        background: linear-gradient(135deg, #fdfbf7 0%, #f6efe4 100%);
+        border-bottom: 1px solid #e7ded0;
+        padding: 48px 0 54px 0;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    .dk-food-hero-container {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: center;
+    }
+    .dk-food-hero-content {
+        max-width: 580px;
+    }
+    .dk-food-hero-title {
+        font-size: 52px;
+        font-weight: 900;
+        color: #111827;
+        line-height: 1.12;
+        margin: 0 0 16px 0;
+        letter-spacing: -1px;
+    }
+    .dk-food-hero-subtitle {
+        font-size: 18px;
+        color: #4b5563;
+        line-height: 1.5;
+        margin: 0 0 26px 0;
+    }
+    .dk-food-hero-cta {
+        margin-bottom: 38px;
+    }
+    .dk-food-btn-primary {
+        background: #1f3d24;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 14px 34px;
+        border-radius: 9999px;
+        font-size: 15px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 6px 18px rgba(31, 61, 36, 0.28);
+        transition: all 0.2s ease;
+    }
+    .dk-food-btn-primary:hover {
+        background: #142918;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(31, 61, 36, 0.35);
+        color: #ffffff;
+    }
+
+    .dk-food-hero-badges-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+        padding-top: 24px;
+    }
+    .dk-food-hbadge {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    .dk-food-hbadge-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #eaf3eb;
+        color: #1f3d24;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dk-food-hbadge-text {
+        font-size: 12px;
+        font-weight: 700;
+        color: #374151;
+        line-height: 1.3;
+    }
+
+    /* Hero Visual */
+    .dk-food-hero-visual {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .dk-food-hero-img-wrap {
+        width: 100%;
+        max-width: 580px;
+        border-radius: 20px;
+        overflow: hidden;
+        filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.12));
+    }
+    .dk-food-hero-img-wrap img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+    }
+
+    /* Placeholder Card fallback */
+    .dk-food-test-pic-card {
+        background: linear-gradient(135deg, #1e293b, #0f172a);
+        color: #ffffff;
+        padding: 50px 30px;
+        border-radius: 20px;
+        text-align: center;
+        border: 2px dashed #475569;
+        width: 100%;
+        max-width: 480px;
+    }
+    .dk-test-cam {
+        font-size: 40px;
+        margin-bottom: 10px;
+    }
+    .dk-test-pill {
+        display: inline-block;
+        background: #22c55e;
+        color: #052e16;
+        font-weight: 900;
+        font-size: 12px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        margin-bottom: 12px;
+    }
+    .dk-test-title {
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+    .dk-test-sub {
+        font-size: 13px;
+        color: #94a3b8;
+    }
+
+    /* General Layout */
+    .dk-food-container {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    .dk-food-section {
+        padding: 38px 0;
+    }
+    .dk-food-section-head-center {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .dk-food-section-title {
+        font-size: 26px;
+        font-weight: 900;
+        color: #1f3d24;
+        margin: 0;
+        letter-spacing: -0.5px;
+    }
+    .dk-title-arrow {
+        color: #16a34a;
+        font-weight: 900;
+    }
+
+    /* 3. Categories Grid */
+    .dk-food-categories-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 16px;
+    }
+    .dk-food-cat-card {
+        background: #fbf9f5;
+        border: 1px solid #ebdccb;
+        border-radius: 16px;
+        padding: 16px 12px 18px 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+    .dk-food-cat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(31, 61, 36, 0.12);
+        border-color: #234d20;
+        background: #ffffff;
+    }
+    .dk-food-cat-card.is-selected {
+        border-color: #1f3d24;
+        background: #ffffff;
+        box-shadow: 0 8px 20px rgba(31, 61, 36, 0.18);
+        outline: 2px solid #234d20;
+    }
+    .dk-fcc-img-wrap {
+        width: 100%;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .dk-fcc-img-wrap img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+    .dk-food-cat-card:hover .dk-fcc-img-wrap img {
+        transform: scale(1.06);
+    }
+    .dk-fcc-icon-pill {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #e2ecd9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        margin-bottom: 8px;
+    }
+    .dk-fcc-title {
+        font-size: 14.5px;
+        font-weight: 800;
+        color: #111827;
+        margin: 0 0 6px 0;
+        line-height: 1.25;
+    }
+    .dk-fcc-list {
+        list-style: none;
+        padding: 0;
+        margin: 6px 0 0 0;
+        text-align: left;
+        width: 100%;
+        border-top: 1px dashed #d1d5db;
+        padding-top: 6px;
+    }
+    .dk-fcc-list li {
+        font-size: 11px;
+        color: #64748b;
+        line-height: 1.45;
+        position: relative;
+        padding-left: 10px;
+    }
+    .dk-fcc-list li::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: #16a34a;
+        font-weight: bold;
+    }
+
+    /* 4. Trio Promo Grid */
+    .dk-food-promos-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    .dk-food-promo-card {
+        border-radius: 18px;
+        padding: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        transition: all 0.25s ease;
+    }
+    .dk-food-promo-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    }
+    .dk-fpc-content {
+        flex: 1;
+    }
+    .dk-fpc-heading {
+        font-size: 20px;
+        font-weight: 900;
+        color: #111827;
+        margin: 0 0 8px 0;
+        line-height: 1.25;
+    }
+    .dk-fpc-sub {
+        font-size: 13px;
+        color: #64748b;
+        margin: 0 0 16px 0;
+        line-height: 1.4;
+    }
+    .dk-food-btn-promo {
+        background: #1f3d24;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 9px 18px;
+        border-radius: 999px;
+        font-size: 12.5px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.2s ease;
+    }
+    .dk-food-btn-promo:hover {
+        background: #142918;
+        color: #ffffff;
+    }
+    .dk-fpc-visual {
+        width: 140px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dk-fpc-visual img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* 5. Best Sellers Section */
+    .dk-food-section-head-split {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 24px;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 12px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .dk-food-catalog-count {
+        font-size: 13px;
+        font-weight: 600;
+        color: #64748b;
+        margin-left: 8px;
+    }
+    .dk-food-clear-pill {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+    .dk-food-view-all-link {
+        color: #1f3d24;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 14px;
+    }
+    .dk-food-view-all-link:hover {
+        text-decoration: underline;
+    }
+
+    .dk-food-products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+    }
+    .dk-food-product-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+    .dk-food-product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        border-color: #cbd5e1;
+    }
+    .dk-fprod-img-wrap {
+        width: 100%;
+        height: 170px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        text-decoration: none;
+        margin-bottom: 12px;
+        overflow: hidden;
+    }
+    .dk-fprod-img-wrap img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: transform 0.25s ease;
+    }
+    .dk-food-product-card:hover .dk-fprod-img-wrap img {
+        transform: scale(1.05);
+    }
+    .dk-fprod-badge {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #16a34a;
+        color: #ffffff;
+        font-size: 10.5px;
+        font-weight: 800;
+        padding: 3px 8px;
+        border-radius: 4px;
+    }
+    .dk-fprod-meta {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+    .dk-fprod-rating {
+        background: #15803d;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    .dk-fprod-reviews {
+        font-size: 11px;
+        color: #64748b;
+    }
+    .dk-fprod-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 4px 0;
+        line-height: 1.35;
+        height: 38px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    .dk-fprod-title a {
+        color: inherit;
+        text-decoration: none;
+    }
+    .dk-fprod-short {
+        font-size: 11.5px;
+        color: #64748b;
+        margin: 0 0 10px 0;
+        height: 32px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    .dk-fprod-pricing {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .dk-fprod-price {
+        font-size: 17px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+    .dk-fprod-mrp {
+        font-size: 13px;
+        color: #94a3b8;
+        text-decoration: line-through;
+    }
+    .dk-food-btn-cart {
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #86efac;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 12.5px;
+        font-weight: 800;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+        transition: all 0.2s ease;
+    }
+    .dk-food-btn-cart:hover {
+        background: #166534;
+        color: #ffffff;
+        border-color: #166534;
+    }
+
+    /* 6. Bottom Trust Highlights Bar */
+    .dk-food-bottom-trust {
+        background: #fbf9f5;
+        border-top: 1px solid #ebdccb;
+        border-bottom: 1px solid #ebdccb;
+        padding: 34px 0;
+        margin-top: 20px;
+        width: 100%;
+    }
+    .dk-food-btrust-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+    }
+    .dk-food-bt-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    .dk-food-bt-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #eaf3eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .dk-food-bt-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: #111827;
+        margin: 0 0 3px 0;
+    }
+    .dk-food-bt-sub {
+        font-size: 12.5px;
+        color: #64748b;
+        margin: 0;
+    }
+
+    /* 7. Newsletter Subscription */
+    .dk-food-newsletter-section {
+        padding: 40px 0 50px 0;
+    }
+    .dk-food-newsletter-card {
+        background: linear-gradient(135deg, #eaf3eb 0%, #f4ede2 100%);
+        border: 1px solid #d2e4d5;
+        border-radius: 20px;
+        padding: 36px 48px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 30px;
+    }
+    .dk-fnl-content {
+        max-width: 520px;
+    }
+    .dk-fnl-title {
+        font-size: 28px;
+        font-weight: 900;
+        color: #1f3d24;
+        margin: 0 0 8px 0;
+    }
+    .dk-fnl-sub {
+        font-size: 14.5px;
+        color: #4b5563;
+        margin: 0 0 20px 0;
+    }
+    .dk-fnl-form {
+        display: flex;
+        gap: 10px;
+    }
+    .dk-fnl-input {
+        flex: 1;
+        padding: 12px 18px;
+        border-radius: 8px;
+        border: 1px solid #94a3b8;
+        font-size: 14px;
+        outline: none;
+    }
+    .dk-fnl-input:focus {
+        border-color: #1f3d24;
+        box-shadow: 0 0 0 3px rgba(31, 61, 36, 0.15);
+    }
+    .dk-fnl-btn {
+        background: #1f3d24;
+        color: #ffffff;
+        border: none;
+        padding: 12px 26px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+    .dk-fnl-btn:hover {
+        background: #142918;
+    }
+    .dk-fnl-visual {
+        width: 180px;
+        height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dk-fnl-visual img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* Responsive */
+    @@media (max-width: 1024px) {
+        .dk-food-hero-container {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+        .dk-food-hero-content {
+            margin: 0 auto;
+        }
+        .dk-food-hero-badges-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .dk-food-categories-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        .dk-food-promos-grid {
+            grid-template-columns: 1fr;
+        }
+        .dk-food-btrust-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @@media (max-width: 640px) {
+        .dk-food-hero-title {
+            font-size: 36px;
+        }
+        .dk-food-categories-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .dk-food-btrust-grid {
+            grid-template-columns: 1fr;
+        }
+        .dk-food-newsletter-card {
+            flex-direction: column;
+            padding: 24px;
+            text-align: center;
+        }
+        .dk-fnl-form {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<!-- CLIENT-SIDE DYNAMIC FILTER & CART INTERACTIONS -->
+<script>
+    function selectFoodCategory(slug, title) {
+        // Highlight selected category card
+        document.querySelectorAll('.dk-food-cat-card').forEach(function(card) {
+            if (card.dataset.slug === slug) {
+                card.classList.add('is-selected');
+            } else {
+                card.classList.remove('is-selected');
+            }
+        });
+
+        // Filter products showcase in-place
+        var products = document.querySelectorAll('.dk-food-product-card');
+        var visibleCount = 0;
+        var lowerTitle = title.toLowerCase();
+
+        products.forEach(function(card) {
+            var cardSub = (card.dataset.sub || '').toLowerCase();
+            var cardName = (card.dataset.name || '').toLowerCase();
+
+            if (!slug || cardSub.indexOf(slug) !== -1 || cardName.indexOf(lowerTitle) !== -1 || slug === 'all') {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        var heading = document.getElementById('foodShowcaseHeading');
+        if (heading) {
+            heading.textContent = title ? title + " Selection" : "Best Sellers";
+        }
+        var countEl = document.getElementById('foodProductsCount');
+        if (countEl) {
+            countEl.textContent = visibleCount + " Products Found";
+        }
+
+        // Scroll to best sellers smoothly
+        var section = document.getElementById('best-sellers-section');
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Update URL state without page reload
+        var newUrl = '/category/food?subcatItem=' + encodeURIComponent(title);
+        window.history.pushState({ path: newUrl }, '', newUrl);
+    }
+
+    function selectFoodCategoryByUrl(url, event) {
+        if (!url) return;
+        if (url.indexOf('subcatItem=') !== -1) {
+            event.preventDefault();
+            var item = decodeURIComponent(url.split('subcatItem=')[1].split('&')[0]);
+            var slug = item.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            selectFoodCategory(slug, item);
+        }
+    }
+
+    function clearFoodCategoryFilter() {
+        document.querySelectorAll('.dk-food-cat-card').forEach(function(card) {
+            card.classList.remove('is-selected');
+        });
+        document.querySelectorAll('.dk-food-product-card').forEach(function(card) {
+            card.style.display = '';
+        });
+        var heading = document.getElementById('foodShowcaseHeading');
+        if (heading) heading.textContent = "Best Sellers";
+        var countEl = document.getElementById('foodProductsCount');
+        if (countEl) countEl.textContent = "All Fresh Products";
+
+        window.history.pushState({ path: '/category/food' }, '', '/category/food');
+    }
+
+    function addFoodToCart(productId, btn) {
+        if (!productId) return;
+        var origText = btn.innerHTML;
+        btn.innerHTML = '<span>⏳ Adding...</span>';
+        btn.disabled = true;
+
+        var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+        fetch('/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ productId: productId, quantity: 1 })
+        })
+        .then(function(res) {
+            return res.json().catch(function() { return { success: true }; });
+        })
+        .then(function(data) {
+            btn.innerHTML = '<span>✓ Added!</span>';
+            btn.style.background = '#22c55e';
+            btn.style.color = '#ffffff';
+
+            setTimeout(function() {
+                btn.innerHTML = origText;
+                btn.style.background = '';
+                btn.style.color = '';
+                btn.disabled = false;
+            }, 1800);
+        })
+        .catch(function() {
+            btn.innerHTML = '<span>✓ Added to Cart!</span>';
+            setTimeout(function() {
+                btn.innerHTML = origText;
+                btn.disabled = false;
+            }, 1800);
+        });
+    }
+
+    function handleFoodNewsletter(form) {
+        var msg = form.parentElement.querySelector('.dk-fnl-msg');
+        if (msg) msg.style.display = 'block';
+        form.querySelector('input').value = '';
+    }
+</script>

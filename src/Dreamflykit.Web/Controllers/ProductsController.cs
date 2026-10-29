@@ -19,6 +19,7 @@ public sealed class ProductsController : Controller
     private readonly Dreamflykit.Application.MobilesHub.Interfaces.IMobilesHubService _mobilesHubService;
     private readonly Dreamflykit.Application.AppliancesHub.Interfaces.IAppliancesHubService _appliancesHubService;
     private readonly Dreamflykit.Application.BeautyHub.Interfaces.IBeautyHubService _beautyHubService;
+    private readonly Dreamflykit.Application.FoodHub.Interfaces.IFoodHubService _foodHubService;
 
     public ProductsController(
         IProductService productService,
@@ -28,7 +29,8 @@ public sealed class ProductsController : Controller
         Dreamflykit.Application.HealthHub.Interfaces.IHealthHubService healthHubService,
         Dreamflykit.Application.MobilesHub.Interfaces.IMobilesHubService mobilesHubService,
         Dreamflykit.Application.AppliancesHub.Interfaces.IAppliancesHubService appliancesHubService,
-        Dreamflykit.Application.BeautyHub.Interfaces.IBeautyHubService beautyHubService)
+        Dreamflykit.Application.BeautyHub.Interfaces.IBeautyHubService beautyHubService,
+        Dreamflykit.Application.FoodHub.Interfaces.IFoodHubService foodHubService)
     {
         _productService = productService;
         _categoryService = categoryService;
@@ -38,6 +40,7 @@ public sealed class ProductsController : Controller
         _mobilesHubService = mobilesHubService;
         _appliancesHubService = appliancesHubService;
         _beautyHubService = beautyHubService;
+        _foodHubService = foodHubService;
     }
 
     [HttpGet("/category/study-essentials/category/study-essentials/{slug}")]
@@ -122,6 +125,11 @@ public sealed class ProductsController : Controller
                                string.Equals(effectiveCategory, "beauty-and-personal-care", StringComparison.OrdinalIgnoreCase) ||
                                string.Equals(effectiveCategory, "beauty-personal-care", StringComparison.OrdinalIgnoreCase) ||
                                string.Equals(effectiveCategory, "bpc", StringComparison.OrdinalIgnoreCase);
+
+        var isFoodCategory = string.Equals(effectiveCategory, "food", StringComparison.OrdinalIgnoreCase) ||
+                             string.Equals(effectiveCategory, "foods", StringComparison.OrdinalIgnoreCase) ||
+                             string.Equals(effectiveCategory, "groceries", StringComparison.OrdinalIgnoreCase) ||
+                             string.Equals(effectiveCategory, "grocery", StringComparison.OrdinalIgnoreCase);
 
         CategoryDetails? catDetails = null;
         string? currentSubcategoryName = null;
@@ -275,7 +283,7 @@ public sealed class ProductsController : Controller
                   (isSweatshirtsCategory ? "sweatshirts" :
                   (isWomenClothingCategory ? "women-clothing" :
                   (isMenClothingCategory ? "men-clothing" :
-                  ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory || isAppliancesCategory || isBeautyCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"))))))),
+                  ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory || isAppliancesCategory || isBeautyCategory || isFoodCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"))))))),
             StudyHub = isStudyCategory
                         ? await _studyHubService.GetConfigAsync(cancellationToken)
                         : null,
@@ -293,6 +301,9 @@ public sealed class ProductsController : Controller
                         : null,
             BeautyHub = isBeautyCategory
                         ? await _beautyHubService.GetConfigAsync(cancellationToken)
+                        : null,
+            FoodHub = isFoodCategory
+                        ? await _foodHubService.GetConfigAsync(cancellationToken)
                         : null
         };
 

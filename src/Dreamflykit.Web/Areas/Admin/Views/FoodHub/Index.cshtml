@@ -1,0 +1,623 @@
+@model Dreamflykit.Application.FoodHub.Models.FoodHubDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Food & Grocery Category Hub Management";
+    var hub = Model ?? Dreamflykit.Application.FoodHub.Models.FoodHubDto.CreateDefault();
+    var theme = hub.ThemeSettings ?? new();
+    var notice = hub.TopNoticeBar ?? new();
+    var hero = hub.HeroBanner ?? new();
+    var shopCats = hub.ShopByCategories?.Cards ?? new();
+    var promos = hub.PromoCards?.Cards ?? new();
+    var bottomTrust = hub.BottomTrustBar ?? new();
+    var stayUpdated = hub.StayUpdated ?? new();
+}
+
+@Html.AntiForgeryToken()
+
+<div class="dk-admin-content-container" style="max-width: 1400px; margin: 0 auto; padding: 24px 20px;">
+
+    <!-- TOP HEADER & CONTROLS -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                <span style="background: linear-gradient(135deg, #1e3923, #15803d); color: #ffffff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 6px; letter-spacing: 0.5px;">🥑 FOOD &amp; GROCERY HUB</span>
+                <span style="background: #dcfce7; color: #166534; font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 6px;">FRESHBASKET TEMPLATE</span>
+            </div>
+            <h1 style="font-size: 26px; font-weight: 900; color: #0f172a; margin: 0;">Food Category Hub Management</h1>
+            <p style="font-size: 13.5px; color: #64748b; margin: 4px 0 0 0;">
+                Full administrative control over Full-Width Hero Banner, 7 Category Cards, Trio Promo Banners, Best Sellers &amp; Image Uploads.
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <a href="/category/food" target="_blank" class="dk-btn" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 10px 18px; font-size: 13.5px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <span>👁️</span> Preview Live Store
+            </a>
+            <form asp-action="ResetToDefault" method="post" style="display: inline;" onsubmit="return confirm('Reset all Food Hub settings to default FreshBasket template?');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="dk-btn" style="background: #fff; color: #dc2626; border: 1px solid #fca5a5; padding: 10px 16px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer;">
+                    ↺ Reset Defaults
+                </button>
+            </form>
+            <button type="button" class="dk-btn" id="btnSaveFoodTop" onclick="saveFoodHubConfig()" style="background: #1f3d24; color: #ffffff; border: none; padding: 11px 26px; font-size: 14px; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(31, 61, 36, 0.35);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save All Changes
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; color: #065f46; font-weight: 600;">
+            ✓ @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- TABS BAR -->
+    <div style="display: flex; gap: 8px; border-bottom: 2px solid #e2e8f0; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px;">
+        <button type="button" class="dk-hub-tab-btn active" onclick="switchFoodTab('hero', this)">
+            🌾 1. Full-Width Hero Banner
+        </button>
+        <button type="button" class="dk-hub-tab-btn" onclick="switchFoodTab('categories', this)">
+            🛒 2. Shop By 7 Categories
+        </button>
+        <button type="button" class="dk-hub-tab-btn" onclick="switchFoodTab('promos', this)">
+            ✨ 3. Trio Promo Feature Banners
+        </button>
+        <button type="button" class="dk-hub-tab-btn" onclick="switchFoodTab('trust', this)">
+            🚚 4. Top &amp; Bottom Trust Bars
+        </button>
+        <button type="button" class="dk-hub-tab-btn" onclick="switchFoodTab('newsletter', this)">
+            ✉️ 5. Newsletter &amp; Theme
+        </button>
+    </div>
+
+    <!-- ========================================================
+         TAB 1: FULL-WIDTH HERO BANNER
+    ========================================================= -->
+    <div id="tab_hero" class="dk-hub-tab-pane active">
+        <div class="dk-admin-card" style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px;">
+            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 16px;">
+                🌾 Main Hero Banner (Full-Width Top Showcase)
+            </h2>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                <div>
+                    <div style="margin-bottom: 16px;">
+                        <label class="dk-admin-label">Main Heading</label>
+                        <input type="text" id="hero_heading" class="dk-admin-input" value="@hero.Heading" placeholder="Good Food. Good Mood." />
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label class="dk-admin-label">Subtitle Text</label>
+                        <input type="text" id="hero_subtitle" class="dk-admin-input" value="@hero.Subtitle" placeholder="Your one-stop shop for groceries, snacks & more." />
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+                        <div>
+                            <label class="dk-admin-label">Button Text</label>
+                            <input type="text" id="hero_btn_text" class="dk-admin-input" value="@hero.ButtonText" placeholder="Shop Now →" />
+                        </div>
+                        <div>
+                            <label class="dk-admin-label">Button Target URL</label>
+                            <input type="text" id="hero_btn_url" class="dk-admin-input" value="@hero.ButtonUrl" placeholder="#best-sellers-section" />
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label class="dk-admin-label">Hero Banner Image URL</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="hero_img_url" class="dk-admin-input" value="@hero.ImageUrl" placeholder="/images/food-hub/hero-food-basket.webp" onchange="previewImg(this.value, 'hero_img_preview')" />
+                            <label class="dk-btn" style="background: #234d20; color: #fff; padding: 10px 16px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-size: 13px; font-weight: 700;">
+                                📁 Upload Image
+                                <input type="file" accept="image/*" style="display: none;" onchange="uploadImageAsync(this, 'hero_img_url', 'hero_img_preview')" />
+                            </label>
+                        </div>
+                        <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Recommended aspect ratio: 4:3 or 16:9 high resolution (e.g. 1200x800px). Supports JPG, PNG, WEBP, SVG.</p>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13.5px; font-weight: 600; color: #334155;">
+                            <input type="checkbox" id="hero_uploading_soon" @(hero.IsUploadingSoon ? "checked" : "") style="width: 17px; height: 17px; accent-color: #234d20;" />
+                            <span>Show "TEST PIC / Super Admin Replaceable" fallback badge</span>
+                        </label>
+                    </div>
+
+                    <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin: 20px 0 10px 0;">4 Trust Badges Below Button</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        @for (var b = 0; b < 4; b++)
+                        {
+                            var badgeVal = hero.TrustBadges != null && hero.TrustBadges.Count > b ? hero.TrustBadges[b] : "";
+                            <div>
+                                <label class="dk-admin-label">Badge @(b + 1)</label>
+                                <input type="text" id="hero_badge_@b" class="dk-admin-input" value="@badgeVal" />
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Preview Column -->
+                <div>
+                    <label class="dk-admin-label">Hero Image Live Preview</label>
+                    <div style="border: 2px dashed #cbd5e1; border-radius: 12px; padding: 12px; background: #f8fafc; text-align: center;">
+                        <img id="hero_img_preview" src="@hero.ImageUrl" alt="Hero Preview" style="max-width: 100%; max-height: 280px; object-fit: contain; border-radius: 8px;" onerror="this.onerror=null;this.src='/images/food-hub/hero-food-basket.svg';" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         TAB 2: SHOP BY 7 CATEGORIES
+    ========================================================= -->
+    <div id="tab_categories" class="dk-hub-tab-pane" style="display: none;">
+        <div class="dk-admin-card" style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">
+                    🛒 Shop By Categories (7 Core Categories)
+                </h2>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <label class="dk-admin-label" style="margin: 0;">Section Heading:</label>
+                    <input type="text" id="cats_heading" class="dk-admin-input" value="@hub.ShopByCategories.Heading" style="width: 220px;" />
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 18px;">
+                @for (var i = 0; i < shopCats.Count; i++)
+                {
+                    var cat = shopCats[i];
+                    var subItemsText = cat.Items != null ? string.Join("\n", cat.Items) : "";
+
+                    <div style="background: #fbf9f5; border: 1px solid #e2d2be; border-radius: 10px; padding: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="font-weight: 800; font-size: 14px; color: #1f3d24;">#@(i + 1) @cat.Title</span>
+                            <span style="font-size: 11px; background: #e2ecd9; color: #166534; font-weight: 800; padding: 2px 8px; border-radius: 4px;">@cat.Slug</span>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 10px;">
+                            <div>
+                                <label class="dk-admin-label">Category Title</label>
+                                <input type="text" id="cat_title_@i" class="dk-admin-input" value="@cat.Title" />
+                            </div>
+                            <div>
+                                <label class="dk-admin-label">Slug</label>
+                                <input type="text" id="cat_slug_@i" class="dk-admin-input" value="@cat.Slug" />
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 10px;">
+                            <label class="dk-admin-label">Target URL</label>
+                            <input type="text" id="cat_url_@i" class="dk-admin-input" value="@cat.TargetUrl" />
+                        </div>
+
+                        <div style="margin-bottom: 10px;">
+                            <label class="dk-admin-label">Image URL</label>
+                            <div style="display: flex; gap: 6px;">
+                                <input type="text" id="cat_img_@i" class="dk-admin-input" value="@cat.ImageUrl" onchange="previewImg(this.value, 'cat_prev_@i')" />
+                                <label class="dk-btn" style="background: #234d20; color: #fff; padding: 8px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; font-size: 12px;">
+                                    📁
+                                    <input type="file" accept="image/*" style="display: none;" onchange="uploadImageAsync(this, 'cat_img_@i', 'cat_prev_@i')" />
+                                </label>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px;">
+                            <div style="flex: 1;">
+                                <label class="dk-admin-label">Sub-items (one per line)</label>
+                                <textarea id="cat_items_@i" class="dk-admin-input" rows="3" style="font-size: 12px;">@subItemsText</textarea>
+                            </div>
+                            <div style="width: 70px; height: 70px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 18px;">
+                                <img id="cat_prev_@i" src="@cat.ImageUrl" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.onerror=null;this.src='/images/food-hub/cat-groceries.svg';" />
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         TAB 3: TRIO PROMO FEATURE CARDS
+    ========================================================= -->
+    <div id="tab_promos" class="dk-hub-tab-pane" style="display: none;">
+        <div class="dk-admin-card" style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px;">
+            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 16px;">
+                ✨ Trio Promo Feature Banners (3 Cards Grid)
+            </h2>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                @for (var p = 0; p < promos.Count; p++)
+                {
+                    var pr = promos[p];
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="font-weight: 800; font-size: 14px; color: #1e293b;">Card @(p + 1)</span>
+                            <input type="color" id="promo_bg_@p" value="@pr.BgColor" title="Background Color" style="width: 32px; height: 26px; border: none; border-radius: 4px; cursor: pointer;" />
+                        </div>
+
+                        <div style="margin-bottom: 10px;">
+                            <label class="dk-admin-label">Heading</label>
+                            <input type="text" id="promo_heading_@p" class="dk-admin-input" value="@pr.Heading" />
+                        </div>
+
+                        <div style="margin-bottom: 10px;">
+                            <label class="dk-admin-label">Subtitle</label>
+                            <input type="text" id="promo_sub_@p" class="dk-admin-input" value="@pr.Subtitle" />
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                            <div>
+                                <label class="dk-admin-label">Button Text</label>
+                                <input type="text" id="promo_btn_text_@p" class="dk-admin-input" value="@pr.ButtonText" />
+                            </div>
+                            <div>
+                                <label class="dk-admin-label">Button URL</label>
+                                <input type="text" id="promo_btn_url_@p" class="dk-admin-input" value="@pr.ButtonUrl" />
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 12px;">
+                            <label class="dk-admin-label">Image URL</label>
+                            <div style="display: flex; gap: 6px;">
+                                <input type="text" id="promo_img_@p" class="dk-admin-input" value="@pr.ImageUrl" onchange="previewImg(this.value, 'promo_prev_@p')" />
+                                <label class="dk-btn" style="background: #234d20; color: #fff; padding: 8px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; font-size: 12px;">
+                                    📁
+                                    <input type="file" accept="image/*" style="display: none;" onchange="uploadImageAsync(this, 'promo_img_@p', 'promo_prev_@p')" />
+                                </label>
+                            </div>
+                        </div>
+
+                        <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; background: @pr.BgColor; text-align: center;">
+                            <img id="promo_prev_@p" src="@pr.ImageUrl" style="max-width: 100%; height: 90px; object-fit: contain;" onerror="this.onerror=null;this.src='/images/food-hub/promo-groceries.svg';" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         TAB 4: TOP & BOTTOM TRUST BARS
+    ========================================================= -->
+    <div id="tab_trust" class="dk-hub-tab-pane" style="display: none;">
+        <div class="dk-admin-card" style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px;">
+            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 16px;">
+                🚚 Top Notice Bar &amp; Bottom Trust Highlights
+            </h2>
+
+            <div style="margin-bottom: 24px;">
+                <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">
+                    <input type="checkbox" id="notice_enabled" @(notice.IsEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #234d20;" />
+                    <span>Enable Top Green Notice Bar</span>
+                </label>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                    <div>
+                        <label class="dk-admin-label">Item 1</label>
+                        <input type="text" id="notice_item_1" class="dk-admin-input" value="@notice.Item1Text" />
+                    </div>
+                    <div>
+                        <label class="dk-admin-label">Item 2</label>
+                        <input type="text" id="notice_item_2" class="dk-admin-input" value="@notice.Item2Text" />
+                    </div>
+                    <div>
+                        <label class="dk-admin-label">Item 3</label>
+                        <input type="text" id="notice_item_3" class="dk-admin-input" value="@notice.Item3Text" />
+                    </div>
+                    <div>
+                        <label class="dk-admin-label">Item 4</label>
+                        <input type="text" id="notice_item_4" class="dk-admin-input" value="@notice.Item4Text" />
+                    </div>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
+
+            <h3 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0 0 14px 0;">Bottom 4-Column Trust Highlights</h3>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+                    <label class="dk-admin-label">Highlight 1 Title</label>
+                    <input type="text" id="bt_title_1" class="dk-admin-input" value="@bottomTrust.Item1Title" style="margin-bottom: 6px;" />
+                    <label class="dk-admin-label">Subtitle</label>
+                    <input type="text" id="bt_sub_1" class="dk-admin-input" value="@bottomTrust.Item1Subtitle" />
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+                    <label class="dk-admin-label">Highlight 2 Title</label>
+                    <input type="text" id="bt_title_2" class="dk-admin-input" value="@bottomTrust.Item2Title" style="margin-bottom: 6px;" />
+                    <label class="dk-admin-label">Subtitle</label>
+                    <input type="text" id="bt_sub_2" class="dk-admin-input" value="@bottomTrust.Item2Subtitle" />
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+                    <label class="dk-admin-label">Highlight 3 Title</label>
+                    <input type="text" id="bt_title_3" class="dk-admin-input" value="@bottomTrust.Item3Title" style="margin-bottom: 6px;" />
+                    <label class="dk-admin-label">Subtitle</label>
+                    <input type="text" id="bt_sub_3" class="dk-admin-input" value="@bottomTrust.Item3Subtitle" />
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+                    <label class="dk-admin-label">Highlight 4 Title</label>
+                    <input type="text" id="bt_title_4" class="dk-admin-input" value="@bottomTrust.Item4Title" style="margin-bottom: 6px;" />
+                    <label class="dk-admin-label">Subtitle</label>
+                    <input type="text" id="bt_sub_4" class="dk-admin-input" value="@bottomTrust.Item4Subtitle" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         TAB 5: NEWSLETTER & THEME
+    ========================================================= -->
+    <div id="tab_newsletter" class="dk-hub-tab-pane" style="display: none;">
+        <div class="dk-admin-card" style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px;">
+            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 16px;">
+                ✉️ Stay Updated Newsletter &amp; Store Title
+            </h2>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                <div>
+                    <div style="margin-bottom: 16px;">
+                        <label class="dk-admin-label">Store Brand Title</label>
+                        <input type="text" id="theme_title" class="dk-admin-input" value="@theme.StoreTitle" placeholder="FreshBasket • Food &amp; Grocery" />
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label class="dk-admin-label">Newsletter Heading</label>
+                        <input type="text" id="nl_heading" class="dk-admin-input" value="@stayUpdated.Heading" placeholder="Stay Updated!" />
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label class="dk-admin-label">Newsletter Subtitle</label>
+                        <input type="text" id="nl_sub" class="dk-admin-input" value="@stayUpdated.Subtitle" />
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label class="dk-admin-label">Button Text</label>
+                        <input type="text" id="nl_btn" class="dk-admin-input" value="@stayUpdated.ButtonText" />
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label class="dk-admin-label">Side Basket Image URL</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="nl_img_url" class="dk-admin-input" value="@stayUpdated.ImageUrl" onchange="previewImg(this.value, 'nl_img_preview')" />
+                            <label class="dk-btn" style="background: #234d20; color: #fff; padding: 10px 16px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-size: 13px; font-weight: 700;">
+                                📁 Upload Image
+                                <input type="file" accept="image/*" style="display: none;" onchange="uploadImageAsync(this, 'nl_img_url', 'nl_img_preview')" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="dk-admin-label">Newsletter Image Preview</label>
+                    <div style="border: 2px dashed #cbd5e1; border-radius: 12px; padding: 12px; background: #f8fafc; text-align: center;">
+                        <img id="nl_img_preview" src="@stayUpdated.ImageUrl" alt="Newsletter Preview" style="max-width: 100%; max-height: 200px; object-fit: contain; border-radius: 8px;" onerror="this.onerror=null;this.src='/images/food-hub/newsletter-basket.svg';" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM ACTION BAR -->
+    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+        <button type="button" class="dk-btn" onclick="saveFoodHubConfig()" style="background: #1f3d24; color: #ffffff; border: none; padding: 12px 32px; font-size: 15px; font-weight: 800; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(31, 61, 36, 0.35);">
+            Save All Food Hub Changes
+        </button>
+    </div>
+
+</div>
+
+<!-- CSS FOR ADMIN TABS -->
+<style>
+    .dk-admin-label {
+        display: block;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 5px;
+    }
+    .dk-admin-input {
+        width: 100%;
+        padding: 9px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 13.5px;
+        color: #0f172a;
+        box-sizing: border-box;
+        outline: none;
+        transition: border-color 0.15s ease;
+    }
+    .dk-admin-input:focus {
+        border-color: #234d20;
+        box-shadow: 0 0 0 3px rgba(35, 77, 32, 0.15);
+    }
+    .dk-hub-tab-btn {
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #64748b;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+    }
+    .dk-hub-tab-btn:hover {
+        color: #1f3d24;
+    }
+    .dk-hub-tab-btn.active {
+        color: #1f3d24;
+        border-bottom-color: #1f3d24;
+    }
+</style>
+
+<!-- JAVASCRIPT FOR TABS, ASYNC IMAGE UPLOADS & SERIALIZATION -->
+<script>
+    function switchFoodTab(tabName, btn) {
+        document.querySelectorAll('.dk-hub-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.querySelectorAll('.dk-hub-tab-pane').forEach(function(p) { p.style.display = 'none'; });
+
+        btn.classList.add('active');
+        var pane = document.getElementById('tab_' + tabName);
+        if (pane) pane.style.display = 'block';
+    }
+
+    function previewImg(url, targetImgId) {
+        var el = document.getElementById(targetImgId);
+        if (el && url) el.src = url;
+    }
+
+    function uploadImageAsync(input, targetInputId, targetPreviewId) {
+        if (!input.files || input.files.length === 0) return;
+        var file = input.files[0];
+
+        var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('targetField', targetInputId);
+
+        var btn = input.parentElement;
+        var origText = btn.innerHTML;
+        btn.innerHTML = 'Uploading...';
+
+        fetch('/Admin/FoodHub/UploadImage', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': token
+            },
+            body: formData
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            btn.innerHTML = origText;
+            if (data.success && data.url) {
+                var inputEl = document.getElementById(targetInputId);
+                if (inputEl) inputEl.value = data.url;
+                var prevEl = document.getElementById(targetPreviewId);
+                if (prevEl) prevEl.src = data.url;
+                alert('✓ ' + data.message);
+            } else {
+                alert('Upload failed: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(function(err) {
+            btn.innerHTML = origText;
+            alert('Upload error: ' + err.message);
+        });
+    }
+
+    function saveFoodHubConfig() {
+        var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+        var trustBadges = [];
+        for (var b = 0; b < 4; b++) {
+            var badgeEl = document.getElementById('hero_badge_' + b);
+            if (badgeEl && badgeEl.value.trim().length > 0) {
+                trustBadges.push(badgeEl.value.trim());
+            }
+        }
+
+        var cards = [];
+        for (var c = 0; c < 7; c++) {
+            var tEl = document.getElementById('cat_title_' + c);
+            if (!tEl) break;
+            var itemsText = document.getElementById('cat_items_' + c)?.value || '';
+            var itemsList = itemsText.split('\n').map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
+
+            cards.push({
+                Id: 'cat-' + (document.getElementById('cat_slug_' + c)?.value || c),
+                Title: tEl.value,
+                Slug: document.getElementById('cat_slug_' + c)?.value || '',
+                TargetUrl: document.getElementById('cat_url_' + c)?.value || '',
+                ImageUrl: document.getElementById('cat_img_' + c)?.value || '',
+                Items: itemsList
+            });
+        }
+
+        var promoCards = [];
+        for (var p = 0; p < 3; p++) {
+            var hEl = document.getElementById('promo_heading_' + p);
+            if (!hEl) break;
+            promoCards.push({
+                Id: 'promo-' + (p + 1),
+                Heading: hEl.value,
+                Subtitle: document.getElementById('promo_sub_' + p)?.value || '',
+                ButtonText: document.getElementById('promo_btn_text_' + p)?.value || '',
+                ButtonUrl: document.getElementById('promo_btn_url_' + p)?.value || '',
+                ImageUrl: document.getElementById('promo_img_' + p)?.value || '',
+                BgColor: document.getElementById('promo_bg_' + p)?.value || '#f7f0e6'
+            });
+        }
+
+        var payload = {
+            ThemeSettings: {
+                StoreTitle: document.getElementById('theme_title')?.value || 'FreshBasket • Food & Grocery',
+                AccentColor: '#1f3d24',
+                PrimaryGreen: '#234d20',
+                SoftBackground: '#fbf9f5'
+            },
+            TopNoticeBar: {
+                IsEnabled: document.getElementById('notice_enabled')?.checked || false,
+                Item1Text: document.getElementById('notice_item_1')?.value || '',
+                Item2Text: document.getElementById('notice_item_2')?.value || '',
+                Item3Text: document.getElementById('notice_item_3')?.value || '',
+                Item4Text: document.getElementById('notice_item_4')?.value || ''
+            },
+            HeroBanner: {
+                IsEnabled: true,
+                Heading: document.getElementById('hero_heading')?.value || '',
+                Subtitle: document.getElementById('hero_subtitle')?.value || '',
+                ButtonText: document.getElementById('hero_btn_text')?.value || 'Shop Now →',
+                ButtonUrl: document.getElementById('hero_btn_url')?.value || '#best-sellers-section',
+                ImageUrl: document.getElementById('hero_img_url')?.value || '',
+                IsUploadingSoon: document.getElementById('hero_uploading_soon')?.checked || false,
+                TrustBadges: trustBadges
+            },
+            ShopByCategories: {
+                Heading: document.getElementById('cats_heading')?.value || 'Shop By Categories',
+                Cards: cards
+            },
+            PromoCards: {
+                IsEnabled: true,
+                Cards: promoCards
+            },
+            BottomTrustBar: {
+                Item1Title: document.getElementById('bt_title_1')?.value || '',
+                Item1Subtitle: document.getElementById('bt_sub_1')?.value || '',
+                Item2Title: document.getElementById('bt_title_2')?.value || '',
+                Item2Subtitle: document.getElementById('bt_sub_2')?.value || '',
+                Item3Title: document.getElementById('bt_title_3')?.value || '',
+                Item3Subtitle: document.getElementById('bt_sub_3')?.value || '',
+                Item4Title: document.getElementById('bt_title_4')?.value || '',
+                Item4Subtitle: document.getElementById('bt_sub_4')?.value || ''
+            },
+            StayUpdated: {
+                Heading: document.getElementById('nl_heading')?.value || 'Stay Updated!',
+                Subtitle: document.getElementById('nl_sub')?.value || '',
+                ButtonText: document.getElementById('nl_btn')?.value || 'Subscribe',
+                ImageUrl: document.getElementById('nl_img_url')?.value || ''
+            }
+        };
+
+        fetch('/Admin/FoodHub/Save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.success) {
+                alert('✓ ' + data.message);
+                window.location.reload();
+            } else {
+                alert('Save failed: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(function(err) {
+            alert('Save error: ' + err.message);
+        });
+    }
+</script>
+
