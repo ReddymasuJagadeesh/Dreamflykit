@@ -1,0 +1,563 @@
+@model Dreamflykit.Application.LuggageHub.Models.LuggageHubDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Luggage & Bags Category Hub Management";
+    var hub = Model ?? Dreamflykit.Application.LuggageHub.Models.LuggageHubDto.CreateDefault();
+    var festival = hub.FestivalTheme ?? new();
+    var hero = hub.HeroBanner ?? new();
+    var reassurance = hub.ReassuranceBar ?? new();
+    var shopCats = hub.ShopByCategory ?? new();
+    var promoBanners = hub.PromoBanners ?? new();
+}
+
+<div class="dk-admin-content" style="max-width: 1300px; margin: 0 auto; padding: 24px;">
+
+    <!-- TOP HEADER BAR -->
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; background: #ffffff; padding: 20px 24px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+        <div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 26px;">🧳</span>
+                <h1 style="font-size: 22px; font-weight: 800; color: #0f2b48; margin: 0;">Luggage &amp; Bags Hub Management</h1>
+            </div>
+            <p style="font-size: 13px; color: #64748b; margin: 4px 0 0 0;">
+                Full control over Hero Banner, Festival Themes, 8 Categories, 3 Promo Banners, and Reassurance Badges. Upload real photos or toggle "Uploading Soon" anytime.
+            </p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <a href="/category/luggage-bags" target="_blank" class="dk-btn" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 10px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                View Live Hub
+            </a>
+
+            <button type="button" class="dk-btn" id="btnSaveLuggageTop" onclick="saveLuggageHubConfig()" style="background: #0f2b48; color: #ffffff; border: none; padding: 11px 26px; font-size: 14px; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(15, 43, 72, 0.3);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save Settings
+            </button>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION MESSAGES -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 600;">
+            ✓ @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 600;">
+            ✕ @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <form id="luggageHubForm" method="post" asp-antiforgery="true">
+
+        <!-- ========================================================
+             1. FESTIVAL THEME & BRAND COLORS
+        ========================================================= -->
+        <div class="dk-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <h3 style="font-size: 17px; font-weight: 800; color: #0f2b48; margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <span>🎉</span> Festival Theme &amp; Brand Styling
+                </h3>
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #ea580c; cursor: pointer;">
+                    <input type="checkbox" id="festIsActive" @(festival.IsFestivalActive ? "checked" : "") style="width: 18px; height: 18px;" />
+                    <span>Enable Festival Theme &amp; Top Banner</span>
+                </label>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Festival Name</label>
+                    <input type="text" id="festName" value="@festival.FestivalName" class="dk-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" placeholder="e.g. Flight Season Special or Diwali Mega Sale" />
+                </div>
+                <div>
+                    <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Festival Badge Tag</label>
+                    <input type="text" id="festTag" value="@festival.FestivalTag" class="dk-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" placeholder="e.g. FESTIVAL THEME or SPECIAL OFFER" />
+                </div>
+                <div>
+                    <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Accent Orange Color</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="color" id="festAccentPicker" value="@festival.AccentOrange" onchange="document.getElementById('festAccentOrange').value = this.value" style="width: 40px; height: 38px; border: none; cursor: pointer; border-radius: 6px;" />
+                        <input type="text" id="festAccentOrange" value="@festival.AccentOrange" class="dk-input" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                    </div>
+                </div>
+                <div>
+                    <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Primary Navy Color</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="color" id="festNavyPicker" value="@festival.PrimaryNavy" onchange="document.getElementById('festPrimaryNavy').value = this.value" style="width: 40px; height: 38px; border: none; cursor: pointer; border-radius: 6px;" />
+                        <input type="text" id="festPrimaryNavy" value="@festival.PrimaryNavy" class="dk-input" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Top Festival Notice Banner Message</label>
+                <input type="text" id="festBannerText" value="@festival.FestivalBannerText" class="dk-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" placeholder="e.g. ✈️ International Student Travel Sale • Extra 15% Off with Code FLYSMART" />
+            </div>
+        </div>
+
+        <!-- ========================================================
+             2. HERO BANNER CONFIGURATION & LIVE UPLOAD
+        ========================================================= -->
+        <div class="dk-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <h3 style="font-size: 17px; font-weight: 800; color: #0f2b48; margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <span>✈️</span> Main Hero Banner (High Width) &amp; Offer Card
+                </h3>
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">
+                    <input type="checkbox" id="heroIsEnabled" @(hero.IsEnabled ? "checked" : "") style="width: 18px; height: 18px;" />
+                    <span>Hero Section Visible</span>
+                </label>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; margin-bottom: 20px;">
+                <!-- Left Texts -->
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Headline 1 (Navy)</label>
+                            <input type="text" id="heroHeading1" value="@hero.HeadingLine1" class="dk-input" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Headline 2 (Orange)</label>
+                            <input type="text" id="heroHeading2" value="@hero.HeadingLine2" class="dk-input" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="font-size: 12px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Subtitle Line 1</label>
+                        <input type="text" id="heroSub1" value="@hero.SubtitleLine1" class="dk-input" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                    </div>
+
+                    <div>
+                        <label style="font-size: 12px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Subtitle Line 2</label>
+                        <input type="text" id="heroSub2" value="@hero.SubtitleLine2" class="dk-input" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Button Text</label>
+                            <input type="text" id="heroBtnText" value="@hero.ButtonText" class="dk-input" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Button Target URL</label>
+                            <input type="text" id="heroBtnUrl" value="@hero.ButtonUrl" class="dk-input" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                        </div>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-top: 4px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #f97316; cursor: pointer;">
+                            <input type="checkbox" id="heroIsUploadingSoon" @(hero.IsUploadingSoon ? "checked" : "") style="width: 18px; height: 18px;" />
+                            <span>Show "Uploading Soon" Placeholder on Hero Banner</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Right Hero Image Preview & Live Upload -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <span style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 10px; align-self: flex-start;">Hero Banner Visual Image</span>
+                    <div style="width: 100%; height: 180px; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                        <img id="heroImagePreview" src="@(string.IsNullOrWhiteSpace(hero.ImageUrl) ? "/images/luggage-hub/hero-luggage-collection.svg" : hero.ImageUrl)" alt="Hero Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                    </div>
+
+                    <input type="hidden" id="heroImageUrl" value="@hero.ImageUrl" />
+
+                    <div style="display: flex; gap: 8px; width: 100%;">
+                        <label class="dk-btn" style="flex: 1; background: #f97316; color: #ffffff; text-align: center; padding: 8px 12px; font-size: 12.5px; font-weight: 700; border-radius: 6px; cursor: pointer;">
+                            <input type="file" accept="image/*" style="display: none;" onchange="uploadImageAsync(this, 'heroImageUrl', 'heroImagePreview', 'heroIsUploadingSoon')" />
+                            📷 Upload Hero Luggage Banner
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Offer Box Settings -->
+            <h4 style="font-size: 14px; font-weight: 800; color: #0f2b48; margin: 16px 0 10px 0;">Floating Offer Card (Right Side of Hero)</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+                <div>
+                    <label style="font-size: 11.5px; font-weight: 700; color: #475569;">Top Tag</label>
+                    <input type="text" id="offerTopTag" value="@hero.OfferBox?.TopTag" class="dk-input" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                </div>
+                <div>
+                    <label style="font-size: 11.5px; font-weight: 700; color: #475569;">Discount Headline</label>
+                    <input type="text" id="offerDiscountTitle" value="@hero.OfferBox?.DiscountTitle" class="dk-input" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                </div>
+                <div>
+                    <label style="font-size: 11.5px; font-weight: 700; color: #475569;">Subtitle</label>
+                    <input type="text" id="offerDiscountSub" value="@hero.OfferBox?.DiscountSubtitle" class="dk-input" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                </div>
+                <div>
+                    <label style="font-size: 11.5px; font-weight: 700; color: #475569;">Button Text</label>
+                    <input type="text" id="offerButtonText" value="@hero.OfferBox?.ButtonText" class="dk-input" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                </div>
+            </div>
+
+            <!-- 3 Badges Editor -->
+            <h4 style="font-size: 14px; font-weight: 800; color: #0f2b48; margin: 20px 0 10px 0;">3 Key Feature Badges (Strong Outside, Light Inside, Safe All The Way)</h4>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;" id="heroBadgesContainer">
+                @if (hero.Badges != null)
+                {
+                    @for (int i = 0; i < hero.Badges.Count; i++)
+                    {
+                        var b = hero.Badges[i];
+                        <div class="hero-badge-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                            <input type="hidden" class="badge-id" value="@b.Id" />
+                            <input type="hidden" class="badge-icon" value="@b.Icon" />
+                            <div style="margin-bottom: 6px;">
+                                <label style="font-size: 11.5px; font-weight: 700; color: #475569;">Title @(i+1)</label>
+                                <input type="text" class="badge-title dk-input" value="@b.Title" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                            </div>
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700; color: #475569;">Subtitle</label>
+                                <input type="text" class="badge-sub dk-input" value="@b.Subtitle" style="width: 100%; padding: 6px 10px; font-size: 11.5px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- ========================================================
+             3. 8 SHOP BY CATEGORY CARDS (LIVE IMAGE UPLOADS + CONTENT)
+        ========================================================= -->
+        <div class="dk-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <div>
+                    <h3 style="font-size: 17px; font-weight: 800; color: #0f2b48; margin: 0; display: flex; align-items: center; gap: 8px;">
+                        <span>🧳</span> 8 Shop by Category Cards (Suitcases, Backpacks, Duffel, Cabin, etc.)
+                    </h3>
+                    <p style="font-size: 12.5px; color: #64748b; margin: 4px 0 0 0;">
+                        Upload real product photos or leave "Uploading Soon" placeholder enabled for any item.
+                    </p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;" id="subcatCardsContainer">
+                @if (shopCats.Cards != null)
+                {
+                    @for (int i = 0; i < shopCats.Cards.Count; i++)
+                    {
+                        var c = shopCats.Cards[i];
+                        <div class="subcat-card-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <input type="hidden" class="card-id" value="@c.Id" />
+                            <input type="hidden" class="card-slug" value="@c.Slug" />
+                            <input type="hidden" class="card-icon" value="@c.Icon" />
+
+                            <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                                <!-- Image Preview & Upload -->
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 90px; flex-shrink: 0;">
+                                    <div style="width: 85px; height: 80px; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 6px;">
+                                        <img id="cardPreview_@i" src="@(string.IsNullOrWhiteSpace(c.ImageUrl) ? "/images/luggage-hub/placeholder-uploading-soon.svg" : c.ImageUrl)" alt="@c.Title" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                                    </div>
+                                    <input type="hidden" id="cardImageUrl_@i" class="card-image-url" value="@c.ImageUrl" />
+
+                                    <label class="dk-btn" style="width: 100%; background: #0f2b48; color: #ffffff; font-size: 10.5px; font-weight: 700; padding: 4px 6px; border-radius: 4px; text-align: center; cursor: pointer;">
+                                        <input type="file" accept="image/*" style="display: none;" onchange="uploadImageAsync(this, 'cardImageUrl_@i', 'cardPreview_@i', 'cardSoon_@i')" />
+                                        📷 Upload
+                                    </label>
+                                </div>
+
+                                <!-- Text Fields -->
+                                <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 700; color: #475569;">Title</label>
+                                        <input type="text" class="card-title dk-input" value="@c.Title" style="width: 100%; padding: 5px 8px; font-size: 12px; font-weight: 700; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                    </div>
+
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 700; color: #475569;">Subtitle</label>
+                                        <input type="text" class="card-subtitle dk-input" value="@c.Subtitle" style="width: 100%; padding: 5px 8px; font-size: 11.5px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                    </div>
+
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 700; color: #475569;">Target Link</label>
+                                        <input type="text" class="card-target-url dk-input" value="@c.TargetUrl" style="width: 100%; padding: 5px 8px; font-size: 11px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 8px;">
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #f97316; cursor: pointer;">
+                                    <input type="checkbox" id="cardSoon_@i" class="card-is-soon" @(c.IsUploadingSoon ? "checked" : "") style="width: 15px; height: 15px;" />
+                                    <span>Uploading Soon</span>
+                                </label>
+
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                        <span style="font-size: 10.5px; color: #64748b;">Order:</span>
+                                        <input type="number" class="card-order dk-input" value="@c.DisplayOrder" style="width: 44px; padding: 2px 4px; font-size: 11px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                    </div>
+
+                                    <label style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: #334155; cursor: pointer;">
+                                        <input type="checkbox" class="card-is-active" @(c.IsActive ? "checked" : "") style="width: 14px; height: 14px;" />
+                                        <span>Active</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- ========================================================
+             4. 3 PROMOTIONAL OFFER BANNERS
+        ========================================================= -->
+        <div class="dk-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px;">
+            <h3 style="font-size: 17px; font-weight: 800; color: #0f2b48; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                <span>🎁</span> 3 Promo Banners (New Arrivals, Top Brands, Student Special)
+            </h3>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                @if (promoBanners.Cards != null)
+                {
+                    @for (int i = 0; i < promoBanners.Cards.Count; i++)
+                    {
+                        var p = promoBanners.Cards[i];
+                        <div class="promo-card-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+                            <input type="hidden" class="promo-id" value="@p.Id" />
+                            <input type="hidden" class="promo-gradient" value="@p.Gradient" />
+                            <input type="hidden" class="promo-accent" value="@p.AccentColor" />
+
+                            <div style="margin-bottom: 8px;">
+                                <label style="font-size: 11.5px; font-weight: 700; color: #334155;">Title</label>
+                                <input type="text" class="promo-title dk-input" value="@p.Title" style="width: 100%; padding: 6px 10px; font-size: 12px; font-weight: 700; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                            </div>
+
+                            <div style="margin-bottom: 8px;">
+                                <label style="font-size: 11.5px; font-weight: 700; color: #334155;">Subtitle</label>
+                                <input type="text" class="promo-subtitle dk-input" value="@p.Subtitle" style="width: 100%; padding: 6px 10px; font-size: 11.5px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                                <div>
+                                    <label style="font-size: 11px; font-weight: 700; color: #334155;">Button Text</label>
+                                    <input type="text" class="promo-btn-text dk-input" value="@p.ButtonText" style="width: 100%; padding: 5px 8px; font-size: 11.5px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                </div>
+                                <div>
+                                    <label style="font-size: 11px; font-weight: 700; color: #334155;">Target Link</label>
+                                    <input type="text" class="promo-btn-url dk-input" value="@p.ButtonUrl" style="width: 100%; padding: 5px 8px; font-size: 11.5px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 8px; border-radius: 6px; border: 1px dashed #cbd5e1;">
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #f97316; cursor: pointer;">
+                                    <input type="checkbox" id="promoSoon_@i" class="promo-is-soon" @(p.IsUploadingSoon ? "checked" : "") style="width: 14px; height: 14px;" />
+                                    <span>Uploading Soon</span>
+                                </label>
+
+                                <input type="hidden" id="promoImageUrl_@i" class="promo-image-url" value="@p.ImageUrl" />
+                                <label class="dk-btn" style="background: #0f2b48; color: #ffffff; font-size: 10.5px; font-weight: 700; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                                    <input type="file" accept="image/*" style="display: none;" onchange="uploadImageAsync(this, 'promoImageUrl_@i', null, 'promoSoon_@i')" />
+                                    📷 Upload Visual
+                                </label>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- BOTTOM ACTION BUTTONS -->
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 20px 24px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+            <form asp-action="ResetToDefault" method="post" style="margin: 0;" onsubmit="return confirm('Are you sure you want to reset Luggage Hub to default template?');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="dk-btn" style="background: #f1f5f9; color: #dc2626; border: 1px solid #fca5a5; padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer;">
+                    ↺ Reset to Default
+                </button>
+            </form>
+
+            <button type="button" class="dk-btn" onclick="saveLuggageHubConfig()" style="background: #0f2b48; color: #ffffff; border: none; padding: 12px 36px; font-size: 15px; font-weight: 800; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(15, 43, 72, 0.35);">
+                Save Luggage Hub Configuration
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    // AJAX IMAGE UPLOAD HANDLER
+    function uploadImageAsync(inputElement, targetFieldId, previewImgId, soonCheckboxId) {
+        if (!inputElement.files || inputElement.files.length === 0) return;
+
+        var file = inputElement.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('targetField', targetFieldId);
+
+        var tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (tokenInput) {
+            formData.append('__RequestVerificationToken', tokenInput.value);
+        }
+
+        var parentLabel = inputElement.parentElement;
+        var originalBtnText = parentLabel.innerText;
+        parentLabel.innerText = '⏳ Uploading...';
+
+        fetch('/Admin/LuggageHub/UploadImage', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                var field = document.getElementById(targetFieldId);
+                if (field) field.value = data.url;
+
+                if (previewImgId) {
+                    var preview = document.getElementById(previewImgId);
+                    if (preview) preview.src = data.url;
+                }
+
+                if (soonCheckboxId) {
+                    var soonCheckbox = document.getElementById(soonCheckboxId);
+                    if (soonCheckbox) soonCheckbox.checked = false;
+                }
+
+                alert('✓ ' + (data.message || 'Image uploaded successfully!'));
+            } else {
+                alert('✕ ' + (data.message || 'Image upload failed.'));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('✕ Upload failed: ' + err.message);
+        })
+        .finally(() => {
+            parentLabel.innerHTML = '<input type="file" accept="image/*" style="display:none;" onchange="uploadImageAsync(this, \'' + targetFieldId + '\', \'' + (previewImgId || '') + '\', \'' + (soonCheckboxId || '') + '\')" />📷 Upload';
+        });
+    }
+
+    // SAVE COMPLETE LUGGAGE HUB CONFIG
+    function saveLuggageHubConfig() {
+        var btn = document.getElementById('btnSaveLuggageTop');
+        var originalText = btn.innerHTML;
+        btn.innerHTML = '<span>Saving...</span>';
+        btn.disabled = true;
+
+        var badges = [];
+        document.querySelectorAll('.hero-badge-row').forEach(row => {
+            badges.push({
+                id: row.querySelector('.badge-id')?.value || '',
+                icon: row.querySelector('.badge-icon')?.value || '',
+                title: row.querySelector('.badge-title')?.value || '',
+                subtitle: row.querySelector('.badge-sub')?.value || ''
+            });
+        });
+
+        var cards = [];
+        document.querySelectorAll('.subcat-card-row').forEach(row => {
+            cards.push({
+                id: row.querySelector('.card-id')?.value || '',
+                slug: row.querySelector('.card-slug')?.value || '',
+                icon: row.querySelector('.card-icon')?.value || '',
+                title: row.querySelector('.card-title')?.value || '',
+                subtitle: row.querySelector('.card-subtitle')?.value || '',
+                targetUrl: row.querySelector('.card-target-url')?.value || '/category/luggage-bags',
+                imageUrl: row.querySelector('.card-image-url')?.value || '',
+                isUploadingSoon: row.querySelector('.card-is-soon')?.checked || false,
+                displayOrder: parseInt(row.querySelector('.card-order')?.value || '1', 10),
+                isActive: row.querySelector('.card-is-active')?.checked || false
+            });
+        });
+
+        var promoCards = [];
+        document.querySelectorAll('.promo-card-row').forEach(row => {
+            promoCards.push({
+                id: row.querySelector('.promo-id')?.value || '',
+                title: row.querySelector('.promo-title')?.value || '',
+                subtitle: row.querySelector('.promo-subtitle')?.value || '',
+                buttonText: row.querySelector('.promo-btn-text')?.value || '',
+                buttonUrl: row.querySelector('.promo-btn-url')?.value || '',
+                imageUrl: row.querySelector('.promo-image-url')?.value || '',
+                gradient: row.querySelector('.promo-gradient')?.value || '',
+                accentColor: row.querySelector('.promo-accent')?.value || '',
+                isUploadingSoon: row.querySelector('.promo-is-soon')?.checked || false
+            });
+        });
+
+        var payload = {
+            festivalTheme: {
+                isFestivalActive: document.getElementById('festIsActive')?.checked || false,
+                festivalName: document.getElementById('festName')?.value || 'Flight Season Special',
+                festivalTag: document.getElementById('festTag')?.value || 'FESTIVAL THEME',
+                festivalBannerText: document.getElementById('festBannerText')?.value || '',
+                themePreset: 'warm-sunset',
+                primaryNavy: document.getElementById('festPrimaryNavy')?.value || '#0f2b48',
+                accentOrange: document.getElementById('festAccentOrange')?.value || '#f97316',
+                heroBackground: 'linear-gradient(135deg, #fdf4ec 0%, #fae8d8 35%, #f1f5f9 70%, #e2e8f0 100%)',
+                cardBorderRadius: '14px'
+            },
+            heroBanner: {
+                isEnabled: document.getElementById('heroIsEnabled')?.checked || false,
+                headingLine1: document.getElementById('heroHeading1')?.value || 'Pack your dreams.',
+                headingLine2: document.getElementById('heroHeading2')?.value || 'Carry your tomorrow.',
+                subtitleLine1: document.getElementById('heroSub1')?.value || '',
+                subtitleLine2: document.getElementById('heroSub2')?.value || '',
+                buttonText: document.getElementById('heroBtnText')?.value || 'Explore Collection →',
+                buttonUrl: document.getElementById('heroBtnUrl')?.value || '#luggage-products-section',
+                imageUrl: document.getElementById('heroImageUrl')?.value || '',
+                isUploadingSoon: document.getElementById('heroIsUploadingSoon')?.checked || false,
+                badges: badges,
+                offerBox: {
+                    isEnabled: true,
+                    topTag: document.getElementById('offerTopTag')?.value || 'TRAVEL FAR. TRAVEL SMART.',
+                    discountTitle: document.getElementById('offerDiscountTitle')?.value || 'UP TO 15% OFF',
+                    discountSubtitle: document.getElementById('offerDiscountSub')?.value || 'On All Luggage',
+                    buttonText: document.getElementById('offerButtonText')?.value || 'Shop Now →',
+                    buttonUrl: '#luggage-products-section'
+                }
+            },
+            reassuranceBar: {
+                isEnabled: true,
+                items: [
+                    { icon: 'truck', title: 'Free Delivery', subtitle: 'On orders above ₹999' },
+                    { icon: 'rotate-ccw', title: 'Easy Returns', subtitle: '7 day hassle-free returns' },
+                    { icon: 'credit-card', title: 'Secure Payments', subtitle: '100% secure checkout' },
+                    { icon: 'headphones', title: '24/7 Support', subtitle: "We're here to help" },
+                    { icon: 'award', title: 'Best Price Guarantee', subtitle: 'Get the best deals' }
+                ]
+            },
+            shopByCategory: {
+                heading: 'Shop by Category',
+                subtitle: 'Find the perfect luggage for your next adventure',
+                cards: cards
+            },
+            promoBanners: {
+                isEnabled: true,
+                cards: promoCards
+            }
+        };
+
+        var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+        fetch('/Admin/LuggageHub/Save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('✓ Luggage & Bags Category Hub settings saved successfully!');
+            } else {
+                alert('✕ ' + (data.message || 'Failed to save configuration.'));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('✕ Error saving configuration: ' + err.message);
+        })
+        .finally(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+    }
+</script>
+

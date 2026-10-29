@@ -1,0 +1,222 @@
+{
+  "FestivalTheme": {
+    "IsFestivalActive": true,
+    "FestivalName": "Flight Season Special",
+    "FestivalTag": "FESTIVAL THEME",
+    "FestivalBannerText": "✈️ International Student Travel Sale • Extra 15% Off with Code FLYSMART",
+    "ThemePreset": "warm-sunset",
+    "PrimaryNavy": "#0f2b48",
+    "AccentOrange": "#f97316",
+    "HeroBackground": "linear-gradient(135deg, #fdf4ec 0%, #fae8d8 35%, #f1f5f9 70%, #e2e8f0 100%)",
+    "CardBorderRadius": "14px"
+  },
+  "HeroBanner": {
+    "IsEnabled": true,
+    "HeadingLine1": "Pack your dreams.",
+    "HeadingLine2": "Carry your tomorrow.",
+    "SubtitleLine1": "Every journey begins with the right luggage.",
+    "SubtitleLine2": "Built to go the distance. Made to move with you.",
+    "ButtonText": "Explore Collection →",
+    "ButtonUrl": "#luggage-products-section",
+    "ImageUrl": "/images/luggage-hub/hero-luggage-collection.webp",
+    "IsUploadingSoon": true,
+    "Badges": [
+      {
+        "Id": "badge-strong",
+        "Icon": "shield",
+        "Title": "Strong Outside",
+        "Subtitle": "Built to last"
+      },
+      {
+        "Id": "badge-light",
+        "Icon": "feather",
+        "Title": "Light Inside",
+        "Subtitle": "Travel with ease"
+      },
+      {
+        "Id": "badge-safe",
+        "Icon": "lock",
+        "Title": "Safe All The Way",
+        "Subtitle": "Secure TSA Locks"
+      }
+    ],
+    "OfferBox": {
+      "IsEnabled": true,
+      "TopTag": "TRAVEL FAR. TRAVEL SMART.",
+      "DiscountTitle": "UP TO 15% OFF",
+      "DiscountSubtitle": "On All Luggage",
+      "ButtonText": "Shop Now →",
+      "ButtonUrl": "#luggage-products-section"
+    }
+  },
+  "ReassuranceBar": {
+    "IsEnabled": true,
+    "Items": [
+      {
+        "Icon": "truck",
+        "Title": "Free Delivery",
+        "Subtitle": "On orders above ₹999"
+      },
+      {
+        "Icon": "rotate-ccw",
+        "Title": "Easy Returns",
+        "Subtitle": "7 day hassle-free returns"
+      },
+      {
+        "Icon": "credit-card",
+        "Title": "Secure Payments",
+        "Subtitle": "100% secure checkout"
+      },
+      {
+        "Icon": "headphones",
+        "Title": "24/7 Support",
+        "Subtitle": "We're here to help"
+      },
+      {
+        "Icon": "award",
+        "Title": "Best Price Guarantee",
+        "Subtitle": "Get the best deals"
+      }
+    ]
+  },
+  "ShopByCategory": {
+    "Heading": "Shop by Category",
+    "Subtitle": "Find the perfect luggage for your next adventure",
+    "Cards": [
+      {
+        "Id": "cat-suitcases",
+        "Title": "Suitcases",
+        "Subtitle": "Hard & Soft Case",
+        "Slug": "suitcases",
+        "ImageUrl": "/images/luggage-hub/cat-suitcases.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=luggage-suitcases&type=suitcases",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 1,
+        "IsActive": true,
+        "Icon": "luggage"
+      },
+      {
+        "Id": "cat-backpacks",
+        "Title": "Backpacks",
+        "Subtitle": "For Travel & Daily Use",
+        "Slug": "backpacks",
+        "ImageUrl": "/images/luggage-hub/cat-backpacks.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=packing-organizers&type=backpacks",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 2,
+        "IsActive": true,
+        "Icon": "backpack"
+      },
+      {
+        "Id": "cat-duffel",
+        "Title": "Duffel Bags",
+        "Subtitle": "Spacious & Stylish",
+        "Slug": "duffel-bags",
+        "ImageUrl": "/images/luggage-hub/cat-duffel.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=luggage-suitcases&type=duffels",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 3,
+        "IsActive": true,
+        "Icon": "briefcase"
+      },
+      {
+        "Id": "cat-cabin",
+        "Title": "Cabin Luggage",
+        "Subtitle": "Travel Light",
+        "Slug": "cabin-luggage",
+        "ImageUrl": "/images/luggage-hub/cat-cabin.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=luggage-suitcases&type=cabin",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 4,
+        "IsActive": true,
+        "Icon": "compass"
+      },
+      {
+        "Id": "cat-sets",
+        "Title": "Luggage Sets",
+        "Subtitle": "All-in-One Sets",
+        "Slug": "luggage-sets",
+        "ImageUrl": "/images/luggage-hub/cat-sets.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=luggage-suitcases&type=sets",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 5,
+        "IsActive": true,
+        "Icon": "layers"
+      },
+      {
+        "Id": "cat-laptop-bags",
+        "Title": "Laptop Bags",
+        "Subtitle": "Work & Travel",
+        "Slug": "laptop-bags",
+        "ImageUrl": "/images/luggage-hub/cat-laptop-bags.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=tech-accessories&type=laptop-bags",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 6,
+        "IsActive": true,
+        "Icon": "folder"
+      },
+      {
+        "Id": "cat-kids",
+        "Title": "Kids Luggage",
+        "Subtitle": "Fun & Durable",
+        "Slug": "kids-luggage",
+        "ImageUrl": "/images/luggage-hub/cat-kids.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=luggage-suitcases&type=kids",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 7,
+        "IsActive": true,
+        "Icon": "smile"
+      },
+      {
+        "Id": "cat-accessories",
+        "Title": "Travel Accessories",
+        "Subtitle": "Must-Have Add-ons",
+        "Slug": "travel-accessories",
+        "ImageUrl": "/images/luggage-hub/cat-accessories.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=comfort-essentials",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 8,
+        "IsActive": true,
+        "Icon": "tag"
+      }
+    ]
+  },
+  "PromoBanners": {
+    "IsEnabled": true,
+    "Cards": [
+      {
+        "Id": "promo-new-arrivals",
+        "Title": "New Arrivals",
+        "Subtitle": "Explore the latest in luggage",
+        "ButtonText": "Shop Now →",
+        "ButtonUrl": "/category/travel-gear?subcategory=luggage-suitcases&filter=new",
+        "ImageUrl": "/images/luggage-hub/promo-new-arrivals.webp",
+        "Gradient": "linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)",
+        "AccentColor": "#0284c7",
+        "IsUploadingSoon": true
+      },
+      {
+        "Id": "promo-top-brands",
+        "Title": "Top Brands",
+        "Subtitle": "Trusted by thousands of travelers",
+        "ButtonText": "Explore Brands →",
+        "ButtonUrl": "/category/travel-gear?subcategory=luggage-suitcases&filter=brands",
+        "ImageUrl": "/images/luggage-hub/promo-top-brands.webp",
+        "Gradient": "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+        "AccentColor": "#d97706",
+        "IsUploadingSoon": true
+      },
+      {
+        "Id": "promo-student-special",
+        "Title": "Student Special",
+        "Subtitle": "Extra discounts for students",
+        "ButtonText": "Verify Now →",
+        "ButtonUrl": "/SpecialOffer",
+        "ImageUrl": "/images/luggage-hub/promo-student-special.webp",
+        "Gradient": "linear-gradient(135deg, #fae8ff 0%, #f5d0fe 100%)",
+        "AccentColor": "#a855f7",
+        "IsUploadingSoon": true
+      }
+    ]
+  }
+}

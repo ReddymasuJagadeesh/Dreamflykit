@@ -260,33 +260,42 @@
                 {
                     @foreach (var c in shopCats.Cards.Where(x => x.IsActive).OrderBy(x => x.DisplayOrder))
                     {
+                        var cardUrl = (string.Equals(c.Slug, "luggage-suitcases", StringComparison.OrdinalIgnoreCase) || 
+                                       string.Equals(c.Id, "cat-luggage-suitcases", StringComparison.OrdinalIgnoreCase) || 
+                                       (c.Title != null && c.Title.Contains("Luggage", StringComparison.OrdinalIgnoreCase)))
+                                      ? "/category/luggage-bags"
+                                      : c.TargetUrl;
                         <div class="dk-travel-card">
                             <!-- Card Image Area -->
-                            <div class="dk-travel-card-media">
-                                @if (!string.IsNullOrWhiteSpace(c.ImageUrl) && !c.IsUploadingSoon)
-                                {
-                                    <img src="@c.ImageUrl" alt="@c.Title" class="dk-travel-card-img" loading="lazy" />
-                                }
-                                else
-                                {
-                                    <div class="dk-travel-card-placeholder">
-                                        <div class="dk-travel-ph-camera-icon">
-                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
-                                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                                                <circle cx="12" cy="13" r="4"></circle>
-                                            </svg>
+                            <a href="@cardUrl" style="display: block; text-decoration: none;">
+                                <div class="dk-travel-card-media">
+                                    @if (!string.IsNullOrWhiteSpace(c.ImageUrl) && !c.IsUploadingSoon)
+                                    {
+                                        <img src="@c.ImageUrl" alt="@c.Title" class="dk-travel-card-img" loading="lazy" />
+                                    }
+                                    else
+                                    {
+                                        <div class="dk-travel-card-placeholder">
+                                            <div class="dk-travel-ph-camera-icon">
+                                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+                                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                                    <circle cx="12" cy="13" r="4"></circle>
+                                                </svg>
+                                            </div>
+                                            <span class="dk-travel-card-soon-badge">UPLOADING SOON</span>
+                                            <span class="dk-travel-card-soon-sub">Admin Replaceable</span>
                                         </div>
-                                        <span class="dk-travel-card-soon-badge">UPLOADING SOON</span>
-                                        <span class="dk-travel-card-soon-sub">Admin Replaceable</span>
-                                    </div>
-                                }
-                            </div>
+                                    }
+                                </div>
+                            </a>
 
                             <!-- Card Body -->
                             <div class="dk-travel-card-body">
-                                <h3 class="dk-travel-card-title">@c.Title</h3>
+                                <h3 class="dk-travel-card-title">
+                                    <a href="@cardUrl" style="color: inherit; text-decoration: none;">@c.Title</a>
+                                </h3>
                                 <p class="dk-travel-card-desc">@c.Subtitle</p>
-                                <a href="@c.TargetUrl" class="dk-travel-shop-btn" style="color: @theme.AccentColor;">
+                                <a href="@cardUrl" class="dk-travel-shop-btn" style="color: @theme.AccentColor;">
                                     <span>Shop Now</span>
                                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </a>
@@ -314,7 +323,7 @@
                         @foreach (var prod in products)
                         {
                             var price = prod.SellingPrice;
-                            var mrp = prod.MRP > 0 ? prod.MRP : Math.Round(price * 1.35m, 0);
+                            var mrp = prod.MRP > 0 ? prod.MRP : (price > 0 ? Math.Round(price * 1.35m, 0) : price);
                             var discountPercent = (int)Math.Round(prod.DiscountPercentage > 0 ? prod.DiscountPercentage : (mrp > price ? (mrp - price) / mrp * 100m : 0m));
                             var rating = 4.6 + (Math.Abs(prod.Name.GetHashCode()) % 4) * 0.1;
 
@@ -1257,4 +1266,3 @@
     }
 }
 </style>
-

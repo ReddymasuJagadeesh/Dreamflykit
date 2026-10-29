@@ -21,6 +21,7 @@ public sealed class ProductsController : Controller
     private readonly Dreamflykit.Application.BeautyHub.Interfaces.IBeautyHubService _beautyHubService;
     private readonly Dreamflykit.Application.FoodHub.Interfaces.IFoodHubService _foodHubService;
     private readonly Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService _travelHubService;
+    private readonly Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService _luggageHubService;
 
     public ProductsController(
         IProductService productService,
@@ -32,7 +33,8 @@ public sealed class ProductsController : Controller
         Dreamflykit.Application.AppliancesHub.Interfaces.IAppliancesHubService appliancesHubService,
         Dreamflykit.Application.BeautyHub.Interfaces.IBeautyHubService beautyHubService,
         Dreamflykit.Application.FoodHub.Interfaces.IFoodHubService foodHubService,
-        Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService travelHubService)
+        Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService travelHubService,
+        Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService luggageHubService)
     {
         _productService = productService;
         _categoryService = categoryService;
@@ -44,6 +46,7 @@ public sealed class ProductsController : Controller
         _beautyHubService = beautyHubService;
         _foodHubService = foodHubService;
         _travelHubService = travelHubService;
+        _luggageHubService = luggageHubService;
     }
 
     [HttpGet("/category/study-essentials/category/study-essentials/{slug}")]
@@ -138,6 +141,20 @@ public sealed class ProductsController : Controller
                                string.Equals(effectiveCategory, "travel", StringComparison.OrdinalIgnoreCase) ||
                                string.Equals(effectiveCategory, "travel_gear", StringComparison.OrdinalIgnoreCase);
 
+        var isLuggageCategory = string.Equals(effectiveCategory, "luggage-bags", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(effectiveCategory, "luggage_bags", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(effectiveCategory, "luggage", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(effectiveCategory, "luggage-suitcases", StringComparison.OrdinalIgnoreCase) ||
+                                (isTravelCategory && (string.Equals(currentSubcategorySlug, "luggage-suitcases", StringComparison.OrdinalIgnoreCase) ||
+                                                      string.Equals(subcategorySlug, "luggage-suitcases", StringComparison.OrdinalIgnoreCase) ||
+                                                      string.Equals(querySubcategory, "luggage-suitcases", StringComparison.OrdinalIgnoreCase) ||
+                                                      string.Equals(subcatItem, "Luggage & Suitcases", StringComparison.OrdinalIgnoreCase)));
+
+        if (isLuggageCategory && !string.Equals(effectiveCategory, "luggage-bags", StringComparison.OrdinalIgnoreCase))
+        {
+            return RedirectPermanent("/category/luggage-bags");
+        }
+
         CategoryDetails? catDetails = null;
         string? currentSubcategoryName = null;
 
@@ -171,6 +188,23 @@ public sealed class ProductsController : Controller
             }
         }
 
+        if (isLuggageCategory && !categoryId.HasValue)
+        {
+            var travelCatDetails = await _categoryService.GetCategoryDetailsAsync("travel-gear", cancellationToken);
+            if (travelCatDetails != null)
+            {
+                categoryId = travelCatDetails.CategoryId;
+                var luggageSub = travelCatDetails.Subcategories
+                    .FirstOrDefault(s => s.Slug.Equals("luggage-suitcases", StringComparison.OrdinalIgnoreCase));
+                if (luggageSub != null)
+                {
+                    subcategoryId = luggageSub.SubcategoryId;
+                    currentSubcategoryName = luggageSub.Name;
+                    currentSubcategorySlug = "luggage-suitcases";
+                }
+            }
+        }
+
         var effectiveSubcatItem = !string.IsNullOrWhiteSpace(subcatItem)
             ? subcatItem.Trim()
             : (!string.IsNullOrWhiteSpace(item) ? item.Trim() : null);
@@ -183,7 +217,7 @@ public sealed class ProductsController : Controller
         {
             SearchTerm = effectiveSearch,
             CategoryId = categoryId,
-            CategorySlug = effectiveCategory,
+            CategorySlug = isLuggageCategory ? "travel-gear" : effectiveCategory,
             SubcategoryId = subcategoryId,
             MinPrice = minPrice,
             MaxPrice = maxPrice,
@@ -250,7 +284,7 @@ public sealed class ProductsController : Controller
             HasNextPage = result.HasNextPage,
             SearchTerm = effectiveSearch,
             CategoryId = categoryId,
-            CategorySlug = result.CurrentCategorySlug ?? effectiveCategory,
+            CategorySlug = isLuggageCategory ? "luggage-bags" : (result.CurrentCategorySlug ?? effectiveCategory),
             CategoryName = (isStudyCategory && !string.IsNullOrWhiteSpace(currentSubcategoryName))
                            ? currentSubcategoryName
                            : (isEthnicWearCategory ? "Ethnic Wear" :
@@ -259,7 +293,8 @@ public sealed class ProductsController : Controller
                            (isSweatshirtsCategory ? "Sweatshirts" :
                            (isWomenClothingCategory ? "Women Clothing" :
                            (isMenClothingCategory ? "Men Clothing" :
-                           (result.CurrentCategoryName ?? catDetails?.Name))))))),
+                           (isLuggageCategory ? "Luggage & Bags" :
+                           (result.CurrentCategoryName ?? catDetails?.Name)))))))),
             CategoryImageUrl = catDetails?.ImageUrl,
             CategoryDescription = !string.IsNullOrWhiteSpace(catDetails?.Name)
                 ? $"Explore premium {catDetails.Name} student essentials, verified university supplies, and travel-ready gear curated for international students."
@@ -282,15 +317,17 @@ public sealed class ProductsController : Controller
             Categories = result.Categories,
             PriceRanges = result.PriceRanges,
             Discounts = result.Discounts,
-            ViewMode = !string.IsNullOrWhiteSpace(view)
-                ? view.Trim().ToLowerInvariant()
-                : (isEthnicWearCategory ? "ethnic-wear" :
-                  (isThermalsCategory ? "thermals" :
-                  (isHoodiesCategory ? "hoodies" :
-                  (isSweatshirtsCategory ? "sweatshirts" :
-                  (isWomenClothingCategory ? "women-clothing" :
-                  (isMenClothingCategory ? "men-clothing" :
-                  ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory || isAppliancesCategory || isBeautyCategory || isFoodCategory || isTravelCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"))))))),
+            ViewMode = isLuggageCategory
+                ? "hub"
+                : (!string.IsNullOrWhiteSpace(view)
+                    ? view.Trim().ToLowerInvariant()
+                    : (isEthnicWearCategory ? "ethnic-wear" :
+                      (isThermalsCategory ? "thermals" :
+                      (isHoodiesCategory ? "hoodies" :
+                      (isSweatshirtsCategory ? "sweatshirts" :
+                      (isWomenClothingCategory ? "women-clothing" :
+                      (isMenClothingCategory ? "men-clothing" :
+                      ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory || isAppliancesCategory || isBeautyCategory || isFoodCategory || isTravelCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories")))))))),
             StudyHub = isStudyCategory
                         ? await _studyHubService.GetConfigAsync(cancellationToken)
                         : null,
@@ -312,8 +349,11 @@ public sealed class ProductsController : Controller
             FoodHub = isFoodCategory
                         ? await _foodHubService.GetConfigAsync(cancellationToken)
                         : null,
-            TravelHub = isTravelCategory
+            TravelHub = isTravelCategory && !isLuggageCategory
                         ? await _travelHubService.GetConfigAsync(cancellationToken)
+                        : null,
+            LuggageHub = isLuggageCategory
+                        ? await _luggageHubService.GetConfigAsync(cancellationToken)
                         : null
         };
 

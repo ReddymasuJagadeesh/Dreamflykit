@@ -74,6 +74,7 @@ public sealed class ProductListViewModel
     public Dreamflykit.Application.BeautyHub.Models.BeautyHubDto? BeautyHub { get; init; }
     public Dreamflykit.Application.FoodHub.Models.FoodHubDto? FoodHub { get; init; }
     public Dreamflykit.Application.TravelHub.Models.TravelHubDto? TravelHub { get; init; }
+    public Dreamflykit.Application.LuggageHub.Models.LuggageHubDto? LuggageHub { get; init; }
 
     public string? ViewMode { get; init; }
 
@@ -169,10 +170,21 @@ public sealed class ProductListViewModel
         string.Equals(CategorySlug, "groceries", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "grocery", StringComparison.OrdinalIgnoreCase);
 
+    public bool IsLuggageHub =>
+        LuggageHub != null ||
+        string.Equals(CategorySlug, "luggage-bags", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "luggage_bags", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "luggage", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "luggage-suitcases", StringComparison.OrdinalIgnoreCase) ||
+        (string.Equals(CategorySlug, "travel-gear", StringComparison.OrdinalIgnoreCase) &&
+         (string.Equals(CurrentSubcategorySlug, "luggage-suitcases", StringComparison.OrdinalIgnoreCase) ||
+          string.Equals(CurrentSubcatItem, "Luggage & Suitcases", StringComparison.OrdinalIgnoreCase)));
+
     public bool IsTravelHub =>
-        string.Equals(CategorySlug, "travel-gear", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(CategorySlug, "travel", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(CategorySlug, "travel_gear", StringComparison.OrdinalIgnoreCase);
+        !IsLuggageHub &&
+        (string.Equals(CategorySlug, "travel-gear", StringComparison.OrdinalIgnoreCase) ||
+         string.Equals(CategorySlug, "travel", StringComparison.OrdinalIgnoreCase) ||
+         string.Equals(CategorySlug, "travel_gear", StringComparison.OrdinalIgnoreCase));
 
     public bool HasActiveFilters =>
         !string.IsNullOrWhiteSpace(SearchTerm) ||

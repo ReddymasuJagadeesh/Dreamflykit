@@ -309,7 +309,13 @@
         </div>
     }
 
-    @if (Model.IsTravelHub && Model.TravelHub != null && Model.ViewMode == "hub")
+    @if (Model.IsLuggageHub)
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_LuggageCategoryHub" model="Model" />
+        </div>
+    }
+    else if (Model.IsTravelHub && Model.TravelHub != null && Model.ViewMode == "hub")
     {
         <div style="width: 100%; margin-bottom: 24px;">
             <partial name="_TravelCategoryHub" model="Model" />
@@ -351,7 +357,8 @@
                                (Model.IsAppliancesHub && Model.ViewMode == "hub") ||
                                Model.IsBeautyHub ||
                                Model.IsFoodHub ||
-                               (Model.IsTravelHub && Model.ViewMode == "hub");
+                               (Model.IsTravelHub && Model.ViewMode == "hub") ||
+                               Model.IsLuggageHub;
     }
 
     @if (!isSpecializedHub)
