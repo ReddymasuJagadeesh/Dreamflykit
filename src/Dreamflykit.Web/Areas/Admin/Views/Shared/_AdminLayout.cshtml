@@ -1,207 +1,411 @@
-@inject Dreamflykit.Application.Theme.IThemeSettingService ThemeSettingService
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] — Dreamflykit Admin</title>
-    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
-    @Html.Raw(await ThemeSettingService.RenderDynamicThemeHtmlAsync())
-</head>
-<body class="dk-admin-body">
-
-    <div class="dk-admin-wrapper">
-
-        <!-- ========================================================
-             ADMIN SIDEBAR
-        ========================================================= -->
-        <aside class="dk-admin-sidebar" id="dkAdminSidebar">
-            <div class="dk-admin-brand-header">
-                <a href="/Admin" class="dk-admin-brand-link">
-                    <img src="~/images/branding/dreamflykit-logo.webp" alt="Dreamflykit" class="dk-admin-brand-logo" />
-                </a>
-                @if (User.IsInRole("SuperAdmin"))
-                {
-                    <span class="dk-admin-role-tag dk-admin-role-super">SUPER ADMIN</span>
-                }
-                else
-                {
-                    <span class="dk-admin-role-tag">ADMIN</span>
-                }
-            </div>
-
-            <nav class="dk-admin-nav">
-                <a href="/Admin" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect>
-                        <rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
-                    <span>Dashboard</span>
-                </a>
-
-                <a href="/Admin/Orders" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Orders" ? "active" : "")">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="8" cy="21" r="1"></circle>
-                        <circle cx="19" cy="21" r="1"></circle>
-                        <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
-                    </svg>
-                    <span>Manage Orders</span>
-                </a>
-
-                <div style="padding: 0.75rem 1rem 0.25rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.05em;">
-                    Catalog Management
-                </div>
-
-                <a href="/Admin/Products" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" && ViewContext.RouteData.Values["action"]?.ToString() != "Create" && string.IsNullOrEmpty(ViewContext.HttpContext.Request.Query["status"]) ? "active" : "")">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    </svg>
-                    <span>All Products</span>
-                </a>
-
-                <a href="/Admin/Products?status=PendingApproval" class="dk-admin-nav-item @(ViewContext.HttpContext.Request.Query["status"] == "PendingApproval" ? "active" : "")" style="color: #fbbf24;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    <span>Seller Submissions (Needs Price)</span>
-                </a>
-
-                <a href="/Admin/Products/Create" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" && ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active" : "")" style="padding-left: 28px; font-size: 12px; color: #38bdf8;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="16"></line>
-                        <line x1="8" y1="12" x2="16" y2="12"></line>
-                    </svg>
-                    <span>+ Add New Product</span>
-                </a>
-
-                <a href="/Admin/Categories" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Categories" ? "active" : "")">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="8" y1="6" x2="21" y2="6"></line>
-                        <line x1="8" y1="12" x2="21" y2="12"></line>
-                        <line x1="8" y1="18" x2="21" y2="18"></line>
-                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                    </svg>
-                    <span>Categories & Subcategories</span>
-                </a>
-
-                <div style="padding: 0.75rem 1rem 0.25rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.05em;">
-                    Storefront & Marketing
-                </div>
-
-                <a href="/Admin/Media" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Media" ? "active" : "")">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                        <polyline points="21 15 16 10 5 21"></polyline>
-                    </svg>
-                    <span>Media Library</span>
-                </a>
-
-                <a href="/Admin/LogoSettings" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "LogoSettings" ? "active" : "")" style="color: #fb923c;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                        <polyline points="2 17 12 22 22 17"></polyline>
-                        <polyline points="2 12 12 17 22 12"></polyline>
-                    </svg>
-                    <span>Header &amp; Logo Branding</span>
-                </a>
-
-                <a href="/Admin/HeaderAds" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "HeaderAds" ? "active" : "")" style="color: #67e8f9;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                        <circle cx="12" cy="14" r="3"></circle>
-                        <line x1="2" y1="10" x2="22" y2="10"></line>
-                    </svg>
-                    <span>Header Ad Space (Beside Logo)</span>
-                </a>
-
-                <a href="/Admin/Banners" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Banners" ? "active" : "")">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                    </svg>
-                    <span>Hero Slides & Banners (Up to 12)</span>
-                </a>
-
-                <a href="/Admin/HomepageSections" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "HomepageSections" ? "active" : "")">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="18" height="7"></rect>
-                        <rect x="3" y="14" width="18" height="7"></rect>
-                    </svg>
-                    <span>Homepage Sections</span>
-                </a>
-
-                <a href="/Admin/LandingPages" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "LandingPages" ? "active" : "")">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                    </svg>
-                    <span>Landing Pages</span>
-                </a>
-
-                <a href="/Admin/StudyAbroadHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "StudyAbroadHub" ? "active" : "")" style="color: #6366f1;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                    <span>🌐 Study Abroad Hub Profile</span>
-                </a>
-
-                <a href="/Admin/StudyHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "StudyHub" ? "active" : "")" style="color: #38bdf8;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                    </svg>
-                    <span>🎓 Study Essentials (Dreamflykit Profile)</span>
-                </a>
-
-                <a href="/Admin/FashionHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "FashionHub" ? "active" : "")" style="color: #ec4899;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path>
-                    </svg>
-                    <span>👗 Fashion Category Hub</span>
-                </a>
-
-                <a href="/Admin/HealthHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "HealthHub" ? "active" : "")" style="color: #34d399;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        <polyline points="9 12 11 14 15 10"></polyline>
-                    </svg>
-                    <span>💊 Health Care Hub</span>
-                </a>
-
-                <a href="/Admin/MobilesHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "MobilesHub" ? "active" : "")" style="color: #38bdf8;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                    </svg>
-                    <span>📱 Mobiles &amp; 3D Hub</span>
-                </a>
-
-                <a href="/Admin/AppliancesHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "AppliancesHub" ? "active" : "")" style="color: #fb923c;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                        <line x1="8" y1="21" x2="16" y2="21"></line>
-                        <line x1="12" y1="17" x2="12" y2="21"></line>
-                    </svg>
-                    <span>🔌 Appliances Hub</span>
-                </a>
-
-                <a href="/Admin/BeautyHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "BeautyHub" ? "active" : "")" style="color: #f43f5e;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                    </svg>
-                    <span>💄 Beauty Category Hub</span>
-                </a>
+@inject Dreamflykit.Application.Theme.IThemeSettingService ThemeSettingService
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] — Dreamflykit Admin</title>
+
+    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+
+    @Html.Raw(await ThemeSettingService.RenderDynamicThemeHtmlAsync())
+
+</head>
+
+<body class="dk-admin-body">
+
+
+
+    <div class="dk-admin-wrapper">
+
+
+
+        <!-- ========================================================
+
+             ADMIN SIDEBAR
+
+        ========================================================= -->
+
+        <aside class="dk-admin-sidebar" id="dkAdminSidebar">
+
+            <div class="dk-admin-brand-header">
+
+                <a href="/Admin" class="dk-admin-brand-link">
+
+                    <img src="~/images/branding/dreamflykit-logo.webp" alt="Dreamflykit" class="dk-admin-brand-logo" />
+
+                </a>
+
+                @if (User.IsInRole("SuperAdmin"))
+
+                {
+
+                    <span class="dk-admin-role-tag dk-admin-role-super">SUPER ADMIN</span>
+
+                }
+
+                else
+
+                {
+
+                    <span class="dk-admin-role-tag">ADMIN</span>
+
+                }
+
+            </div>
+
+
+
+            <nav class="dk-admin-nav">
+
+                <a href="/Admin" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <rect x="3" y="3" width="7" height="7"></rect>
+
+                        <rect x="14" y="3" width="7" height="7"></rect>
+
+                        <rect x="14" y="14" width="7" height="7"></rect>
+
+                        <rect x="3" y="14" width="7" height="7"></rect>
+
+                    </svg>
+
+                    <span>Dashboard</span>
+
+                </a>
+
+
+
+                <a href="/Admin/Orders" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Orders" ? "active" : "")">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <circle cx="8" cy="21" r="1"></circle>
+
+                        <circle cx="19" cy="21" r="1"></circle>
+
+                        <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+
+                    </svg>
+
+                    <span>Manage Orders</span>
+
+                </a>
+
+
+
+                <div style="padding: 0.75rem 1rem 0.25rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.05em;">
+
+                    Catalog Management
+
+                </div>
+
+
+
+                <a href="/Admin/Products" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" && ViewContext.RouteData.Values["action"]?.ToString() != "Create" && string.IsNullOrEmpty(ViewContext.HttpContext.Request.Query["status"]) ? "active" : "")">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+
+                    </svg>
+
+                    <span>All Products</span>
+
+                </a>
+
+
+
+                <a href="/Admin/Products?status=PendingApproval" class="dk-admin-nav-item @(ViewContext.HttpContext.Request.Query["status"] == "PendingApproval" ? "active" : "")" style="color: #fbbf24;">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <circle cx="12" cy="12" r="10"></circle>
+
+                        <polyline points="12 6 12 12 16 14"></polyline>
+
+                    </svg>
+
+                    <span>Seller Submissions (Needs Price)</span>
+
+                </a>
+
+
+
+                <a href="/Admin/Products/Create" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" && ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active" : "")" style="padding-left: 28px; font-size: 12px; color: #38bdf8;">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <circle cx="12" cy="12" r="10"></circle>
+
+                        <line x1="12" y1="8" x2="12" y2="16"></line>
+
+                        <line x1="8" y1="12" x2="16" y2="12"></line>
+
+                    </svg>
+
+                    <span>+ Add New Product</span>
+
+                </a>
+
+
+
+                <a href="/Admin/Categories" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Categories" ? "active" : "")">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+
+                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+
+                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+
+                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+
+                    </svg>
+
+                    <span>Categories & Subcategories</span>
+
+                </a>
+
+
+
+                <div style="padding: 0.75rem 1rem 0.25rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.05em;">
+
+                    Storefront & Marketing
+
+                </div>
+
+
+
+                <a href="/Admin/Media" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Media" ? "active" : "")">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+
+                        <polyline points="21 15 16 10 5 21"></polyline>
+
+                    </svg>
+
+                    <span>Media Library</span>
+
+                </a>
+
+
+
+                <a href="/Admin/LogoSettings" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "LogoSettings" ? "active" : "")" style="color: #fb923c;">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+
+                        <polyline points="2 17 12 22 22 17"></polyline>
+
+                        <polyline points="2 12 12 17 22 12"></polyline>
+
+                    </svg>
+
+                    <span>Header &amp; Logo Branding</span>
+
+                </a>
+
+
+
+                <a href="/Admin/HeaderAds" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "HeaderAds" ? "active" : "")" style="color: #67e8f9;">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+
+                        <circle cx="12" cy="14" r="3"></circle>
+
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+
+                    </svg>
+
+                    <span>Header Ad Space (Beside Logo)</span>
+
+                </a>
+
+
+
+                <a href="/Admin/Banners" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Banners" ? "active" : "")">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+
+                    </svg>
+
+                    <span>Hero Slides & Banners (Up to 12)</span>
+
+                </a>
+
+
+
+                <a href="/Admin/HomepageSections" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "HomepageSections" ? "active" : "")">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <rect x="3" y="3" width="18" height="7"></rect>
+
+                        <rect x="3" y="14" width="18" height="7"></rect>
+
+                    </svg>
+
+                    <span>Homepage Sections</span>
+
+                </a>
+
+
+
+                <a href="/Admin/LandingPages" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "LandingPages" ? "active" : "")">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+
+                        <polyline points="14 2 14 8 20 8"></polyline>
+
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+
+                    </svg>
+
+                    <span>Landing Pages</span>
+
+                </a>
+
+
+
+                <a href="/Admin/StudyAbroadHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "StudyAbroadHub" ? "active" : "")" style="color: #6366f1;">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <circle cx="12" cy="12" r="10"></circle>
+
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+
+                    </svg>
+
+                    <span>🌐 Study Abroad Hub Profile</span>
+
+                </a>
+
+
+
+                <a href="/Admin/StudyHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "StudyHub" ? "active" : "")" style="color: #38bdf8;">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+
+                    </svg>
+
+                    <span>🎓 Study Essentials (Dreamflykit Profile)</span>
+
+                </a>
+
+
+
+                <a href="/Admin/FashionHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "FashionHub" ? "active" : "")" style="color: #ec4899;">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path>
+
+                    </svg>
+
+                    <span>👗 Fashion Category Hub</span>
+
+                </a>
+
+
+
+                <a href="/Admin/HealthHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "HealthHub" ? "active" : "")" style="color: #34d399;">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+
+                        <polyline points="9 12 11 14 15 10"></polyline>
+
+                    </svg>
+
+                    <span>💊 Health Care Hub</span>
+
+                </a>
+
+
+
+                <a href="/Admin/MobilesHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "MobilesHub" ? "active" : "")" style="color: #38bdf8;">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+
+                    </svg>
+
+                    <span>📱 Mobiles &amp; 3D Hub</span>
+
+                </a>
+
+
+
+                <a href="/Admin/AppliancesHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "AppliancesHub" ? "active" : "")" style="color: #fb923c;">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+
+                    </svg>
+
+                    <span>🔌 Appliances Hub</span>
+
+                </a>
+
+
+
+                <a href="/Admin/BeautyHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "BeautyHub" ? "active" : "")" style="color: #f43f5e;">
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+
+                    </svg>
+
+                    <span>💄 Beauty Category Hub</span>
+
+                </a>
+
 
                 <a href="/Admin/FoodHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "FoodHub" ? "active" : "")" style="color: #4ade80;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -213,125 +417,255 @@
                     </svg>
                     <span>🥑 Food Category Hub</span>
                 </a>
-
-                @if (User.IsInRole("SuperAdmin"))
-                {
-                    <div style="padding: 0.75rem 1rem 0.25rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.05em;">
-                        Administration
-                    </div>
-
-                    <a href="/Admin/Sellers" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Sellers" ? "active" : "")" style="color: #6ee7b7;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                        </svg>
-                        <span>Seller Accounts (Stores)</span>
-                    </a>
-
-                    <a href="/Admin/Users" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "active" : "")">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        <span>User & Role Control</span>
-                    </a>
-
-                    <a href="/Admin/MediaPermissions" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminMediaPermissions" ? "active" : "")">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        <span>Media Permissions</span>
-                    </a>
-
-                    <a href="/Admin/ThemeSettings" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "ThemeSettings" ? "active" : "")" style="color: #fde047;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="4 7 4 4 20 4 20 7"></polyline>
-                            <line x1="9" y1="20" x2="15" y2="20"></line>
-                            <line x1="12" y1="4" x2="12" y2="20"></line>
-                        </svg>
-                        <span>Typography Theme</span>
-                    </a>
-                }
-            </nav>
-
-            <div class="dk-admin-sidebar-footer">
-                <a href="/" class="dk-admin-back-store" target="_blank" rel="noopener">
-                    <span>View Public Store ↗</span>
-                </a>
-            </div>
-        </aside>
-
-        <!-- ========================================================
-             ADMIN MAIN AREA
-        ========================================================= -->
-        <div class="dk-admin-main">
-
-            <header class="dk-admin-topbar">
-                <div class="dk-admin-topbar-left">
-                    <button type="button" class="dk-admin-menu-toggle" id="dkAdminMenuToggle" aria-label="Toggle navigation">
-                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="3" y1="12" x2="21" y2="12"></line>
-                            <line x1="3" y1="6" x2="21" y2="6"></line>
-                            <line x1="3" y1="18" x2="21" y2="18"></line>
-                        </svg>
-                    </button>
-                    <h2 class="dk-admin-topbar-title">@ViewData["Title"]</h2>
-                </div>
-
-                <div class="dk-admin-topbar-right">
-                    <div class="dk-admin-user-pill">
-                        <div class="dk-admin-avatar">
-                            @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "A")
-                        </div>
-                        <div class="dk-admin-user-meta">
-                            <div class="dk-admin-user-name">@(User.Identity?.Name?.Split('@')[0] ?? "Administrator")</div>
-                            <div class="dk-admin-user-role">@(User.IsInRole("SuperAdmin") ? "Super Administrator" : "Store Administrator")</div>
-                        </div>
-                    </div>
-
-                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="dk-btn dk-btn-secondary" style="padding: 6px 14px; font-size: 12px;">Logout</button>
-                    </form>
-                </div>
-            </header>
-
-            <div class="dk-admin-content-body">
-                @if (TempData["SuccessMessage"] != null)
-                {
-                    <div class="dk-alert dk-alert-success" style="padding: 12px 18px; background: #ecfdf5; border: 1px solid #6ee7b7; border-radius: 8px; color: #065f46; font-size: 13px; font-weight: 600; margin-bottom: 20px;">
-                        ✓ @TempData["SuccessMessage"]
-                    </div>
-                }
-
-                @if (TempData["ErrorMessage"] != null)
-                {
-                    <div class="dk-alert dk-alert-danger" style="padding: 12px 18px; background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; color: #991b1b; font-size: 13px; font-weight: 600; margin-bottom: 20px;">
-                        ⚠ @TempData["ErrorMessage"]
-                    </div>
-                }
-
-                @RenderBody()
-            </div>
-
-        </div>
-
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggle = document.getElementById('dkAdminMenuToggle');
-            const sidebar = document.getElementById('dkAdminSidebar');
-            if (toggle && sidebar) {
-                toggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('open');
-                });
-            }
-        });
-    </script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
+
+                <a href="/Admin/TravelHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "TravelHub" ? "active" : "")" style="color: #38bdf8;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13"></path>
+                        <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                    </svg>
+                    <span>✈ Travel Gear Hub</span>
+                </a>
+
+
+                @if (User.IsInRole("SuperAdmin"))
+
+                {
+
+                    <div style="padding: 0.75rem 1rem 0.25rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.05em;">
+
+                        Administration
+
+                    </div>
+
+
+
+                    <a href="/Admin/Sellers" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Sellers" ? "active" : "")" style="color: #6ee7b7;">
+
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+
+                        </svg>
+
+                        <span>Seller Accounts (Stores)</span>
+
+                    </a>
+
+
+
+                    <a href="/Admin/Users" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "active" : "")">
+
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+
+                            <circle cx="9" cy="7" r="4"></circle>
+
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+
+                        </svg>
+
+                        <span>User & Role Control</span>
+
+                    </a>
+
+
+
+                    <a href="/Admin/MediaPermissions" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminMediaPermissions" ? "active" : "")">
+
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+
+                        </svg>
+
+                        <span>Media Permissions</span>
+
+                    </a>
+
+
+
+                    <a href="/Admin/ThemeSettings" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "ThemeSettings" ? "active" : "")" style="color: #fde047;">
+
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                            <polyline points="4 7 4 4 20 4 20 7"></polyline>
+
+                            <line x1="9" y1="20" x2="15" y2="20"></line>
+
+                            <line x1="12" y1="4" x2="12" y2="20"></line>
+
+                        </svg>
+
+                        <span>Typography Theme</span>
+
+                    </a>
+
+                }
+
+            </nav>
+
+
+
+            <div class="dk-admin-sidebar-footer">
+
+                <a href="/" class="dk-admin-back-store" target="_blank" rel="noopener">
+
+                    <span>View Public Store ↗</span>
+
+                </a>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- ========================================================
+
+             ADMIN MAIN AREA
+
+        ========================================================= -->
+
+        <div class="dk-admin-main">
+
+
+
+            <header class="dk-admin-topbar">
+
+                <div class="dk-admin-topbar-left">
+
+                    <button type="button" class="dk-admin-menu-toggle" id="dkAdminMenuToggle" aria-label="Toggle navigation">
+
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+
+                        </svg>
+
+                    </button>
+
+                    <h2 class="dk-admin-topbar-title">@ViewData["Title"]</h2>
+
+                </div>
+
+
+
+                <div class="dk-admin-topbar-right">
+
+                    <div class="dk-admin-user-pill">
+
+                        <div class="dk-admin-avatar">
+
+                            @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "A")
+
+                        </div>
+
+                        <div class="dk-admin-user-meta">
+
+                            <div class="dk-admin-user-name">@(User.Identity?.Name?.Split('@')[0] ?? "Administrator")</div>
+
+                            <div class="dk-admin-user-role">@(User.IsInRole("SuperAdmin") ? "Super Administrator" : "Store Administrator")</div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit" class="dk-btn dk-btn-secondary" style="padding: 6px 14px; font-size: 12px;">Logout</button>
+
+                    </form>
+
+                </div>
+
+            </header>
+
+
+
+            <div class="dk-admin-content-body">
+
+                @if (TempData["SuccessMessage"] != null)
+
+                {
+
+                    <div class="dk-alert dk-alert-success" style="padding: 12px 18px; background: #ecfdf5; border: 1px solid #6ee7b7; border-radius: 8px; color: #065f46; font-size: 13px; font-weight: 600; margin-bottom: 20px;">
+
+                        ✓ @TempData["SuccessMessage"]
+
+                    </div>
+
+                }
+
+
+
+                @if (TempData["ErrorMessage"] != null)
+
+                {
+
+                    <div class="dk-alert dk-alert-danger" style="padding: 12px 18px; background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; color: #991b1b; font-size: 13px; font-weight: 600; margin-bottom: 20px;">
+
+                        ⚠ @TempData["ErrorMessage"]
+
+                    </div>
+
+                }
+
+
+
+                @RenderBody()
+
+            </div>
+
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const toggle = document.getElementById('dkAdminMenuToggle');
+
+            const sidebar = document.getElementById('dkAdminSidebar');
+
+            if (toggle && sidebar) {
+
+                toggle.addEventListener('click', () => {
+
+                    sidebar.classList.toggle('open');
+
+                });
+
+            }
+
+        });
+
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+
+</html>
+

@@ -576,6 +576,137 @@ public static class DatabaseSeeder
             }
         }
 
+        // Ensure Travel Gear Category Subcategories and Products (Dreamflykit Travel Hub)
+        if (catMap.TryGetValue("travel-gear", out var travelCatId))
+        {
+            var existingTravelSubs = await context.Subcategories
+                .Where(s => s.CategoryId == travelCatId)
+                .ToListAsync(cancellationToken);
+
+            var requiredTravelSubs = new (string Name, string Slug, int Order)[]
+            {
+                ("Luggage & Suitcases", "luggage-suitcases", 1),
+                ("Packing Organizers", "packing-organizers", 2),
+                ("Comfort Essentials", "comfort-essentials", 3),
+                ("Adapters & Converters", "adapters-converters", 4),
+                ("Bottles & Hydration", "bottles-hydration", 5),
+                ("Toiletry & Hygiene", "toiletry-hygiene", 6),
+                ("Travel Documents", "travel-documents", 7),
+                ("SIM & Connectivity", "sim-connectivity", 8),
+                ("Travel Insurance", "travel-insurance", 9),
+                ("Locks & Security", "locks-security", 10),
+                ("Tech Accessories", "tech-accessories", 11),
+                ("Travel Entertainment", "travel-entertainment", 12)
+            };
+
+            foreach (var (subName, subSlug, subOrder) in requiredTravelSubs)
+            {
+                var existingSub = existingTravelSubs.FirstOrDefault(s => string.Equals(s.Slug, subSlug, StringComparison.OrdinalIgnoreCase));
+                if (existingSub == null)
+                {
+                    var newSub = new Subcategory(travelCatId, subName, subSlug, subOrder);
+                    context.Subcategories.Add(newSub);
+                }
+                else
+                {
+                    existingSub.Update(subName, subSlug, subOrder);
+                    existingSub.Activate();
+                }
+            }
+            await context.SaveChangesAsync(cancellationToken);
+
+            var travelSubList = await context.Subcategories
+                .Where(s => s.CategoryId == travelCatId)
+                .ToListAsync(cancellationToken);
+
+            var travelSeedProducts = new (string SubSlug, string Name, string Slug, string Short, string Desc, int Order, string Var, string Sku, decimal Mrp, decimal Price, string Media)[]
+            {
+                ("luggage-suitcases", "American Tourister Stratum 2.0 Expandable Spinner Luggage 28\"", "american-tourister-stratum-spinner-luggage-28",
+                 "Ultra-durable polycarbonate hard shell with 360-degree dual spinner wheels and TSA lock.",
+                 "Engineered for international students and long-haul travel. Features scratch-resistant rugged exterior, expandable main packing compartment (+20% volume), interior mesh dividers, and ergonomic push-button trolley handle.",
+                 1, "28-Inch Large / Cobalt Blue", "TRV-LUG-AT28-BLU", 12999m, 6499m, "/images/travel-hub/cat-luggage-suitcases.webp"),
+
+                ("luggage-suitcases", "Skybags Safari Quest Lightweight Cabin Trolley 55cm", "skybags-safari-quest-cabin-trolley-55cm",
+                 "Airline compliant international cabin trolley with whisper-silent spinner wheels.",
+                 "Meets all major international and domestic carry-on airline baggage regulations. Durable water-resistant polyester body with reinforced corner guards and quick-access front tech pocket.",
+                 2, "Cabin 55cm / Charcoal Black", "TRV-LUG-SB55-BLK", 5999m, 2899m, "/images/travel-hub/cat-luggage-suitcases.webp"),
+
+                ("packing-organizers", "AmazonBasics 6-Piece Compression Travel Packing Cubes Set", "compression-travel-packing-cubes-set-6pc",
+                 "Double zipper compression system saves up to 60% luggage suitcase volume.",
+                 "Set includes 2 Extra Large cubes for winter jackets, 2 Medium cubes for clothing, 1 Slim cube for underwear/socks, and 1 water-resistant laundry/shoe bag. Made of tear-resistant ripstop nylon with breathable mesh panels.",
+                 3, "Set of 6 / Slate Grey", "TRV-PCK-CUBE6-GRY", 2499m, 1199m, "/images/travel-hub/cat-packing-organizers.webp"),
+
+                ("comfort-essentials", "Cabeau Evolution S3 Ergonomic Memory Foam Neck Pillow", "cabeau-evolution-s3-memory-foam-neck-pillow",
+                 "360-degree head support with patented chin strap prevents neck strain on long flights.",
+                 "High-density responsive memory foam core with seat-strap attachment system. Includes moisture-wicking washable cover, quick-stow compact travel pouch, and premium silicone earplugs.",
+                 4, "Standard / Deep Indigo", "TRV-CMF-CAB-BLU", 3499m, 1999m, "/images/travel-hub/cat-comfort-essentials.webp"),
+
+                ("adapters-converters", "Universal All-in-One 65W GaN Fast Charger Travel Adapter", "universal-all-in-one-65w-gan-travel-adapter",
+                 "Worldwide plug compatibility (US/UK/EU/AU/IN) across 180+ countries with 65W dual USB-C PD.",
+                 "Ultra-compact GaN fast-charge technology powers laptops, smartphones, tablets, and power banks simultaneously. Features auto-resetting safety fuse, surge protection, and child-safe shutter.",
+                 5, "65W GaN Dual USB-C + 2 USB-A", "TRV-ADP-GAN65-WHT", 3999m, 1899m, "/images/travel-hub/cat-adapters-converters.webp"),
+
+                ("bottles-hydration", "Milton Thermosteel Flip-Lid Insulated Water Bottle 1000ml", "milton-thermosteel-insulated-bottle-1000ml",
+                 "24-hour cold / 18-hour hot double-wall vacuum insulated stainless steel flask.",
+                 "100% leak-proof flip lid with carry loop, condensation-free powder coated grip, and BPA-free food-grade 304 stainless steel interior. Ideal for flights, university campus walks, and library study sessions.",
+                 6, "1000ml / Matte Steel Black", "TRV-BTL-MLT1L-BLK", 1399m, 799m, "/images/travel-hub/cat-bottles-hydration.webp"),
+
+                ("toiletry-hygiene", "Hanging Toiletry & Grooming Kit Bag with TSA Clear Bottles Set", "hanging-toiletry-bag-tsa-clear-bottles-set",
+                 "Waterproof hanging organizer with 360 swivel hook and leakproof silicone bottle containers.",
+                 "Includes 4x 100ml TSA airport security compliant leakproof travel bottles, 2 cream jars, spray mister, toothbrush sleeve, and multiple mesh dividers. Compact fold-and-zip structure.",
+                 7, "Hanging Bag + 8pc Bottle Kit", "TRV-TOI-HNG8-BLK", 1799m, 899m, "/images/travel-hub/cat-toiletry-hygiene.webp"),
+
+                ("travel-documents", "RFID-Blocking Multi-Passport & Travel Document Organizer Wallet", "rfid-blocking-multi-passport-travel-organizer-wallet",
+                 "Safely holds up to 4 passports, boarding passes, currency notes, credit cards & SIM pins.",
+                 "Built-in military-grade RFID blocking technology shields your personal biometric data from digital theft. Heavy-duty zinc alloy zipper with removable wrist strap and water-repellent nylon shell.",
+                 8, "Multi-Passport / Navy Blue", "TRV-DOC-RFID-NVY", 1899m, 799m, "/images/travel-hub/cat-travel-documents.webp"),
+
+                ("sim-connectivity", "Global Travel Data eSIM & Multi-Country 4G/5G Connectivity Kit", "global-travel-data-esim-multi-country-kit",
+                 "Pre-activated high-speed 4G/5G international roaming data package across 140+ countries.",
+                 "Seamless instant QR code activation. Unlimited local calls and generous high-speed data for USA, UK, EU, Canada, and Australia destinations without expensive roaming charges.",
+                 9, "10GB 30-Day Global Roaming", "TRV-SIM-ESIM-10G", 2999m, 1499m, "/images/travel-hub/cat-sim-connectivity.webp"),
+
+                ("locks-security", "Master Lock TSA-Approved Cable Luggage Lock (Pack of 2)", "master-lock-tsa-approved-cable-luggage-lock-2pk",
+                 "Resettable 3-dial combination lock with flexible vinyl-sheathed braided steel cable.",
+                 "Allows airport TSA officers to inspect and relock luggage without damaging zippers. Robust zinc body and flexible cable threads through multiple bag zips effortlessly.",
+                 10, "Pack of 2 / Black & Silver", "TRV-LCK-TSA2-BLK", 1499m, 699m, "/images/travel-hub/cat-locks-security.webp"),
+
+                ("tech-accessories", "Mi 20000mAh 50W Fast Charging Power Bank with Dual Type-C", "mi-20000mah-50w-fast-charging-power-bank",
+                 "Flight-certified 74Wh capacity safe for airline cabin carry-on. Super-fast multi-device charge.",
+                 "Can charge a typical smartphone 4-5 times or power Type-C compatible laptops. Features 12-layer advanced circuit protection against overcharging, short circuit, and high temperatures.",
+                 11, "20000mAh / Matte Black", "TRV-TCH-PB20-BLK", 3499m, 2199m, "/images/travel-hub/cat-tech-accessories.webp"),
+
+                ("travel-entertainment", "Sony WH-CH520 Wireless Bluetooth Headphones with 50-Hr Battery", "sony-wh-ch520-wireless-bluetooth-headphones",
+                 "Comfortable lightweight swivel headphones with multipoint Bluetooth and crystal-clear sound.",
+                 "Up to 50 hours battery life with 3-minute quick charge giving 1.5 hours playback. Built-in high-quality microphone for university calls and voice commands.",
+                 12, "Wireless / Midnight Blue", "TRV-ENT-SNY520-BLU", 4999m, 3499m, "/images/travel-hub/cat-travel-entertainment.webp")
+            };
+
+            foreach (var tp in travelSeedProducts)
+            {
+                var existingProd = await context.Products
+                    .FirstOrDefaultAsync(p => p.CategoryId == travelCatId && p.Slug == tp.Slug, cancellationToken);
+
+                if (existingProd == null)
+                {
+                    var product = new Product(travelCatId, tp.Name, tp.Slug, tp.Short, tp.Desc, tp.Order);
+                    var matchingSub = travelSubList.FirstOrDefault(s => string.Equals(s.Slug, tp.SubSlug, StringComparison.OrdinalIgnoreCase));
+                    if (matchingSub != null)
+                    {
+                        product.SetSubcategory(matchingSub.Id);
+                    }
+                    context.Products.Add(product);
+                    await context.SaveChangesAsync(cancellationToken);
+
+                    var variant = new ProductVariant(product.Id, tp.Var, tp.Sku, tp.Mrp, tp.Price, true);
+                    var media = new ProductMedia(product.Id, tp.Media, tp.Name, 0, true);
+                    context.ProductVariants.Add(variant);
+                    context.ProductMedia.Add(media);
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            }
+        }
+
         // B. Reassign products from obsolete categories & remove obsolete categories
         var obsoleteCategories = currentCategories.Where(c => !finalSlugs.Contains(c.Slug)).ToList();
         if (obsoleteCategories.Count > 0)

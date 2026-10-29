@@ -298,6 +298,9 @@ public static class InfrastructureServiceCollectionExtensions
         // Food & Grocery Category Hub Service (FreshBasket Template)
         services.AddScoped<Dreamflykit.Application.FoodHub.Interfaces.IFoodHubService, Dreamflykit.Infrastructure.FoodHub.FoodHubService>();
 
+        // Travel Gear Category Hub Service (Dreamflykit Travel Template)
+        services.AddScoped<Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService, Dreamflykit.Infrastructure.TravelHub.TravelHubService>();
+
         // Central Enterprise Audit Logging
         services.AddScoped<Dreamflykit.Application.Audit.Interfaces.IAuditLogService, Dreamflykit.Infrastructure.Audit.AuditLogService>();
     }
