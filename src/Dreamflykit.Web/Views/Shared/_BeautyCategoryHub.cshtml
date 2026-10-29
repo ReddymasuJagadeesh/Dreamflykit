@@ -755,7 +755,7 @@
     margin: 0 auto;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: #0f172a;
-    background: #ffffff;
+    background: transparent;
     box-sizing: border-box;
 }
 
@@ -771,6 +771,9 @@
     font-size: 13px;
     flex-wrap: wrap;
     gap: 10px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
 }
 .dk-bpc-admin-info {
     display: flex;
@@ -808,7 +811,7 @@
 .dk-bpc-notice-bar {
     background: linear-gradient(90deg, #831843 0%, #be123c 50%, #9f1239 100%);
     color: #ffffff;
-    padding: 8px 16px;
+    padding: 10px 20px;
     font-size: 12.5px;
     font-weight: 600;
     display: flex;
@@ -816,7 +819,9 @@
     justify-content: center;
     gap: 12px;
     text-align: center;
-    border-bottom: 1px solid rgba(251, 191, 36, 0.4);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 10px rgba(190, 18, 60, 0.15);
 }
 .dk-bpc-notice-badge {
     background: var(--bpc-gold, #fbbf24);
@@ -834,12 +839,14 @@
     width: 100%;
     overflow: hidden;
     background: #000;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 .dk-bpc-hero-slider {
     position: relative;
     width: 100%;
-    min-height: 220px;
+    min-height: 200px;
 }
 .dk-bpc-hero-slide {
     display: none;
@@ -864,13 +871,15 @@
     max-height: 380px;
     object-fit: cover;
     display: block;
+    border-radius: 18px;
 }
 
 /* Placeholder Hero Banner */
 .dk-bpc-placeholder-banner {
     width: 100%;
-    min-height: 240px;
+    min-height: 220px;
     max-height: 340px;
+    border-radius: 18px;
     background: var(--bpc-bg, linear-gradient(135deg, #700b1a 0%, #a8122a 40%, #c2193b 70%, #d94612 100%));
     display: flex;
     flex-direction: column;
@@ -997,8 +1006,9 @@
 
 /* 2. Promo Banners (3 Cards) */
 .dk-bpc-promo-wrapper {
-    padding: 0 16px;
-    margin-bottom: 20px;
+    width: 100%;
+    margin-bottom: 22px;
+    box-sizing: border-box;
 }
 .dk-bpc-promo-scroll-track {
     display: grid;
@@ -1092,11 +1102,14 @@
 
 /* 3. Category & Shortcut Chips (17 Items) */
 .dk-bpc-subcats-wrapper {
-    padding: 8px 16px 16px 16px;
-    margin-bottom: 20px;
-    background: #fafaf9;
-    border-top: 1px solid #f0f0ef;
-    border-bottom: 1px solid #f0f0ef;
+    width: 100%;
+    padding: 14px 18px;
+    margin-bottom: 22px;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    box-sizing: border-box;
 }
 .dk-bpc-subcats-scroll {
     display: flex;
@@ -1163,8 +1176,9 @@
 
 /* 4. Spotlight Banner */
 .dk-bpc-spotlight-wrapper {
-    padding: 0 16px;
+    width: 100%;
     margin-bottom: 24px;
+    box-sizing: border-box;
 }
 .dk-bpc-spotlight-card {
     display: block;
@@ -1225,11 +1239,13 @@
 
 /* 5 & 6. Festive Arched Sections ("Jharokha" Indian Architectural Arch) */
 .dk-bpc-festive-arch-section {
-    padding: 24px 16px;
+    width: 100%;
+    padding: 22px 20px;
     margin-bottom: 24px;
-    border-radius: 16px;
+    border-radius: 18px;
     position: relative;
     overflow: hidden;
+    box-sizing: border-box;
 }
 .dk-bpc-arch-her {
     background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 50%, #991b1b 100%);
@@ -1416,8 +1432,9 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
-    padding: 0 16px;
     margin-bottom: 24px;
+    width: 100%;
+    box-sizing: border-box;
 }
 @@media (max-width: 768px) {
     .dk-bpc-dual-wrapper {
@@ -1489,8 +1506,9 @@
 
 /* 8. Premium Gifts 9-Brand Grid */
 .dk-bpc-premium-section {
-    padding: 0 16px;
     margin-bottom: 24px;
+    width: 100%;
+    box-sizing: border-box;
 }
 .dk-bpc-sec-title-wrap {
     margin-bottom: 14px;
@@ -1569,12 +1587,14 @@
 
 /* 9. Festive Look Showcase */
 .dk-bpc-festive-look-wrapper {
-    margin: 0 16px 24px 16px;
+    margin: 0 0 24px 0;
     background: linear-gradient(135deg, #881337 0%, #be123c 50%, #9f1239 100%);
     border-radius: 20px;
     border: 3px solid #fbbf24;
-    padding: 24px 16px;
+    padding: 24px 20px;
     box-shadow: 0 6px 24px rgba(190, 18, 60, 0.35);
+    width: 100%;
+    box-sizing: border-box;
 }
 .dk-bpc-look-ornate-header {
     text-align: center;
@@ -1664,8 +1684,9 @@
 
 /* 10. Limited Stock Ribbon */
 .dk-bpc-limited-ribbon-wrapper {
-    padding: 0 16px;
     margin-bottom: 24px;
+    width: 100%;
+    box-sizing: border-box;
 }
 .dk-bpc-limited-ribbon {
     display: flex;
@@ -1709,8 +1730,9 @@
 
 /* 11. Flash Deals Timer */
 .dk-bpc-flash-section {
-    padding: 0 16px;
     margin-bottom: 24px;
+    width: 100%;
+    box-sizing: border-box;
 }
 .dk-bpc-flash-timer-bar {
     background: #fef08a;
@@ -1747,8 +1769,9 @@
 
 /* 12. Under 99 Banner */
 .dk-bpc-under99-wrapper {
-    padding: 0 16px;
     margin-bottom: 24px;
+    width: 100%;
+    box-sizing: border-box;
 }
 .dk-bpc-under99-card {
     display: flex;
@@ -1784,8 +1807,9 @@
 
 /* 13. Biggest Brands (2-Column Grid) */
 .dk-bpc-bigbrands-section {
-    padding: 0 16px;
     margin-bottom: 24px;
+    width: 100%;
+    box-sizing: border-box;
 }
 .dk-bpc-bigbrands-grid {
     display: grid;
@@ -1844,15 +1868,17 @@
 
 /* 14. Partner Strip */
 .dk-bpc-partner-strip {
-    margin: 0 16px 24px 16px;
+    margin: 0 0 24px 0;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 12px 20px;
+    border-radius: 14px;
+    padding: 14px 20px;
     display: flex;
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
 }
 .dk-bpc-partner-label {
     font-size: 13px;
@@ -1886,17 +1912,21 @@
 
 /* 15. Brand New */
 .dk-bpc-brandnew-section {
-    padding: 0 16px;
-    margin-bottom: 30px;
+    margin-bottom: 28px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Catalog Divider */
 .dk-bpc-catalog-anchor-divider {
-    padding: 24px 16px 12px 16px;
-    border-top: 2px dashed #e2e8f0;
-    margin-top: 24px;
+    padding: 20px 24px 14px 24px;
+    border-top: 2px dashed #cbd5e1;
+    margin: 24px 0 16px 0;
     background: #f8fafc;
-    border-radius: 12px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    width: 100%;
+    box-sizing: border-box;
 }
 .dk-bpc-anchor-pill {
     font-size: 11px;
