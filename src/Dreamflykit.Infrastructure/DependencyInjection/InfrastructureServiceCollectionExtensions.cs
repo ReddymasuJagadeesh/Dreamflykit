@@ -301,6 +301,9 @@ public static class InfrastructureServiceCollectionExtensions
         // Travel Gear Category Hub Service (Dreamflykit Travel Template)
         services.AddScoped<Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService, Dreamflykit.Infrastructure.TravelHub.TravelHubService>();
 
+        // Luggage & Bags Category Hub Service
+        services.AddScoped<Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService, Dreamflykit.Infrastructure.LuggageHub.LuggageHubService>();
+
         // Central Enterprise Audit Logging
         services.AddScoped<Dreamflykit.Application.Audit.Interfaces.IAuditLogService, Dreamflykit.Infrastructure.Audit.AuditLogService>();
     }

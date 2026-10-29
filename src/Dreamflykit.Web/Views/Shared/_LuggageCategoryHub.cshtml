@@ -1,0 +1,1134 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.LuggageHub ?? Dreamflykit.Application.LuggageHub.Models.LuggageHubDto.CreateDefault();
+    var festival = hub.FestivalTheme ?? new();
+    var hero = hub.HeroBanner ?? new();
+    var reassurance = hub.ReassuranceBar ?? new();
+    var shopCats = hub.ShopByCategory ?? new();
+    var promoBanners = hub.PromoBanners ?? new();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+    var products = Model.Products ?? new List<Dreamflykit.Application.Catalog.Models.ProductListItem>();
+}
+
+<div class="dk-luggage-hub-root" id="luggageHubRoot">
+
+    @if (canManage)
+    {
+        <!-- ADMIN QUICK BAR -->
+        <div class="dk-luggage-admin-bar">
+            <div class="dk-luggage-admin-pill">
+                <span class="dk-luggage-badge-dot"></span>
+                <span>SUPER ADMIN CONTROLS</span>
+            </div>
+            <span class="dk-luggage-admin-text">
+                Managing <strong>Luggage &amp; Bags Category Hub</strong> • Super Admin can replace hero banner, 8 categories, 3 promo cards, festival theme &amp; upload images anytime.
+            </span>
+            <a href="/Admin/LuggageHub" class="dk-luggage-admin-link">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Manage Luggage Hub
+            </a>
+        </div>
+    }
+
+    <!-- ========================================================
+         FESTIVAL THEME BANNER (IF ACTIVE)
+    ========================================================= -->
+    @if (festival.IsFestivalActive && !string.IsNullOrWhiteSpace(festival.FestivalBannerText))
+    {
+        <div class="dk-luggage-festival-banner" style="background: @festival.PrimaryNavy;">
+            <div class="dk-shell dk-luggage-festival-content">
+                <span class="dk-luggage-festival-tag">@festival.FestivalTag</span>
+                <span class="dk-luggage-festival-msg">@festival.FestivalBannerText</span>
+            </div>
+        </div>
+    }
+
+    <!-- ========================================================
+         TOP BREADCRUMB
+    ========================================================= -->
+    <div class="dk-shell" style="padding-top: 12px; padding-bottom: 8px;">
+        <nav class="dk-luggage-breadcrumb" aria-label="Breadcrumb">
+            <a href="/" class="dk-luggage-bc-link">Home</a>
+            <span class="dk-luggage-bc-sep">›</span>
+            <a href="/category/travel-gear" class="dk-luggage-bc-link">Travel Gear</a>
+            <span class="dk-luggage-bc-sep">›</span>
+            <span class="dk-luggage-bc-curr">Luggage &amp; Bags</span>
+        </nav>
+    </div>
+
+    <!-- ========================================================
+         MAIN HERO BANNER (FULL WIDTH / HIGH IMPACT WIDE BANNER)
+    ========================================================= -->
+    @if (hero.IsEnabled)
+    {
+        <div class="dk-shell" style="margin-bottom: 24px;">
+            <div class="dk-luggage-hero-card" style="background: @festival.HeroBackground;">
+
+                <!-- HERO LEFT CONTENT -->
+                <div class="dk-luggage-hero-left">
+                    <div class="dk-luggage-hero-flight-trail">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="@festival.PrimaryNavy" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 2L11 13"></path>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                        </svg>
+                        <span class="dk-luggage-trail-dots">········································</span>
+                    </div>
+
+                    <h1 class="dk-luggage-hero-title">
+                        <span class="dk-title-line1" style="color: @festival.PrimaryNavy;">@hero.HeadingLine1</span>
+                        <span class="dk-title-line2" style="color: @festival.AccentOrange;">@hero.HeadingLine2</span>
+                    </h1>
+
+                    <div class="dk-luggage-hero-subtitles">
+                        <p class="dk-sub-line1">@hero.SubtitleLine1</p>
+                        <p class="dk-sub-line2">@hero.SubtitleLine2</p>
+                    </div>
+
+                    <!-- 3 Feature Badges -->
+                    <div class="dk-luggage-badges-row">
+                        @if (hero.Badges != null)
+                        {
+                            @foreach (var b in hero.Badges)
+                            {
+                                <div class="dk-luggage-badge-box">
+                                    <div class="dk-luggage-badge-icon">
+                                        @if (b.Icon == "shield")
+                                        {
+                                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="@festival.PrimaryNavy" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                        }
+                                        else if (b.Icon == "feather")
+                                        {
+                                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="@festival.AccentOrange" stroke-width="2.2"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="15"></line></svg>
+                                        }
+                                        else
+                                        {
+                                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="@festival.PrimaryNavy" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                        }
+                                    </div>
+                                    <div class="dk-luggage-badge-texts">
+                                        <div class="dk-luggage-badge-title">@b.Title</div>
+                                        <div class="dk-luggage-badge-sub">@b.Subtitle</div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    <!-- Hero CTA Button -->
+                    <div style="margin-top: 20px;">
+                        <a href="@hero.ButtonUrl" class="dk-luggage-hero-btn" style="background: @festival.PrimaryNavy;">
+                            <span>@hero.ButtonText</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- HERO CENTER VISUAL (IMAGE / UPLOADING SOON) -->
+                <div class="dk-luggage-hero-center">
+                    @if (!string.IsNullOrWhiteSpace(hero.ImageUrl) && !hero.IsUploadingSoon)
+                    {
+                        <img src="@hero.ImageUrl" alt="Luggage Collection" class="dk-luggage-hero-img" />
+                    }
+                    else
+                    {
+                        <div class="dk-luggage-hero-placeholder">
+                            <div class="dk-luggage-ph-icon">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2">
+                                    <rect x="3" y="6" width="18" height="15" rx="3"></rect>
+                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="12" y1="11" x2="12" y2="15"></line>
+                                    <circle cx="7" cy="21" r="1.5"></circle>
+                                    <circle cx="17" cy="21" r="1.5"></circle>
+                                </svg>
+                            </div>
+                            <div class="dk-luggage-ph-pill">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                <span>UPLOADING SOON</span>
+                            </div>
+                            <div class="dk-luggage-ph-title">Super Admin Replaceable</div>
+                            <div class="dk-luggage-ph-desc">Admin panel can upload/replace hero luggage banner anytime</div>
+                        </div>
+                    }
+                </div>
+
+                <!-- HERO RIGHT FLOATING OFFER CARD -->
+                @if (hero.OfferBox != null && hero.OfferBox.IsEnabled)
+                {
+                    <div class="dk-luggage-hero-right">
+                        <div class="dk-luggage-offer-card" style="background: @festival.PrimaryNavy;">
+                            <div class="dk-offer-tag">@hero.OfferBox.TopTag</div>
+                            <div class="dk-offer-title">@hero.OfferBox.DiscountTitle</div>
+                            <div class="dk-offer-sub">@hero.OfferBox.DiscountSubtitle</div>
+                            <a href="@hero.OfferBox.ButtonUrl" class="dk-offer-btn" style="border: 1.5px solid #ffffff;">
+                                <span>@hero.OfferBox.ButtonText</span>
+                            </a>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    }
+
+    <!-- ========================================================
+         REASSURANCE STRIP (5 ITEMS)
+    ========================================================= -->
+    @if (reassurance.IsEnabled && reassurance.Items != null)
+    {
+        <div class="dk-shell" style="margin-bottom: 30px;">
+            <div class="dk-luggage-reassurance-card">
+                @foreach (var item in reassurance.Items)
+                {
+                    <div class="dk-reassure-item">
+                        <div class="dk-reassure-icon">
+                            @if (item.Icon == "truck")
+                            {
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="@festival.PrimaryNavy" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            }
+                            else if (item.Icon == "rotate-ccw")
+                            {
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="@festival.PrimaryNavy" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                            }
+                            else if (item.Icon == "credit-card")
+                            {
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="@festival.PrimaryNavy" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                            }
+                            else if (item.Icon == "headphones")
+                            {
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="@festival.PrimaryNavy" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                            }
+                            else
+                            {
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="@festival.PrimaryNavy" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                            }
+                        </div>
+                        <div class="dk-reassure-texts">
+                            <span class="dk-reassure-title">@item.Title</span>
+                            <span class="dk-reassure-sub">@item.Subtitle</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- ========================================================
+         SHOP BY CATEGORY (8 CARDS)
+    ========================================================= -->
+    <div class="dk-shell" style="margin-bottom: 32px;">
+        <div class="dk-luggage-shop-cat-header">
+            <div class="dk-luggage-flight-divider">
+                <span class="dk-divider-line"></span>
+                <span class="dk-divider-plane">✈️</span>
+                <span class="dk-divider-arrow">→</span>
+                <h2 class="dk-shop-cat-title">@shopCats.Heading</h2>
+                <span class="dk-divider-arrow">←</span>
+                <span class="dk-divider-plane">✈️</span>
+                <span class="dk-divider-line"></span>
+            </div>
+            <p class="dk-shop-cat-subtitle">@shopCats.Subtitle</p>
+        </div>
+
+        <div class="dk-luggage-cat-grid">
+            @if (shopCats.Cards != null)
+            {
+                @foreach (var c in shopCats.Cards.Where(x => x.IsActive).OrderBy(x => x.DisplayOrder))
+                {
+                    <a href="@c.TargetUrl" class="dk-luggage-cat-card">
+                        <div class="dk-luggage-card-media">
+                            @if (!string.IsNullOrWhiteSpace(c.ImageUrl) && !c.IsUploadingSoon)
+                            {
+                                <img src="@c.ImageUrl" alt="@c.Title" class="dk-luggage-card-img" loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="dk-luggage-card-placeholder">
+                                    <div class="dk-luggage-card-ph-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2">
+                                            <rect x="3" y="19" width="18" height="2"></rect>
+                                            <rect x="4" y="5" width="16" height="14" rx="2"></rect>
+                                            <path d="M9 5V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="dk-luggage-card-soon-pill">UPLOADING SOON</span>
+                                    <span class="dk-luggage-card-soon-sub">Admin Replaceable</span>
+                                </div>
+                            }
+                        </div>
+                        <div class="dk-luggage-card-info">
+                            <h3 class="dk-luggage-card-title">@c.Title</h3>
+                            <p class="dk-luggage-card-desc">@c.Subtitle</p>
+                        </div>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- ========================================================
+         3 PROMO BANNERS (NEW ARRIVALS, TOP BRANDS, STUDENT SPECIAL)
+    ========================================================= -->
+    @if (promoBanners.IsEnabled && promoBanners.Cards != null)
+    {
+        <div class="dk-shell" style="margin-bottom: 32px;">
+            <div class="dk-luggage-promo-grid">
+                @foreach (var p in promoBanners.Cards)
+                {
+                    <div class="dk-luggage-promo-card" style="background: @p.Gradient;">
+                        <div class="dk-luggage-promo-text">
+                            <h4 class="dk-promo-title" style="color: #0f2b48;">@p.Title</h4>
+                            <p class="dk-promo-sub">@p.Subtitle</p>
+                            <a href="@p.ButtonUrl" class="dk-promo-btn" style="color: @p.AccentColor; border-color: @p.AccentColor;">
+                                <span>@p.ButtonText</span>
+                            </a>
+                        </div>
+                        <div class="dk-luggage-promo-visual">
+                            @if (!string.IsNullOrWhiteSpace(p.ImageUrl) && !p.IsUploadingSoon)
+                            {
+                                <img src="@p.ImageUrl" alt="@p.Title" class="dk-promo-img" />
+                            }
+                            else
+                            {
+                                <div class="dk-promo-ph-box">
+                                    <span class="dk-promo-ph-pill" style="background: @p.AccentColor;">UPLOADING SOON</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- ========================================================
+         CURATED LUGGAGE & BAGS CATALOG PRODUCTS GRID
+    ========================================================= -->
+    <div class="dk-shell" id="luggage-products-section" style="margin-bottom: 40px;">
+        <div class="dk-luggage-products-card">
+            <div class="dk-luggage-products-header">
+                <div>
+                    <h2 class="dk-luggage-prod-heading">Flight-Ready Luggage &amp; Travel Bags</h2>
+                    <p class="dk-luggage-prod-sub">TSA-approved locks, 360-degree spinners, and compression travel sets tailored for international university students.</p>
+                </div>
+                <span class="dk-luggage-count-pill">@products.Count Products Available</span>
+            </div>
+
+            @if (products.Count > 0)
+            {
+                <div class="dk-luggage-prods-grid">
+                    @foreach (var prod in products)
+                    {
+                        var price = prod.SellingPrice;
+                        var mrp = prod.MRP > 0 ? prod.MRP : Math.Round(price * 1.35m, 0);
+                        var discountPercent = (int)Math.Round(prod.DiscountPercentage > 0 ? prod.DiscountPercentage : (mrp > price ? (mrp - price) / mrp * 100m : 0m));
+                        var rating = 4.7 + (Math.Abs(prod.Name.GetHashCode()) % 3) * 0.1;
+
+                        <div class="dk-luggage-prod-box">
+                            <a href="/products/@prod.Slug" class="dk-luggage-prod-link">
+                                @if (discountPercent > 0)
+                                {
+                                    <span class="dk-luggage-prod-tag">@(discountPercent)% OFF</span>
+                                }
+                                <img src="@(string.IsNullOrWhiteSpace(prod.PrimaryImageUrl) ? "/images/luggage-hub/placeholder-uploading-soon.svg" : prod.PrimaryImageUrl)"
+                                     alt="@prod.Name"
+                                     class="dk-luggage-prod-thumb"
+                                     loading="lazy"
+                                     onerror="this.src='/images/luggage-hub/placeholder-uploading-soon.svg';" />
+                            </a>
+
+                            <div class="dk-luggage-prod-details">
+                                <div class="dk-luggage-rating-tag">
+                                    <span>★ @rating.ToString("0.0")</span>
+                                    <span class="dk-luggage-verified-pill">Verified Flight Safe</span>
+                                </div>
+
+                                <h4 class="dk-luggage-item-name">
+                                    <a href="/products/@prod.Slug">@prod.Name</a>
+                                </h4>
+
+                                <div class="dk-luggage-price-box">
+                                    <span class="dk-luggage-price-now">₹@price.ToString("N0")</span>
+                                    @if (mrp > price)
+                                    {
+                                        <span class="dk-luggage-price-mrp">₹@mrp.ToString("N0")</span>
+                                    }
+                                </div>
+
+                                <form asp-controller="Cart" asp-action="AddToCart" method="post" style="margin: 0;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="productId" value="@prod.ProductId" />
+                                    <input type="hidden" name="quantity" value="1" />
+                                    <button type="submit" class="dk-luggage-add-cart-btn" style="background: @festival.PrimaryNavy;">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                        <span>Add to Cart</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div style="padding: 40px; text-align: center; color: #64748b;">
+                    <h3>Catalog Products Seeding</h3>
+                    <p>Luggage items are being refreshed in the database. Please reload shortly or browse categories above.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+<style>
+/* ========================================================
+   LUGGAGE & BAGS HUB ENTERPRISE CSS
+======================================================== */
+.dk-luggage-hub-root {
+    width: 100%;
+    background-color: #f8fafc;
+    color: #1e293b;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    padding-bottom: 30px;
+}
+
+/* ADMIN BAR */
+.dk-luggage-admin-bar {
+    background: linear-gradient(90deg, #091e36 0%, #0f2b48 100%);
+    color: #ffffff;
+    padding: 9px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.dk-luggage-admin-pill {
+    background: rgba(249, 115, 22, 0.25);
+    border: 1px solid #f97316;
+    color: #f97316;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.dk-luggage-badge-dot {
+    width: 7px;
+    height: 7px;
+    background: #f97316;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #f97316;
+}
+.dk-luggage-admin-text {
+    flex: 1;
+    margin: 0 16px;
+    color: #e2e8f0;
+}
+.dk-luggage-admin-link {
+    background: #f97316;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.dk-luggage-admin-link:hover {
+    background: #ea580c;
+}
+
+/* FESTIVAL BANNER */
+.dk-luggage-festival-banner {
+    color: #ffffff;
+    padding: 7px 0;
+    text-align: center;
+    font-size: 12.5px;
+}
+.dk-luggage-festival-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+.dk-luggage-festival-tag {
+    background: #f97316;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.6px;
+}
+.dk-luggage-festival-msg {
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+/* BREADCRUMB */
+.dk-luggage-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #64748b;
+}
+.dk-luggage-bc-link {
+    color: #64748b;
+    text-decoration: none;
+}
+.dk-luggage-bc-link:hover {
+    color: #0f2b48;
+}
+.dk-luggage-bc-sep {
+    color: #94a3b8;
+}
+.dk-luggage-bc-curr {
+    color: #0f2b48;
+    font-weight: 700;
+}
+
+/* HERO SECTION */
+.dk-luggage-hero-card {
+    border-radius: 16px;
+    border: 1px solid #fed7aa;
+    padding: 32px 36px;
+    box-shadow: 0 4px 24px rgba(15, 43, 72, 0.06);
+    display: grid;
+    grid-template-columns: 1.15fr 1fr 240px;
+    gap: 28px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+.dk-luggage-hero-flight-trail {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.dk-luggage-trail-dots {
+    color: #f97316;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    font-size: 12px;
+    opacity: 0.7;
+}
+.dk-luggage-hero-title {
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1.15;
+    margin: 0 0 14px 0;
+    letter-spacing: -0.5px;
+    display: flex;
+    flex-direction: column;
+}
+.dk-luggage-hero-subtitles {
+    margin-bottom: 22px;
+}
+.dk-sub-line1 {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #334155;
+    margin: 0 0 4px 0;
+}
+.dk-sub-line2 {
+    font-size: 13.5px;
+    color: #64748b;
+    margin: 0;
+}
+.dk-luggage-badges-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.dk-luggage-badge-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 6px rgba(15, 43, 72, 0.04);
+}
+.dk-luggage-badge-icon {
+    flex-shrink: 0;
+}
+.dk-luggage-badge-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: #0f2b48;
+}
+.dk-luggage-badge-sub {
+    font-size: 10.5px;
+    color: #64748b;
+}
+.dk-luggage-hero-btn {
+    color: #ffffff;
+    font-size: 13.5px;
+    font-weight: 800;
+    padding: 10px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(15, 43, 72, 0.25);
+    transition: transform 0.15s ease;
+}
+.dk-luggage-hero-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* HERO CENTER */
+.dk-luggage-hero-center {
+    height: 100%;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-luggage-hero-img {
+    max-width: 100%;
+    max-height: 270px;
+    object-fit: contain;
+}
+.dk-luggage-hero-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 240px;
+    background: linear-gradient(135deg, #091e36 0%, #0f2b48 100%);
+    border: 1.5px dashed #f97316;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+}
+.dk-luggage-ph-icon {
+    margin-bottom: 10px;
+}
+.dk-luggage-ph-pill {
+    background: #f97316;
+    color: #ffffff;
+    font-size: 11.5px;
+    font-weight: 800;
+    padding: 5px 14px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    box-shadow: 0 3px 10px rgba(249, 115, 22, 0.4);
+}
+.dk-luggage-ph-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+.dk-luggage-ph-desc {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+/* HERO RIGHT OFFER CARD */
+.dk-luggage-hero-right {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+.dk-luggage-offer-card {
+    width: 100%;
+    border-radius: 14px;
+    padding: 22px 18px;
+    color: #ffffff;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(15, 43, 72, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.dk-offer-tag {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    margin-bottom: 6px;
+}
+.dk-offer-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: #f97316;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+.dk-offer-sub {
+    font-size: 12.5px;
+    color: #e2e8f0;
+    margin-bottom: 16px;
+}
+.dk-offer-btn {
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+.dk-offer-btn:hover {
+    background: #ffffff;
+    color: #0f2b48;
+}
+
+/* REASSURANCE CARD */
+.dk-luggage-reassurance-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    gap: 16px;
+}
+.dk-reassure-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-reassure-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.dk-reassure-texts {
+    display: flex;
+    flex-direction: column;
+}
+.dk-reassure-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #0f2b48;
+    line-height: 1.2;
+}
+.dk-reassure-sub {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+/* SHOP BY CATEGORY HEADER */
+.dk-luggage-shop-cat-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+.dk-luggage-flight-divider {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-divider-line {
+    width: 40px;
+    height: 1.5px;
+    background: #cbd5e1;
+}
+.dk-divider-plane {
+    font-size: 16px;
+}
+.dk-divider-arrow {
+    font-size: 14px;
+    color: #0f2b48;
+}
+.dk-shop-cat-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: #0f2b48;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+.dk-shop-cat-subtitle {
+    font-size: 13.5px;
+    color: #64748b;
+    margin: 6px 0 0 0;
+}
+
+/* 8 CATEGORIES GRID */
+.dk-luggage-cat-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 14px;
+}
+.dk-luggage-cat-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(15, 43, 72, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.dk-luggage-cat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(15, 43, 72, 0.1);
+    border-color: #f97316;
+}
+.dk-luggage-card-media {
+    width: 100%;
+    height: 120px;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.dk-luggage-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+}
+.dk-luggage-card-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #091e36 0%, #0f2b48 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    text-align: center;
+}
+.dk-luggage-card-ph-icon {
+    margin-bottom: 4px;
+}
+.dk-luggage-card-soon-pill {
+    background: #f97316;
+    color: #ffffff;
+    font-size: 8.5px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.4px;
+    margin-bottom: 2px;
+}
+.dk-luggage-card-soon-sub {
+    font-size: 8px;
+    color: #94a3b8;
+}
+.dk-luggage-card-info {
+    padding: 10px 8px;
+    text-align: center;
+}
+.dk-luggage-card-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f2b48;
+    margin: 0 0 3px 0;
+    line-height: 1.2;
+}
+.dk-luggage-card-desc {
+    font-size: 10.5px;
+    color: #64748b;
+    margin: 0;
+}
+
+/* 3 PROMO BANNERS */
+.dk-luggage-promo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+.dk-luggage-promo-card {
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+.dk-luggage-promo-text {
+    flex: 1;
+}
+.dk-promo-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 4px 0;
+}
+.dk-promo-sub {
+    font-size: 12px;
+    color: #475569;
+    margin: 0 0 12px 0;
+}
+.dk-promo-btn {
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    border-bottom: 1.5px solid;
+    padding-bottom: 2px;
+    display: inline-block;
+}
+.dk-luggage-promo-visual {
+    width: 90px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-promo-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+.dk-promo-ph-box {
+    width: 100%;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px dashed rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-promo-ph-pill {
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+/* CATALOG PRODUCTS SECTION */
+.dk-luggage-products-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 4px 14px rgba(15, 43, 72, 0.04);
+}
+.dk-luggage-products-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.dk-luggage-prod-heading {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f2b48;
+    margin: 0 0 4px 0;
+}
+.dk-luggage-prod-sub {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+}
+.dk-luggage-count-pill {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #ea580c;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 999px;
+}
+.dk-luggage-prods-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+.dk-luggage-prod-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.dk-luggage-prod-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+.dk-luggage-prod-link {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 180px;
+    background: #f8fafc;
+    overflow: hidden;
+}
+.dk-luggage-prod-tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 3px 7px;
+    border-radius: 4px;
+    z-index: 2;
+}
+.dk-luggage-prod-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 12px;
+    transition: transform 0.25s ease;
+}
+.dk-luggage-prod-box:hover .dk-luggage-prod-thumb {
+    transform: scale(1.04);
+}
+.dk-luggage-prod-details {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.dk-luggage-rating-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.dk-luggage-rating-tag > span:first-child {
+    background: #22c55e;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.dk-luggage-verified-pill {
+    font-size: 10.5px;
+    color: #0284c7;
+    font-weight: 600;
+}
+.dk-luggage-item-name {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin: 0 0 10px 0;
+    flex: 1;
+}
+.dk-luggage-item-name a {
+    color: #1e293b;
+    text-decoration: none;
+}
+.dk-luggage-item-name a:hover {
+    color: #f97316;
+}
+.dk-luggage-price-box {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.dk-luggage-price-now {
+    font-size: 17px;
+    font-weight: 800;
+    color: #0f2b48;
+}
+.dk-luggage-price-mrp {
+    font-size: 13px;
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+.dk-luggage-add-cart-btn {
+    width: 100%;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-size: 12.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.dk-luggage-add-cart-btn:hover {
+    background: #f97316 !important;
+}
+
+/* RESPONSIVE */
+@@media (max-width: 1200px) {
+    .dk-luggage-hero-card {
+        grid-template-columns: 1fr 1fr;
+    }
+    .dk-luggage-hero-right {
+        grid-column: span 2;
+    }
+    .dk-luggage-cat-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .dk-luggage-prods-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@@media (max-width: 900px) {
+    .dk-luggage-hero-card {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+    .dk-luggage-hero-right {
+        grid-column: span 1;
+    }
+    .dk-luggage-reassurance-card {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .dk-luggage-cat-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .dk-luggage-promo-grid {
+        grid-template-columns: 1fr;
+    }
+    .dk-luggage-prods-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@@media (max-width: 600px) {
+    .dk-luggage-cat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dk-luggage-prods-grid {
+        grid-template-columns: 1fr;
+    }
+    .dk-luggage-badges-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+</style>
+

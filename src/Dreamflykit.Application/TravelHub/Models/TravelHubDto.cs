@@ -189,7 +189,7 @@ public sealed class TravelHubDto
                         Subtitle = "Trolleys, backpacks, duffels & travel bags",
                         Slug = "luggage-suitcases",
                         ImageUrl = "/images/travel-hub/cat-luggage-suitcases.webp",
-                        TargetUrl = "/category/travel-gear?subcategory=luggage-suitcases",
+                        TargetUrl = "/category/luggage-bags",
                         IsUploadingSoon = true,
                         DisplayOrder = 1,
                         IsActive = true,
