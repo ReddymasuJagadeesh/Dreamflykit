@@ -86,10 +86,10 @@ public sealed class StudyHubDto
                     new()
                     {
                         Id = "cat-stationery",
-                        Title = "Stationary & study supplies",
+                        Title = "Stationery & Study Supplies",
                         Description = "Notebooks, pens, highlighters and daily university study gear.",
                         ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        LinkUrl = "/category/study-essentials?subcategory=stationery-study-supplies",
+                        LinkUrl = "/category/study-essentials/stationery-study-supplies",
                         IconType = "academic"
                     },
                     new()
@@ -98,25 +98,25 @@ public sealed class StudyHubDto
                         Title = "Tech for study",
                         Description = "Calculators, headphones, hard drives, USB hubs & power accessories.",
                         ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        LinkUrl = "/category/study-essentials?subcategory=tech-for-study",
+                        LinkUrl = "/category/study-essentials/tech-for-study",
                         IconType = "digital"
                     },
                     new()
                     {
                         Id = "cat-documents",
-                        Title = "Document & organization",
+                        Title = "Documents & Organization",
                         Description = "Passport wallets, secure visa files, portfolios & document vaults.",
                         ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        LinkUrl = "/category/study-essentials?subcategory=document-organization",
+                        LinkUrl = "/category/study-essentials/document-organization",
                         IconType = "passport"
                     },
                     new()
                     {
                         Id = "cat-desk",
-                        Title = "Desk & Room study essential",
+                        Title = "Desk & Room Study Essentials",
                         Description = "Desk lamps, cable organizers, organizers & study room comfort.",
                         ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        LinkUrl = "/category/study-essentials?subcategory=desk-room-study-essential",
+                        LinkUrl = "/category/study-essentials/desk-room-study-essential",
                         IconType = "lifestyle"
                     },
                     new()
@@ -125,7 +125,7 @@ public sealed class StudyHubDto
                         Title = "College & Campus Essentials",
                         Description = "Ergonomic student backpacks, water bottles, ID holders & locks.",
                         ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        LinkUrl = "/category/study-essentials?subcategory=college-campus-essentials",
+                        LinkUrl = "/category/study-essentials/college-campus-essentials",
                         IconType = "academic"
                     },
                     new()
@@ -134,7 +134,7 @@ public sealed class StudyHubDto
                         Title = "Online Classes & Productivity",
                         Description = "HD webcams, noise-canceling mic headsets, planners & study timers.",
                         ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        LinkUrl = "/category/study-essentials?subcategory=online-classes-productivity",
+                        LinkUrl = "/category/study-essentials/online-classes-productivity",
                         IconType = "digital"
                     }
                 }
@@ -411,6 +411,10 @@ public sealed class StudyHubDto
                 HeroTitle = "Study Essentials",
                 HeroSubtitle = "Everything you need to study smart, stay organized and ace your academic journey abroad.",
                 HeroImageUrl = "/images/study-hub/test-pic-placeholder.svg",
+                HeroPillText = "STUDY ESSENTIALS",
+                FestivalThemeEnabled = false,
+                FestivalThemeName = "diwali",
+                FrameDesign = "arch-gold",
                 Badges = new List<string>
                 {
                     "Student Trusted • 10K+ Happy Students",
@@ -422,12 +426,23 @@ public sealed class StudyHubDto
                     new()
                     {
                         Id = "cat-1",
-                        Name = "Stationary & study supplies",
+                        Name = "Stationery & Study Supplies",
                         Slug = "stationery-study-supplies",
-                        Description = "Pens, pencils, highlighters, notebooks, sticky notes and more for everyday writing.",
+                        Description = "Notebooks, pens, highlighters, sticky notes and daily university study gear.",
                         ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
                         Icon = "pen",
-                        ProductCount = 24
+                        ProductCount = 24,
+                        Subcategories = new List<string>
+                        {
+                            "Notebooks and writing pads",
+                            "Pens, pencils and erasers",
+                            "Highlighters and permanent markers",
+                            "Sticky notes and page flags",
+                            "File folders and document organizers",
+                            "Pencil pouch",
+                            "Stapler, staples and paper clips",
+                            "Scientific calculator (if required)"
+                        }
                     },
                     new()
                     {
@@ -437,27 +452,63 @@ public sealed class StudyHubDto
                         Description = "Calculators, headphones, USB drives, laptop stands, mice & digital study tools.",
                         ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
                         Icon = "laptop",
-                        ProductCount = 18
+                        ProductCount = 18,
+                        Subcategories = new List<string>
+                        {
+                            "Laptop or laptop accessories",
+                            "Wireless mouse",
+                            "Laptop sleeve",
+                            "USB flash drive",
+                            "USB-C hub or adapter",
+                            "Headphones or earphones",
+                            "Laptop stand",
+                            "Charging cables",
+                            "Power bank",
+                            "Universal travel adapter compatible with destination"
+                        }
                     },
                     new()
                     {
                         Id = "cat-3",
-                        Name = "Document & organization",
+                        Name = "Documents & Organization",
                         Slug = "document-organization",
                         Description = "Folders, file organizers, passport holders, dividers and safe certificates storage.",
                         ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
                         Icon = "file",
-                        ProductCount = 15
+                        ProductCount = 15,
+                        ImportantNote = "Keep original passports and certificates with the student; don't pack them in checked luggage.",
+                        Subcategories = new List<string>
+                        {
+                            "Passport holder",
+                            "Document folder",
+                            "Transparent document sleeves",
+                            "Academic certificates folder",
+                            "Admission letter and visa document organizer",
+                            "Copies of educational documents",
+                            "Luggage tags",
+                            "Small document pouch"
+                        }
                     },
                     new()
                     {
                         Id = "cat-4",
-                        Name = "Desk & Room study essential",
+                        Name = "Desk & Room Study Essentials",
                         Slug = "desk-room-study-essential",
                         Description = "Lamps, desk organizers, whiteboards, study clocks and room desk must-haves.",
                         ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
                         Icon = "lamp",
-                        ProductCount = 22
+                        ProductCount = 22,
+                        Subcategories = new List<string>
+                        {
+                            "Study planner or academic diary",
+                            "Weekly timetable",
+                            "Desk organizer",
+                            "Pen holder",
+                            "Small desk lamp",
+                            "Reusable water bottle",
+                            "Bookmarks",
+                            "Reading light"
+                        }
                     },
                     new()
                     {
@@ -467,7 +518,18 @@ public sealed class StudyHubDto
                         Description = "Backpacks, water bottles, lunch boxes, ID card holders and campus everyday gear.",
                         ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
                         Icon = "bag",
-                        ProductCount = 19
+                        ProductCount = 19,
+                        Subcategories = new List<string>
+                        {
+                            "Laptop backpack",
+                            "Laptop compartment sleeve",
+                            "Compact umbrella",
+                            "Lunch box",
+                            "Water bottle",
+                            "ID card holder and lanyard",
+                            "Small stationery pouch",
+                            "Reusable shopping bag"
+                        }
                     },
                     new()
                     {
@@ -477,27 +539,17 @@ public sealed class StudyHubDto
                         Description = "Webcams, conference mics, semester planners, timers & study focus gear.",
                         ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
                         Icon = "monitor",
-                        ProductCount = 14
-                    },
-                    new()
-                    {
-                        Id = "cat-7",
-                        Name = "Exam preparation ( Gre ,tofel ,)",
-                        Slug = "exam-preparation",
-                        Description = "GRE, TOEFL, IELTS test prep books, practice sets, vocab cards and guides.",
-                        ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        Icon = "book",
-                        ProductCount = 16
-                    },
-                    new()
-                    {
-                        Id = "cat-8",
-                        Name = "Books & references",
-                        Slug = "books-references",
-                        Description = "Academic textbooks, reference guides, course literature, dictionaries and eBooks.",
-                        ImageUrl = "/images/study-hub/test-pic-placeholder.svg",
-                        Icon = "bookmark",
-                        ProductCount = 21
+                        ProductCount = 14,
+                        Subcategories = new List<string>
+                        {
+                            "Webcam, if not built into the laptop",
+                            "Microphone or headset",
+                            "Phone stand",
+                            "External storage drive",
+                            "Cable organizer",
+                            "Screen cleaning kit",
+                            "Planner for assignments and deadlines"
+                        }
                     }
                 },
                 Promo1Title = "Need a Complete Study Kit?",
@@ -2141,6 +2193,10 @@ public sealed class StudyHubCategoriesPageDto
     public string HeroTitle { get; set; } = "Study Essentials";
     public string HeroSubtitle { get; set; } = "Everything you need to study smart, stay organized and ace your academic journey abroad.";
     public string HeroImageUrl { get; set; } = "/images/study-hub/test-pic-placeholder.svg";
+    public string HeroPillText { get; set; } = "STUDY ESSENTIALS";
+    public bool FestivalThemeEnabled { get; set; } = false;
+    public string FestivalThemeName { get; set; } = "diwali";
+    public string FrameDesign { get; set; } = "arch-gold";
     public List<string> Badges { get; set; } = new();
     public List<StudyHubCategoryCardDto> Categories { get; set; } = new();
 
@@ -2167,6 +2223,8 @@ public sealed class StudyHubCategoryCardDto
     public string ImageUrl { get; set; } = "/images/study-hub/test-pic-placeholder.svg";
     public string Icon { get; set; } = "pen";
     public int ProductCount { get; set; } = 0;
+    public string? ImportantNote { get; set; }
+    public List<string> Subcategories { get; set; } = new();
 }
 
 // -------------------------------------------------------------

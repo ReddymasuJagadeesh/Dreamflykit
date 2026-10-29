@@ -3,13 +3,23 @@
     var hub = Model.StudyHub ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefault();
     var catPage = hub.CategoriesPage ?? new();
     var currentSubSlug = Model.CurrentSubcategorySlug;
-    var hasSubcategorySelected = !string.IsNullOrWhiteSpace(currentSubSlug) || Model.SubcategoryId.HasValue;
     var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
 
-    // The 8 Study Essentials categories specified by user
+    // Exactly the 6 Study Essentials categories
     var studyCategories = catPage.Categories != null && catPage.Categories.Count > 0
         ? catPage.Categories
         : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefault().CategoriesPage.Categories;
+
+    var activeCategory = studyCategories.FirstOrDefault(c => string.Equals(c.Slug, currentSubSlug, StringComparison.OrdinalIgnoreCase))
+                         ?? studyCategories.FirstOrDefault(c => string.Equals(c.Slug, "stationery-study-supplies", StringComparison.OrdinalIgnoreCase))
+                         ?? studyCategories.FirstOrDefault();
+
+    var activeCategoryName = activeCategory?.Name ?? Model.CategoryName ?? "Study Essentials";
+    var activeCategorySubcategories = activeCategory?.Subcategories ?? new List<string>();
+    var activeSubItem = Model.CurrentSubcatItem ?? "";
+
+    var isFestive = catPage.FestivalThemeEnabled;
+    var frameDesign = catPage.FrameDesign ?? "arch-gold";
 }
 
 <div class="dk-study-cat-page-wrapper">
@@ -18,935 +28,911 @@
     {
         <div class="dk-study-hub-admin-bar">
             <span class="dk-sh-admin-badge">Admin Controls</span>
-            <span class="dk-sh-admin-hint">Viewing Study Essentials Categories page. Super Admin can manage all 8 categories &amp; replace test pics.</span>
+            <span class="dk-sh-admin-hint">Managing Study Essentials Category: <strong>@activeCategoryName</strong>. Super Admin can replace hero image, festival theme &amp; subcategories.</span>
             <a href="/Admin/StudyHub" class="dk-sh-admin-btn">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                 </svg>
-                Manage Categories &amp; Test Pics
+                Manage Categories &amp; Common Hero
             </a>
         </div>
     }
 
     <!-- ========================================================
-         HERO HEADER (IMAGE 4)
+         COMMON HERO BANNER (TOP FULL WIDTH)
+         Admin Replaceable Image + Festival Theme + Frame Design
     ========================================================= -->
-    <header class="dk-cat-hero-card">
-        <div class="dk-cat-hero-left">
-            <h1 class="dk-cat-hero-title">@catPage.HeroTitle</h1>
-            <p class="dk-cat-hero-sub">@catPage.HeroSubtitle</p>
+    <header class="dk-study-common-hero @(isFestive ? "is-festive-hero frame-" + frameDesign : "frame-" + frameDesign)">
+        @if (isFestive)
+        {
+            <div class="dk-festive-decor-top">
+                <span class="dk-diya">🪔</span>
+                <span class="dk-festive-badge">✨ DIWALI SPECIAL • FESTIVAL OF LEARNING ✨</span>
+                <span class="dk-diya">🪔</span>
+            </div>
+        }
 
-            <div class="dk-cat-hero-badges">
-                <div class="dk-cat-badge-item">
-                    <span class="dk-cat-badge-icon">🎓</span>
-                    <span>Student Trusted &bull; <strong>10K+ Happy Students</strong></span>
+        <div class="dk-hero-inner-grid">
+            <div class="dk-hero-text-col">
+                <div class="dk-hero-pill-badge">
+                    <span class="dk-hero-dot"></span>
+                    @(string.IsNullOrWhiteSpace(catPage.HeroPillText) ? "STUDY ESSENTIALS" : catPage.HeroPillText)
                 </div>
-                <div class="dk-cat-badge-item">
-                    <span class="dk-cat-badge-icon">🌐</span>
-                    <span>Curated for Abroad &bull; <strong>Universities Worldwide</strong></span>
+
+                <h1 class="dk-hero-main-title">@catPage.HeroTitle</h1>
+                <p class="dk-hero-main-sub">@catPage.HeroSubtitle</p>
+
+                <div class="dk-hero-trust-badges">
+                    <div class="dk-hero-trust-item">
+                        <span class="dk-hero-trust-icon">🎓</span>
+                        <span>Student Trusted &bull; <strong>10K+ Students</strong></span>
+                    </div>
+                    <div class="dk-hero-trust-item">
+                        <span class="dk-hero-trust-icon">🌐</span>
+                        <span>Curated for Abroad &bull; <strong>Universities Worldwide</strong></span>
+                    </div>
+                    <div class="dk-hero-trust-item">
+                        <span class="dk-hero-trust-icon">💡</span>
+                        <span>Smart &amp; Affordable &bull; <strong>Best Value Essentials</strong></span>
+                    </div>
                 </div>
-                <div class="dk-cat-badge-item">
-                    <span class="dk-cat-badge-icon">💡</span>
-                    <span>Smart &amp; Affordable &bull; <strong>Best Value Essentials</strong></span>
-                </div>
+            </div>
+
+            <div class="dk-hero-img-col">
+                @{
+                    var heroImg = !string.IsNullOrWhiteSpace(catPage.HeroImageUrl) ? catPage.HeroImageUrl : "/images/study-hub/test-pic-placeholder.svg";
+                    var isTestPic = string.IsNullOrWhiteSpace(heroImg) || heroImg.Contains("test-pic-placeholder");
+                }
+
+                @if (isTestPic)
+                {
+                    <div class="dk-hero-test-pic-box">
+                        <div class="dk-hero-cam-icon">📷</div>
+                        <div class="dk-hero-test-btn">TEST PIC</div>
+                        <div class="dk-hero-test-title">Super Admin Replaceable</div>
+                        <div class="dk-hero-test-sub">Admin panel can upload/replace image anytime</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="dk-hero-custom-img-wrap">
+                        <img src="@heroImg" alt="Study Essentials Hero" loading="eager" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+                    </div>
+                }
             </div>
         </div>
 
-        <div class="dk-cat-hero-right">
-            <div class="dk-cat-hero-img-wrap">
-                <img src="@catPage.HeroImageUrl" alt="Study Essentials Hero" loading="eager" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
+        <!-- 4 Bottom Trust Highlights Bar inside Hero -->
+        <div class="dk-hero-trust-bar">
+            <div class="dk-htb-item">
+                <span class="dk-htb-icon">⭐</span>
+                <div>
+                    <strong>Quality Products</strong>
+                    <span>Handpicked for Students</span>
+                </div>
+            </div>
+            <div class="dk-htb-item">
+                <span class="dk-htb-icon">📦</span>
+                <div>
+                    <strong>Affordable Bundles</strong>
+                    <span>Save More, Study More</span>
+                </div>
+            </div>
+            <div class="dk-htb-item">
+                <span class="dk-htb-icon">🔒</span>
+                <div>
+                    <strong>Secure Checkout</strong>
+                    <span>Multiple Payment Options</span>
+                </div>
+            </div>
+            <div class="dk-htb-item">
+                <span class="dk-htb-icon">🚚</span>
+                <div>
+                    <strong>Fast &amp; Reliable Delivery</strong>
+                    <span>To Your Doorstep</span>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- ========================================================
-         MAIN 2-COLUMN LAYOUT (SIDEBAR & CATEGORIES / PRODUCTS)
+         6 STUDY CATEGORIES QUICK NAV PILLS STRIP
+    ========================================================= -->
+    <div class="dk-study-cat-nav-strip">
+        <div class="dk-study-cat-nav-title">
+            <span>Explore 6 Categories:</span>
+        </div>
+        <div class="dk-study-cat-nav-items">
+            @foreach (var c in studyCategories)
+            {
+                var isSelected = string.Equals(c.Slug, activeCategory?.Slug, StringComparison.OrdinalIgnoreCase);
+                <a href="/category/study-essentials/@c.Slug"
+                   class="dk-cat-nav-pill @(isSelected ? "is-selected" : "")">
+                    <span class="dk-cat-pill-icon">
+                        @if (c.Icon == "laptop" || c.Slug.Contains("tech")) { <text>💻</text> }
+                        else if (c.Icon == "file" || c.Slug.Contains("document")) { <text>📁</text> }
+                        else if (c.Icon == "lamp" || c.Slug.Contains("desk")) { <text>🛋️</text> }
+                        else if (c.Icon == "bag" || c.Slug.Contains("campus")) { <text>🎒</text> }
+                        else if (c.Icon == "monitor" || c.Slug.Contains("online")) { <text>🖥️</text> }
+                        else { <text>✏️</text> }
+                    </span>
+                    <span class="dk-cat-pill-name">@c.Name</span>
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- ========================================================
+         MAIN 2-COLUMN LAYOUT:
+         LEFT: SUBCATEGORIES FILTER LIST FOR THIS CATEGORY
+         RIGHT: MATCHING PRODUCTS LIST
     ========================================================= -->
     <div class="dk-cat-main-layout">
 
-        <!-- LEFT SIDEBAR -->
-        <aside class="dk-cat-sidebar">
+        <!-- LEFT SIDEBAR: SUBCATEGORIES FILTER -->
+        <aside class="dk-cat-sidebar" id="dkStudySidebar">
             <div class="dk-cat-sidebar-card">
-                <h2 class="dk-cat-sidebar-title">Categories</h2>
-                <nav class="dk-cat-nav-list" aria-label="Study Essentials Subcategories">
-                    <a href="/category/study-essentials"
-                       class="dk-cat-nav-item dk-cat-action-link @(string.IsNullOrWhiteSpace(currentSubSlug) ? "is-active" : "")"
-                       data-subslug="">
-                        <span class="dk-cat-nav-icon">🎓</span>
-                        <span class="dk-cat-nav-text">All Study Essentials</span>
+                <div class="dk-cat-sidebar-header">
+                    <h2 class="dk-cat-sidebar-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                        Subcategories
+                    </h2>
+                    @if (!string.IsNullOrWhiteSpace(activeSubItem))
+                    {
+                        <button type="button" class="dk-cat-clear-btn" onclick="filterBySubItem('')" title="Clear subcategory filter">
+                            Clear
+                        </button>
+                    }
+                </div>
+
+                <div class="dk-cat-sidebar-subhead">
+                    <span>@activeCategoryName</span>
+                </div>
+
+                <nav class="dk-cat-sub-list" aria-label="@activeCategoryName Subcategories">
+                    <!-- Option to view all products of this category -->
+                    <a href="/category/study-essentials/@activeCategory?.Slug"
+                       class="dk-cat-sub-link @(string.IsNullOrWhiteSpace(activeSubItem) ? "is-active" : "")"
+                       data-subitem=""
+                       onclick="event.preventDefault(); filterBySubItem('');">
+                        <span class="dk-sub-radio"></span>
+                        <span class="dk-sub-text">All @activeCategoryName</span>
+                        <span class="dk-sub-badge">All</span>
                     </a>
 
-                    @foreach (var sc in studyCategories)
+                    <!-- Subcategories list provided by user -->
+                    @foreach (var sub in activeCategorySubcategories)
                     {
-                        var isActive = string.Equals(currentSubSlug, sc.Slug, StringComparison.OrdinalIgnoreCase);
-                        <a href="/category/study-essentials/@sc.Slug"
-                           class="dk-cat-nav-item dk-cat-action-link @(isActive ? "is-active" : "")"
-                           data-subslug="@sc.Slug">
-                            <span class="dk-cat-nav-icon">
-                                @if (sc.Icon == "laptop" || sc.Icon == "digital") { <text>💻</text> }
-                                else if (sc.Icon == "file" || sc.Icon == "passport") { <text>📁</text> }
-                                else if (sc.Icon == "lamp") { <text>🛋️</text> }
-                                else if (sc.Icon == "bag") { <text>🎒</text> }
-                                else if (sc.Icon == "monitor") { <text>🖥️</text> }
-                                else if (sc.Icon == "book") { <text>📝</text> }
-                                else if (sc.Icon == "bookmark") { <text>📚</text> }
-                                else { <text>✏️</text> }
-                            </span>
-                            <span class="dk-cat-nav-text">@sc.Name</span>
+                        var isCurrentSub = string.Equals(activeSubItem, sub, StringComparison.OrdinalIgnoreCase);
+                        <a href="/category/study-essentials/@activeCategory?.Slug?subcatItem=@Uri.EscapeDataString(sub)"
+                           class="dk-cat-sub-link @(isCurrentSub ? "is-active" : "")"
+                           data-subitem="@sub"
+                           onclick="event.preventDefault(); filterBySubItem(this.dataset.subitem);">
+                            <span class="dk-sub-radio"></span>
+                            <span class="dk-sub-text">@sub</span>
                         </a>
                     }
                 </nav>
             </div>
 
-            <!-- Promo Box 1: Complete Study Kit -->
-            <div class="dk-cat-promo-box dk-promo-kit">
-                <div class="dk-cat-promo-badge">Bundle Offer</div>
-                <h3 class="dk-cat-promo-title">@catPage.Promo1Title</h3>
-                <p class="dk-cat-promo-sub">@catPage.Promo1Subtitle</p>
-                <div class="dk-cat-promo-img">
-                    <img src="@catPage.Promo1ImageUrl" alt="Study Kit" onerror="this.onerror=null;this.src='/images/study-hub/kit-premium.png';" />
+            <!-- IMPORTANT NOTE CARD (FOR CATEGORY 3 DOCUMENTS & ORGANIZATION) -->
+            @if (!string.IsNullOrWhiteSpace(activeCategory?.ImportantNote))
+            {
+                <div class="dk-cat-note-card">
+                    <div class="dk-cat-note-head">
+                        <span class="dk-cat-note-icon">💡</span>
+                        <strong>Important Student Note:</strong>
+                    </div>
+                    <p class="dk-cat-note-text">
+                        @activeCategory.ImportantNote
+                    </p>
                 </div>
-                <a href="@catPage.Promo1ButtonUrl" class="dk-cat-promo-btn">
-                    @catPage.Promo1ButtonText
-                </a>
+            }
+
+            <!-- Price Filters Strip in Sidebar -->
+            <div class="dk-cat-sidebar-card" style="margin-top: 14px;">
+                <h3 class="dk-cat-sidebar-title" style="font-size: 13.5px; margin-bottom: 10px;">Price Range</h3>
+                <div class="dk-cat-price-facets">
+                    <a href="?minPrice=&maxPrice=500" class="dk-price-facet-chip">Under ₹500</a>
+                    <a href="?minPrice=500&maxPrice=1000" class="dk-price-facet-chip">₹500 - ₹1,000</a>
+                    <a href="?minPrice=1000&maxPrice=2000" class="dk-price-facet-chip">₹1,000 - ₹2,000</a>
+                    <a href="?minPrice=2000&maxPrice=" class="dk-price-facet-chip">₹2,000 &amp; Above</a>
+                </div>
             </div>
 
-            <!-- Promo Box 2: Need Help Choosing -->
-            <div class="dk-cat-promo-box dk-promo-support">
-                <div class="dk-cat-support-icon">💬</div>
-                <h3 class="dk-cat-promo-title">@catPage.Promo2Title</h3>
-                <p class="dk-cat-promo-sub">@catPage.Promo2Subtitle</p>
-                <a href="@catPage.Promo2ButtonUrl" target="_blank" rel="noopener noreferrer" class="dk-cat-btn-chat">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                    @catPage.Promo2ButtonText
-                </a>
+            <!-- Need Complete Kit Promo -->
+            <div class="dk-cat-sidebar-promo">
+                <div class="dk-sp-tag">Starter Bundle</div>
+                <h4 class="dk-sp-title">Complete Study Abroad Kits</h4>
+                <p class="dk-sp-sub">Curated packs with essential university stationery &amp; tech gear.</p>
+                <a href="/category/study-essentials" class="dk-sp-btn">Explore Study Hub →</a>
             </div>
         </aside>
 
-        <!-- RIGHT CONTENT AREA (DYNAMICALLY UPDATED VIA AJAX WITHOUT FULL PAGE RELOAD) -->
-        <main class="dk-cat-content" id="dkCatContentArea" style="position: relative; min-height: 480px;">
-            <div id="dkCatLoadingOverlay" class="dk-cat-loading-overlay" style="display: none;" aria-hidden="true">
-                <div class="dk-cat-loading-spinner"></div>
-                <span class="dk-cat-loading-text">Loading products...</span>
-            </div>
+        <!-- RIGHT CONTENT AREA: PRODUCTS LIST -->
+        <main class="dk-cat-content" id="dkCatContentArea">
             <partial name="_StudyEssentialsProductsListPartial" model="Model" />
         </main>
     </div>
 
-    <!-- ========================================================
-         FOOTER FEATURES BAR (IMAGE 4 BOTTOM)
-    ========================================================= -->
-    <div class="dk-cat-features-strip">
-        <div class="dk-cat-feature-item">
-            <span class="dk-cf-icon">🚚</span>
-            <div>
-                <strong>Fast &amp; Reliable Delivery</strong>
-                <span>On-time delivery worldwide</span>
-            </div>
-        </div>
-        <div class="dk-cat-feature-item">
-            <span class="dk-cf-icon">🛡️</span>
-            <div>
-                <strong>100% Secure Payments</strong>
-                <span>Multiple payment options</span>
-            </div>
-        </div>
-        <div class="dk-cat-feature-item">
-            <span class="dk-cf-icon">⭐</span>
-            <div>
-                <strong>Premium Quality Products</strong>
-                <span>Genuine &amp; durable</span>
-            </div>
-        </div>
-        <div class="dk-cat-feature-item">
-            <span class="dk-cf-icon">🎧</span>
-            <div>
-                <strong>24/7 Customer Support</strong>
-                <span>We're here to help</span>
-            </div>
-        </div>
-        <div class="dk-cat-feature-item">
-            <span class="dk-cf-icon">🔄</span>
-            <div>
-                <strong>Easy Returns</strong>
-                <span>Hassle-free returns</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================================
-         BOTTOM BANNER (IMAGE 4)
-    ========================================================= -->
-    <section class="dk-cat-bottom-cta">
-        <div class="dk-cat-bcta-content">
-            <div class="dk-cat-bcta-icon">🎓</div>
-            <div>
-                <h2 class="dk-cat-bcta-title">Prepare Better. Study Smarter. Go Further.</h2>
-                <p class="dk-cat-bcta-sub">Everything you need for a successful academic journey.</p>
-            </div>
-        </div>
-        <a href="/study-abroad-hub#kits-section" class="dk-cat-bcta-btn">
-            Explore Study Kits →
-        </a>
-    </section>
-
 </div>
 
 <!-- ========================================================
-     INLINE STYLING FOR STUDY CATEGORIES VIEW
+     INLINE STYLING FOR COMMON HERO & 6 CATEGORIES VIEW
 ========================================================= -->
 <style>
     .dk-study-cat-page-wrapper {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        color: #1e293b;
         width: 100%;
         max-width: 100%;
         margin: 0 auto;
-        padding: 10px 0 40px 0;
+        padding: 4px 0 32px 0;
         box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
-    /* Hero Banner */
-    .dk-cat-hero-card {
-        background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #eff6ff 100%);
-        border: 1px solid #bae6fd;
-        border-radius: 20px;
-        padding: 32px 36px;
-        display: grid;
-        grid-template-columns: 1.3fr 0.7fr;
-        gap: 28px;
+    /* Admin bar */
+    .dk-study-hub-admin-bar {
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 10px 18px;
+        border-radius: 10px;
+        margin-bottom: 14px;
+        display: flex;
         align-items: center;
-        margin-bottom: 28px;
-        box-shadow: 0 6px 24px rgba(2, 132, 199, 0.08);
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
     }
-    @@media (max-width: 850px) {
-        .dk-cat-hero-card { 
-            grid-template-columns: 1fr; 
-            padding: 22px 18px;
-            gap: 20px;
-        }
+    .dk-sh-admin-badge {
+        background: #0284c7;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 3px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-    .dk-cat-hero-title {
-        font-size: 2.2rem;
-        font-weight: 900;
+    .dk-sh-admin-hint {
+        font-size: 12.5px;
+        color: #cbd5e1;
+        flex: 1;
+    }
+    .dk-sh-admin-btn {
+        background: #ffffff;
         color: #0f172a;
-        margin: 0 0 8px 0;
-        letter-spacing: -0.025em;
-    }
-    @@media (max-width: 600px) {
-        .dk-cat-hero-title { font-size: 1.7rem; }
-    }
-    .dk-cat-hero-sub {
-        font-size: 1.05rem;
-        color: #475569;
-        margin: 0 0 20px 0;
-        line-height: 1.45;
-    }
-    @@media (max-width: 600px) {
-        .dk-cat-hero-sub { font-size: 0.92rem; margin-bottom: 14px; }
-    }
-    .dk-cat-hero-badges {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-    .dk-cat-badge-item {
-        display: flex;
+        font-size: 12.5px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
         align-items: center;
-        gap: 8px;
-        font-size: 0.9rem;
-        color: #334155;
+        gap: 6px;
+        transition: all 0.2s;
     }
-    .dk-cat-badge-icon {
-        font-size: 1.15rem;
+    .dk-sh-admin-btn:hover {
+        background: #f1f5f9;
+        transform: translateY(-1px);
     }
-    .dk-cat-hero-img-wrap {
+
+    /* ========================================================
+       COMMON HERO BANNER (FULL WIDTH .dk-shell)
+    ========================================================= */
+    .dk-study-common-hero {
+        width: 100%;
         border-radius: 16px;
         overflow: hidden;
-        aspect-ratio: 16/11;
-        background: #ffffff;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-        border: 1px solid #e2e8f0;
+        margin-bottom: 18px;
+        box-sizing: border-box;
+        position: relative;
+        background: linear-gradient(135deg, #063f91 0%, #0849a3 45%, #0284c7 100%);
+        color: #ffffff;
+        box-shadow: 0 6px 20px rgba(6, 63, 145, 0.16);
+        border: 1px solid #0369a1;
+        transition: all 0.3s ease;
     }
-    .dk-cat-hero-img-wrap img {
+
+    /* Festive theme variations */
+    .dk-study-common-hero.is-festive-hero {
+        background: linear-gradient(135deg, #7c1315 0%, #991b1b 35%, #c2410c 70%, #d97706 100%);
+        border: 2px solid #fbbf24;
+        box-shadow: 0 8px 30px rgba(185, 28, 28, 0.28), 0 0 15px rgba(251, 191, 36, 0.2);
+    }
+    .dk-study-common-hero.frame-arch-gold {
+        border: 2px solid #f59e0b;
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+    }
+    .dk-study-common-hero.frame-festive-glow {
+        border: 2px solid #fbbf24;
+        box-shadow: 0 0 30px rgba(251, 191, 36, 0.35);
+    }
+
+    .dk-festive-decor-top {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background: rgba(0, 0, 0, 0.25);
+        padding: 6px 16px;
+        font-size: 13px;
+        font-weight: 800;
+        color: #fef08a;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(251, 191, 36, 0.4);
+    }
+    .dk-festive-decor-top .dk-diya {
+        font-size: 16px;
+        animation: diyaPulse 2s infinite ease-in-out;
+    }
+    @@keyframes diyaPulse {
+        0%, 100% { transform: scale(1); filter: drop-shadow(0 0 3px #fbbf24); }
+        50% { transform: scale(1.15); filter: drop-shadow(0 0 8px #f59e0b); }
+    }
+
+    .dk-hero-inner-grid {
+        display: grid;
+        grid-template-columns: 1.35fr 0.85fr;
+        gap: 24px;
+        padding: 28px 32px;
+        align-items: center;
+    }
+    @@media (max-width: 900px) {
+        .dk-hero-inner-grid {
+            grid-template-columns: 1fr;
+            padding: 20px 18px;
+            gap: 18px;
+        }
+    }
+
+    .dk-hero-pill-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(8px);
+        padding: 5px 14px;
+        border-radius: 999px;
+        font-size: 11.5px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: #ffffff;
+        margin-bottom: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .dk-hero-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #ff7900;
+        box-shadow: 0 0 6px #ff7900;
+    }
+
+    .dk-hero-main-title {
+        font-size: 1.95rem;
+        font-weight: 900;
+        line-height: 1.25;
+        margin: 0 0 8px 0;
+        color: #ffffff;
+        letter-spacing: -0.02em;
+    }
+    @@media (max-width: 600px) {
+        .dk-hero-main-title { font-size: 1.55rem; }
+    }
+
+    .dk-hero-main-sub {
+        font-size: 0.98rem;
+        line-height: 1.5;
+        color: #e0f2fe;
+        margin: 0 0 16px 0;
+        max-width: 620px;
+    }
+    .is-festive-hero .dk-hero-main-sub {
+        color: #fed7aa;
+    }
+
+    .dk-hero-trust-badges {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+    .dk-hero-trust-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12.5px;
+        color: #f0fdf4;
+    }
+    .dk-hero-trust-icon {
+        font-size: 15px;
+    }
+
+    /* Test pic card on hero right */
+    .dk-hero-test-pic-box {
+        background: radial-gradient(circle at center, #0f274a 0%, #06162d 100%);
+        border: 2px dashed #0284c7;
+        border-radius: 14px;
+        padding: 24px 20px;
+        text-align: center;
+        box-shadow: inset 0 0 24px rgba(2, 132, 199, 0.15);
+        color: #ffffff;
+        min-height: 160px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .is-festive-hero .dk-hero-test-pic-box {
+        border-color: #fbbf24;
+        background: radial-gradient(circle at center, #3b0709 0%, #1a0405 100%);
+    }
+    .dk-hero-cam-icon {
+        font-size: 26px;
+        margin-bottom: 6px;
+        opacity: 0.9;
+    }
+    .dk-hero-test-btn {
+        background: #0284c7;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 11.5px;
+        padding: 4px 14px;
+        border-radius: 999px;
+        letter-spacing: 0.6px;
+        display: inline-block;
+        margin-bottom: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .is-festive-hero .dk-hero-test-btn {
+        background: #d97706;
+    }
+    .dk-hero-test-title {
+        font-weight: 800;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    .dk-hero-test-sub {
+        font-size: 11px;
+        color: #94a3b8;
+    }
+
+    .dk-hero-custom-img-wrap {
+        border-radius: 12px;
+        overflow: hidden;
+        max-height: 220px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }
+    .dk-hero-custom-img-wrap img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
     }
 
-    /* 2-Column Layout */
-    .dk-cat-main-layout {
+    /* Bottom Trust Bar inside Hero */
+    .dk-hero-trust-bar {
+        background: rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
         display: grid;
-        grid-template-columns: 280px 1fr;
-        gap: 24px;
-        margin-bottom: 40px;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 12px 24px;
+        gap: 16px;
     }
-    @@media (min-width: 1400px) {
-        .dk-cat-main-layout {
-            grid-template-columns: 290px 1fr;
-            gap: 28px;
+    @@media (max-width: 820px) {
+        .dk-hero-trust-bar {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 12px 16px;
         }
     }
-    @@media (max-width: 900px) {
-        .dk-cat-main-layout { grid-template-columns: 1fr; }
+    @@media (max-width: 480px) {
+        .dk-hero-trust-bar {
+            grid-template-columns: 1fr;
+        }
+    }
+    .dk-htb-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .dk-htb-icon {
+        font-size: 18px;
+    }
+    .dk-htb-item strong {
+        display: block;
+        font-size: 12px;
+        font-weight: 800;
+        color: #ffffff;
+    }
+    .dk-htb-item span {
+        font-size: 11px;
+        color: #bae6fd;
+    }
+    .is-festive-hero .dk-htb-item span {
+        color: #fed7aa;
     }
 
-    /* Sidebar */
-    .dk-cat-sidebar {
+    /* ========================================================
+       6 CATEGORIES QUICK NAV PILLS STRIP
+    ========================================================= */
+    .dk-study-cat-nav-strip {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 10px 16px;
+        margin-bottom: 18px;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+    .dk-study-cat-nav-title {
+        font-size: 12.5px;
+        font-weight: 800;
+        color: #063f91;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+    .dk-study-cat-nav-items {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        flex: 1;
+    }
+    .dk-cat-nav-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 12.5px;
+        font-weight: 700;
+        text-decoration: none;
+        background: #f8fafc;
+        color: #334155;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s;
+    }
+    .dk-cat-nav-pill:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #063f91;
+    }
+    .dk-cat-nav-pill.is-selected {
+        background: linear-gradient(135deg, #063f91 0%, #075bc8 100%);
+        color: #ffffff;
+        border-color: #063f91;
+        box-shadow: 0 2px 8px rgba(6, 63, 145, 0.25);
+    }
+    .dk-cat-pill-icon {
+        font-size: 13.5px;
+    }
+
+    /* ========================================================
+       2-COLUMN LAYOUT
+    ========================================================= */
+    .dk-cat-main-layout {
+        display: grid;
+        grid-template-columns: 290px 1fr;
         gap: 20px;
+        align-items: flex-start;
+    }
+    @@media (max-width: 960px) {
+        .dk-cat-main-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* LEFT SIDEBAR */
+    .dk-cat-sidebar {
+        position: sticky;
+        top: 80px;
     }
     .dk-cat-sidebar-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 20px 16px;
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
     }
-    .dk-cat-sidebar-title {
-        font-size: 1.05rem;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0 0 14px 0;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #f1f5f9;
-    }
-    .dk-cat-nav-list {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-    .dk-cat-nav-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 9px 12px;
-        border-radius: 10px;
-        color: #334155;
-        font-size: 0.88rem;
-        font-weight: 600;
-        text-decoration: none;
-        transition: background 0.15s, color 0.15s;
-    }
-    .dk-cat-nav-item:hover {
-        background: #f1f5f9;
-        color: #063f91;
-    }
-    .dk-cat-nav-item.is-active {
-        background: rgba(6, 63, 145, 0.08);
-        color: #063f91;
-        font-weight: 700;
-        border-left: 3px solid #ff7900;
-    }
-    .dk-cat-nav-icon {
-        font-size: 1.1rem;
-        flex-shrink: 0;
-    }
-
-    /* Promo Boxes in Sidebar */
-    .dk-cat-promo-box {
-        border-radius: 16px;
-        padding: 20px;
-        position: relative;
-    }
-    .dk-promo-kit {
-        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
-        border: 1px solid #bbf7d0;
-    }
-    .dk-promo-support {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        border: 1px solid #cbd5e1;
-        text-align: center;
-    }
-    .dk-cat-promo-badge {
-        display: inline-block;
-        background: #16a34a;
-        color: #fff;
-        font-size: 10px;
-        font-weight: 800;
-        padding: 2px 8px;
-        border-radius: 4px;
-        text-transform: uppercase;
-        margin-bottom: 8px;
-    }
-    .dk-cat-promo-title {
-        font-size: 1rem;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0 0 4px 0;
-    }
-    .dk-cat-promo-sub {
-        font-size: 0.82rem;
-        color: #64748b;
-        margin: 0 0 14px 0;
-    }
-    .dk-cat-promo-img {
-        width: 100%;
-        height: 110px;
-        border-radius: 10px;
-        overflow: hidden;
-        margin-bottom: 12px;
-        background: #ffffff;
-    }
-    .dk-cat-promo-img img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    }
-    .dk-cat-promo-btn {
-        display: block;
-        text-align: center;
-        background: linear-gradient(135deg, #063f91 0%, #075bc8 100%);
-        color: #fff;
-        font-weight: 700;
-        font-size: 0.85rem;
-        padding: 8px 14px;
-        border-radius: 8px;
-        text-decoration: none;
-        box-shadow: 0 4px 12px rgba(6, 63, 145, 0.25);
-        transition: transform 0.15s, background 0.15s;
-    }
-    .dk-cat-promo-btn:hover {
-        background: #ff7900;
-        box-shadow: 0 4px 14px rgba(255, 121, 0, 0.35);
-    }
-    .dk-cat-support-icon {
-        font-size: 2rem;
-        margin-bottom: 6px;
-    }
-    .dk-cat-btn-chat {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        background: #25d366;
-        color: #fff;
-        font-weight: 700;
-        font-size: 0.85rem;
-        padding: 8px 16px;
-        border-radius: 8px;
-        text-decoration: none;
-    }
-
-    /* Content Area & Top Bar */
-    .dk-cat-top-bar {
+    .dk-cat-sidebar-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 16px;
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        margin-bottom: 20px;
+        margin-bottom: 4px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f1f5f9;
     }
-    .dk-cat-breadcrumb-trail {
-        font-size: 0.88rem;
-        color: #64748b;
-    }
-    .dk-cat-breadcrumb-trail a {
-        color: #063f91;
-        text-decoration: none;
-        font-weight: 600;
-        transition: color 0.15s;
-    }
-    .dk-cat-breadcrumb-trail a:hover {
-        color: #ff7900;
-    }
-    .dk-sep { margin: 0 6px; color: #94a3b8; }
-    .dk-current { color: #0f172a; font-weight: 700; }
-    .dk-cat-sort-wrap {
+    .dk-cat-sidebar-title {
+        font-size: 14.5px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
         display: flex;
         align-items: center;
         gap: 8px;
     }
-    .dk-sort-lbl {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #64748b;
+    .dk-cat-clear-btn {
+        background: none;
+        border: none;
+        color: #0284c7;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 0;
     }
-    .dk-sort-select {
-        border: 1px solid #cbd5e1;
+    .dk-cat-clear-btn:hover {
+        text-decoration: underline;
+    }
+    .dk-cat-sidebar-subhead {
+        font-size: 11.5px;
+        font-weight: 800;
+        color: #0284c7;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        margin: 10px 0 8px 4px;
+    }
+
+    .dk-cat-sub-list {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+    .dk-cat-sub-link {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 8px 10px;
         border-radius: 8px;
-        padding: 6px 12px;
-        font-size: 0.85rem;
+        font-size: 13px;
         font-weight: 600;
-        color: #0f172a;
-        background: #ffffff;
+        color: #334155;
+        text-decoration: none;
+        transition: all 0.18s;
         cursor: pointer;
     }
-
-    /* 8 Category Cards Grid (Image 4) */
-    .dk-cat-cards-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 18px;
-    }
-    @@media (max-width: 1100px) {
-        .dk-cat-cards-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-    @@media (max-width: 768px) {
-        .dk-cat-cards-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @@media (max-width: 480px) {
-        .dk-cat-cards-grid { grid-template-columns: 1fr; }
-    }
-    .dk-cat-grid-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
-    }
-    .dk-cat-grid-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-        border-color: #38bdf8;
-    }
-    .dk-cat-card-img-wrap {
-        aspect-ratio: 4/3;
+    .dk-cat-sub-link:hover {
         background: #f8fafc;
-        overflow: hidden;
-    }
-    .dk-cat-card-img-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-    .dk-cat-grid-card:hover .dk-cat-card-img-wrap img {
-        transform: scale(1.04);
-    }
-    .dk-cat-card-body {
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
-    .dk-cat-card-name {
-        font-size: 0.96rem;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0 0 6px 0;
-        line-height: 1.3;
-    }
-    .dk-cat-card-desc {
-        font-size: 0.8rem;
-        color: #64748b;
-        line-height: 1.4;
-        margin: 0 0 14px 0;
-        flex: 1;
-    }
-    .dk-cat-card-btn {
         color: #063f91;
-        font-weight: 700;
-        font-size: 0.86rem;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        transition: gap 0.15s ease, color 0.15s;
     }
-    .dk-cat-card-btn:hover { gap: 8px; color: #ff7900; }
-
-    /* Products Grid */
-    .dk-cat-products-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 18px;
-    }
-    @@media (min-width: 1400px) {
-        .dk-cat-products-grid {
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-    }
-    @@media (max-width: 1100px) {
-        .dk-cat-products-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-    @@media (max-width: 768px) {
-        .dk-cat-products-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-    }
-    @@media (max-width: 480px) {
-        .dk-cat-products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    }
-    @@media (max-width: 360px) {
-        .dk-cat-products-grid { grid-template-columns: 1fr; }
-    }
-    .dk-cat-prod-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 12px;
-        display: flex;
-        flex-direction: column;
-        transition: transform 0.15s ease, box-shadow 0.15s, border-color 0.15s;
-    }
-    .dk-cat-prod-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 24px rgba(6, 63, 145, 0.12);
-        border-color: #063f91;
-    }
-    .dk-cat-prod-img-wrap {
-        aspect-ratio: 1/1;
-        background: #f8fafc;
-        border-radius: 10px;
-        overflow: hidden;
-        margin-bottom: 10px;
-        position: relative;
-        display: block;
-    }
-    .dk-cat-prod-img-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .dk-cat-prod-discount {
-        position: absolute;
-        top: 6px;
-        left: 6px;
-        background: #ff7900;
-        color: #fff;
-        font-size: 10px;
+    .dk-cat-sub-link.is-active {
+        background: #f0f7ff;
+        color: #063f91;
         font-weight: 800;
-        padding: 2px 6px;
-        border-radius: 4px;
-        box-shadow: 0 2px 6px rgba(255, 121, 0, 0.35);
     }
-    .dk-cat-prod-body {
-        display: flex;
-        flex-direction: column;
+    .dk-sub-radio {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid #cbd5e1;
+        display: inline-block;
+        flex-shrink: 0;
+        transition: all 0.18s;
+        position: relative;
+    }
+    .dk-cat-sub-link.is-active .dk-sub-radio {
+        border-color: #0284c7;
+        background: #0284c7;
+        box-shadow: inset 0 0 0 2.5px #ffffff;
+    }
+    .dk-sub-text {
         flex: 1;
+        line-height: 1.35;
     }
-    .dk-cat-prod-title {
-        font-size: 0.88rem;
-        font-weight: 700;
-        color: #0f172a;
-        text-decoration: none;
-        margin-bottom: 6px;
-        line-height: 1.3;
-        transition: color 0.15s;
+    .dk-sub-badge {
+        font-size: 10.5px;
+        font-weight: 800;
+        background: #e2e8f0;
+        color: #475569;
+        padding: 2px 7px;
+        border-radius: 999px;
     }
-    .dk-cat-prod-title:hover { color: #063f91; }
-    .dk-cat-prod-rating {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 11px;
-        margin-bottom: 8px;
+    .dk-cat-sub-link.is-active .dk-sub-badge {
+        background: #0284c7;
+        color: #ffffff;
     }
-    .dk-cat-stars { color: #f59e0b; }
-    .dk-cat-rating-val { font-weight: 700; color: #0f172a; }
-    .dk-cat-prod-price-row {
+
+    /* Important Note Card */
+    .dk-cat-note-card {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-left: 4px solid #f59e0b;
+        border-radius: 10px;
+        padding: 14px 14px;
+        margin-top: 14px;
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08);
+    }
+    .dk-cat-note-head {
         display: flex;
         align-items: center;
         gap: 6px;
-        margin-bottom: 10px;
-        margin-top: auto;
+        font-size: 12.5px;
+        color: #b45309;
+        margin-bottom: 4px;
     }
-    .dk-cat-price {
-        font-size: 1.05rem;
-        font-weight: 800;
-        color: #063f91;
+    .dk-cat-note-icon {
+        font-size: 16px;
     }
-    .dk-cat-mrp {
-        font-size: 0.8rem;
-        color: #94a3b8;
-        text-decoration: line-through;
-    }
-    .dk-cat-btn-add {
-        width: 100%;
-        background: linear-gradient(135deg, #063f91 0%, #075bc8 100%);
-        color: #ffffff;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 0.82rem;
-        font-weight: 700;
-        cursor: pointer;
-        box-shadow: 0 3px 10px rgba(6, 63, 145, 0.22);
-        transition: all 0.15s ease;
-    }
-    .dk-cat-btn-add:hover {
-        background: #ff7900;
-        box-shadow: 0 4px 14px rgba(255, 121, 0, 0.35);
-        transform: translateY(-1px);
-    }
-
-    /* Empty state */
-    .dk-cat-empty-state {
-        text-align: center;
-        padding: 48px 24px;
-        background: #ffffff;
-        border: 1px dashed #cbd5e1;
-        border-radius: 16px;
-    }
-    .dk-cat-empty-icon { font-size: 3rem; margin-bottom: 12px; }
-
-    /* Features Strip */
-    .dk-cat-features-strip {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 20px 24px;
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 16px;
-        margin-bottom: 24px;
-    }
-    @@media (max-width: 900px) {
-        .dk-cat-features-strip { grid-template-columns: repeat(2, 1fr); }
-    }
-    @@media (max-width: 500px) {
-        .dk-cat-features-strip { grid-template-columns: 1fr; }
-    }
-    .dk-cat-feature-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .dk-cf-icon { font-size: 1.5rem; flex-shrink: 0; }
-    .dk-cat-feature-item strong {
-        display: block;
-        font-size: 0.86rem;
-        color: #0f172a;
-    }
-    .dk-cat-feature-item span {
-        font-size: 0.76rem;
-        color: #64748b;
-    }
-
-    /* Bottom CTA */
-    .dk-cat-bottom-cta {
-        background: linear-gradient(135deg, #0f172a 0%, #0369a1 100%);
-        border-radius: 16px;
-        padding: 28px 36px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: #ffffff;
-        gap: 20px;
-        flex-wrap: wrap;
-    }
-    .dk-cat-bcta-content {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-    }
-    .dk-cat-bcta-icon {
-        font-size: 2.2rem;
-    }
-    .dk-cat-bcta-title {
-        font-size: 1.45rem;
-        font-weight: 800;
-        margin: 0 0 4px 0;
-        color: #ffffff;
-    }
-    .dk-cat-bcta-sub {
-        font-size: 0.95rem;
-        color: #cbd5e1;
+    .dk-cat-note-text {
         margin: 0;
+        font-size: 12px;
+        line-height: 1.45;
+        color: #78350f;
     }
-    .dk-cat-bcta-btn {
-        background: #38bdf8;
-        color: #0f172a;
-        font-weight: 800;
-        font-size: 0.92rem;
-        padding: 10px 22px;
-        border-radius: 8px;
-        text-decoration: none;
-        white-space: nowrap;
-        transition: background 0.15s, transform 0.15s;
-    }
-    .dk-cat-bcta-btn:hover {
-        background: #7dd3fc;
-        transform: translateY(-1px);
-    }
-    /* Dynamic Loading Overlay */
-    .dk-cat-loading-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.78);
-        backdrop-filter: blur(2px);
-        -webkit-backdrop-filter: blur(2px);
+
+    /* Price Facets */
+    .dk-cat-price-facets {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        z-index: 50;
-        border-radius: 16px;
-        transition: opacity 0.2s ease;
+        flex-wrap: wrap;
+        gap: 6px;
     }
-    .dk-cat-loading-spinner {
-        width: 38px;
-        height: 38px;
-        border: 3.5px solid #e2e8f0;
-        border-top-color: #063f91;
-        border-right-color: #ff7900;
-        border-radius: 50%;
-        animation: dk-cat-spin 0.75s linear infinite;
-    }
-    .dk-cat-loading-text {
-        font-size: 0.92rem;
+    .dk-price-facet-chip {
+        font-size: 11.5px;
         font-weight: 700;
-        color: #063f91;
-        letter-spacing: -0.01em;
+        color: #475569;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 4px 10px;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: all 0.2s;
     }
-    @@keyframes dk-cat-spin {
-        to { transform: rotate(360deg); }
+    .dk-price-facet-chip:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #063f91;
+    }
+
+    /* Sidebar Promo */
+    .dk-cat-sidebar-promo {
+        background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+        border: 1px solid #bfdbfe;
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 14px;
+    }
+    .dk-sp-tag {
+        font-size: 10.5px;
+        font-weight: 800;
+        color: #1d4ed8;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        margin-bottom: 4px;
+    }
+    .dk-sp-title {
+        font-size: 13.5px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 4px 0;
+    }
+    .dk-sp-sub {
+        font-size: 11.5px;
+        color: #64748b;
+        margin: 0 0 10px 0;
+        line-height: 1.4;
+    }
+    .dk-sp-btn {
+        display: inline-block;
+        font-size: 11.5px;
+        font-weight: 800;
+        color: #0284c7;
+        text-decoration: none;
+    }
+    .dk-sp-btn:hover {
+        text-decoration: underline;
+    }
+
+    /* RIGHT CONTENT */
+    .dk-cat-content {
+        min-height: 480px;
     }
 </style>
 
+<!-- ========================================================
+     CLIENT-SIDE INTERACTIVE FILTERING SCRIPT
+========================================================= -->
 <script>
-    (function () {
-        let dkCatAbortController = null;
-
-        function showCatLoading() {
-            const overlay = document.getElementById("dkCatLoadingOverlay");
-            if (overlay) overlay.style.display = "flex";
-        }
-
-        function hideCatLoading() {
-            const overlay = document.getElementById("dkCatLoadingOverlay");
-            if (overlay) overlay.style.display = "none";
-        }
-
-        function updateSidebarActive(targetUrl) {
-            try {
-                const parsed = new URL(targetUrl, window.location.origin);
-                const pathParts = parsed.pathname.replace(/\/+$/, '').split('/');
-                // If path is /category/study-essentials, active subslug is ""
-                // If path is /category/study-essentials/tech-for-study, active subslug is "tech-for-study"
-                let targetSubslug = "";
-                if (pathParts.length >= 4 && pathParts[1] === "category" && (pathParts[2] === "study-essentials" || pathParts[2] === "study_essentials")) {
-                    targetSubslug = pathParts[3].toLowerCase();
-                }
-
-                document.querySelectorAll(".dk-cat-sidebar .dk-cat-nav-item").forEach(item => {
-                    const itemSlug = (item.getAttribute("data-subslug") || "").toLowerCase();
-                    if (itemSlug === targetSubslug) {
-                        item.classList.add("is-active");
-                    } else {
-                        item.classList.remove("is-active");
-                    }
-                });
-            } catch (e) {
-                console.warn("[StudyEssentials] Could not parse url for sidebar active state:", e);
-            }
-        }
-
-        async function loadStudyCategoryProducts(targetUrl, pushState = true) {
-            // Cancel any in-flight request to prevent race conditions & stale results
-            if (dkCatAbortController) {
-                dkCatAbortController.abort();
-            }
-            dkCatAbortController = new AbortController();
-
-            const contentArea = document.getElementById("dkCatContentArea");
-            if (!contentArea) return;
-
-            showCatLoading();
-            updateSidebarActive(targetUrl);
-
-            try {
-                // Append partial=true to URL so server returns partial view
-                const fetchUrl = new URL(targetUrl, window.location.origin);
-                fetchUrl.searchParams.set("partial", "true");
-
-                const response = await fetch(fetchUrl.toString(), {
-                    method: "GET",
-                    headers: {
-                        "X-Requested-With": "XMLHttpRequest",
-                        "Accept": "text/html, application/xhtml+xml"
-                    },
-                    signal: dkCatAbortController.signal
-                });
-
-                if (!response.ok) {
-                    throw new Error("HTTP error " + response.status);
-                }
-
-                const html = await response.text();
-
-                // Re-inject the updated partial while keeping the loading overlay structure
-                contentArea.innerHTML = `
-                    <div id="dkCatLoadingOverlay" class="dk-cat-loading-overlay" style="display: none;" aria-hidden="true">
-                        <div class="dk-cat-loading-spinner"></div>
-                        <span class="dk-cat-loading-text">Loading products...</span>
-                    </div>
-                    ` + html;
-
-                if (pushState) {
-                    window.history.pushState({ studyEssentialsAjax: true, url: targetUrl }, "", targetUrl);
-                }
-
-                // If user is scrolled down, gently scroll back to top of products area
-                const rect = contentArea.getBoundingClientRect();
-                if (rect.top < 60) {
-                    contentArea.scrollIntoView({ behavior: "smooth", block: "start" });
-                }
-            } catch (err) {
-                if (err.name === "AbortError") {
-                    // Superseded by newer click; ignore
-                    return;
-                }
-                console.error("[StudyEssentials] Failed to load products dynamically:", err);
-                contentArea.innerHTML = `
-                    <div class="dk-cat-empty-state" style="border-color: #ef4444; background: #fff5f5;">
-                        <div class="dk-cat-empty-icon" style="color: #ef4444;">⚠️</div>
-                        <h3 style="color: #b91c1c;">Unable to load products</h3>
-                        <p style="color: #7f1d1d;">A network or connection issue occurred while fetching items for this category.</p>
-                        <button type="button" class="dk-sh-btn-primary" onclick="window.retryLoadStudyCategory('${targetUrl.replace(/'/g, "\\'")}')">
-                            Try Again
-                        </button>
-                    </div>`;
-            } finally {
-                hideCatLoading();
-            }
-        }
-
-        window.retryLoadStudyCategory = function (url) {
-            loadStudyCategoryProducts(url, false);
-        };
-
-        window.handleSortChange = function (sortVal) {
-            const url = new URL(window.location.href);
-            url.searchParams.set("sort", sortVal);
-            loadStudyCategoryProducts(url.toString(), true);
-        };
-
-        // Event delegation for clicks on category links, card buttons, breadcrumbs, and pagination
-        document.addEventListener("click", function (e) {
-            const actionLink = e.target.closest(".dk-cat-action-link");
-            if (!actionLink) return;
-
-            // Don't intercept if ctrl/meta/shift key is pressed (let user open in new tab)
-            if (e.ctrlKey || e.metaKey || e.shiftKey || actionLink.target === "_blank") {
-                return;
-            }
-
-            const href = actionLink.getAttribute("href");
-            if (!href || href.startsWith("#") || href.startsWith("javascript:")) {
-                return;
-            }
-
-            e.preventDefault();
-            loadStudyCategoryProducts(href, true);
-        });
-
-        // Browser Back / Forward button support
-        window.addEventListener("popstate", function () {
-            if (window.location.pathname.includes("/category/study-essentials") ||
-                window.location.pathname.includes("/category/study_essentials")) {
-                loadStudyCategoryProducts(window.location.href, false);
+    function filterBySubItem(subItem) {
+        const cleanSub = (subItem || "").trim().toLowerCase();
+        
+        // 1. Update Left Sidebar active state
+        document.querySelectorAll(".dk-cat-sub-link").forEach(link => {
+            const itemVal = (link.dataset.subitem || "").trim().toLowerCase();
+            if (cleanSub === "") {
+                link.classList.toggle("is-active", itemVal === "");
+            } else {
+                link.classList.toggle("is-active", itemVal === cleanSub);
             }
         });
-    })();
+
+        // 2. Filter product cards on the right side
+        const cards = document.querySelectorAll(".dk-cat-prod-card");
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            if (cleanSub === "") {
+                card.style.display = "";
+                visibleCount++;
+            } else {
+                const tags = (card.dataset.subcatTags || "").toLowerCase();
+                const title = (card.dataset.title || "").toLowerCase();
+                const desc = (card.dataset.desc || "").toLowerCase();
+
+                // Check match with subItem words
+                const subWords = cleanSub.split(/[\s,]+/);
+                let matches = false;
+                if (tags.includes(cleanSub) || title.includes(cleanSub) || desc.includes(cleanSub)) {
+                    matches = true;
+                } else {
+                    // Check if multiple key words match
+                    const matchCount = subWords.filter(w => w.length > 2 && (tags.includes(w) || title.includes(w) || desc.includes(w))).length;
+                    if (matchCount >= 1) matches = true;
+                }
+
+                if (matches) {
+                    card.style.display = "";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+            }
+        });
+
+        // 3. Update count and active chip
+        const countEl = document.getElementById("dkCatProdCount");
+        if (countEl) {
+            countEl.textContent = visibleCount + " Products";
+        }
+
+        const chipWrap = document.getElementById("dkCatActiveChipWrap");
+        const chipText = document.getElementById("dkCatActiveChipText");
+        if (chipWrap && chipText) {
+            if (cleanSub !== "") {
+                chipText.textContent = subItem;
+                chipWrap.style.display = "inline-flex";
+            } else {
+                chipWrap.style.display = "none";
+            }
+        }
+
+        // 4. Update empty state visibility
+        const emptyState = document.getElementById("dkCatSubEmptyState");
+        const prodGrid = document.querySelector(".dk-cat-products-grid");
+        if (emptyState && prodGrid) {
+            if (visibleCount === 0) {
+                prodGrid.style.display = "none";
+                emptyState.style.display = "block";
+            } else {
+                prodGrid.style.display = "grid";
+                emptyState.style.display = "none";
+            }
+        }
+
+        // 5. Update browser URL without reload
+        const url = new URL(window.location.href);
+        if (cleanSub !== "") {
+            url.searchParams.set("subcatItem", subItem);
+        } else {
+            url.searchParams.delete("subcatItem");
+        }
+        window.history.pushState(null, '', url.toString());
+    }
+
+    // Initialize filter if subcatItem is in URL on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const subItem = urlParams.get("subcatItem");
+        if (subItem) {
+            filterBySubItem(subItem);
+        }
+    });
 </script>

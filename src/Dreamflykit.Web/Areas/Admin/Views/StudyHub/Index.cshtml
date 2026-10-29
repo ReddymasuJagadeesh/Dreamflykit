@@ -108,7 +108,7 @@
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s8')">8. Study Setup</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s9')">9. Why Dreamflykit</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-s10')">10. FAQs</button>
-    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-cat')">📚 Categories Page (8 Categories)</button>
+    <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-cat')">📚 6 Categories &amp; Subcategories (Common Hero &amp; Filters)</button>
     <button type="button" class="dk-sh-tab-btn" onclick="switchAdminTab('tab-bottom')">Bottom Banner</button>
 </div>
 
@@ -793,20 +793,62 @@
      TAB CAT: 📚 STUDY ESSENTIALS 8 CATEGORIES PAGE (IMAGE 4)
 ========================================================= -->
 <div class="dk-sh-tab-pane" id="tab-cat">
+    <!-- Common Hero & Festival Theme Controls -->
     <div class="dk-admin-card" style="margin-bottom: 20px;">
-        <h3 class="dk-sh-tab-title">Categories Page Hero (Image 4)</h3>
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <h3 class="dk-sh-tab-title" style="margin: 0;">Common Hero Banner &amp; Festival Theme Settings</h3>
+            <span style="background: #e0f2fe; color: #0369a1; font-weight: 800; font-size: 11px; padding: 4px 10px; border-radius: 999px;">
+                Displayed across all Category Pages
+            </span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Hero Pill Badge</label>
+                <input type="text" id="cat_hero_pill" class="dk-admin-form-input" value="@(string.IsNullOrWhiteSpace(catPage.HeroPillText) ? "STUDY ESSENTIALS" : catPage.HeroPillText)" />
+            </div>
             <div>
                 <label class="dk-sh-form-label">Hero Title</label>
                 <input type="text" id="cat_hero_title" class="dk-admin-form-input" value="@catPage.HeroTitle" />
             </div>
-            <div>
-                <label class="dk-sh-form-label">Hero Subtitle</label>
-                <input type="text" id="cat_hero_sub" class="dk-admin-form-input" value="@catPage.HeroSubtitle" />
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label class="dk-sh-form-label">Hero Subtitle</label>
+            <input type="text" id="cat_hero_sub" class="dk-admin-form-input" value="@catPage.HeroSubtitle" />
+        </div>
+
+        <!-- Festival Theme & Frame Design -->
+        <div style="background: #fdf4ff; border: 1.5px solid #f0abfc; border-radius: 12px; padding: 16px; margin-bottom: 18px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                <input type="checkbox" id="cat_festive_enabled" style="width: 18px; height: 18px; cursor: pointer;" @(catPage.FestivalThemeEnabled ? "checked" : "") />
+                <label for="cat_festive_enabled" style="font-weight: 800; font-size: 13.5px; color: #86198f; cursor: pointer; margin: 0;">
+                    Enable Festival Theme (Diwali / Celebrations Theme across Category Pages)
+                </label>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div>
+                    <label class="dk-sh-form-label">Festival Theme Name / Style</label>
+                    <select id="cat_festive_name" class="dk-admin-form-input">
+                        <option value="diwali" selected="@(catPage.FestivalThemeName == "diwali")">Diwali Celebration (Golden Lamps &amp; Warm Lights)</option>
+                        <option value="festive-glow" selected="@(catPage.FestivalThemeName == "festive-glow")">Festive Fireworks &amp; Gold Sparkles</option>
+                        <option value="new-year" selected="@(catPage.FestivalThemeName == "new-year")">New Year Global Fest</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="dk-sh-form-label">Frame Design</label>
+                    <select id="cat_frame_design" class="dk-admin-form-input">
+                        <option value="arch-gold" selected="@(catPage.FrameDesign == "arch-gold")">Arch Gold Frame (Flipkart Festival Style)</option>
+                        <option value="festive-glow" selected="@(catPage.FrameDesign == "festive-glow")">Festive Glowing Lanterns</option>
+                        <option value="modern-card" selected="@(catPage.FrameDesign == "modern-card")">Modern Rounded Card</option>
+                        <option value="clean" selected="@(catPage.FrameDesign == "clean")">Clean / Minimalist</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <label class="dk-sh-form-label">Hero Image (Super Admin Replaceable)</label>
+        <label class="dk-sh-form-label">Common Hero Image (Super Admin Replaceable)</label>
         <div class="dk-sh-img-ctrl-row">
             <div class="dk-sh-img-preview-box">
                 <img id="preview_cat_hero_img" src="@catPage.HeroImageUrl" onerror="this.src='/images/study-hub/test-pic-placeholder.svg';" />
@@ -821,24 +863,44 @@
         </div>
     </div>
 
+    <!-- The 6 Study Essentials Categories & Subcategories -->
     <div class="dk-admin-card">
-        <h3 class="dk-sh-tab-title">The 8 Study Essentials Categories (Super Admin Image Replacement)</h3>
+        <h3 class="dk-sh-tab-title">The 6 Study Essentials Categories &amp; Subcategories (Admin Full Control)</h3>
         <p style="color: #64748b; font-size: 0.88rem; margin-top: -8px; margin-bottom: 16px;">
-            Manage each category card shown in Image 4. Click Upload to replace any test pic with a real university product image!
+            Manage each category card, image, and its subcategory list. Clicking any subcategory in the store filters products on the right side.
         </p>
 
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
             @for (int i = 0; i < catPage.Categories.Count; i++)
             {
                 var cat = catPage.Categories[i];
-                <div class="dk-sh-edit-card" id="cat_card_wrap_@i">
-                    <div style="font-weight: 800; color: #0284c7; margin-bottom: 6px;">Category @(i + 1)</div>
-                    <label class="dk-sh-form-label">Name</label>
-                    <input type="text" id="cat_item_name_@i" class="dk-admin-form-input" value="@cat.Name" style="margin-bottom: 8px;" />
-                    <label class="dk-sh-form-label">Slug</label>
-                    <input type="text" id="cat_item_slug_@i" class="dk-admin-form-input" value="@cat.Slug" style="margin-bottom: 8px;" />
+                <div class="dk-sh-edit-card" id="cat_card_wrap_@i" style="border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 16px; background: #ffffff;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: 800; color: #0284c7; font-size: 13.5px;">Category @(i + 1)</span>
+                        <span style="font-size: 11px; font-weight: 700; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px;">@(cat.Subcategories?.Count ?? 0) Subcategories</span>
+                    </div>
+
+                    <input type="hidden" id="cat_item_id_@i" value="@cat.Id" />
+
+                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px; margin-bottom: 8px;">
+                        <div>
+                            <label class="dk-sh-form-label">Category Name</label>
+                            <input type="text" id="cat_item_name_@i" class="dk-admin-form-input" value="@cat.Name" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label">Slug</label>
+                            <input type="text" id="cat_item_slug_@i" class="dk-admin-form-input" value="@cat.Slug" />
+                        </div>
+                    </div>
+
                     <label class="dk-sh-form-label">Description</label>
                     <textarea id="cat_item_desc_@i" class="dk-admin-form-input" rows="2" style="margin-bottom: 8px;">@cat.Description</textarea>
+
+                    <label class="dk-sh-form-label">Important Note / Advice (Shown in left filter alert)</label>
+                    <input type="text" id="cat_item_note_@i" class="dk-admin-form-input" value="@cat.ImportantNote" placeholder="e.g. Keep original passports and certificates with the student..." style="margin-bottom: 8px;" />
+
+                    <label class="dk-sh-form-label">Subcategories Filter List (One per line)</label>
+                    <textarea id="cat_item_subs_@i" class="dk-admin-form-input" rows="5" style="margin-bottom: 10px; font-family: monospace; font-size: 12px;">@(string.Join("\n", cat.Subcategories ?? new List<string>()))</textarea>
 
                     <label class="dk-sh-form-label">Category Image (Super Admin Replaceable)</label>
                     <div class="dk-sh-img-ctrl-row">
@@ -2477,6 +2539,10 @@
                 HeroTitle: document.getElementById("cat_hero_title")?.value || "Study Essentials",
                 HeroSubtitle: document.getElementById("cat_hero_sub")?.value || "",
                 HeroImageUrl: document.getElementById("cat_hero_img_url")?.value || "/images/study-hub/test-pic-placeholder.svg",
+                HeroPillText: document.getElementById("cat_hero_pill")?.value || "STUDY ESSENTIALS",
+                FestivalThemeEnabled: document.getElementById("cat_festive_enabled") ? document.getElementById("cat_festive_enabled").checked : false,
+                FestivalThemeName: document.getElementById("cat_festive_name")?.value || "diwali",
+                FrameDesign: document.getElementById("cat_frame_design")?.value || "arch-gold",
                 Categories: []
             },
             ChecklistPage: {
@@ -2593,15 +2659,20 @@
             });
         }
 
-        // Categories Page 8 Categories
+        // 6 Categories & Subcategories
         for (let i = 0; i < 12; i++) {
             const n = document.getElementById("cat_item_name_" + i);
             if (!n) break;
+            const subsText = document.getElementById("cat_item_subs_" + i)?.value || "";
+            const subs = subsText.split("\n").map(s => s.trim()).filter(s => s.length > 0);
             payload.CategoriesPage.Categories.push({
+                Id: document.getElementById("cat_item_id_" + i)?.value || ("cat-" + (i + 1)),
                 Name: n.value,
                 Slug: document.getElementById("cat_item_slug_" + i)?.value || "",
                 Description: document.getElementById("cat_item_desc_" + i)?.value || "",
-                ImageUrl: document.getElementById("cat_item_img_" + i)?.value || "/images/study-hub/test-pic-placeholder.svg"
+                ImageUrl: document.getElementById("cat_item_img_" + i)?.value || "/images/study-hub/test-pic-placeholder.svg",
+                ImportantNote: document.getElementById("cat_item_note_" + i)?.value || "",
+                Subcategories: subs
             });
         }
 

@@ -158,14 +158,20 @@
         <div class="dk-sh-cards-grid dk-sh-s1-grid">
             @foreach (var card in s1.Cards)
             {
+                var targetLink = !string.IsNullOrWhiteSpace(card.LinkUrl)
+                    ? card.LinkUrl.Replace("/category/study-essentials//category/study-essentials/", "/category/study-essentials/").Replace("//", "/")
+                    : "/category/study-essentials";
+
                 <div class="dk-sh-card-item">
-                    <div class="dk-sh-card-img-wrap">
+                    <a href="@targetLink" class="dk-sh-card-img-wrap" style="display: block; text-decoration: none;">
                         <img src="@card.ImageUrl" alt="@card.Title" loading="lazy" onerror="this.onerror=null;this.src='/images/study-hub/test-pic-placeholder.svg';" />
-                    </div>
+                    </a>
                     <div class="dk-sh-card-body">
-                        <h3 class="dk-sh-card-title">@card.Title</h3>
+                        <h3 class="dk-sh-card-title">
+                            <a href="@targetLink" style="color: inherit; text-decoration: none;">@card.Title</a>
+                        </h3>
                         <p class="dk-sh-card-desc">@card.Description</p>
-                        <a href="@card.LinkUrl" class="dk-sh-card-link">
+                        <a href="@targetLink" class="dk-sh-card-link">
                             Shop Now
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
