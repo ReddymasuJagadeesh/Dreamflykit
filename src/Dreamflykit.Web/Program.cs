@@ -144,6 +144,30 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Sanitize malformed consecutive slashes and duplicated study-essentials route paths
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path.Value;
+    if (!string.IsNullOrEmpty(path))
+    {
+        if (path.Contains("//") || path.Contains("/category/study-essentials/category/study-essentials/"))
+        {
+            var cleanPath = path;
+            while (cleanPath.Contains("//"))
+            {
+                cleanPath = cleanPath.Replace("//", "/");
+            }
+            if (cleanPath.Contains("/category/study-essentials/category/study-essentials/"))
+            {
+                cleanPath = cleanPath.Replace("/category/study-essentials/category/study-essentials/", "/category/study-essentials/");
+            }
+            context.Response.Redirect(cleanPath + context.Request.QueryString, permanent: true);
+            return;
+        }
+    }
+    await next();
+});
+
 app.UseStaticFiles();
 
 app.UseRouting();

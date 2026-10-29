@@ -92,6 +92,16 @@ public sealed class StudyHubService : IStudyHubService
                             dto.TrustItems = def.TrustItems;
                         if (dto.Section1 == null || dto.Section1.Cards.Count == 0)
                             dto.Section1 = def.Section1;
+                        else
+                        {
+                            foreach (var card in dto.Section1.Cards)
+                            {
+                                if (!string.IsNullOrWhiteSpace(card.LinkUrl) && card.LinkUrl.Contains("//"))
+                                {
+                                    card.LinkUrl = card.LinkUrl.Replace("/category/study-essentials//category/study-essentials/", "/category/study-essentials/").Replace("//", "/");
+                                }
+                            }
+                        }
                         if (dto.Section2 == null || dto.Section2.Kits.Count == 0)
                             dto.Section2 = def.Section2;
                         if (dto.Section3Detail == null || dto.Section3Detail.Cards.Count == 0 || (dto.Section3Detail.Title != null && dto.Section3Detail.Title.Contains("Key Study Essentials")))
@@ -112,8 +122,28 @@ public sealed class StudyHubService : IStudyHubService
                             dto.Section10 = def.Section10;
                         if (dto.BottomBanner == null || string.IsNullOrWhiteSpace(dto.BottomBanner.Title))
                             dto.BottomBanner = def.BottomBanner;
-                        if (dto.CategoriesPage == null || dto.CategoriesPage.Categories.Count == 0)
+                        if (dto.CategoriesPage == null || dto.CategoriesPage.Categories.Count == 0 || dto.CategoriesPage.Categories.Count > 6)
+                        {
                             dto.CategoriesPage = def.CategoriesPage;
+                        }
+                        else
+                        {
+                            foreach (var cat in dto.CategoriesPage.Categories)
+                            {
+                                var defCat = def.CategoriesPage.Categories.FirstOrDefault(c => string.Equals(c.Slug, cat.Slug, StringComparison.OrdinalIgnoreCase));
+                                if (defCat != null)
+                                {
+                                    if (cat.Subcategories == null || cat.Subcategories.Count == 0)
+                                    {
+                                        cat.Subcategories = defCat.Subcategories;
+                                    }
+                                    if (string.IsNullOrWhiteSpace(cat.ImportantNote))
+                                    {
+                                        cat.ImportantNote = defCat.ImportantNote;
+                                    }
+                                }
+                            }
+                        }
                         if (dto.Section3 == null || dto.Section3.Items.Count == 0)
                             dto.Section3 = def.Section3;
                         if (dto.ChecklistPage == null || dto.ChecklistPage.Categories.Count == 0)
