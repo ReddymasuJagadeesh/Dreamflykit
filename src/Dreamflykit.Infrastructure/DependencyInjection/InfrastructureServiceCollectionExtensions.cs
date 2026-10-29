@@ -292,6 +292,9 @@ public static class InfrastructureServiceCollectionExtensions
         // Appliances Category Hub Service (Flipkart TV & Appliances Store Template)
         services.AddScoped<Dreamflykit.Application.AppliancesHub.Interfaces.IAppliancesHubService, Dreamflykit.Infrastructure.AppliancesHub.AppliancesHubService>();
 
+        // Beauty Category Hub Service (Flipkart Beauty & Personal Care Store Template)
+        services.AddScoped<Dreamflykit.Application.BeautyHub.Interfaces.IBeautyHubService, Dreamflykit.Infrastructure.BeautyHub.BeautyHubService>();
+
         // Central Enterprise Audit Logging
         services.AddScoped<Dreamflykit.Application.Audit.Interfaces.IAuditLogService, Dreamflykit.Infrastructure.Audit.AuditLogService>();
     }

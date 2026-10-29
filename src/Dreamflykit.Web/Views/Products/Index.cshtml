@@ -1,718 +1,725 @@
-@using Dreamflykit.Application.Catalog.Models
-@model Dreamflykit.Web.Models.Products.ProductListViewModel
-
-@{
-    ViewData["Title"] = !string.IsNullOrWhiteSpace(Model.SearchTerm)
-        ? $"Search: {Model.SearchTerm} - Dreamflykit"
-        : (!string.IsNullOrWhiteSpace(Model.CategoryName) ? $"{Model.CategoryName} - Dreamflykit Store" : "Shop All Products - Dreamflykit");
-
-    string BuildFilterUrl(
-        Guid? catId = null,
-        string? catSlug = null,
-        Guid? subcatId = null,
-        string? subcatSlug = null,
-        decimal? minP = null,
-        decimal? maxP = null,
-        int? discount = null,
-        bool? inStock = null,
-        ProductSortOption? sortOpt = null,
-        int? pageNum = 1,
-        bool clearCategory = false,
-        bool clearSubcategory = false,
-        string? search = null,
-        bool clearSearch = false)
-    {
-        var parameters = new Dictionary<string, string?>();
-
-        var s = clearSearch ? null : (search ?? Model.SearchTerm);
-        if (!string.IsNullOrWhiteSpace(s)) parameters["q"] = s;
-
-        var effectiveCatSlug = clearCategory ? null : (catSlug ?? Model.CategorySlug);
-        var effectiveCatId = clearCategory ? null : (catId ?? Model.CategoryId);
-        var effectiveSubcatId = (clearCategory || clearSubcategory) ? null : (subcatId ?? Model.SubcategoryId);
-        var effectiveSubcatSlug = (clearCategory || clearSubcategory) ? null : (subcatSlug ?? Model.CurrentSubcategorySlug);
-
-        string basePath = "/products";
-        if (!string.IsNullOrWhiteSpace(effectiveCatSlug))
-        {
-            if (!string.IsNullOrWhiteSpace(effectiveSubcatSlug))
-            {
-                basePath = $"/category/{effectiveCatSlug}/{effectiveSubcatSlug}";
-            }
-            else
-            {
-                basePath = $"/category/{effectiveCatSlug}";
-                if (effectiveSubcatId.HasValue)
-                {
-                    parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
-                }
-            }
-        }
-        else
-        {
-            if (effectiveCatId.HasValue && effectiveCatId.Value != Guid.Empty)
-            {
-                parameters["categoryId"] = effectiveCatId.Value.ToString();
-            }
-            if (effectiveSubcatId.HasValue && effectiveSubcatId.Value != Guid.Empty)
-            {
-                parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
-            }
-        }
-
-        var mn = minP ?? Model.MinPrice;
-        if (mn.HasValue) parameters["minPrice"] = mn.Value.ToString();
-
-        var mx = maxP ?? Model.MaxPrice;
-        if (mx.HasValue) parameters["maxPrice"] = mx.Value.ToString();
-
-        var d = discount ?? Model.MinDiscount;
-        if (d.HasValue && d.Value > 0) parameters["minDiscount"] = d.Value.ToString();
-
-        var stk = inStock ?? Model.InStockOnly;
-        if (stk.HasValue && stk.Value) parameters["inStockOnly"] = "true";
-
-        var so = sortOpt ?? Model.Sort;
-        if (so != ProductSortOption.Relevance) parameters["sort"] = so.ToString();
-
-        var p = pageNum ?? Model.Page;
-        if (p > 1) parameters["page"] = p.ToString();
-
-        var queryString = string.Join("&", parameters.Where(kvp => !string.IsNullOrEmpty(kvp.Value)).Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value!)}"));
-        return string.IsNullOrEmpty(queryString) ? basePath : $"{basePath}?{queryString}";
-    }
-
-    string ClearParamUrl(string paramToRemove)
-    {
-        var parameters = new Dictionary<string, string?>();
-
-        var s = paramToRemove == "q" ? null : Model.SearchTerm;
-        if (!string.IsNullOrWhiteSpace(s)) parameters["q"] = s;
-
-        var clearCat = paramToRemove == "category";
-        var clearSub = paramToRemove == "subcategory" || clearCat;
-
-        var effectiveCatSlug = clearCat ? null : Model.CategorySlug;
-        var effectiveCatId = clearCat ? null : Model.CategoryId;
-        var effectiveSubcatId = clearSub ? null : Model.SubcategoryId;
-        var effectiveSubcatSlug = clearSub ? null : Model.CurrentSubcategorySlug;
-
-        string basePath = "/products";
-        if (!string.IsNullOrWhiteSpace(effectiveCatSlug))
-        {
-            if (!string.IsNullOrWhiteSpace(effectiveSubcatSlug))
-            {
-                basePath = $"/category/{effectiveCatSlug}/{effectiveSubcatSlug}";
-            }
-            else
-            {
-                basePath = $"/category/{effectiveCatSlug}";
-                if (effectiveSubcatId.HasValue)
-                {
-                    parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
-                }
-            }
-        }
-        else
-        {
-            if (effectiveCatId.HasValue && effectiveCatId.Value != Guid.Empty)
-            {
-                parameters["categoryId"] = effectiveCatId.Value.ToString();
-            }
-        }
-
-        if (paramToRemove != "price")
-        {
-            if (Model.MinPrice.HasValue) parameters["minPrice"] = Model.MinPrice.Value.ToString();
-            if (Model.MaxPrice.HasValue) parameters["maxPrice"] = Model.MaxPrice.Value.ToString();
-        }
-        if (paramToRemove != "discount" && Model.MinDiscount.HasValue)
-        {
-            parameters["minDiscount"] = Model.MinDiscount.Value.ToString();
-        }
-        if (paramToRemove != "inStock" && Model.InStockOnly.HasValue && Model.InStockOnly.Value)
-        {
-            parameters["inStockOnly"] = "true";
-        }
-        if (Model.Sort != ProductSortOption.Relevance)
-        {
-            parameters["sort"] = Model.Sort.ToString();
-        }
-
-        var queryString = string.Join("&", parameters.Where(kvp => !string.IsNullOrEmpty(kvp.Value)).Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value!)}"));
-        return string.IsNullOrEmpty(queryString) ? basePath : $"{basePath}?{queryString}";
-    }
-}
-
-<div class="dk-catalog-page">
-
-    <!-- Breadcrumb & Top Bar -->
-    <div class="dk-shell dk-catalog-top-bar">
-        <nav class="dk-catalog-breadcrumb" aria-label="Breadcrumb">
-            <a href="/" class="dk-breadcrumb-item">Home</a>
-            <span class="dk-breadcrumb-separator">›</span>
-            @if (Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear")
-            {
-                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
-                <span class="dk-breadcrumb-separator">›</span>
-                <a href="/category/fashion/men-clothing" class="dk-breadcrumb-item">Men Clothing</a>
-                <span class="dk-breadcrumb-separator">›</span>
-                <span class="dk-breadcrumb-current">Ethnic Wear</span>
-            }
-            else if (Model.IsThermalsHub || Model.ViewMode == "thermals")
-            {
-                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
-                <span class="dk-breadcrumb-separator">›</span>
-                <a href="/category/fashion/men-clothing" class="dk-breadcrumb-item">Men Clothing</a>
-                <span class="dk-breadcrumb-separator">›</span>
-                <span class="dk-breadcrumb-current">Thermals</span>
-            }
-            else if (Model.IsWomenClothing || Model.ViewMode == "women-clothing")
-            {
-                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
-                <span class="dk-breadcrumb-separator">›</span>
-                <span class="dk-breadcrumb-current">Women Clothing</span>
-            }
-            else if (Model.IsHoodiesHub || Model.ViewMode == "hoodies")
-            {
-                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
-                <span class="dk-breadcrumb-separator">›</span>
-                <span class="dk-breadcrumb-current">Hoodies</span>
-            }
-            else if (Model.IsSweatshirtsHub || Model.ViewMode == "sweatshirts")
-            {
-                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
-                <span class="dk-breadcrumb-separator">›</span>
-                <span class="dk-breadcrumb-current">Sweatshirts</span>
-            }
-            else if (Model.IsMenClothing || Model.ViewMode == "men-clothing")
-            {
-                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
-                <span class="dk-breadcrumb-separator">›</span>
-                <span class="dk-breadcrumb-current">Men Clothing</span>
-            }
-            else if (Model.IsFashionHub && Model.ViewMode == "hub")
-            {
-                <span class="dk-breadcrumb-current">Fashion</span>
-            }
-            else if (Model.IsHealthCareHub && Model.ViewMode == "hub")
-            {
-                <span class="dk-breadcrumb-current">Health Care</span>
-            }
-            else if (Model.IsMobilesHub && Model.ViewMode == "hub")
-            {
-                <span class="dk-breadcrumb-current">Mobiles</span>
-            }
-            else if (!string.IsNullOrWhiteSpace(Model.CategoryName))
-            {
-                <a href="/categories" class="dk-breadcrumb-item">Categories</a>
-                <span class="dk-breadcrumb-separator">›</span>
-                @if (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName))
-                {
-                    <a href="/category/@Model.CategorySlug" class="dk-breadcrumb-item">@Model.CategoryName</a>
-                    <span class="dk-breadcrumb-separator">›</span>
-                    <span class="dk-breadcrumb-current">@Model.CurrentSubcategoryName</span>
-                }
-                else
-                {
-                    <span class="dk-breadcrumb-current">@Model.CategoryName</span>
-                }
-            }
-            else if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
-            {
-                <a href="/products" class="dk-breadcrumb-item">All Products</a>
-                <span class="dk-breadcrumb-separator">›</span>
-                <span class="dk-breadcrumb-current">Search Results for "@Model.SearchTerm"</span>
-            }
-            else
-            {
-                <span class="dk-breadcrumb-current">All Products</span>
-            }
-        </nav>
-    </div>
-
-    @if (Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear")
-    {
-        <div style="width: 100%; margin-bottom: 24px;">
-            <partial name="_FashionEthnicWearHub" model="@(Model.FashionHub?.EthnicWear ?? Dreamflykit.Application.FashionHub.Models.FashionEthnicWearDto.CreateDefault())" />
-        </div>
-    }
-    else if (Model.IsThermalsHub || Model.ViewMode == "thermals")
-    {
-        <div style="width: 100%; margin-bottom: 24px;">
-            <partial name="_FashionThermalsHub" model="@(Model.FashionHub?.Thermals ?? Dreamflykit.Application.FashionHub.Models.FashionThermalsDto.CreateDefault())" />
-        </div>
-    }
-    else if (Model.IsWomenClothing || Model.ViewMode == "women-clothing")
-    {
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
-            <partial name="_FashionWomenClothingHub" model="@(Model.FashionHub?.WomenClothing ?? Dreamflykit.Application.FashionHub.Models.FashionWomenClothingDto.CreateDefault())" />
-        </div>
-    }
-    else if (Model.IsHoodiesHub || Model.ViewMode == "hoodies")
-    {
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
-            <partial name="_FashionHoodiesHub" model="@(Model.FashionHub?.Hoodies ?? Dreamflykit.Application.FashionHub.Models.FashionHoodiesHubDto.CreateDefault())" />
-        </div>
-    }
-    else if (Model.IsSweatshirtsHub || Model.ViewMode == "sweatshirts")
-    {
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
-            <partial name="_FashionSweatshirtsHub" model="@(Model.FashionHub?.Sweatshirts ?? Dreamflykit.Application.FashionHub.Models.FashionSweatshirtsHubDto.CreateDefault())" />
-        </div>
-    }
-    else if (Model.IsMenClothing || Model.ViewMode == "men-clothing")
-    {
-        <div style="width: 100%; margin-bottom: 24px;">
-            <partial name="_FashionMenClothingHub" model="@(Model.FashionHub?.MenClothing ?? Dreamflykit.Application.FashionHub.Models.FashionMenClothingDto.CreateDefault())" />
-        </div>
-    }
-    else if (Model.IsFashionHub && Model.FashionHub != null && Model.ViewMode == "hub")
-    {
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
-            <partial name="_FashionCategoryHub" model="Model.FashionHub" />
-        </div>
-    }
-
-    @if (Model.IsHealthCareHub && Model.HealthHub != null && Model.ViewMode == "hub")
-    {
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
-            <partial name="_HealthCareCategoryHub" model="Model.HealthHub" />
-        </div>
-    }
-
-    @if (Model.IsMobilesHub && Model.MobilesHub != null && Model.ViewMode == "hub")
-    {
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
-            <partial name="_MobilesCategoryHub" model="Model.MobilesHub" />
-        </div>
-    }
-
-    @if (Model.IsAppliancesHub && Model.AppliancesHub != null && Model.ViewMode == "hub")
-    {
-        <div style="width: 100%; margin-bottom: 24px;">
-            <partial name="_AppliancesCategoryHub" model="Model.AppliancesHub" />
-        </div>
-    }
-
-    @if (Model.IsStudyEssentialsHub && Model.StudyHub != null)
-    {
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 14px;">
-            <!-- View Mode Switcher -->
-            <div class="dk-study-view-switcher" style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 12px; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(6, 63, 145, 0.04); flex-wrap: wrap; gap: 10px;">
-                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                    <span style="font-weight: 800; font-size: 12.5px; color: #063f91; text-transform: uppercase; letter-spacing: 0.6px; display: inline-flex; align-items: center; gap: 6px;">
-                        <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #ff7900;"></span>
-                        Explore Mode:
-                    </span>
-                    <a href="/category/study-essentials?view=hub"
-                       id="tabStudyEssentials"
-                       style="font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; @(Model.ViewMode == "hub" ? "background: linear-gradient(135deg, #063f91 0%, #075bc8 100%); color: #ffffff; box-shadow: 0 3px 12px rgba(6, 63, 145, 0.28); border: 1px solid #063f91;" : "background: #f8fafc; color: #334155; border: 1px solid #e2e8f0;")">
-                        🎓 Study Essentials
-                    </a>
-                    <a href="/category/study-essentials?view=categories"
-                       id="tabShopByCategories"
-                       style="font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; @(Model.ViewMode != "hub" ? "background: linear-gradient(135deg, #063f91 0%, #075bc8 100%); color: #ffffff; box-shadow: 0 3px 12px rgba(6, 63, 145, 0.28); border: 1px solid #063f91;" : "background: #f8fafc; color: #334155; border: 1px solid #e2e8f0;")">
-                        📚 Shop by Categories (8 Categories &amp; Filters)
-                    </a>
-                </div>
-            </div>
-
-            @if (Model.ViewMode == "hub")
-            {
-                <partial name="_StudyEssentialsHub" model="Model.StudyHub" />
-            }
-            else
-            {
-                <partial name="_StudyEssentialsCategoriesView" model="Model" />
-            }
-        </div>
-    }
-
-    @if (Model.IsElectronicsCategory)
-    {
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
-            <partial name="_ElectronicsCategoryHubBanner" model="Model" />
-        </div>
-    }
-
-    @{
-        var isSpecializedHub = (Model.IsFashionHub && Model.ViewMode == "hub") ||
-                               Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear" ||
-                               Model.IsThermalsHub || Model.ViewMode == "thermals" ||
-                               Model.IsWomenClothing || Model.ViewMode == "women-clothing" ||
-                               Model.IsHoodiesHub || Model.ViewMode == "hoodies" ||
-                               Model.IsSweatshirtsHub || Model.ViewMode == "sweatshirts" ||
-                               Model.IsMenClothing || Model.ViewMode == "men-clothing" ||
-                               Model.IsStudyEssentialsHub ||
-                               (Model.IsHealthCareHub && Model.ViewMode == "hub") ||
-                               (Model.IsMobilesHub && Model.ViewMode == "hub") ||
-                               (Model.IsAppliancesHub && Model.ViewMode == "hub");
-    }
-
-    @if (!isSpecializedHub)
-    {
-        <!-- Main 2-Column Catalog Container -->
-        <div class="dk-shell dk-catalog-layout">
-
-        <!-- ========================================================
-             LEFT SIDEBAR: FACETED FILTERS
-        ========================================================= -->
-        <aside class="dk-catalog-sidebar" id="dk-filter-sidebar">
-            <div class="dk-filters-panel">
-
-                <div class="dk-filters-header">
-                    <div class="dk-filters-title">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <line x1="4" y1="21" x2="4" y2="14"></line>
-                            <line x1="4" y1="10" x2="4" y2="3"></line>
-                            <line x1="12" y1="21" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12" y2="3"></line>
-                            <line x1="20" y1="21" x2="20" y2="16"></line>
-                            <line x1="20" y1="12" x2="20" y2="3"></line>
-                            <line x1="1" y1="14" x2="7" y2="14"></line>
-                            <line x1="9" y1="8" x2="15" y2="8"></line>
-                            <line x1="17" y1="16" x2="23" y2="16"></line>
-                        </svg>
-                        <span>Filters</span>
-                    </div>
-
-                    @if (Model.HasActiveFilters)
-                    {
-                        <a href="/products" class="dk-clear-all-link">CLEAR ALL</a>
-                    }
-                    <button type="button" class="dk-mobile-filter-close" id="dk-mobile-filter-close" aria-label="Close filters">✕</button>
-                </div>
-
-                <!-- CATEGORIES FACET -->
-                @if (Model.Categories.Any())
-                {
-                    <div class="dk-filter-group">
-                        <h4 class="dk-filter-group-title">CATEGORIES</h4>
-                        <ul class="dk-filter-list">
-                            <li>
-                                <a href="@ClearParamUrl("category")"
-                                   class="dk-filter-item @(Model.CategoryId == null && string.IsNullOrEmpty(Model.CategorySlug) ? "active" : "")">
-                                    <span class="dk-filter-text">All Categories</span>
-                                </a>
-                            </li>
-                            @foreach (var cat in Model.Categories)
-                            {
-                                <li>
-                                    <a href="@BuildFilterUrl(catId: cat.CategoryId, catSlug: null, pageNum: 1)"
-                                       class="dk-filter-item @(cat.IsSelected ? "active" : "")">
-                                        <span class="dk-filter-text">@cat.Name</span>
-                                        @if (cat.Count > 0)
-                                        {
-                                            <span class="dk-filter-count">(@cat.Count)</span>
-                                        }
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                }
-
-                <!-- SUBCATEGORIES FACET -->
-                @if (Model.Subcategories.Any())
-                {
-                    <div class="dk-filter-group">
-                        <h4 class="dk-filter-group-title">SUBCATEGORIES</h4>
-                        <ul class="dk-filter-list">
-                            <li>
-                                <a href="@BuildFilterUrl(catSlug: Model.CategorySlug, clearSubcategory: true)"
-                                   class="dk-filter-item @(!Model.SubcategoryId.HasValue && string.IsNullOrEmpty(Model.CurrentSubcategorySlug) ? "active" : "")">
-                                    <span class="dk-filter-text">All @Model.CategoryName</span>
-                                </a>
-                            </li>
-                            @foreach (var sub in Model.Subcategories)
-                            {
-                                var isSubActive = (Model.SubcategoryId.HasValue && Model.SubcategoryId.Value == sub.SubcategoryId) ||
-                                                  (!string.IsNullOrEmpty(Model.CurrentSubcategorySlug) && string.Equals(Model.CurrentSubcategorySlug, sub.Slug, StringComparison.OrdinalIgnoreCase));
-                                <li>
-                                    <a href="@BuildFilterUrl(catSlug: Model.CategorySlug, subcatSlug: sub.Slug, subcatId: sub.SubcategoryId, pageNum: 1)"
-                                       class="dk-filter-item @(isSubActive ? "active" : "")">
-                                        <span class="dk-filter-text">@sub.Name</span>
-                                        @if (sub.ProductCount > 0)
-                                        {
-                                            <span class="dk-filter-count">(@sub.ProductCount)</span>
-                                        }
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                }
-
-                <!-- PRICE RANGE FACET -->
-                <div class="dk-filter-group">
-                    <h4 class="dk-filter-group-title">PRICE</h4>
-                    <div class="dk-price-quick-links">
-                        @foreach (var range in Model.PriceRanges)
-                        {
-                            <a href="@BuildFilterUrl(minP: range.MinPrice, maxP: range.MaxPrice, pageNum: 1)"
-                               class="dk-price-pill @(range.IsSelected ? "active" : "")">
-                                @range.Label
-                            </a>
-                        }
-                    </div>
-
-                    <!-- Manual Min/Max Price Form -->
-                    <form method="get" action="/products" class="dk-price-custom-form">
-                        @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
-                        {
-                            <input type="hidden" name="q" value="@Model.SearchTerm" />
-                        }
-                        @if (Model.CategoryId.HasValue)
-                        {
-                            <input type="hidden" name="categoryId" value="@Model.CategoryId.Value" />
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.CategorySlug))
-                        {
-                            <input type="hidden" name="category" value="@Model.CategorySlug" />
-                        }
-                        @if (Model.MinDiscount.HasValue)
-                        {
-                            <input type="hidden" name="minDiscount" value="@Model.MinDiscount.Value" />
-                        }
-                        @if (Model.Sort != ProductSortOption.Relevance)
-                        {
-                            <input type="hidden" name="sort" value="@Model.Sort.ToString()" />
-                        }
-
-                        <div class="dk-price-inputs">
-                            <input type="number"
-                                   name="minPrice"
-                                   placeholder="₹ Min"
-                                   min="0"
-                                   value="@Model.MinPrice"
-                                   class="dk-price-input"
-                                   aria-label="Minimum Price" />
-                            <span class="dk-price-to">to</span>
-                            <input type="number"
-                                   name="maxPrice"
-                                   placeholder="₹ Max"
-                                   min="0"
-                                   value="@Model.MaxPrice"
-                                   class="dk-price-input"
-                                   aria-label="Maximum Price" />
-                            <button type="submit" class="dk-price-go-btn" aria-label="Apply price filter">Go</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- DISCOUNT FACET -->
-                <div class="dk-filter-group">
-                    <h4 class="dk-filter-group-title">DISCOUNT</h4>
-                    <div class="dk-discount-options">
-                        @foreach (var disc in Model.Discounts)
-                        {
-                            <a href="@(disc.IsSelected ? ClearParamUrl("discount") : BuildFilterUrl(discount: disc.MinDiscount, pageNum: 1))"
-                               class="dk-radio-filter @(disc.IsSelected ? "active" : "")">
-                                <span class="dk-radio-circle"></span>
-                                <span class="dk-radio-label">@disc.Label</span>
-                            </a>
-                        }
-                    </div>
-                </div>
-
-                <!-- AVAILABILITY -->
-                <div class="dk-filter-group">
-                    <h4 class="dk-filter-group-title">AVAILABILITY</h4>
-                    <a href="@(Model.InStockOnly == true ? ClearParamUrl("inStock") : BuildFilterUrl(inStock: true, pageNum: 1))"
-                       class="dk-checkbox-filter @(Model.InStockOnly == true ? "active" : "")">
-                        <span class="dk-checkbox-box">✓</span>
-                        <span class="dk-checkbox-label">In Stock Only</span>
-                    </a>
-                </div>
-
-                @{
-                    var currentCat = Model.CategorySlug?.ToLowerInvariant() ?? "";
-                }
-
-                @if (currentCat == "electronics")
-                {
-                    <!-- ELECTRONICS SPECIFIC FILTERS -->
-                    <div class="dk-filter-group">
-                        <h4 class="dk-filter-group-title">BRAND</h4>
-                        <div class="dk-filter-list">
-                            @foreach (var brand in new[] { "Apple", "Dell", "HP", "Lenovo", "Asus", "Samsung", "Sony", "Boat" })
-                            {
-                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
-                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
-                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
-                                    <span class="dk-checkbox-box">✓</span>
-                                    <span class="dk-checkbox-label">@brand</span>
-                                </a>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="dk-filter-group">
-                        <h4 class="dk-filter-group-title">RAM / STORAGE</h4>
-                        <div class="dk-filter-list">
-                            @foreach (var spec in new[] { "16 GB", "8 GB", "32 GB", "512 GB SSD", "1 TB SSD" })
-                            {
-                                var isSelected = string.Equals(Model.SearchTerm, spec, StringComparison.OrdinalIgnoreCase);
-                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: spec, pageNum: 1))"
-                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
-                                    <span class="dk-checkbox-box">✓</span>
-                                    <span class="dk-checkbox-label">@spec</span>
-                                </a>
-                            }
-                        </div>
-                    </div>
-                }
-                else if (currentCat == "lifestyle" || currentCat == "fashion" || currentCat == "clothing")
-                {
-                    <!-- LIFESTYLE / FASHION FILTERS -->
-                    <div class="dk-filter-group">
-                        <h4 class="dk-filter-group-title">BRAND</h4>
-                        <div class="dk-filter-list">
-                            @foreach (var brand in new[] { "Nike", "Puma", "Adidas", "Wildcraft", "Dreamflykit" })
-                            {
-                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
-                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
-                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
-                                    <span class="dk-checkbox-box">✓</span>
-                                    <span class="dk-checkbox-label">@brand</span>
-                                </a>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="dk-filter-group">
-                        <h4 class="dk-filter-group-title">SIZE</h4>
-                        <div class="dk-filter-list">
-                            @foreach (var size in new[] { "S", "M", "L", "XL", "XXL", "Free Size" })
-                            {
-                                var isSelected = string.Equals(Model.SearchTerm, size, StringComparison.OrdinalIgnoreCase);
-                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: size, pageNum: 1))"
-                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
-                                    <span class="dk-checkbox-box">✓</span>
-                                    <span class="dk-checkbox-label">@size</span>
-                                </a>
-                            }
-                        </div>
-                    </div>
-                }
-                else if (currentCat == "travel-gear" || currentCat == "luggage-bags" || currentCat == "luggage")
-                {
-                    <!-- TRAVEL GEAR FILTERS -->
-                    <div class="dk-filter-group">
-                        <h4 class="dk-filter-group-title">BRAND</h4>
-                        <div class="dk-filter-list">
-                            @foreach (var brand in new[] { "American Tourister", "Samsonite", "Wildcraft", "Safari" })
-                            {
-                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
-                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
-                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
-                                    <span class="dk-checkbox-box">✓</span>
-                                    <span class="dk-checkbox-label">@brand</span>
-                                </a>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="dk-filter-group">
-                        <h4 class="dk-filter-group-title">LUGGAGE SIZE</h4>
-                        <div class="dk-filter-list">
-                            @foreach (var size in new[] { "Cabin (Up to 55 cm)", "Medium Check-in (65 cm)", "Large Check-in (75+ cm)", "Backpack 30L" })
-                            {
-                                var isSelected = string.Equals(Model.SearchTerm, size, StringComparison.OrdinalIgnoreCase);
-                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: size, pageNum: 1))"
-                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
-                                    <span class="dk-checkbox-box">✓</span>
-                                    <span class="dk-checkbox-label">@size</span>
-                                </a>
-                            }
-                        </div>
-                    </div>
-                }
-                else if (currentCat == "study-essentials" || currentCat == "stationery")
-                {
-                    <!-- STUDY ESSENTIALS FILTERS -->
-                    <div class="dk-filter-group">
-                        <h4 class="dk-filter-group-title">ESSENTIALS TYPE</h4>
-                        <div class="dk-filter-list">
-                            @foreach (var item in new[] { "Scientific Calculators", "Notebooks & Planners", "Desk Organizers", "Complete Student Kits" })
-                            {
-                                var isSelected = string.Equals(Model.SearchTerm, item, StringComparison.OrdinalIgnoreCase);
-                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: item, pageNum: 1))"
-                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
-                                    <span class="dk-checkbox-box">✓</span>
-                                    <span class="dk-checkbox-label">@item</span>
-                                </a>
-                            }
-                        </div>
-                    </div>
-                }
-                else if (currentCat == "adapters-sim" || currentCat == "adapters")
-                {
-                    <!-- ADAPTERS & SIM FILTERS -->
-                    <div class="dk-filter-group">
-                        <h4 class="dk-filter-group-title">DESTINATION REGION</h4>
-                        <div class="dk-filter-list">
-                            @foreach (var region in new[] { "USA / Canada", "United Kingdom (UK)", "Europe (EU)", "Australia & NZ", "Universal All-in-One" })
-                            {
-                                var isSelected = string.Equals(Model.SearchTerm, region, StringComparison.OrdinalIgnoreCase);
-                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: region, pageNum: 1))"
-                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
-                                    <span class="dk-checkbox-box">✓</span>
-                                    <span class="dk-checkbox-label">@region</span>
-                                </a>
-                            }
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <!-- GENERAL POPULAR BRANDS -->
-                    <div class="dk-filter-group">
-                        <h4 class="dk-filter-group-title">POPULAR BRANDS</h4>
-                        <div class="dk-filter-list">
-                            @foreach (var brand in new[] { "Apple", "Dell", "American Tourister", "Wildcraft", "Nike", "Samsung" })
-                            {
-                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
-                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
-                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
-                                    <span class="dk-checkbox-box">✓</span>
-                                    <span class="dk-checkbox-label">@brand</span>
-                                </a>
-                            }
-                        </div>
-                    </div>
-                }
-
-                <!-- CUSTOMER RATINGS -->
-                <div class="dk-filter-group">
-                    <h4 class="dk-filter-group-title">CUSTOMER RATINGS</h4>
-                    <div class="dk-discount-options">
-                        <a href="@BuildFilterUrl(pageNum: 1)" class="dk-radio-filter active">
-                            <span class="dk-radio-circle"></span>
-                            <span class="dk-radio-label">4★ &amp; above</span>
-                        </a>
-                        <a href="@BuildFilterUrl(pageNum: 1)" class="dk-radio-filter">
-                            <span class="dk-radio-circle"></span>
-                            <span class="dk-radio-label">3★ &amp; above</span>
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-        </aside>
-
-        <!-- ========================================================
-             RIGHT MAIN AREA: PRODUCTS CATALOG
-        ========================================================= -->
-        <main class="dk-catalog-content" id="dkCatalogMainContent" style="position: relative; min-height: 480px;">
-            <partial name="_CatalogProductsListPartial" model="Model" />
-        </main>
-
-    </div>
-    }
-
-</div>
-
-<!-- Backdrop for Mobile Filter Drawer -->
+@using Dreamflykit.Application.Catalog.Models
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+
+@{
+    ViewData["Title"] = !string.IsNullOrWhiteSpace(Model.SearchTerm)
+        ? $"Search: {Model.SearchTerm} - Dreamflykit"
+        : (!string.IsNullOrWhiteSpace(Model.CategoryName) ? $"{Model.CategoryName} - Dreamflykit Store" : "Shop All Products - Dreamflykit");
+
+    string BuildFilterUrl(
+        Guid? catId = null,
+        string? catSlug = null,
+        Guid? subcatId = null,
+        string? subcatSlug = null,
+        decimal? minP = null,
+        decimal? maxP = null,
+        int? discount = null,
+        bool? inStock = null,
+        ProductSortOption? sortOpt = null,
+        int? pageNum = 1,
+        bool clearCategory = false,
+        bool clearSubcategory = false,
+        string? search = null,
+        bool clearSearch = false)
+    {
+        var parameters = new Dictionary<string, string?>();
+
+        var s = clearSearch ? null : (search ?? Model.SearchTerm);
+        if (!string.IsNullOrWhiteSpace(s)) parameters["q"] = s;
+
+        var effectiveCatSlug = clearCategory ? null : (catSlug ?? Model.CategorySlug);
+        var effectiveCatId = clearCategory ? null : (catId ?? Model.CategoryId);
+        var effectiveSubcatId = (clearCategory || clearSubcategory) ? null : (subcatId ?? Model.SubcategoryId);
+        var effectiveSubcatSlug = (clearCategory || clearSubcategory) ? null : (subcatSlug ?? Model.CurrentSubcategorySlug);
+
+        string basePath = "/products";
+        if (!string.IsNullOrWhiteSpace(effectiveCatSlug))
+        {
+            if (!string.IsNullOrWhiteSpace(effectiveSubcatSlug))
+            {
+                basePath = $"/category/{effectiveCatSlug}/{effectiveSubcatSlug}";
+            }
+            else
+            {
+                basePath = $"/category/{effectiveCatSlug}";
+                if (effectiveSubcatId.HasValue)
+                {
+                    parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
+                }
+            }
+        }
+        else
+        {
+            if (effectiveCatId.HasValue && effectiveCatId.Value != Guid.Empty)
+            {
+                parameters["categoryId"] = effectiveCatId.Value.ToString();
+            }
+            if (effectiveSubcatId.HasValue && effectiveSubcatId.Value != Guid.Empty)
+            {
+                parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
+            }
+        }
+
+        var mn = minP ?? Model.MinPrice;
+        if (mn.HasValue) parameters["minPrice"] = mn.Value.ToString();
+
+        var mx = maxP ?? Model.MaxPrice;
+        if (mx.HasValue) parameters["maxPrice"] = mx.Value.ToString();
+
+        var d = discount ?? Model.MinDiscount;
+        if (d.HasValue && d.Value > 0) parameters["minDiscount"] = d.Value.ToString();
+
+        var stk = inStock ?? Model.InStockOnly;
+        if (stk.HasValue && stk.Value) parameters["inStockOnly"] = "true";
+
+        var so = sortOpt ?? Model.Sort;
+        if (so != ProductSortOption.Relevance) parameters["sort"] = so.ToString();
+
+        var p = pageNum ?? Model.Page;
+        if (p > 1) parameters["page"] = p.ToString();
+
+        var queryString = string.Join("&", parameters.Where(kvp => !string.IsNullOrEmpty(kvp.Value)).Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value!)}"));
+        return string.IsNullOrEmpty(queryString) ? basePath : $"{basePath}?{queryString}";
+    }
+
+    string ClearParamUrl(string paramToRemove)
+    {
+        var parameters = new Dictionary<string, string?>();
+
+        var s = paramToRemove == "q" ? null : Model.SearchTerm;
+        if (!string.IsNullOrWhiteSpace(s)) parameters["q"] = s;
+
+        var clearCat = paramToRemove == "category";
+        var clearSub = paramToRemove == "subcategory" || clearCat;
+
+        var effectiveCatSlug = clearCat ? null : Model.CategorySlug;
+        var effectiveCatId = clearCat ? null : Model.CategoryId;
+        var effectiveSubcatId = clearSub ? null : Model.SubcategoryId;
+        var effectiveSubcatSlug = clearSub ? null : Model.CurrentSubcategorySlug;
+
+        string basePath = "/products";
+        if (!string.IsNullOrWhiteSpace(effectiveCatSlug))
+        {
+            if (!string.IsNullOrWhiteSpace(effectiveSubcatSlug))
+            {
+                basePath = $"/category/{effectiveCatSlug}/{effectiveSubcatSlug}";
+            }
+            else
+            {
+                basePath = $"/category/{effectiveCatSlug}";
+                if (effectiveSubcatId.HasValue)
+                {
+                    parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
+                }
+            }
+        }
+        else
+        {
+            if (effectiveCatId.HasValue && effectiveCatId.Value != Guid.Empty)
+            {
+                parameters["categoryId"] = effectiveCatId.Value.ToString();
+            }
+        }
+
+        if (paramToRemove != "price")
+        {
+            if (Model.MinPrice.HasValue) parameters["minPrice"] = Model.MinPrice.Value.ToString();
+            if (Model.MaxPrice.HasValue) parameters["maxPrice"] = Model.MaxPrice.Value.ToString();
+        }
+        if (paramToRemove != "discount" && Model.MinDiscount.HasValue)
+        {
+            parameters["minDiscount"] = Model.MinDiscount.Value.ToString();
+        }
+        if (paramToRemove != "inStock" && Model.InStockOnly.HasValue && Model.InStockOnly.Value)
+        {
+            parameters["inStockOnly"] = "true";
+        }
+        if (Model.Sort != ProductSortOption.Relevance)
+        {
+            parameters["sort"] = Model.Sort.ToString();
+        }
+
+        var queryString = string.Join("&", parameters.Where(kvp => !string.IsNullOrEmpty(kvp.Value)).Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value!)}"));
+        return string.IsNullOrEmpty(queryString) ? basePath : $"{basePath}?{queryString}";
+    }
+}
+
+<div class="dk-catalog-page">
+
+    <!-- Breadcrumb & Top Bar -->
+    <div class="dk-shell dk-catalog-top-bar">
+        <nav class="dk-catalog-breadcrumb" aria-label="Breadcrumb">
+            <a href="/" class="dk-breadcrumb-item">Home</a>
+            <span class="dk-breadcrumb-separator">›</span>
+            @if (Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear")
+            {
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <a href="/category/fashion/men-clothing" class="dk-breadcrumb-item">Men Clothing</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">Ethnic Wear</span>
+            }
+            else if (Model.IsThermalsHub || Model.ViewMode == "thermals")
+            {
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <a href="/category/fashion/men-clothing" class="dk-breadcrumb-item">Men Clothing</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">Thermals</span>
+            }
+            else if (Model.IsWomenClothing || Model.ViewMode == "women-clothing")
+            {
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">Women Clothing</span>
+            }
+            else if (Model.IsHoodiesHub || Model.ViewMode == "hoodies")
+            {
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">Hoodies</span>
+            }
+            else if (Model.IsSweatshirtsHub || Model.ViewMode == "sweatshirts")
+            {
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">Sweatshirts</span>
+            }
+            else if (Model.IsMenClothing || Model.ViewMode == "men-clothing")
+            {
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">Men Clothing</span>
+            }
+            else if (Model.IsFashionHub && Model.ViewMode == "hub")
+            {
+                <span class="dk-breadcrumb-current">Fashion</span>
+            }
+            else if (Model.IsHealthCareHub && Model.ViewMode == "hub")
+            {
+                <span class="dk-breadcrumb-current">Health Care</span>
+            }
+            else if (Model.IsMobilesHub && Model.ViewMode == "hub")
+            {
+                <span class="dk-breadcrumb-current">Mobiles</span>
+            }
+            else if (!string.IsNullOrWhiteSpace(Model.CategoryName))
+            {
+                <a href="/categories" class="dk-breadcrumb-item">Categories</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                @if (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName))
+                {
+                    <a href="/category/@Model.CategorySlug" class="dk-breadcrumb-item">@Model.CategoryName</a>
+                    <span class="dk-breadcrumb-separator">›</span>
+                    <span class="dk-breadcrumb-current">@Model.CurrentSubcategoryName</span>
+                }
+                else
+                {
+                    <span class="dk-breadcrumb-current">@Model.CategoryName</span>
+                }
+            }
+            else if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+            {
+                <a href="/products" class="dk-breadcrumb-item">All Products</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">Search Results for "@Model.SearchTerm"</span>
+            }
+            else
+            {
+                <span class="dk-breadcrumb-current">All Products</span>
+            }
+        </nav>
+    </div>
+
+    @if (Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear")
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_FashionEthnicWearHub" model="@(Model.FashionHub?.EthnicWear ?? Dreamflykit.Application.FashionHub.Models.FashionEthnicWearDto.CreateDefault())" />
+        </div>
+    }
+    else if (Model.IsThermalsHub || Model.ViewMode == "thermals")
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_FashionThermalsHub" model="@(Model.FashionHub?.Thermals ?? Dreamflykit.Application.FashionHub.Models.FashionThermalsDto.CreateDefault())" />
+        </div>
+    }
+    else if (Model.IsWomenClothing || Model.ViewMode == "women-clothing")
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_FashionWomenClothingHub" model="@(Model.FashionHub?.WomenClothing ?? Dreamflykit.Application.FashionHub.Models.FashionWomenClothingDto.CreateDefault())" />
+        </div>
+    }
+    else if (Model.IsHoodiesHub || Model.ViewMode == "hoodies")
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_FashionHoodiesHub" model="@(Model.FashionHub?.Hoodies ?? Dreamflykit.Application.FashionHub.Models.FashionHoodiesHubDto.CreateDefault())" />
+        </div>
+    }
+    else if (Model.IsSweatshirtsHub || Model.ViewMode == "sweatshirts")
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_FashionSweatshirtsHub" model="@(Model.FashionHub?.Sweatshirts ?? Dreamflykit.Application.FashionHub.Models.FashionSweatshirtsHubDto.CreateDefault())" />
+        </div>
+    }
+    else if (Model.IsMenClothing || Model.ViewMode == "men-clothing")
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_FashionMenClothingHub" model="@(Model.FashionHub?.MenClothing ?? Dreamflykit.Application.FashionHub.Models.FashionMenClothingDto.CreateDefault())" />
+        </div>
+    }
+    else if (Model.IsFashionHub && Model.FashionHub != null && Model.ViewMode == "hub")
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_FashionCategoryHub" model="Model.FashionHub" />
+        </div>
+    }
+
+    @if (Model.IsHealthCareHub && Model.HealthHub != null && Model.ViewMode == "hub")
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_HealthCareCategoryHub" model="Model.HealthHub" />
+        </div>
+    }
+
+    @if (Model.IsMobilesHub && Model.MobilesHub != null && Model.ViewMode == "hub")
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_MobilesCategoryHub" model="Model.MobilesHub" />
+        </div>
+    }
+
+    @if (Model.IsAppliancesHub && Model.AppliancesHub != null && Model.ViewMode == "hub")
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_AppliancesCategoryHub" model="Model.AppliancesHub" />
+        </div>
+    }
+
+    @if (Model.IsBeautyHub && Model.BeautyHub != null)
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_BeautyCategoryHub" model="Model.BeautyHub" />
+        </div>
+    }
+
+    @if (Model.IsStudyEssentialsHub && Model.StudyHub != null)
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 14px;">
+            <!-- View Mode Switcher -->
+            <div class="dk-study-view-switcher" style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 12px; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(6, 63, 145, 0.04); flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <span style="font-weight: 800; font-size: 12.5px; color: #063f91; text-transform: uppercase; letter-spacing: 0.6px; display: inline-flex; align-items: center; gap: 6px;">
+                        <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #ff7900;"></span>
+                        Explore Mode:
+                    </span>
+                    <a href="/category/study-essentials?view=hub"
+                       id="tabStudyEssentials"
+                       style="font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; @(Model.ViewMode == "hub" ? "background: linear-gradient(135deg, #063f91 0%, #075bc8 100%); color: #ffffff; box-shadow: 0 3px 12px rgba(6, 63, 145, 0.28); border: 1px solid #063f91;" : "background: #f8fafc; color: #334155; border: 1px solid #e2e8f0;")">
+                        🎓 Study Essentials
+                    </a>
+                    <a href="/category/study-essentials?view=categories"
+                       id="tabShopByCategories"
+                       style="font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; @(Model.ViewMode != "hub" ? "background: linear-gradient(135deg, #063f91 0%, #075bc8 100%); color: #ffffff; box-shadow: 0 3px 12px rgba(6, 63, 145, 0.28); border: 1px solid #063f91;" : "background: #f8fafc; color: #334155; border: 1px solid #e2e8f0;")">
+                        📚 Shop by Categories (8 Categories &amp; Filters)
+                    </a>
+                </div>
+            </div>
+
+            @if (Model.ViewMode == "hub")
+            {
+                <partial name="_StudyEssentialsHub" model="Model.StudyHub" />
+            }
+            else
+            {
+                <partial name="_StudyEssentialsCategoriesView" model="Model" />
+            }
+        </div>
+    }
+
+    @if (Model.IsElectronicsCategory)
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_ElectronicsCategoryHubBanner" model="Model" />
+        </div>
+    }
+
+    @{
+        var isSpecializedHub = (Model.IsFashionHub && Model.ViewMode == "hub") ||
+                               Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear" ||
+                               Model.IsThermalsHub || Model.ViewMode == "thermals" ||
+                               Model.IsWomenClothing || Model.ViewMode == "women-clothing" ||
+                               Model.IsHoodiesHub || Model.ViewMode == "hoodies" ||
+                               Model.IsSweatshirtsHub || Model.ViewMode == "sweatshirts" ||
+                               Model.IsMenClothing || Model.ViewMode == "men-clothing" ||
+                               Model.IsStudyEssentialsHub ||
+                               (Model.IsHealthCareHub && Model.ViewMode == "hub") ||
+                               (Model.IsMobilesHub && Model.ViewMode == "hub") ||
+                               (Model.IsAppliancesHub && Model.ViewMode == "hub");
+    }
+
+    @if (!isSpecializedHub)
+    {
+        <!-- Main 2-Column Catalog Container -->
+        <div class="dk-shell dk-catalog-layout">
+
+        <!-- ========================================================
+             LEFT SIDEBAR: FACETED FILTERS
+        ========================================================= -->
+        <aside class="dk-catalog-sidebar" id="dk-filter-sidebar">
+            <div class="dk-filters-panel">
+
+                <div class="dk-filters-header">
+                    <div class="dk-filters-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <line x1="4" y1="21" x2="4" y2="14"></line>
+                            <line x1="4" y1="10" x2="4" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12" y2="3"></line>
+                            <line x1="20" y1="21" x2="20" y2="16"></line>
+                            <line x1="20" y1="12" x2="20" y2="3"></line>
+                            <line x1="1" y1="14" x2="7" y2="14"></line>
+                            <line x1="9" y1="8" x2="15" y2="8"></line>
+                            <line x1="17" y1="16" x2="23" y2="16"></line>
+                        </svg>
+                        <span>Filters</span>
+                    </div>
+
+                    @if (Model.HasActiveFilters)
+                    {
+                        <a href="/products" class="dk-clear-all-link">CLEAR ALL</a>
+                    }
+                    <button type="button" class="dk-mobile-filter-close" id="dk-mobile-filter-close" aria-label="Close filters">✕</button>
+                </div>
+
+                <!-- CATEGORIES FACET -->
+                @if (Model.Categories.Any())
+                {
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">CATEGORIES</h4>
+                        <ul class="dk-filter-list">
+                            <li>
+                                <a href="@ClearParamUrl("category")"
+                                   class="dk-filter-item @(Model.CategoryId == null && string.IsNullOrEmpty(Model.CategorySlug) ? "active" : "")">
+                                    <span class="dk-filter-text">All Categories</span>
+                                </a>
+                            </li>
+                            @foreach (var cat in Model.Categories)
+                            {
+                                <li>
+                                    <a href="@BuildFilterUrl(catId: cat.CategoryId, catSlug: null, pageNum: 1)"
+                                       class="dk-filter-item @(cat.IsSelected ? "active" : "")">
+                                        <span class="dk-filter-text">@cat.Name</span>
+                                        @if (cat.Count > 0)
+                                        {
+                                            <span class="dk-filter-count">(@cat.Count)</span>
+                                        }
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <!-- SUBCATEGORIES FACET -->
+                @if (Model.Subcategories.Any())
+                {
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">SUBCATEGORIES</h4>
+                        <ul class="dk-filter-list">
+                            <li>
+                                <a href="@BuildFilterUrl(catSlug: Model.CategorySlug, clearSubcategory: true)"
+                                   class="dk-filter-item @(!Model.SubcategoryId.HasValue && string.IsNullOrEmpty(Model.CurrentSubcategorySlug) ? "active" : "")">
+                                    <span class="dk-filter-text">All @Model.CategoryName</span>
+                                </a>
+                            </li>
+                            @foreach (var sub in Model.Subcategories)
+                            {
+                                var isSubActive = (Model.SubcategoryId.HasValue && Model.SubcategoryId.Value == sub.SubcategoryId) ||
+                                                  (!string.IsNullOrEmpty(Model.CurrentSubcategorySlug) && string.Equals(Model.CurrentSubcategorySlug, sub.Slug, StringComparison.OrdinalIgnoreCase));
+                                <li>
+                                    <a href="@BuildFilterUrl(catSlug: Model.CategorySlug, subcatSlug: sub.Slug, subcatId: sub.SubcategoryId, pageNum: 1)"
+                                       class="dk-filter-item @(isSubActive ? "active" : "")">
+                                        <span class="dk-filter-text">@sub.Name</span>
+                                        @if (sub.ProductCount > 0)
+                                        {
+                                            <span class="dk-filter-count">(@sub.ProductCount)</span>
+                                        }
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <!-- PRICE RANGE FACET -->
+                <div class="dk-filter-group">
+                    <h4 class="dk-filter-group-title">PRICE</h4>
+                    <div class="dk-price-quick-links">
+                        @foreach (var range in Model.PriceRanges)
+                        {
+                            <a href="@BuildFilterUrl(minP: range.MinPrice, maxP: range.MaxPrice, pageNum: 1)"
+                               class="dk-price-pill @(range.IsSelected ? "active" : "")">
+                                @range.Label
+                            </a>
+                        }
+                    </div>
+
+                    <!-- Manual Min/Max Price Form -->
+                    <form method="get" action="/products" class="dk-price-custom-form">
+                        @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+                        {
+                            <input type="hidden" name="q" value="@Model.SearchTerm" />
+                        }
+                        @if (Model.CategoryId.HasValue)
+                        {
+                            <input type="hidden" name="categoryId" value="@Model.CategoryId.Value" />
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.CategorySlug))
+                        {
+                            <input type="hidden" name="category" value="@Model.CategorySlug" />
+                        }
+                        @if (Model.MinDiscount.HasValue)
+                        {
+                            <input type="hidden" name="minDiscount" value="@Model.MinDiscount.Value" />
+                        }
+                        @if (Model.Sort != ProductSortOption.Relevance)
+                        {
+                            <input type="hidden" name="sort" value="@Model.Sort.ToString()" />
+                        }
+
+                        <div class="dk-price-inputs">
+                            <input type="number"
+                                   name="minPrice"
+                                   placeholder="₹ Min"
+                                   min="0"
+                                   value="@Model.MinPrice"
+                                   class="dk-price-input"
+                                   aria-label="Minimum Price" />
+                            <span class="dk-price-to">to</span>
+                            <input type="number"
+                                   name="maxPrice"
+                                   placeholder="₹ Max"
+                                   min="0"
+                                   value="@Model.MaxPrice"
+                                   class="dk-price-input"
+                                   aria-label="Maximum Price" />
+                            <button type="submit" class="dk-price-go-btn" aria-label="Apply price filter">Go</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- DISCOUNT FACET -->
+                <div class="dk-filter-group">
+                    <h4 class="dk-filter-group-title">DISCOUNT</h4>
+                    <div class="dk-discount-options">
+                        @foreach (var disc in Model.Discounts)
+                        {
+                            <a href="@(disc.IsSelected ? ClearParamUrl("discount") : BuildFilterUrl(discount: disc.MinDiscount, pageNum: 1))"
+                               class="dk-radio-filter @(disc.IsSelected ? "active" : "")">
+                                <span class="dk-radio-circle"></span>
+                                <span class="dk-radio-label">@disc.Label</span>
+                            </a>
+                        }
+                    </div>
+                </div>
+
+                <!-- AVAILABILITY -->
+                <div class="dk-filter-group">
+                    <h4 class="dk-filter-group-title">AVAILABILITY</h4>
+                    <a href="@(Model.InStockOnly == true ? ClearParamUrl("inStock") : BuildFilterUrl(inStock: true, pageNum: 1))"
+                       class="dk-checkbox-filter @(Model.InStockOnly == true ? "active" : "")">
+                        <span class="dk-checkbox-box">✓</span>
+                        <span class="dk-checkbox-label">In Stock Only</span>
+                    </a>
+                </div>
+
+                @{
+                    var currentCat = Model.CategorySlug?.ToLowerInvariant() ?? "";
+                }
+
+                @if (currentCat == "electronics")
+                {
+                    <!-- ELECTRONICS SPECIFIC FILTERS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">BRAND</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var brand in new[] { "Apple", "Dell", "HP", "Lenovo", "Asus", "Samsung", "Sony", "Boat" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@brand</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">RAM / STORAGE</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var spec in new[] { "16 GB", "8 GB", "32 GB", "512 GB SSD", "1 TB SSD" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, spec, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: spec, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@spec</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (currentCat == "lifestyle" || currentCat == "fashion" || currentCat == "clothing")
+                {
+                    <!-- LIFESTYLE / FASHION FILTERS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">BRAND</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var brand in new[] { "Nike", "Puma", "Adidas", "Wildcraft", "Dreamflykit" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@brand</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">SIZE</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var size in new[] { "S", "M", "L", "XL", "XXL", "Free Size" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, size, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: size, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@size</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (currentCat == "travel-gear" || currentCat == "luggage-bags" || currentCat == "luggage")
+                {
+                    <!-- TRAVEL GEAR FILTERS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">BRAND</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var brand in new[] { "American Tourister", "Samsonite", "Wildcraft", "Safari" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@brand</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">LUGGAGE SIZE</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var size in new[] { "Cabin (Up to 55 cm)", "Medium Check-in (65 cm)", "Large Check-in (75+ cm)", "Backpack 30L" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, size, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: size, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@size</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (currentCat == "study-essentials" || currentCat == "stationery")
+                {
+                    <!-- STUDY ESSENTIALS FILTERS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">ESSENTIALS TYPE</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var item in new[] { "Scientific Calculators", "Notebooks & Planners", "Desk Organizers", "Complete Student Kits" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, item, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: item, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@item</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (currentCat == "adapters-sim" || currentCat == "adapters")
+                {
+                    <!-- ADAPTERS & SIM FILTERS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">DESTINATION REGION</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var region in new[] { "USA / Canada", "United Kingdom (UK)", "Europe (EU)", "Australia & NZ", "Universal All-in-One" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, region, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: region, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@region</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- GENERAL POPULAR BRANDS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">POPULAR BRANDS</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var brand in new[] { "Apple", "Dell", "American Tourister", "Wildcraft", "Nike", "Samsung" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@brand</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- CUSTOMER RATINGS -->
+                <div class="dk-filter-group">
+                    <h4 class="dk-filter-group-title">CUSTOMER RATINGS</h4>
+                    <div class="dk-discount-options">
+                        <a href="@BuildFilterUrl(pageNum: 1)" class="dk-radio-filter active">
+                            <span class="dk-radio-circle"></span>
+                            <span class="dk-radio-label">4★ &amp; above</span>
+                        </a>
+                        <a href="@BuildFilterUrl(pageNum: 1)" class="dk-radio-filter">
+                            <span class="dk-radio-circle"></span>
+                            <span class="dk-radio-label">3★ &amp; above</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- ========================================================
+             RIGHT MAIN AREA: PRODUCTS CATALOG
+        ========================================================= -->
+        <main class="dk-catalog-content" id="dkCatalogMainContent" style="position: relative; min-height: 480px;">
+            <partial name="_CatalogProductsListPartial" model="Model" />
+        </main>
+
+    </div>
+    }
+
+</div>
+
+<!-- Backdrop for Mobile Filter Drawer -->
 <div class="dk-filter-backdrop" id="dk-filter-backdrop"></div>

@@ -1,0 +1,2003 @@
+@model Dreamflykit.Application.BeautyHub.Models.BeautyHubDto
+@{
+    var hub = Model ?? Dreamflykit.Application.BeautyHub.Models.BeautyHubDto.CreateDefault();
+    var theme = hub.ThemeSettings ?? new Dreamflykit.Application.BeautyHub.Models.BeautyThemeSettingsDto();
+    var hero = hub.HeroBanner ?? new Dreamflykit.Application.BeautyHub.Models.BeautyHeroBannerDto();
+    var slides = hero.Slides?.Where(s => s != null).ToList() 
+                 ?? new List<Dreamflykit.Application.BeautyHub.Models.BeautyHeroSlideDto>();
+    if (slides.Count == 0)
+    {
+        slides = Dreamflykit.Application.BeautyHub.Models.BeautyHubDto.CreateDefault().HeroBanner.Slides;
+    }
+
+    var promo = hub.PromoBanners ?? new Dreamflykit.Application.BeautyHub.Models.BeautyPromoBannersDto();
+    var promoCards = promo.Cards?.Where(c => c != null).ToList() ?? new List<Dreamflykit.Application.BeautyHub.Models.BeautyPromoCardDto>();
+    var subCats = hub.SubCategories?.Items?.Where(i => i != null).ToList() ?? new List<Dreamflykit.Application.BeautyHub.Models.BeautySubCategoryItemDto>();
+    var spotlight = hub.SpotlightBanner ?? new Dreamflykit.Application.BeautyHub.Models.BeautySpotlightBannerDto();
+    var giftsHer = hub.SpecialGiftsForHer ?? new Dreamflykit.Application.BeautyHub.Models.BeautyArchedSectionDto();
+    var giftsHim = hub.GrandGiftsForHim ?? new Dreamflykit.Application.BeautyHub.Models.BeautyArchedSectionDto();
+    var dualBanners = hub.DualBanners ?? new Dreamflykit.Application.BeautyHub.Models.BeautyDualBannersDto();
+    var premiumGifts = hub.PremiumGifts ?? new Dreamflykit.Application.BeautyHub.Models.BeautyPremiumGiftsDto();
+    var festiveLooks = hub.FestiveLooks ?? new Dreamflykit.Application.BeautyHub.Models.BeautyFestiveLooksDto();
+    var limitedDeals = hub.LimitedDealsRibbon ?? new Dreamflykit.Application.BeautyHub.Models.BeautyLimitedDealsRibbonDto();
+    var flashDeals = hub.FlashDealsTimer ?? new Dreamflykit.Application.BeautyHub.Models.BeautyFlashDealsTimerDto();
+    var under99 = hub.BeautyPicksUnder99 ?? new Dreamflykit.Application.BeautyHub.Models.BeautyPicksUnder99Dto();
+    var bigBrands = hub.BiggestBrands ?? new Dreamflykit.Application.BeautyHub.Models.BeautyBiggestBrandsDto();
+    var partners = hub.BeautyPartners ?? new Dreamflykit.Application.BeautyHub.Models.BeautyPartnersDto();
+    var brandNew = hub.BrandNewInBeauty ?? new Dreamflykit.Application.BeautyHub.Models.BeautyBrandNewDto();
+
+    var isAdmin = User.IsInRole("Admin") || User.IsInRole("SuperAdmin");
+    var slideDuration = hero.IntervalSeconds > 0 ? hero.IntervalSeconds : 4;
+}
+
+<div class="dk-beauty-hub-root" id="beauty-hub-root"
+     style="--bpc-gold: @theme.AccentGold; --bpc-bg: @theme.PrimaryBgGradient;">
+
+    <!-- ========================================================
+         ADMIN BAR (Visible to Admin & SuperAdmin)
+    ========================================================= -->
+    @if (isAdmin)
+    {
+        <div class="dk-bpc-admin-bar">
+            <div class="dk-bpc-admin-info">
+                <span class="dk-bpc-admin-badge">⚡ Admin Mode Active</span>
+                <span>Flipkart Beauty Store &bull; Festival Mode: <strong>@(theme.IsFestiveEnabled ? theme.ThemeName : "Off")</strong> &bull; Frame: <strong>@theme.FrameDesignStyle</strong> &bull; Slides: <strong>@slides.Count</strong></span>
+            </div>
+            <a href="/Admin/BeautyHub" class="dk-bpc-admin-btn" id="btnManageBeautyHub">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                Manage Beauty Store &amp; Upload Images
+            </a>
+        </div>
+    }
+
+    <!-- ========================================================
+         FESTIVE ANNOUNCEMENT NOTICE BAR
+    ========================================================= -->
+    @if (!string.IsNullOrWhiteSpace(theme.NoticeBarText))
+    {
+        <div class="dk-bpc-notice-bar">
+            <span class="dk-bpc-notice-badge">@theme.BadgeText</span>
+            <span class="dk-bpc-notice-text">@theme.NoticeBarText</span>
+        </div>
+    }
+
+    <!-- ========================================================
+         1. FULL WIDTH BIG HERO BANNER CAROUSEL
+         Edge-to-edge, Admin customizable slides, timeframes, upload soon
+    ========================================================= -->
+    @if (hero.IsEnabled && slides.Count > 0)
+    {
+        <section class="dk-bpc-hero-wrapper"
+                 id="beautyHeroCarousel"
+                 data-autoplay="@(hero.AutoPlay ? "true" : "false")"
+                 data-interval="@(slideDuration * 1000)">
+            <div class="dk-bpc-hero-slider" id="beautyHeroSlider">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    var slide = slides[i];
+                    var isActive = i == 0;
+                    <div class="dk-bpc-hero-slide @(isActive ? "active" : "")" data-index="@i">
+                        <a href="@slide.TargetUrl" class="dk-bpc-hero-slide-link" title="@slide.Title">
+                            @if (slide.IsUploadingSoon || string.IsNullOrWhiteSpace(slide.ImageUrl))
+                            {
+                                <div class="dk-bpc-placeholder-banner dk-bpc-hero-fallback">
+                                    <div class="dk-bpc-festive-diyas-decor">
+                                        <span>🪔</span><span>✨</span><span>🪔</span>
+                                    </div>
+                                    <div class="dk-bpc-placeholder-content">
+                                        <div class="dk-bpc-badge-pill">⏳ Uploading Soon</div>
+                                        <div class="dk-bpc-hero-tag">@slide.TagBadge</div>
+                                        <h2>@slide.Title</h2>
+                                        @if (!string.IsNullOrWhiteSpace(slide.PriceHighlight))
+                                        {
+                                            <div class="dk-bpc-banner-price">@slide.PriceHighlight</div>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(slide.Subtitle))
+                                        {
+                                            <p>@slide.Subtitle</p>
+                                        }
+                                        <span class="dk-bpc-cta-btn">@slide.ButtonText</span>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@slide.ImageUrl"
+                                     alt="@slide.Title"
+                                     class="dk-bpc-hero-img"
+                                     loading="@(i == 0 ? "eager" : "lazy")"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-bpc-placeholder-banner dk-bpc-hero-fallback" style="display: none;">
+                                    <div class="dk-bpc-placeholder-content">
+                                        <div class="dk-bpc-badge-pill">⏳ Uploading Soon</div>
+                                        <h2>@slide.Title</h2>
+                                        <div class="dk-bpc-banner-price">@slide.PriceHighlight</div>
+                                        <p>@slide.Subtitle</p>
+                                    </div>
+                                </div>
+                            }
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <!-- Arrows -->
+            <button class="dk-bpc-hero-prev" id="bpcHeroPrev" aria-label="Previous Slide">‹</button>
+            <button class="dk-bpc-hero-next" id="bpcHeroNext" aria-label="Next Slide">›</button>
+
+            <!-- Slide Navigation Indicators (Dots) -->
+            <div class="dk-bpc-hero-indicators" id="beautyHeroDots">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    <button class="dk-bpc-hero-dot @(i == 0 ? "active" : "")"
+                            data-target="@i"
+                            aria-label="Slide @(i + 1)"></button>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         2. PROMO BANNERS CAROUSEL (3 Across with Bank Offer)
+    ========================================================= -->
+    @if (promo.IsEnabled && promoCards.Count > 0)
+    {
+        <section class="dk-bpc-promo-wrapper">
+            <div class="dk-bpc-promo-scroll-track" id="bpcPromoTrack">
+                @foreach (var pc in promoCards)
+                {
+                    <div class="dk-bpc-promo-card">
+                        <a href="@pc.TargetUrl" class="dk-bpc-promo-link">
+                            @if (pc.IsUploadingSoon || string.IsNullOrWhiteSpace(pc.ImageUrl))
+                            {
+                                <div class="dk-bpc-promo-placeholder">
+                                    <div class="dk-bpc-bank-tag">
+                                        <span>💳</span> @promo.BankOfferHeader
+                                    </div>
+                                    <div class="dk-bpc-promo-badge">⏳ Uploading Soon</div>
+                                    <h3>@pc.Title</h3>
+                                    <div class="dk-bpc-promo-discount">@pc.DiscountHighlight</div>
+                                    <p class="dk-bpc-promo-brands">@pc.Subtitle</p>
+                                    <div class="dk-bpc-promo-bank-footer">@pc.BankOfferText</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@pc.ImageUrl"
+                                     alt="@pc.Title"
+                                     class="dk-bpc-promo-img"
+                                     loading="lazy"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                                <div class="dk-bpc-promo-placeholder" style="display: none;">
+                                    <div class="dk-bpc-bank-tag">💳 @promo.BankOfferHeader</div>
+                                    <h3>@pc.Title</h3>
+                                    <div class="dk-bpc-promo-discount">@pc.DiscountHighlight</div>
+                                    <p class="dk-bpc-promo-brands">@pc.Subtitle</p>
+                                </div>
+                            }
+                        </a>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         3. QUICK CATEGORY & SHORTCUTS GRID (17 Icons)
+    ========================================================= -->
+    @if (subCats.Count > 0)
+    {
+        <section class="dk-bpc-subcats-wrapper">
+            <div class="dk-bpc-subcats-scroll">
+                @foreach (var item in subCats)
+                {
+                    <a href="@item.TargetUrl" class="dk-bpc-subcat-chip" title="@item.Title">
+                        <div class="dk-bpc-subcat-icon-box">
+                            @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" alt="@item.Title" class="dk-bpc-subcat-thumb" />
+                            }
+                            else
+                            {
+                                <span class="dk-bpc-subcat-emoji">@item.Icon</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(item.Badge))
+                            {
+                                <span class="dk-bpc-subcat-badge">@item.Badge</span>
+                            }
+                        </div>
+                        <span class="dk-bpc-subcat-label">@item.Title</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         4. SPOTLIGHT BANNER: "The Global Luxe Store"
+    ========================================================= -->
+    @if (spotlight.IsEnabled)
+    {
+        <section class="dk-bpc-spotlight-wrapper">
+            <a href="@spotlight.TargetUrl" class="dk-bpc-spotlight-card">
+                @if (spotlight.IsUploadingSoon || string.IsNullOrWhiteSpace(spotlight.ImageUrl))
+                {
+                    <div class="dk-bpc-spotlight-placeholder">
+                        <div class="dk-bpc-spotlight-glass-pill">
+                            <span class="dk-bpc-serif-brand">The Global<br />Luxe Store</span>
+                            <span class="dk-bpc-pill-cta">@spotlight.ButtonText</span>
+                        </div>
+                        <div class="dk-bpc-spotlight-info">
+                            <span class="dk-bpc-tag-gold">PREMIUM INTERNATIONAL CURATION</span>
+                            <p>@spotlight.Subtitle</p>
+                            <span class="dk-bpc-badge-soon">⏳ Uploading Soon</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <img src="@spotlight.ImageUrl"
+                         alt="@spotlight.Title"
+                         class="dk-bpc-spotlight-img"
+                         loading="lazy"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                    <div class="dk-bpc-spotlight-placeholder" style="display: none;">
+                        <div class="dk-bpc-spotlight-glass-pill">
+                            <span class="dk-bpc-serif-brand">@spotlight.Title</span>
+                            <span class="dk-bpc-pill-cta">@spotlight.ButtonText</span>
+                        </div>
+                    </div>
+                }
+            </a>
+        </section>
+    }
+
+    <!-- ========================================================
+         5. FESTIVE ARCHED CAROUSEL: "Special gifts for her"
+    ========================================================= -->
+    @if (giftsHer.IsEnabled && giftsHer.Cards.Count > 0)
+    {
+        <section class="dk-bpc-festive-arch-section dk-bpc-arch-her">
+            <div class="dk-bpc-arch-header">
+                <div class="dk-bpc-arch-title-wrap">
+                    <span class="dk-bpc-arch-diya">🪔</span>
+                    <h2 class="dk-bpc-arch-title">@giftsHer.SectionTitle</h2>
+                    <span class="dk-bpc-arch-subtitle">@giftsHer.Subtitle</span>
+                </div>
+            </div>
+
+            <div class="dk-bpc-arch-scroll-container">
+                <div class="dk-bpc-arch-track" id="bpcHerTrack">
+                    @foreach (var card in giftsHer.Cards)
+                    {
+                        <div class="dk-bpc-arch-card-wrapper">
+                            <a href="@card.TargetUrl" class="dk-bpc-arch-card">
+                                <div class="dk-bpc-arch-frame">
+                                    <div class="dk-bpc-arch-top-ornament"></div>
+                                    <div class="dk-bpc-arch-inner">
+                                        @if (card.IsUploadingSoon || string.IsNullOrWhiteSpace(card.ImageUrl))
+                                        {
+                                            <div class="dk-bpc-arch-placeholder">
+                                                <div class="dk-bpc-badge-mini">⏳ Uploading Soon</div>
+                                                <div class="dk-bpc-arch-icon">💄</div>
+                                                <span class="dk-bpc-arch-ph-title">@card.Title</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <img src="@card.ImageUrl"
+                                                 alt="@card.Title"
+                                                 class="dk-bpc-arch-img"
+                                                 loading="lazy"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                            <div class="dk-bpc-arch-placeholder" style="display: none;">
+                                                <div class="dk-bpc-badge-mini">⏳ Uploading Soon</div>
+                                                <span class="dk-bpc-arch-ph-title">@card.Title</span>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="dk-bpc-arch-tag-pill">@card.OfferTag</div>
+                                </div>
+                                <div class="dk-bpc-arch-card-footer">
+                                    <div class="dk-bpc-arch-footer-title">@card.Title</div>
+                                    @if (!string.IsNullOrWhiteSpace(card.Subtitle))
+                                    {
+                                        <div class="dk-bpc-arch-footer-sub">@card.Subtitle</div>
+                                    }
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+                <button class="dk-bpc-scroll-btn next" onclick="scrollArchTrack('bpcHerTrack', 300)" aria-label="Next">›</button>
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         6. FESTIVE ARCHED CAROUSEL: "Grand gifts for him"
+    ========================================================= -->
+    @if (giftsHim.IsEnabled && giftsHim.Cards.Count > 0)
+    {
+        <section class="dk-bpc-festive-arch-section dk-bpc-arch-him">
+            <div class="dk-bpc-arch-header">
+                <div class="dk-bpc-arch-title-wrap">
+                    <span class="dk-bpc-arch-diya">🪔</span>
+                    <h2 class="dk-bpc-arch-title">@giftsHim.SectionTitle</h2>
+                    <span class="dk-bpc-arch-subtitle">@giftsHim.Subtitle</span>
+                </div>
+            </div>
+
+            <div class="dk-bpc-arch-scroll-container">
+                <div class="dk-bpc-arch-track" id="bpcHimTrack">
+                    @foreach (var card in giftsHim.Cards)
+                    {
+                        <div class="dk-bpc-arch-card-wrapper">
+                            <a href="@card.TargetUrl" class="dk-bpc-arch-card">
+                                <div class="dk-bpc-arch-frame him-theme">
+                                    <div class="dk-bpc-arch-top-ornament"></div>
+                                    <div class="dk-bpc-arch-inner">
+                                        @if (card.IsUploadingSoon || string.IsNullOrWhiteSpace(card.ImageUrl))
+                                        {
+                                            <div class="dk-bpc-arch-placeholder">
+                                                <div class="dk-bpc-badge-mini">⏳ Uploading Soon</div>
+                                                <div class="dk-bpc-arch-icon">🧔</div>
+                                                <span class="dk-bpc-arch-ph-title">@card.Title</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <img src="@card.ImageUrl"
+                                                 alt="@card.Title"
+                                                 class="dk-bpc-arch-img"
+                                                 loading="lazy"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                            <div class="dk-bpc-arch-placeholder" style="display: none;">
+                                                <div class="dk-bpc-badge-mini">⏳ Uploading Soon</div>
+                                                <span class="dk-bpc-arch-ph-title">@card.Title</span>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="dk-bpc-arch-tag-pill">@card.OfferTag</div>
+                                </div>
+                                <div class="dk-bpc-arch-card-footer">
+                                    <div class="dk-bpc-arch-footer-title">@card.Title</div>
+                                    @if (!string.IsNullOrWhiteSpace(card.Subtitle))
+                                    {
+                                        <div class="dk-bpc-arch-footer-sub">@card.Subtitle</div>
+                                    }
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+                <button class="dk-bpc-scroll-btn next" onclick="scrollArchTrack('bpcHimTrack', 300)" aria-label="Next">›</button>
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         7. DUAL SPLIT PROMO BANNERS
+    ========================================================= -->
+    @if (dualBanners.IsEnabled)
+    {
+        <section class="dk-bpc-dual-wrapper">
+            <div class="dk-bpc-dual-card left-banner">
+                <a href="@dualBanners.LeftBanner.TargetUrl" class="dk-bpc-dual-link">
+                    @if (dualBanners.LeftBanner.IsUploadingSoon || string.IsNullOrWhiteSpace(dualBanners.LeftBanner.ImageUrl))
+                    {
+                        <div class="dk-bpc-dual-placeholder">
+                            <span class="dk-bpc-dual-tag">@dualBanners.LeftBanner.TagBadge</span>
+                            <h3>@dualBanners.LeftBanner.Title</h3>
+                            <div class="dk-bpc-dual-price">@dualBanners.LeftBanner.PriceHighlight</div>
+                            <span class="dk-bpc-circle-btn">@dualBanners.LeftBanner.ButtonText</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <img src="@dualBanners.LeftBanner.ImageUrl" alt="@dualBanners.LeftBanner.Title" class="dk-bpc-dual-img" loading="lazy" />
+                    }
+                </a>
+            </div>
+
+            <div class="dk-bpc-dual-card right-banner">
+                <a href="@dualBanners.RightBanner.TargetUrl" class="dk-bpc-dual-link">
+                    @if (dualBanners.RightBanner.IsUploadingSoon || string.IsNullOrWhiteSpace(dualBanners.RightBanner.ImageUrl))
+                    {
+                        <div class="dk-bpc-dual-placeholder">
+                            <span class="dk-bpc-dual-tag">@dualBanners.RightBanner.TagBadge</span>
+                            <h3>@dualBanners.RightBanner.Title</h3>
+                            <div class="dk-bpc-dual-price">@dualBanners.RightBanner.PriceHighlight</div>
+                            <span class="dk-bpc-circle-btn">@dualBanners.RightBanner.ButtonText</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <img src="@dualBanners.RightBanner.ImageUrl" alt="@dualBanners.RightBanner.Title" class="dk-bpc-dual-img" loading="lazy" />
+                    }
+                </a>
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         8. "PREMIUM GIFTS" 9-BRAND GRID
+    ========================================================= -->
+    @if (premiumGifts.IsEnabled && premiumGifts.Brands.Count > 0)
+    {
+        <section class="dk-bpc-premium-section">
+            <div class="dk-bpc-sec-title-wrap">
+                <h2 class="dk-bpc-sec-title">@premiumGifts.SectionTitle</h2>
+                <span class="dk-bpc-sec-subtitle">@premiumGifts.Subtitle</span>
+            </div>
+
+            <div class="dk-bpc-premium-grid">
+                @foreach (var b in premiumGifts.Brands)
+                {
+                    <a href="@b.TargetUrl" class="dk-bpc-brand-card">
+                        <div class="dk-bpc-brand-card-inner">
+                            <div class="dk-bpc-brand-sparkles">✨</div>
+                            @if (b.IsUploadingSoon || string.IsNullOrWhiteSpace(b.ImageUrl))
+                            {
+                                <div class="dk-bpc-brand-ph">
+                                    <span class="dk-bpc-brand-logo-text">@b.BrandName</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@b.ImageUrl"
+                                     alt="@b.BrandName"
+                                     class="dk-bpc-brand-img"
+                                     loading="lazy"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-bpc-brand-ph" style="display: none;">
+                                    <span class="dk-bpc-brand-logo-text">@b.BrandName</span>
+                                </div>
+                            }
+                            <div class="dk-bpc-brand-tag">@b.DiscountTag</div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         9. FESTIVE HEADER SHOWCASE: "NAIL EVERY FESTIVE LOOK"
+    ========================================================= -->
+    @if (festiveLooks.IsEnabled && festiveLooks.Cards.Count > 0)
+    {
+        <section class="dk-bpc-festive-look-wrapper">
+            <div class="dk-bpc-look-ornate-header">
+                <div class="dk-bpc-look-lights">✨ ✨ ✨</div>
+                <h2 class="dk-bpc-look-heading">@festiveLooks.SectionTitle</h2>
+                <p class="dk-bpc-look-sub">@festiveLooks.Subtitle</p>
+                <div class="dk-bpc-look-diyas">
+                    <span class="diya-left">🪔</span>
+                    <span class="diya-right">🪔</span>
+                </div>
+            </div>
+
+            <div class="dk-bpc-look-cards-track">
+                @foreach (var look in festiveLooks.Cards)
+                {
+                    <div class="dk-bpc-look-card">
+                        <a href="@look.TargetUrl" class="dk-bpc-look-link">
+                            <div class="dk-bpc-look-arch-frame">
+                                @if (look.IsUploadingSoon || string.IsNullOrWhiteSpace(look.ImageUrl))
+                                {
+                                    <div class="dk-bpc-look-ph">
+                                        <span class="look-avatar">👑</span>
+                                        <span class="dk-bpc-badge-mini">⏳ Uploading Soon</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <img src="@look.ImageUrl"
+                                         alt="@look.LookName"
+                                         class="dk-bpc-look-img"
+                                         loading="lazy"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                    <div class="dk-bpc-look-ph" style="display: none;">
+                                        <span class="look-avatar">👑</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="dk-bpc-look-name">@look.LookName</div>
+                            @if (!string.IsNullOrWhiteSpace(look.Subtitle))
+                            {
+                                <div class="dk-bpc-look-subname">@look.Subtitle</div>
+                            }
+                        </a>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         10. "LIMITED STOCK, BIG DEALS" WIDE DEAL RIBBON
+    ========================================================= -->
+    @if (limitedDeals.IsEnabled)
+    {
+        <section class="dk-bpc-limited-ribbon-wrapper">
+            <a href="@limitedDeals.TargetUrl" class="dk-bpc-limited-ribbon">
+                <div class="dk-bpc-ribbon-content">
+                    <h3>@limitedDeals.Title</h3>
+                    <div class="dk-bpc-ribbon-discount">@limitedDeals.DiscountHighlight</div>
+                    <p>@limitedDeals.Subtitle</p>
+                </div>
+                <div class="dk-bpc-ribbon-action">
+                    <span class="dk-bpc-circle-arrow-btn">→</span>
+                </div>
+            </a>
+        </section>
+    }
+
+    <!-- ========================================================
+         11. FLASH DEALS WITH 12-HOUR COUNTDOWN TIMER
+    ========================================================= -->
+    @if (flashDeals.IsEnabled && flashDeals.Cards.Count > 0)
+    {
+        <section class="dk-bpc-flash-section">
+            <div class="dk-bpc-flash-timer-bar">
+                <div class="dk-bpc-flash-title-group">
+                    <span class="flash-clock">⏳</span>
+                    <span class="flash-text">@flashDeals.TimerTitle</span>
+                </div>
+                <div class="dk-bpc-countdown-display" id="bpcFlashCountdown">
+                    <span class="cd-box" id="cdHours">11h</span> :
+                    <span class="cd-box" id="cdMinutes">28m</span> :
+                    <span class="cd-box" id="cdSeconds">45s</span>
+                </div>
+            </div>
+
+            <div class="dk-bpc-arch-scroll-container">
+                <div class="dk-bpc-arch-track" id="bpcFlashTrack">
+                    @foreach (var deal in flashDeals.Cards)
+                    {
+                        <div class="dk-bpc-arch-card-wrapper flash-card">
+                            <a href="@deal.TargetUrl" class="dk-bpc-arch-card">
+                                <div class="dk-bpc-arch-frame gold-theme">
+                                    <div class="dk-bpc-arch-inner">
+                                        @if (deal.IsUploadingSoon || string.IsNullOrWhiteSpace(deal.ImageUrl))
+                                        {
+                                            <div class="dk-bpc-arch-placeholder">
+                                                <div class="dk-bpc-badge-mini">⏳ Uploading Soon</div>
+                                                <div class="dk-bpc-arch-icon">⚡</div>
+                                                <span class="dk-bpc-arch-ph-title">@deal.Title</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <img src="@deal.ImageUrl"
+                                                 alt="@deal.Title"
+                                                 class="dk-bpc-arch-img"
+                                                 loading="lazy"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                            <div class="dk-bpc-arch-placeholder" style="display: none;">
+                                                <div class="dk-bpc-badge-mini">⏳ Uploading Soon</div>
+                                                <span class="dk-bpc-arch-ph-title">@deal.Title</span>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="dk-bpc-arch-tag-pill">@deal.OfferTag</div>
+                                </div>
+                                <div class="dk-bpc-arch-card-footer">
+                                    <div class="dk-bpc-arch-footer-title">@deal.Title</div>
+                                    @if (!string.IsNullOrWhiteSpace(deal.Subtitle))
+                                    {
+                                        <div class="dk-bpc-arch-footer-sub">@deal.Subtitle</div>
+                                    }
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+                <button class="dk-bpc-scroll-btn next" onclick="scrollArchTrack('bpcFlashTrack', 300)" aria-label="Next">›</button>
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         12. VALUE BANNER: "Beauty Picks - Under ₹99"
+    ========================================================= -->
+    @if (under99.IsEnabled)
+    {
+        <section class="dk-bpc-under99-wrapper">
+            <a href="@under99.TargetUrl" class="dk-bpc-under99-card">
+                <div class="dk-bpc-under99-content">
+                    <span class="dk-bpc-under99-badge">SUPER BUDGET ESSENTIALS</span>
+                    <h3>@under99.Title</h3>
+                    <div class="dk-bpc-under99-price">@under99.PriceHighlight</div>
+                    <p>@under99.Subtitle</p>
+                </div>
+                <div class="dk-bpc-under99-decor">
+                    <span class="character-diya">🪔</span>
+                </div>
+            </a>
+        </section>
+    }
+
+    <!-- ========================================================
+         13. "BIGGEST BRANDS ON OFFER" (2-Column Cards)
+    ========================================================= -->
+    @if (bigBrands.IsEnabled && bigBrands.Brands.Count > 0)
+    {
+        <section class="dk-bpc-bigbrands-section">
+            <div class="dk-bpc-sec-title-wrap">
+                <h2 class="dk-bpc-sec-title">@bigBrands.SectionTitle</h2>
+                <span class="dk-bpc-sec-subtitle">@bigBrands.Subtitle</span>
+            </div>
+
+            <div class="dk-bpc-bigbrands-grid">
+                @foreach (var bb in bigBrands.Brands)
+                {
+                    <a href="@bb.TargetUrl" class="dk-bpc-bigbrand-card">
+                        <div class="dk-bpc-bb-frame">
+                            <div class="dk-bpc-bb-inner">
+                                @if (bb.IsUploadingSoon || string.IsNullOrWhiteSpace(bb.ImageUrl))
+                                {
+                                    <div class="dk-bpc-bb-ph">
+                                        <span class="dk-bpc-bb-logo">@bb.BrandName</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <img src="@bb.ImageUrl"
+                                         alt="@bb.BrandName"
+                                         class="dk-bpc-bb-img"
+                                         loading="lazy"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                    <div class="dk-bpc-bb-ph" style="display: none;">
+                                        <span class="dk-bpc-bb-logo">@bb.BrandName</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="dk-bpc-bb-pill">@bb.OfferTag</div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         14. "BEAUTY PARTNER" STRIP & 15. "BRAND NEW IN BEAUTY"
+    ========================================================= -->
+    @if (partners.IsEnabled && partners.Items.Count > 0)
+    {
+        <section class="dk-bpc-partner-strip">
+            <span class="dk-bpc-partner-label">@partners.SectionTitle</span>
+            <div class="dk-bpc-partner-items">
+                @foreach (var p in partners.Items)
+                {
+                    <a href="@p.TargetUrl" class="dk-bpc-partner-pill">
+                        <span class="part-name">@p.BrandName</span>
+                        <span class="part-tag">@p.OfferTag</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    @if (brandNew.IsEnabled && brandNew.Cards.Count > 0)
+    {
+        <section class="dk-bpc-brandnew-section">
+            <div class="dk-bpc-sec-title-wrap">
+                <h2 class="dk-bpc-sec-title">@brandNew.SectionTitle</h2>
+                <span class="dk-bpc-sec-subtitle">@brandNew.Subtitle</span>
+            </div>
+
+            <div class="dk-bpc-arch-scroll-container">
+                <div class="dk-bpc-arch-track" id="bpcBrandNewTrack">
+                    @foreach (var bn in brandNew.Cards)
+                    {
+                        <div class="dk-bpc-arch-card-wrapper brandnew-card">
+                            <a href="@bn.TargetUrl" class="dk-bpc-arch-card">
+                                <div class="dk-bpc-arch-frame red-theme">
+                                    <div class="dk-bpc-arch-inner">
+                                        @if (bn.IsUploadingSoon || string.IsNullOrWhiteSpace(bn.ImageUrl))
+                                        {
+                                            <div class="dk-bpc-arch-placeholder">
+                                                <div class="dk-bpc-badge-mini">⏳ Uploading Soon</div>
+                                                <div class="dk-bpc-arch-icon">🌸</div>
+                                                <span class="dk-bpc-arch-ph-title">@bn.BrandName</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <img src="@bn.ImageUrl"
+                                                 alt="@bn.BrandName"
+                                                 class="dk-bpc-arch-img"
+                                                 loading="lazy"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                            <div class="dk-bpc-arch-placeholder" style="display: none;">
+                                                <div class="dk-bpc-badge-mini">⏳ Uploading Soon</div>
+                                                <span class="dk-bpc-arch-ph-title">@bn.BrandName</span>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="dk-bpc-arch-tag-pill">@bn.OfferTag</div>
+                                </div>
+                                <div class="dk-bpc-arch-card-footer">
+                                    <div class="dk-bpc-arch-footer-title">@bn.BrandName</div>
+                                    <div class="dk-bpc-arch-footer-sub">@bn.ProductTitle</div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+                <button class="dk-bpc-scroll-btn next" onclick="scrollArchTrack('bpcBrandNewTrack', 300)" aria-label="Next">›</button>
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         PRODUCT CATALOG SECTION DIVIDER & ANCHOR
+         Smooth scroll anchor so products show immediately below
+    ========================================================= -->
+    <div id="beauty-products-catalog" class="dk-bpc-catalog-anchor-divider">
+        <div class="dk-bpc-catalog-anchor-header">
+            <span class="dk-bpc-anchor-pill">✨ DREAMFLYKIT VERIFIED CATALOG</span>
+            <h2>🧴 All Beauty &amp; Personal Care Products</h2>
+            <p>Explore international student essentials, dermatologically tested skincare, makeup kits and verified student supplies.</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- STYLES -->
+<style>
+/* Root Scope */
+.dk-beauty-hub-root {
+    width: 100%;
+    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+/* Admin Bar */
+.dk-bpc-admin-bar {
+    background: #0f172a;
+    color: #ffffff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--bpc-gold, #fbbf24);
+    font-size: 13px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.dk-bpc-admin-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-bpc-admin-badge {
+    background: #e11d48;
+    color: #ffffff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+.dk-bpc-admin-btn {
+    background: #e11d48;
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+.dk-bpc-admin-btn:hover {
+    background: #be123c;
+    color: #ffffff;
+}
+
+/* Notice Bar */
+.dk-bpc-notice-bar {
+    background: linear-gradient(90deg, #831843 0%, #be123c 50%, #9f1239 100%);
+    color: #ffffff;
+    padding: 8px 16px;
+    font-size: 12.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(251, 191, 36, 0.4);
+}
+.dk-bpc-notice-badge {
+    background: var(--bpc-gold, #fbbf24);
+    color: #78350f;
+    font-size: 10.5px;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+/* 1. Hero Banner */
+.dk-bpc-hero-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #000;
+    margin-bottom: 16px;
+}
+.dk-bpc-hero-slider {
+    position: relative;
+    width: 100%;
+    min-height: 220px;
+}
+.dk-bpc-hero-slide {
+    display: none;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.45s ease-in-out;
+}
+.dk-bpc-hero-slide.active {
+    display: block;
+    opacity: 1;
+}
+.dk-bpc-hero-slide-link {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+.dk-bpc-hero-img {
+    width: 100%;
+    height: auto;
+    min-height: 200px;
+    max-height: 380px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Placeholder Hero Banner */
+.dk-bpc-placeholder-banner {
+    width: 100%;
+    min-height: 240px;
+    max-height: 340px;
+    background: var(--bpc-bg, linear-gradient(135deg, #700b1a 0%, #a8122a 40%, #c2193b 70%, #d94612 100%));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #ffffff;
+    padding: 30px 20px;
+    position: relative;
+    box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.4);
+}
+.dk-bpc-festive-diyas-decor {
+    font-size: 20px;
+    margin-bottom: 6px;
+    display: flex;
+    gap: 12px;
+}
+.dk-bpc-badge-pill {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+.dk-bpc-hero-tag {
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    color: var(--bpc-gold, #fbbf24);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+.dk-bpc-placeholder-banner h2 {
+    font-size: 28px;
+    font-weight: 900;
+    margin: 4px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.dk-bpc-banner-price {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--bpc-gold, #fbbf24);
+    margin: 4px 0 8px 0;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+.dk-bpc-placeholder-banner p {
+    font-size: 14px;
+    max-width: 650px;
+    margin: 0 auto 14px auto;
+    opacity: 0.95;
+}
+.dk-bpc-cta-btn {
+    background: #ffffff;
+    color: #9f1239;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 8px 20px;
+    border-radius: 24px;
+    display: inline-block;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+}
+.dk-bpc-cta-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Slide Nav Buttons */
+.dk-bpc-hero-prev,
+.dk-bpc-hero-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    font-size: 26px;
+    font-weight: 300;
+    color: #1e293b;
+    cursor: pointer;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.dk-bpc-hero-prev { left: 0; border-radius: 0 6px 6px 0; }
+.dk-bpc-hero-next { right: 0; border-radius: 6px 0 0 6px; }
+.dk-bpc-hero-prev:hover, .dk-bpc-hero-next:hover {
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.dk-bpc-hero-indicators {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 5;
+}
+.dk-bpc-hero-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.dk-bpc-hero-dot.active {
+    background: #ffffff;
+    width: 24px;
+    border-radius: 12px;
+}
+
+/* 2. Promo Banners (3 Cards) */
+.dk-bpc-promo-wrapper {
+    padding: 0 16px;
+    margin-bottom: 20px;
+}
+.dk-bpc-promo-scroll-track {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+@@media (max-width: 900px) {
+    .dk-bpc-promo-scroll-track {
+        grid-template-columns: 1fr;
+    }
+}
+.dk-bpc-promo-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: #ffffff;
+}
+.dk-bpc-promo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+.dk-bpc-promo-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+.dk-bpc-promo-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+.dk-bpc-promo-placeholder {
+    padding: 16px;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
+    color: #ffffff;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.dk-bpc-promo-card:nth-child(2) .dk-bpc-promo-placeholder {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 50%, #7f1d1d 100%);
+}
+.dk-bpc-promo-card:nth-child(3) .dk-bpc-promo-placeholder {
+    background: linear-gradient(135deg, #be185d 0%, #9d174d 50%, #831843 100%);
+}
+.dk-bpc-bank-tag {
+    font-size: 10.5px;
+    font-weight: 800;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    align-self: flex-start;
+    margin-bottom: 4px;
+}
+.dk-bpc-promo-badge {
+    font-size: 10.5px;
+    font-weight: 800;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    align-self: flex-start;
+}
+.dk-bpc-promo-placeholder h3 {
+    font-size: 18px;
+    font-weight: 900;
+    margin: 4px 0 2px 0;
+}
+.dk-bpc-promo-discount {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fef08a;
+}
+.dk-bpc-promo-brands {
+    font-size: 12px;
+    opacity: 0.9;
+    margin: 2px 0 6px 0;
+}
+.dk-bpc-promo-bank-footer {
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.9);
+    color: #1e3a8a;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* 3. Category & Shortcut Chips (17 Items) */
+.dk-bpc-subcats-wrapper {
+    padding: 8px 16px 16px 16px;
+    margin-bottom: 20px;
+    background: #fafaf9;
+    border-top: 1px solid #f0f0ef;
+    border-bottom: 1px solid #f0f0ef;
+}
+.dk-bpc-subcats-scroll {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 6px 2px;
+    scrollbar-width: thin;
+}
+.dk-bpc-subcat-chip {
+    flex: 0 0 84px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #1e293b;
+    transition: transform 0.2s;
+}
+.dk-bpc-subcat-chip:hover {
+    transform: translateY(-2px);
+}
+.dk-bpc-subcat-icon-box {
+    width: 68px;
+    height: 68px;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    overflow: hidden;
+}
+.dk-bpc-subcat-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 6px;
+}
+.dk-bpc-subcat-emoji {
+    font-size: 28px;
+}
+.dk-bpc-subcat-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 1px 4px;
+    border-radius: 3px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+.dk-bpc-subcat-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    margin-top: 6px;
+    text-align: center;
+    line-height: 1.25;
+    color: #334155;
+}
+
+/* 4. Spotlight Banner */
+.dk-bpc-spotlight-wrapper {
+    padding: 0 16px;
+    margin-bottom: 24px;
+}
+.dk-bpc-spotlight-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.dk-bpc-spotlight-img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    display: block;
+}
+.dk-bpc-spotlight-placeholder {
+    background: linear-gradient(135deg, #fed7aa 0%, #fdba74 40%, #fb923c 100%);
+    padding: 30px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 160px;
+}
+.dk-bpc-spotlight-glass-pill {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid #ffffff;
+    border-radius: 14px;
+    padding: 18px 28px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+.dk-bpc-serif-brand {
+    font-family: "Georgia", serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1e1b4b;
+    display: block;
+    line-height: 1.1;
+    margin-bottom: 8px;
+}
+.dk-bpc-pill-cta {
+    font-size: 12px;
+    font-weight: 800;
+    color: #4338ca;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.dk-bpc-spotlight-info {
+    text-align: right;
+    color: #451a03;
+}
+.dk-bpc-tag-gold {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #9a3412;
+}
+
+/* 5 & 6. Festive Arched Sections ("Jharokha" Indian Architectural Arch) */
+.dk-bpc-festive-arch-section {
+    padding: 24px 16px;
+    margin-bottom: 24px;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+}
+.dk-bpc-arch-her {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 50%, #991b1b 100%);
+    box-shadow: 0 4px 20px rgba(185, 28, 28, 0.25);
+}
+.dk-bpc-arch-him {
+    background: linear-gradient(135deg, #7c2d12 0%, #c2410c 50%, #ea580c 100%);
+    box-shadow: 0 4px 20px rgba(234, 88, 12, 0.25);
+}
+.dk-bpc-arch-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    color: #ffffff;
+}
+.dk-bpc-arch-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.dk-bpc-arch-diya {
+    font-size: 24px;
+}
+.dk-bpc-arch-title {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    margin: 0;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.dk-bpc-arch-subtitle {
+    font-size: 13px;
+    opacity: 0.9;
+    margin-left: 8px;
+}
+
+/* Arch Card Grid / Track */
+.dk-bpc-arch-scroll-container {
+    position: relative;
+    width: 100%;
+}
+.dk-bpc-arch-track {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+    scroll-behavior: smooth;
+}
+.dk-bpc-arch-card-wrapper {
+    flex: 0 0 160px;
+    transition: transform 0.2s ease;
+}
+.dk-bpc-arch-card-wrapper:hover {
+    transform: translateY(-4px);
+}
+.dk-bpc-arch-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Jharokha Arch Frame Design */
+.dk-bpc-arch-frame {
+    width: 100%;
+    height: 200px;
+    background: #ffffff;
+    border-radius: 80px 80px 10px 10px; /* Traditional Indian Jharokha Arch */
+    border: 3px solid #fbbf24; /* Golden glittering border */
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.45), inset 0 0 8px rgba(251, 191, 36, 0.25);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.dk-bpc-arch-frame.him-theme {
+    border-color: #fde047;
+    box-shadow: 0 0 12px rgba(253, 224, 71, 0.5);
+}
+.dk-bpc-arch-frame.gold-theme {
+    border-color: #f59e0b;
+}
+.dk-bpc-arch-frame.red-theme {
+    border-color: #fb7185;
+}
+.dk-bpc-arch-top-ornament {
+    height: 8px;
+    background: radial-gradient(circle, #fbbf24 40%, transparent 70%);
+}
+.dk-bpc-arch-inner {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background: #ffffff;
+}
+.dk-bpc-arch-img {
+    max-width: 100%;
+    max-height: 140px;
+    object-fit: contain;
+}
+.dk-bpc-arch-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+}
+.dk-bpc-arch-icon {
+    font-size: 36px;
+    margin: 4px 0;
+}
+.dk-bpc-arch-ph-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+}
+.dk-bpc-badge-mini {
+    font-size: 9px;
+    font-weight: 800;
+    background: #fef08a;
+    color: #854d0e;
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+.dk-bpc-arch-tag-pill {
+    background: #fbbf24;
+    color: #78350f;
+    font-size: 11px;
+    font-weight: 900;
+    text-align: center;
+    padding: 4px 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-top: 1px dashed rgba(0,0,0,0.15);
+}
+.dk-bpc-arch-card-footer {
+    background: #ffffff;
+    border-radius: 6px;
+    margin-top: 6px;
+    padding: 6px 4px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+.dk-bpc-arch-footer-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.dk-bpc-arch-footer-sub {
+    font-size: 10.5px;
+    color: #64748b;
+    margin-top: 1px;
+}
+
+.dk-bpc-scroll-btn {
+    position: absolute;
+    right: -8px;
+    top: 45%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+}
+
+/* 7. Dual Split Banners */
+.dk-bpc-dual-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 0 16px;
+    margin-bottom: 24px;
+}
+@@media (max-width: 768px) {
+    .dk-bpc-dual-wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+.dk-bpc-dual-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+.dk-bpc-dual-link {
+    display: block;
+    text-decoration: none;
+    color: #ffffff;
+}
+.dk-bpc-dual-img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    display: block;
+}
+.dk-bpc-dual-placeholder {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 110px;
+    position: relative;
+}
+.left-banner .dk-bpc-dual-placeholder {
+    background: linear-gradient(135deg, #b91c1c 0%, #dc2626 60%, #ea580c 100%);
+}
+.right-banner .dk-bpc-dual-placeholder {
+    background: linear-gradient(135deg, #701a75 0%, #a21caf 60%, #c026d3 100%);
+}
+.dk-bpc-dual-tag {
+    font-size: 11px;
+    font-weight: 800;
+    color: #fef08a;
+    text-transform: uppercase;
+}
+.dk-bpc-dual-placeholder h3 {
+    font-size: 16px;
+    font-weight: 800;
+    margin: 2px 0;
+}
+.dk-bpc-dual-price {
+    font-size: 18px;
+    font-weight: 900;
+    color: #ffffff;
+}
+.dk-bpc-circle-btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+/* 8. Premium Gifts 9-Brand Grid */
+.dk-bpc-premium-section {
+    padding: 0 16px;
+    margin-bottom: 24px;
+}
+.dk-bpc-sec-title-wrap {
+    margin-bottom: 14px;
+}
+.dk-bpc-sec-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0;
+}
+.dk-bpc-sec-subtitle {
+    font-size: 13px;
+    color: #64748b;
+}
+.dk-bpc-premium-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+@@media (max-width: 768px) {
+    .dk-bpc-premium-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+.dk-bpc-brand-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    border: 1px solid #fed7aa;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.dk-bpc-brand-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+.dk-bpc-brand-card-inner {
+    padding: 16px 12px 10px 12px;
+    text-align: center;
+    position: relative;
+}
+.dk-bpc-brand-sparkles {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 14px;
+    opacity: 0.6;
+}
+.dk-bpc-brand-img {
+    height: 70px;
+    max-width: 100%;
+    object-fit: contain;
+    margin: 0 auto;
+    display: block;
+}
+.dk-bpc-brand-ph {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-bpc-brand-logo-text {
+    font-size: 15px;
+    font-weight: 900;
+    color: #431407;
+    letter-spacing: 0.5px;
+}
+.dk-bpc-brand-tag {
+    font-size: 12px;
+    font-weight: 800;
+    color: #9a3412;
+    margin-top: 8px;
+}
+
+/* 9. Festive Look Showcase */
+.dk-bpc-festive-look-wrapper {
+    margin: 0 16px 24px 16px;
+    background: linear-gradient(135deg, #881337 0%, #be123c 50%, #9f1239 100%);
+    border-radius: 20px;
+    border: 3px solid #fbbf24;
+    padding: 24px 16px;
+    box-shadow: 0 6px 24px rgba(190, 18, 60, 0.35);
+}
+.dk-bpc-look-ornate-header {
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 20px;
+    position: relative;
+}
+.dk-bpc-look-lights {
+    font-size: 14px;
+    color: #fef08a;
+    letter-spacing: 12px;
+    margin-bottom: 4px;
+}
+.dk-bpc-look-heading {
+    font-family: "Georgia", serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: #fef08a;
+    letter-spacing: 1px;
+    margin: 0;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+.dk-bpc-look-sub {
+    font-size: 13px;
+    opacity: 0.95;
+    margin: 4px 0 0 0;
+}
+.dk-bpc-look-diyas {
+    display: flex;
+    justify-content: space-around;
+    font-size: 24px;
+    margin-top: 8px;
+}
+.dk-bpc-look-cards-track {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding: 4px;
+}
+.dk-bpc-look-card {
+    flex: 0 0 130px;
+    text-align: center;
+}
+.dk-bpc-look-link {
+    display: block;
+    text-decoration: none;
+    color: #ffffff;
+}
+.dk-bpc-look-arch-frame {
+    width: 100%;
+    height: 150px;
+    border-radius: 65px 65px 8px 8px;
+    border: 2px solid #fef08a;
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-bpc-look-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.dk-bpc-look-ph {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+.look-avatar {
+    font-size: 32px;
+}
+.dk-bpc-look-name {
+    font-size: 12px;
+    font-weight: 800;
+    margin-top: 6px;
+    color: #fef08a;
+}
+.dk-bpc-look-subname {
+    font-size: 10px;
+    color: rgba(255,255,255,0.8);
+}
+
+/* 10. Limited Stock Ribbon */
+.dk-bpc-limited-ribbon-wrapper {
+    padding: 0 16px;
+    margin-bottom: 24px;
+}
+.dk-bpc-limited-ribbon {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #991b1b 0%, #dc2626 50%, #ea580c 100%);
+    border: 2px solid #fbbf24;
+    color: #ffffff;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);
+}
+.dk-bpc-ribbon-content h3 {
+    font-size: 18px;
+    font-weight: 900;
+    margin: 0 0 2px 0;
+}
+.dk-bpc-ribbon-discount {
+    font-size: 22px;
+    font-weight: 900;
+    color: #fef08a;
+}
+.dk-bpc-ribbon-content p {
+    font-size: 12px;
+    opacity: 0.9;
+    margin: 2px 0 0 0;
+}
+.dk-bpc-circle-arrow-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #991b1b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+/* 11. Flash Deals Timer */
+.dk-bpc-flash-section {
+    padding: 0 16px;
+    margin-bottom: 24px;
+}
+.dk-bpc-flash-timer-bar {
+    background: #fef08a;
+    border: 1px solid #fde047;
+    border-radius: 10px;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.dk-bpc-flash-title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 900;
+    font-size: 14px;
+    color: #854d0e;
+}
+.dk-bpc-countdown-display {
+    font-size: 15px;
+    font-weight: 900;
+    color: #854d0e;
+    letter-spacing: 0.5px;
+}
+.cd-box {
+    background: #854d0e;
+    color: #ffffff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* 12. Under 99 Banner */
+.dk-bpc-under99-wrapper {
+    padding: 0 16px;
+    margin-bottom: 24px;
+}
+.dk-bpc-under99-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #991b1b 0%, #b91c1c 40%, #ea580c 100%);
+    border-radius: 14px;
+    padding: 24px 32px;
+    color: #ffffff;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(185, 28, 28, 0.25);
+}
+.dk-bpc-under99-badge {
+    font-size: 11px;
+    font-weight: 900;
+    color: #fef08a;
+    letter-spacing: 1px;
+}
+.dk-bpc-under99-content h3 {
+    font-size: 24px;
+    font-weight: 900;
+    margin: 4px 0;
+}
+.dk-bpc-under99-price {
+    font-size: 30px;
+    font-weight: 900;
+    color: #fde047;
+    margin-bottom: 4px;
+}
+.character-diya {
+    font-size: 48px;
+}
+
+/* 13. Biggest Brands (2-Column Grid) */
+.dk-bpc-bigbrands-section {
+    padding: 0 16px;
+    margin-bottom: 24px;
+}
+.dk-bpc-bigbrands-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+@@media (max-width: 900px) {
+    .dk-bpc-bigbrands-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+.dk-bpc-bigbrand-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+.dk-bpc-bigbrand-card:hover {
+    transform: translateY(-3px);
+}
+.dk-bpc-bb-frame {
+    background: #ffffff;
+    border: 2px solid #fbbf24;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    overflow: hidden;
+}
+.dk-bpc-bb-inner {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+.dk-bpc-bb-img {
+    max-height: 90px;
+    max-width: 100%;
+    object-fit: contain;
+}
+.dk-bpc-bb-logo {
+    font-size: 16px;
+    font-weight: 900;
+    color: #0f172a;
+}
+.dk-bpc-bb-pill {
+    background: #fbbf24;
+    color: #78350f;
+    font-size: 12px;
+    font-weight: 900;
+    text-align: center;
+    padding: 5px;
+    text-transform: uppercase;
+}
+
+/* 14. Partner Strip */
+.dk-bpc-partner-strip {
+    margin: 0 16px 24px 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.dk-bpc-partner-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.dk-bpc-partner-items {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.dk-bpc-partner-pill {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 20px;
+    padding: 6px 14px;
+    text-decoration: none;
+    color: #0f172a;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.dk-bpc-partner-pill .part-tag {
+    color: #b91c1c;
+    font-weight: 800;
+}
+
+/* 15. Brand New */
+.dk-bpc-brandnew-section {
+    padding: 0 16px;
+    margin-bottom: 30px;
+}
+
+/* Catalog Divider */
+.dk-bpc-catalog-anchor-divider {
+    padding: 24px 16px 12px 16px;
+    border-top: 2px dashed #e2e8f0;
+    margin-top: 24px;
+    background: #f8fafc;
+    border-radius: 12px;
+}
+.dk-bpc-anchor-pill {
+    font-size: 11px;
+    font-weight: 800;
+    color: #2563eb;
+    letter-spacing: 0.5px;
+}
+.dk-bpc-catalog-anchor-header h2 {
+    font-size: 22px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 4px 0 2px 0;
+}
+.dk-bpc-catalog-anchor-header p {
+    font-size: 13.5px;
+    color: #64748b;
+    margin: 0;
+}
+</style>
+
+<!-- SCRIPTS (Hero AutoPlay, Countdown, Smooth Scroll) -->
+<script>
+(function() {
+    // 1. Hero Carousel Controller
+    const heroWrapper = document.getElementById('beautyHeroCarousel');
+    if (heroWrapper) {
+        const slides = heroWrapper.querySelectorAll('.dk-bpc-hero-slide');
+        const dots = heroWrapper.querySelectorAll('.dk-bpc-hero-dot');
+        const prevBtn = document.getElementById('bpcHeroPrev');
+        const nextBtn = document.getElementById('bpcHeroNext');
+        let currentIdx = 0;
+        const total = slides.length;
+        const autoPlay = heroWrapper.getAttribute('data-autoplay') === 'true';
+        const intervalMs = parseInt(heroWrapper.getAttribute('data-interval') || '4000', 10);
+        let timer = null;
+
+        function goToSlide(idx) {
+            slides[currentIdx].classList.remove('active');
+            if (dots[currentIdx]) dots[currentIdx].classList.remove('active');
+            currentIdx = (idx + total) % total;
+            slides[currentIdx].classList.add('active');
+            if (dots[currentIdx]) dots[currentIdx].classList.add('active');
+        }
+
+        function startTimer() {
+            if (autoPlay && total > 1) {
+                stopTimer();
+                timer = setInterval(() => goToSlide(currentIdx + 1), intervalMs);
+            }
+        }
+
+        function stopTimer() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+        }
+
+        if (nextBtn) nextBtn.addEventListener('click', () => { goToSlide(currentIdx + 1); startTimer(); });
+        if (prevBtn) prevBtn.addEventListener('click', () => { goToSlide(currentIdx - 1); startTimer(); });
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const target = parseInt(dot.getAttribute('data-target') || '0', 10);
+                goToSlide(target);
+                startTimer();
+            });
+        });
+
+        heroWrapper.addEventListener('mouseenter', stopTimer);
+        heroWrapper.addEventListener('mouseleave', startTimer);
+        startTimer();
+    }
+
+    // 2. Countdown Timer for Flash Deals
+    function updateCountdown() {
+        const hoursBox = document.getElementById('cdHours');
+        const minsBox = document.getElementById('cdMinutes');
+        const secsBox = document.getElementById('cdSeconds');
+        if (!hoursBox || !minsBox || !secsBox) return;
+
+        // 12-hour cycle based on wall clock
+        const now = new Date();
+        const secondsRemaining = (12 * 3600) - ((now.getHours() % 12) * 3600 + now.getMinutes() * 60 + now.getSeconds());
+        const h = Math.floor(secondsRemaining / 3600);
+        const m = Math.floor((secondsRemaining % 3600) / 60);
+        const s = secondsRemaining % 60;
+
+        hoursBox.textContent = (h < 10 ? '0' : '') + h + 'h';
+        minsBox.textContent = (m < 10 ? '0' : '') + m + 'm';
+        secsBox.textContent = (s < 10 ? '0' : '') + s + 's';
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+})();
+
+function scrollArchTrack(trackId, amount) {
+    const track = document.getElementById(trackId);
+    if (track) {
+        track.scrollBy({ left: amount, behavior: 'smooth' });
+    }
+}
+</script>
+
