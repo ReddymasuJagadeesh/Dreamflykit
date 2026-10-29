@@ -295,6 +295,13 @@
         </div>
     }
 
+    @if (Model.IsBeautyHub && Model.BeautyHub != null)
+    {
+        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+            <partial name="_BeautyCategoryHub" model="Model.BeautyHub" />
+        </div>
+    }
+
     @if (Model.IsStudyEssentialsHub && Model.StudyHub != null)
     {
         <div class="dk-shell" style="padding-top: 4px; margin-bottom: 14px;">
@@ -660,6 +667,39 @@
                                    class="dk-checkbox-filter @(isSelected ? "active" : "")">
                                     <span class="dk-checkbox-box">✓</span>
                                     <span class="dk-checkbox-label">@region</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (currentCat == "beauty" || currentCat == "bpc" || currentCat == "beauty-and-personal-care" || currentCat == "beauty-personal-care")
+                {
+                    <!-- BEAUTY & PERSONAL CARE SPECIFIC FILTERS -->
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">POPULAR BEAUTY BRANDS</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var brand in new[] { "Lakme", "L'Oreal", "Mamaearth", "Cetaphil", "Beardo", "Maybelline", "Nivea", "Swiss Beauty" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, brand, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: brand, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@brand</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="dk-filter-group">
+                        <h4 class="dk-filter-group-title">SKIN / CONCERN TYPE</h4>
+                        <div class="dk-filter-list">
+                            @foreach (var concern in new[] { "All Skin Types", "Oily & Acne Prone", "Dry Skin", "Anti-Ageing", "Brightening", "Sun Protection" })
+                            {
+                                var isSelected = string.Equals(Model.SearchTerm, concern, StringComparison.OrdinalIgnoreCase);
+                                <a href="@(isSelected ? ClearParamUrl("q") : BuildFilterUrl(search: concern, pageNum: 1))"
+                                   class="dk-checkbox-filter @(isSelected ? "active" : "")">
+                                    <span class="dk-checkbox-box">✓</span>
+                                    <span class="dk-checkbox-label">@concern</span>
                                 </a>
                             }
                         </div>

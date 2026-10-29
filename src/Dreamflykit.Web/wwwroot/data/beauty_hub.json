@@ -1,0 +1,794 @@
+{
+  "ThemeSettings": {
+    "ThemeName": "BIG BANG DIWALI",
+    "ThemeTagline": "LOWEST PRICE OF 2026 • Beauty, food & more",
+    "BadgeText": "✨ FESTIVE GLOW DHAMAKA",
+    "NoticeBarText": "\uD83C\uDF86 Festive Glow Dhamaka is LIVE! Extra 10% instant bank discount on SBI Card + Daily Flash Deals up to 80% Off on Skincare, Fragrances & Makeup.",
+    "IsFestiveEnabled": true,
+    "FrameDesignStyle": "FestiveArchedGolden",
+    "AccentGold": "#fbbf24",
+    "PrimaryBgGradient": "linear-gradient(135deg, #700b1a 0%, #a8122a 40%, #c2193b 70%, #d94612 100%)",
+    "DiyaDecorationEnabled": true
+  },
+  "HeroBanner": {
+    "IsEnabled": true,
+    "AutoPlay": true,
+    "IntervalSeconds": 4,
+    "Slides": [
+      {
+        "Id": "bpc-hero-1",
+        "TagBadge": "BIG BANG DIWALI",
+        "Title": "LOWEST PRICE OF 2026",
+        "PriceHighlight": "Beauty, food & more",
+        "Subtitle": "Mega Festive Glow Carnival • Luxury Fragrances, Serums & Lipsticks",
+        "ImageUrl": "/images/beauty-hub/hero-diwali-banner.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "ButtonText": "Explore Deals →",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "bpc-hero-2",
+        "TagBadge": "GLOBAL LUXE STORE",
+        "Title": "The Global Luxe Store",
+        "PriceHighlight": "Up to 60% Off*",
+        "Subtitle": "Davidoff, Jaguar, L'Oréal Paris, Eucerin & K-Beauty Cult Classics",
+        "ImageUrl": "/images/beauty-hub/hero-luxe-store.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "ButtonText": "Shop Luxury →",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "bpc-hero-3",
+        "TagBadge": "FESTIVE GLAM MUST-HAVES",
+        "Title": "Nail Every Festive Look",
+        "PriceHighlight": "Starting Under ₹149*",
+        "Subtitle": "Long-wear Foundations, Waterproof Mascaras & Festive Gift Sets",
+        "ImageUrl": "/images/beauty-hub/hero-festive-glow.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "ButtonText": "Shop Festive Looks →",
+        "IsUploadingSoon": false
+      }
+    ]
+  },
+  "PromoBanners": {
+    "IsEnabled": true,
+    "BankOfferHeader": "BANK OFFER REFRESHED DAILY",
+    "BankOfferSubtext": "10% Instant Discount* on SBI Debit & Credit Cards | Min Spend ₹1,500",
+    "Cards": [
+      {
+        "Id": "promo-1",
+        "TagBadge": "BIG BANG DIWALI",
+        "BankOfferBadge": "BANK OFFER REFRESHED DAILY",
+        "Title": "GEN-Z FAVES",
+        "DiscountHighlight": "Up to 40% Off",
+        "Subtitle": "Biestaa, nathabit & more",
+        "BankOfferText": "10% Instant Discount* on SBI Card",
+        "ImageUrl": "/images/beauty-hub/promo-genz-faves.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "promo-2",
+        "TagBadge": "BIG BANG DIWALI",
+        "BankOfferBadge": "BANK OFFER REFRESHED DAILY",
+        "Title": "Luscious locks",
+        "DiscountHighlight": "Up to 75% Off",
+        "Subtitle": "Pilgrim, Dove & more",
+        "BankOfferText": "10% Instant Discount* on SBI Card",
+        "ImageUrl": "/images/beauty-hub/promo-luscious-locks.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "promo-3",
+        "TagBadge": "BIG BANG DIWALI",
+        "BankOfferBadge": "BANK OFFER REFRESHED DAILY",
+        "Title": "Festive Glam Super Savings",
+        "DiscountHighlight": "Up to 70% Off",
+        "Subtitle": "Maybelline, Lakme & Swiss Beauty",
+        "BankOfferText": "10% Instant Discount* on SBI Card",
+        "ImageUrl": "/images/beauty-hub/promo-super-savings.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      }
+    ]
+  },
+  "SubCategories": {
+    "IsEnabled": true,
+    "Title": "Quick Beauty & Grooming Shortcuts",
+    "Items": [
+      {
+        "Id": "sub-1",
+        "Title": "Skincare",
+        "Icon": "\uD83E\uDDF4",
+        "Slug": "skincare",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?subcategory=skincare",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-2",
+        "Title": "Top 50 Deals",
+        "Icon": "⚡",
+        "Slug": "top-50-deals",
+        "Badge": "Live now",
+        "TargetUrl": "/category/beauty?sort=Discount",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-3",
+        "Title": "Men's grooming",
+        "Icon": "\uD83E\uDDD4",
+        "Slug": "mens-grooming",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?subcategory=mens-grooming",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-4",
+        "Title": "Global Luxe",
+        "Icon": "✨",
+        "Slug": "global-luxe",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?subcategory=fragrances",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-5",
+        "Title": "Derma store",
+        "Icon": "\uD83E\uDDEA",
+        "Slug": "derma-store",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?subcategory=skincare",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-6",
+        "Title": "K-beauty",
+        "Icon": "\uD83C\uDF38",
+        "Slug": "k-beauty",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?subcategory=skincare",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-7",
+        "Title": "Only here!",
+        "Icon": "\uD83C\uDFF7️",
+        "Slug": "exclusive",
+        "Badge": "EXCLUSIVE",
+        "TargetUrl": "/category/beauty?view=hub",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-8",
+        "Title": "ENVY",
+        "Icon": "\uD83D\uDC8E",
+        "Slug": "envy",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?search=envy",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-9",
+        "Title": "The Derma Co.",
+        "Icon": "\uD83E\uDDEC",
+        "Slug": "the-derma-co",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?search=derma",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-10",
+        "Title": "Hair care",
+        "Icon": "\uD83D\uDC87‍♀️",
+        "Slug": "hair-care",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?subcategory=hair-care",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-11",
+        "Title": "Makeup",
+        "Icon": "\uD83D\uDC84",
+        "Slug": "makeup",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?subcategory=makeup",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-12",
+        "Title": "Fragrances",
+        "Icon": "\uD83C\uDF38",
+        "Slug": "fragrances",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?subcategory=fragrances",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-13",
+        "Title": "Bath & body",
+        "Icon": "\uD83D\uDEC1",
+        "Slug": "bath-body",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?subcategory=bath-body",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-14",
+        "Title": "Hygiene",
+        "Icon": "\uD83E\uDDFC",
+        "Slug": "hygiene",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?subcategory=skincare",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-15",
+        "Title": "Oral care",
+        "Icon": "\uD83E\uDEA5",
+        "Slug": "oral-care",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?subcategory=oral-care",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-16",
+        "Title": "Combos",
+        "Icon": "\uD83C\uDF81",
+        "Slug": "combos",
+        "Badge": "COMBOS",
+        "TargetUrl": "/category/beauty?sort=Discount",
+        "ImageUrl": null
+      },
+      {
+        "Id": "sub-17",
+        "Title": "Beauty supp",
+        "Icon": "\uD83D\uDC8A",
+        "Slug": "supplements",
+        "Badge": null,
+        "TargetUrl": "/category/beauty?subcategory=beauty-supplements",
+        "ImageUrl": null
+      }
+    ]
+  },
+  "SpotlightBanner": {
+    "IsEnabled": true,
+    "Title": "The Global Luxe Store",
+    "Subtitle": "Curated luxury fragrances, premium French serums & international beauty collections",
+    "ButtonText": "Explore now →",
+    "ImageUrl": "/images/beauty-hub/spotlight-global-luxe.webp",
+    "TargetUrl": "#beauty-products-catalog",
+    "IsUploadingSoon": false
+  },
+  "SpecialGiftsForHer": {
+    "IsEnabled": true,
+    "SectionTitle": "Special gifts for her",
+    "Subtitle": "Delightful makeup combos, luxury elixirs & glowing skincare picks",
+    "AccentColor": "#dc2626",
+    "BgGradient": "linear-gradient(135deg, #7f1d1d 0%, #b91c1c 50%, #991b1b 100%)",
+    "Cards": [
+      {
+        "Id": "her-1",
+        "OfferTag": "Min. 40% Off",
+        "Title": "Bath combo",
+        "Subtitle": "Coffee scrubs & whipped butters",
+        "ImageUrl": "/images/beauty-hub/gift-her-bath-combo.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "her-2",
+        "OfferTag": "Under ₹199",
+        "Title": "Lip makeup",
+        "Subtitle": "Creamy matte & hydrating oils",
+        "ImageUrl": "/images/beauty-hub/gift-her-lip-makeup.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "her-3",
+        "OfferTag": "Up to 65% Off",
+        "Title": "Luxury fragrances",
+        "Subtitle": "Eau de Parfum for her",
+        "ImageUrl": "/images/beauty-hub/gift-her-fragrances.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "her-4",
+        "OfferTag": "Min. 40% Off",
+        "Title": "Hair care",
+        "Subtitle": "Nourishing masks & serums",
+        "ImageUrl": "/images/beauty-hub/gift-her-hair-care.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "her-5",
+        "OfferTag": "Under ₹199",
+        "Title": "Face makeup",
+        "Subtitle": "Flawless foundation & compacts",
+        "ImageUrl": "/images/beauty-hub/gift-her-face-makeup.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "her-6",
+        "OfferTag": "Under ₹249",
+        "Title": "Eye makeup",
+        "Subtitle": "Mesmer-eyes shadow palettes",
+        "ImageUrl": "/images/beauty-hub/gift-her-eye-makeup.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      }
+    ]
+  },
+  "GrandGiftsForHim": {
+    "IsEnabled": true,
+    "SectionTitle": "Grand gifts for him",
+    "Subtitle": "Sharp beard care, invigorating colognes & complete men's grooming hampers",
+    "AccentColor": "#ea580c",
+    "BgGradient": "linear-gradient(135deg, #7c2d12 0%, #c2410c 50%, #ea580c 100%)",
+    "Cards": [
+      {
+        "Id": "him-1",
+        "OfferTag": "Min. 50% Off",
+        "Title": "Perfumes",
+        "Subtitle": "Bold woods & aquatic colognes",
+        "ImageUrl": "/images/beauty-hub/gift-him-perfumes.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "him-2",
+        "OfferTag": "Under ₹199",
+        "Title": "Beard care",
+        "Subtitle": "Beard oils, washes & balms",
+        "ImageUrl": "/images/beauty-hub/gift-him-beard-care.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "him-3",
+        "OfferTag": "Min. 50% Off",
+        "Title": "Grooming kits",
+        "Subtitle": "Head-to-toe luxury hampers",
+        "ImageUrl": "/images/beauty-hub/gift-him-grooming-kits.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "him-4",
+        "OfferTag": "Min. 50% Off",
+        "Title": "Skincare for men",
+        "Subtitle": "Oil-control washes & moisturizers",
+        "ImageUrl": "/images/beauty-hub/gift-him-skincare.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "him-5",
+        "OfferTag": "Up to 70% Off",
+        "Title": "Luxe fragrance",
+        "Subtitle": "Jaguar, Davidoff & Bella Vita",
+        "ImageUrl": "/images/beauty-hub/gift-him-luxe-fragrance.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "him-6",
+        "OfferTag": "Under ₹199",
+        "Title": "Men's styling",
+        "Subtitle": "Hair pomades, waxes & sprays",
+        "ImageUrl": "/images/beauty-hub/gift-him-styling.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      }
+    ]
+  },
+  "DualBanners": {
+    "IsEnabled": true,
+    "LeftBanner": {
+      "TagBadge": "Diwali celebration",
+      "Title": "Beauty, food & more",
+      "PriceHighlight": "From ₹99",
+      "ImageUrl": "/images/beauty-hub/dual-banner-diwali.webp",
+      "TargetUrl": "#beauty-products-catalog",
+      "ButtonText": "→",
+      "IsUploadingSoon": false
+    },
+    "RightBanner": {
+      "TagBadge": "Gifts for your loved ones",
+      "Title": "Curated festive gift boxes",
+      "PriceHighlight": "Up to 80% Off",
+      "ImageUrl": "/images/beauty-hub/dual-banner-gifts.webp",
+      "TargetUrl": "#beauty-products-catalog",
+      "ButtonText": "Shop Gift Hampers →",
+      "IsUploadingSoon": false
+    }
+  },
+  "PremiumGifts": {
+    "IsEnabled": true,
+    "SectionTitle": "Premium gifts",
+    "Subtitle": "Internationally renowned premium skincare, fragrances & salon haircare",
+    "Brands": [
+      {
+        "Id": "prem-1",
+        "BrandName": "Eucerin",
+        "DiscountTag": "Up to 30% Off",
+        "Subtitle": "Dermatologist recommended",
+        "ImageUrl": "/images/beauty-hub/brand-eucerin.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "prem-2",
+        "BrandName": "DAVIDOFF",
+        "DiscountTag": "Up to 60% Off",
+        "Subtitle": "Cool Water & luxury scents",
+        "ImageUrl": "/images/beauty-hub/brand-davidoff.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "prem-3",
+        "BrandName": "L'ORÉAL PARIS",
+        "DiscountTag": "Up to 30% Off",
+        "Subtitle": "Professional salon haircare",
+        "ImageUrl": "/images/beauty-hub/brand-loreal.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "prem-4",
+        "BrandName": "TIRTIR",
+        "DiscountTag": "Up to 50% Off",
+        "Subtitle": "Mask fit red cushion compact",
+        "ImageUrl": "/images/beauty-hub/brand-tirtir.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "prem-5",
+        "BrandName": "SKIN1004",
+        "DiscountTag": "Up to 25% Off",
+        "Subtitle": "Madagascar Centella Ampoule",
+        "ImageUrl": "/images/beauty-hub/brand-skin1004.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "prem-6",
+        "BrandName": "d'Alba",
+        "DiscountTag": "Up to 15% Off",
+        "Subtitle": "White truffle first spray serum",
+        "ImageUrl": "/images/beauty-hub/brand-dalba.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "prem-7",
+        "BrandName": "JAGUAR",
+        "DiscountTag": "Up to 60% Off",
+        "Subtitle": "Classic black eau de toilette",
+        "ImageUrl": "/images/beauty-hub/brand-jaguar.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "prem-8",
+        "BrandName": "matrix",
+        "DiscountTag": "Up to 35% Off",
+        "Subtitle": "Opti.Care smooth & straight",
+        "ImageUrl": "/images/beauty-hub/brand-matrix.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "prem-9",
+        "BrandName": "BEAUTY OF JOSEON",
+        "DiscountTag": "Up to 20% Off",
+        "Subtitle": "Relief sun rice + probiotics",
+        "ImageUrl": "/images/beauty-hub/brand-joseon.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      }
+    ]
+  },
+  "FestiveLooks": {
+    "IsEnabled": true,
+    "SectionTitle": "NAIL EVERY FESTIVE LOOK",
+    "Subtitle": "Get runway ready with step-by-step festive trends & curated essentials",
+    "Cards": [
+      {
+        "Id": "look-1",
+        "LookName": "Flawless finish",
+        "Subtitle": "Airbrush base & setting powder",
+        "ImageUrl": "/images/beauty-hub/look-flawless.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "look-2",
+        "LookName": "Star-struck!",
+        "Subtitle": "High-shine highlighter & gloss",
+        "ImageUrl": "/images/beauty-hub/look-starstruck.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "look-3",
+        "LookName": "Mesmer-eyes",
+        "Subtitle": "Smokey shadows & winged eyeliner",
+        "ImageUrl": "/images/beauty-hub/look-mesmereyes.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "look-4",
+        "LookName": "All-nighter looks",
+        "Subtitle": "Sweat-proof 24h long stay",
+        "ImageUrl": "/images/beauty-hub/look-allnighter.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "look-5",
+        "LookName": "Sunkissed glow",
+        "Subtitle": "Peachy blush & dewy serum drops",
+        "ImageUrl": "/images/beauty-hub/look-sunkissed.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      }
+    ]
+  },
+  "LimitedDealsRibbon": {
+    "IsEnabled": true,
+    "Title": "Limited Stock, Big Deals",
+    "DiscountHighlight": "Up to 75% Off",
+    "Subtitle": "Grab fast-moving festive bestsellers before inventory empties out",
+    "ButtonText": "Shop Fast Deals →",
+    "ImageUrl": "/images/beauty-hub/limited-deals-ribbon.webp",
+    "TargetUrl": "#beauty-products-catalog",
+    "IsUploadingSoon": false
+  },
+  "FlashDealsTimer": {
+    "IsEnabled": true,
+    "TimerTitle": "New deals every 12 Hrs",
+    "TimerHours": 12,
+    "TimerEndIso": "2026-10-29T17:05:09.1008594Z",
+    "Cards": [
+      {
+        "Id": "flash-1",
+        "OfferTag": "Up to 70% Off",
+        "Title": "Face washes",
+        "Subtitle": "Gentle foaming & brightening cleansers",
+        "ImageUrl": "/images/beauty-hub/flash-facewash.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "flash-2",
+        "OfferTag": "Under ₹199",
+        "Title": "Face Cream",
+        "Subtitle": "Ceramide barrier repair moisturizers",
+        "ImageUrl": "/images/beauty-hub/flash-facecream.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "flash-3",
+        "OfferTag": "From ₹199",
+        "Title": "Hair serums",
+        "Subtitle": "Heat protection & anti-frizz drops",
+        "ImageUrl": "/images/beauty-hub/flash-hairserum.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "flash-4",
+        "OfferTag": "Under ₹199",
+        "Title": "Shampoos",
+        "Subtitle": "Sulfate-free scalp cleansers",
+        "ImageUrl": "/images/beauty-hub/flash-shampoo.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "flash-5",
+        "OfferTag": "Min. 25% Off",
+        "Title": "Makeup kits",
+        "Subtitle": "Complete brushes & sponge sets",
+        "ImageUrl": "/images/beauty-hub/flash-makeupkit.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "flash-6",
+        "OfferTag": "Under ₹199",
+        "Title": "Deodorants",
+        "Subtitle": "Long-lasting fresh body sprays",
+        "ImageUrl": "/images/beauty-hub/flash-deodorant.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "flash-7",
+        "OfferTag": "Under ₹299",
+        "Title": "Perfumes",
+        "Subtitle": "Pocket perfumes & mist sprays",
+        "ImageUrl": "/images/beauty-hub/flash-perfumes.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      }
+    ]
+  },
+  "BeautyPicksUnder99": {
+    "IsEnabled": true,
+    "Title": "Beauty Picks",
+    "PriceHighlight": "Under ₹99",
+    "Subtitle": "Pocket-friendly daily self-care & university student grooming kits",
+    "ImageUrl": "/images/beauty-hub/banner-under99.webp",
+    "TargetUrl": "#beauty-products-catalog",
+    "IsUploadingSoon": false
+  },
+  "BiggestBrands": {
+    "IsEnabled": true,
+    "SectionTitle": "Biggest brands on offer",
+    "Subtitle": "Explore verified authentic products with direct brand warranties",
+    "Brands": [
+      {
+        "Id": "brand-1",
+        "BrandName": "Cetaphil",
+        "OfferTag": "Up to 60% Off",
+        "Subtitle": "Gentle cleanser & lotion",
+        "ImageUrl": "/images/beauty-hub/brand-cetaphil.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-2",
+        "BrandName": "BEARDO",
+        "OfferTag": "Up to 75% Off",
+        "Subtitle": "Whisky smoke perfume & oils",
+        "ImageUrl": "/images/beauty-hub/brand-beardo.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-3",
+        "BrandName": "mamaearth",
+        "OfferTag": "Up to 70% Off",
+        "Subtitle": "Onion shampoo & vitamin C face wash",
+        "ImageUrl": "/images/beauty-hub/brand-mamaearth.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-4",
+        "BrandName": "SWISS BEAUTY",
+        "OfferTag": "From ₹149",
+        "Subtitle": "Craze lip gloss & concealers",
+        "ImageUrl": "/images/beauty-hub/brand-swissbeauty.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-5",
+        "BrandName": "L'ORÉAL PARIS",
+        "OfferTag": "Up to 50% Off",
+        "Subtitle": "Hyaluronic acid serum & masks",
+        "ImageUrl": "/images/beauty-hub/brand-loreal-paris.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-6",
+        "BrandName": "LAKMÉ",
+        "OfferTag": "Up to 65% Off",
+        "Subtitle": "Eyeconic kajal & 9 to 5 foundation",
+        "ImageUrl": "/images/beauty-hub/brand-lakme.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-7",
+        "BrandName": "BLA BLI BLU",
+        "OfferTag": "Up to 80% Off",
+        "Subtitle": "Body mist & glow lotion",
+        "ImageUrl": "/images/beauty-hub/brand-blabliblu.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "brand-8",
+        "BrandName": "RENÉE",
+        "OfferTag": "Up to 70% Off",
+        "Subtitle": "5 in 1 fab lipstick & kohls",
+        "ImageUrl": "/images/beauty-hub/brand-renee.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      }
+    ]
+  },
+  "BeautyPartners": {
+    "IsEnabled": true,
+    "SectionTitle": "Beauty partner",
+    "Items": [
+      {
+        "Id": "part-1",
+        "BrandName": "foxtale",
+        "OfferTag": "Up to 50% Off",
+        "TargetUrl": "#beauty-products-catalog",
+        "ImageUrl": "/images/beauty-hub/partner-foxtale.webp"
+      },
+      {
+        "Id": "part-2",
+        "BrandName": "Parachute Advansed",
+        "OfferTag": "Up to 50% Off",
+        "TargetUrl": "#beauty-products-catalog",
+        "ImageUrl": "/images/beauty-hub/partner-parachute.webp"
+      },
+      {
+        "Id": "part-3",
+        "BrandName": "BEARDO",
+        "OfferTag": "Min. 60% Off",
+        "TargetUrl": "#beauty-products-catalog",
+        "ImageUrl": "/images/beauty-hub/partner-beardo.webp"
+      }
+    ]
+  },
+  "BrandNewInBeauty": {
+    "IsEnabled": true,
+    "SectionTitle": "Brand new in beauty!",
+    "Subtitle": "Exciting fresh drops, global beauty sensations and trending formulas",
+    "Cards": [
+      {
+        "Id": "new-1",
+        "BrandName": "REAL TECHNIQUES",
+        "ProductTitle": "Makeup brushes",
+        "OfferTag": "Up to 25% Off",
+        "ImageUrl": "/images/beauty-hub/new-realtechniques.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "new-2",
+        "BrandName": "akind",
+        "ProductTitle": "Lip Gloss Oil",
+        "OfferTag": "Up to 25% Off",
+        "ImageUrl": "/images/beauty-hub/new-akind.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "new-3",
+        "BrandName": "essence",
+        "ProductTitle": "Blush",
+        "OfferTag": "Up to 25% Off",
+        "ImageUrl": "/images/beauty-hub/new-essence.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "new-4",
+        "BrandName": "N E X T",
+        "ProductTitle": "Attar & Perfume",
+        "OfferTag": "Up to 40% Off",
+        "ImageUrl": "/images/beauty-hub/new-next.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      },
+      {
+        "Id": "new-5",
+        "BrandName": "CeraVe",
+        "ProductTitle": "Brightening Care",
+        "OfferTag": "Up to 25% Off",
+        "ImageUrl": "/images/beauty-hub/new-cerave.webp",
+        "TargetUrl": "#beauty-products-catalog",
+        "IsUploadingSoon": false
+      }
+    ]
+  }
+}
