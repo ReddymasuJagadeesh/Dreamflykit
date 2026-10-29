@@ -109,6 +109,8 @@ public sealed class MobilesHubDto
                 Subheading = "Curated Flagship Smartphones with 0% EMI & Star Ratings",
                 SlideIntervalSeconds = 4,
                 AutoPlay = true,
+                SyncAllSections = true,
+                ShowDots = false,
                 Title = "Galaxy S25 Ultra 5G",
                 TitleHighlight = "From ₹58,999*",
                 Subtitle = "Upgrade to Flagship • Snapdragon 8 Elite • Galaxy AI Built-in",
@@ -588,6 +590,8 @@ public sealed class MobilesHighlightBannerDto
     public string Subheading { get; set; } = "Next-Gen Flagship Smartphones with 0% EMI & Studio Optics";
     public int SlideIntervalSeconds { get; set; } = 4;
     public bool AutoPlay { get; set; } = true;
+    public bool SyncAllSections { get; set; } = true;
+    public bool ShowDots { get; set; } = false;
     public List<FlagshipSectionColumnDto> Sections { get; set; } = new();
 
     // Legacy fallback properties for backward compatibility

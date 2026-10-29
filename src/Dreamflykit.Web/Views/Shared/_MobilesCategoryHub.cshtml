@@ -304,6 +304,7 @@
                      id="flagshipThreeSection" 
                      aria-label="Flagship Smartphone 3-Section Showcase"
                      data-autoplay="@(highlight.AutoPlay ? "true" : "false")"
+                     data-sync="@(highlight.SyncAllSections ? "true" : "false")"
                      data-interval="@(highlight.SlideIntervalSeconds > 0 ? highlight.SlideIntervalSeconds * 1000 : 4000)">
                 
                 <div class="dk-flagship-grid">
@@ -389,8 +390,8 @@
                                 }
                             </div>
 
-                            <!-- Section Pagination Dots (Flipkart Style Dots) -->
-                            @if (colSlides.Count > 1)
+                            <!-- Section Pagination Dots (Removed / Controlled by Admin) -->
+                            @if (highlight.ShowDots && colSlides.Count > 1)
                             {
                                 <div class="dk-flagship-dots-bar" id="flagshipDots_@c">
                                     @for (int d = 0; d < colSlides.Count; d++)
@@ -2338,66 +2339,111 @@
     };
 
     // ----------------------------------------------------
-    // 3. FLAGSHIP SPECIALS 3-SECTION SLIDE CAROUSEL
+    // 3. FLAGSHIP SPECIALS 3-SECTION SYNCHRONIZED SLIDE CAROUSEL
+    // All 3 sections rotate together simultaneously at the exact same time
     // ----------------------------------------------------
     const flagshipRoot = document.getElementById("flagshipThreeSection");
     if (flagshipRoot) {
         const autoPlay = flagshipRoot.getAttribute("data-autoplay") === "true";
+        const syncAll = flagshipRoot.getAttribute("data-sync") !== "false";
         const intervalMs = parseInt(flagshipRoot.getAttribute("data-interval"), 10) || 4000;
-        const columns = flagshipRoot.querySelectorAll(".dk-flagship-col-carousel");
+        const columns = Array.from(flagshipRoot.querySelectorAll(".dk-flagship-col-carousel"));
 
-        columns.forEach(col => {
-            const cIndex = col.getAttribute("data-col-index") || "0";
-            const slides = col.querySelectorAll(".dk-flagship-card");
-            const dots = col.querySelectorAll(".dk-flagship-dot");
-            if (slides.length <= 1) return;
+        if (syncAll) {
+            // Find max slides across all columns
+            let maxSlides = 1;
+            columns.forEach(col => {
+                const count = col.querySelectorAll(".dk-flagship-card").length;
+                if (count > maxSlides) maxSlides = count;
+            });
 
-            let currentSlide = 0;
-            let colTimer = null;
+            let currentGlobalSlide = 0;
+            let masterSyncTimer = null;
 
-            function showColSlide(idx) {
-                if (idx < 0) idx = slides.length - 1;
-                if (idx >= slides.length) idx = 0;
+            function showSyncSlide(targetIdx) {
+                currentGlobalSlide = ((targetIdx % maxSlides) + maxSlides) % maxSlides;
 
-                slides.forEach((s, i) => {
-                    s.classList.toggle("active", i === idx);
+                columns.forEach(col => {
+                    const slides = col.querySelectorAll(".dk-flagship-card");
+                    const dots = col.querySelectorAll(".dk-flagship-dot");
+                    if (slides.length === 0) return;
+
+                    const colTarget = currentGlobalSlide % slides.length;
+                    slides.forEach((s, i) => {
+                        s.classList.toggle("active", i === colTarget);
+                    });
+                    dots.forEach((d, i) => {
+                        d.classList.toggle("active", i === colTarget);
+                    });
                 });
-                dots.forEach((d, i) => {
-                    d.classList.toggle("active", i === idx);
-                });
-                currentSlide = idx;
             }
 
-            function startColTimer() {
-                if (!autoPlay || slides.length <= 1) return;
-                stopColTimer();
-                colTimer = setInterval(() => showColSlide(currentSlide + 1), intervalMs + (parseInt(cIndex, 10) * 350));
+            function startMasterTimer() {
+                if (!autoPlay || maxSlides <= 1) return;
+                stopMasterTimer();
+                masterSyncTimer = setInterval(() => {
+                    showSyncSlide(currentGlobalSlide + 1);
+                }, intervalMs);
             }
 
-            function stopColTimer() {
-                if (colTimer) clearInterval(colTimer);
+            function stopMasterTimer() {
+                if (masterSyncTimer) {
+                    clearInterval(masterSyncTimer);
+                    masterSyncTimer = null;
+                }
             }
 
-            col.addEventListener("mouseenter", stopColTimer);
-            col.addEventListener("mouseleave", startColTimer);
+            // Pause rotation when user hovers over the flagship section
+            flagshipRoot.addEventListener("mouseenter", stopMasterTimer);
+            flagshipRoot.addEventListener("mouseleave", startMasterTimer);
 
-            startColTimer();
-        });
-    }
+            window.switchFlagshipSyncSlide = function(slideIndex) {
+                showSyncSlide(slideIndex);
+                startMasterTimer();
+            };
 
-    window.switchFlagshipColSlide = function(colIndex, slideIndex, ev) {
-        if (ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
+            window.switchFlagshipColSlide = function(colIndex, slideIndex, ev) {
+                if (ev) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                }
+                showSyncSlide(slideIndex);
+                startMasterTimer();
+            };
+
+            // Start synchronized carousel
+            showSyncSlide(0);
+            startMasterTimer();
+        } else {
+            // Independent rotation fallback if sync is explicitly disabled
+            columns.forEach(col => {
+                const slides = col.querySelectorAll(".dk-flagship-card");
+                const dots = col.querySelectorAll(".dk-flagship-dot");
+                if (slides.length <= 1) return;
+
+                let currentSlide = 0;
+                let colTimer = null;
+
+                function showColSlide(idx) {
+                    if (idx < 0) idx = slides.length - 1;
+                    if (idx >= slides.length) idx = 0;
+                    slides.forEach((s, i) => s.classList.toggle("active", i === idx));
+                    dots.forEach((d, i) => d.classList.toggle("active", i === idx));
+                    currentSlide = idx;
+                }
+
+                function startColTimer() {
+                    if (!autoPlay || slides.length <= 1) return;
+                    if (colTimer) clearInterval(colTimer);
+                    colTimer = setInterval(() => showColSlide(currentSlide + 1), intervalMs);
+                }
+
+                col.addEventListener("mouseenter", () => { if (colTimer) clearInterval(colTimer); });
+                col.addEventListener("mouseleave", startColTimer);
+                startColTimer();
+            });
         }
-        const col = document.getElementById("flagshipCol_" + colIndex);
-        if (!col) return;
-        const slides = col.querySelectorAll(".dk-flagship-card");
-        const dots = col.querySelectorAll(".dk-flagship-dot");
-
-        slides.forEach((s, i) => s.classList.toggle("active", i === slideIndex));
-        dots.forEach((d, i) => d.classList.toggle("active", i === slideIndex));
-    };
+    }
 
     // ----------------------------------------------------
     // 4. UNMISSABLE DEALS SCROLL BUTTONS
