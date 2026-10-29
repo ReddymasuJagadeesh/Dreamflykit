@@ -1,0 +1,319 @@
+{
+  "ThemeSettings": {
+    "StoreTitle": "Dreamflykit • Travel Gear & Luggage",
+    "PrimaryColor": "#0f2b48",
+    "AccentColor": "#0284c7",
+    "SoftBackground": "#f8fafc",
+    "HeroBackground": "linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #ffffff 100%)",
+    "CardBorderRadius": "12px"
+  },
+  "TopNoticeBar": {
+    "IsEnabled": true,
+    "Item1Text": "Delivering Across USA, UK, Canada, Australia & More",
+    "Item2Text": "100% Genuine Products",
+    "Item3Text": "Student Trusted",
+    "SupportPhone": "+91 91234 56789",
+    "TrackOrderUrl": "/Orders/Track"
+  },
+  "HeroBanner": {
+    "IsEnabled": true,
+    "Heading": "Travel Gear",
+    "HeadingBadge": "✈️",
+    "Subtitle": "Everything you need for a smooth, comfortable and stress-free journey.",
+    "ImageUrl": "/images/travel-hub/hero-travel-banner.webp",
+    "IsUploadingSoon": true,
+    "Badges": [
+      {
+        "Id": "badge-1",
+        "Icon": "shield-check",
+        "Title": "Curated for Every Traveler",
+        "Subtitle": "Students, Tourists, Professionals & Honeymooners"
+      },
+      {
+        "Id": "badge-2",
+        "Icon": "award",
+        "Title": "Premium Quality",
+        "Subtitle": "Durable, reliable & long-lasting products"
+      },
+      {
+        "Id": "badge-3",
+        "Icon": "layers",
+        "Title": "Smart & Compact",
+        "Subtitle": "Space-saving & travel-friendly essentials"
+      },
+      {
+        "Id": "badge-4",
+        "Icon": "globe",
+        "Title": "Ready for Any Destination",
+        "Subtitle": "From visa to boarding, we've got you covered"
+      }
+    ],
+    "PerfectJourneyTitle": "Perfect for Every Journey",
+    "PerfectJourneys": [
+      {
+        "Id": "journey-1",
+        "Icon": "graduation-cap",
+        "Title": "MS / Study Abroad",
+        "Subtitle": "Long-term stay essentials",
+        "TargetUrl": "/category/travel-gear?subcategory=packing-organizers"
+      },
+      {
+        "Id": "journey-2",
+        "Icon": "heart",
+        "Title": "Honeymoon Trips",
+        "Subtitle": "Romantic & comfortable travel",
+        "TargetUrl": "/category/travel-gear?subcategory=comfort-essentials"
+      },
+      {
+        "Id": "journey-3",
+        "Icon": "users",
+        "Title": "Family Vacations",
+        "Subtitle": "Safe & convenient packing",
+        "TargetUrl": "/category/travel-gear?subcategory=luggage-suitcases"
+      },
+      {
+        "Id": "journey-4",
+        "Icon": "briefcase",
+        "Title": "Business Trips",
+        "Subtitle": "Stay organized, travel smart",
+        "TargetUrl": "/category/travel-gear?subcategory=tech-accessories"
+      },
+      {
+        "Id": "journey-5",
+        "Icon": "backpack",
+        "Title": "Weekend Getaways",
+        "Subtitle": "Light, compact & hassle-free",
+        "TargetUrl": "/category/travel-gear?subcategory=toiletry-hygiene"
+      }
+    ]
+  },
+  "Sidebar": {
+    "TravelForTitle": "Travel For",
+    "TravelForItems": [
+      {
+        "Id": "tf-1",
+        "Title": "MS / Study Abroad Students",
+        "Subtitle": "Long stay essentials",
+        "TargetUrl": "/category/travel-gear?subcategory=packing-organizers",
+        "Icon": "graduation-cap"
+      },
+      {
+        "Id": "tf-2",
+        "Title": "Honeymoon Couples",
+        "Subtitle": "Romantic travel must-haves",
+        "TargetUrl": "/category/travel-gear?subcategory=comfort-essentials",
+        "Icon": "heart"
+      },
+      {
+        "Id": "tf-3",
+        "Title": "Family Travelers",
+        "Subtitle": "Comfort & convenience",
+        "TargetUrl": "/category/travel-gear?subcategory=luggage-suitcases",
+        "Icon": "users"
+      },
+      {
+        "Id": "tf-4",
+        "Title": "Business Travelers",
+        "Subtitle": "Smart & professional",
+        "TargetUrl": "/category/travel-gear?subcategory=tech-accessories",
+        "Icon": "briefcase"
+      },
+      {
+        "Id": "tf-5",
+        "Title": "Weekend Getaways",
+        "Subtitle": "Light & compact travel",
+        "TargetUrl": "/category/travel-gear?subcategory=toiletry-hygiene",
+        "Icon": "backpack"
+      }
+    ],
+    "QuizCard": {
+      "IsEnabled": true,
+      "Title": "Not Sure What You Need?",
+      "Subtitle": "Take our quick Travel Kit Quiz and get personalized picks!",
+      "ButtonText": "Take Quiz Now →",
+      "ButtonUrl": "/Kits/FindMyKit",
+      "ImageUrl": "/images/travel-hub/quiz-travel-box.webp",
+      "IsUploadingSoon": true
+    }
+  },
+  "ShopByCategories": {
+    "Heading": "Everything You Need, All in One Place",
+    "SortLabel": "Sort By: Popular",
+    "Cards": [
+      {
+        "Id": "cat-luggage-suitcases",
+        "Title": "Luggage & Suitcases",
+        "Subtitle": "Trolleys, backpacks, duffels & travel bags",
+        "Slug": "luggage-suitcases",
+        "ImageUrl": "/images/travel-hub/cat-luggage-suitcases.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=luggage-suitcases",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 1,
+        "IsActive": true,
+        "Icon": "luggage"
+      },
+      {
+        "Id": "cat-packing-organizers",
+        "Title": "Packing Organizers",
+        "Subtitle": "Packing cubes, pouches, socks & laundry bags",
+        "Slug": "packing-organizers",
+        "ImageUrl": "/images/travel-hub/cat-packing-organizers.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=packing-organizers",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 2,
+        "IsActive": true,
+        "Icon": "boxes"
+      },
+      {
+        "Id": "cat-comfort-essentials",
+        "Title": "Comfort Essentials",
+        "Subtitle": "Neck pillows, eye masks, earplugs & more",
+        "Slug": "comfort-essentials",
+        "ImageUrl": "/images/travel-hub/cat-comfort-essentials.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=comfort-essentials",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 3,
+        "IsActive": true,
+        "Icon": "smile"
+      },
+      {
+        "Id": "cat-adapters-converters",
+        "Title": "Adapters & Converters",
+        "Subtitle": "Universal adapters, voltage converters & plugs",
+        "Slug": "adapters-converters",
+        "ImageUrl": "/images/travel-hub/cat-adapters-converters.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=adapters-converters",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 4,
+        "IsActive": true,
+        "Icon": "zap"
+      },
+      {
+        "Id": "cat-bottles-hydration",
+        "Title": "Bottles & Hydration",
+        "Subtitle": "Water bottles, flasks, mugs & tumblers",
+        "Slug": "bottles-hydration",
+        "ImageUrl": "/images/travel-hub/cat-bottles-hydration.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=bottles-hydration",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 5,
+        "IsActive": true,
+        "Icon": "coffee"
+      },
+      {
+        "Id": "cat-toiletry-hygiene",
+        "Title": "Toiletry & Hygiene",
+        "Subtitle": "Toiletry bags, travel bottles, essentials & personal care",
+        "Slug": "toiletry-hygiene",
+        "ImageUrl": "/images/travel-hub/cat-toiletry-hygiene.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=toiletry-hygiene",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 6,
+        "IsActive": true,
+        "Icon": "droplet"
+      },
+      {
+        "Id": "cat-travel-documents",
+        "Title": "Travel Documents",
+        "Subtitle": "Passport holders, wallet, ID holders & card cases",
+        "Slug": "travel-documents",
+        "ImageUrl": "/images/travel-hub/cat-travel-documents.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=travel-documents",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 7,
+        "IsActive": true,
+        "Icon": "file-text"
+      },
+      {
+        "Id": "cat-sim-connectivity",
+        "Title": "SIM & Connectivity",
+        "Subtitle": "Travel SIMs, WiFi devices, data cards & more",
+        "Slug": "sim-connectivity",
+        "ImageUrl": "/images/travel-hub/cat-sim-connectivity.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=sim-connectivity",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 8,
+        "IsActive": true,
+        "Icon": "wifi"
+      },
+      {
+        "Id": "cat-travel-insurance",
+        "Title": "Travel Insurance",
+        "Subtitle": "Stay protected on your journey anywhere",
+        "Slug": "travel-insurance",
+        "ImageUrl": "/images/travel-hub/cat-travel-insurance.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=travel-insurance",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 9,
+        "IsActive": true,
+        "Icon": "shield"
+      },
+      {
+        "Id": "cat-locks-security",
+        "Title": "Locks & Security",
+        "Subtitle": "TSA locks, luggage straps, anti-theft gear",
+        "Slug": "locks-security",
+        "ImageUrl": "/images/travel-hub/cat-locks-security.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=locks-security",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 10,
+        "IsActive": true,
+        "Icon": "lock"
+      },
+      {
+        "Id": "cat-tech-accessories",
+        "Title": "Tech Accessories",
+        "Subtitle": "Power banks, cables, chargers & more",
+        "Slug": "tech-accessories",
+        "ImageUrl": "/images/travel-hub/cat-tech-accessories.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=tech-accessories",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 11,
+        "IsActive": true,
+        "Icon": "battery-charging"
+      },
+      {
+        "Id": "cat-travel-entertainment",
+        "Title": "Travel Entertainment",
+        "Subtitle": "Headphones, stands, reading lights & more",
+        "Slug": "travel-entertainment",
+        "ImageUrl": "/images/travel-hub/cat-travel-entertainment.webp",
+        "TargetUrl": "/category/travel-gear?subcategory=travel-entertainment",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 12,
+        "IsActive": true,
+        "Icon": "headphones"
+      }
+    ]
+  },
+  "BottomTrustBar": {
+    "IsEnabled": true,
+    "Badges": [
+      {
+        "Icon": "truck",
+        "Title": "Fast & Reliable Delivery",
+        "Subtitle": "On-time delivery worldwide"
+      },
+      {
+        "Icon": "shield-check",
+        "Title": "100% Secure Payments",
+        "Subtitle": "Multiple payment options"
+      },
+      {
+        "Icon": "check-circle",
+        "Title": "Premium Quality Products",
+        "Subtitle": "Genuine & trusted"
+      },
+      {
+        "Icon": "headphones",
+        "Title": "24/7 Customer Support",
+        "Subtitle": "We're here to help"
+      },
+      {
+        "Icon": "rotate-ccw",
+        "Title": "Easy Returns",
+        "Subtitle": "Hassle-free returns"
+      }
+    ]
+  }
+}

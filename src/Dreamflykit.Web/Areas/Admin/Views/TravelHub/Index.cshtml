@@ -1,0 +1,572 @@
+@model Dreamflykit.Application.TravelHub.Models.TravelHubDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Travel Gear Category Hub Management";
+    var hub = Model ?? Dreamflykit.Application.TravelHub.Models.TravelHubDto.CreateDefault();
+    var theme = hub.ThemeSettings ?? new();
+    var hero = hub.HeroBanner ?? new();
+    var sidebar = hub.Sidebar ?? new();
+    var shopCats = hub.ShopByCategories ?? new();
+    var bottomTrust = hub.BottomTrustBar ?? new();
+}
+
+<div class="dk-admin-content" style="max-width: 1300px; margin: 0 auto; padding: 24px;">
+
+    <!-- TOP HEADER BAR -->
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; background: #ffffff; padding: 20px 24px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+        <div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 26px;">✈️</span>
+                <h1 style="font-size: 22px; font-weight: 800; color: #0f2b48; margin: 0;">Travel Gear Hub Management</h1>
+            </div>
+            <p style="font-size: 13px; color: #64748b; margin: 4px 0 0 0;">
+                Full control over Hero Banner, "Travel For" Sidebar, Quiz Promo, and all 12 Travel Subcategories. Upload new images or toggle "Uploading Soon" placeholders anytime.
+            </p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <a href="/category/travel-gear" target="_blank" class="dk-btn" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 10px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                View Live Hub
+            </a>
+
+            <button type="button" class="dk-btn" id="btnSaveTravelTop" onclick="saveTravelHubConfig()" style="background: #0f2b48; color: #ffffff; border: none; padding: 11px 26px; font-size: 14px; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(15, 43, 72, 0.3);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save Settings
+            </button>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION MESSAGES -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 600;">
+            ✓ @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 600;">
+            ✕ @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <form id="travelHubForm" method="post" asp-antiforgery="true">
+
+        <!-- ========================================================
+             1. THEME SETTINGS
+        ========================================================= -->
+        <div class="dk-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px;">
+            <h3 style="font-size: 17px; font-weight: 800; color: #0f2b48; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                <span>🎨</span> Theme &amp; Brand Colors
+            </h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+                <div>
+                    <label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Store Title</label>
+                    <input type="text" id="themeStoreTitle" value="@theme.StoreTitle" class="dk-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                </div>
+                <div>
+                    <label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Primary Color (Navy)</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="color" id="themePrimaryColorPicker" value="@theme.PrimaryColor" onchange="document.getElementById('themePrimaryColor').value = this.value" style="width: 40px; height: 38px; border: none; cursor: pointer; border-radius: 6px;" />
+                        <input type="text" id="themePrimaryColor" value="@theme.PrimaryColor" class="dk-input" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                    </div>
+                </div>
+                <div>
+                    <label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Accent Color (Sky Blue)</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="color" id="themeAccentColorPicker" value="@theme.AccentColor" onchange="document.getElementById('themeAccentColor').value = this.value" style="width: 40px; height: 38px; border: none; cursor: pointer; border-radius: 6px;" />
+                        <input type="text" id="themeAccentColor" value="@theme.AccentColor" class="dk-input" style="flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             2. HERO BANNER CONFIGURATION & LIVE UPLOAD
+        ========================================================= -->
+        <div class="dk-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <h3 style="font-size: 17px; font-weight: 800; color: #0f2b48; margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <span>✈️</span> Hero Banner &amp; "Perfect for Every Journey" Personas
+                </h3>
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">
+                    <input type="checkbox" id="heroIsEnabled" @(hero.IsEnabled ? "checked" : "") style="width: 18px; height: 18px;" />
+                    <span>Hero Section Visible</span>
+                </label>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; margin-bottom: 20px;">
+                <!-- Left Texts -->
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <div>
+                        <label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Heading Text</label>
+                        <input type="text" id="heroHeading" value="@hero.Heading" class="dk-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                    </div>
+
+                    <div>
+                        <label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Heading Airplane Emoji / Icon</label>
+                        <input type="text" id="heroHeadingBadge" value="@hero.HeadingBadge" class="dk-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                    </div>
+
+                    <div>
+                        <label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Subtitle</label>
+                        <textarea id="heroSubtitle" rows="2" class="dk-input" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">@hero.Subtitle</textarea>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #0369a1; cursor: pointer;">
+                            <input type="checkbox" id="heroIsUploadingSoon" @(hero.IsUploadingSoon ? "checked" : "") style="width: 18px; height: 18px;" />
+                            <span>Show "Uploading Soon" Placeholder on Hero Banner</span>
+                        </label>
+                        <span style="font-size: 11.5px; color: #64748b; display: block; margin-top: 4px;">
+                            Uncheck this when you upload a custom hero banner image so visitors see your photo immediately.
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Right Hero Image Preview & Live Upload -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <span style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 10px; align-self: flex-start;">Hero Banner Image</span>
+                    <div style="width: 100%; height: 180px; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                        <img id="heroImagePreview" src="@(string.IsNullOrWhiteSpace(hero.ImageUrl) ? "/images/travel-hub/hero-travel-banner.svg" : hero.ImageUrl)" alt="Hero Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                    </div>
+
+                    <input type="hidden" id="heroImageUrl" value="@hero.ImageUrl" />
+
+                    <div style="display: flex; gap: 8px; width: 100%;">
+                        <label class="dk-btn" style="flex: 1; background: #0284c7; color: #ffffff; text-align: center; padding: 8px 12px; font-size: 12.5px; font-weight: 700; border-radius: 6px; cursor: pointer;">
+                            <input type="file" accept="image/*" style="display: none;" onchange="uploadImageAsync(this, 'heroImageUrl', 'heroImagePreview', 'heroIsUploadingSoon')" />
+                            📷 Upload Hero Image
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Badges Editor -->
+            <h4 style="font-size: 14px; font-weight: 800; color: #0f2b48; margin: 16px 0 10px 0;">4 Key Feature Badges (Under Hero Subtitle)</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;" id="heroBadgesContainer">
+                @if (hero.Badges != null)
+                {
+                    @for (int i = 0; i < hero.Badges.Count; i++)
+                    {
+                        var b = hero.Badges[i];
+                        <div class="hero-badge-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                            <input type="hidden" class="badge-id" value="@b.Id" />
+                            <input type="hidden" class="badge-icon" value="@b.Icon" />
+                            <div style="margin-bottom: 6px;">
+                                <label style="font-size: 11.5px; font-weight: 700; color: #475569;">Title @(i+1)</label>
+                                <input type="text" class="badge-title dk-input" value="@b.Title" style="width: 100%; padding: 6px 10px; font-size: 12.5px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                            </div>
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700; color: #475569;">Subtitle</label>
+                                <input type="text" class="badge-sub dk-input" value="@b.Subtitle" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <!-- 5 Perfect Journey Personas Editor -->
+            <h4 style="font-size: 14px; font-weight: 800; color: #0f2b48; margin: 24px 0 10px 0;">5 "Perfect for Every Journey" Personas (Right Card)</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;" id="heroJourneysContainer">
+                @if (hero.PerfectJourneys != null)
+                {
+                    @for (int i = 0; i < hero.PerfectJourneys.Count; i++)
+                    {
+                        var j = hero.PerfectJourneys[i];
+                        <div class="hero-journey-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                            <input type="hidden" class="journey-id" value="@j.Id" />
+                            <input type="hidden" class="journey-icon" value="@j.Icon" />
+                            <div style="margin-bottom: 6px;">
+                                <label style="font-size: 11px; font-weight: 700; color: #475569;">Persona @(i+1)</label>
+                                <input type="text" class="journey-title dk-input" value="@j.Title" style="width: 100%; padding: 6px 10px; font-size: 12.5px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                            </div>
+                            <div style="margin-bottom: 6px;">
+                                <label style="font-size: 11px; font-weight: 700; color: #475569;">Subtitle</label>
+                                <input type="text" class="journey-sub dk-input" value="@j.Subtitle" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: 700; color: #475569;">Target Link</label>
+                                <input type="text" class="journey-target-url dk-input" value="@j.TargetUrl" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- ========================================================
+             3. SIDEBAR: TRAVEL FOR & QUIZ PROMO CARD
+        ========================================================= -->
+        <div class="dk-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px;">
+            <h3 style="font-size: 17px; font-weight: 800; color: #0f2b48; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                <span>🧭</span> Sidebar Widgets ("Travel For" &amp; Quiz Promo)
+            </h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <!-- Travel For List -->
+                <div>
+                    <h4 style="font-size: 14px; font-weight: 800; color: #0f2b48; margin: 0 0 10px 0;">"Travel For" Sidebar Links</h4>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 12px; font-weight: 700; color: #475569;">Header Title</label>
+                        <input type="text" id="sidebarTravelForTitle" value="@sidebar.TravelForTitle" class="dk-input" style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                    </div>
+
+                    <div id="sidebarTravelForContainer" style="display: flex; flex-direction: column; gap: 10px;">
+                        @if (sidebar.TravelForItems != null)
+                        {
+                            @for (int i = 0; i < sidebar.TravelForItems.Count; i++)
+                            {
+                                var item = sidebar.TravelForItems[i];
+                                <div class="travel-for-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                                    <input type="hidden" class="tf-id" value="@item.Id" />
+                                    <input type="hidden" class="tf-icon" value="@item.Icon" />
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
+                                        <input type="text" class="tf-title dk-input" value="@item.Title" placeholder="Title" style="padding: 5px 8px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                        <input type="text" class="tf-sub dk-input" value="@item.Subtitle" placeholder="Subtitle" style="padding: 5px 8px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                    </div>
+                                    <input type="text" class="tf-target-url dk-input" value="@item.TargetUrl" placeholder="Target URL" style="width: 100%; padding: 5px 8px; font-size: 11.5px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <!-- Quiz Promo Card -->
+                <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 16px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <h4 style="font-size: 14px; font-weight: 800; color: #9a3412; margin: 0;">Travel Kit Quiz Promo</h4>
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #9a3412; cursor: pointer;">
+                            <input type="checkbox" id="quizIsEnabled" @(sidebar.QuizCard?.IsEnabled == true ? "checked" : "") style="width: 16px; height: 16px;" />
+                            <span>Enabled</span>
+                        </label>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+                        <div>
+                            <label style="font-size: 11.5px; font-weight: 700; color: #7c2d12;">Quiz Title</label>
+                            <input type="text" id="quizTitle" value="@sidebar.QuizCard?.Title" class="dk-input" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #fed7aa; border-radius: 4px;" />
+                        </div>
+                        <div>
+                            <label style="font-size: 11.5px; font-weight: 700; color: #7c2d12;">Subtitle</label>
+                            <input type="text" id="quizSubtitle" value="@sidebar.QuizCard?.Subtitle" class="dk-input" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #fed7aa; border-radius: 4px;" />
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700; color: #7c2d12;">Button Text</label>
+                                <input type="text" id="quizButtonText" value="@sidebar.QuizCard?.ButtonText" class="dk-input" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #fed7aa; border-radius: 4px;" />
+                            </div>
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700; color: #7c2d12;">Target Link</label>
+                                <input type="text" id="quizButtonUrl" value="@sidebar.QuizCard?.ButtonUrl" class="dk-input" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #fed7aa; border-radius: 4px;" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #9a3412; cursor: pointer; margin-top: 4px;">
+                                <input type="checkbox" id="quizIsUploadingSoon" @(sidebar.QuizCard?.IsUploadingSoon == true ? "checked" : "") style="width: 16px; height: 16px;" />
+                                <span>Show "Uploading Soon" for Quiz Graphic</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Image Upload -->
+                    <div style="display: flex; align-items: center; gap: 12px; background: #ffffff; padding: 10px; border-radius: 6px; border: 1px dashed #fed7aa;">
+                        <img id="quizImagePreview" src="@(string.IsNullOrWhiteSpace(sidebar.QuizCard?.ImageUrl) ? "/images/travel-hub/placeholder-uploading-soon.svg" : sidebar.QuizCard.ImageUrl)" alt="Quiz Preview" style="width: 50px; height: 50px; object-fit: contain;" />
+                        <input type="hidden" id="quizImageUrl" value="@sidebar.QuizCard?.ImageUrl" />
+                        <label class="dk-btn" style="background: #9a3412; color: #ffffff; padding: 6px 12px; font-size: 11.5px; font-weight: 700; border-radius: 4px; cursor: pointer;">
+                            <input type="file" accept="image/*" style="display: none;" onchange="uploadImageAsync(this, 'quizImageUrl', 'quizImagePreview', 'quizIsUploadingSoon')" />
+                            📷 Upload Quiz Image
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             4. ALL 12 SHOP BY CATEGORIES CARDS (IMAGE UPLOADS + DETAILS)
+        ========================================================= -->
+        <div class="dk-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <div>
+                    <h3 style="font-size: 17px; font-weight: 800; color: #0f2b48; margin: 0; display: flex; align-items: center; gap: 8px;">
+                        <span>🧳</span> 12 Travel Subcategories (Upload Images &amp; Edit Content)
+                    </h3>
+                    <p style="font-size: 12.5px; color: #64748b; margin: 4px 0 0 0;">
+                        Every subcategory card has a live image upload button. You can also toggle "Uploading Soon" on/off for each item individually.
+                    </p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 16px;" id="subcatCardsContainer">
+                @if (shopCats.Cards != null)
+                {
+                    @for (int i = 0; i < shopCats.Cards.Count; i++)
+                    {
+                        var c = shopCats.Cards[i];
+                        <div class="subcat-card-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <input type="hidden" class="card-id" value="@c.Id" />
+                            <input type="hidden" class="card-slug" value="@c.Slug" />
+                            <input type="hidden" class="card-icon" value="@c.Icon" />
+
+                            <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                                <!-- Image Preview & Upload -->
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 110px; flex-shrink: 0;">
+                                    <div style="width: 100px; height: 90px; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 6px;">
+                                        <img id="cardPreview_@i" src="@(string.IsNullOrWhiteSpace(c.ImageUrl) ? "/images/travel-hub/placeholder-uploading-soon.svg" : c.ImageUrl)" alt="@c.Title" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                                    </div>
+                                    <input type="hidden" id="cardImageUrl_@i" class="card-image-url" value="@c.ImageUrl" />
+
+                                    <label class="dk-btn" style="width: 100%; background: #0284c7; color: #ffffff; font-size: 11px; font-weight: 700; padding: 4px 6px; border-radius: 4px; text-align: center; cursor: pointer;">
+                                        <input type="file" accept="image/*" style="display: none;" onchange="uploadImageAsync(this, 'cardImageUrl_@i', 'cardPreview_@i', 'cardSoon_@i')" />
+                                        📷 Upload
+                                    </label>
+                                </div>
+
+                                <!-- Text Fields -->
+                                <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 700; color: #475569;">Title</label>
+                                        <input type="text" class="card-title dk-input" value="@c.Title" style="width: 100%; padding: 5px 8px; font-size: 12.5px; font-weight: 700; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                    </div>
+
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 700; color: #475569;">Subtitle / Items</label>
+                                        <input type="text" class="card-subtitle dk-input" value="@c.Subtitle" style="width: 100%; padding: 5px 8px; font-size: 11.5px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                    </div>
+
+                                    <div>
+                                        <label style="font-size: 11px; font-weight: 700; color: #475569;">Target Link</label>
+                                        <input type="text" class="card-target-url dk-input" value="@c.TargetUrl" style="width: 100%; padding: 5px 8px; font-size: 11.5px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 8px;">
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: #0284c7; cursor: pointer;">
+                                    <input type="checkbox" id="cardSoon_@i" class="card-is-soon" @(c.IsUploadingSoon ? "checked" : "") style="width: 15px; height: 15px;" />
+                                    <span>Uploading Soon Badge</span>
+                                </label>
+
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                        <span style="font-size: 11px; color: #64748b;">Order:</span>
+                                        <input type="number" class="card-order dk-input" value="@c.DisplayOrder" style="width: 48px; padding: 3px 5px; font-size: 11.5px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                    </div>
+
+                                    <label style="display: flex; align-items: center; gap: 4px; font-size: 11.5px; color: #334155; cursor: pointer;">
+                                        <input type="checkbox" class="card-is-active" @(c.IsActive ? "checked" : "") style="width: 15px; height: 15px;" />
+                                        <span>Active</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- BOTTOM ACTION BUTTONS -->
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 20px 24px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+            <form asp-action="ResetToDefault" method="post" style="margin: 0;" onsubmit="return confirm('Are you sure you want to reset Travel Hub to original default settings?');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="dk-btn" style="background: #f1f5f9; color: #dc2626; border: 1px solid #fca5a5; padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer;">
+                    ↺ Reset to Default
+                </button>
+            </form>
+
+            <button type="button" class="dk-btn" onclick="saveTravelHubConfig()" style="background: #0f2b48; color: #ffffff; border: none; padding: 12px 36px; font-size: 15px; font-weight: 800; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(15, 43, 72, 0.35);">
+                Save Travel Hub Configuration
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    // AJAX IMAGE UPLOAD HANDLER
+    function uploadImageAsync(inputElement, targetFieldId, previewImgId, soonCheckboxId) {
+        if (!inputElement.files || inputElement.files.length === 0) return;
+
+        var file = inputElement.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('targetField', targetFieldId);
+
+        var tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (tokenInput) {
+            formData.append('__RequestVerificationToken', tokenInput.value);
+        }
+
+        var originalBtnText = inputElement.parentElement.innerText;
+        inputElement.parentElement.innerText = '⏳ Uploading...';
+
+        fetch('/Admin/TravelHub/UploadImage', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                var field = document.getElementById(targetFieldId);
+                if (field) field.value = data.url;
+
+                var preview = document.getElementById(previewImgId);
+                if (preview) preview.src = data.url;
+
+                if (soonCheckboxId) {
+                    var soonCheckbox = document.getElementById(soonCheckboxId);
+                    if (soonCheckbox) soonCheckbox.checked = false;
+                }
+
+                alert('✓ ' + (data.message || 'Image uploaded successfully!'));
+            } else {
+                alert('✕ ' + (data.message || 'Image upload failed.'));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('✕ Upload failed: ' + err.message);
+        })
+        .finally(() => {
+            inputElement.parentElement.innerHTML = '<input type="file" accept="image/*" style="display:none;" onchange="uploadImageAsync(this, \'' + targetFieldId + '\', \'' + previewImgId + '\', \'' + (soonCheckboxId || '') + '\')" />📷 Upload Image';
+        });
+    }
+
+    // SAVE COMPLETE TRAVEL HUB CONFIG
+    function saveTravelHubConfig() {
+        var btn = document.getElementById('btnSaveTravelTop');
+        var originalText = btn.innerHTML;
+        btn.innerHTML = '<span>Saving...</span>';
+        btn.disabled = true;
+
+        var badges = [];
+        document.querySelectorAll('.hero-badge-row').forEach(row => {
+            badges.push({
+                id: row.querySelector('.badge-id')?.value || '',
+                icon: row.querySelector('.badge-icon')?.value || '',
+                title: row.querySelector('.badge-title')?.value || '',
+                subtitle: row.querySelector('.badge-sub')?.value || ''
+            });
+        });
+
+        var journeys = [];
+        document.querySelectorAll('.hero-journey-row').forEach(row => {
+            journeys.push({
+                id: row.querySelector('.journey-id')?.value || '',
+                icon: row.querySelector('.journey-icon')?.value || '',
+                title: row.querySelector('.journey-title')?.value || '',
+                subtitle: row.querySelector('.journey-sub')?.value || '',
+                targetUrl: row.querySelector('.journey-target-url')?.value || '/category/travel-gear'
+            });
+        });
+
+        var travelForItems = [];
+        document.querySelectorAll('.travel-for-row').forEach(row => {
+            travelForItems.push({
+                id: row.querySelector('.tf-id')?.value || '',
+                icon: row.querySelector('.tf-icon')?.value || '',
+                title: row.querySelector('.tf-title')?.value || '',
+                subtitle: row.querySelector('.tf-sub')?.value || '',
+                targetUrl: row.querySelector('.tf-target-url')?.value || '/category/travel-gear'
+            });
+        });
+
+        var cards = [];
+        document.querySelectorAll('.subcat-card-row').forEach(row => {
+            cards.push({
+                id: row.querySelector('.card-id')?.value || '',
+                slug: row.querySelector('.card-slug')?.value || '',
+                icon: row.querySelector('.card-icon')?.value || '',
+                title: row.querySelector('.card-title')?.value || '',
+                subtitle: row.querySelector('.card-subtitle')?.value || '',
+                targetUrl: row.querySelector('.card-target-url')?.value || '/category/travel-gear',
+                imageUrl: row.querySelector('.card-image-url')?.value || '',
+                isUploadingSoon: row.querySelector('.card-is-soon')?.checked || false,
+                displayOrder: parseInt(row.querySelector('.card-order')?.value || '1', 10),
+                isActive: row.querySelector('.card-is-active')?.checked || false
+            });
+        });
+
+        var payload = {
+            themeSettings: {
+                storeTitle: document.getElementById('themeStoreTitle')?.value || 'Dreamflykit • Travel Gear & Luggage',
+                primaryColor: document.getElementById('themePrimaryColor')?.value || '#0f2b48',
+                accentColor: document.getElementById('themeAccentColor')?.value || '#0284c7',
+                softBackground: '#f8fafc',
+                heroBackground: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #ffffff 100%)',
+                cardBorderRadius: '12px'
+            },
+            heroBanner: {
+                isEnabled: document.getElementById('heroIsEnabled')?.checked || false,
+                heading: document.getElementById('heroHeading')?.value || 'Travel Gear',
+                headingBadge: document.getElementById('heroHeadingBadge')?.value || '✈️',
+                subtitle: document.getElementById('heroSubtitle')?.value || '',
+                imageUrl: document.getElementById('heroImageUrl')?.value || '',
+                isUploadingSoon: document.getElementById('heroIsUploadingSoon')?.checked || false,
+                badges: badges,
+                perfectJourneyTitle: 'Perfect for Every Journey',
+                perfectJourneys: journeys
+            },
+            sidebar: {
+                travelForTitle: document.getElementById('sidebarTravelForTitle')?.value || 'Travel For',
+                travelForItems: travelForItems,
+                quizCard: {
+                    isEnabled: document.getElementById('quizIsEnabled')?.checked || false,
+                    title: document.getElementById('quizTitle')?.value || 'Not Sure What You Need?',
+                    subtitle: document.getElementById('quizSubtitle')?.value || '',
+                    buttonText: document.getElementById('quizButtonText')?.value || 'Take Quiz Now →',
+                    buttonUrl: document.getElementById('quizButtonUrl')?.value || '/Kits/FindMyKit',
+                    imageUrl: document.getElementById('quizImageUrl')?.value || '',
+                    isUploadingSoon: document.getElementById('quizIsUploadingSoon')?.checked || false
+                }
+            },
+            shopByCategories: {
+                heading: 'Everything You Need, All in One Place',
+                sortLabel: 'Sort By: Popular',
+                cards: cards
+            },
+            bottomTrustBar: {
+                isEnabled: true,
+                badges: [
+                    { icon: 'truck', title: 'Fast & Reliable Delivery', subtitle: 'On-time delivery worldwide' },
+                    { icon: 'shield-check', title: '100% Secure Payments', subtitle: 'Multiple payment options' },
+                    { icon: 'check-circle', title: 'Premium Quality Products', subtitle: 'Genuine & trusted' },
+                    { icon: 'headphones', title: '24/7 Customer Support', subtitle: "We're here to help" },
+                    { icon: 'rotate-ccw', title: 'Easy Returns', subtitle: 'Hassle-free returns' }
+                ]
+            }
+        };
+
+        var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+        fetch('/Admin/TravelHub/Save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('✓ Travel Gear Category Hub settings saved successfully!');
+            } else {
+                alert('✕ ' + (data.message || 'Failed to save configuration.'));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('✕ Error saving configuration: ' + err.message);
+        })
+        .finally(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+    }
+</script>
+

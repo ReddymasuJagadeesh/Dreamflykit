@@ -1,0 +1,1260 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.TravelHub ?? Dreamflykit.Application.TravelHub.Models.TravelHubDto.CreateDefault();
+    var theme = hub.ThemeSettings ?? new();
+    var notice = hub.TopNoticeBar ?? new();
+    var hero = hub.HeroBanner ?? new();
+    var sidebar = hub.Sidebar ?? new();
+    var shopCats = hub.ShopByCategories ?? new();
+    var bottomTrust = hub.BottomTrustBar ?? new();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+    var products = Model.Products ?? new List<Dreamflykit.Application.Catalog.Models.ProductListItem>();
+}
+
+<div class="dk-travel-hub-root" id="travelHubRoot">
+
+    @if (canManage)
+    {
+        <!-- ADMIN QUICK BAR -->
+        <div class="dk-travel-admin-bar">
+            <div class="dk-travel-admin-pill">
+                <span class="dk-admin-badge-dot"></span>
+                <span>SUPER ADMIN CONTROLS</span>
+            </div>
+            <span class="dk-travel-admin-text">
+                Managing <strong>Travel Gear Category Hub</strong> • Super Admin can customize hero banner, 12 categories, quiz promo, and live upload images.
+            </span>
+            <a href="/Admin/TravelHub" class="dk-travel-admin-link">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Manage Travel Hub
+            </a>
+        </div>
+    }
+
+    <!-- ========================================================
+         TOP BREADCRUMB
+    ========================================================= -->
+    <div class="dk-shell" style="padding-top: 10px; padding-bottom: 8px;">
+        <nav class="dk-travel-breadcrumb" aria-label="Breadcrumb">
+            <a href="/" class="dk-travel-bc-link">Home</a>
+            <span class="dk-travel-bc-sep">›</span>
+            <span class="dk-travel-bc-curr">Travel Gear</span>
+        </nav>
+    </div>
+
+    <!-- ========================================================
+         HERO SECTION (FULL WIDTH SHELL)
+    ========================================================= -->
+    @if (hero.IsEnabled)
+    {
+        <div class="dk-shell" style="margin-bottom: 24px;">
+            <div class="dk-travel-hero-card" style="background: @theme.HeroBackground;">
+                <!-- HERO LEFT -->
+                <div class="dk-travel-hero-left">
+                    <div class="dk-travel-hero-title-row">
+                        <h1 class="dk-travel-hero-title">@hero.Heading</h1>
+                        <span class="dk-travel-hero-plane-badge">@hero.HeadingBadge</span>
+                    </div>
+                    <p class="dk-travel-hero-subtitle">@hero.Subtitle</p>
+
+                    <!-- 4 Feature Pills -->
+                    <div class="dk-travel-hero-badges-grid">
+                        @if (hero.Badges != null)
+                        {
+                            @foreach (var b in hero.Badges)
+                            {
+                                <div class="dk-travel-hero-badge-item">
+                                    <div class="dk-travel-badge-icon">
+                                        @if (b.Icon == "shield-check")
+                                        {
+                                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0284c7" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                                        }
+                                        else if (b.Icon == "award")
+                                        {
+                                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#2563eb" stroke-width="2.2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                                        }
+                                        else if (b.Icon == "layers")
+                                        {
+                                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0891b2" stroke-width="2.2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                                        }
+                                        else
+                                        {
+                                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#059669" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                                        }
+                                    </div>
+                                    <div class="dk-travel-badge-texts">
+                                        <div class="dk-travel-badge-title">@b.Title</div>
+                                        <div class="dk-travel-badge-sub">@b.Subtitle</div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <!-- HERO CENTER (VISUAL / UPLOADING SOON) -->
+                <div class="dk-travel-hero-visual">
+                    @if (!string.IsNullOrWhiteSpace(hero.ImageUrl) && !hero.IsUploadingSoon)
+                    {
+                        <img src="@hero.ImageUrl" alt="Travel Gear Hero Banner" class="dk-travel-hero-img" />
+                    }
+                    else
+                    {
+                        <div class="dk-travel-hero-placeholder">
+                            <div class="dk-travel-ph-airplane">
+                                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 2L11 13"></path>
+                                    <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                                </svg>
+                            </div>
+                            <div class="dk-travel-ph-pill">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                <span>UPLOADING SOON</span>
+                            </div>
+                            <div class="dk-travel-ph-tag">Super Admin Replaceable</div>
+                            <div class="dk-travel-ph-hint">Admin panel can upload/replace image anytime</div>
+                        </div>
+                    }
+                </div>
+
+                <!-- HERO RIGHT (PERFECT FOR EVERY JOURNEY) -->
+                <div class="dk-travel-hero-right">
+                    <div class="dk-travel-journey-card">
+                        <h3 class="dk-travel-journey-title">@hero.PerfectJourneyTitle</h3>
+                        <div class="dk-travel-journey-list">
+                            @if (hero.PerfectJourneys != null)
+                            {
+                                @foreach (var j in hero.PerfectJourneys)
+                                {
+                                    <a href="@j.TargetUrl" class="dk-travel-journey-item">
+                                        <div class="dk-travel-journey-icon">
+                                            @if (j.Icon == "graduation-cap")
+                                            {
+                                                <span>🎓</span>
+                                            }
+                                            else if (j.Icon == "heart")
+                                            {
+                                                <span>💑</span>
+                                            }
+                                            else if (j.Icon == "users")
+                                            {
+                                                <span>👨‍👩‍👧‍👦</span>
+                                            }
+                                            else if (j.Icon == "briefcase")
+                                            {
+                                                <span>💼</span>
+                                            }
+                                            else
+                                            {
+                                                <span>🎒</span>
+                                            }
+                                        </div>
+                                        <div class="dk-travel-journey-info">
+                                            <span class="dk-travel-journey-name">@j.Title</span>
+                                            <span class="dk-travel-journey-sub">@j.Subtitle</span>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ========================================================
+         MAIN BODY: 2-COLUMN LAYOUT (SIDEBAR + 12 CARDS GRID)
+    ========================================================= -->
+    <div class="dk-shell dk-travel-main-layout">
+
+        <!-- ========================================================
+             LEFT SIDEBAR
+        ========================================================= -->
+        <aside class="dk-travel-sidebar">
+
+            <!-- WIDGET 1: TRAVEL FOR -->
+            <div class="dk-travel-for-card">
+                <div class="dk-travel-for-header" style="background: @theme.PrimaryColor;">
+                    <div class="dk-travel-for-header-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        <span>@sidebar.TravelForTitle</span>
+                    </div>
+                </div>
+                <div class="dk-travel-for-body">
+                    @if (sidebar.TravelForItems != null)
+                    {
+                        @foreach (var item in sidebar.TravelForItems)
+                        {
+                            <a href="@item.TargetUrl" class="dk-travel-for-row">
+                                <div class="dk-travel-for-row-left">
+                                    <span class="dk-travel-for-icon">
+                                        @if (item.Icon == "graduation-cap") { <span>🎓</span> }
+                                        else if (item.Icon == "heart") { <span>💑</span> }
+                                        else if (item.Icon == "users") { <span>👨‍👩‍👧‍👦</span> }
+                                        else if (item.Icon == "briefcase") { <span>💼</span> }
+                                        else { <span>🎒</span> }
+                                    </span>
+                                    <div class="dk-travel-for-texts">
+                                        <div class="dk-travel-for-item-title">@item.Title</div>
+                                        <div class="dk-travel-for-item-sub">@item.Subtitle</div>
+                                    </div>
+                                </div>
+                                <svg class="dk-travel-for-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </a>
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- WIDGET 2: TRAVEL KIT QUIZ CARD -->
+            @if (sidebar.QuizCard != null && sidebar.QuizCard.IsEnabled)
+            {
+                <div class="dk-travel-quiz-card">
+                    <h4 class="dk-travel-quiz-title">@sidebar.QuizCard.Title</h4>
+                    <p class="dk-travel-quiz-subtitle">@sidebar.QuizCard.Subtitle</p>
+                    <a href="@sidebar.QuizCard.ButtonUrl" class="dk-travel-quiz-btn" style="background: @theme.PrimaryColor;">
+                        <span>@sidebar.QuizCard.ButtonText</span>
+                    </a>
+
+                    <div class="dk-travel-quiz-visual">
+                        @if (!string.IsNullOrWhiteSpace(sidebar.QuizCard.ImageUrl) && !sidebar.QuizCard.IsUploadingSoon)
+                        {
+                            <img src="@sidebar.QuizCard.ImageUrl" alt="Travel Kit Quiz Box" class="dk-travel-quiz-img" />
+                        }
+                        else
+                        {
+                            <div class="dk-travel-box-placeholder">
+                                <div class="dk-travel-box-icon">🎁</div>
+                                <span class="dk-travel-box-pill">UPLOADING SOON</span>
+                                <span class="dk-travel-box-sub">Travel Kit Box</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+        </aside>
+
+        <!-- ========================================================
+             RIGHT MAIN CONTENT: 12 CATEGORIES GRID + PRODUCTS
+        ========================================================= -->
+        <main class="dk-travel-main-content">
+
+            <!-- HEADER ROW -->
+            <div class="dk-travel-section-header">
+                <h2 class="dk-travel-section-heading">@shopCats.Heading</h2>
+                <div class="dk-travel-sort-pill">
+                    <span>@shopCats.SortLabel</span>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+            </div>
+
+            <!-- 12 CATEGORIES GRID -->
+            <div class="dk-travel-cards-grid">
+                @if (shopCats.Cards != null)
+                {
+                    @foreach (var c in shopCats.Cards.Where(x => x.IsActive).OrderBy(x => x.DisplayOrder))
+                    {
+                        <div class="dk-travel-card">
+                            <!-- Card Image Area -->
+                            <div class="dk-travel-card-media">
+                                @if (!string.IsNullOrWhiteSpace(c.ImageUrl) && !c.IsUploadingSoon)
+                                {
+                                    <img src="@c.ImageUrl" alt="@c.Title" class="dk-travel-card-img" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <div class="dk-travel-card-placeholder">
+                                        <div class="dk-travel-ph-camera-icon">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+                                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                                <circle cx="12" cy="13" r="4"></circle>
+                                            </svg>
+                                        </div>
+                                        <span class="dk-travel-card-soon-badge">UPLOADING SOON</span>
+                                        <span class="dk-travel-card-soon-sub">Admin Replaceable</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="dk-travel-card-body">
+                                <h3 class="dk-travel-card-title">@c.Title</h3>
+                                <p class="dk-travel-card-desc">@c.Subtitle</p>
+                                <a href="@c.TargetUrl" class="dk-travel-shop-btn" style="color: @theme.AccentColor;">
+                                    <span>Shop Now</span>
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <!-- ========================================================
+                 CURATED TRAVEL GEAR PRODUCTS SECTION
+            ========================================================= -->
+            <div class="dk-travel-products-section" id="travel-products-section">
+                <div class="dk-travel-products-header">
+                    <div>
+                        <h2 class="dk-travel-section-heading">Curated Student Travel Essentials</h2>
+                        <p class="dk-travel-section-subtext">Flight-ready luggage, compression organizers, and destination adapters curated for international students.</p>
+                    </div>
+                    <span class="dk-travel-count-badge">@products.Count Products Ready</span>
+                </div>
+
+                @if (products.Count > 0)
+                {
+                    <div class="dk-travel-products-grid">
+                        @foreach (var prod in products)
+                        {
+                            var price = prod.SellingPrice;
+                            var mrp = prod.MRP > 0 ? prod.MRP : Math.Round(price * 1.35m, 0);
+                            var discountPercent = (int)Math.Round(prod.DiscountPercentage > 0 ? prod.DiscountPercentage : (mrp > price ? (mrp - price) / mrp * 100m : 0m));
+                            var rating = 4.6 + (Math.Abs(prod.Name.GetHashCode()) % 4) * 0.1;
+
+                            <div class="dk-travel-prod-card">
+                                <a href="/products/@prod.Slug" class="dk-travel-prod-thumb-link">
+                                    @if (discountPercent > 0)
+                                    {
+                                        <span class="dk-travel-discount-tag">@(discountPercent)% OFF</span>
+                                    }
+                                    <img src="@(string.IsNullOrWhiteSpace(prod.PrimaryImageUrl) ? "/images/travel-hub/placeholder-uploading-soon.svg" : prod.PrimaryImageUrl)"
+                                         alt="@prod.Name"
+                                         class="dk-travel-prod-img"
+                                         loading="lazy"
+                                         onerror="this.src='/images/travel-hub/placeholder-uploading-soon.svg';" />
+                                </a>
+
+                                <div class="dk-travel-prod-content">
+                                    <div class="dk-travel-rating-row">
+                                        <span class="dk-travel-star-badge">★ @rating.ToString("0.0")</span>
+                                        <span class="dk-travel-reviews-count">(student favorite)</span>
+                                    </div>
+
+                                    <h4 class="dk-travel-prod-name">
+                                        <a href="/products/@prod.Slug">@prod.Name</a>
+                                    </h4>
+
+                                    <div class="dk-travel-price-row">
+                                        <span class="dk-travel-current-price">₹@price.ToString("N0")</span>
+                                        @if (mrp > price)
+                                        {
+                                            <span class="dk-travel-mrp-price">₹@mrp.ToString("N0")</span>
+                                        }
+                                    </div>
+
+                                    <form asp-controller="Cart" asp-action="AddToCart" method="post" class="dk-travel-cart-form">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="productId" value="@prod.ProductId" />
+                                        <input type="hidden" name="quantity" value="1" />
+                                        <button type="submit" class="dk-travel-add-btn">
+                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                            <span>Add to Cart</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="dk-travel-no-products">
+                        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#94a3b8" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        <h3>Catalog Products Seeding</h3>
+                        <p>Travel gear products are being seeded. Please refresh the page or browse categories above.</p>
+                    </div>
+                }
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ========================================================
+         BOTTOM TRUST BADGES STRIP
+    ========================================================= -->
+    @if (bottomTrust != null && bottomTrust.IsEnabled && bottomTrust.Badges != null)
+    {
+        <div class="dk-travel-bottom-trust">
+            <div class="dk-shell dk-travel-trust-container">
+                @foreach (var tb in bottomTrust.Badges)
+                {
+                    <div class="dk-travel-trust-item">
+                        <div class="dk-travel-trust-icon">
+                            @if (tb.Icon == "truck")
+                            {
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0284c7" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            }
+                            else if (tb.Icon == "shield-check")
+                            {
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0284c7" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                            }
+                            else if (tb.Icon == "check-circle")
+                            {
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0284c7" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            }
+                            else if (tb.Icon == "headphones")
+                            {
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0284c7" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                            }
+                            else
+                            {
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0284c7" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+                            }
+                        </div>
+                        <div class="dk-travel-trust-texts">
+                            <span class="dk-travel-trust-title">@tb.Title</span>
+                            <span class="dk-travel-trust-sub">@tb.Subtitle</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+</div>
+
+<style>
+/* ========================================================
+   TRAVEL HUB COMPLETE ENTERPRISE CSS
+======================================================== */
+.dk-travel-hub-root {
+    width: 100%;
+    background-color: #f8fafc;
+    color: #1e293b;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    padding-bottom: 40px;
+}
+
+/* ADMIN BAR */
+.dk-travel-admin-bar {
+    background: linear-gradient(90deg, #091e36 0%, #0f2b48 100%);
+    color: #ffffff;
+    padding: 9px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.dk-travel-admin-pill {
+    background: rgba(2, 132, 199, 0.25);
+    border: 1px solid #38bdf8;
+    color: #38bdf8;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.dk-admin-badge-dot {
+    width: 7px;
+    height: 7px;
+    background: #38bdf8;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #38bdf8;
+}
+.dk-travel-admin-text {
+    flex: 1;
+    margin: 0 16px;
+    color: #e2e8f0;
+}
+.dk-travel-admin-link {
+    background: #0284c7;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s ease;
+}
+.dk-travel-admin-link:hover {
+    background: #0369a1;
+}
+
+/* BREADCRUMB */
+.dk-travel-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #64748b;
+}
+.dk-travel-bc-link {
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+.dk-travel-bc-link:hover {
+    color: #0284c7;
+}
+.dk-travel-bc-sep {
+    color: #94a3b8;
+    font-size: 14px;
+}
+.dk-travel-bc-curr {
+    color: #0f2b48;
+    font-weight: 600;
+}
+
+/* HERO SECTION */
+.dk-travel-hero-card {
+    border-radius: 16px;
+    border: 1px solid #dbeafe;
+    padding: 28px 32px;
+    box-shadow: 0 4px 20px rgba(15, 43, 72, 0.05);
+    display: grid;
+    grid-template-columns: 1.15fr 1fr 1fr;
+    gap: 24px;
+    align-items: center;
+}
+.dk-travel-hero-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.dk-travel-hero-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f2b48;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+.dk-travel-hero-plane-badge {
+    font-size: 26px;
+}
+.dk-travel-hero-subtitle {
+    font-size: 14px;
+    color: #475569;
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+}
+.dk-travel-hero-badges-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.dk-travel-hero-badge-item {
+    background: #ffffff;
+    border: 1px solid #e0f2fe;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    box-shadow: 0 2px 6px rgba(15, 43, 72, 0.03);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.dk-travel-hero-badge-item:hover {
+    transform: translateY(-2px);
+    border-color: #38bdf8;
+}
+.dk-travel-badge-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+.dk-travel-badge-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #0f2b48;
+    line-height: 1.3;
+}
+.dk-travel-badge-sub {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.3;
+    margin-top: 2px;
+}
+
+/* HERO VISUAL PLACEHOLDER */
+.dk-travel-hero-visual {
+    height: 100%;
+    min-height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-travel-hero-img {
+    max-width: 100%;
+    max-height: 260px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+.dk-travel-hero-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 230px;
+    background: linear-gradient(135deg, #091e36 0%, #0f2b48 100%);
+    border: 1.5px dashed #38bdf8;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.08);
+}
+.dk-travel-ph-airplane {
+    margin-bottom: 12px;
+    animation: dk-float 3s ease-in-out infinite;
+}
+@@keyframes dk-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+.dk-travel-ph-pill {
+    background: #0284c7;
+    border: 1px solid #38bdf8;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 6px 16px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+    margin-bottom: 8px;
+}
+.dk-travel-ph-tag {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 4px;
+}
+.dk-travel-ph-hint {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+/* HERO RIGHT: PERFECT FOR EVERY JOURNEY */
+.dk-travel-hero-right {
+    height: 100%;
+    display: flex;
+}
+.dk-travel-journey-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 18px;
+    width: 100%;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.dk-travel-journey-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f2b48;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid #f1f5f9;
+}
+.dk-travel-journey-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.dk-travel-journey-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: background 0.15s ease;
+}
+.dk-travel-journey-item:hover {
+    background: #f0f7fe;
+}
+.dk-travel-journey-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+}
+.dk-travel-journey-info {
+    display: flex;
+    flex-direction: column;
+}
+.dk-travel-journey-name {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #0f2b48;
+    line-height: 1.2;
+}
+.dk-travel-journey-sub {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.2;
+}
+
+/* 2-COLUMN MAIN LAYOUT */
+.dk-travel-main-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+/* SIDEBAR: TRAVEL FOR CARD */
+.dk-travel-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.dk-travel-for-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(15, 43, 72, 0.04);
+}
+.dk-travel-for-header {
+    padding: 14px 18px;
+    color: #ffffff;
+}
+.dk-travel-for-header-title {
+    font-size: 15px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.2px;
+}
+.dk-travel-for-body {
+    display: flex;
+    flex-direction: column;
+}
+.dk-travel-for-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    text-decoration: none;
+    transition: background 0.15s ease;
+}
+.dk-travel-for-row:last-child {
+    border-bottom: none;
+}
+.dk-travel-for-row:hover {
+    background: #f8fafc;
+}
+.dk-travel-for-row-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dk-travel-for-icon {
+    font-size: 16px;
+}
+.dk-travel-for-texts {
+    display: flex;
+    flex-direction: column;
+}
+.dk-travel-for-item-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #0f2b48;
+    line-height: 1.3;
+}
+.dk-travel-for-item-sub {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.2;
+}
+.dk-travel-for-chevron {
+    color: #94a3b8;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+}
+.dk-travel-for-row:hover .dk-travel-for-chevron {
+    transform: translateX(3px);
+    color: #0284c7;
+}
+
+/* SIDEBAR: QUIZ CARD */
+.dk-travel-quiz-card {
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    border: 1px solid #fed7aa;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 4px 12px rgba(251, 146, 60, 0.08);
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+.dk-travel-quiz-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #9a3412;
+    margin: 0 0 6px 0;
+}
+.dk-travel-quiz-subtitle {
+    font-size: 12.5px;
+    color: #7c2d12;
+    margin: 0 0 14px 0;
+    line-height: 1.4;
+}
+.dk-travel-quiz-btn {
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 9px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 3px 10px rgba(15, 43, 72, 0.2);
+    transition: transform 0.15s ease;
+    margin-bottom: 14px;
+}
+.dk-travel-quiz-btn:hover {
+    transform: translateY(-1px);
+}
+.dk-travel-quiz-visual {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-travel-quiz-img {
+    max-width: 100%;
+    max-height: 100px;
+    object-fit: contain;
+}
+.dk-travel-box-placeholder {
+    width: 100%;
+    height: 90px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1.5px dashed #f97316;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+}
+.dk-travel-box-icon {
+    font-size: 20px;
+}
+.dk-travel-box-pill {
+    font-size: 10px;
+    font-weight: 800;
+    color: #ea580c;
+    background: rgba(249, 115, 22, 0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+.dk-travel-box-sub {
+    font-size: 10px;
+    color: #7c2d12;
+}
+
+/* RIGHT CONTENT: SECTION HEADER */
+.dk-travel-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+.dk-travel-section-heading {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f2b48;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+.dk-travel-section-subtext {
+    font-size: 13px;
+    color: #64748b;
+    margin: 4px 0 0 0;
+}
+.dk-travel-sort-pill {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* 12 CATEGORIES GRID (6 across or 4 across responsive) */
+.dk-travel-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+    margin-bottom: 36px;
+}
+.dk-travel-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(15, 43, 72, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.dk-travel-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(15, 43, 72, 0.1);
+    border-color: #38bdf8;
+}
+.dk-travel-card-media {
+    width: 100%;
+    height: 120px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+.dk-travel-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8px;
+}
+.dk-travel-card-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #091e36 0%, #0f2b48 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    text-align: center;
+}
+.dk-travel-ph-camera-icon {
+    margin-bottom: 6px;
+}
+.dk-travel-card-soon-badge {
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.4px;
+    margin-bottom: 3px;
+}
+.dk-travel-card-soon-sub {
+    font-size: 8.5px;
+    color: #94a3b8;
+}
+
+.dk-travel-card-body {
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+}
+.dk-travel-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f2b48;
+    margin: 0 0 5px 0;
+    line-height: 1.3;
+}
+.dk-travel-card-desc {
+    font-size: 11px;
+    color: #64748b;
+    margin: 0 0 10px 0;
+    line-height: 1.35;
+    flex: 1;
+}
+.dk-travel-shop-btn {
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: gap 0.15s ease;
+}
+.dk-travel-shop-btn:hover {
+    gap: 7px;
+}
+
+/* CURATED PRODUCTS SECTION */
+.dk-travel-products-section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 3px 12px rgba(15, 43, 72, 0.04);
+}
+.dk-travel-products-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.dk-travel-count-badge {
+    background: #f0f7fe;
+    border: 1px solid #bae6fd;
+    color: #0369a1;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+}
+.dk-travel-products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+.dk-travel-prod-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.dk-travel-prod-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+.dk-travel-prod-thumb-link {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 180px;
+    background: #f8fafc;
+    overflow: hidden;
+}
+.dk-travel-discount-tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 3px 7px;
+    border-radius: 4px;
+    z-index: 2;
+}
+.dk-travel-prod-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 12px;
+    transition: transform 0.25s ease;
+}
+.dk-travel-prod-card:hover .dk-travel-prod-img {
+    transform: scale(1.04);
+}
+.dk-travel-prod-content {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.dk-travel-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.dk-travel-star-badge {
+    background: #22c55e;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.dk-travel-reviews-count {
+    font-size: 11px;
+    color: #94a3b8;
+}
+.dk-travel-prod-name {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin: 0 0 10px 0;
+    flex: 1;
+}
+.dk-travel-prod-name a {
+    color: #1e293b;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+.dk-travel-prod-name a:hover {
+    color: #0284c7;
+}
+.dk-travel-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.dk-travel-current-price {
+    font-size: 17px;
+    font-weight: 800;
+    color: #0f2b48;
+}
+.dk-travel-mrp-price {
+    font-size: 13px;
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+.dk-travel-cart-form {
+    margin: 0;
+}
+.dk-travel-add-btn {
+    width: 100%;
+    background: #0f2b48;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-size: 12.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.dk-travel-add-btn:hover {
+    background: #0284c7;
+}
+
+.dk-travel-no-products {
+    padding: 40px;
+    text-align: center;
+    color: #64748b;
+}
+
+/* BOTTOM TRUST BAR */
+.dk-travel-bottom-trust {
+    margin-top: 36px;
+    padding: 20px 0;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    background: #ffffff;
+}
+.dk-travel-trust-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.dk-travel-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-travel-trust-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #f0f7fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.dk-travel-trust-texts {
+    display: flex;
+    flex-direction: column;
+}
+.dk-travel-trust-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f2b48;
+    line-height: 1.2;
+}
+.dk-travel-trust-sub {
+    font-size: 11.5px;
+    color: #64748b;
+    line-height: 1.2;
+    margin-top: 2px;
+}
+
+/* RESPONSIVE BREAKPOINTS */
+@@media (max-width: 1200px) {
+    .dk-travel-hero-card {
+        grid-template-columns: 1fr 1fr;
+    }
+    .dk-travel-hero-right {
+        grid-column: span 2;
+    }
+    .dk-travel-cards-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .dk-travel-products-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@@media (max-width: 900px) {
+    .dk-travel-main-layout {
+        grid-template-columns: 1fr;
+    }
+    .dk-travel-hero-card {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+    .dk-travel-hero-right {
+        grid-column: span 1;
+    }
+    .dk-travel-cards-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .dk-travel-products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dk-travel-trust-container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+@@media (max-width: 600px) {
+    .dk-travel-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dk-travel-products-grid {
+        grid-template-columns: 1fr;
+    }
+    .dk-travel-hero-badges-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
