@@ -47,6 +47,7 @@ public sealed class StudyAbroadHubController : Controller
         ViewData["Title"] = "Get Abroad Education Loan in 48 Hours — Dreamflykit";
         var config = await _studyHubService.GetConfigAsync(cancellationToken);
         var page = config.EducationLoansPage ?? Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage();
+        page.EnsureDefaults();
         return View("EducationLoans", page);
     }
 

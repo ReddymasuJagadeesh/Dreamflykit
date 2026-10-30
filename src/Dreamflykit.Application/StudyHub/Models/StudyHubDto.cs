@@ -852,7 +852,141 @@ public sealed class StudyHubDto
     {
         return new EducationLoansPageDto
         {
-            TopNavBrandName = "UniCreds",
+            UseTataCapitalNavbar = true,
+            NavbarBrandName = "TATA CAPITAL",
+            NavbarBrandAccent = "CAPITAL",
+            NavbarLogoUrl = "",
+            NavbarBgColor = "#0A58A2",
+            NavbarLoansMenuTitle = "Loans for You",
+            NavbarEducationLoanTitle = "Education Loans",
+            NavbarEducationLoanUrl = "#overview",
+            NavbarRightCountriesTitle = "Education right countries",
+            CountryOptions = new List<EducationLoanCountryOptionDto>
+            {
+                new() { Name = "United States (USA)", FlagEmoji = "🇺🇸", Code = "USA", LoanAmountLimit = "Up to ₹1.5 Cr", InterestRate = "From 9.50% p.a.", Url = "#apply-loan-modal" },
+                new() { Name = "United Kingdom (UK)", FlagEmoji = "🇬🇧", Code = "UK", LoanAmountLimit = "Up to ₹1.2 Cr", InterestRate = "From 9.65% p.a.", Url = "#apply-loan-modal" },
+                new() { Name = "Canada", FlagEmoji = "🇨🇦", Code = "CAN", LoanAmountLimit = "Up to ₹1.0 Cr", InterestRate = "From 9.75% p.a.", Url = "#apply-loan-modal" },
+                new() { Name = "Australia", FlagEmoji = "🇦🇺", Code = "AUS", LoanAmountLimit = "Up to ₹1.2 Cr", InterestRate = "From 9.70% p.a.", Url = "#apply-loan-modal" },
+                new() { Name = "Germany", FlagEmoji = "🇩🇪", Code = "GER", LoanAmountLimit = "Up to ₹80 Lakhs", InterestRate = "From 8.99% p.a.", Url = "#apply-loan-modal" },
+                new() { Name = "Ireland", FlagEmoji = "🇮🇪", Code = "IRE", LoanAmountLimit = "Up to ₹90 Lakhs", InterestRate = "From 9.80% p.a.", Url = "#apply-loan-modal" }
+            },
+            MainNavItems = new List<EducationLoanNavItemDto>
+            {
+                new() { Title = "Loans for Business", Url = "#", HasDropdown = true, SubItems = new List<string> { "SME Working Capital", "Machinery Loans", "Business Expansion" } },
+                new() { Title = "Investment", Url = "#", HasDropdown = true, SubItems = new List<string> { "Mutual Funds", "Fixed Deposits", "Wealth Solutions" } },
+                new() { Title = "Insurance", Url = "#", HasDropdown = true, SubItems = new List<string> { "Student Travel Insurance", "Life Cover", "Health Protection" } },
+                new() { Title = "Apply", Url = "#apply-loan-modal", HasDropdown = true, SubItems = new List<string> { "Check Loan Eligibility", "Instant Sanction Letter", "Document Verification" } },
+                new() { Title = "Offers", Url = "#loan-partners", HasDropdown = false },
+                new() { Title = "Quick Pay", Url = "#emi-calculator", HasDropdown = false }
+            },
+            SearchPlaceholder = "Search...",
+            SearchTargetUrl = "/search",
+            NotificationCount = 1,
+            NotificationText = "Special Offer: Zero Processing Fee on USA/UK Abroad Education Loans!",
+            LoginButtonText = "Login",
+            LoginButtonUrl = "/Account/Login",
+            BreadcrumbText = "Home - Education Loan",
+
+            ShowSubNavTabs = true,
+            SubNavTab1Title = "Overview",
+            SubNavTab1Target = "#overview",
+            SubNavTab2Title = "Document Required",
+            SubNavTab2Target = "#document-required",
+            SubNavTab3Title = "Rates and Charges",
+            SubNavTab3Target = "#rates-and-charges",
+            SubNavTab4Title = "EMI Calculator",
+            SubNavTab4Target = "#emi-calculator",
+            SubNavCtaText = "Get Instant Education Loan",
+            SubNavCtaUrl = "#apply-loan-modal",
+
+            OverviewTitle = "Education Loan for Higher Studies in India & Abroad",
+            OverviewSubtitle = "Fund your dreams with 100% financing, competitive interest rates, and minimal documentation.",
+            OverviewDescription = "Pursuing higher education is a significant milestone that shapes your global career. Tata Capital's comprehensive Education Loans are designed to empower ambitious students to access world-class universities across India and worldwide. We cover complete educational expenses including tuition fees, accommodation, living expenses, travel tickets, study materials, and examination fees, backed by pre-visa sanctions and flexible repayment terms.",
+            OverviewCards = new List<EducationLoanOverviewCardDto>
+            {
+                new() { Title = "100% Comprehensive Financing", Description = "Covers tuition fees, hostel, living costs, airfare, laptop, books, and university deposits with zero margin money for select universities.", Icon = "award" },
+                new() { Title = "Pre-Visa & Pre-Admission Sanction", Description = "Receive in-principle loan approval before visa or university confirmation to strengthen your international visa application.", Icon = "check-circle" },
+                new() { Title = "Competitive Rates from 9.50% p.a.", Description = "Access the most competitive interest rates from top bank and NBFC partners with flexible floating and fixed rate schemes.", Icon = "percent" },
+                new() { Title = "Extended Tenure up to 15 Years", Description = "Comfortable repayment tenure of up to 15 years with flexible moratorium (course duration + 6 to 12 months) grace period.", Icon = "clock" },
+                new() { Title = "Unsecured & Collateral-Free Loans", Description = "Collateral-free loans up to ₹75 Lakhs for premier global universities, with easy cosigner eligibility.", Icon = "shield" },
+                new() { Title = "Tax Benefits under Section 80E", Description = "Claim 100% income tax deduction on interest paid on education loans under Section 80E of Income Tax Act for up to 8 continuous years.", Icon = "file-text" }
+            },
+
+            DocumentsTitle = "Documents Required for Education Loan",
+            DocumentsSubtitle = "Simple and transparent documentation process for student applicant and co-applicant.",
+            DocumentGroups = new List<EducationLoanDocGroupDto>
+            {
+                new()
+                {
+                    GroupTitle = "Applicant (Student) Documents",
+                    GroupBadge = "Student KYC & Academics",
+                    Items = new List<string>
+                    {
+                        "Proof of Identity: Aadhaar Card / Valid Passport / Voter ID / PAN Card",
+                        "Proof of Residence: Valid Passport / Aadhaar / Utility Bill / Rental Agreement",
+                        "Academic Records: 10th, 12th, and Graduation mark sheets & Degree certificate",
+                        "Standardized Test Scorecards: GRE, GMAT, IELTS, TOEFL, PTE (as applicable)",
+                        "Official Admission Letter: Offer letter / I-20 / CAS / COE from the recognized foreign institution",
+                        "Schedule of Expenses: Comprehensive fee breakdown issued by the educational institution"
+                    }
+                },
+                new()
+                {
+                    GroupTitle = "Co-Applicant / Guarantor Documents",
+                    GroupBadge = "Parent / Sponsor Financials",
+                    Items = new List<string>
+                    {
+                        "Proof of Identity & Residence: PAN Card & Aadhaar Card of parent/guarantor",
+                        "Salaried Cosigners: Salary slips for last 3 months & Form 16 / ITR for last 2 years",
+                        "Salary Account Bank Statements: Last 6 months showing regular salary credits",
+                        "Self-Employed Cosigners: ITR with Computation of Income for last 2-3 Assessment Years",
+                        "Financial Statements: Audited Balance Sheet & Profit & Loss statements for last 2 years",
+                        "Business Proof: Current account bank statement (last 6 months) + GST registration certificate"
+                    }
+                },
+                new()
+                {
+                    GroupTitle = "Collateral Documents (if Secured Loan)",
+                    GroupBadge = "Property / Asset Backed",
+                    Items = new List<string>
+                    {
+                        "Property Title Deeds: Registered Sale Deed and chain documents (up to 30 years)",
+                        "Municipal Approvals: Approved building layout plan & structural certificate",
+                        "Tax Receipts: Latest property tax receipts & electricity bill",
+                        "Encumbrance Certificate (EC) for the past 13 to 30 years",
+                        "Fixed Deposit (FD) Receipts with bank lien letter (if opting for FD-backed financing)"
+                    }
+                }
+            },
+
+            RatesTitle = "Education Loan Interest Rates & Charges",
+            RatesSubtitle = "Competitive rates, zero hidden charges, and transparent loan terms for students.",
+            RateRows = new List<EducationLoanRateRowDto>
+            {
+                new() { Parameter = "Interest Rate", Details = "Starting at 9.50% p.a. (Floating & Fixed options)", Note = "Linked to repo rate / benchmark; customized based on university tier & student profile" },
+                new() { Parameter = "Loan Amount", Details = "Up to ₹1.5 Crore (Abroad) / Up to ₹75 Lakhs (India)", Note = "100% financing covering tuition fees, living costs, equipment, and travel" },
+                new() { Parameter = "Processing Fees", Details = "Up to 1.00% - 1.50% of sanctioned loan amount (+ GST)", Note = "Special waivers & promotional cashback applicable during study abroad intakes" },
+                new() { Parameter = "Loan Repayment Tenure", Details = "Up to 15 Years (180 months)", Note = "Flexible equated monthly installments (EMI) planned around future employment" },
+                new() { Parameter = "Moratorium / Grace Period", Details = "Course Duration + 6 months to 1 year", Note = "Pay simple interest or partial interest during course; full EMI starts after moratorium" },
+                new() { Parameter = "Prepayment / Foreclosure Charges", Details = "NIL / Zero charges", Note = "Zero penalty on floating rate loans to individuals in full compliance with RBI regulations" },
+                new() { Parameter = "Part-Payment Charges", Details = "NIL / Zero charges", Note = "Make lump-sum prepayments anytime without fee to accelerate debt clearance" },
+                new() { Parameter = "Stamp Duty & Statutory Charges", Details = "At actuals as per state legislation", Note = "Standard government statutory charges for mortgage / loan agreement execution" },
+                new() { Parameter = "Cheque / NACH Bounce Charges", Details = "₹500 + applicable taxes", Note = "Per failed electronic auto-debit clearance attempt" }
+            },
+
+            EmiCalcTitle = "Interactive Education Loan EMI Calculator",
+            EmiCalcSubtitle = "Plan your loan repayment with precision. Adjust loan amount, interest rate, and tenure to calculate your monthly EMI instantly.",
+            EmiDefaultAmount = 3000000,
+            EmiMinAmount = 100000,
+            EmiMaxAmount = 15000000,
+            EmiDefaultRate = 9.5,
+            EmiMinRate = 8.0,
+            EmiMaxRate = 16.0,
+            EmiDefaultTenureYears = 10,
+            EmiMinTenureYears = 1,
+            EmiMaxTenureYears = 15,
+
+            TopNavBrandName = "TATA CAPITAL",
             TopNavBrandSubtitle = "Global Student Financing",
             TopNavLogoUrl = "",
             TopNavLinks = new List<string> { "Abroad Education Loan", "Student Loan", "Study Abroad", "Contact Us" },
@@ -2493,9 +2627,71 @@ public sealed class StudyGuideCategoryCardDto
 
 public sealed class EducationLoansPageDto
 {
-    // Top Navigation (Student Accommodation removed as requested)
+    // Tata Capital Navigation Bar Settings (Image 1 Style)
+    public bool UseTataCapitalNavbar { get; set; } = true;
+    public string NavbarBrandName { get; set; } = "TATA CAPITAL";
+    public string NavbarBrandAccent { get; set; } = "CAPITAL";
+    public string NavbarLogoUrl { get; set; } = "";
+    public string NavbarBgColor { get; set; } = "#0A58A2"; // Tata Capital signature royal blue
+    public string NavbarLoansMenuTitle { get; set; } = "Loans for You";
+    public string NavbarEducationLoanTitle { get; set; } = "Education Loans";
+    public string NavbarEducationLoanUrl { get; set; } = "#overview";
+    public string NavbarRightCountriesTitle { get; set; } = "Education right countries";
+    public List<EducationLoanCountryOptionDto> CountryOptions { get; set; } = new();
+    public List<EducationLoanNavItemDto> MainNavItems { get; set; } = new();
+    public string SearchPlaceholder { get; set; } = "Search...";
+    public string SearchTargetUrl { get; set; } = "/search";
+    public int NotificationCount { get; set; } = 1;
+    public string NotificationText { get; set; } = "Special Offer: Zero Processing Fee on USA/UK Abroad Education Loans!";
+    public string LoginButtonText { get; set; } = "Login";
+    public string LoginButtonUrl { get; set; } = "/Account/Login";
+    public string BreadcrumbText { get; set; } = "Home - Education Loan";
+
+    // 4 Sticky Sub-Nav Tabs Below Hero Banner (Image 3 Style)
+    public bool ShowSubNavTabs { get; set; } = true;
+    public string SubNavTab1Title { get; set; } = "Overview";
+    public string SubNavTab1Target { get; set; } = "#overview";
+    public string SubNavTab2Title { get; set; } = "Document Required";
+    public string SubNavTab2Target { get; set; } = "#document-required";
+    public string SubNavTab3Title { get; set; } = "Rates and Charges";
+    public string SubNavTab3Target { get; set; } = "#rates-and-charges";
+    public string SubNavTab4Title { get; set; } = "EMI Calculator";
+    public string SubNavTab4Target { get; set; } = "#emi-calculator";
+    public string SubNavCtaText { get; set; } = "Get Instant Education Loan";
+    public string SubNavCtaUrl { get; set; } = "#apply-loan-modal";
+
+    // Tab 1: Overview Section Content
+    public string OverviewTitle { get; set; } = "Education Loan for Higher Studies in India & Abroad";
+    public string OverviewSubtitle { get; set; } = "Fund your dreams with 100% financing, competitive interest rates, and minimal documentation.";
+    public string OverviewDescription { get; set; } = "Pursuing higher education is a significant milestone that shapes your global career. Tata Capital's comprehensive Education Loans are designed to empower ambitious students to access world-class universities across India and worldwide. We cover complete educational expenses including tuition fees, accommodation, living expenses, travel tickets, study materials, and examination fees, backed by pre-visa sanctions and flexible repayment terms.";
+    public List<EducationLoanOverviewCardDto> OverviewCards { get; set; } = new();
+
+    // Tab 2: Document Required Section Content
+    public string DocumentsTitle { get; set; } = "Documents Required for Education Loan";
+    public string DocumentsSubtitle { get; set; } = "Simple and transparent documentation process for student applicant and co-applicant.";
+    public List<EducationLoanDocGroupDto> DocumentGroups { get; set; } = new();
+
+    // Tab 3: Rates and Charges Section Content
+    public string RatesTitle { get; set; } = "Education Loan Interest Rates & Charges";
+    public string RatesSubtitle { get; set; } = "Competitive rates, zero hidden charges, and transparent loan terms for students.";
+    public List<EducationLoanRateRowDto> RateRows { get; set; } = new();
+
+    // Tab 4: EMI Calculator Section Content
+    public string EmiCalcTitle { get; set; } = "Interactive Education Loan EMI Calculator";
+    public string EmiCalcSubtitle { get; set; } = "Plan your loan repayment with precision. Adjust loan amount, interest rate, and tenure to calculate your monthly EMI instantly.";
+    public double EmiDefaultAmount { get; set; } = 3000000;
+    public double EmiMinAmount { get; set; } = 100000;
+    public double EmiMaxAmount { get; set; } = 15000000;
+    public double EmiDefaultRate { get; set; } = 9.5;
+    public double EmiMinRate { get; set; } = 8.0;
+    public double EmiMaxRate { get; set; } = 16.0;
+    public int EmiDefaultTenureYears { get; set; } = 10;
+    public int EmiMinTenureYears { get; set; } = 1;
+    public int EmiMaxTenureYears { get; set; } = 15;
+
+    // Legacy Top Navigation Compatibility
     public bool ShowTopNav { get; set; } = true;
-    public string TopNavBrandName { get; set; } = "UniCreds";
+    public string TopNavBrandName { get; set; } = "TATA CAPITAL";
     public string TopNavBrandSubtitle { get; set; } = "Global Student Financing";
     public string TopNavLogoUrl { get; set; } = "";
     public List<string> TopNavLinks { get; set; } = new() { "Abroad Education Loan", "Student Loan", "Study Abroad", "Contact Us" };
@@ -2555,6 +2751,21 @@ public sealed class EducationLoansPageDto
     public string FloatingPromptDesc { get; set; } = "Best-in-class courses in Data Science, Management and Technology";
     public string FloatingPromptPhone { get; set; } = "1800-DREAMFLY";
     public string FloatingPromptWhatsApp { get; set; } = "+919163012345";
+
+    public void EnsureDefaults()
+    {
+        var def = StudyHubDto.CreateDefaultEducationLoansPage();
+        if (string.IsNullOrWhiteSpace(NavbarBrandName)) NavbarBrandName = def.NavbarBrandName;
+        if (CountryOptions == null || CountryOptions.Count == 0) CountryOptions = def.CountryOptions;
+        if (MainNavItems == null || MainNavItems.Count == 0) MainNavItems = def.MainNavItems;
+        if (OverviewCards == null || OverviewCards.Count == 0) OverviewCards = def.OverviewCards;
+        if (DocumentGroups == null || DocumentGroups.Count == 0) DocumentGroups = def.DocumentGroups;
+        if (RateRows == null || RateRows.Count == 0) RateRows = def.RateRows;
+        if (string.IsNullOrWhiteSpace(OverviewTitle)) OverviewTitle = def.OverviewTitle;
+        if (string.IsNullOrWhiteSpace(DocumentsTitle)) DocumentsTitle = def.DocumentsTitle;
+        if (string.IsNullOrWhiteSpace(RatesTitle)) RatesTitle = def.RatesTitle;
+        if (string.IsNullOrWhiteSpace(EmiCalcTitle)) EmiCalcTitle = def.EmiCalcTitle;
+    }
 }
 
 public sealed class EducationLoanPartnerDto
@@ -2600,6 +2811,50 @@ public sealed class EducationLoanApplicationLeadDto
     public string CourseOrProgram { get; set; } = string.Empty;
     public string CollateralType { get; set; } = "Non-Collateral";
     public string Notes { get; set; } = string.Empty;
+}
+
+public sealed class EducationLoanCountryOptionDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Name { get; set; } = string.Empty;
+    public string FlagEmoji { get; set; } = "🌍";
+    public string Code { get; set; } = string.Empty;
+    public string LoanAmountLimit { get; set; } = "Up to ₹1.5 Cr";
+    public string InterestRate { get; set; } = "From 9.50%";
+    public string Url { get; set; } = "#apply-loan-modal";
+}
+
+public sealed class EducationLoanNavItemDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Title { get; set; } = string.Empty;
+    public string Url { get; set; } = "#";
+    public bool HasDropdown { get; set; } = true;
+    public List<string> SubItems { get; set; } = new();
+}
+
+public sealed class EducationLoanOverviewCardDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Icon { get; set; } = "award";
+}
+
+public sealed class EducationLoanDocGroupDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string GroupTitle { get; set; } = string.Empty;
+    public string GroupBadge { get; set; } = string.Empty;
+    public List<string> Items { get; set; } = new();
+}
+
+public sealed class EducationLoanRateRowDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Parameter { get; set; } = string.Empty;
+    public string Details { get; set; } = string.Empty;
+    public string Note { get; set; } = string.Empty;
 }
 
 // -------------------------------------------------------------
