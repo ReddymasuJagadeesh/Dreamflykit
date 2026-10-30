@@ -203,6 +203,10 @@
             {
                 <span class="dk-breadcrumb-current">Mobiles</span>
             }
+            else if (Model.IsElectronicsCategory && Model.ViewMode == "hub")
+            {
+                <span class="dk-breadcrumb-current">Electronics</span>
+            }
             else if (!string.IsNullOrWhiteSpace(Model.CategoryName))
             {
                 <a href="/categories" class="dk-breadcrumb-item">Categories</a>
@@ -336,10 +340,10 @@
         </div>
     }
 
-    @if (Model.IsElectronicsCategory)
+    @if (Model.IsElectronicsCategory && Model.ElectronicsHub != null && Model.ViewMode == "hub")
     {
         <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
-            <partial name="_ElectronicsCategoryHubBanner" model="Model" />
+            <partial name="_ElectronicsCategoryHub" model="Model.ElectronicsHub" />
         </div>
     }
 
@@ -358,6 +362,7 @@
                                Model.IsBeautyHub ||
                                Model.IsFoodHub ||
                                (Model.IsTravelHub && Model.ViewMode == "hub") ||
+                               (Model.IsElectronicsCategory && Model.ViewMode == "hub") ||
                                Model.IsLuggageHub;
     }
 

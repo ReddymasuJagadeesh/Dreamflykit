@@ -24,6 +24,7 @@ public class ProductsControllerTests
     private readonly Mock<Dreamflykit.Application.FoodHub.Interfaces.IFoodHubService> _foodHubServiceMock;
     private readonly Mock<Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService> _travelHubServiceMock;
     private readonly Mock<Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService> _luggageHubServiceMock;
+    private readonly Mock<Dreamflykit.Application.ElectronicsHub.Interfaces.IElectronicsHubService> _electronicsHubServiceMock;
 
     public ProductsControllerTests()
     {
@@ -52,6 +53,9 @@ public class ProductsControllerTests
         _luggageHubServiceMock = new Mock<Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService>();
         _luggageHubServiceMock.Setup(l => l.GetConfigAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(Dreamflykit.Application.LuggageHub.Models.LuggageHubDto.CreateDefault());
+        _electronicsHubServiceMock = new Mock<Dreamflykit.Application.ElectronicsHub.Interfaces.IElectronicsHubService>();
+        _electronicsHubServiceMock.Setup(e => e.GetConfigAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Dreamflykit.Application.ElectronicsHub.Models.ElectronicsHubDto.CreateDefault());
     }
 
     private ProductsController CreateController(bool isAjax = false, bool partialQuery = false)
@@ -67,7 +71,8 @@ public class ProductsControllerTests
             _beautyHubServiceMock.Object,
             _foodHubServiceMock.Object,
             _travelHubServiceMock.Object,
-            _luggageHubServiceMock.Object);
+            _luggageHubServiceMock.Object,
+            _electronicsHubServiceMock.Object);
 
         var httpContext = new DefaultHttpContext();
         if (isAjax)

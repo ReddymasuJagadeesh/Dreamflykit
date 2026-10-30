@@ -75,6 +75,7 @@ public sealed class ProductListViewModel
     public Dreamflykit.Application.FoodHub.Models.FoodHubDto? FoodHub { get; init; }
     public Dreamflykit.Application.TravelHub.Models.TravelHubDto? TravelHub { get; init; }
     public Dreamflykit.Application.LuggageHub.Models.LuggageHubDto? LuggageHub { get; init; }
+    public Dreamflykit.Application.ElectronicsHub.Models.ElectronicsHubDto? ElectronicsHub { get; init; }
 
     public string? ViewMode { get; init; }
 
@@ -157,6 +158,9 @@ public sealed class ProductListViewModel
     public bool IsElectronicsCategory =>
         string.Equals(CategorySlug, "electronics", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "electronic", StringComparison.OrdinalIgnoreCase);
+
+    public bool IsElectronicsHub =>
+        IsElectronicsCategory && !SubcategoryId.HasValue && string.IsNullOrWhiteSpace(CurrentSubcategorySlug);
 
     public bool IsBeautyHub =>
         string.Equals(CategorySlug, "beauty", StringComparison.OrdinalIgnoreCase) ||
