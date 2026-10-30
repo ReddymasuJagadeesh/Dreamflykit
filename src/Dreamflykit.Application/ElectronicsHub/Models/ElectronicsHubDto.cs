@@ -8,6 +8,7 @@ public sealed class ElectronicsHubDto
     public ElectronicsCuratedProductsSectionDto CuratedProductsSection { get; set; } = new();
     public ElectronicsTrustBadgesSectionDto TrustBadgesSection { get; set; } = new();
     public ElectronicsBottomBannerDto BottomBanner { get; set; } = new();
+    public List<ElectronicsSubcategoryPageDto> SubcategoryPages { get; set; } = new();
 
     public static ElectronicsHubDto CreateDefault()
     {
@@ -49,7 +50,7 @@ public sealed class ElectronicsHubDto
                         ImageUrl = "/images/hero/hero-electronics.webp",
                         IsUploadingSoon = true,
                         ButtonText = "Shop Laptops",
-                        ButtonUrl = "/category/electronics?q=laptop",
+                        ButtonUrl = "/category/electronics/laptops-macbooks",
                         DisplayOrder = 1,
                         IsActive = true
                     },
@@ -62,7 +63,7 @@ public sealed class ElectronicsHubDto
                         ImageUrl = "/images/hero/hero-electronics.webp",
                         IsUploadingSoon = true,
                         ButtonText = "Explore Audio",
-                        ButtonUrl = "/category/electronics?q=headphone",
+                        ButtonUrl = "/category/electronics/headphones-audio",
                         DisplayOrder = 2,
                         IsActive = true
                     },
@@ -75,7 +76,7 @@ public sealed class ElectronicsHubDto
                         ImageUrl = "/images/hero/hero-electronics.webp",
                         IsUploadingSoon = true,
                         ButtonText = "Shop Adapters",
-                        ButtonUrl = "/category/electronics?q=adapter",
+                        ButtonUrl = "/category/electronics/travel-adapters",
                         DisplayOrder = 3,
                         IsActive = true
                     }
@@ -133,7 +134,7 @@ public sealed class ElectronicsHubDto
                         Name = "All-in-One Universal Travel Adapter with USB-C PD",
                         Slug = "universal-travel-adapter-pd",
                         CategoryName = "Universal Travel Adapters",
-                        ProductUrl = "/category/electronics?q=adapter",
+                        ProductUrl = "/category/electronics/travel-adapters",
                         ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
                         Price = 1499,
                         OriginalPrice = 2499,
@@ -150,7 +151,7 @@ public sealed class ElectronicsHubDto
                         Name = "Active Noise-Cancelling Wireless Headphones (40h Battery)",
                         Slug = "anc-wireless-headphones",
                         CategoryName = "Noise-Cancelling Headphones",
-                        ProductUrl = "/category/electronics?q=headphone",
+                        ProductUrl = "/category/electronics/headphones-audio",
                         ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
                         Price = 5999,
                         OriginalPrice = 9999,
@@ -167,7 +168,7 @@ public sealed class ElectronicsHubDto
                         Name = "65W GaN 3-Port Fast Charger (Laptop + Mobile)",
                         Slug = "65w-gan-fast-charger",
                         CategoryName = "Power Banks & Chargers",
-                        ProductUrl = "/category/electronics?q=charger",
+                        ProductUrl = "/category/electronics/power-banks-chargers",
                         ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
                         Price = 1999,
                         OriginalPrice = 3499,
@@ -184,7 +185,7 @@ public sealed class ElectronicsHubDto
                         Name = "1TB Portable High-Speed USB-C External SSD",
                         Slug = "1tb-portable-external-ssd",
                         CategoryName = "Storage & Portable SSDs",
-                        ProductUrl = "/category/electronics?q=ssd",
+                        ProductUrl = "/category/electronics/storage-ssds",
                         ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
                         Price = 7499,
                         OriginalPrice = 11999,
@@ -201,7 +202,7 @@ public sealed class ElectronicsHubDto
                         Name = "USA & Canada Pre-Activated Student 5G SIM Card (30-Day)",
                         Slug = "usa-canada-student-sim",
                         CategoryName = "International Student SIMs",
-                        ProductUrl = "/category/electronics?q=sim",
+                        ProductUrl = "/category/electronics/student-sims",
                         ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
                         Price = 2499,
                         OriginalPrice = 3999,
@@ -234,9 +235,439 @@ public sealed class ElectronicsHubDto
                 ButtonUrl = "/products?category=electronics",
                 ImageUrl = "/images/hero/hero-electronics.webp",
                 IsUploadingSoon = true
+            },
+            SubcategoryPages = CreateDefaultSubcategoryPages()
+        };
+    }
+
+    public static List<ElectronicsSubcategoryPageDto> CreateDefaultSubcategoryPages()
+    {
+        return new List<ElectronicsSubcategoryPageDto>
+        {
+            // 1. Laptops & MacBooks / Laptop & Mouses
+            new()
+            {
+                Id = "sub_laptops",
+                CategorySlug = "laptops-macbooks",
+                CategoryName = "Laptops & MacBooks",
+                Emoji = "💻",
+                HeroBanner = new ElectronicsHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Engineered for Global Campuses",
+                    TitleHighlight = "Laptops & Computing",
+                    Subtitle = "Certified MacBooks, ThinkPads, and student setups with worldwide 110V-240V power and international student warranty.",
+                    ImageUrl = "/images/hero/hero-electronics.webp",
+                    IsUploadingSoon = true,
+                    BannerHeight = 380,
+                    TitleColor = "#063f91",
+                    TitleHighlightColor = "#0284c7",
+                    SubtitleColor = "#334155",
+                    Badges = new List<ElectronicsHeroBadgeDto>
+                    {
+                        new() { Id = "sb1", Label = "110V–240V Universal Power", Icon = "zap" },
+                        new() { Id = "sb2", Label = "Official Campus Warranty", Icon = "shield" },
+                        new() { Id = "sb3", Label = "Long Battery Life", Icon = "award" }
+                    }
+                },
+                ShopByBrands = new ElectronicsShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Top authorized campus computing brands with student discounts & global support.",
+                    Brands = new List<ElectronicsBrandItemDto>
+                    {
+                        new() { Id = "b_lap_1", Name = "Apple", Slug = "apple", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "b_lap_2", Name = "Dell", Slug = "dell", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "b_lap_3", Name = "Lenovo", Slug = "lenovo", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "b_lap_4", Name = "HP", Slug = "hp", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "b_lap_5", Name = "Asus", Slug = "asus", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "b_lap_6", Name = "Acer", Slug = "acer", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true },
+                        new() { Id = "b_lap_7", Name = "Microsoft", Slug = "microsoft", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7, IsActive = true },
+                        new() { Id = "b_lap_8", Name = "Samsung", Slug = "samsung", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8, IsActive = true }
+                    }
+                }
+            },
+
+            // 2. Noise-Cancelling Headphones
+            new()
+            {
+                Id = "sub_headphones",
+                CategorySlug = "headphones-audio",
+                CategoryName = "Noise-Cancelling Headphones",
+                Emoji = "🎧",
+                HeroBanner = new ElectronicsHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Distraction-Free Focus & Study",
+                    TitleHighlight = "Noise-Cancelling Audio",
+                    Subtitle = "Immerse in uninterrupted library study sessions and quiet long-haul flights with industry-leading Active Noise Cancellation.",
+                    ImageUrl = "/images/hero/hero-electronics.webp",
+                    IsUploadingSoon = true,
+                    BannerHeight = 380,
+                    TitleColor = "#063f91",
+                    TitleHighlightColor = "#0284c7",
+                    SubtitleColor = "#334155"
+                },
+                ShopByBrands = new ElectronicsShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Premium audio brands certified for high-fidelity acoustic performance and ANC comfort.",
+                    Brands = new List<ElectronicsBrandItemDto>
+                    {
+                        new() { Id = "b_aud_1", Name = "Sony", Slug = "sony", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "b_aud_2", Name = "Bose", Slug = "bose", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "b_aud_3", Name = "Apple", Slug = "apple", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "b_aud_4", Name = "Boat", Slug = "boat", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "b_aud_5", Name = "JBL", Slug = "jbl", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "b_aud_6", Name = "Sennheiser", Slug = "sennheiser", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true },
+                        new() { Id = "b_aud_7", Name = "Marshall", Slug = "marshall", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7, IsActive = true },
+                        new() { Id = "b_aud_8", Name = "Skullcandy", Slug = "skullcandy", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8, IsActive = true }
+                    }
+                }
+            },
+
+            // 3. Universal Travel Adapters
+            new()
+            {
+                Id = "sub_adapters",
+                CategorySlug = "travel-adapters",
+                CategoryName = "Universal Travel Adapters",
+                Emoji = "🔌",
+                HeroBanner = new ElectronicsHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Safe Power Worldwide",
+                    TitleHighlight = "Universal Travel Adapters",
+                    Subtitle = "Surge-protected international plugs with fast USB-C PD ports compatible with USA, UK, EU, Canada & Australia sockets.",
+                    ImageUrl = "/images/hero/hero-electronics.webp",
+                    IsUploadingSoon = true,
+                    BannerHeight = 380,
+                    TitleColor = "#063f91",
+                    TitleHighlightColor = "#0284c7",
+                    SubtitleColor = "#334155"
+                },
+                ShopByBrands = new ElectronicsShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Safety-certified international power plug brands covering 150+ countries.",
+                    Brands = new List<ElectronicsBrandItemDto>
+                    {
+                        new() { Id = "b_adp_1", Name = "Epicka", Slug = "epicka", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "b_adp_2", Name = "Belkin", Slug = "belkin", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "b_adp_3", Name = "Anker", Slug = "anker", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "b_adp_4", Name = "Skross", Slug = "skross", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "b_adp_5", Name = "Oreva", Slug = "oreva", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "b_adp_6", Name = "Portronics", Slug = "portronics", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true },
+                        new() { Id = "b_adp_7", Name = "Syska", Slug = "syska", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7, IsActive = true },
+                        new() { Id = "b_adp_8", Name = "Philips", Slug = "philips", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8, IsActive = true }
+                    }
+                }
+            },
+
+            // 4. Power Banks & Chargers
+            new()
+            {
+                Id = "sub_power",
+                CategorySlug = "power-banks-chargers",
+                CategoryName = "Power Banks & Chargers",
+                Emoji = "🔋",
+                HeroBanner = new ElectronicsHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "All-Day Campus Power",
+                    TitleHighlight = "GaN Chargers & Power Banks",
+                    Subtitle = "Flight-approved portable battery packs and multi-port 65W/100W GaN chargers to power laptops, tablets, and phones simultaneously.",
+                    ImageUrl = "/images/hero/hero-electronics.webp",
+                    IsUploadingSoon = true,
+                    BannerHeight = 380,
+                    TitleColor = "#063f91",
+                    TitleHighlightColor = "#0284c7",
+                    SubtitleColor = "#334155"
+                },
+                ShopByBrands = new ElectronicsShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Top high-efficiency GaN charging and portable power technology brands.",
+                    Brands = new List<ElectronicsBrandItemDto>
+                    {
+                        new() { Id = "b_pwr_1", Name = "Anker", Slug = "anker", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "b_pwr_2", Name = "Ambrane", Slug = "ambrane", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "b_pwr_3", Name = "Xiaomi", Slug = "xiaomi", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "b_pwr_4", Name = "Boat", Slug = "boat", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "b_pwr_5", Name = "Belkin", Slug = "belkin", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "b_pwr_6", Name = "Spigen", Slug = "spigen", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true },
+                        new() { Id = "b_pwr_7", Name = "Ugreen", Slug = "ugreen", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7, IsActive = true },
+                        new() { Id = "b_pwr_8", Name = "CMF", Slug = "cmf", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8, IsActive = true }
+                    }
+                }
+            },
+
+            // 5. International Student SIMs
+            new()
+            {
+                Id = "sub_sims",
+                CategorySlug = "student-sims",
+                CategoryName = "International Student SIMs",
+                Emoji = "📶",
+                HeroBanner = new ElectronicsHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Stay Connected from Touchdown",
+                    TitleHighlight = "International Student SIMs & eSIM",
+                    Subtitle = "Pre-activated physical SIM cards and instant digital eSIMs with unlimited calling, high-speed 5G data, and zero roaming fees.",
+                    ImageUrl = "/images/hero/hero-electronics.webp",
+                    IsUploadingSoon = true,
+                    BannerHeight = 380,
+                    TitleColor = "#063f91",
+                    TitleHighlightColor = "#0284c7",
+                    SubtitleColor = "#334155"
+                },
+                ShopByBrands = new ElectronicsShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Authorized global telecom networks in USA, UK, Canada, Australia & Europe.",
+                    Brands = new List<ElectronicsBrandItemDto>
+                    {
+                        new() { Id = "b_sim_1", Name = "T-Mobile", Slug = "t-mobile", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "b_sim_2", Name = "Vodafone", Slug = "vodafone", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "b_sim_3", Name = "Lyca Mobile", Slug = "lyca", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "b_sim_4", Name = "AT&T", Slug = "att", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "b_sim_5", Name = "O2", Slug = "o2", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "b_sim_6", Name = "EE", Slug = "ee", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true },
+                        new() { Id = "b_sim_7", Name = "Mint Mobile", Slug = "mint", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7, IsActive = true },
+                        new() { Id = "b_sim_8", Name = "Three", Slug = "three", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8, IsActive = true }
+                    }
+                }
+            },
+
+            // 6. Storage & Portable SSDs
+            new()
+            {
+                Id = "sub_storage",
+                CategorySlug = "storage-ssds",
+                CategoryName = "Storage & Portable SSDs",
+                Emoji = "💾",
+                HeroBanner = new ElectronicsHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Assignment & Project Backups",
+                    TitleHighlight = "Ultra-Fast Portable SSDs",
+                    Subtitle = "Shock-resistant, ultra-compact NVMe portable solid state drives up to 2TB for ultra-fast transfers and assignments safety.",
+                    ImageUrl = "/images/hero/hero-electronics.webp",
+                    IsUploadingSoon = true,
+                    BannerHeight = 380,
+                    TitleColor = "#063f91",
+                    TitleHighlightColor = "#0284c7",
+                    SubtitleColor = "#334155"
+                },
+                ShopByBrands = new ElectronicsShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "World-class solid-state memory and encrypted backup drive manufacturers.",
+                    Brands = new List<ElectronicsBrandItemDto>
+                    {
+                        new() { Id = "b_ssd_1", Name = "SanDisk", Slug = "sandisk", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "b_ssd_2", Name = "Samsung", Slug = "samsung", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "b_ssd_3", Name = "Western Digital", Slug = "wd", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "b_ssd_4", Name = "Seagate", Slug = "seagate", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "b_ssd_5", Name = "Crucial", Slug = "crucial", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "b_ssd_6", Name = "Kingston", Slug = "kingston", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true },
+                        new() { Id = "b_ssd_7", Name = "Transcend", Slug = "transcend", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7, IsActive = true }
+                    }
+                }
+            },
+
+            // 7. Smartwatches & Wearables
+            new()
+            {
+                Id = "sub_wearables",
+                CategorySlug = "smartwatches-wearables",
+                CategoryName = "Smartwatches & Wearables",
+                Emoji = "⌚",
+                HeroBanner = new ElectronicsHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Timetables, Alarms & Health",
+                    TitleHighlight = "Smartwatches & Wearables",
+                    Subtitle = "Stay punctual for morning lectures, track your daily wellness, and manage incoming campus notifications on your wrist.",
+                    ImageUrl = "/images/hero/hero-electronics.webp",
+                    IsUploadingSoon = true,
+                    BannerHeight = 380,
+                    TitleColor = "#063f91",
+                    TitleHighlightColor = "#0284c7",
+                    SubtitleColor = "#334155"
+                },
+                ShopByBrands = new ElectronicsShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Industry-leading smartwatch brands with battery endurance and health analytics.",
+                    Brands = new List<ElectronicsBrandItemDto>
+                    {
+                        new() { Id = "b_wat_1", Name = "Apple", Slug = "apple", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "b_wat_2", Name = "Samsung Galaxy", Slug = "samsung", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "b_wat_3", Name = "Garmin", Slug = "garmin", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "b_wat_4", Name = "Fitbit", Slug = "fitbit", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "b_wat_5", Name = "Noise", Slug = "noise", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "b_wat_6", Name = "Fire-Boltt", Slug = "fire-boltt", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true },
+                        new() { Id = "b_wat_7", Name = "Amazfit", Slug = "amazfit", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7, IsActive = true },
+                        new() { Id = "b_wat_8", Name = "Fastrack", Slug = "fastrack", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8, IsActive = true }
+                    }
+                }
+            },
+
+            // 8. Cables, Hubs & Docks
+            new()
+            {
+                Id = "sub_cables",
+                CategorySlug = "cables-hubs-docks",
+                CategoryName = "Cables, Hubs & Docks",
+                Emoji = "🔗",
+                HeroBanner = new ElectronicsHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Seamless Multi-Port Connectivity",
+                    TitleHighlight = "USB-C Hubs, Docks & Cables",
+                    Subtitle = "Multi-port 4K HDMI adapters, SD card slots, and military-grade braided cables engineered to withstand backpack wear.",
+                    ImageUrl = "/images/hero/hero-electronics.webp",
+                    IsUploadingSoon = true,
+                    BannerHeight = 380,
+                    TitleColor = "#063f91",
+                    TitleHighlightColor = "#0284c7",
+                    SubtitleColor = "#334155"
+                },
+                ShopByBrands = new ElectronicsShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Durable connectivity and docking station brands for MacBook and Windows.",
+                    Brands = new List<ElectronicsBrandItemDto>
+                    {
+                        new() { Id = "b_cbl_1", Name = "Anker", Slug = "anker", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "b_cbl_2", Name = "Ugreen", Slug = "ugreen", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "b_cbl_3", Name = "Baseus", Slug = "baseus", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "b_cbl_4", Name = "Satechi", Slug = "satechi", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "b_cbl_5", Name = "Belkin", Slug = "belkin", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "b_cbl_6", Name = "Portronics", Slug = "portronics", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true },
+                        new() { Id = "b_cbl_7", Name = "Honeywell", Slug = "honeywell", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7, IsActive = true }
+                    }
+                }
+            },
+
+            // 9. Monitors & Displays
+            new()
+            {
+                Id = "sub_monitors",
+                CategorySlug = "monitors-displays",
+                CategoryName = "Monitors & Displays",
+                Emoji = "🖥️",
+                HeroBanner = new ElectronicsHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Expanded Desktop Productivity",
+                    TitleHighlight = "Monitors & Portable Displays",
+                    Subtitle = "Eye-care blue light filtered study displays and ultra-portable USB-C external screens for dorm rooms and library booths.",
+                    ImageUrl = "/images/hero/hero-electronics.webp",
+                    IsUploadingSoon = true,
+                    BannerHeight = 380,
+                    TitleColor = "#063f91",
+                    TitleHighlightColor = "#0284c7",
+                    SubtitleColor = "#334155"
+                },
+                ShopByBrands = new ElectronicsShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Certified ergonomic eye-care monitors from top global display brands.",
+                    Brands = new List<ElectronicsBrandItemDto>
+                    {
+                        new() { Id = "b_mon_1", Name = "LG", Slug = "lg", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "b_mon_2", Name = "Dell", Slug = "dell", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "b_mon_3", Name = "Samsung", Slug = "samsung", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "b_mon_4", Name = "BenQ", Slug = "benq", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "b_mon_5", Name = "Acer", Slug = "acer", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "b_mon_6", Name = "Asus", Slug = "asus", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true },
+                        new() { Id = "b_mon_7", Name = "ViewSonic", Slug = "viewsonic", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7, IsActive = true },
+                        new() { Id = "b_mon_8", Name = "MSI", Slug = "msi", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8, IsActive = true }
+                    }
+                }
+            },
+
+            // 10. Calculators & Tech Tools
+            new()
+            {
+                Id = "sub_calculators",
+                CategorySlug = "calculators-tech-tools",
+                CategoryName = "Calculators & Tech Tools",
+                Emoji = "🔢",
+                HeroBanner = new ElectronicsHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Exam-Approved Academic Accuracy",
+                    TitleHighlight = "Calculators & Tech Tools",
+                    Subtitle = "University and examination-board compliant scientific and financial calculators, digital styluses, and screen detail kits.",
+                    ImageUrl = "/images/hero/hero-electronics.webp",
+                    IsUploadingSoon = true,
+                    BannerHeight = 380,
+                    TitleColor = "#063f91",
+                    TitleHighlightColor = "#0284c7",
+                    SubtitleColor = "#334155"
+                },
+                ShopByBrands = new ElectronicsShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Global examination-certified calculation and STEM academic tools.",
+                    Brands = new List<ElectronicsBrandItemDto>
+                    {
+                        new() { Id = "b_cal_1", Name = "Casio", Slug = "casio", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "b_cal_2", Name = "Texas Instruments", Slug = "ti", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "b_cal_3", Name = "Sharp", Slug = "sharp", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "b_cal_4", Name = "Citizen", Slug = "citizen", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "b_cal_5", Name = "HP", Slug = "hp", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "b_cal_6", Name = "Orpat", Slug = "orpat", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                }
             }
         };
     }
+}
+
+public sealed class ElectronicsSubcategoryPageDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string CategorySlug { get; set; } = string.Empty;
+    public string CategoryName { get; set; } = string.Empty;
+    public string Emoji { get; set; } = "⚡";
+    public ElectronicsHeroBannerDto HeroBanner { get; set; } = new();
+    public ElectronicsShopByBrandsDto ShopByBrands { get; set; } = new();
+    public List<ElectronicsProductItemDto> CuratedProducts { get; set; } = new();
+}
+
+public sealed class ElectronicsShopByBrandsDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public string Title { get; set; } = "Shop by Brands";
+    public string Subtitle { get; set; } = "Top authorized campus brands with international student warranty & support.";
+    public List<ElectronicsBrandItemDto> Brands { get; set; } = new();
+}
+
+public sealed class ElectronicsBrandItemDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Name { get; set; } = string.Empty;
+    public string Slug { get; set; } = string.Empty;
+    public string LogoUrl { get; set; } = "/images/fashion-hub/uploading-soon-placeholder.svg";
+    public bool IsUploadingSoon { get; set; } = true;
+    public string TargetUrl { get; set; } = string.Empty;
+    public int DisplayOrder { get; set; } = 1;
+    public bool IsActive { get; set; } = true;
 }
 
 public sealed class ElectronicsThemeSettingsDto
@@ -379,4 +810,3 @@ public sealed class ElectronicsBottomBannerDto
     public string ImageUrl { get; set; } = string.Empty;
     public bool IsUploadingSoon { get; set; } = true;
 }
-

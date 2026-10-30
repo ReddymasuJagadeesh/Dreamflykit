@@ -194,6 +194,29 @@ public sealed class ProductsController : Controller
             }
         }
 
+        if (isElectronicsCategory && !string.IsNullOrWhiteSpace(currentSubcategorySlug) && string.IsNullOrWhiteSpace(currentSubcategoryName))
+        {
+            var elecHubConfig = await _electronicsHubService.GetConfigAsync(cancellationToken);
+            var subPage = elecHubConfig.SubcategoryPages?.FirstOrDefault(p =>
+                string.Equals(p.CategorySlug, currentSubcategorySlug, StringComparison.OrdinalIgnoreCase) ||
+                (currentSubcategorySlug.Contains("laptop") && p.CategorySlug.Contains("laptop")) ||
+                (currentSubcategorySlug.Contains("headphone") && p.CategorySlug.Contains("headphone")) ||
+                (currentSubcategorySlug.Contains("adapter") && p.CategorySlug.Contains("adapter")) ||
+                (currentSubcategorySlug.Contains("power") && p.CategorySlug.Contains("power")) ||
+                (currentSubcategorySlug.Contains("sim") && p.CategorySlug.Contains("sim")) ||
+                (currentSubcategorySlug.Contains("storage") && p.CategorySlug.Contains("storage")) ||
+                (currentSubcategorySlug.Contains("watch") && p.CategorySlug.Contains("watch")) ||
+                (currentSubcategorySlug.Contains("cable") && p.CategorySlug.Contains("cable")) ||
+                (currentSubcategorySlug.Contains("monitor") && p.CategorySlug.Contains("monitor")) ||
+                (currentSubcategorySlug.Contains("calculator") && p.CategorySlug.Contains("calculator")));
+
+            if (subPage != null)
+            {
+                currentSubcategoryName = subPage.CategoryName;
+                currentSubcategorySlug = subPage.CategorySlug;
+            }
+        }
+
         if (isLuggageCategory && !categoryId.HasValue)
         {
             var travelCatDetails = await _categoryService.GetCategoryDetailsAsync("travel-gear", cancellationToken);

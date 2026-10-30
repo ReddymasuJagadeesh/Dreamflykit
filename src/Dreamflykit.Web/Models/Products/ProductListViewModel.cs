@@ -162,6 +162,9 @@ public sealed class ProductListViewModel
     public bool IsElectronicsHub =>
         IsElectronicsCategory && !SubcategoryId.HasValue && string.IsNullOrWhiteSpace(CurrentSubcategorySlug);
 
+    public bool IsElectronicsSubcategoryHub =>
+        IsElectronicsCategory && (!string.IsNullOrWhiteSpace(CurrentSubcategorySlug) || SubcategoryId.HasValue);
+
     public bool IsBeautyHub =>
         string.Equals(CategorySlug, "beauty", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "beauty-and-personal-care", StringComparison.OrdinalIgnoreCase) ||

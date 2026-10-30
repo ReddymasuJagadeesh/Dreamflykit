@@ -52,6 +52,46 @@ public class ElectronicsHubTests
     }
 
     [Fact]
+    public void ElectronicsHubDto_CreateDefault_InitializesTenSubcategoryPagesWithHeroAndBrands()
+    {
+        // Act
+        var dto = ElectronicsHubDto.CreateDefault();
+
+        // Assert
+        Assert.NotNull(dto.SubcategoryPages);
+        Assert.Equal(10, dto.SubcategoryPages.Count);
+
+        // Check Laptops & MacBooks subcategory
+        var laptopPage = dto.SubcategoryPages.FirstOrDefault(p => p.CategorySlug == "laptops-macbooks");
+        Assert.NotNull(laptopPage);
+        Assert.Equal("Laptops & MacBooks", laptopPage.CategoryName);
+        Assert.NotNull(laptopPage.HeroBanner);
+        Assert.True(laptopPage.HeroBanner.IsUploadingSoon);
+        Assert.NotNull(laptopPage.ShopByBrands);
+        Assert.True(laptopPage.ShopByBrands.IsEnabled);
+        Assert.NotEmpty(laptopPage.ShopByBrands.Brands);
+
+        var brandNames = laptopPage.ShopByBrands.Brands.Select(b => b.Name).ToList();
+        Assert.Contains("Apple", brandNames);
+        Assert.Contains("Dell", brandNames);
+        Assert.Contains("HP", brandNames);
+        Assert.Contains("Lenovo", brandNames);
+
+        // Check all brands have uploading soon placeholder
+        foreach (var brand in laptopPage.ShopByBrands.Brands)
+        {
+            Assert.True(brand.IsUploadingSoon);
+            Assert.Contains("uploading-soon", brand.LogoUrl);
+        }
+
+        // Check Headphones subcategory
+        var audioPage = dto.SubcategoryPages.FirstOrDefault(p => p.CategorySlug == "headphones-audio");
+        Assert.NotNull(audioPage);
+        Assert.Contains("Sony", audioPage.ShopByBrands.Brands.Select(b => b.Name));
+        Assert.Contains("Bose", audioPage.ShopByBrands.Brands.Select(b => b.Name));
+    }
+
+    [Fact]
     public void ElectronicsHubDto_HeroBanner_DefaultIsConfiguredForStudents()
     {
         // Act
@@ -137,5 +177,77 @@ public class ElectronicsHubTests
         Assert.True(model.IsElectronicsHub);
         Assert.NotNull(model.ElectronicsHub);
         Assert.Equal(10, model.ElectronicsHub.CategoriesSection.Categories.Count);
+    }
+
+    [Fact]
+    public async Task ProductsController_WhenElectronicsSubcategoryRequested_ResolvesSubcategoryAndSetsSubcategoryHubFlag()
+    {
+        // Arrange
+        var productServiceMock = new Mock<IProductService>();
+        var categoryServiceMock = new Mock<ICategoryService>();
+        var studyHubMock = new Mock<Dreamflykit.Application.StudyHub.Interfaces.IStudyHubService>();
+        var fashionHubMock = new Mock<Dreamflykit.Application.FashionHub.Interfaces.IFashionHubService>();
+        var healthHubMock = new Mock<Dreamflykit.Application.HealthHub.Interfaces.IHealthHubService>();
+        var mobilesHubMock = new Mock<Dreamflykit.Application.MobilesHub.Interfaces.IMobilesHubService>();
+        var appliancesHubMock = new Mock<Dreamflykit.Application.AppliancesHub.Interfaces.IAppliancesHubService>();
+        var beautyHubMock = new Mock<Dreamflykit.Application.BeautyHub.Interfaces.IBeautyHubService>();
+        var foodHubMock = new Mock<Dreamflykit.Application.FoodHub.Interfaces.IFoodHubService>();
+        var travelHubMock = new Mock<Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService>();
+        var luggageHubMock = new Mock<Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService>();
+        var electronicsHubMock = new Mock<IElectronicsHubService>();
+
+        var defaultElecHub = ElectronicsHubDto.CreateDefault();
+        electronicsHubMock.Setup(e => e.GetConfigAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(defaultElecHub);
+
+        categoryServiceMock.Setup(c => c.GetCategoryDetailsAsync("electronics", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new CategoryDetails
+            {
+                CategoryId = Guid.NewGuid(),
+                Name = "Electronics",
+                Slug = "electronics",
+                Subcategories = new List<SubcategoryListItem>()
+            });
+
+        productServiceMock.Setup(p => p.SearchProductsAsync(It.IsAny<ProductListQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ProductSearchResult
+            {
+                Items = new List<ProductListItem>(),
+                Page = 1,
+                PageSize = 24,
+                TotalCount = 0
+            });
+
+        var controller = new ProductsController(
+            productServiceMock.Object,
+            categoryServiceMock.Object,
+            studyHubMock.Object,
+            fashionHubMock.Object,
+            healthHubMock.Object,
+            mobilesHubMock.Object,
+            appliancesHubMock.Object,
+            beautyHubMock.Object,
+            foodHubMock.Object,
+            travelHubMock.Object,
+            luggageHubMock.Object,
+            electronicsHubMock.Object);
+
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+
+        // Act - user visits with "laptops-mouses" alias
+        var result = await controller.Index(category: "electronics", subcategorySlug: "laptops-mouses");
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<ProductListViewModel>(viewResult.Model);
+
+        Assert.True(model.IsElectronicsCategory);
+        Assert.True(model.IsElectronicsSubcategoryHub);
+        Assert.Equal("laptops-macbooks", model.CurrentSubcategorySlug);
+        Assert.Equal("Laptops & MacBooks", model.CurrentSubcategoryName);
+        Assert.NotNull(model.ElectronicsHub);
     }
 }

@@ -707,6 +707,44 @@ public static class DatabaseSeeder
             }
         }
 
+        // Ensure Electronics Category Subcategories (10 Tech Subcategories)
+        if (catMap.TryGetValue("electronics", out var elecCatId))
+        {
+            var existingElecSubs = await context.Subcategories
+                .Where(s => s.CategoryId == elecCatId)
+                .ToListAsync(cancellationToken);
+
+            var requiredElecSubs = new (string Name, string Slug, int Order)[]
+            {
+                ("Laptops & MacBooks", "laptops-macbooks", 1),
+                ("Noise-Cancelling Headphones", "headphones-audio", 2),
+                ("Universal Travel Adapters", "travel-adapters", 3),
+                ("Power Banks & Chargers", "power-banks-chargers", 4),
+                ("International Student SIMs", "student-sims", 5),
+                ("Storage & Portable SSDs", "storage-ssds", 6),
+                ("Smartwatches & Wearables", "smartwatches-wearables", 7),
+                ("Cables, Hubs & Docks", "cables-hubs-docks", 8),
+                ("Monitors & Displays", "monitors-displays", 9),
+                ("Calculators & Tech Tools", "calculators-tech-tools", 10)
+            };
+
+            foreach (var (subName, subSlug, subOrder) in requiredElecSubs)
+            {
+                var existingSub = existingElecSubs.FirstOrDefault(s => string.Equals(s.Slug, subSlug, StringComparison.OrdinalIgnoreCase));
+                if (existingSub == null)
+                {
+                    var newSub = new Subcategory(elecCatId, subName, subSlug, subOrder);
+                    context.Subcategories.Add(newSub);
+                }
+                else
+                {
+                    existingSub.Update(subName, subSlug, subOrder);
+                    existingSub.Activate();
+                }
+            }
+            await context.SaveChangesAsync(cancellationToken);
+        }
+
         // B. Reassign products from obsolete categories & remove obsolete categories
         var obsoleteCategories = currentCategories.Where(c => !finalSlugs.Contains(c.Slug)).ToList();
         if (obsoleteCategories.Count > 0)

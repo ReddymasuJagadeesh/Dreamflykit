@@ -194,7 +194,7 @@
                 @foreach (var cat in catSection.Categories.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder))
                 {
                     var catUrl = !string.IsNullOrWhiteSpace(cat.Slug)
-                        ? $"/category/electronics?q={Uri.EscapeDataString(cat.Slug)}"
+                        ? $"/category/electronics/{cat.Slug}"
                         : "/products?category=electronics";
 
                     <a href="@catUrl" class="dk-elec-cat-card" title="@cat.Name">

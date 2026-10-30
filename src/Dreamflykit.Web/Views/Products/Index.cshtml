@@ -203,6 +203,12 @@
             {
                 <span class="dk-breadcrumb-current">Mobiles</span>
             }
+            else if (Model.IsElectronicsCategory && !string.IsNullOrWhiteSpace(Model.CurrentSubcategorySlug))
+            {
+                <a href="/category/electronics" class="dk-breadcrumb-item">Electronics</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">@(Model.CurrentSubcategoryName ?? Model.CurrentSubcategorySlug)</span>
+            }
             else if (Model.IsElectronicsCategory && Model.ViewMode == "hub")
             {
                 <span class="dk-breadcrumb-current">Electronics</span>
@@ -340,10 +346,17 @@
         </div>
     }
 
-    @if (Model.IsElectronicsCategory && Model.ElectronicsHub != null && Model.ViewMode == "hub")
+    @if (Model.IsElectronicsCategory && Model.ElectronicsHub != null)
     {
         <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
-            <partial name="_ElectronicsCategoryHub" model="Model.ElectronicsHub" />
+            @if (Model.ViewMode == "hub" && string.IsNullOrWhiteSpace(Model.CurrentSubcategorySlug))
+            {
+                <partial name="_ElectronicsCategoryHub" model="Model.ElectronicsHub" />
+            }
+            else
+            {
+                <partial name="_ElectronicsSubcategoryHub" model="Model" />
+            }
         </div>
     }
 
@@ -362,7 +375,7 @@
                                Model.IsBeautyHub ||
                                Model.IsFoodHub ||
                                (Model.IsTravelHub && Model.ViewMode == "hub") ||
-                               (Model.IsElectronicsCategory && Model.ViewMode == "hub") ||
+                               (Model.IsElectronicsCategory && (Model.ViewMode == "hub" || Model.IsElectronicsSubcategoryHub)) ||
                                Model.IsLuggageHub;
     }
 
