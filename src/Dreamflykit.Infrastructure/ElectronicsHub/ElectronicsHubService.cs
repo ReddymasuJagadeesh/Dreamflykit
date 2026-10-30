@@ -88,6 +88,11 @@ public sealed class ElectronicsHubService : IElectronicsHubService
                         dto.CuratedProductsSection ??= def.CuratedProductsSection;
                         dto.TrustBadgesSection ??= def.TrustBadgesSection;
                         dto.BottomBanner ??= def.BottomBanner;
+                        dto.SubcategoryPages ??= def.SubcategoryPages;
+                        if (dto.SubcategoryPages == null || dto.SubcategoryPages.Count == 0)
+                        {
+                            dto.SubcategoryPages = def.SubcategoryPages;
+                        }
 
                         _cache.Set(CacheKey, dto, TimeSpan.FromMinutes(10));
                         return dto;

@@ -1,0 +1,942 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.ElectronicsHub ?? Dreamflykit.Application.ElectronicsHub.Models.ElectronicsHubDto.CreateDefault();
+    var currentSubSlug = Model.CurrentSubcategorySlug ?? "";
+
+    // Find active subcategory page or match by alias
+    var activePage = hub.SubcategoryPages?.FirstOrDefault(p =>
+        string.Equals(p.CategorySlug, currentSubSlug, StringComparison.OrdinalIgnoreCase) ||
+        (currentSubSlug.Contains("laptop") && p.CategorySlug.Contains("laptop")) ||
+        (currentSubSlug.Contains("headphone") && p.CategorySlug.Contains("headphone")) ||
+        (currentSubSlug.Contains("adapter") && p.CategorySlug.Contains("adapter")) ||
+        (currentSubSlug.Contains("power") && p.CategorySlug.Contains("power")) ||
+        (currentSubSlug.Contains("sim") && p.CategorySlug.Contains("sim")) ||
+        (currentSubSlug.Contains("storage") && p.CategorySlug.Contains("storage")) ||
+        (currentSubSlug.Contains("ssd") && p.CategorySlug.Contains("storage")) ||
+        (currentSubSlug.Contains("watch") && p.CategorySlug.Contains("watch")) ||
+        (currentSubSlug.Contains("cable") && p.CategorySlug.Contains("cable")) ||
+        (currentSubSlug.Contains("hub") && p.CategorySlug.Contains("cable")) ||
+        (currentSubSlug.Contains("monitor") && p.CategorySlug.Contains("monitor")) ||
+        (currentSubSlug.Contains("calculator") && p.CategorySlug.Contains("calculator")));
+
+    if (activePage == null)
+    {
+        var defaultPages = Dreamflykit.Application.ElectronicsHub.Models.ElectronicsHubDto.CreateDefaultSubcategoryPages();
+        activePage = defaultPages.FirstOrDefault(p =>
+            string.Equals(p.CategorySlug, currentSubSlug, StringComparison.OrdinalIgnoreCase) ||
+            (currentSubSlug.Contains("laptop") && p.CategorySlug.Contains("laptop")))
+            ?? defaultPages.First();
+    }
+
+    var hero = activePage.HeroBanner ?? new();
+    var shopByBrands = activePage.ShopByBrands ?? new();
+    var brands = shopByBrands.Brands != null && shopByBrands.Brands.Count > 0
+        ? shopByBrands.Brands.Where(b => b.IsActive).OrderBy(b => b.DisplayOrder).ToList()
+        : new List<Dreamflykit.Application.ElectronicsHub.Models.ElectronicsBrandItemDto>();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+    var totalProducts = Model.TotalCount;
+    var products = Model.Products ?? new List<Dreamflykit.Application.Catalog.Models.ProductListItem>();
+
+    var isHeroSoon = hero.IsUploadingSoon || string.IsNullOrWhiteSpace(hero.ImageUrl);
+}
+
+<div class="dk-elec-sub-hub-root" id="electronicsSubcategoryRoot">
+
+    <!-- Admin Quick Bar -->
+    @if (canManage)
+    {
+        <div class="dk-elec-sub-admin-bar">
+            <div class="dk-elec-sub-admin-left">
+                <span class="dk-elec-sub-admin-badge">⚡ Admin Mode</span>
+                <span class="dk-elec-sub-admin-hint">
+                    Managing Subcategory: <strong>@activePage.CategoryName</strong> &bull; Customize hero banner, shop by brands, &amp; upload images anytime.
+                </span>
+            </div>
+            <a href="/Admin/ElectronicsHub#sub-@activePage.CategorySlug" class="dk-elec-sub-admin-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Edit @activePage.CategoryName &amp; Brands
+            </a>
+        </div>
+    }
+
+    <!-- Subcategory Navigation Bar -->
+    <div class="dk-elec-sub-nav-bar">
+        <div class="dk-elec-sub-nav-left">
+            <span class="dk-elec-sub-nav-emoji">@activePage.Emoji</span>
+            <div>
+                <h1 class="dk-elec-sub-nav-title">@activePage.CategoryName</h1>
+                <span class="dk-elec-sub-nav-tag">Verified International Student Gear &bull; 100% Genuine</span>
+            </div>
+        </div>
+        <div class="dk-elec-sub-nav-right">
+            <a href="/category/electronics" class="dk-elec-sub-back-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span>All Electronics Categories</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         1. SUBCATEGORY HERO BANNER (FULL WIDTH)
+    ============================================================ -->
+    @if (hero.IsEnabled)
+    {
+        var minHeight = hero.BannerHeight > 0 ? hero.BannerHeight : 380;
+        var titleColor = !string.IsNullOrWhiteSpace(hero.TitleColor) ? hero.TitleColor : "#063f91";
+        var highlightColor = !string.IsNullOrWhiteSpace(hero.TitleHighlightColor) ? hero.TitleHighlightColor : "#0284c7";
+        var subtitleColor = !string.IsNullOrWhiteSpace(hero.SubtitleColor) ? hero.SubtitleColor : "#334155";
+
+        <section class="dk-elec-sub-hero-section" style="min-height: @(minHeight)px;" aria-label="@activePage.CategoryName Showcase">
+            
+            <!-- Full Width Background Layer -->
+            @if (isHeroSoon)
+            {
+                <div class="dk-elec-sub-hero-soon">
+                    <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon Placeholder" class="dk-elec-sub-soon-img" />
+                    <div class="dk-elec-sub-soon-pill">⏳ HERO BANNER UPLOADING SOON</div>
+                </div>
+            }
+            else
+            {
+                <img src="@hero.ImageUrl"
+                     alt="@hero.Title @hero.TitleHighlight"
+                     class="dk-elec-sub-hero-bg"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="dk-elec-sub-hero-soon" style="display: none;">
+                    <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon Placeholder" class="dk-elec-sub-soon-img" />
+                    <div class="dk-elec-sub-soon-pill">⏳ HERO BANNER UPLOADING SOON</div>
+                </div>
+            }
+
+            <div class="dk-elec-sub-hero-overlay"></div>
+
+            <!-- Content Overlayed -->
+            <div class="dk-elec-sub-hero-content">
+                <div class="dk-elec-sub-hero-badge">
+                    <span class="dk-elec-sub-pulse"></span>
+                    <span>@activePage.Emoji OFFICIAL CAMPUS TECH &bull; UP TO 40% OFF</span>
+                </div>
+
+                <h2 class="dk-elec-sub-hero-title" style="color: @titleColor;">
+                    @hero.Title
+                    <span class="dk-elec-sub-hero-highlight" style="color: @highlightColor;">@hero.TitleHighlight</span>
+                </h2>
+
+                <p class="dk-elec-sub-hero-desc" style="color: @subtitleColor;">
+                    @hero.Subtitle
+                </p>
+
+                <!-- Badges Row -->
+                <div class="dk-elec-sub-badges-row">
+                    <span class="dk-elec-sub-badge-chip">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        110V–240V Universal Power
+                    </span>
+                    <span class="dk-elec-sub-badge-chip">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        Global Campus Warranty
+                    </span>
+                    <span class="dk-elec-sub-badge-chip">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        Express Pre-Flight Dispatch
+                    </span>
+                </div>
+            </div>
+
+        </section>
+    }
+
+    <!-- ============================================================
+         2. SHOP BY BRANDS SECTION (BELOW HERO BANNER)
+    ============================================================ -->
+    @if (shopByBrands.IsEnabled && brands.Count > 0)
+    {
+        <section class="dk-elec-brands-section" aria-label="Shop @activePage.CategoryName by Brands">
+            
+            <div class="dk-elec-brands-header">
+                <div class="dk-elec-brands-header-left">
+                    <h2 class="dk-elec-brands-title">@shopByBrands.Title</h2>
+                    <p class="dk-elec-brands-sub">@shopByBrands.Subtitle</p>
+                </div>
+                <div class="dk-elec-brands-header-right">
+                    <span class="dk-elec-brands-count">🏷️ <strong>@brands.Count</strong> Global Brands Available</span>
+                </div>
+            </div>
+
+            <!-- Brands Grid -->
+            <div class="dk-elec-brands-grid">
+                @foreach (var brand in brands)
+                {
+                    var brandUrl = !string.IsNullOrWhiteSpace(brand.TargetUrl)
+                        ? brand.TargetUrl
+                        : $"/category/electronics/{activePage.CategorySlug}?q={Uri.EscapeDataString(brand.Name)}";
+
+                    var isBrandSoon = brand.IsUploadingSoon || string.IsNullOrWhiteSpace(brand.LogoUrl) || brand.LogoUrl.Contains("uploading-soon");
+
+                    <a href="@brandUrl" class="dk-elec-brand-card" title="Shop @brand.Name for @activePage.CategoryName">
+                        
+                        <div class="dk-elec-brand-logo-box">
+                            @if (isBrandSoon)
+                            {
+                                <div class="dk-elec-brand-placeholder">
+                                    <span class="dk-elec-brand-initial">@brand.Name.FirstOrDefault()</span>
+                                    <span class="dk-elec-brand-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@brand.LogoUrl"
+                                     alt="@brand.Name"
+                                     loading="lazy"
+                                     class="dk-elec-brand-logo-img"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-elec-brand-placeholder" style="display: none;">
+                                    <span class="dk-elec-brand-initial">@brand.Name.FirstOrDefault()</span>
+                                    <span class="dk-elec-brand-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+
+                        <span class="dk-elec-brand-name">@brand.Name</span>
+                    </a>
+                }
+            </div>
+
+        </section>
+    }
+
+    <!-- ============================================================
+         3. SUBCATEGORY PRODUCTS CATALOG
+    ============================================================ -->
+    <section class="dk-elec-products-section" aria-label="@activePage.CategoryName Products">
+        
+        <div class="dk-elec-products-header">
+            <div>
+                <h2 class="dk-elec-products-heading">
+                    Explore @activePage.CategoryName
+                </h2>
+                <span class="dk-elec-products-subtext">Showing all curated tech models, campus verified bundles &amp; accessories.</span>
+            </div>
+            <div class="dk-elec-products-toolbar">
+                <span class="dk-elec-products-live-count">⚡ <strong>@(totalProducts > 0 ? totalProducts : 8)</strong> Products Available</span>
+            </div>
+        </div>
+
+        @if (products.Count > 0)
+        {
+            <div class="dk-elec-sub-products-grid">
+                @foreach (var prod in products)
+                {
+                    <div class="dk-elec-sub-prod-card">
+                        <a href="/products/@prod.Slug" class="dk-elec-sub-prod-img-box">
+                            @if (string.IsNullOrWhiteSpace(prod.PrimaryImageUrl))
+                            {
+                                <div class="dk-elec-sub-prod-placeholder">
+                                    <span class="dk-elec-sub-prod-emoji">@activePage.Emoji</span>
+                                    <span class="dk-elec-sub-prod-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@prod.PrimaryImageUrl" alt="@prod.Name" class="dk-elec-sub-prod-img" loading="lazy"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-elec-sub-prod-placeholder" style="display: none;">
+                                    <span class="dk-elec-sub-prod-emoji">@activePage.Emoji</span>
+                                    <span class="dk-elec-sub-prod-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                        </a>
+
+                        <div class="dk-elec-sub-prod-body">
+                            <span class="dk-elec-sub-prod-cat">@activePage.CategoryName</span>
+                            <a href="/products/@prod.Slug" class="dk-elec-sub-prod-title" title="@prod.Name">@prod.Name</a>
+
+                            <div class="dk-elec-sub-prod-pricing">
+                                <span class="dk-elec-sub-price-current">₹@prod.SellingPrice.ToString("N0")</span>
+                                @if (prod.MRP > prod.SellingPrice)
+                                {
+                                    <span class="dk-elec-sub-price-mrp">₹@prod.MRP.ToString("N0")</span>
+                                    <span class="dk-elec-sub-price-disc">@prod.DiscountPercentage% off</span>
+                                }
+                            </div>
+
+                            <div class="dk-elec-sub-prod-actions">
+                                <a href="/products/@prod.Slug" class="dk-elec-sub-btn-view">
+                                    <span>View Gear Details</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <!-- Curated Starter Products When DB Catalog Empty -->
+            <div class="dk-elec-sub-products-grid">
+                @{
+                    var sampleItems = new[]
+                    {
+                        new { Name = $"{activePage.CategoryName} Pro Edition (Universal 110V-240V)", Price = 12999, Mrp = 19999, Disc = 35, Badge = "TOP SELLER" },
+                        new { Name = $"{activePage.CategoryName} Campus Compact Travel Pack", Price = 4499, Mrp = 6999, Disc = 35, Badge = "ESSENTIAL" },
+                        new { Name = $"{activePage.CategoryName} High-Speed Fast Series", Price = 2999, Mrp = 4999, Disc = 40, Badge = "MUST HAVE" },
+                        new { Name = $"{activePage.CategoryName} Ultra-Durable Student Kit", Price = 1899, Mrp = 2999, Disc = 36, Badge = "VERIFIED" }
+                    };
+                }
+
+                @foreach (var sample in sampleItems)
+                {
+                    <div class="dk-elec-sub-prod-card">
+                        <span class="dk-elec-sub-badge-corner">@sample.Badge</span>
+                        <div class="dk-elec-sub-prod-img-box">
+                            <div class="dk-elec-sub-prod-placeholder">
+                                <span class="dk-elec-sub-prod-emoji">@activePage.Emoji</span>
+                                <span class="dk-elec-sub-prod-soon-badge">Uploading Soon</span>
+                            </div>
+                        </div>
+
+                        <div class="dk-elec-sub-prod-body">
+                            <span class="dk-elec-sub-prod-cat">@activePage.CategoryName</span>
+                            <span class="dk-elec-sub-prod-title">@sample.Name</span>
+
+                            <div class="dk-elec-sub-prod-pricing">
+                                <span class="dk-elec-sub-price-current">₹@sample.Price.ToString("N0")</span>
+                                <span class="dk-elec-sub-price-mrp">₹@sample.Mrp.ToString("N0")</span>
+                                <span class="dk-elec-sub-price-disc">@sample.Disc% off</span>
+                            </div>
+
+                            <div class="dk-elec-sub-prod-actions">
+                                <a href="/category/electronics" class="dk-elec-sub-btn-view">
+                                    <span>View Gear Details</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+    </section>
+
+    <!-- ============================================================
+         4. STUDENT REASSURANCE BAR
+    ============================================================ -->
+    <section class="dk-elec-sub-trust-bar">
+        <div class="dk-elec-sub-trust-item">
+            <div class="dk-elec-sub-trust-icon">⚡</div>
+            <div>
+                <strong class="dk-elec-sub-trust-title">110V–240V Voltage Safe</strong>
+                <span class="dk-elec-sub-trust-sub">Tested for US, UK, Canada &amp; Europe</span>
+            </div>
+        </div>
+        <div class="dk-elec-sub-trust-item">
+            <div class="dk-elec-sub-trust-icon">🛡️</div>
+            <div>
+                <strong class="dk-elec-sub-trust-title">100% Genuine Certified</strong>
+                <span class="dk-elec-sub-trust-sub">International brand warranty coverage</span>
+            </div>
+        </div>
+        <div class="dk-elec-sub-trust-item">
+            <div class="dk-elec-sub-trust-icon">✈️</div>
+            <div>
+                <strong class="dk-elec-sub-trust-title">Pre-Flight Dispatch</strong>
+                <span class="dk-elec-sub-trust-sub">Delivered on time before departure</span>
+            </div>
+        </div>
+        <div class="dk-elec-sub-trust-item">
+            <div class="dk-elec-sub-trust-icon">🔄</div>
+            <div>
+                <strong class="dk-elec-sub-trust-title">Hassle-Free Returns</strong>
+                <span class="dk-elec-sub-trust-sub">7-Day student replacement guarantee</span>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- ============================================================
+     SUBCATEGORY PAGE & BRANDS STYLES
+============================================================ -->
+<style>
+.dk-elec-sub-hub-root {
+    width: 100%;
+    margin-bottom: 32px;
+}
+
+/* Admin bar */
+.dk-elec-sub-admin-bar {
+    background: #0f172a;
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+.dk-elec-sub-admin-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-elec-sub-admin-badge {
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.dk-elec-sub-admin-hint {
+    font-size: 13px;
+    color: #94a3b8;
+}
+.dk-elec-sub-admin-btn {
+    background: #0284c7;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px 16px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+.dk-elec-sub-admin-btn:hover {
+    background: #0369a1;
+    transform: translateY(-1px);
+}
+
+/* Subcategory Nav Bar */
+.dk-elec-sub-nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 14px 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.dk-elec-sub-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.dk-elec-sub-nav-emoji {
+    font-size: 32px;
+    background: #f0f9ff;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-elec-sub-nav-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0;
+}
+.dk-elec-sub-nav-tag {
+    font-size: 12.5px;
+    color: #64748b;
+    font-weight: 600;
+}
+.dk-elec-sub-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+.dk-elec-sub-back-link:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+/* 1. HERO BANNER */
+.dk-elec-sub-hero-section {
+    position: relative;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(6, 63, 145, 0.05);
+}
+.dk-elec-sub-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    filter: brightness(1.10) contrast(1.08);
+}
+.dk-elec-sub-hero-soon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+.dk-elec-sub-soon-img {
+    max-width: 180px;
+    opacity: 0.5;
+    margin-bottom: 12px;
+}
+.dk-elec-sub-soon-pill {
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 6px 16px;
+    border-radius: 20px;
+    letter-spacing: 0.6px;
+}
+.dk-elec-sub-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.90) 0%, rgba(255, 255, 255, 0.65) 50%, rgba(255, 255, 255, 0.25) 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+.dk-elec-sub-hero-content {
+    position: relative;
+    z-index: 3;
+    padding: 40px;
+    max-width: 700px;
+}
+.dk-elec-sub-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(2, 132, 199, 0.12);
+    border: 1px solid rgba(2, 132, 199, 0.3);
+    color: #0369a1;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+}
+.dk-elec-sub-pulse {
+    width: 7px;
+    height: 7px;
+    background: #0284c7;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.3);
+}
+.dk-elec-sub-hero-title {
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin: 0 0 12px 0;
+}
+.dk-elec-sub-hero-highlight {
+    display: block;
+}
+.dk-elec-sub-hero-desc {
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0 0 20px 0;
+}
+.dk-elec-sub-badges-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.dk-elec-sub-badge-chip {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #0f172a;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+.dk-elec-sub-badge-chip svg {
+    color: #0284c7;
+}
+
+/* 2. SHOP BY BRANDS SECTION */
+.dk-elec-brands-section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px 26px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+}
+.dk-elec-brands-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.dk-elec-brands-title {
+    font-size: 21px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+}
+.dk-elec-brands-sub {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+}
+.dk-elec-brands-count {
+    background: #f0f9ff;
+    color: #0369a1;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #bae6fd;
+}
+
+/* 8-Column Responsive Brand Cards Grid */
+.dk-elec-brands-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 14px;
+}
+.dk-elec-brand-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+.dk-elec-brand-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(2, 132, 199, 0.12);
+    border-color: #38bdf8;
+}
+.dk-elec-brand-logo-box {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #f8fafc;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.dk-elec-brand-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8px;
+}
+.dk-elec-brand-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: #f8fafc;
+    padding: 6px;
+}
+.dk-elec-brand-initial {
+    font-size: 24px;
+    font-weight: 900;
+    color: #0284c7;
+    margin-bottom: 4px;
+}
+.dk-elec-brand-soon-badge {
+    font-size: 8px;
+    font-weight: 800;
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 2px 5px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+.dk-elec-brand-name {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.25;
+}
+
+/* 3. PRODUCTS SECTION */
+.dk-elec-products-section {
+    margin-bottom: 32px;
+}
+.dk-elec-products-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.dk-elec-products-heading {
+    font-size: 20px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+}
+.dk-elec-products-subtext {
+    font-size: 13px;
+    color: #64748b;
+}
+.dk-elec-products-live-count {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0284c7;
+}
+
+.dk-elec-sub-products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+.dk-elec-sub-prod-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: all 0.2s ease;
+}
+.dk-elec-sub-prod-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(6, 63, 145, 0.08);
+    border-color: #38bdf8;
+}
+.dk-elec-sub-badge-corner {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    z-index: 2;
+}
+.dk-elec-sub-prod-img-box {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #f8fafc;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+.dk-elec-sub-prod-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.dk-elec-sub-prod-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.dk-elec-sub-prod-emoji {
+    font-size: 36px;
+    margin-bottom: 6px;
+}
+.dk-elec-sub-prod-soon-badge {
+    font-size: 9px;
+    font-weight: 800;
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+.dk-elec-sub-prod-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.dk-elec-sub-prod-cat {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+.dk-elec-sub-prod-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.35;
+    margin-bottom: 10px;
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.dk-elec-sub-prod-title:hover {
+    color: #0284c7;
+}
+.dk-elec-sub-prod-pricing {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+.dk-elec-sub-price-current {
+    font-size: 17px;
+    font-weight: 900;
+    color: #0f172a;
+}
+.dk-elec-sub-price-mrp {
+    font-size: 12px;
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+.dk-elec-sub-price-disc {
+    font-size: 11px;
+    font-weight: 700;
+    color: #16a34a;
+}
+.dk-elec-sub-prod-actions {
+    margin-top: auto;
+}
+.dk-elec-sub-btn-view {
+    width: 100%;
+    background: #f0f9ff;
+    color: #0284c7;
+    border: 1px solid #bae6fd;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+.dk-elec-sub-btn-view:hover {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+}
+
+/* 4. TRUST BAR */
+.dk-elec-sub-trust-bar {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.02);
+}
+.dk-elec-sub-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-elec-sub-trust-icon {
+    font-size: 24px;
+    background: #f0f9ff;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.dk-elec-sub-trust-title {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.dk-elec-sub-trust-sub {
+    font-size: 11.5px;
+    color: #64748b;
+}
+
+/* Responsive */
+@@media (max-width: 1200px) {
+    .dk-elec-brands-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .dk-elec-sub-products-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .dk-elec-sub-trust-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@@media (max-width: 768px) {
+    .dk-elec-brands-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dk-elec-sub-products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dk-elec-sub-trust-bar {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+

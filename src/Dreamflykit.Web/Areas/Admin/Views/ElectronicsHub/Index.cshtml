@@ -11,6 +11,9 @@
     var products = picksSection.Products ?? new();
     var trust = hub.TrustBadgesSection ?? new();
     var bottomBanner = hub.BottomBanner ?? new();
+    var subPages = hub.SubcategoryPages != null && hub.SubcategoryPages.Count > 0
+        ? hub.SubcategoryPages
+        : Dreamflykit.Application.ElectronicsHub.Models.ElectronicsHubDto.CreateDefaultSubcategoryPages();
 }
 
 @Html.AntiForgeryToken()
@@ -57,19 +60,22 @@
     <!-- TABS BAR -->
     <div style="display: flex; gap: 8px; border-bottom: 2px solid #e2e8f0; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px;">
         <button type="button" class="dk-hub-tab-btn active" onclick="switchElecTab('categories', this)">
-            💻 1. Shop By Category (10 Tech Cards)
+            💻 1. Main Shop By Category (10 Hub Cards)
+        </button>
+        <button type="button" class="dk-hub-tab-btn" onclick="switchElecTab('subcategories', this)">
+            🏷️ 2. Subcategory Pages &amp; Shop by Brands (All 10 Categories)
         </button>
         <button type="button" class="dk-hub-tab-btn" onclick="switchElecTab('hero', this)">
-            ⚡ 2. Full-Width Hero Banner
+            ⚡ 3. Main Hero Banner
         </button>
         <button type="button" class="dk-hub-tab-btn" onclick="switchElecTab('picks', this)">
-            🎧 3. Top Tech Picks for Students
+            🎧 4. Top Tech Picks for Students
         </button>
         <button type="button" class="dk-hub-tab-btn" onclick="switchElecTab('trust', this)">
-            🛡️ 4. Trust Badges &amp; Callout Banner
+            🛡️ 5. Trust Badges &amp; Callout Banner
         </button>
         <button type="button" class="dk-hub-tab-btn" onclick="switchElecTab('theme', this)">
-            🎨 5. Festival Theme &amp; Colors
+            🎨 6. Festival Theme &amp; Colors
         </button>
     </div>
 
@@ -193,6 +199,189 @@
                     </div>
                 }
             </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         TAB 2: SUBCATEGORY PAGES & SHOP BY BRANDS
+    ========================================================= -->
+    <div id="tab_subcategories" class="dk-hub-tab-pane" style="display: none;">
+        <div class="dk-admin-card" style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px;">
+            
+            <div style="margin-bottom: 20px;">
+                <h2 style="font-size: 19px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">
+                    🏷️ Subcategory Dedicated Pages &amp; Shop By Brands Management
+                </h2>
+                <p style="font-size: 13.5px; color: #64748b; margin: 0;">
+                    Select any of the 10 categories to customize its full-width Hero Banner, title, description, and "Shop by Brands" logos &amp; names.
+                </p>
+            </div>
+
+            <!-- Subcategory Selector Buttons -->
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
+                @for (var s = 0; s < subPages.Count; s++)
+                {
+                    var pageItem = subPages[s];
+                    <button type="button" class="dk-subpage-btn @(s == 0 ? "active" : "")" onclick="selectSubPageAdmin('@pageItem.CategorySlug', this)" style="background: @(s == 0 ? "#0284c7" : "#ffffff"); color: @(s == 0 ? "#ffffff" : "#334155"); border: 1px solid @(s == 0 ? "#0284c7" : "#cbd5e1"); font-size: 12.5px; font-weight: 700; padding: 7px 14px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        <span>@pageItem.Emoji</span>
+                        <span>@pageItem.CategoryName</span>
+                    </button>
+                }
+            </div>
+
+            <!-- Subcategory Sections Container -->
+            <div id="subPagesAdminContainer">
+                @for (var s = 0; s < subPages.Count; s++)
+                {
+                    var p = subPages[s];
+                    var pHero = p.HeroBanner ?? new();
+                    var pBrandsSection = p.ShopByBrands ?? new();
+                    var pBrands = pBrandsSection.Brands ?? new List<Dreamflykit.Application.ElectronicsHub.Models.ElectronicsBrandItemDto>();
+
+                    <div class="sub-page-editor" id="sub_editor_@p.CategorySlug" style="display: @(s == 0 ? "block" : "none");">
+                        
+                        <!-- Header Bar for Subcategory -->
+                        <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 26px;">@p.Emoji</span>
+                                <div>
+                                    <h3 style="font-size: 16px; font-weight: 800; color: #0284c7; margin: 0;">@p.CategoryName</h3>
+                                    <span style="font-size: 12px; color: #64748b;">Live URL: <code>/category/electronics/@p.CategorySlug</code></span>
+                                </div>
+                            </div>
+                            <a href="/category/electronics/@p.CategorySlug" target="_blank" class="dk-btn" style="background: #ffffff; color: #0284c7; border: 1px solid #bae6fd; font-size: 12.5px; font-weight: 700; padding: 6px 14px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                                <span>👁️</span> Preview Subcategory Page
+                            </a>
+                        </div>
+
+                        <!-- 1. Hero Banner for this Subcategory -->
+                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; margin-bottom: 24px;">
+                            <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 14px;">
+                                ⚡ Hero Banner for @p.CategoryName
+                            </h4>
+
+                            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                                <div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                        <div>
+                                            <label class="dk-admin-label">Title</label>
+                                            <input type="text" id="sub_hero_title_@p.CategorySlug" class="dk-admin-input" value="@pHero.Title" />
+                                        </div>
+                                        <div>
+                                            <label class="dk-admin-label">Title Highlight</label>
+                                            <input type="text" id="sub_hero_highlight_@p.CategorySlug" class="dk-admin-input" value="@pHero.TitleHighlight" />
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 12px;">
+                                        <label class="dk-admin-label">Subtitle Text</label>
+                                        <textarea id="sub_hero_sub_@p.CategorySlug" class="dk-admin-input" rows="2">@pHero.Subtitle</textarea>
+                                    </div>
+
+                                    <div style="display: flex; align-items: center; gap: 12px; padding-top: 4px;">
+                                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #0f172a; cursor: pointer;">
+                                            <input type="checkbox" id="sub_hero_soon_@p.CategorySlug" @(pHero.IsUploadingSoon ? "checked" : "") />
+                                            <span>Show "UPLOADING SOON" Badge on Hero</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Image & Upload -->
+                                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                                    <label class="dk-admin-label" style="margin: 0;">Hero Background Image</label>
+                                    <div style="width: 100%; height: 110px; border-radius: 6px; overflow: hidden; background: #e2e8f0;">
+                                        <img id="sub_hero_preview_@p.CategorySlug" src="@pHero.ImageUrl" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                                    </div>
+                                    <input type="text" id="sub_hero_img_@p.CategorySlug" class="dk-admin-input" value="@pHero.ImageUrl" style="font-size: 11.5px;" oninput="document.getElementById('sub_hero_preview_@p.CategorySlug').src=this.value;" />
+                                    <div style="display: flex; gap: 6px; align-items: center;">
+                                        <input type="file" id="sub_hero_file_@p.CategorySlug" accept="image/*" style="display: none;" onchange="uploadSubHeroImage('@p.CategorySlug', this)" />
+                                        <button type="button" onclick="document.getElementById('sub_hero_file_@p.CategorySlug').click()" class="dk-btn" style="background: #0284c7; color: #fff; border: none; font-size: 11.5px; font-weight: 700; padding: 6px 12px; border-radius: 5px; cursor: pointer;">
+                                            📁 Upload Image
+                                        </button>
+                                        <span id="sub_hero_status_@p.CategorySlug" style="font-size: 10.5px; color: #64748b;">Max 8MB</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Shop By Brands for this Subcategory -->
+                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                                <div>
+                                    <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0;">
+                                        🏷️ "Shop by Brands" for @p.CategoryName
+                                    </h4>
+                                    <span style="font-size: 12.5px; color: #64748b;">Configure brand cards displayed below the hero banner.</span>
+                                </div>
+                                <button type="button" onclick="addNewBrandCard('@p.CategorySlug')" class="dk-btn" style="background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
+                                    ＋ Add Brand
+                                </button>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                                <div>
+                                    <label class="dk-admin-label">Section Heading</label>
+                                    <input type="text" id="sub_brands_title_@p.CategorySlug" class="dk-admin-input" value="@pBrandsSection.Title" />
+                                </div>
+                                <div>
+                                    <label class="dk-admin-label">Section Subtitle</label>
+                                    <input type="text" id="sub_brands_sub_@p.CategorySlug" class="dk-admin-input" value="@pBrandsSection.Subtitle" />
+                                </div>
+                            </div>
+
+                            <!-- Brand Cards Grid -->
+                            <div id="brands_list_@p.CategorySlug" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">
+                                @for (var b = 0; b < pBrands.Count; b++)
+                                {
+                                    var brand = pBrands[b];
+                                    <div class="brand-item-card brand-card-@p.CategorySlug" id="brand_row_@(p.CategorySlug)_@b" data-index="@b" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                                        
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <span style="font-weight: 800; font-size: 13px; color: #0284c7;" id="brand_title_lbl_@(p.CategorySlug)_@b">#@(b + 1) @brand.Name</span>
+                                            <button type="button" onclick="removeBrandCard('@p.CategorySlug', @b)" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;">🗑️</button>
+                                        </div>
+
+                                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+                                            <div>
+                                                <label class="dk-admin-label">Brand Name</label>
+                                                <input type="text" id="brand_name_@(p.CategorySlug)_@b" class="dk-admin-input" value="@brand.Name" oninput="document.getElementById('brand_title_lbl_@(p.CategorySlug)_@b').innerText = '#' + (@(b + 1)) + ' ' + this.value;" />
+                                            </div>
+                                            <div>
+                                                <label class="dk-admin-label">Slug</label>
+                                                <input type="text" id="brand_slug_@(p.CategorySlug)_@b" class="dk-admin-input" value="@brand.Slug" />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #0f172a; cursor: pointer;">
+                                                <input type="checkbox" id="brand_soon_@(p.CategorySlug)_@b" @(brand.IsUploadingSoon ? "checked" : "") />
+                                                <span>Show "UPLOADING SOON" Badge</span>
+                                            </label>
+                                        </div>
+
+                                        <!-- Logo Upload -->
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <input type="text" id="brand_logo_@(p.CategorySlug)_@b" class="dk-admin-input" value="@brand.LogoUrl" style="font-size: 11px;" />
+                                            <input type="file" id="brand_file_@(p.CategorySlug)_@b" accept="image/*" style="display: none;" onchange="uploadBrandLogoImg('@p.CategorySlug', @b, this)" />
+                                            <button type="button" onclick="document.getElementById('brand_file_@(p.CategorySlug)_@b').click()" class="dk-btn" style="background: #0284c7; color: #fff; border: none; font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 4px; cursor: pointer; white-space: nowrap;">
+                                                📁 Logo
+                                            </button>
+                                        </div>
+
+                                        <input type="hidden" id="brand_id_@(p.CategorySlug)_@b" value="@brand.Id" />
+                                        <input type="hidden" id="brand_order_@(p.CategorySlug)_@b" value="@brand.DisplayOrder" />
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="sub_page_id_@p.CategorySlug" value="@p.Id" />
+                        <input type="hidden" id="sub_page_name_@p.CategorySlug" value="@p.CategoryName" />
+                        <input type="hidden" id="sub_page_emoji_@p.CategorySlug" value="@p.Emoji" />
+                    </div>
+                }
+            </div>
+
         </div>
     </div>
 
@@ -653,6 +842,140 @@
         container.insertAdjacentHTML('beforeend', cardHtml);
     }
 
+    function selectSubPageAdmin(slug, btn) {
+        document.querySelectorAll('.dk-subpage-btn').forEach(b => {
+            b.style.background = '#ffffff';
+            b.style.color = '#334155';
+            b.style.borderColor = '#cbd5e1';
+            b.classList.remove('active');
+        });
+        document.querySelectorAll('.sub-page-editor').forEach(e => e.style.display = 'none');
+        btn.style.background = '#0284c7';
+        btn.style.color = '#ffffff';
+        btn.style.borderColor = '#0284c7';
+        btn.classList.add('active');
+
+        const editor = document.getElementById('sub_editor_' + slug);
+        if (editor) editor.style.display = 'block';
+    }
+
+    async function uploadSubHeroImage(slug, fileInput) {
+        if (!fileInput.files || fileInput.files.length === 0) return;
+        const file = fileInput.files[0];
+        const status = document.getElementById('sub_hero_status_' + slug);
+        if (status) status.innerText = '⏳ Uploading...';
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('targetField', 'sub_hero_' + slug);
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+        try {
+            const resp = await fetch('/Admin/ElectronicsHub/UploadImage', {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': token || '' },
+                body: formData
+            });
+
+            const res = await resp.json();
+            if (res.success && res.url) {
+                document.getElementById('sub_hero_img_' + slug).value = res.url;
+                document.getElementById('sub_hero_preview_' + slug).src = res.url;
+                const soonChk = document.getElementById('sub_hero_soon_' + slug);
+                if (soonChk) soonChk.checked = false;
+                if (status) status.innerText = '✓ Uploaded!';
+            } else {
+                alert('Upload failed: ' + (res.message || 'Unknown error'));
+                if (status) status.innerText = 'Failed';
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Upload error: ' + err.message);
+            if (status) status.innerText = 'Error';
+        }
+    }
+
+    async function uploadBrandLogoImg(slug, index, fileInput) {
+        if (!fileInput.files || fileInput.files.length === 0) return;
+        const file = fileInput.files[0];
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('targetField', 'brand_' + slug + '_' + index);
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+        try {
+            const resp = await fetch('/Admin/ElectronicsHub/UploadImage', {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': token || '' },
+                body: formData
+            });
+
+            const res = await resp.json();
+            if (res.success && res.url) {
+                document.getElementById('brand_logo_' + slug + '_' + index).value = res.url;
+                const soonChk = document.getElementById('brand_soon_' + slug + '_' + index);
+                if (soonChk) soonChk.checked = false;
+                alert('✓ Brand logo uploaded!');
+            } else {
+                alert('Upload failed: ' + (res.message || 'Unknown error'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Upload error: ' + err.message);
+        }
+    }
+
+    function removeBrandCard(slug, index) {
+        if (confirm('Delete this brand card?')) {
+            const row = document.getElementById('brand_row_' + slug + '_' + index);
+            if (row) row.remove();
+        }
+    }
+
+    function addNewBrandCard(slug) {
+        const container = document.getElementById('brands_list_' + slug);
+        const count = container.querySelectorAll('.brand-card-' + slug).length;
+        const newIndex = count;
+
+        const cardHtml = `
+        <div class="brand-item-card brand-card-${slug}" id="brand_row_${slug}_${newIndex}" data-index="${newIndex}" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 800; font-size: 13px; color: #0284c7;" id="brand_title_lbl_${slug}_${newIndex}">#${newIndex + 1} New Brand</span>
+                <button type="button" onclick="removeBrandCard('${slug}', ${newIndex})" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;">🗑️</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+                <div>
+                    <label class="dk-admin-label">Brand Name</label>
+                    <input type="text" id="brand_name_${slug}_${newIndex}" class="dk-admin-input" value="Brand Name" oninput="document.getElementById('brand_title_lbl_${slug}_${newIndex}').innerText = '#' + (${newIndex + 1}) + ' ' + this.value;" />
+                </div>
+                <div>
+                    <label class="dk-admin-label">Slug</label>
+                    <input type="text" id="brand_slug_${slug}_${newIndex}" class="dk-admin-input" value="brand" />
+                </div>
+            </div>
+            <div>
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #0f172a; cursor: pointer;">
+                    <input type="checkbox" id="brand_soon_${slug}_${newIndex}" checked />
+                    <span>Show "UPLOADING SOON" Badge</span>
+                </label>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="text" id="brand_logo_${slug}_${newIndex}" class="dk-admin-input" value="/images/fashion-hub/uploading-soon-placeholder.svg" style="font-size: 11px;" />
+                <input type="file" id="brand_file_${slug}_${newIndex}" accept="image/*" style="display: none;" onchange="uploadBrandLogoImg('${slug}', ${newIndex}, this)" />
+                <button type="button" onclick="document.getElementById('brand_file_${slug}_${newIndex}').click()" class="dk-btn" style="background: #0284c7; color: #fff; border: none; font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 4px; cursor: pointer; white-space: nowrap;">
+                    📁 Logo
+                </button>
+            </div>
+            <input type="hidden" id="brand_id_${slug}_${newIndex}" value="" />
+            <input type="hidden" id="brand_order_${slug}_${newIndex}" value="${newIndex + 1}" />
+        </div>`;
+
+        container.insertAdjacentHTML('beforeend', cardHtml);
+    }
+
     async function saveElectronicsHubConfig() {
         const btn = document.getElementById('btnSaveElectronicsTop');
         if (btn) btn.innerText = '⏳ Saving...';
@@ -725,7 +1048,8 @@
                 ButtonUrl: document.getElementById('bottom_btn_url')?.value || '/products?category=electronics',
                 ImageUrl: '/images/hero/hero-electronics.webp',
                 IsUploadingSoon: true
-            }
+            },
+            SubcategoryPages: []
         };
 
         // Collect Categories
@@ -761,6 +1085,64 @@
                 IsActive: true,
                 InStock: true,
                 Badge: document.getElementById('prod_badge_' + p)?.value || 'TOP DEAL'
+            });
+        });
+
+        // Collect Subcategory Pages & Brands
+        document.querySelectorAll('.sub-page-editor').forEach(editor => {
+            const slug = editor.id.replace('sub_editor_', '');
+            const pageId = document.getElementById('sub_page_id_' + slug)?.value || slug;
+            const pageName = document.getElementById('sub_page_name_' + slug)?.value || slug;
+            const pageEmoji = document.getElementById('sub_page_emoji_' + slug)?.value || '⚡';
+
+            const heroTitle = document.getElementById('sub_hero_title_' + slug)?.value || '';
+            const heroHighlight = document.getElementById('sub_hero_highlight_' + slug)?.value || '';
+            const heroSub = document.getElementById('sub_hero_sub_' + slug)?.value || '';
+            const heroImg = document.getElementById('sub_hero_img_' + slug)?.value || '/images/hero/hero-electronics.webp';
+            const heroSoon = document.getElementById('sub_hero_soon_' + slug)?.checked ?? true;
+
+            const brandsTitle = document.getElementById('sub_brands_title_' + slug)?.value || 'Shop by Brands';
+            const brandsSub = document.getElementById('sub_brands_sub_' + slug)?.value || '';
+
+            const brandsList = [];
+            editor.querySelectorAll('.brand-card-' + slug).forEach((bCard, bIdx) => {
+                const b = bCard.getAttribute('data-index');
+                brandsList.push({
+                    Id: document.getElementById('brand_id_' + slug + '_' + b)?.value || 'b_' + slug + '_' + (bIdx + 1),
+                    Name: document.getElementById('brand_name_' + slug + '_' + b)?.value || 'Brand ' + (bIdx + 1),
+                    Slug: document.getElementById('brand_slug_' + slug + '_' + b)?.value || 'brand-' + (bIdx + 1),
+                    LogoUrl: document.getElementById('brand_logo_' + slug + '_' + b)?.value || '/images/fashion-hub/uploading-soon-placeholder.svg',
+                    IsUploadingSoon: document.getElementById('brand_soon_' + slug + '_' + b)?.checked ?? true,
+                    TargetUrl: '',
+                    DisplayOrder: parseInt(document.getElementById('brand_order_' + slug + '_' + b)?.value || (bIdx + 1), 10),
+                    IsActive: true
+                });
+            });
+
+            payload.SubcategoryPages.push({
+                Id: pageId,
+                CategorySlug: slug,
+                CategoryName: pageName,
+                Emoji: pageEmoji,
+                HeroBanner: {
+                    IsEnabled: true,
+                    Title: heroTitle,
+                    TitleHighlight: heroHighlight,
+                    Subtitle: heroSub,
+                    ImageUrl: heroImg,
+                    IsUploadingSoon: heroSoon,
+                    BannerHeight: 380,
+                    TitleColor: '#063f91',
+                    TitleHighlightColor: '#0284c7',
+                    SubtitleColor: '#334155'
+                },
+                ShopByBrands: {
+                    IsEnabled: true,
+                    Title: brandsTitle,
+                    Subtitle: brandsSub,
+                    Brands: brandsList
+                },
+                CuratedProducts: []
             });
         });
 
