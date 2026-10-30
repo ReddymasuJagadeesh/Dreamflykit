@@ -2,7 +2,8 @@
 @{
     Layout = "_Layout";
     var eduPage = Model ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage();
-    ViewData["Title"] = $"{eduPage.HeroTitle} {eduPage.HeroTitleHighlight} — {eduPage.TopNavBrandName}";
+    eduPage.EnsureDefaults();
+    ViewData["Title"] = $"{eduPage.NavbarBrandName} Education Loans — {eduPage.OverviewTitle}";
     var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
 
     var partners = eduPage.Partners != null && eduPage.Partners.Count > 0
@@ -16,6 +17,26 @@
     var courses = eduPage.Courses != null && eduPage.Courses.Count > 0
         ? eduPage.Courses
         : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage().Courses;
+
+    var countries = eduPage.CountryOptions != null && eduPage.CountryOptions.Count > 0
+        ? eduPage.CountryOptions
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage().CountryOptions;
+
+    var navItems = eduPage.MainNavItems != null && eduPage.MainNavItems.Count > 0
+        ? eduPage.MainNavItems
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage().MainNavItems;
+
+    var overviewCards = eduPage.OverviewCards != null && eduPage.OverviewCards.Count > 0
+        ? eduPage.OverviewCards
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage().OverviewCards;
+
+    var docGroups = eduPage.DocumentGroups != null && eduPage.DocumentGroups.Count > 0
+        ? eduPage.DocumentGroups
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage().DocumentGroups;
+
+    var rateRows = eduPage.RateRows != null && eduPage.RateRows.Count > 0
+        ? eduPage.RateRows
+        : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage().RateRows;
 }
 
 <div class="dk-edu-loans-root" id="eduLoansRoot">
@@ -26,68 +47,178 @@
         <div class="dk-edu-admin-bar">
             <div class="dk-edu-admin-inner">
                 <span class="dk-edu-admin-tag">⚡ Super Admin Controls</span>
-                <span>You can edit all text, hero banner, loan partners, steps, and featured courses anytime in the Admin Dashboard.</span>
+                <span>Tata Capital Navbar, Sub-Nav Tabs, Overview, Documents, Rates &amp; Charges, EMI Calculator &amp; Themes are fully controllable in Admin Dashboard.</span>
                 <a href="/Admin/StudyAbroadHub#tab-edu-loans" class="dk-edu-admin-btn">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                    <span>Edit Education Loans Page in Admin</span>
+                    <span>Edit Education Loans Portal in Admin</span>
                 </a>
             </div>
         </div>
     }
 
     <!-- ========================================================
-         TOP NAVIGATION BAR (Image 2 Style - Student Accommodation REMOVED)
+         1. TATA CAPITAL NAVIGATION BAR (Image 1 Style)
     ========================================================= -->
     @if (eduPage.ShowTopNav)
     {
-        <header class="dk-edu-nav-header">
-            <div class="dk-edu-nav-shell">
-                <!-- Brand Logo -->
-                <a href="/study-abroad-hub/education-loans" class="dk-edu-brand">
-                    <div class="dk-edu-logo-cap">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                        </svg>
-                    </div>
-                    <div class="dk-edu-brand-texts">
-                        <span class="dk-edu-brand-title">@eduPage.TopNavBrandName</span>
-                    </div>
+        <header class="dk-tata-nav-header" style="background-color: @(string.IsNullOrWhiteSpace(eduPage.NavbarBgColor) ? "#0A58A2" : eduPage.NavbarBgColor);">
+            <div class="dk-tata-nav-shell">
+                
+                <!-- Left: Tata Capital Brand Logo -->
+                <a href="/study-abroad-hub/education-loans" class="dk-tata-brand" title="@eduPage.NavbarBrandName">
+                    @if (!string.IsNullOrWhiteSpace(eduPage.NavbarLogoUrl))
+                    {
+                        <img src="@eduPage.NavbarLogoUrl" alt="@eduPage.NavbarBrandName" class="dk-tata-brand-img" />
+                    }
+                    else
+                    {
+                        <div class="dk-tata-brand-lockup">
+                            <span class="dk-tata-brand-name">@eduPage.NavbarBrandName</span>
+                            <span class="dk-tata-brand-underline"></span>
+                        </div>
+                    }
                 </a>
 
-                <!-- Nav Menu Items (Accommodation removed per user request) -->
-                <nav class="dk-edu-nav-menu" aria-label="Education Loans Navigation">
-                    <a href="#hero-banner" class="dk-edu-nav-link active">Abroad Education Loan</a>
+                <!-- Mobile Menu Hamburger -->
+                <button type="button" class="dk-tata-mobile-btn" onclick="toggleTataMobileMenu()" aria-label="Toggle navigation">
+                    <span></span><span></span><span></span>
+                </button>
+
+                <!-- Center: Navigation Links -->
+                <nav class="dk-tata-nav-menu" id="tataNavMenu" aria-label="Tata Capital Loans Navigation">
                     
-                    <div class="dk-edu-dropdown-wrap">
-                        <a href="#loan-partners" class="dk-edu-nav-link has-arrow">
-                            <span>Student Loan</span>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                    <!-- 1.1 Loans for You Dropdown (With Education Loans & Education right countries) -->
+                    <div class="dk-tata-nav-item has-dropdown" id="loansForYouDropdown">
+                        <a href="#overview" class="dk-tata-nav-link active">
+                            <span>@eduPage.NavbarLoansMenuTitle</span>
+                            <svg class="dk-tata-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
                         </a>
-                        <div class="dk-edu-dropdown-pop">
-                            <a href="#loan-partners">Bank Loan Partners</a>
-                            <a href="#how-it-works">5-Step Process</a>
-                            <a href="#trending-courses">Top Course Financing</a>
+                        
+                        <div class="dk-tata-dropdown-pane dk-tata-mega-pane">
+                            <div class="dk-tata-mega-grid">
+                                
+                                <!-- Primary Education Loan Link -->
+                                <div class="dk-tata-mega-col dk-mega-featured">
+                                    <div class="dk-tata-dropdown-badge">Featured</div>
+                                    <a href="@eduPage.NavbarEducationLoanUrl" class="dk-mega-edu-card" onclick="smoothScrollTo('overview')">
+                                        <div class="dk-mega-edu-icon">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0A58A2" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                                        </div>
+                                        <div>
+                                            <strong class="dk-mega-edu-title">@eduPage.NavbarEducationLoanTitle</strong>
+                                            <p class="dk-mega-edu-sub">100% Comprehensive Abroad &amp; Domestic Financing up to ₹1.5 Cr</p>
+                                            <span class="dk-mega-edu-action">Explore Loan Details →</span>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <!-- Education Right Countries (Destinations List) -->
+                                <div class="dk-tata-mega-col dk-mega-destinations">
+                                    <div class="dk-tata-dropdown-header">
+                                        <span>@eduPage.NavbarRightCountriesTitle</span>
+                                        <span class="dk-header-note">Fast Pre-Visa Approvals</span>
+                                    </div>
+                                    <div class="dk-countries-chips-grid">
+                                        @foreach (var c in countries)
+                                        {
+                                            <a href="@c.Url" class="dk-country-chip" onclick="openEduModal('Education Loan for @c.Name')">
+                                                <span class="dk-chip-flag">@c.FlagEmoji</span>
+                                                <div class="dk-chip-info">
+                                                    <span class="dk-chip-name">@c.Name</span>
+                                                    <span class="dk-chip-meta">@c.LoanAmountLimit • @c.InterestRate</span>
+                                                </div>
+                                                <span class="dk-chip-arrow">›</span>
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
 
-                    <a href="/study-abroad-hub" class="dk-edu-nav-link">Study Abroad</a>
-                    <!-- Student Accommodation intentionally removed per user request -->
-                    <a href="#how-it-works" class="dk-edu-nav-link">Contact Us</a>
+                    <!-- Additional Nav Items (Configurable from Admin) -->
+                    @foreach (var nav in navItems)
+                    {
+                        <div class="dk-tata-nav-item @(nav.HasDropdown ? "has-dropdown" : "")">
+                            <a href="@nav.Url" class="dk-tata-nav-link">
+                                <span>@nav.Title</span>
+                                @if (nav.HasDropdown)
+                                {
+                                    <svg class="dk-tata-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                                }
+                            </a>
+                            @if (nav.HasDropdown && nav.SubItems != null && nav.SubItems.Count > 0)
+                            {
+                                <div class="dk-tata-dropdown-pane dk-tata-simple-pane">
+                                    @foreach (var sub in nav.SubItems)
+                                    {
+                                        <a href="#overview" onclick="openEduModal('@sub')" class="dk-tata-sub-link">@sub</a>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+
                 </nav>
 
-                <!-- Top CTA Button -->
-                <div class="dk-edu-nav-action">
-                    <button type="button" class="dk-edu-btn-apply" onclick="openEduModal('General Loan Application')">
-                        @eduPage.TopNavCtaText
-                    </button>
+                <!-- Right: Search, Notifications, Google Profile, Login Button -->
+                <div class="dk-tata-nav-tools">
+                    
+                    <!-- Search Input Pill -->
+                    <div class="dk-tata-search-pill">
+                        <svg class="dk-tata-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <input type="text" id="tataSearchInput" class="dk-tata-search-input" placeholder="@eduPage.SearchPlaceholder" onkeydown="handleTataSearch(event)" />
+                    </div>
+
+                    <!-- Notification Bell with Unread Badge -->
+                    <div class="dk-tata-notif-wrap">
+                        <button type="button" class="dk-tata-notif-btn" id="btnTataNotif" onclick="toggleTataNotif()" title="Special Loan Offers">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                            @if (eduPage.NotificationCount > 0)
+                            {
+                                <span class="dk-tata-notif-dot">@eduPage.NotificationCount</span>
+                            }
+                        </button>
+                        
+                        <!-- Notification Popover Card -->
+                        <div class="dk-tata-notif-pop" id="tataNotifPop" style="display: none;">
+                            <div class="dk-notif-head">
+                                <strong>Loan Notification</strong>
+                                <span class="dk-notif-time">Just now</span>
+                            </div>
+                            <p class="dk-notif-body">@eduPage.NotificationText</p>
+                            <button type="button" class="dk-notif-cta" onclick="openEduModal('Special Offer Notification')">Claim Offer →</button>
+                        </div>
+                    </div>
+
+                    <!-- User / Google Avatar Icon -->
+                    <div class="dk-tata-avatar-box" title="My Account">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+
+                    <!-- Yellow Login Pill Button -->
+                    <a href="@eduPage.LoginButtonUrl" class="dk-tata-login-btn">
+                        @eduPage.LoginButtonText
+                    </a>
+
                 </div>
+
             </div>
         </header>
+
+        <!-- Breadcrumb Bar Below Tata Navbar (Image 1 Style) -->
+        <div class="dk-tata-breadcrumb-bar">
+            <div class="dk-tata-breadcrumb-inner">
+                <a href="/" class="dk-bread-link">Home</a>
+                <span class="dk-bread-sep">-</span>
+                <span class="dk-bread-current">@eduPage.BreadcrumbText</span>
+            </div>
+        </div>
     }
 
     <!-- ========================================================
-         FULL HERO BANNER (Full Width & Tall Height Panoramic Banner)
+         2. FULL HERO BANNER (Wide & Tall Panoramic Banner)
     ========================================================= -->
     <section class="dk-edu-hero-panoramic-section" id="hero-banner">
         <div class="dk-edu-hero-banner-frame">
@@ -99,7 +230,383 @@
     </section>
 
     <!-- ========================================================
-         OUR ACHIEVEMENTS STRIP (Image 3 Style)
+         3. 4 STICKY SUB-NAV TABS BELOW HERO BANNER (Image 3 Style)
+         Overview | Document Required | Rates and Charges | EMI Calculator
+    ========================================================= -->
+    @if (eduPage.ShowSubNavTabs)
+    {
+        <div class="dk-tata-subnav-sticky" id="tataSubNavSticky">
+            <div class="dk-tata-subnav-shell">
+                
+                <!-- 4 Navigation Tabs with Dynamic ScrollSpy Active Highlight -->
+                <div class="dk-tata-tabs-track" id="tataTabsTrack">
+                    <a href="#overview" class="dk-subnav-tab active" data-section="overview" onclick="handleTabClick(event, 'overview')">
+                        <span>@eduPage.SubNavTab1Title</span>
+                    </a>
+                    <a href="#document-required" class="dk-subnav-tab" data-section="document-required" onclick="handleTabClick(event, 'document-required')">
+                        <span>@eduPage.SubNavTab2Title</span>
+                    </a>
+                    <a href="#rates-and-charges" class="dk-subnav-tab" data-section="rates-and-charges" onclick="handleTabClick(event, 'rates-and-charges')">
+                        <span>@eduPage.SubNavTab3Title</span>
+                    </a>
+                    <a href="#emi-calculator" class="dk-subnav-tab" data-section="emi-calculator" onclick="handleTabClick(event, 'emi-calculator')">
+                        <span>@eduPage.SubNavTab4Title</span>
+                    </a>
+                </div>
+
+                <!-- Right Action Button: Get Instant Education Loan -->
+                <div class="dk-tata-subnav-action">
+                    <button type="button" class="dk-tata-instant-btn" onclick="openEduModal('Instant Education Loan CTA')">
+                        <span>@eduPage.SubNavCtaText</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    }
+
+    <!-- ========================================================
+         4. SECTION 1: OVERVIEW (Tata Capital Reference)
+    ========================================================= -->
+    <section class="dk-tata-section dk-overview-section" id="overview">
+        <div class="dk-section-container">
+            
+            <div class="dk-section-header">
+                <span class="dk-section-eyebrow">Tata Capital Comprehensive Education Financing</span>
+                <h2 class="dk-section-heading">@eduPage.OverviewTitle</h2>
+                <p class="dk-section-subheading">@eduPage.OverviewSubtitle</p>
+            </div>
+
+            <!-- Overview Main Narrative Box -->
+            <div class="dk-overview-story-box">
+                <p class="dk-overview-desc">@eduPage.OverviewDescription</p>
+                <div class="dk-overview-fast-facts">
+                    <div class="dk-fact-pill">
+                        <span class="dk-fact-icon">🎓</span>
+                        <span><strong>100% Cost of Study</strong> Covered</span>
+                    </div>
+                    <div class="dk-fact-pill">
+                        <span class="dk-fact-icon">⚡</span>
+                        <span><strong>48-Hour</strong> In-Principle Sanction</span>
+                    </div>
+                    <div class="dk-fact-pill">
+                        <span class="dk-fact-icon">🌐</span>
+                        <span><strong>50+ Countries</strong> Recognized</span>
+                    </div>
+                    <div class="dk-fact-pill">
+                        <span class="dk-fact-icon">🛡️</span>
+                        <span><strong>Zero Margin Money</strong> Options</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6 Key Highlights Grid -->
+            <div class="dk-overview-cards-grid">
+                @for (int oIdx = 0; oIdx < overviewCards.Count; oIdx++)
+                {
+                    var oc = overviewCards[oIdx];
+                    <div class="dk-overview-card">
+                        <div class="dk-oc-icon-box">
+                            @if (oc.Icon == "award" || oIdx == 0)
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0A58A2" stroke-width="2.2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                            }
+                            else if (oc.Icon == "check-circle" || oIdx == 1)
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            }
+                            else if (oc.Icon == "percent" || oIdx == 2)
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+                            }
+                            else if (oc.Icon == "clock" || oIdx == 3)
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            }
+                            else if (oc.Icon == "shield" || oIdx == 4)
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            }
+                            else
+                            {
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                            }
+                        </div>
+                        <h3 class="dk-oc-title">@oc.Title</h3>
+                        <p class="dk-oc-desc">@oc.Description</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Overview Section Quick CTA Banner -->
+            <div class="dk-overview-cta-strip">
+                <div class="dk-octa-text">
+                    <strong>Ready to calculate your monthly education loan installments?</strong>
+                    <span>Use our interactive EMI calculator below to plan your repayment structure.</span>
+                </div>
+                <button type="button" class="dk-octa-btn" onclick="smoothScrollTo('emi-calculator')">
+                    Go to EMI Calculator ↓
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================
+         5. SECTION 2: DOCUMENT REQUIRED (Tata Capital Reference)
+    ========================================================= -->
+    <section class="dk-tata-section dk-docs-section" id="document-required">
+        <div class="dk-section-container">
+            
+            <div class="dk-section-header">
+                <span class="dk-section-eyebrow">Hassle-Free Digital Verification</span>
+                <h2 class="dk-section-heading">@eduPage.DocumentsTitle</h2>
+                <p class="dk-section-subheading">@eduPage.DocumentsSubtitle</p>
+            </div>
+
+            <!-- Documents Categorized Cards Grid -->
+            <div class="dk-docs-grid">
+                @foreach (var grp in docGroups)
+                {
+                    <div class="dk-doc-group-card">
+                        <div class="dk-doc-group-head">
+                            <span class="dk-doc-badge">@grp.GroupBadge</span>
+                            <h3 class="dk-doc-group-title">@grp.GroupTitle</h3>
+                        </div>
+                        <ul class="dk-doc-checklist">
+                            @foreach (var item in grp.Items)
+                            {
+                                <li class="dk-doc-item">
+                                    <span class="dk-doc-check-icon">✓</span>
+                                    <span class="dk-doc-item-text">@item</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+
+            <!-- Pro-Tip Note Callout -->
+            <div class="dk-docs-tip-callout">
+                <div class="dk-tip-icon">💡</div>
+                <div class="dk-tip-content">
+                    <strong>Important Note on Documentation:</strong>
+                    <p>Digital soft copies (clear PDF / high-resolution images) are accepted for pre-visa in-principle sanction. Keep original passports and academic certificates with the student; do not pack them in checked baggage or surrender original property deeds during initial assessment.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================
+         6. SECTION 3: RATES AND CHARGES (Tata Capital Reference)
+    ========================================================= -->
+    <section class="dk-tata-section dk-rates-section" id="rates-and-charges">
+        <div class="dk-section-container">
+            
+            <div class="dk-section-header">
+                <span class="dk-section-eyebrow">Complete Financial Transparency</span>
+                <h2 class="dk-section-heading">@eduPage.RatesTitle</h2>
+                <p class="dk-section-subheading">@eduPage.RatesSubtitle</p>
+            </div>
+
+            <!-- Rates & Charges Table -->
+            <div class="dk-rates-table-wrapper">
+                <table class="dk-rates-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 28%;">Parameter</th>
+                            <th style="width: 36%;">Details &amp; Applicable Charges</th>
+                            <th style="width: 36%;">Terms &amp; Regulatory Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in rateRows)
+                        {
+                            <tr>
+                                <td class="dk-rate-param">
+                                    <span class="dk-rate-param-text">@row.Parameter</span>
+                                </td>
+                                <td class="dk-rate-details">
+                                    <span class="dk-rate-details-highlight">@row.Details</span>
+                                </td>
+                                <td class="dk-rate-notes">
+                                    <span>@row.Note</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Disclaimer note -->
+            <p class="dk-rates-disclaimer">
+                * Note: Interest rates and processing charges are indicative and subject to change based on benchmark rates, university accreditation tier, target degree program, and credit evaluation of applicant/co-applicant. All charges are exclusive of applicable statutory government GST.
+            </p>
+
+        </div>
+    </section>
+
+    <!-- ========================================================
+         7. SECTION 4: EMI CALCULATOR (Tata Capital Reference)
+    ========================================================= -->
+    <section class="dk-tata-section dk-emi-section" id="emi-calculator">
+        <div class="dk-section-container">
+            
+            <div class="dk-section-header">
+                <span class="dk-section-eyebrow">Smart Loan Repayment Planning</span>
+                <h2 class="dk-section-heading">@eduPage.EmiCalcTitle</h2>
+                <p class="dk-section-subheading">@eduPage.EmiCalcSubtitle</p>
+            </div>
+
+            <div class="dk-emi-calculator-card">
+                <div class="dk-emi-grid">
+                    
+                    <!-- Left: Interactive Sliders & Presets -->
+                    <div class="dk-emi-controls-col">
+                        
+                        <!-- 1. Loan Amount Slider -->
+                        <div class="dk-emi-control-group">
+                            <div class="dk-emi-label-row">
+                                <label for="emiAmountRange" class="dk-emi-label">Loan Amount</label>
+                                <div class="dk-emi-val-box">
+                                    <span class="dk-currency-sym">₹</span>
+                                    <input type="text" id="emiAmountDisplay" class="dk-emi-input-field" value="30,00,000" onchange="handleEmiAmountInput(this.value)" />
+                                </div>
+                            </div>
+                            <input type="range" id="emiAmountRange" class="dk-emi-slider" 
+                                   min="@eduPage.EmiMinAmount" max="@eduPage.EmiMaxAmount" step="50000" value="@eduPage.EmiDefaultAmount" 
+                                   oninput="updateEmiFromSlider()" />
+                            <div class="dk-slider-limits">
+                                <span>₹ 1 Lakh</span>
+                                <span>₹ 75 Lakhs</span>
+                                <span>₹ 1.50 Crore</span>
+                            </div>
+                            <div class="dk-emi-presets">
+                                <button type="button" class="dk-preset-btn" onclick="setEmiAmount(1500000)">₹15 L</button>
+                                <button type="button" class="dk-preset-btn active" onclick="setEmiAmount(3000000)">₹30 L</button>
+                                <button type="button" class="dk-preset-btn" onclick="setEmiAmount(5000000)">₹50 L</button>
+                                <button type="button" class="dk-preset-btn" onclick="setEmiAmount(7500000)">₹75 L</button>
+                                <button type="button" class="dk-preset-btn" onclick="setEmiAmount(10000000)">₹1 Cr</button>
+                            </div>
+                        </div>
+
+                        <!-- 2. Interest Rate Slider -->
+                        <div class="dk-emi-control-group">
+                            <div class="dk-emi-label-row">
+                                <label for="emiRateRange" class="dk-emi-label">Interest Rate (% p.a.)</label>
+                                <div class="dk-emi-val-box">
+                                    <input type="number" id="emiRateDisplay" class="dk-emi-input-field" step="0.1" value="@eduPage.EmiDefaultRate" onchange="handleEmiRateInput(this.value)" />
+                                    <span class="dk-unit-sym">%</span>
+                                </div>
+                            </div>
+                            <input type="range" id="emiRateRange" class="dk-emi-slider" 
+                                   min="@eduPage.EmiMinRate" max="@eduPage.EmiMaxRate" step="0.1" value="@eduPage.EmiDefaultRate" 
+                                   oninput="updateEmiFromSlider()" />
+                            <div class="dk-slider-limits">
+                                <span>@eduPage.EmiMinRate %</span>
+                                <span>12.0 %</span>
+                                <span>@eduPage.EmiMaxRate %</span>
+                            </div>
+                            <div class="dk-emi-presets">
+                                <button type="button" class="dk-preset-btn" onclick="setEmiRate(8.5)">8.5%</button>
+                                <button type="button" class="dk-preset-btn active" onclick="setEmiRate(9.5)">9.5%</button>
+                                <button type="button" class="dk-preset-btn" onclick="setEmiRate(10.5)">10.5%</button>
+                                <button type="button" class="dk-preset-btn" onclick="setEmiRate(11.5)">11.5%</button>
+                            </div>
+                        </div>
+
+                        <!-- 3. Tenure Slider -->
+                        <div class="dk-emi-control-group">
+                            <div class="dk-emi-label-row">
+                                <label for="emiTenureRange" class="dk-emi-label">Loan Tenure (Years)</label>
+                                <div class="dk-emi-val-box">
+                                    <input type="number" id="emiTenureDisplay" class="dk-emi-input-field" min="@eduPage.EmiMinTenureYears" max="@eduPage.EmiMaxTenureYears" value="@eduPage.EmiDefaultTenureYears" onchange="handleEmiTenureInput(this.value)" />
+                                    <span class="dk-unit-sym">Yrs</span>
+                                </div>
+                            </div>
+                            <input type="range" id="emiTenureRange" class="dk-emi-slider" 
+                                   min="@eduPage.EmiMinTenureYears" max="@eduPage.EmiMaxTenureYears" step="1" value="@eduPage.EmiDefaultTenureYears" 
+                                   oninput="updateEmiFromSlider()" />
+                            <div class="dk-slider-limits">
+                                <span>1 Year</span>
+                                <span>7 Years</span>
+                                <span>15 Years</span>
+                            </div>
+                            <div class="dk-emi-presets">
+                                <button type="button" class="dk-preset-btn" onclick="setEmiTenure(5)">5 Yrs</button>
+                                <button type="button" class="dk-preset-btn" onclick="setEmiTenure(7)">7 Yrs</button>
+                                <button type="button" class="dk-preset-btn active" onclick="setEmiTenure(10)">10 Yrs</button>
+                                <button type="button" class="dk-preset-btn" onclick="setEmiTenure(15)">15 Yrs</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right: Summary Card & Dynamic Calculation Results -->
+                    <div class="dk-emi-summary-col">
+                        
+                        <div class="dk-emi-summary-box">
+                            <span class="dk-summary-tag">Calculated Monthly Installment</span>
+                            
+                            <div class="dk-emi-main-figure">
+                                <span class="dk-emi-curr">₹</span>
+                                <span class="dk-emi-amount" id="lblMonthlyEmi">38,822</span>
+                                <span class="dk-emi-period">/ month</span>
+                            </div>
+
+                            <div class="dk-emi-breakdown-list">
+                                <div class="dk-breakdown-row">
+                                    <div class="dk-bd-indicator green"></div>
+                                    <span class="dk-bd-label">Principal Loan Amount</span>
+                                    <strong class="dk-bd-val" id="lblPrincipalAmount">₹ 30,00,000</strong>
+                                </div>
+                                <div class="dk-breakdown-row">
+                                    <div class="dk-bd-indicator purple"></div>
+                                    <span class="dk-bd-label">Total Interest Payable</span>
+                                    <strong class="dk-bd-val" id="lblTotalInterest">₹ 16,58,640</strong>
+                                </div>
+                                <div class="dk-breakdown-row dk-row-total">
+                                    <div class="dk-bd-indicator blue"></div>
+                                    <span class="dk-bd-label">Total Repayment (Principal + Interest)</span>
+                                    <strong class="dk-bd-val" id="lblTotalPayable">₹ 46,58,640</strong>
+                                </div>
+                            </div>
+
+                            <!-- Visual Proportion Bar -->
+                            <div class="dk-emi-ratio-container">
+                                <div class="dk-ratio-bar">
+                                    <div class="dk-ratio-principal" id="barPrincipal" style="width: 64.4%;" title="Principal Portion"></div>
+                                    <div class="dk-ratio-interest" id="barInterest" style="width: 35.6%;" title="Interest Portion"></div>
+                                </div>
+                                <div class="dk-ratio-legend">
+                                    <span><span class="legend-dot green"></span> Principal (<span id="pctPrincipal">64.4%</span>)</span>
+                                    <span><span class="legend-dot purple"></span> Interest (<span id="pctInterest">35.6%</span>)</span>
+                                </div>
+                            </div>
+
+                            <!-- Instant Apply Button -->
+                            <button type="button" class="dk-emi-apply-btn" id="btnApplyCalculatedEmi" onclick="applyWithCalculatedLoan()">
+                                <span>Apply for this Loan Now →</span>
+                            </button>
+
+                            <p class="dk-emi-security-note">
+                                🔒 Fast digital application • No obligation • 20+ Lender offers
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================================
+         8. OUR ACHIEVEMENTS STRIP (Image 3 Style)
     ========================================================= -->
     <section class="dk-edu-achieve-section" aria-label="Our Achievements">
         <div class="dk-edu-achieve-shell">
@@ -109,7 +616,6 @@
                 <div class="dk-edu-achieve-title-box">
                     <h2 class="dk-edu-achieve-heading">Our Achievements</h2>
                     <div class="dk-edu-google-reviews-pill">
-                        <!-- Google G logo -->
                         <div class="dk-edu-google-g">
                             <svg width="22" height="22" viewBox="0 0 24 24">
                                 <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
@@ -153,7 +659,7 @@
     </section>
 
     <!-- ========================================================
-         OUR LOAN PARTNERS SECTION (Image 4 Style)
+         9. OUR LOAN PARTNERS SECTION (Image 4 Style)
     ========================================================= -->
     <section class="dk-edu-partners-section" id="loan-partners">
         <div class="dk-edu-section-shell">
@@ -197,7 +703,7 @@
     </section>
 
     <!-- ========================================================
-         HOW IT WORKS SECTION (Image 4 Style: 5 Easy Steps)
+         10. HOW IT WORKS SECTION (Image 4 Style: 5 Easy Steps)
     ========================================================= -->
     <section class="dk-edu-how-section" id="how-it-works">
         <div class="dk-edu-section-shell">
@@ -214,7 +720,6 @@
                     var s = steps[sIdx];
                     <div class="dk-edu-step-card">
                         
-                        <!-- Step Icon Emblem -->
                         <div class="dk-edu-step-emblem">
                             @if (s.Icon == "check-circle" || sIdx == 0)
                             {
@@ -238,13 +743,11 @@
                             }
                         </div>
 
-                        <!-- Step Content -->
                         <div class="dk-edu-step-body">
                             <h3 class="dk-edu-step-title">@s.Title</h3>
                             <p class="dk-edu-step-desc">@s.Subtitle</p>
                         </div>
 
-                        <!-- Connector arrow (except last) -->
                         @if (sIdx < steps.Count - 1)
                         {
                             <div class="dk-edu-step-connector" aria-hidden="true">
@@ -261,36 +764,29 @@
     </section>
 
     <!-- ========================================================
-         FEATURED / TRENDING COURSES & LOAN SCHEMES (Image 5 Style)
-         High-Tech Futuristic Background + Sliding Cards Conveyor
+         11. FEATURED / TRENDING COURSES & FINANCING (Image 5)
     ========================================================= -->
     <section class="dk-edu-tech-section" id="trending-courses" style="background-image: url('@eduPage.CoursesBgImageUrl');">
-        <!-- Cyberspace dark overlay -->
         <div class="dk-tech-overlay"></div>
 
         <div class="dk-edu-section-shell dk-tech-shell">
             
-            <!-- Section Header -->
             <div class="dk-tech-header">
                 <span class="dk-tech-tag">@eduPage.CoursesTag</span>
                 <h2 class="dk-tech-title">@eduPage.CoursesTitle</h2>
                 <p class="dk-tech-sub">@eduPage.CoursesSubtitle</p>
             </div>
 
-            <!-- Auto-Moving Conveyor Carousel (Moves from right to left based on timeframe without side arrow markers) -->
             <div class="dk-tech-carousel-container" id="coursesCarouselWrapper">
-                <!-- Cards Slider Viewport & Track -->
                 <div class="dk-tech-cards-viewport" id="coursesViewport" data-interval-sec="@(eduPage.CoursesSlideIntervalSec > 0 ? eduPage.CoursesSlideIntervalSec : 3)">
                     <div class="dk-tech-cards-track" id="coursesTrack">
                         @for (int cIdx = 0; cIdx < courses.Count; cIdx++)
                         {
                             var c = courses[cIdx];
                             <div class="dk-tech-course-card" data-course-index="@cIdx">
-                                <!-- Campus Image with Institution Badge -->
                                 <div class="dk-course-media-box">
                                     <img src="@c.ImageUrl" alt="@c.Title" class="dk-course-img" onerror="this.src='/images/study-hub/upload-soon.svg';" />
                                     
-                                    <!-- Circular Logo Emblem Overlaid on Bottom-Right of Image (Image 5 style) -->
                                     <div class="dk-course-inst-emblem">
                                         @if (!string.IsNullOrWhiteSpace(c.LogoUrl))
                                         {
@@ -303,12 +799,10 @@
                                     </div>
                                 </div>
 
-                                <!-- Card Body -->
                                 <div class="dk-course-info">
                                     <span class="dk-course-inst-name">@c.Institution</span>
                                     <h3 class="dk-course-title" title="@c.Title">@c.Title</h3>
 
-                                    <!-- Badges List with Icons -->
                                     <div class="dk-course-badges">
                                         @if (!string.IsNullOrWhiteSpace(c.Badge1))
                                         {
@@ -326,7 +820,6 @@
                                         }
                                     </div>
 
-                                    <!-- Action Buttons: User specified "More Information" and "Apply Now" -->
                                     <div class="dk-course-actions">
                                         <button type="button" class="dk-course-btn-info" onclick="openEduModal('Info: @c.Title (@c.Institution)')">
                                             @c.InfoButtonText
@@ -346,10 +839,8 @@
         </div>
     </section>
 
-
-
     <!-- ========================================================
-         INTERACTIVE LOAN ELIGIBILITY / APPLICATION MODAL
+         12. INTERACTIVE LOAN APPLICATION MODAL
     ========================================================= -->
     <div class="dk-edu-modal-backdrop" id="eduLoanModal" style="display: none;" onclick="closeEduModalOnBackdrop(event)">
         <div class="dk-edu-modal-box">
@@ -421,7 +912,6 @@
                     <input type="text" id="leadProgram" class="dk-modal-input" placeholder="e.g. MS in Computer Science / AI / MBA" />
                 </div>
 
-                <!-- Submit Button -->
                 <div style="margin-top: 20px;">
                     <button type="submit" class="dk-modal-submit-btn" id="btnSubmitLoan">
                         <span>Check Eligibility &amp; Apply Now →</span>
@@ -433,7 +923,6 @@
 
             </form>
 
-            <!-- Success Message Box -->
             <div id="eduModalSuccess" style="display: none; text-align: center; padding: 25px 15px;">
                 <div class="dk-success-tick">✓</div>
                 <h4 style="font-size: 20px; font-weight: 800; color: #065f46; margin: 12px 0 8px 0;">Application Submitted!</h4>
@@ -451,7 +940,7 @@
 </div>
 
 <!-- ========================================================
-     CSS STYLING FOR DEDICATED EDUCATION LOANS PAGE
+     CSS STYLING FOR TATA CAPITAL NAVBAR, STICKY SUB-NAV & 4 SECTIONS
 ========================================================= -->
 <style>
     /* Base wrapper & Typography */
@@ -500,203 +989,1148 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        transition: background 0.2s;
-    }
-    .dk-edu-admin-btn:hover {
-        background: #0369a1;
-        color: #fff;
     }
 
-    /* Top Nav Header (Image 2 style) */
-    .dk-edu-nav-header {
-        background: #ffffff;
-        border-bottom: 1px solid #e2e8f0;
+    /* ========================================================
+       1. TATA CAPITAL NAVBAR CSS (Media 1)
+    ========================================================= */
+    .dk-tata-nav-header {
+        background: #0A58A2;
+        color: #ffffff;
         position: sticky;
         top: 0;
         z-index: 999;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     }
-    .dk-edu-nav-shell {
-        max-width: 1320px;
+    .dk-tata-nav-shell {
+        max-width: 1360px;
         margin: 0 auto;
-        padding: 14px 24px;
+        padding: 10px 24px;
         display: flex;
+        align-items: center;
         justify-content: space-between;
+        gap: 18px;
+    }
+
+    /* Brand Logo */
+    .dk-tata-brand {
+        text-decoration: none;
+        color: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        flex-shrink: 0;
+    }
+    .dk-tata-brand-lockup {
+        display: flex;
+        flex-direction: column;
+    }
+    .dk-tata-brand-name {
+        font-size: 20px;
+        font-weight: 900;
+        letter-spacing: 0.8px;
+        color: #ffffff;
+        line-height: 1.1;
+        text-transform: uppercase;
+    }
+    .dk-tata-brand-underline {
+        height: 3px;
+        background: #FFD100;
+        width: 100%;
+        margin-top: 3px;
+        border-radius: 2px;
+    }
+    .dk-tata-brand-img {
+        max-height: 38px;
+        object-fit: contain;
+    }
+
+    /* Mobile Button */
+    .dk-tata-mobile-btn {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+    }
+    .dk-tata-mobile-btn span {
+        width: 22px;
+        height: 2.5px;
+        background: #ffffff;
+        border-radius: 2px;
+    }
+
+    /* Nav Menu */
+    .dk-tata-nav-menu {
+        display: flex;
         align-items: center;
         gap: 20px;
+        flex-grow: 1;
+        margin-left: 20px;
     }
-    .dk-edu-brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+    .dk-tata-nav-item {
+        position: relative;
+    }
+    .dk-tata-nav-link {
+        color: #ffffff;
+        font-size: 13.5px;
+        font-weight: 600;
         text-decoration: none;
-        color: #0f172a;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 8px 6px;
+        border-radius: 4px;
+        transition: color 0.15s, background 0.15s;
+        white-space: nowrap;
     }
-    .dk-edu-logo-cap {
+    .dk-tata-nav-link:hover,
+    .dk-tata-nav-item:hover > .dk-tata-nav-link {
+        color: #FFD100;
+    }
+    .dk-tata-arrow {
+        transition: transform 0.2s;
+    }
+    .dk-tata-nav-item:hover > .dk-tata-nav-link .dk-tata-arrow {
+        transform: rotate(180deg);
+    }
+
+    /* Dropdown Panes */
+    .dk-tata-dropdown-pane {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #ffffff;
         color: #0f172a;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+        border-radius: 12px;
+        padding: 16px;
+        display: none;
+        z-index: 1050;
+        border: 1px solid #e2e8f0;
+    }
+    .dk-tata-nav-item:hover > .dk-tata-dropdown-pane {
+        display: block;
+        animation: dkTataFadeDown 0.18s ease-out;
+    }
+    @@keyframes dkTataFadeDown {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mega Dropdown for Loans For You */
+    .dk-tata-mega-pane {
+        width: 680px;
+        padding: 20px;
+        left: -10px;
+    }
+    .dk-tata-mega-grid {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 20px;
+    }
+    .dk-tata-dropdown-badge {
+        display: inline-block;
+        background: #dbeafe;
+        color: #0284c7;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 2px 8px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+    }
+    .dk-mega-edu-card {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 16px;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        height: 100%;
+        transition: all 0.2s;
+    }
+    .dk-mega-edu-card:hover {
+        border-color: #0A58A2;
+        background: #f0f7ff;
+        transform: translateY(-2px);
+    }
+    .dk-mega-edu-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        background: #e0f2fe;
         display: flex;
         align-items: center;
         justify-content: center;
     }
-    .dk-edu-brand-title {
-        font-size: 24px;
-        font-weight: 900;
-        letter-spacing: -0.5px;
-        color: #0d3b32;
+    .dk-mega-edu-title {
+        font-size: 15px;
+        color: #0A58A2;
+        font-weight: 800;
+        display: block;
     }
-    .dk-edu-nav-menu {
+    .dk-mega-edu-sub {
+        font-size: 12px;
+        color: #64748b;
+        margin: 4px 0 0 0;
+        line-height: 1.4;
+    }
+    .dk-mega-edu-action {
+        font-size: 12px;
+        font-weight: 700;
+        color: #0A58A2;
+        margin-top: auto;
+    }
+
+    /* Mega Destinations Grid */
+    .dk-tata-dropdown-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 8px;
+        margin-bottom: 12px;
+        font-size: 13px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+    .dk-header-note {
+        font-size: 11px;
+        color: #16a34a;
+        font-weight: 700;
+    }
+    .dk-countries-chips-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    .dk-country-chip {
         display: flex;
         align-items: center;
-        gap: 24px;
+        gap: 8px;
+        padding: 8px 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #0f172a;
+        transition: all 0.15s;
     }
-    .dk-edu-nav-link {
+    .dk-country-chip:hover {
+        border-color: #0A58A2;
+        background: #eff6ff;
+        transform: translateX(2px);
+    }
+    .dk-chip-flag {
+        font-size: 18px;
+    }
+    .dk-chip-info {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow: hidden;
+    }
+    .dk-chip-name {
+        font-size: 12px;
+        font-weight: 700;
+        color: #1e293b;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .dk-chip-meta {
+        font-size: 10.5px;
+        color: #64748b;
+    }
+    .dk-chip-arrow {
+        color: #94a3b8;
         font-size: 14px;
+        font-weight: 800;
+    }
+
+    /* Simple Dropdown */
+    .dk-tata-simple-pane {
+        width: 220px;
+        padding: 8px;
+    }
+    .dk-tata-sub-link {
+        display: block;
+        padding: 8px 12px;
+        font-size: 13px;
         font-weight: 600;
         color: #334155;
         text-decoration: none;
-        transition: color 0.15s;
+        border-radius: 6px;
+        transition: background 0.15s, color 0.15s;
+    }
+    .dk-tata-sub-link:hover {
+        background: #eff6ff;
+        color: #0A58A2;
+    }
+
+    /* Right Nav Tools */
+    .dk-tata-nav-tools {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 12px;
+        flex-shrink: 0;
     }
-    .dk-edu-nav-link:hover, .dk-edu-nav-link.active {
-        color: #047857;
+    .dk-tata-search-pill {
+        position: relative;
+        display: flex;
+        align-items: center;
     }
-    .dk-edu-dropdown-wrap {
+    .dk-tata-search-icon {
+        position: absolute;
+        left: 10px;
+        color: #64748b;
+        pointer-events: none;
+    }
+    .dk-tata-search-input {
+        background: #ffffff;
+        color: #0f172a;
+        border: none;
+        border-radius: 20px;
+        padding: 6px 12px 6px 30px;
+        font-size: 12.5px;
+        width: 130px;
+        outline: none;
+        transition: width 0.2s, box-shadow 0.2s;
+    }
+    .dk-tata-search-input:focus {
+        width: 170px;
+        box-shadow: 0 0 0 2px #FFD100;
+    }
+
+    /* Notification Bell */
+    .dk-tata-notif-wrap {
         position: relative;
     }
-    .dk-edu-dropdown-pop {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        padding: 8px 0;
-        min-width: 190px;
-        z-index: 50;
-    }
-    .dk-edu-dropdown-wrap:hover .dk-edu-dropdown-pop {
-        display: block;
-    }
-    .dk-edu-dropdown-pop a {
-        display: block;
-        padding: 8px 16px;
-        font-size: 13px;
-        font-weight: 600;
-        color: #1e293b;
-        text-decoration: none;
-    }
-    .dk-edu-dropdown-pop a:hover {
-        background: #f0fdf4;
-        color: #047857;
-    }
-    .dk-edu-btn-apply {
-        background: #0f393b;
+    .dk-tata-notif-btn {
+        background: rgba(255, 255, 255, 0.15);
         color: #ffffff;
-        font-size: 14px;
-        font-weight: 700;
-        padding: 10px 22px;
-        border-radius: 8px;
         border: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         cursor: pointer;
-        transition: all 0.2s ease;
+        position: relative;
+        transition: background 0.2s;
     }
-    .dk-edu-btn-apply:hover {
-        background: #047857;
-        box-shadow: 0 4px 14px rgba(4, 120, 87, 0.35);
+    .dk-tata-notif-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+    .dk-tata-notif-dot {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background: #ef4444;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 800;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #0A58A2;
+    }
+    .dk-tata-notif-pop {
+        position: absolute;
+        top: 120%;
+        right: 0;
+        width: 290px;
+        background: #ffffff;
+        color: #0f172a;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        padding: 14px;
+        border: 1px solid #e2e8f0;
+        z-index: 1060;
+    }
+    .dk-notif-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+    .dk-notif-time {
+        font-size: 10.5px;
+        color: #64748b;
+    }
+    .dk-notif-body {
+        font-size: 12px;
+        color: #334155;
+        line-height: 1.4;
+        margin: 0 0 10px 0;
+    }
+    .dk-notif-cta {
+        background: #0A58A2;
+        color: #fff;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    /* Avatar */
+    .dk-tata-avatar-box {
+        color: #ffffff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Yellow Login Pill */
+    .dk-tata-login-btn {
+        background: #FFD100;
+        color: #0f172a;
+        font-size: 13px;
+        font-weight: 800;
+        padding: 6px 18px;
+        border-radius: 20px;
+        text-decoration: none;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        transition: transform 0.15s, background 0.15s;
+        white-space: nowrap;
+    }
+    .dk-tata-login-btn:hover {
+        background: #facc15;
+        color: #0f172a;
         transform: translateY(-1px);
     }
 
-    /* ========================================================
-       FULL HERO BANNER (Full Width & Tall Height Panoramic Banner)
-    ======================================================== */
-    .dk-edu-hero-panoramic-section {
-        position: relative;
-        width: 100% !important;
-        min-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #022340 !important;
-        overflow: hidden !important;
-        border: none !important;
-        line-height: 0;
+    /* Breadcrumbs Bar */
+    .dk-tata-breadcrumb-bar {
+        background: #f1f5f9;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 6px 24px;
+        font-size: 12.5px;
     }
-    .dk-edu-hero-banner-frame {
-        width: 100% !important;
-        min-width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: block !important;
-        position: relative;
-        line-height: 0;
-        background: transparent !important;
+    .dk-tata-breadcrumb-inner {
+        max-width: 1360px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
-    .dk-edu-hero-panoramic-img {
-        width: 100% !important;
-        min-width: 100% !important;
-        max-width: 100% !important;
-        height: auto !important;
-        max-height: none !important;
-        min-height: 0 !important;
-        display: block !important;
-        object-fit: cover !important;
-        object-position: center top !important;
-        margin: 0 !important;
-        border: none !important;
+    .dk-bread-link {
+        color: #64748b;
+        text-decoration: none;
+    }
+    .dk-bread-link:hover {
+        color: #0A58A2;
+        text-decoration: underline;
+    }
+    .dk-bread-sep {
+        color: #94a3b8;
+    }
+    .dk-bread-current {
+        color: #0A58A2;
+        font-weight: 700;
     }
 
-    /* OUR ACHIEVEMENTS STRIP (Image 3 style) */
-    .dk-edu-achieve-section {
-        background: #ffffff;
-        border-top: 1px solid #f1f5f9;
-        border-bottom: 1px solid #f1f5f9;
-        padding: 34px 0;
+    /* ========================================================
+       2. HERO BANNER
+    ========================================================= */
+    .dk-edu-hero-panoramic-section {
+        width: 100%;
+        background: #022340;
     }
-    .dk-edu-achieve-shell {
-        max-width: 1320px;
+    .dk-edu-hero-banner-frame {
+        width: 100%;
+        line-height: 0;
+    }
+    .dk-edu-hero-panoramic-img {
+        width: 100%;
+        height: auto;
+        max-height: 540px;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* ========================================================
+       3. 4 STICKY SUB-NAV TABS CSS (Image 3 Style)
+    ========================================================= */
+    .dk-tata-subnav-sticky {
+        position: sticky;
+        top: 56px;
+        z-index: 900;
+        background: #ffffff;
+        border-bottom: 1.5px solid #e2e8f0;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+    .dk-tata-subnav-shell {
+        max-width: 1360px;
         margin: 0 auto;
         padding: 0 24px;
-    }
-    .dk-edu-achieve-grid {
-        display: grid;
-        grid-template-columns: 1.1fr 2fr;
-        align-items: center;
-        gap: 30px;
-    }
-    .dk-edu-achieve-title-box {
         display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+    .dk-tata-tabs-track {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+    .dk-tata-tabs-track::-webkit-scrollbar {
+        display: none;
+    }
+    .dk-subnav-tab {
+        padding: 16px 20px;
+        font-size: 14.5px;
+        font-weight: 700;
+        color: #475569;
+        text-decoration: none;
+        border-bottom: 3px solid transparent;
+        transition: color 0.15s, border-color 0.15s;
+        white-space: nowrap;
+    }
+    .dk-subnav-tab:hover {
+        color: #0A58A2;
+    }
+    .dk-subnav-tab.active {
+        color: #0A58A2;
+        border-bottom-color: #0A58A2;
+    }
+    .dk-tata-instant-btn {
+        background: #0A58A2;
+        color: #ffffff;
+        font-size: 13.5px;
+        font-weight: 800;
+        border: none;
+        padding: 9px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.15s, transform 0.15s;
+        white-space: nowrap;
+    }
+    .dk-tata-instant-btn:hover {
+        background: #084784;
+        transform: translateY(-1px);
+    }
+
+    /* Common Section Styles */
+    .dk-tata-section {
+        padding: 56px 24px;
+        scroll-margin-top: 110px;
+    }
+    .dk-section-container {
+        max-width: 1320px;
+        margin: 0 auto;
+    }
+    .dk-section-header {
+        margin-bottom: 32px;
+    }
+    .dk-section-eyebrow {
+        display: inline-block;
+        font-size: 11.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #0A58A2;
+        letter-spacing: 0.8px;
+        margin-bottom: 6px;
+    }
+    .dk-section-heading {
+        font-size: 28px;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+        letter-spacing: -0.4px;
+    }
+    .dk-section-subheading {
+        font-size: 15px;
+        color: #64748b;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* ========================================================
+       4. SECTION 1: OVERVIEW CSS
+    ========================================================= */
+    .dk-overview-section {
+        background: #f8fafc;
+    }
+    .dk-overview-story-box {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 24px 28px;
+        margin-bottom: 28px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .dk-overview-desc {
+        font-size: 15.5px;
+        color: #334155;
+        line-height: 1.7;
+        margin: 0 0 20px 0;
+    }
+    .dk-overview-fast-facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding-top: 16px;
+        border-top: 1px solid #f1f5f9;
+    }
+    .dk-fact-pill {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+        font-size: 13px;
+        padding: 6px 14px;
+        border-radius: 999px;
+    }
+    .dk-fact-icon {
+        font-size: 15px;
+    }
+    .dk-overview-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+    .dk-overview-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 24px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .dk-overview-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        border-color: #cbd5e1;
+    }
+    .dk-oc-icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        background: #eff6ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+    }
+    .dk-oc-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+    }
+    .dk-oc-desc {
+        font-size: 13.5px;
+        color: #64748b;
+        line-height: 1.55;
+        margin: 0;
+    }
+    .dk-overview-cta-strip {
+        background: linear-gradient(90deg, #0A58A2, #0284c7);
+        color: #ffffff;
+        border-radius: 12px;
+        padding: 18px 26px;
+        display: flex;
+        justify-content: space-between;
         align-items: center;
         gap: 20px;
         flex-wrap: wrap;
     }
-    .dk-edu-achieve-heading {
-        font-size: 28px;
-        font-weight: 900;
-        color: #1e293b;
-        margin: 0;
+    .dk-octa-text strong {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 2px;
     }
-    .dk-edu-google-reviews-pill {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+    .dk-octa-text span {
+        font-size: 13.5px;
+        opacity: 0.9;
+    }
+    .dk-octa-btn {
+        background: #FFD100;
+        color: #0f172a;
+        font-size: 13.5px;
+        font-weight: 800;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.15s;
+    }
+    .dk-octa-btn:hover {
+        transform: scale(1.03);
+    }
+
+    /* ========================================================
+       5. SECTION 2: DOCUMENT REQUIRED CSS
+    ========================================================= */
+    .dk-docs-section {
+        background: #ffffff;
+    }
+    .dk-docs-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+        margin-bottom: 24px;
+    }
+    .dk-doc-group-card {
         background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        padding: 6px 14px;
-        border-radius: 10px;
-    }
-    .dk-edu-rating-text-box {
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 22px;
         display: flex;
         flex-direction: column;
     }
+    .dk-doc-group-head {
+        margin-bottom: 16px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .dk-doc-badge {
+        display: inline-block;
+        background: #dbeafe;
+        color: #0A58A2;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-bottom: 6px;
+    }
+    .dk-doc-group-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
+    }
+    .dk-doc-checklist {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .dk-doc-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 13px;
+        color: #334155;
+        line-height: 1.45;
+    }
+    .dk-doc-check-icon {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #dcfce7;
+        color: #16a34a;
+        font-size: 11px;
+        font-weight: 900;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+    .dk-docs-tip-callout {
+        background: #fefce8;
+        border: 1px solid #fef08a;
+        border-radius: 10px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+    }
+    .dk-tip-icon {
+        font-size: 22px;
+        flex-shrink: 0;
+    }
+    .dk-tip-content strong {
+        color: #854d0e;
+        font-size: 14px;
+        display: block;
+        margin-bottom: 4px;
+    }
+    .dk-tip-content p {
+        color: #713f12;
+        font-size: 13px;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    /* ========================================================
+       6. SECTION 3: RATES AND CHARGES CSS
+    ========================================================= */
+    .dk-rates-section {
+        background: #f8fafc;
+    }
+    .dk-rates-table-wrapper {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        margin-bottom: 14px;
+    }
+    .dk-rates-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+    }
+    .dk-rates-table thead {
+        background: #0A58A2;
+        color: #ffffff;
+    }
+    .dk-rates-table th {
+        padding: 14px 20px;
+        text-align: left;
+        font-weight: 800;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .dk-rates-table tbody tr {
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.15s;
+    }
+    .dk-rates-table tbody tr:nth-child(even) {
+        background: #fcfdfe;
+    }
+    .dk-rates-table tbody tr:hover {
+        background: #f0f7ff;
+    }
+    .dk-rates-table td {
+        padding: 14px 20px;
+        vertical-align: middle;
+    }
+    .dk-rate-param {
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .dk-rate-details-highlight {
+        color: #0A58A2;
+        font-weight: 800;
+        background: #eff6ff;
+        padding: 3px 8px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+    .dk-rate-notes {
+        color: #64748b;
+        font-size: 12.5px;
+        line-height: 1.4;
+    }
+    .dk-rates-disclaimer {
+        font-size: 12px;
+        color: #94a3b8;
+        line-height: 1.5;
+        margin: 8px 0 0 0;
+        font-style: italic;
+    }
+
+    /* ========================================================
+       7. SECTION 4: EMI CALCULATOR CSS
+    ========================================================= */
+    .dk-emi-section {
+        background: #ffffff;
+    }
+    .dk-emi-calculator-card {
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        padding: 36px;
+    }
+    .dk-emi-grid {
+        display: grid;
+        grid-template-columns: 1fr 420px;
+        gap: 36px;
+    }
+    .dk-emi-control-group {
+        margin-bottom: 28px;
+    }
+    .dk-emi-control-group:last-child {
+        margin-bottom: 0;
+    }
+    .dk-emi-label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .dk-emi-label {
+        font-size: 14.5px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+    .dk-emi-val-box {
+        display: inline-flex;
+        align-items: center;
+        background: #f8fafc;
+        border: 1.5px solid #0A58A2;
+        border-radius: 8px;
+        padding: 4px 10px;
+    }
+    .dk-currency-sym,
+    .dk-unit-sym {
+        font-size: 14px;
+        font-weight: 800;
+        color: #0A58A2;
+        margin-right: 4px;
+    }
+    .dk-unit-sym {
+        margin-right: 0;
+        margin-left: 4px;
+    }
+    .dk-emi-input-field {
+        border: none;
+        background: transparent;
+        font-size: 15px;
+        font-weight: 800;
+        color: #0f172a;
+        width: 105px;
+        text-align: right;
+        outline: none;
+    }
+    .dk-emi-slider {
+        width: 100%;
+        height: 6px;
+        background: #e2e8f0;
+        border-radius: 4px;
+        outline: none;
+        accent-color: #0A58A2;
+        cursor: pointer;
+    }
+    .dk-slider-limits {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #94a3b8;
+        font-weight: 600;
+        margin-top: 4px;
+    }
+    .dk-emi-presets {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+    }
+    .dk-preset-btn {
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        color: #475569;
+        font-size: 11.5px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+    .dk-preset-btn:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+    .dk-preset-btn.active {
+        background: #0A58A2;
+        border-color: #0A58A2;
+        color: #ffffff;
+    }
+
+    /* Summary Card */
+    .dk-emi-summary-box {
+        background: linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
+        border: 1.5px solid #bfdbfe;
+        border-radius: 14px;
+        padding: 26px;
+        display: flex;
+        flex-direction: column;
+    }
+    .dk-summary-tag {
+        font-size: 11.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #0A58A2;
+        letter-spacing: 0.5px;
+    }
+    .dk-emi-main-figure {
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+        margin: 8px 0 18px 0;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #dbeafe;
+    }
+    .dk-emi-curr {
+        font-size: 24px;
+        font-weight: 800;
+        color: #0A58A2;
+    }
+    .dk-emi-amount {
+        font-size: 34px;
+        font-weight: 900;
+        color: #0f172a;
+        letter-spacing: -0.5px;
+    }
+    .dk-emi-period {
+        font-size: 14px;
+        color: #64748b;
+        font-weight: 600;
+    }
+    .dk-emi-breakdown-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .dk-breakdown-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #475569;
+    }
+    .dk-bd-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .dk-bd-indicator.green { background: #16a34a; }
+    .dk-bd-indicator.purple { background: #7c3aed; }
+    .dk-bd-indicator.blue { background: #0A58A2; }
+    .dk-bd-label {
+        flex-grow: 1;
+    }
+    .dk-bd-val {
+        color: #0f172a;
+        font-weight: 800;
+    }
+    .dk-row-total {
+        padding-top: 8px;
+        border-top: 1px dashed #cbd5e1;
+        font-weight: 700;
+    }
+
+    /* Ratio Bar */
+    .dk-emi-ratio-container {
+        margin-bottom: 22px;
+    }
+    .dk-ratio-bar {
+        height: 8px;
+        background: #e2e8f0;
+        border-radius: 4px;
+        overflow: hidden;
+        display: flex;
+    }
+    .dk-ratio-principal {
+        background: #16a34a;
+        height: 100%;
+        transition: width 0.3s;
+    }
+    .dk-ratio-interest {
+        background: #7c3aed;
+        height: 100%;
+        transition: width 0.3s;
+    }
+    .dk-ratio-legend {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 6px;
+    }
+    .legend-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 4px;
+    }
+    .legend-dot.green { background: #16a34a; }
+    .legend-dot.purple { background: #7c3aed; }
+
+    /* Button */
+    .dk-emi-apply-btn {
+        background: #0A58A2;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 800;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.15s;
+    }
+    .dk-emi-apply-btn:hover {
+        background: #084784;
+        transform: translateY(-1px);
+    }
+    .dk-emi-security-note {
+        text-align: center;
+        font-size: 11px;
+        color: #64748b;
+        margin: 10px 0 0 0;
+    }
+
+    /* ========================================================
+       8-12. PRESERVED EXISTING SECTIONS CSS
+    ========================================================= */
+    .dk-edu-achieve-section {
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 30px 24px;
+    }
+    .dk-edu-achieve-shell {
+        max-width: 1320px;
+        margin: 0 auto;
+    }
+    .dk-edu-achieve-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 30px;
+        align-items: center;
+    }
+    .dk-edu-achieve-heading {
+        font-size: 22px;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0 0 10px 0;
+    }
+    .dk-edu-google-reviews-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 6px 14px;
+        border-radius: 30px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
     .dk-edu-stars-row {
+        display: block;
         font-size: 11px;
         font-weight: 800;
         color: #f59e0b;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
     }
     .dk-edu-rating-num {
         font-size: 12px;
@@ -705,76 +2139,80 @@
     .dk-edu-metrics-row {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
+        gap: 16px;
     }
     .dk-edu-metric-item {
-        display: flex;
-        flex-direction: column;
-        border-left: 2px solid #e2e8f0;
-        padding-left: 18px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 16px;
+        text-align: center;
+    }
+    .dk-metric-value {
+        display: block;
+        font-size: 24px;
+        font-weight: 900;
+        color: #0A58A2;
+        margin-top: 4px;
     }
     .dk-metric-label {
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 700;
         color: #64748b;
-        margin-bottom: 4px;
-    }
-    .dk-metric-value {
-        font-size: 26px;
-        font-weight: 900;
-        color: #0f172a;
-        letter-spacing: -0.5px;
+        text-transform: uppercase;
     }
 
-    /* OUR LOAN PARTNERS SECTION (Image 4 style) */
+    /* Partners */
     .dk-edu-partners-section {
-        padding: 56px 0 46px 0;
+        padding: 60px 24px;
         background: #ffffff;
     }
     .dk-edu-section-shell {
         max-width: 1320px;
         margin: 0 auto;
-        padding: 0 24px;
     }
     .dk-edu-section-head {
-        margin-bottom: 34px;
+        text-align: center;
+        margin-bottom: 40px;
     }
     .dk-edu-section-title {
-        font-size: 32px;
+        font-size: 28px;
         font-weight: 900;
-        color: #1e293b;
-        margin: 0 0 6px 0;
+        color: #0f172a;
+        margin: 0 0 10px 0;
     }
     .dk-edu-section-sub {
-        font-size: 14.5px;
+        font-size: 15px;
         color: #64748b;
         margin: 0;
     }
     .dk-edu-partners-grid {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 16px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 24px;
     }
     .dk-edu-partner-card {
-        background: #f4fbf7;
-        border: 1px solid #dcf2e6;
+        background: #ffffff;
+        border: 1.5px solid #e2e8f0;
         border-radius: 12px;
-        padding: 22px 16px 16px 16px;
+        padding: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
-        min-height: 140px;
-        transition: transform 0.2s, box-shadow 0.2s;
+        gap: 16px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        transition: transform 0.2s, border-color 0.2s;
     }
     .dk-edu-partner-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+        transform: translateY(-2px);
+        border-color: #0A58A2;
     }
     .dk-edu-partner-card.partner-extra {
         display: none;
     }
-    .dk-edu-partner-card.partner-extra.is-visible {
+    .dk-edu-partner-card.partner-extra.shown {
         display: flex;
     }
     .dk-partner-logo-box {
@@ -783,375 +2221,270 @@
         align-items: center;
         justify-content: center;
     }
-    .dk-partner-text-logo {
-        font-size: 19px;
-        font-weight: 900;
-        color: #166534;
-        letter-spacing: -0.3px;
-    }
     .dk-partner-img {
-        max-height: 38px;
-        max-width: 120px;
+        max-height: 40px;
+        max-width: 140px;
         object-fit: contain;
     }
+    .dk-partner-text-logo {
+        font-size: 16px;
+        font-weight: 800;
+        color: #0f172a;
+    }
     .dk-partner-rate-btn {
-        background: #4bb56e;
-        color: #ffffff;
-        font-size: 11.5px;
-        font-weight: 700;
-        padding: 6px 12px;
-        border-radius: 6px;
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 6px 14px;
+        border-radius: 20px;
         text-decoration: none;
-        width: 100%;
-        text-align: center;
-        display: block;
-        transition: background 0.15s;
+        transition: all 0.15s;
     }
     .dk-partner-rate-btn:hover {
-        background: #15803d;
-        color: #fff;
+        background: #16a34a;
+        color: #ffffff;
     }
     .dk-edu-viewmore-row {
         text-align: center;
-        margin-top: 24px;
+        margin-top: 10px;
     }
     .dk-edu-viewmore-btn {
-        background: none;
-        border: none;
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        color: #334155;
         font-size: 13.5px;
         font-weight: 700;
-        color: #334155;
+        padding: 8px 24px;
+        border-radius: 20px;
         cursor: pointer;
-        padding: 6px 16px;
-    }
-    .dk-edu-viewmore-btn:hover {
-        color: #15803d;
     }
 
-    /* HOW IT WORKS SECTION (Image 4 style: 5 Steps) */
+    /* How It Works */
     .dk-edu-how-section {
-        padding: 46px 0 66px 0;
-        background: #ffffff;
+        background: #f8fafc;
+        padding: 60px 24px;
     }
     .dk-edu-steps-track {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
         gap: 16px;
-        position: relative;
     }
     .dk-edu-step-card {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 22px 16px;
+        text-align: center;
         position: relative;
     }
     .dk-edu-step-emblem {
-        width: 58px;
-        height: 58px;
-        border-radius: 14px;
-        background: #f8fafc;
-        border: 1.5px solid #e2e8f0;
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background: #f1f5f9;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 16px;
-        transition: transform 0.2s;
-    }
-    .dk-edu-step-card:hover .dk-edu-step-emblem {
-        transform: scale(1.08);
-        border-color: #15803d;
-    }
-    .dk-edu-step-body {
-        padding-right: 10px;
+        margin: 0 auto 14px auto;
     }
     .dk-edu-step-title {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 800;
         color: #0f172a;
         margin: 0 0 6px 0;
-        line-height: 1.3;
     }
     .dk-edu-step-desc {
-        font-size: 12.5px;
+        font-size: 12px;
         color: #64748b;
         margin: 0;
-        line-height: 1.45;
+        line-height: 1.4;
     }
     .dk-edu-step-connector {
         position: absolute;
-        top: 28px;
-        right: -8px;
-        display: flex;
-        align-items: center;
-        gap: 3px;
+        top: 36px;
+        right: -14px;
         color: #cbd5e1;
-        font-weight: 900;
         font-size: 18px;
-        pointer-events: none;
-    }
-    .dk-connector-dots {
-        width: 20px;
-        height: 2px;
-        background: repeating-linear-gradient(90deg, #cbd5e1 0, #cbd5e1 4px, transparent 4px, transparent 8px);
+        font-weight: 900;
+        z-index: 2;
     }
 
-    /* FEATURED / TRENDING COURSES (Image 5 style) */
+    /* Courses Conveyor */
     .dk-edu-tech-section {
-        background-color: #0b1528;
+        position: relative;
+        padding: 60px 24px;
+        background-color: #0b1120;
         background-size: cover;
         background-position: center;
-        position: relative;
-        padding: 70px 0 80px 0;
         color: #ffffff;
         overflow: hidden;
     }
     .dk-tech-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(180deg, rgba(11,21,40,0.88) 0%, rgba(11,21,40,0.95) 100%);
+        background: rgba(11, 17, 32, 0.88);
     }
     .dk-tech-shell {
         position: relative;
         z-index: 2;
     }
     .dk-tech-header {
+        text-align: center;
         margin-bottom: 36px;
     }
     .dk-tech-tag {
-        font-size: 11.5px;
+        display: inline-block;
+        background: rgba(56, 189, 248, 0.15);
+        color: #38bdf8;
+        font-size: 11px;
         font-weight: 800;
         letter-spacing: 1px;
-        color: #38bdf8;
-        text-transform: uppercase;
-        display: block;
+        padding: 4px 12px;
+        border-radius: 20px;
         margin-bottom: 8px;
     }
     .dk-tech-title {
-        font-size: 38px;
+        font-size: 28px;
         font-weight: 900;
-        color: #ffffff;
         margin: 0 0 8px 0;
-        letter-spacing: -0.5px;
     }
     .dk-tech-sub {
         font-size: 14.5px;
         color: #94a3b8;
-        max-width: 680px;
         margin: 0;
-    }
-
-    /* Moving Courses Carousel */
-    .dk-tech-carousel-container {
-        position: relative;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
-    .dk-tech-nav-arrow {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.12);
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255,255,255,0.2);
-        color: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        flex-shrink: 0;
-        z-index: 10;
-        transition: all 0.2s ease;
-    }
-    .dk-tech-nav-arrow:hover {
-        background: #ea580c;
-        border-color: #ea580c;
-        transform: scale(1.1);
     }
     .dk-tech-cards-viewport {
         overflow: hidden;
         width: 100%;
-        border-radius: 16px;
     }
     .dk-tech-cards-track {
         display: flex;
         gap: 20px;
-        transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
-        will-change: transform;
     }
     .dk-tech-course-card {
-        flex: 0 0 calc(25% - 15px);
-        max-width: calc(25% - 15px);
-        box-sizing: border-box;
+        flex: 0 0 280px;
         background: #ffffff;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
         color: #0f172a;
+        border-radius: 12px;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        min-width: 240px;
-        transition: transform 0.25s ease;
-    }
-    @@media (max-width: 1024px) {
-        .dk-tech-course-card {
-            flex: 0 0 calc(50% - 10px);
-            max-width: calc(50% - 10px);
-            min-width: 220px;
-        }
-    }
-    @@media (max-width: 640px) {
-        .dk-tech-course-card {
-            flex: 0 0 100%;
-            max-width: 100%;
-            min-width: 0;
-        }
-    }
-    .dk-tech-course-card:hover {
-        transform: translateY(-5px);
     }
     .dk-course-media-box {
         position: relative;
-        height: 165px;
-        width: 100%;
+        height: 140px;
         background: #0f172a;
     }
     .dk-course-img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        display: block;
     }
     .dk-course-inst-emblem {
         position: absolute;
-        bottom: -18px;
-        right: 18px;
-        width: 44px;
-        height: 44px;
+        bottom: -16px;
+        right: 14px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
         background: #ffffff;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.18);
-        border: 2px solid #ffffff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         display: flex;
         align-items: center;
         justify-content: center;
-        overflow: hidden;
-        z-index: 3;
-    }
-    .dk-inst-logo-letter {
         font-size: 11px;
         font-weight: 900;
-        color: #0284c7;
-        text-transform: uppercase;
-    }
-    .dk-inst-logo-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        color: #0A58A2;
+        border: 2px solid #ffffff;
     }
     .dk-course-info {
-        padding: 24px 18px 18px 18px;
+        padding: 20px 16px 16px 16px;
         display: flex;
         flex-direction: column;
-        flex: 1;
-        justify-content: space-between;
+        flex-grow: 1;
     }
     .dk-course-inst-name {
-        font-size: 12px;
-        font-weight: 700;
-        color: #64748b;
-        margin-bottom: 6px;
-        display: block;
+        font-size: 11px;
+        font-weight: 800;
+        color: #0A58A2;
+        text-transform: uppercase;
+        margin-bottom: 4px;
     }
     .dk-course-title {
-        font-size: 15.5px;
+        font-size: 14px;
         font-weight: 800;
         color: #0f172a;
-        margin: 0 0 16px 0;
+        margin: 0 0 10px 0;
         line-height: 1.35;
-        min-height: 42px;
     }
     .dk-course-badges {
-        margin-bottom: 18px;
+        margin-bottom: 14px;
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 4px;
     }
     .dk-course-badge-row {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        color: #475569;
-        font-weight: 600;
+        gap: 6px;
+        font-size: 11.5px;
+        color: #64748b;
     }
     .dk-course-actions {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 8px;
+        margin-top: auto;
     }
     .dk-course-btn-info {
-        background: #ffffff;
-        color: #1e293b;
-        border: 1.5px solid #cbd5e1;
-        font-size: 12px;
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        font-size: 11.5px;
         font-weight: 700;
-        padding: 8px 10px;
-        border-radius: 999px;
+        padding: 6px;
+        border-radius: 6px;
         cursor: pointer;
-        transition: all 0.15s;
-        text-align: center;
-    }
-    .dk-course-btn-info:hover {
-        border-color: #0f172a;
-        background: #f8fafc;
     }
     .dk-course-btn-apply {
-        background: #e11d48;
+        background: #0A58A2;
         color: #ffffff;
         border: none;
-        font-size: 12px;
-        font-weight: 700;
-        padding: 8px 12px;
-        border-radius: 999px;
+        font-size: 11.5px;
+        font-weight: 800;
+        padding: 6px;
+        border-radius: 6px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 5px;
-        transition: all 0.2s;
-    }
-    .dk-course-btn-apply:hover {
-        background: #be123c;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(225, 29, 72, 0.4);
+        gap: 4px;
     }
 
-
-
-    /* ELIGIBILITY & APPLICATION MODAL */
+    /* Modal */
     .dk-edu-modal-backdrop {
         position: fixed;
         inset: 0;
-        background: rgba(15, 23, 42, 0.72);
-        backdrop-filter: blur(6px);
-        z-index: 2000;
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(4px);
+        z-index: 9999;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 20px;
+        padding: 16px;
     }
     .dk-edu-modal-box {
         background: #ffffff;
-        border-radius: 20px;
-        max-width: 580px;
+        border-radius: 16px;
+        max-width: 560px;
         width: 100%;
-        max-height: 90vh;
-        overflow-y: auto;
         padding: 30px;
         position: relative;
-        box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.25);
     }
     .dk-edu-modal-close {
         position: absolute;
@@ -1162,192 +2495,402 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        font-size: 14px;
-        font-weight: 800;
-        color: #475569;
         cursor: pointer;
-    }
-    .dk-edu-modal-close:hover {
-        background: #e2e8f0;
-        color: #0f172a;
+        font-size: 14px;
+        color: #64748b;
     }
     .dk-modal-badge {
+        display: inline-block;
+        background: #dcfce7;
+        color: #166534;
         font-size: 11px;
         font-weight: 800;
-        color: #15803d;
-        background: #dcfce7;
-        padding: 3px 10px;
-        border-radius: 999px;
-        display: inline-block;
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-bottom: 6px;
     }
     .dk-modal-title {
-        font-size: 24px;
+        font-size: 20px;
         font-weight: 900;
         color: #0f172a;
         margin: 0 0 6px 0;
     }
     .dk-modal-sub {
-        font-size: 13.5px;
+        font-size: 13px;
         color: #64748b;
         margin: 0 0 20px 0;
     }
     .dk-modal-fields-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 14px;
+        gap: 12px;
     }
     .dk-modal-label {
         display: block;
         font-size: 12px;
         font-weight: 700;
         color: #334155;
-        margin-bottom: 5px;
+        margin-bottom: 4px;
     }
     .dk-modal-input {
         width: 100%;
-        box-sizing: border-box;
-        border: 1.5px solid #cbd5e1;
-        border-radius: 8px;
-        padding: 9px 12px;
-        font-size: 13.5px;
-        color: #0f172a;
+        padding: 8px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 13px;
         outline: none;
-        transition: border-color 0.2s;
+        box-sizing: border-box;
     }
     .dk-modal-input:focus {
-        border-color: #15803d;
-        box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
+        border-color: #0A58A2;
+        box-shadow: 0 0 0 2px rgba(10, 88, 162, 0.15);
     }
     .dk-modal-submit-btn {
         width: 100%;
-        background: #14493e;
+        background: #0A58A2;
         color: #ffffff;
-        font-size: 16px;
-        font-weight: 800;
-        padding: 13px;
-        border-radius: 10px;
         border: none;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 14.5px;
+        font-weight: 800;
         cursor: pointer;
-        box-shadow: 0 6px 20px rgba(20, 73, 62, 0.25);
-        transition: all 0.2s;
     }
     .dk-modal-submit-btn:hover {
-        background: #15803d;
-        box-shadow: 0 8px 25px rgba(21, 128, 61, 0.35);
+        background: #084784;
     }
     .dk-modal-terms {
         font-size: 11px;
         color: #64748b;
         text-align: center;
-        margin: 10px 0 0 0;
-        line-height: 1.4;
+        margin-top: 10px;
     }
     .dk-success-tick {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
+        width: 50px;
+        height: 50px;
         background: #dcfce7;
-        color: #15803d;
-        font-size: 32px;
-        font-weight: 900;
+        color: #166534;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: 26px;
         margin: 0 auto;
     }
 
     /* Responsive adjustments */
     @@media (max-width: 1024px) {
-        .dk-edu-hero-container {
+        .dk-overview-cards-grid,
+        .dk-docs-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .dk-emi-grid {
             grid-template-columns: 1fr;
-            text-align: center;
         }
-        .dk-edu-hero-heading {
-            font-size: 40px;
+        .dk-tata-mega-pane {
+            width: 95vw;
+            left: -20px;
         }
-        .dk-edu-bullets-list {
-            justify-content: center;
+        .dk-tata-nav-menu {
+            display: none;
         }
-        .dk-edu-hero-cta-wrap {
-            align-items: center;
+        .dk-tata-nav-menu.mobile-open {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #0A58A2;
+            padding: 16px;
+            margin-left: 0;
+        }
+        .dk-tata-mobile-btn {
+            display: flex;
+        }
+    }
+    @@media (max-width: 768px) {
+        .dk-overview-cards-grid,
+        .dk-docs-grid,
+        .dk-edu-partners-grid,
+        .dk-edu-steps-track,
+        .dk-edu-metrics-row {
+            grid-template-columns: 1fr;
         }
         .dk-edu-achieve-grid {
             grid-template-columns: 1fr;
         }
-        .dk-edu-metrics-row {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-        .dk-edu-partners-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-        .dk-edu-steps-track {
-            grid-template-columns: 1fr;
-            gap: 24px;
-        }
-        .dk-edu-step-connector {
+        .dk-tata-search-pill {
             display: none;
-        }
-        .dk-tech-course-card {
-            flex: 0 0 calc(50% - 10px);
-        }
-    }
-
-    @@media (max-width: 640px) {
-        .dk-edu-nav-menu {
-            display: none;
-        }
-        .dk-edu-hero-heading {
-            font-size: 32px;
-        }
-        .dk-edu-bullets-list {
-            grid-template-columns: 1fr;
-        }
-        .dk-edu-student-img {
-            height: 340px;
-        }
-        .dk-edu-metrics-row {
-            grid-template-columns: 1fr 1fr;
-        }
-        .dk-edu-partners-grid {
-            grid-template-columns: 1fr 1fr;
-        }
-        .dk-tech-course-card {
-            flex: 0 0 100%;
-        }
-        .dk-modal-fields-grid {
-            grid-template-columns: 1fr;
         }
     }
 </style>
 
 <!-- ========================================================
-     JAVASCRIPT LOGIC FOR EDUCATION LOANS PAGE
+     CLIENT-SIDE JAVASCRIPT: SCROLLSPY, EMI CALCULATOR & CONTROLS
 ========================================================= -->
 <script>
-    (function () {
-        // 1. Partners "View More" toggle
+    // 1. Tata Capital Navigation Controls
+    function toggleTataNotif() {
+        var pop = document.getElementById("tataNotifPop");
+        if (pop) {
+            pop.style.display = pop.style.display === "none" ? "block" : "none";
+        }
+    }
+
+    function toggleTataMobileMenu() {
+        var menu = document.getElementById("tataNavMenu");
+        if (menu) {
+            menu.classList.toggle("mobile-open");
+        }
+    }
+
+    function handleTataSearch(e) {
+        if (e.key === "Enter") {
+            var q = e.target.value.trim();
+            if (q) {
+                window.location.href = "/search?q=" + encodeURIComponent(q);
+            }
+        }
+    }
+
+    // 2. Smooth Scrolling & Tab Click Handler
+    function smoothScrollTo(sectionId) {
+        var el = document.getElementById(sectionId);
+        if (el) {
+            var offset = 115; // Header + Sticky Subnav height
+            var bodyRect = document.body.getBoundingClientRect().top;
+            var elementRect = el.getBoundingClientRect().top;
+            var elementPosition = elementRect - bodyRect;
+            var offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: "smooth"
+            });
+        }
+    }
+
+    function handleTabClick(e, sectionId) {
+        e.preventDefault();
+        smoothScrollTo(sectionId);
+    }
+
+    // 3. ScrollSpy Implementation for the 4 Sections
+    (function initScrollSpy() {
+        var sections = ["overview", "document-required", "rates-and-charges", "emi-calculator"];
+        var tabs = document.querySelectorAll(".dk-subnav-tab");
+
+        function onScroll() {
+            var scrollPos = window.scrollY + 130;
+            var currentSection = "";
+
+            for (var i = 0; i < sections.length; i++) {
+                var el = document.getElementById(sections[i]);
+                if (el) {
+                    var top = el.offsetTop;
+                    var height = el.offsetHeight;
+                    if (scrollPos >= top && scrollPos < top + height) {
+                        currentSection = sections[i];
+                        break;
+                    }
+                }
+            }
+
+            if (currentSection) {
+                tabs.forEach(function (tab) {
+                    if (tab.getAttribute("data-section") === currentSection) {
+                        tab.classList.add("active");
+                    } else {
+                        tab.classList.remove("active");
+                    }
+                });
+            }
+        }
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+    })();
+
+    // 4. Interactive EMI Calculator
+    function formatINR(val) {
+        return Math.round(val).toLocaleString("en-IN");
+    }
+
+    function calculateEMI() {
+        var amountSlider = document.getElementById("emiAmountRange");
+        var rateSlider = document.getElementById("emiRateRange");
+        var tenureSlider = document.getElementById("emiTenureRange");
+
+        if (!amountSlider || !rateSlider || !tenureSlider) return;
+
+        var P = parseFloat(amountSlider.value) || 3000000;
+        var annualRate = parseFloat(rateSlider.value) || 9.5;
+        var years = parseInt(tenureSlider.value, 10) || 10;
+
+        var r = annualRate / 12 / 100; // monthly rate
+        var n = years * 12; // number of installments
+
+        var emi = 0;
+        if (r === 0) {
+            emi = P / n;
+        } else {
+            emi = P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+        }
+
+        var totalPayable = emi * n;
+        var totalInterest = totalPayable - P;
+
+        // Update displays
+        var lblMonthlyEmi = document.getElementById("lblMonthlyEmi");
+        var lblPrincipal = document.getElementById("lblPrincipalAmount");
+        var lblInterest = document.getElementById("lblTotalInterest");
+        var lblTotal = document.getElementById("lblTotalPayable");
+        var btnApply = document.getElementById("btnApplyCalculatedEmi");
+
+        if (lblMonthlyEmi) lblMonthlyEmi.textContent = formatINR(emi);
+        if (lblPrincipal) lblPrincipal.textContent = "₹ " + formatINR(P);
+        if (lblInterest) lblInterest.textContent = "₹ " + formatINR(totalInterest);
+        if (lblTotal) lblTotal.textContent = "₹ " + formatINR(totalPayable);
+
+        if (btnApply) {
+            btnApply.innerHTML = "<span>Apply for ₹ " + formatINR(P) + " Loan Now →</span>";
+        }
+
+        // Update proportion bars
+        var pctPrincipal = ((P / totalPayable) * 100).toFixed(1);
+        var pctInterest = (100 - pctPrincipal).toFixed(1);
+
+        var barPrincipal = document.getElementById("barPrincipal");
+        var barInterest = document.getElementById("barInterest");
+        var txtPctPrincipal = document.getElementById("pctPrincipal");
+        var txtPctInterest = document.getElementById("pctInterest");
+
+        if (barPrincipal) barPrincipal.style.width = pctPrincipal + "%";
+        if (barInterest) barInterest.style.width = pctInterest + "%";
+        if (txtPctPrincipal) txtPctPrincipal.textContent = pctPrincipal + "%";
+        if (txtPctInterest) txtPctInterest.textContent = pctInterest + "%";
+    }
+
+    function updateEmiFromSlider() {
+        var amountSlider = document.getElementById("emiAmountRange");
+        var rateSlider = document.getElementById("emiRateRange");
+        var tenureSlider = document.getElementById("emiTenureRange");
+
+        var amountDisplay = document.getElementById("emiAmountDisplay");
+        var rateDisplay = document.getElementById("emiRateDisplay");
+        var tenureDisplay = document.getElementById("emiTenureDisplay");
+
+        if (amountSlider && amountDisplay) {
+            amountDisplay.value = formatINR(amountSlider.value);
+        }
+        if (rateSlider && rateDisplay) {
+            rateDisplay.value = rateSlider.value;
+        }
+        if (tenureSlider && tenureDisplay) {
+            tenureDisplay.value = tenureSlider.value;
+        }
+
+        calculateEMI();
+    }
+
+    function setEmiAmount(val) {
+        var slider = document.getElementById("emiAmountRange");
+        if (slider) {
+            slider.value = val;
+            updateEmiFromSlider();
+        }
+        // Update active class on preset buttons
+        document.querySelectorAll(".dk-emi-control-group:nth-child(1) .dk-preset-btn").forEach(function (btn) {
+            btn.classList.toggle("active", btn.textContent.includes(val >= 10000000 ? (val/10000000) + " Cr" : (val/100000) + " L"));
+        });
+    }
+
+    function setEmiRate(val) {
+        var slider = document.getElementById("emiRateRange");
+        if (slider) {
+            slider.value = val;
+            updateEmiFromSlider();
+        }
+        document.querySelectorAll(".dk-emi-control-group:nth-child(2) .dk-preset-btn").forEach(function (btn) {
+            btn.classList.toggle("active", btn.textContent.includes(val.toString()));
+        });
+    }
+
+    function setEmiTenure(val) {
+        var slider = document.getElementById("emiTenureRange");
+        if (slider) {
+            slider.value = val;
+            updateEmiFromSlider();
+        }
+        document.querySelectorAll(".dk-emi-control-group:nth-child(3) .dk-preset-btn").forEach(function (btn) {
+            btn.classList.toggle("active", btn.textContent.includes(val.toString()));
+        });
+    }
+
+    function handleEmiAmountInput(text) {
+        var clean = text.replace(/[^0-9]/g, "");
+        var num = parseInt(clean, 10);
+        if (!isNaN(num)) {
+            var slider = document.getElementById("emiAmountRange");
+            if (slider) {
+                slider.value = num;
+                updateEmiFromSlider();
+            }
+        }
+    }
+
+    function handleEmiRateInput(text) {
+        var num = parseFloat(text);
+        if (!isNaN(num)) {
+            var slider = document.getElementById("emiRateRange");
+            if (slider) {
+                slider.value = num;
+                updateEmiFromSlider();
+            }
+        }
+    }
+
+    function handleEmiTenureInput(text) {
+        var num = parseInt(text, 10);
+        if (!isNaN(num)) {
+            var slider = document.getElementById("emiTenureRange");
+            if (slider) {
+                slider.value = num;
+                updateEmiFromSlider();
+            }
+        }
+    }
+
+    function applyWithCalculatedLoan() {
+        var slider = document.getElementById("emiAmountRange");
+        var amountText = slider ? "₹ " + formatINR(slider.value) : "Education Loan";
+        openEduModal("EMI Calculator Selection: " + amountText);
+        
+        var select = document.getElementById("leadLoanAmount");
+        if (select && slider) {
+            var val = parseInt(slider.value, 10);
+            if (val <= 2500000) select.value = "₹10L - ₹25L";
+            else if (val <= 5000000) select.value = "₹25L - ₹50L";
+            else if (val <= 10000000) select.value = "₹50L - ₹1 Crore";
+            else select.value = "Above ₹1 Crore";
+        }
+    }
+
+    // 5. Partner Cards Toggle & Tech Conveyor Carousel
+    (function initLegacyFeatures() {
         var btnToggle = document.getElementById("btnTogglePartners");
         if (btnToggle) {
             btnToggle.addEventListener("click", function () {
                 var extraCards = document.querySelectorAll(".dk-edu-partner-card.partner-extra");
-                var isExpanded = false;
-                extraCards.forEach(function (c) {
-                    if (c.classList.contains("is-visible")) {
-                        c.classList.remove("is-visible");
-                    } else {
-                        c.classList.add("is-visible");
-                        isExpanded = true;
-                    }
+                var isExpanded = btnToggle.getAttribute("data-expanded") === "true";
+                extraCards.forEach(function (card) {
+                    card.classList.toggle("shown", !isExpanded);
                 });
-                btnToggle.querySelector("span").textContent = isExpanded ? "View Less ⌃" : "@eduPage.PartnersViewMoreText";
+                btnToggle.setAttribute("data-expanded", !isExpanded ? "true" : "false");
+                btnToggle.querySelector("span").textContent = !isExpanded ? "View Less ⌃" : "View More ⌵";
             });
         }
 
-        // 2. Tech Courses Interactive Carousel: Move from one section to another
         var viewport = document.getElementById("coursesViewport");
         var track = document.getElementById("coursesTrack");
 
@@ -1360,20 +2903,18 @@
                 var isPaused = false;
                 var isSliding = false;
 
-                // Pause movement when user hovers over courses or touches on mobile
                 viewport.addEventListener("mouseenter", function () { isPaused = true; });
                 viewport.addEventListener("mouseleave", function () { isPaused = false; });
                 viewport.addEventListener("touchstart", function () { isPaused = true; }, { passive: true });
                 viewport.addEventListener("touchend", function () { isPaused = false; });
 
-                // Slides smoothly from right to left based on timeframe
                 function slideNextRightToLeft() {
                     if (isPaused || isSliding) return;
                     var firstCard = track.firstElementChild;
                     if (!firstCard) return;
 
                     isSliding = true;
-                    var cardWidth = firstCard.offsetWidth || 270;
+                    var cardWidth = firstCard.offsetWidth || 280;
                     var gap = 20;
                     var stepDistance = cardWidth + gap;
 
@@ -1383,8 +2924,8 @@
                     setTimeout(function () {
                         track.style.transition = "none";
                         track.style.transform = "translateX(0)";
-                        track.appendChild(firstCard); // Infinite continuous loop from right to left
-                        void track.offsetWidth; // flush reflow
+                        track.appendChild(firstCard);
+                        void track.offsetWidth;
                         isSliding = false;
                     }, 660);
                 }
@@ -1392,9 +2933,12 @@
                 setInterval(slideNextRightToLeft, intervalSec * 1000);
             }
         }
+
+        // Initialize EMI calculator on load
+        calculateEMI();
     })();
 
-    // 3. Modal Handlers
+    // 6. Modal Functions
     function openEduModal(sourceTitle) {
         var modal = document.getElementById("eduLoanModal");
         var subText = document.getElementById("eduModalSubText");
@@ -1424,7 +2968,6 @@
         }
     }
 
-    // 4. Submit Lead Application
     async function handleEduLoanSubmit(e) {
         e.preventDefault();
         var btn = document.getElementById("btnSubmitLoan");

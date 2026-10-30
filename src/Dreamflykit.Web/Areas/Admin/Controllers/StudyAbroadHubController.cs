@@ -50,6 +50,7 @@ public sealed class StudyAbroadHubController : AdminBaseController
         var config = await _studyHubService.GetConfigAsync(cancellationToken);
         var abroadProfile = config.AbroadProfile ?? StudyHubDto.CreateDefaultAbroadProfile();
         abroadProfile.EducationLoansPage = config.EducationLoansPage ?? StudyHubDto.CreateDefaultEducationLoansPage();
+        abroadProfile.EducationLoansPage.EnsureDefaults();
         abroadProfile.ConsultancyDetailsPage = config.ConsultancyDetailsPage ?? abroadProfile.ConsultancyDetailsPage ?? StudyHubDto.CreateDefaultConsultancyDetailsPage();
         return View(abroadProfile);
     }

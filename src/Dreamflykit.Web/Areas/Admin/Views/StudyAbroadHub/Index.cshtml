@@ -5,9 +5,15 @@
     var carousel = Model.FiveSectionCarousel ?? new Dreamflykit.Application.StudyHub.Models.AbroadFiveSectionCarouselDto();
     var slides = carousel.Slides ?? new List<Dreamflykit.Application.StudyHub.Models.AbroadFiveSectionSlideDto>();
     var edu = Model.EducationLoansPage ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultEducationLoansPage();
+    edu.EnsureDefaults();
     var eduPartners = edu.Partners ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanPartnerDto>();
     var eduSteps = edu.Steps ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanStepDto>();
     var eduCourses = edu.Courses ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanCourseDto>();
+    var eduCountries = edu.CountryOptions ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanCountryOptionDto>();
+    var eduNavItems = edu.MainNavItems ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanNavItemDto>();
+    var eduOverviewCards = edu.OverviewCards ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanOverviewCardDto>();
+    var eduDocGroups = edu.DocumentGroups ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanDocGroupDto>();
+    var eduRateRows = edu.RateRows ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanRateRowDto>();
     var consult = Model.ConsultancyDetailsPage ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultConsultancyDetailsPage();
     var consultPills = consult.CategoryPills ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyCategoryPillDto>();
     var consultPartners = consult.Partners ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyPartnerLogoDto>();
@@ -541,32 +547,118 @@
         </div>
     </div>
 
-    <!-- 4.1 TOP NAVIGATION & BRANDING -->
-    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
-        <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0 0 12px 0;">
-            4.1 Top Navigation Bar (Student Accommodation Removed per Request)
-        </h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px;">
+    <!-- 4.1 TATA CAPITAL NAVIGATION BAR (Image 1 Style) -->
+    <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 20px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
             <div>
-                <label class="dk-sh-form-label">Brand Name</label>
-                <input type="text" id="edu_top_brand" class="dk-admin-form-input" value="@edu.TopNavBrandName" placeholder="UniCreds" />
+                <span style="background: #0A58A2; color: #fff; font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 4px; text-transform: uppercase;">
+                    Navbar Feature
+                </span>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #0A58A2; margin: 4px 0 0 0;">
+                    4.1 🏦 Tata Capital Navigation Bar (Brand, "Loans for You ˅", Search, Bell &amp; Login)
+                </h3>
+            </div>
+            <span style="font-size: 12px; color: #64748b; font-weight: 600;">
+                Image 1 Layout Fidelity
+            </span>
+        </div>
+
+        <!-- Row 1: Brand & Styling -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr 2fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Brand Title (Logo Text)</label>
+                <input type="text" id="edu_tata_brand" class="dk-admin-form-input" value="@edu.NavbarBrandName" placeholder="TATA CAPITAL" />
             </div>
             <div>
-                <label class="dk-sh-form-label">Sub-Title / Slogan</label>
-                <input type="text" id="edu_top_subtitle" class="dk-admin-form-input" value="@edu.TopNavBrandSubtitle" placeholder="Global Student Financing" />
+                <label class="dk-sh-form-label">Yellow Accent Subtitle</label>
+                <input type="text" id="edu_tata_accent" class="dk-admin-form-input" value="@edu.NavbarBrandAccent" placeholder="CAPITAL" />
             </div>
             <div>
-                <label class="dk-sh-form-label">Top CTA Button Text</label>
-                <input type="text" id="edu_top_cta_text" class="dk-admin-form-input" value="@edu.TopNavCtaText" placeholder="Apply For Loan" />
+                <label class="dk-sh-form-label">Brand Logo Graphic URL (Optional Image Override)</label>
+                <input type="text" id="edu_tata_logo" class="dk-admin-form-input" value="@edu.NavbarLogoUrl" placeholder="Leave empty for stylized text logo" />
             </div>
             <div>
-                <label class="dk-sh-form-label">Top CTA Target URL</label>
-                <input type="text" id="edu_top_cta_url" class="dk-admin-form-input" value="@edu.TopNavCtaUrl" placeholder="#apply-loan-modal" />
+                <label class="dk-sh-form-label">Navbar Background Color</label>
+                <input type="text" id="edu_tata_bg_color" class="dk-admin-form-input" value="@edu.NavbarBgColor" placeholder="#0A58A2" />
             </div>
         </div>
-        <div style="margin-top: 10px; font-size: 12px; color: #64748b; font-style: italic;">
-            Note: "Student Accommodation" is intentionally excluded from the top navigation as explicitly specified.
+
+        <!-- Row 2: Loans for You & Mega Dropdown -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Primary Dropdown Label</label>
+                <input type="text" id="edu_tata_loans_title" class="dk-admin-form-input" value="@edu.NavbarLoansMenuTitle" placeholder="Loans for You" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Education Loans Menu Option</label>
+                <input type="text" id="edu_tata_edu_title" class="dk-admin-form-input" value="@edu.NavbarEducationLoanTitle" placeholder="Education Loans" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Target Section Anchor / URL</label>
+                <input type="text" id="edu_tata_edu_url" class="dk-admin-form-input" value="@edu.NavbarEducationLoanUrl" placeholder="#overview" />
+            </div>
         </div>
+
+        <!-- Row 3: Right Tools (Search, Notifications, Login & Breadcrumb) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1.5fr; gap: 14px; margin-bottom: 16px;">
+            <div>
+                <label class="dk-sh-form-label">Search Bar Placeholder</label>
+                <input type="text" id="edu_tata_search_placeholder" class="dk-admin-form-input" value="@edu.SearchPlaceholder" placeholder="Search..." />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Search Action Target URL</label>
+                <input type="text" id="edu_tata_search_url" class="dk-admin-form-input" value="@edu.SearchTargetUrl" placeholder="/search" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Notification Badge Count</label>
+                <input type="number" id="edu_tata_notif_count" class="dk-admin-form-input" value="@edu.NotificationCount" min="0" max="99" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Login Button Label</label>
+                <input type="text" id="edu_tata_login_text" class="dk-admin-form-input" value="@edu.LoginButtonText" placeholder="Login" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Breadcrumb Text Below Navbar</label>
+                <input type="text" id="edu_tata_breadcrumb_text" class="dk-admin-form-input" value="@edu.BreadcrumbText" placeholder="Home - Education Loan" />
+            </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label class="dk-sh-form-label">Notification Banner Offer Text (Shown on Bell Hover / Click)</label>
+            <input type="text" id="edu_tata_notif_text" class="dk-admin-form-input" value="@edu.NotificationText" placeholder="Special Offer: Zero Processing Fee on USA/UK Abroad Education Loans!" />
+        </div>
+
+        <!-- Row 4: Education Right Countries Dropdown Management -->
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div>
+                    <label class="dk-sh-form-label" style="font-weight: 800; color: #0A58A2; margin: 0;">
+                        🌍 Education Right Countries (Shown inside "Loans for You ˅" Dropdown)
+                    </label>
+                    <input type="text" id="edu_tata_countries_title" class="dk-admin-form-input" value="@edu.NavbarRightCountriesTitle" placeholder="Education right countries" style="font-size: 12px; margin-top: 4px; max-width: 280px;" />
+                </div>
+                <button type="button" class="dk-btn" onclick="addTataCountry()" style="background: #0A58A2; color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 6px;">
+                    + Add Destination Country
+                </button>
+            </div>
+            <div id="tata_countries_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px;">
+                @foreach (var c in eduCountries)
+                {
+                    <div class="tata-country-admin-card" data-country-id="@c.Id" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; font-size: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <input type="text" class="tata-country-flag" value="@c.FlagEmoji" style="width: 32px; text-align: center; font-size: 16px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px;" title="Flag Emoji" />
+                            <input type="text" class="tata-country-name dk-admin-form-input" value="@c.Name" placeholder="Country Name" style="flex: 1; margin: 0 6px; padding: 3px 6px; font-size: 11.5px; font-weight: 700;" />
+                            <button type="button" style="background: #fee2e2; color: #b91c1c; border: none; border-radius: 4px; cursor: pointer; padding: 2px 5px; font-size: 10px;" onclick="this.closest('.tata-country-admin-card').remove()">✕</button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+                            <input type="text" class="tata-country-limit dk-admin-form-input" value="@c.LoanAmountLimit" placeholder="Up to ₹1.5 Cr" style="padding: 2px 4px; font-size: 10.5px;" />
+                            <input type="text" class="tata-country-rate dk-admin-form-input" value="@c.InterestRate" placeholder="From 9.50% p.a." style="padding: 2px 4px; font-size: 10.5px;" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
     </div>
 
     <!-- 4.2 FULL HERO BANNER (Image 2 Style) -->
@@ -640,6 +732,239 @@
                     <button type="button" class="dk-btn" style="padding: 7px 10px; font-size: 11px; background: #fee2e2; color: #b91c1c; font-weight: 700; white-space: nowrap;" onclick="setUploadingSoon('edu_hero_img_url', 'prev_edu_hero_img')">
                         ⏳ Upload Soon
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         4.2A 📌 4 STICKY SUB-NAV TABS BELOW HERO BANNER (Image 3 Style)
+    ========================================================= -->
+    <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #0A58A2; margin: 0;">
+                4.2A 📌 4 Sticky Sub-Nav Tabs Below Hero Banner (ScrollSpy Sync)
+            </h3>
+            <span style="background: #0A58A2; color: #fff; font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 4px;">
+                Sticky ScrollBar
+            </span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1.5fr; gap: 12px;">
+            <div>
+                <label class="dk-sh-form-label">Tab 1 Name</label>
+                <input type="text" id="edu_subnav_tab1" class="dk-admin-form-input" value="@edu.SubNavTab1Title" placeholder="Overview" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Tab 2 Name</label>
+                <input type="text" id="edu_subnav_tab2" class="dk-admin-form-input" value="@edu.SubNavTab2Title" placeholder="Document Required" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Tab 3 Name</label>
+                <input type="text" id="edu_subnav_tab3" class="dk-admin-form-input" value="@edu.SubNavTab3Title" placeholder="Rates and Charges" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Tab 4 Name</label>
+                <input type="text" id="edu_subnav_tab4" class="dk-admin-form-input" value="@edu.SubNavTab4Title" placeholder="EMI Calculator" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Right Sticky CTA Button</label>
+                <input type="text" id="edu_subnav_cta" class="dk-admin-form-input" value="@edu.SubNavCtaText" placeholder="Get Instant Education Loan" />
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         4.2B 📖 TAB 1: OVERVIEW SECTION CONTENT
+    ========================================================= -->
+    <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-bottom: 22px;">
+        <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0 0 14px 0;">
+            4.2B 📖 Tab 1: Overview Section Content &amp; 6 Highlights Cards
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Overview Section Heading</label>
+                <input type="text" id="edu_overview_title" class="dk-admin-form-input" value="@edu.OverviewTitle" placeholder="Education Loan for Higher Studies in India & Abroad" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Overview Subtitle</label>
+                <input type="text" id="edu_overview_subtitle" class="dk-admin-form-input" value="@edu.OverviewSubtitle" placeholder="Fund your dreams with 100% financing..." />
+            </div>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <label class="dk-sh-form-label">Overview Detailed Narrative Description</label>
+            <textarea id="edu_overview_desc" class="dk-admin-form-input" rows="3" style="resize: vertical;">@edu.OverviewDescription</textarea>
+        </div>
+
+        <label class="dk-sh-form-label">6 Key Highlights Cards (Title, Description, Icon)</label>
+        <div id="tata_overview_cards_container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            @for (int ocIdx = 0; ocIdx < eduOverviewCards.Count; ocIdx++)
+            {
+                var oc = eduOverviewCards[ocIdx];
+                <div class="tata-oc-admin-card" data-card-id="@oc.Id" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                    <span style="font-size: 10.5px; font-weight: 800; color: #0A58A2; text-transform: uppercase;">Feature Card #@(ocIdx + 1)</span>
+                    <input type="text" class="tata-oc-title dk-admin-form-input" value="@oc.Title" placeholder="Card Title" style="font-size: 12px; font-weight: 700; margin: 4px 0;" />
+                    <textarea class="tata-oc-desc dk-admin-form-input" rows="2" style="font-size: 11.5px; resize: none;">@oc.Description</textarea>
+                    <input type="hidden" class="tata-oc-icon" value="@oc.Icon" />
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- ========================================================
+         4.2C 📄 TAB 2: DOCUMENT REQUIRED SECTION CONTENT
+    ========================================================= -->
+    <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-bottom: 22px;">
+        <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0 0 14px 0;">
+            4.2C 📄 Tab 2: Document Required Section Content &amp; Checklist Groups
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Documents Section Heading</label>
+                <input type="text" id="edu_docs_title" class="dk-admin-form-input" value="@edu.DocumentsTitle" placeholder="Documents Required for Education Loan" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Documents Subtitle</label>
+                <input type="text" id="edu_docs_subtitle" class="dk-admin-form-input" value="@edu.DocumentsSubtitle" placeholder="Simple and transparent documentation process..." />
+            </div>
+        </div>
+
+        <div id="tata_doc_groups_container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+            @for (int dgIdx = 0; dgIdx < eduDocGroups.Count; dgIdx++)
+            {
+                var dg = eduDocGroups[dgIdx];
+                <div class="tata-dg-admin-card" data-group-id="@dg.Id" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px;">
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10.5px;">Group Badge</label>
+                        <input type="text" class="tata-dg-badge dk-admin-form-input" value="@dg.GroupBadge" placeholder="Student KYC" style="font-size: 11.5px; padding: 3px 6px;" />
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <label class="dk-sh-form-label" style="font-size: 10.5px;">Group Heading</label>
+                        <input type="text" class="tata-dg-title dk-admin-form-input" value="@dg.GroupTitle" placeholder="Applicant Documents" style="font-size: 12px; font-weight: 700; padding: 4px 6px;" />
+                    </div>
+                    <div>
+                        <label class="dk-sh-form-label" style="font-size: 10.5px;">Checklist Items (One Per Line)</label>
+                        <textarea class="tata-dg-items dk-admin-form-input" rows="6" style="font-size: 11px; line-height: 1.4; resize: vertical;">@(dg.Items != null ? string.Join("\n", dg.Items) : "")</textarea>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- ========================================================
+         4.2D 🏷️ TAB 3: RATES AND CHARGES SECTION CONTENT
+    ========================================================= -->
+    <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0;">
+                4.2D 🏷️ Tab 3: Rates and Charges Section Content &amp; Pricing Table
+            </h3>
+            <button type="button" class="dk-btn" onclick="addTataRateRow()" style="background: #0A58A2; color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 6px;">
+                + Add Pricing Parameter
+            </button>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Rates Section Heading</label>
+                <input type="text" id="edu_rates_title" class="dk-admin-form-input" value="@edu.RatesTitle" placeholder="Education Loan Interest Rates & Charges" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Rates Subtitle</label>
+                <input type="text" id="edu_rates_subtitle" class="dk-admin-form-input" value="@edu.RatesSubtitle" placeholder="Competitive rates, zero hidden charges..." />
+            </div>
+        </div>
+
+        <div id="tata_rates_container" style="display: flex; flex-direction: column; gap: 8px;">
+            @for (int rIdx = 0; rIdx < eduRateRows.Count; rIdx++)
+            {
+                var r = eduRateRows[rIdx];
+                <div class="tata-rate-admin-row" data-row-id="@r.Id" style="display: grid; grid-template-columns: 2fr 3fr 3fr 40px; gap: 8px; align-items: center; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 10px;">
+                    <input type="text" class="tata-rate-param dk-admin-form-input" value="@r.Parameter" placeholder="Parameter" style="font-size: 12px; font-weight: 700; padding: 4px 6px;" />
+                    <input type="text" class="tata-rate-details dk-admin-form-input" value="@r.Details" placeholder="Details & Charges" style="font-size: 12px; padding: 4px 6px;" />
+                    <input type="text" class="tata-rate-note dk-admin-form-input" value="@r.Note" placeholder="Regulatory / Policy Note" style="font-size: 11.5px; padding: 4px 6px;" />
+                    <button type="button" style="background: #fee2e2; color: #b91c1c; border: none; border-radius: 4px; padding: 4px; cursor: pointer; font-size: 10px;" onclick="this.closest('.tata-rate-admin-row').remove()">✕</button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- ========================================================
+         4.2E 🧮 TAB 4: INTERACTIVE EMI CALCULATOR SETTINGS
+    ========================================================= -->
+    <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 20px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #166534; margin: 0;">
+                4.2E 🧮 Tab 4: Interactive EMI Calculator Settings
+            </h3>
+            <span style="background: #16a34a; color: #fff; font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 4px;">
+                Instant Math Engine
+            </span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Calculator Heading</label>
+                <input type="text" id="edu_emi_title" class="dk-admin-form-input" value="@edu.EmiCalcTitle" placeholder="Interactive Education Loan EMI Calculator" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Calculator Subtitle</label>
+                <input type="text" id="edu_emi_subtitle" class="dk-admin-form-input" value="@edu.EmiCalcSubtitle" placeholder="Plan your loan repayment with precision..." />
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+            <!-- Amount Limits -->
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                <label class="dk-sh-form-label" style="font-weight: 800; color: #166534;">Loan Amount (₹)</label>
+                <div style="margin-bottom: 6px;">
+                    <label style="font-size: 10.5px; color: #64748b;">Default Amount</label>
+                    <input type="number" id="edu_emi_def_amount" class="dk-admin-form-input" value="@edu.EmiDefaultAmount" step="50000" />
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <div>
+                        <label style="font-size: 10px; color: #64748b;">Min Amount</label>
+                        <input type="number" id="edu_emi_min_amount" class="dk-admin-form-input" value="@edu.EmiMinAmount" style="font-size: 11px;" />
+                    </div>
+                    <div>
+                        <label style="font-size: 10px; color: #64748b;">Max Amount</label>
+                        <input type="number" id="edu_emi_max_amount" class="dk-admin-form-input" value="@edu.EmiMaxAmount" style="font-size: 11px;" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rate Limits -->
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                <label class="dk-sh-form-label" style="font-weight: 800; color: #166534;">Interest Rate (% p.a.)</label>
+                <div style="margin-bottom: 6px;">
+                    <label style="font-size: 10.5px; color: #64748b;">Default Rate (%)</label>
+                    <input type="number" id="edu_emi_def_rate" class="dk-admin-form-input" value="@edu.EmiDefaultRate" step="0.1" />
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <div>
+                        <label style="font-size: 10px; color: #64748b;">Min Rate (%)</label>
+                        <input type="number" id="edu_emi_min_rate" class="dk-admin-form-input" value="@edu.EmiMinRate" step="0.1" style="font-size: 11px;" />
+                    </div>
+                    <div>
+                        <label style="font-size: 10px; color: #64748b;">Max Rate (%)</label>
+                        <input type="number" id="edu_emi_max_rate" class="dk-admin-form-input" value="@edu.EmiMaxRate" step="0.1" style="font-size: 11px;" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tenure Limits -->
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px;">
+                <label class="dk-sh-form-label" style="font-weight: 800; color: #166534;">Loan Tenure (Years)</label>
+                <div style="margin-bottom: 6px;">
+                    <label style="font-size: 10.5px; color: #64748b;">Default Tenure (Yrs)</label>
+                    <input type="number" id="edu_emi_def_tenure" class="dk-admin-form-input" value="@edu.EmiDefaultTenureYears" min="1" max="30" />
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <div>
+                        <label style="font-size: 10px; color: #64748b;">Min Tenure (Yrs)</label>
+                        <input type="number" id="edu_emi_min_tenure" class="dk-admin-form-input" value="@edu.EmiMinTenureYears" min="1" style="font-size: 11px;" />
+                    </div>
+                    <div>
+                        <label style="font-size: 10px; color: #64748b;">Max Tenure (Yrs)</label>
+                        <input type="number" id="edu_emi_max_tenure" class="dk-admin-form-input" value="@edu.EmiMaxTenureYears" max="30" style="font-size: 11px;" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -1762,11 +2087,74 @@
             TrustPillars: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TrustPillars, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = null })),
             EducationLoansPage: {
                 ShowTopNav: true,
-                TopNavBrandName: document.getElementById("edu_top_brand")?.value || "UniCreds",
-                TopNavBrandSubtitle: document.getElementById("edu_top_subtitle")?.value || "Global Student Financing",
+                UseTataCapitalNavbar: true,
+                NavbarBrandName: document.getElementById("edu_tata_brand")?.value || "TATA CAPITAL",
+                NavbarBrandAccent: document.getElementById("edu_tata_accent")?.value || "CAPITAL",
+                NavbarLogoUrl: document.getElementById("edu_tata_logo")?.value || "",
+                NavbarBgColor: document.getElementById("edu_tata_bg_color")?.value || "#0A58A2",
+                NavbarLoansMenuTitle: document.getElementById("edu_tata_loans_title")?.value || "Loans for You",
+                NavbarEducationLoanTitle: document.getElementById("edu_tata_edu_title")?.value || "Education Loans",
+                NavbarEducationLoanUrl: document.getElementById("edu_tata_edu_url")?.value || "#overview",
+                NavbarRightCountriesTitle: document.getElementById("edu_tata_countries_title")?.value || "Education right countries",
+                CountryOptions: gatherTataCountries(),
+                MainNavItems: [
+                    { Title: "Loans for Business", Url: "#", HasDropdown: true, SubItems: ["SME Working Capital", "Machinery Loans", "Business Expansion"] },
+                    { Title: "Investment", Url: "#", HasDropdown: true, SubItems: ["Mutual Funds", "Fixed Deposits", "Wealth Solutions"] },
+                    { Title: "Insurance", Url: "#", HasDropdown: true, SubItems: ["Student Travel Insurance", "Life Cover", "Health Protection"] },
+                    { Title: "Apply", Url: "#apply-loan-modal", HasDropdown: true, SubItems: ["Check Loan Eligibility", "Instant Sanction Letter", "Document Verification"] },
+                    { Title: "Offers", Url: "#loan-partners", HasDropdown: false },
+                    { Title: "Quick Pay", Url: "#emi-calculator", HasDropdown: false }
+                ],
+                SearchPlaceholder: document.getElementById("edu_tata_search_placeholder")?.value || "Search...",
+                SearchTargetUrl: document.getElementById("edu_tata_search_url")?.value || "/search",
+                NotificationCount: parseInt(document.getElementById("edu_tata_notif_count")?.value || "1", 10),
+                NotificationText: document.getElementById("edu_tata_notif_text")?.value || "Special Offer: Zero Processing Fee on USA/UK Abroad Education Loans!",
+                LoginButtonText: document.getElementById("edu_tata_login_text")?.value || "Login",
+                LoginButtonUrl: "/Account/Login",
+                BreadcrumbText: document.getElementById("edu_tata_breadcrumb_text")?.value || "Home - Education Loan",
+
+                ShowSubNavTabs: true,
+                SubNavTab1Title: document.getElementById("edu_subnav_tab1")?.value || "Overview",
+                SubNavTab1Target: "#overview",
+                SubNavTab2Title: document.getElementById("edu_subnav_tab2")?.value || "Document Required",
+                SubNavTab2Target: "#document-required",
+                SubNavTab3Title: document.getElementById("edu_subnav_tab3")?.value || "Rates and Charges",
+                SubNavTab3Target: "#rates-and-charges",
+                SubNavTab4Title: document.getElementById("edu_subnav_tab4")?.value || "EMI Calculator",
+                SubNavTab4Target: "#emi-calculator",
+                SubNavCtaText: document.getElementById("edu_subnav_cta")?.value || "Get Instant Education Loan",
+                SubNavCtaUrl: "#apply-loan-modal",
+
+                OverviewTitle: document.getElementById("edu_overview_title")?.value || "Education Loan for Higher Studies in India & Abroad",
+                OverviewSubtitle: document.getElementById("edu_overview_subtitle")?.value || "Fund your dreams with 100% financing, competitive interest rates, and minimal documentation.",
+                OverviewDescription: document.getElementById("edu_overview_desc")?.value || "",
+                OverviewCards: gatherTataOverviewCards(),
+
+                DocumentsTitle: document.getElementById("edu_docs_title")?.value || "Documents Required for Education Loan",
+                DocumentsSubtitle: document.getElementById("edu_docs_subtitle")?.value || "Simple and transparent documentation process for student applicant and co-applicant.",
+                DocumentGroups: gatherTataDocGroups(),
+
+                RatesTitle: document.getElementById("edu_rates_title")?.value || "Education Loan Interest Rates & Charges",
+                RatesSubtitle: document.getElementById("edu_rates_subtitle")?.value || "Competitive rates, zero hidden charges, and transparent loan terms for students.",
+                RateRows: gatherTataRateRows(),
+
+                EmiCalcTitle: document.getElementById("edu_emi_title")?.value || "Interactive Education Loan EMI Calculator",
+                EmiCalcSubtitle: document.getElementById("edu_emi_subtitle")?.value || "Plan your loan repayment with precision...",
+                EmiDefaultAmount: parseFloat(document.getElementById("edu_emi_def_amount")?.value || "3000000"),
+                EmiMinAmount: parseFloat(document.getElementById("edu_emi_min_amount")?.value || "100000"),
+                EmiMaxAmount: parseFloat(document.getElementById("edu_emi_max_amount")?.value || "15000000"),
+                EmiDefaultRate: parseFloat(document.getElementById("edu_emi_def_rate")?.value || "9.5"),
+                EmiMinRate: parseFloat(document.getElementById("edu_emi_min_rate")?.value || "8.0"),
+                EmiMaxRate: parseFloat(document.getElementById("edu_emi_max_rate")?.value || "16.0"),
+                EmiDefaultTenureYears: parseInt(document.getElementById("edu_emi_def_tenure")?.value || "10", 10),
+                EmiMinTenureYears: parseInt(document.getElementById("edu_emi_min_tenure")?.value || "1", 10),
+                EmiMaxTenureYears: parseInt(document.getElementById("edu_emi_max_tenure")?.value || "15", 10),
+
+                TopNavBrandName: document.getElementById("edu_tata_brand")?.value || "TATA CAPITAL",
+                TopNavBrandSubtitle: "Education Loans",
                 TopNavLinks: ["Abroad Education Loan", "Student Loan", "Study Abroad", "Contact Us"],
-                TopNavCtaText: document.getElementById("edu_top_cta_text")?.value || "Apply For Loan",
-                TopNavCtaUrl: document.getElementById("edu_top_cta_url")?.value || "#apply-loan-modal",
+                TopNavCtaText: document.getElementById("edu_subnav_cta")?.value || "Apply For Loan",
+                TopNavCtaUrl: "#apply-loan-modal",
                 HeroTagline: document.getElementById("edu_hero_tagline")?.value || "FUNDING DREAMS. FUELLING CAREERS.",
                 HeroTitle: document.getElementById("edu_hero_title")?.value || "Get Abroad Education Loan in",
                 HeroTitleHighlight: document.getElementById("edu_hero_highlight")?.value || "48 hours*",
@@ -1861,6 +2249,101 @@
             updateLivePreview(inputId, previewId);
             showHubToast("⏳ Image set to 'Uploading Soon' placeholder");
         }
+    }
+
+    // Dynamic Helper Functions for Tata Capital Education Loans Admin Panel
+    function gatherTataCountries() {
+        const list = [];
+        document.querySelectorAll("#tata_countries_container .tata-country-admin-card").forEach(c => {
+            list.push({
+                Id: c.dataset.countryId || ("country-" + Math.random().toString(36).substr(2, 6)),
+                FlagEmoji: c.querySelector(".tata-country-flag")?.value || "🌍",
+                Name: c.querySelector(".tata-country-name")?.value || "Country",
+                Code: (c.querySelector(".tata-country-name")?.value || "INT").substr(0, 3).toUpperCase(),
+                LoanAmountLimit: c.querySelector(".tata-country-limit")?.value || "Up to ₹1.5 Cr",
+                InterestRate: c.querySelector(".tata-country-rate")?.value || "From 9.50% p.a.",
+                Url: "#apply-loan-modal"
+            });
+        });
+        return list;
+    }
+
+    function addTataCountry() {
+        const wrap = document.getElementById("tata_countries_container");
+        if (!wrap) return;
+        const div = document.createElement("div");
+        div.className = "tata-country-admin-card";
+        div.dataset.countryId = "country-" + Math.random().toString(36).substr(2, 6);
+        div.style.cssText = "background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; font-size: 12px;";
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <input type="text" class="tata-country-flag" value="🌍" style="width: 32px; text-align: center; font-size: 16px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px;" title="Flag Emoji" />
+                <input type="text" class="tata-country-name dk-admin-form-input" value="New Country" placeholder="Country Name" style="flex: 1; margin: 0 6px; padding: 3px 6px; font-size: 11.5px; font-weight: 700;" />
+                <button type="button" style="background: #fee2e2; color: #b91c1c; border: none; border-radius: 4px; cursor: pointer; padding: 2px 5px; font-size: 10px;" onclick="this.closest('.tata-country-admin-card').remove()">✕</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+                <input type="text" class="tata-country-limit dk-admin-form-input" value="Up to ₹1.0 Cr" placeholder="Loan Limit" style="padding: 2px 4px; font-size: 10.5px;" />
+                <input type="text" class="tata-country-rate dk-admin-form-input" value="From 9.50% p.a." placeholder="Rate" style="padding: 2px 4px; font-size: 10.5px;" />
+            </div>
+        `;
+        wrap.appendChild(div);
+    }
+
+    function gatherTataOverviewCards() {
+        const list = [];
+        document.querySelectorAll("#tata_overview_cards_container .tata-oc-admin-card").forEach(c => {
+            list.push({
+                Id: c.dataset.cardId || ("oc-" + Math.random().toString(36).substr(2, 6)),
+                Title: c.querySelector(".tata-oc-title")?.value || "Feature Title",
+                Description: c.querySelector(".tata-oc-desc")?.value || "",
+                Icon: c.querySelector(".tata-oc-icon")?.value || "award"
+            });
+        });
+        return list;
+    }
+
+    function gatherTataDocGroups() {
+        const list = [];
+        document.querySelectorAll("#tata_doc_groups_container .tata-dg-admin-card").forEach(c => {
+            const rawText = c.querySelector(".tata-dg-items")?.value || "";
+            const items = rawText.split("\n").map(s => s.trim()).filter(s => s.length > 0);
+            list.push({
+                Id: c.dataset.groupId || ("dg-" + Math.random().toString(36).substr(2, 6)),
+                GroupBadge: c.querySelector(".tata-dg-badge")?.value || "Documents",
+                GroupTitle: c.querySelector(".tata-dg-title")?.value || "Document Group",
+                Items: items
+            });
+        });
+        return list;
+    }
+
+    function gatherTataRateRows() {
+        const list = [];
+        document.querySelectorAll("#tata_rates_container .tata-rate-admin-row").forEach(c => {
+            list.push({
+                Id: c.dataset.rowId || ("rate-" + Math.random().toString(36).substr(2, 6)),
+                Parameter: c.querySelector(".tata-rate-param")?.value || "Parameter",
+                Details: c.querySelector(".tata-rate-details")?.value || "Details",
+                Note: c.querySelector(".tata-rate-note")?.value || ""
+            });
+        });
+        return list;
+    }
+
+    function addTataRateRow() {
+        const wrap = document.getElementById("tata_rates_container");
+        if (!wrap) return;
+        const div = document.createElement("div");
+        div.className = "tata-rate-admin-row";
+        div.dataset.rowId = "rate-" + Math.random().toString(36).substr(2, 6);
+        div.style.cssText = "display: grid; grid-template-columns: 2fr 3fr 3fr 40px; gap: 8px; align-items: center; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 10px;";
+        div.innerHTML = `
+            <input type="text" class="tata-rate-param dk-admin-form-input" value="New Parameter" placeholder="Parameter" style="font-size: 12px; font-weight: 700; padding: 4px 6px;" />
+            <input type="text" class="tata-rate-details dk-admin-form-input" value="Details / Rate" placeholder="Details & Charges" style="font-size: 12px; padding: 4px 6px;" />
+            <input type="text" class="tata-rate-note dk-admin-form-input" value="Standard Terms" placeholder="Regulatory / Policy Note" style="font-size: 11.5px; padding: 4px 6px;" />
+            <button type="button" style="background: #fee2e2; color: #b91c1c; border: none; border-radius: 4px; padding: 4px; cursor: pointer; font-size: 10px;" onclick="this.closest('.tata-rate-admin-row').remove()">✕</button>
+        `;
+        wrap.appendChild(div);
     }
 
     // Dynamic Helper Functions for Education Loans Admin Panel
