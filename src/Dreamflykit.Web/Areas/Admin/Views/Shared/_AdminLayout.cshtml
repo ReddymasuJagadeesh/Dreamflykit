@@ -374,6 +374,14 @@
 
                 </a>
 
+                <a href="/Admin/ElectronicsHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "ElectronicsHub" ? "active" : "")" style="color: #0284c7;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="2" y1="20" x2="22" y2="20"></line>
+                    </svg>
+                    <span>⚡ Electronics Category Hub</span>
+                </a>
+
 
 
                 <a href="/Admin/AppliancesHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "AppliancesHub" ? "active" : "")" style="color: #fb923c;">
@@ -424,7 +432,8 @@
                         <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
                     </svg>
                     <span>✈ Travel Gear Hub</span>
-                </a>
+                </a>
+
 
                 <a href="/Admin/LuggageHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "LuggageHub" ? "active" : "")" style="color: #fb923c;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

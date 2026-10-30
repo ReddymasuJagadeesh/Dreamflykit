@@ -304,6 +304,9 @@ public static class InfrastructureServiceCollectionExtensions
         // Luggage & Bags Category Hub Service
         services.AddScoped<Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService, Dreamflykit.Infrastructure.LuggageHub.LuggageHubService>();
 
+        // Electronics Category Hub Service
+        services.AddScoped<Dreamflykit.Application.ElectronicsHub.Interfaces.IElectronicsHubService, Dreamflykit.Infrastructure.ElectronicsHub.ElectronicsHubService>();
+
         // Central Enterprise Audit Logging
         services.AddScoped<Dreamflykit.Application.Audit.Interfaces.IAuditLogService, Dreamflykit.Infrastructure.Audit.AuditLogService>();
     }

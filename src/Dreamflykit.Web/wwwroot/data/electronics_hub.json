@@ -1,0 +1,348 @@
+{
+  "ThemeSettings": {
+    "StoreTitle": "Dreamflykit Tech • Electronics Store",
+    "AccentColor": "#0284c7",
+    "PrimaryColor": "#0f172a",
+    "FestivalThemeEnabled": false,
+    "FestivalThemeName": "Student Tech Fest 2026",
+    "FestivalBannerUrl": ""
+  },
+  "HeroBanner": {
+    "IsEnabled": true,
+    "Title": "Student Electronics for",
+    "TitleHighlight": "Every Global Campus",
+    "Subtitle": "Certified MacBooks, noise-cancelling audio, universal adapters, and tech power for university life.",
+    "ImageUrl": "/images/hero/hero-electronics.webp",
+    "IsUploadingSoon": true,
+    "BannerHeight": 440,
+    "TitleColor": "#063f91",
+    "TitleHighlightColor": "#0284c7",
+    "SubtitleColor": "#334155",
+    "BadgeBgColor": "rgba(255, 255, 255, 0.94)",
+    "BadgeTextColor": "#0f172a",
+    "OverlayGradient": "linear-gradient(90deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.45) 45%, rgba(255, 255, 255, 0.15) 70%, rgba(255, 255, 255, 0.65) 100%)",
+    "SlideIntervalSeconds": 5,
+    "Slides": [
+      {
+        "Id": "s1",
+        "Title": "Next-Gen Laptops &",
+        "TitleHighlight": "MacBook Power",
+        "Subtitle": "Universal 110V–240V chargers, long battery life, and global campus warranties.",
+        "ImageUrl": "/images/hero/hero-electronics.webp",
+        "IsUploadingSoon": true,
+        "ButtonText": "Shop Laptops",
+        "ButtonUrl": "/category/electronics?q=laptop",
+        "DisplayOrder": 1,
+        "IsActive": true
+      },
+      {
+        "Id": "s2",
+        "Title": "Active Noise-Cancelling",
+        "TitleHighlight": "Study Silence Audio",
+        "Subtitle": "Bose, Sony, Apple & Boat headphones for undisturbed library sessions & long-haul flights.",
+        "ImageUrl": "/images/hero/hero-electronics.webp",
+        "IsUploadingSoon": true,
+        "ButtonText": "Explore Audio",
+        "ButtonUrl": "/category/electronics?q=headphone",
+        "DisplayOrder": 2,
+        "IsActive": true
+      },
+      {
+        "Id": "s3",
+        "Title": "Worldwide 150+ Country",
+        "TitleHighlight": "Universal Adapters",
+        "Subtitle": "Surge-protected multi-plug GaN fast chargers ready for USA, UK, Canada & Europe.",
+        "ImageUrl": "/images/hero/hero-electronics.webp",
+        "IsUploadingSoon": true,
+        "ButtonText": "Shop Adapters",
+        "ButtonUrl": "/category/electronics?q=adapter",
+        "DisplayOrder": 3,
+        "IsActive": true
+      }
+    ],
+    "Badges": [
+      {
+        "Id": "b1",
+        "Label": "110V–240V Universal Power",
+        "Icon": "zap",
+        "IsActive": true
+      },
+      {
+        "Id": "b2",
+        "Label": "100% Genuine Certified Tech",
+        "Icon": "shield",
+        "IsActive": true
+      },
+      {
+        "Id": "b3",
+        "Label": "International Student Warranty",
+        "Icon": "award",
+        "IsActive": true
+      },
+      {
+        "Id": "b4",
+        "Label": "Loved by 10K+ Students",
+        "Icon": "users",
+        "IsActive": true
+      }
+    ],
+    "RightCard": {
+      "Title": "Smart Tech.",
+      "TitleHighlight": "Campuses Abroad.",
+      "Features": [
+        {
+          "Id": "f1",
+          "Title": "Worldwide Voltage Tested",
+          "Icon": "zap",
+          "IsActive": true
+        },
+        {
+          "Id": "f2",
+          "Title": "Lightweight & Carry-On Ready",
+          "Icon": "feather",
+          "IsActive": true
+        },
+        {
+          "Id": "f3",
+          "Title": "Pre-Activated Student SIMs",
+          "Icon": "sim",
+          "IsActive": true
+        }
+      ]
+    }
+  },
+  "CategoriesSection": {
+    "IsEnabled": true,
+    "Title": "Shop by Category",
+    "ViewAllText": "View All Categories →",
+    "ViewAllUrl": "/products?category=electronics",
+    "Categories": [
+      {
+        "Id": "c1",
+        "Name": "Laptops & MacBooks",
+        "Slug": "laptops-macbooks",
+        "Emoji": "\uD83D\uDCBB",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 1,
+        "IsActive": true,
+        "IsUploadingSoon": true
+      },
+      {
+        "Id": "c2",
+        "Name": "Noise-Cancelling Headphones",
+        "Slug": "headphones-audio",
+        "Emoji": "\uD83C\uDFA7",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 2,
+        "IsActive": true,
+        "IsUploadingSoon": true
+      },
+      {
+        "Id": "c3",
+        "Name": "Universal Travel Adapters",
+        "Slug": "travel-adapters",
+        "Emoji": "\uD83D\uDD0C",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 3,
+        "IsActive": true,
+        "IsUploadingSoon": true
+      },
+      {
+        "Id": "c4",
+        "Name": "Power Banks & Chargers",
+        "Slug": "power-banks-chargers",
+        "Emoji": "\uD83D\uDD0B",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 4,
+        "IsActive": true,
+        "IsUploadingSoon": true
+      },
+      {
+        "Id": "c5",
+        "Name": "International Student SIMs",
+        "Slug": "student-sims",
+        "Emoji": "\uD83D\uDCF6",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 5,
+        "IsActive": true,
+        "IsUploadingSoon": true
+      },
+      {
+        "Id": "c6",
+        "Name": "Storage & Portable SSDs",
+        "Slug": "storage-ssds",
+        "Emoji": "\uD83D\uDCBE",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 6,
+        "IsActive": true,
+        "IsUploadingSoon": true
+      },
+      {
+        "Id": "c7",
+        "Name": "Smartwatches & Wearables",
+        "Slug": "smartwatches-wearables",
+        "Emoji": "⌚",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 7,
+        "IsActive": true,
+        "IsUploadingSoon": true
+      },
+      {
+        "Id": "c8",
+        "Name": "Cables, Hubs & Docks",
+        "Slug": "cables-hubs-docks",
+        "Emoji": "\uD83D\uDD17",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 8,
+        "IsActive": true,
+        "IsUploadingSoon": true
+      },
+      {
+        "Id": "c9",
+        "Name": "Monitors & Displays",
+        "Slug": "monitors-displays",
+        "Emoji": "\uD83D\uDDA5️",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 9,
+        "IsActive": true,
+        "IsUploadingSoon": true
+      },
+      {
+        "Id": "c10",
+        "Name": "Calculators & Tech Tools",
+        "Slug": "calculators-tech-tools",
+        "Emoji": "\uD83D\uDD22",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "DisplayOrder": 10,
+        "IsActive": true,
+        "IsUploadingSoon": true
+      }
+    ]
+  },
+  "CuratedProductsSection": {
+    "IsEnabled": true,
+    "Title": "Top Tech Picks for Students",
+    "ViewAllText": "View All Tech Essentials →",
+    "ViewAllUrl": "/products?category=electronics",
+    "Products": [
+      {
+        "Id": "p1",
+        "Name": "All-in-One Universal Travel Adapter with USB-C PD",
+        "Slug": "universal-travel-adapter-pd",
+        "CategoryName": "Universal Travel Adapters",
+        "ProductUrl": "/category/electronics?q=adapter",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "Price": 1499,
+        "OriginalPrice": 2499,
+        "DiscountPercent": 40,
+        "Rating": 4.9,
+        "ReviewCount": 384,
+        "IsActive": true,
+        "InStock": true,
+        "Badge": "BESTSELLER"
+      },
+      {
+        "Id": "p2",
+        "Name": "Active Noise-Cancelling Wireless Headphones (40h Battery)",
+        "Slug": "anc-wireless-headphones",
+        "CategoryName": "Noise-Cancelling Headphones",
+        "ProductUrl": "/category/electronics?q=headphone",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "Price": 5999,
+        "OriginalPrice": 9999,
+        "DiscountPercent": 40,
+        "Rating": 4.8,
+        "ReviewCount": 512,
+        "IsActive": true,
+        "InStock": true,
+        "Badge": "STUDENT CHOICE"
+      },
+      {
+        "Id": "p3",
+        "Name": "65W GaN 3-Port Fast Charger (Laptop + Mobile)",
+        "Slug": "65w-gan-fast-charger",
+        "CategoryName": "Power Banks & Chargers",
+        "ProductUrl": "/category/electronics?q=charger",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "Price": 1999,
+        "OriginalPrice": 3499,
+        "DiscountPercent": 43,
+        "Rating": 4.9,
+        "ReviewCount": 280,
+        "IsActive": true,
+        "InStock": true,
+        "Badge": "MUST HAVE"
+      },
+      {
+        "Id": "p4",
+        "Name": "1TB Portable High-Speed USB-C External SSD",
+        "Slug": "1tb-portable-external-ssd",
+        "CategoryName": "Storage & Portable SSDs",
+        "ProductUrl": "/category/electronics?q=ssd",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "Price": 7499,
+        "OriginalPrice": 11999,
+        "DiscountPercent": 37,
+        "Rating": 4.9,
+        "ReviewCount": 194,
+        "IsActive": true,
+        "InStock": true,
+        "Badge": "HIGH SPEED"
+      },
+      {
+        "Id": "p5",
+        "Name": "USA & Canada Pre-Activated Student 5G SIM Card (30-Day)",
+        "Slug": "usa-canada-student-sim",
+        "CategoryName": "International Student SIMs",
+        "ProductUrl": "/category/electronics?q=sim",
+        "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+        "Price": 2499,
+        "OriginalPrice": 3999,
+        "DiscountPercent": 38,
+        "Rating": 4.8,
+        "ReviewCount": 420,
+        "IsActive": true,
+        "InStock": true,
+        "Badge": "INSTANT CONNECT"
+      }
+    ]
+  },
+  "TrustBadgesSection": {
+    "IsEnabled": true,
+    "Badges": [
+      {
+        "Id": "tb1",
+        "Title": "100% Genuine Certified Tech",
+        "Subtitle": "Direct from brand-authorized distributors",
+        "Icon": "shield"
+      },
+      {
+        "Id": "tb2",
+        "Title": "Worldwide Voltage 110V–240V",
+        "Subtitle": "Safe for US, UK, Canada & European sockets",
+        "Icon": "zap"
+      },
+      {
+        "Id": "tb3",
+        "Title": "Express Student Dispatch",
+        "Subtitle": "Fast delivery right before your flight departure",
+        "Icon": "truck"
+      },
+      {
+        "Id": "tb4",
+        "Title": "Student Warranty Support",
+        "Subtitle": "Hassle-free replacement & international coverage",
+        "Icon": "award"
+      }
+    ]
+  },
+  "BottomBanner": {
+    "IsEnabled": true,
+    "Title": "Need Complete Tech Packing for Your Destination?",
+    "Subtitle": "Explore curated tech bundles tested and approved by students in 50+ universities worldwide.",
+    "ButtonText": "Browse Tech Catalog",
+    "ButtonUrl": "/products?category=electronics",
+    "ImageUrl": "/images/hero/hero-electronics.webp",
+    "IsUploadingSoon": true
+  }
+}
