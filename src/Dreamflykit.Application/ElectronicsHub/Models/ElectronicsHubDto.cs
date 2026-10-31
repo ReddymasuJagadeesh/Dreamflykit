@@ -668,6 +668,9 @@ public sealed class ElectronicsBrandItemDto
     public string TargetUrl { get; set; } = string.Empty;
     public int DisplayOrder { get; set; } = 1;
     public bool IsActive { get; set; } = true;
+    public string Tagline { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public ElectronicsBrandHeroBannerDto? HeroBanner { get; set; }
 }
 
 public sealed class ElectronicsThemeSettingsDto

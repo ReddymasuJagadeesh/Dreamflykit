@@ -213,6 +213,14 @@
             {
                 <span class="dk-breadcrumb-current">Appliances</span>
             }
+            else if (Model.IsElectronicsBrandHub)
+            {
+                <a href="/category/electronics" class="dk-breadcrumb-item">Electronics</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <a href="/category/electronics/@Model.CurrentSubcategorySlug" class="dk-breadcrumb-item">@(Model.CurrentSubcategoryName ?? Model.CurrentSubcategorySlug)</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">@(Model.CurrentBrandName ?? Model.CurrentBrandSlug)</span>
+            }
             else if (Model.IsElectronicsCategory && !string.IsNullOrWhiteSpace(Model.CurrentSubcategorySlug))
             {
                 <a href="/category/electronics" class="dk-breadcrumb-item">Electronics</a>
@@ -366,7 +374,11 @@
     @if (Model.IsElectronicsCategory && Model.ElectronicsHub != null)
     {
         <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
-            @if (Model.ViewMode == "hub" && string.IsNullOrWhiteSpace(Model.CurrentSubcategorySlug))
+            @if (Model.IsElectronicsBrandHub)
+            {
+                <partial name="_ElectronicsBrandHub" model="Model" />
+            }
+            else if (Model.ViewMode == "hub" && string.IsNullOrWhiteSpace(Model.CurrentSubcategorySlug))
             {
                 <partial name="_ElectronicsCategoryHub" model="Model.ElectronicsHub" />
             }
@@ -392,7 +404,7 @@
                                Model.IsBeautyHub ||
                                Model.IsFoodHub ||
                                (Model.IsTravelHub && Model.ViewMode == "hub") ||
-                               (Model.IsElectronicsCategory && (Model.ViewMode == "hub" || Model.IsElectronicsSubcategoryHub)) ||
+                               (Model.IsElectronicsCategory && (Model.ViewMode == "hub" || Model.IsElectronicsSubcategoryHub || Model.IsElectronicsBrandHub)) ||
                                Model.IsLuggageHub;
     }
 

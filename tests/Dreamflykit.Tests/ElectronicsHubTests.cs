@@ -250,4 +250,146 @@ public class ElectronicsHubTests
         Assert.Equal("Laptops & MacBooks", model.CurrentSubcategoryName);
         Assert.NotNull(model.ElectronicsHub);
     }
+
+    [Fact]
+    public void ElectronicsBrandCatalogService_GetBrandShowcase_AppleLaptops_ReturnsHeroAndFiltersAndProducts()
+    {
+        // Act
+        var showcase = Dreamflykit.Application.ElectronicsHub.Services.ElectronicsBrandCatalogService.GetBrandShowcase(
+            "laptops-macbooks", "apple");
+
+        // Assert
+        Assert.NotNull(showcase);
+        Assert.Equal("Apple", showcase.BrandName);
+        Assert.Equal("apple", showcase.BrandSlug);
+        Assert.Equal("laptops-macbooks", showcase.SubcategorySlug);
+
+        // Hero banner check
+        Assert.NotNull(showcase.HeroBanner);
+        Assert.True(showcase.HeroBanner.IsEnabled);
+        Assert.True(showcase.HeroBanner.IsUploadingSoon);
+        Assert.Contains("Apple", showcase.HeroBanner.Title);
+
+        // Faceted filters check
+        Assert.NotNull(showcase.FilterGroups);
+        Assert.NotEmpty(showcase.FilterGroups);
+        var filterKeys = showcase.FilterGroups.Select(f => f.Key).ToList();
+        Assert.Contains("processor", filterKeys);
+        Assert.Contains("ram", filterKeys);
+        Assert.Contains("storage", filterKeys);
+        Assert.Contains("screensize", filterKeys);
+
+        // Products check
+        Assert.NotNull(showcase.Products);
+        Assert.NotEmpty(showcase.Products);
+        Assert.All(showcase.Products, p =>
+        {
+            Assert.Contains("Apple", p.Name);
+            Assert.True(p.Price > 0);
+            Assert.True(p.IsUploadingSoon);
+        });
+    }
+
+    [Fact]
+    public void ElectronicsBrandCatalogService_GetBrandShowcase_SonyHeadphones_ReturnsAudioFiltersAndProducts()
+    {
+        // Act
+        var showcase = Dreamflykit.Application.ElectronicsHub.Services.ElectronicsBrandCatalogService.GetBrandShowcase(
+            "headphones-audio", "sony");
+
+        // Assert
+        Assert.NotNull(showcase);
+        Assert.Equal("Sony", showcase.BrandName);
+        Assert.Equal("sony", showcase.BrandSlug);
+
+        // Audio-specific faceted filters check
+        Assert.NotNull(showcase.FilterGroups);
+        var filterKeys = showcase.FilterGroups.Select(f => f.Key).ToList();
+        Assert.Contains("anc", filterKeys);
+        Assert.Contains("type", filterKeys);
+        Assert.Contains("price", filterKeys);
+
+        // Sony products check
+        Assert.NotEmpty(showcase.Products);
+        Assert.All(showcase.Products, p => Assert.Contains("Sony", p.Name));
+    }
+
+    [Fact]
+    public async Task ProductsController_ElectronicsBrandRoute_SetsBrandHubViewModel()
+    {
+        // Arrange
+        var productServiceMock = new Mock<IProductService>();
+        var categoryServiceMock = new Mock<ICategoryService>();
+        var studyHubMock = new Mock<Dreamflykit.Application.StudyHub.Interfaces.IStudyHubService>();
+        var fashionHubMock = new Mock<Dreamflykit.Application.FashionHub.Interfaces.IFashionHubService>();
+        var healthHubMock = new Mock<Dreamflykit.Application.HealthHub.Interfaces.IHealthHubService>();
+        var mobilesHubMock = new Mock<Dreamflykit.Application.MobilesHub.Interfaces.IMobilesHubService>();
+        var appliancesHubMock = new Mock<Dreamflykit.Application.AppliancesHub.Interfaces.IAppliancesHubService>();
+        var beautyHubMock = new Mock<Dreamflykit.Application.BeautyHub.Interfaces.IBeautyHubService>();
+        var foodHubMock = new Mock<Dreamflykit.Application.FoodHub.Interfaces.IFoodHubService>();
+        var travelHubMock = new Mock<Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService>();
+        var luggageHubMock = new Mock<Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService>();
+        var electronicsHubMock = new Mock<IElectronicsHubService>();
+
+        electronicsHubMock.Setup(e => e.GetConfigAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ElectronicsHubDto.CreateDefault());
+
+        categoryServiceMock.Setup(c => c.GetCategoryDetailsAsync("electronics", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new CategoryDetails
+            {
+                CategoryId = Guid.NewGuid(),
+                Name = "Electronics",
+                Slug = "electronics",
+                Subcategories = new List<SubcategoryListItem>()
+            });
+
+        productServiceMock.Setup(p => p.SearchProductsAsync(It.IsAny<ProductListQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ProductSearchResult
+            {
+                Items = new List<ProductListItem>(),
+                Page = 1,
+                PageSize = 24,
+                TotalCount = 0
+            });
+
+        var controller = new ProductsController(
+            productServiceMock.Object,
+            categoryServiceMock.Object,
+            studyHubMock.Object,
+            fashionHubMock.Object,
+            healthHubMock.Object,
+            mobilesHubMock.Object,
+            appliancesHubMock.Object,
+            beautyHubMock.Object,
+            foodHubMock.Object,
+            travelHubMock.Object,
+            luggageHubMock.Object,
+            electronicsHubMock.Object);
+
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+
+        // Act - user navigates to /category/electronics/laptops-macbooks/apple
+        var result = await controller.Index(
+            category: "electronics",
+            subcategorySlug: "laptops-macbooks",
+            brandSlug: "apple");
+
+        // Assert
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<ProductListViewModel>(viewResult.Model);
+
+        Assert.True(model.IsElectronicsCategory);
+        Assert.True(model.IsElectronicsBrandHub);
+        Assert.False(model.IsElectronicsSubcategoryHub);
+        Assert.Equal("apple", model.CurrentBrandSlug);
+        Assert.Equal("Apple", model.CurrentBrandName);
+        Assert.Equal("laptops-macbooks", model.CurrentSubcategorySlug);
+        Assert.Equal("Laptops & MacBooks", model.CurrentSubcategoryName);
+        Assert.NotNull(model.ElectronicsBrandHero);
+        Assert.NotEmpty(model.ElectronicsBrandFilters);
+        Assert.NotEmpty(model.ElectronicsBrandProducts);
+    }
 }

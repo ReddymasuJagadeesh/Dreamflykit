@@ -46,6 +46,16 @@ public sealed class ProductListViewModel
 
     public string? CurrentSubcatItem { get; init; }
 
+    public string? CurrentBrandSlug { get; init; }
+
+    public string? CurrentBrandName { get; init; }
+
+    public Dreamflykit.Application.ElectronicsHub.Models.ElectronicsBrandHeroBannerDto? ElectronicsBrandHero { get; init; }
+
+    public List<Dreamflykit.Application.ElectronicsHub.Models.ElectronicsBrandFilterGroupDto>? ElectronicsBrandFilters { get; init; }
+
+    public List<Dreamflykit.Application.ElectronicsHub.Models.ElectronicsBrandProductDto>? ElectronicsBrandProducts { get; init; }
+
     public IReadOnlyList<Dreamflykit.Application.Categories.Models.SubcategoryListItem> Subcategories { get; init; }
         = Array.Empty<Dreamflykit.Application.Categories.Models.SubcategoryListItem>();
 
@@ -168,8 +178,13 @@ public sealed class ProductListViewModel
     public bool IsElectronicsHub =>
         IsElectronicsCategory && !SubcategoryId.HasValue && string.IsNullOrWhiteSpace(CurrentSubcategorySlug);
 
+    public bool IsElectronicsBrandHub =>
+        IsElectronicsCategory &&
+        !string.IsNullOrWhiteSpace(CurrentSubcategorySlug) &&
+        !string.IsNullOrWhiteSpace(CurrentBrandSlug);
+
     public bool IsElectronicsSubcategoryHub =>
-        IsElectronicsCategory && (!string.IsNullOrWhiteSpace(CurrentSubcategorySlug) || SubcategoryId.HasValue);
+        IsElectronicsCategory && !IsElectronicsBrandHub && (!string.IsNullOrWhiteSpace(CurrentSubcategorySlug) || SubcategoryId.HasValue);
 
     public bool IsBeautyHub =>
         string.Equals(CategorySlug, "beauty", StringComparison.OrdinalIgnoreCase) ||
