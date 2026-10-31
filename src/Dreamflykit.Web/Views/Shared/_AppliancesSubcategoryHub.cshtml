@@ -1,0 +1,1041 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.AppliancesHub ?? Dreamflykit.Application.AppliancesHub.Models.AppliancesHubDto.CreateDefault();
+    var currentSubSlug = Model.CurrentSubcategorySlug ?? "";
+
+    // Find active subcategory page or match by alias
+    var activePage = hub.SubcategoryPages?.FirstOrDefault(p =>
+        string.Equals(p.CategorySlug, currentSubSlug, StringComparison.OrdinalIgnoreCase) ||
+        (currentSubSlug.Contains("tv") && p.CategorySlug.Contains("television")) ||
+        (currentSubSlug.Contains("telev") && p.CategorySlug.Contains("television")) ||
+        (currentSubSlug.Contains("laund") && p.CategorySlug.Contains("laundry")) ||
+        (currentSubSlug.Contains("wash") && p.CategorySlug.Contains("laundry")) ||
+        (currentSubSlug.Contains("ac") && p.CategorySlug.Contains("air-conditioners")) ||
+        (currentSubSlug.Contains("fan") && p.CategorySlug.Contains("fans")) ||
+        (currentSubSlug.Contains("micro") && p.CategorySlug.Contains("microwaves")) ||
+        (currentSubSlug.Contains("365") && p.CategorySlug.Contains("value-365")) ||
+        (currentSubSlug.Contains("appliance") && p.CategorySlug.Contains("small-appliances")) ||
+        (currentSubSlug.Contains("geys") && p.CategorySlug.Contains("geysers")) ||
+        (currentSubSlug.Contains("stab") && p.CategorySlug.Contains("stabilizers")) ||
+        (currentSubSlug.Contains("kitch") && p.CategorySlug.Contains("kitchen-appliances")) ||
+        (currentSubSlug.Contains("fridg") && p.CategorySlug.Contains("refrigerators")) ||
+        (currentSubSlug.Contains("refrig") && p.CategorySlug.Contains("refrigerators")) ||
+        (currentSubSlug.Contains("home") && p.CategorySlug.Contains("home-appliances")) ||
+        (currentSubSlug.Contains("break") && p.CategorySlug.Contains("breakfast-appliances")) ||
+        ((currentSubSlug.Contains("top") || currentSubSlug.Contains("fk")) && p.CategorySlug.Contains("top-rated")) ||
+        ((currentSubSlug.Contains("invert") || currentSubSlug.Contains("backup")) && p.CategorySlug.Contains("inverters")) ||
+        (currentSubSlug.Contains("dish") && p.CategorySlug.Contains("dishwashers")));
+
+    if (activePage == null)
+    {
+        var defaultPages = Dreamflykit.Application.AppliancesHub.Models.AppliancesHubDto.CreateDefaultSubcategoryPages();
+        activePage = defaultPages.FirstOrDefault(p =>
+            string.Equals(p.CategorySlug, currentSubSlug, StringComparison.OrdinalIgnoreCase) ||
+            (currentSubSlug.Contains("tv") && p.CategorySlug.Contains("television")))
+            ?? defaultPages.First();
+    }
+
+    var hero = activePage.HeroBanner ?? new();
+    var shopByBrands = activePage.ShopByBrands ?? new();
+    var brands = shopByBrands.Brands != null && shopByBrands.Brands.Count > 0
+        ? shopByBrands.Brands.Where(b => b.IsActive).OrderBy(b => b.DisplayOrder).ToList()
+        : new List<Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandItemDto>();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+    var totalProducts = Model.TotalCount;
+    var products = Model.Products ?? new List<Dreamflykit.Application.Catalog.Models.ProductListItem>();
+
+    var isHeroSoon = hero.IsUploadingSoon || string.IsNullOrWhiteSpace(hero.ImageUrl);
+}
+
+<div class="dk-app-sub-hub-root" id="appliancesSubcategoryRoot">
+
+    <!-- Admin Quick Bar -->
+    @if (canManage)
+    {
+        <div class="dk-app-sub-admin-bar">
+            <div class="dk-app-sub-admin-left">
+                <span class="dk-app-sub-admin-badge">⚡ Admin Mode</span>
+                <span class="dk-app-sub-admin-hint">
+                    Managing Subcategory: <strong>@activePage.CategoryName</strong> &bull; Customize hero banner, shop by brands, &amp; upload images anytime.
+                </span>
+            </div>
+            <a href="/Admin/AppliancesHub#sub-@activePage.CategorySlug" class="dk-app-sub-admin-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Edit @activePage.CategoryName &amp; Brands
+            </a>
+        </div>
+    }
+
+    <!-- Subcategory Navigation Bar -->
+    <div class="dk-app-sub-nav-bar">
+        <div class="dk-app-sub-nav-left">
+            <span class="dk-app-sub-nav-emoji">@activePage.Emoji</span>
+            <div>
+                <h1 class="dk-app-sub-nav-title">@activePage.CategoryName</h1>
+                <span class="dk-app-sub-nav-tag">Verified International Student Appliances &bull; 100% Genuine</span>
+            </div>
+        </div>
+        <div class="dk-app-sub-nav-right">
+            <a href="/category/appliances" class="dk-app-sub-back-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span>All Appliances Categories</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         1. SUBCATEGORY HERO BANNER (FULL WIDTH)
+    ============================================================ -->
+    @if (hero.IsEnabled)
+    {
+        <section class="dk-app-sub-hero-section" aria-label="@activePage.CategoryName Showcase">
+            
+            <!-- Full Width Background Layer -->
+            @if (isHeroSoon)
+            {
+                <div class="dk-app-sub-hero-soon">
+                    <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon Placeholder" class="dk-app-sub-soon-img" />
+                    <div class="dk-app-sub-soon-pill">⏳ HERO BANNER UPLOADING SOON</div>
+                </div>
+            }
+            else
+            {
+                <img src="@hero.ImageUrl"
+                     alt="@hero.Title @hero.TitleHighlight"
+                     class="dk-app-sub-hero-bg"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="dk-app-sub-hero-soon" style="display: none;">
+                    <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon Placeholder" class="dk-app-sub-soon-img" />
+                    <div class="dk-app-sub-soon-pill">⏳ HERO BANNER UPLOADING SOON</div>
+                </div>
+            }
+
+            <div class="dk-app-sub-hero-overlay"></div>
+
+            <!-- Content Overlayed -->
+            <div class="dk-app-sub-hero-content">
+                <div class="dk-app-sub-hero-badge">
+                    <span class="dk-app-sub-pulse"></span>
+                    <span>@(!string.IsNullOrWhiteSpace(hero.TagBadge) ? hero.TagBadge : "⚡ 100% GENUINE CERTIFIED APPLIANCES")</span>
+                </div>
+
+                <h2 class="dk-app-sub-hero-title">
+                    @hero.Title
+                    <span class="dk-app-sub-hero-highlight">@hero.TitleHighlight</span>
+                </h2>
+
+                <p class="dk-app-sub-hero-desc">
+                    @hero.Subtitle
+                </p>
+
+                <!-- Badges Row -->
+                <div class="dk-app-sub-badges-row">
+                    @if (hero.FeaturePills != null && hero.FeaturePills.Count > 0)
+                    {
+                        foreach (var pill in hero.FeaturePills)
+                        {
+                            <span class="dk-app-sub-badge-chip">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                @pill
+                            </span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="dk-app-sub-badge-chip">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                            110V–240V Dual Voltage
+                        </span>
+                        <span class="dk-app-sub-badge-chip">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            Brand Warranty Included
+                        </span>
+                        <span class="dk-app-sub-badge-chip">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            Free In-Home Installation
+                        </span>
+                    }
+                </div>
+            </div>
+
+        </section>
+    }
+
+    <!-- ============================================================
+         2. SHOP BY BRANDS SECTION (BELOW HERO BANNER)
+    ============================================================ -->
+    @if (shopByBrands.IsEnabled && brands.Count > 0)
+    {
+        <section class="dk-app-brands-section" aria-label="Shop @activePage.CategoryName by Brands">
+            
+            <div class="dk-app-brands-header">
+                <div class="dk-app-brands-header-left">
+                    <h2 class="dk-app-brands-title">@shopByBrands.Title</h2>
+                    <p class="dk-app-brands-sub">@shopByBrands.Subtitle</p>
+                </div>
+                <div class="dk-app-brands-header-right">
+                    <span class="dk-app-brands-count">🏷️ <strong>@brands.Count</strong> Global Brands Available</span>
+                </div>
+            </div>
+
+            <!-- Brands Grid -->
+            <div class="dk-app-brands-grid">
+                @foreach (var brand in brands)
+                {
+                    var brandUrl = !string.IsNullOrWhiteSpace(brand.TargetUrl)
+                        ? brand.TargetUrl
+                        : $"/category/appliances/{activePage.CategorySlug}?q={Uri.EscapeDataString(brand.Name)}";
+
+                    var isBrandSoon = brand.IsUploadingSoon || string.IsNullOrWhiteSpace(brand.LogoUrl) || brand.LogoUrl.Contains("uploading-soon");
+
+                    <a href="@brandUrl" class="dk-app-brand-card" title="Shop @brand.Name for @activePage.CategoryName">
+                        
+                        <div class="dk-app-brand-logo-box">
+                            @if (isBrandSoon)
+                            {
+                                <div class="dk-app-brand-placeholder">
+                                    <span class="dk-app-brand-initial">@brand.Name.FirstOrDefault()</span>
+                                    <span class="dk-app-brand-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@brand.LogoUrl"
+                                     alt="@brand.Name"
+                                     loading="lazy"
+                                     class="dk-app-brand-logo-img"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-app-brand-placeholder" style="display: none;">
+                                    <span class="dk-app-brand-initial">@brand.Name.FirstOrDefault()</span>
+                                    <span class="dk-app-brand-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+
+                        <span class="dk-app-brand-name">@brand.Name</span>
+                    </a>
+                }
+            </div>
+
+        </section>
+    }
+
+    <!-- ============================================================
+         3. SUBCATEGORY PRODUCTS CATALOG
+    ============================================================ -->
+    <section class="dk-app-products-section" aria-label="@activePage.CategoryName Products">
+        
+        <div class="dk-app-products-header">
+            <div>
+                <h2 class="dk-app-products-heading">
+                    Explore @activePage.CategoryName
+                </h2>
+                <span class="dk-app-products-subtext">Showing all verified appliance models, energy-saving series &amp; accessories.</span>
+            </div>
+            <div class="dk-app-products-toolbar">
+                <span class="dk-app-products-live-count">⚡ <strong>@(totalProducts > 0 ? totalProducts : (activePage.CuratedProducts?.Count > 0 ? activePage.CuratedProducts.Count : 6))</strong> Products Available</span>
+            </div>
+        </div>
+
+        @if (products.Count > 0)
+        {
+            <div class="dk-app-sub-products-grid">
+                @foreach (var prod in products)
+                {
+                    <div class="dk-app-sub-prod-card">
+                        <a href="/products/@prod.Slug" class="dk-app-sub-prod-img-box">
+                            @if (string.IsNullOrWhiteSpace(prod.PrimaryImageUrl))
+                            {
+                                <div class="dk-app-sub-prod-placeholder">
+                                    <span class="dk-app-sub-prod-emoji">@activePage.Emoji</span>
+                                    <span class="dk-app-sub-prod-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@prod.PrimaryImageUrl" alt="@prod.Name" class="dk-app-sub-prod-img" loading="lazy"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-app-sub-prod-placeholder" style="display: none;">
+                                    <span class="dk-app-sub-prod-emoji">@activePage.Emoji</span>
+                                    <span class="dk-app-sub-prod-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                        </a>
+
+                        <div class="dk-app-sub-prod-body">
+                            <span class="dk-app-sub-prod-cat">@activePage.CategoryName</span>
+                            <a href="/products/@prod.Slug" class="dk-app-sub-prod-title" title="@prod.Name">@prod.Name</a>
+
+                            <div class="dk-app-sub-prod-pricing">
+                                <span class="dk-app-sub-price-current">₹@prod.SellingPrice.ToString("N0")</span>
+                                @if (prod.MRP > prod.SellingPrice)
+                                {
+                                    <span class="dk-app-sub-price-mrp">₹@prod.MRP.ToString("N0")</span>
+                                    <span class="dk-app-sub-price-disc">@prod.DiscountPercentage% off</span>
+                                }
+                            </div>
+
+                            <div class="dk-app-sub-prod-actions">
+                                <a href="/products/@prod.Slug" class="dk-app-sub-btn-view">
+                                    <span>View Appliance Details</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else if (activePage.CuratedProducts != null && activePage.CuratedProducts.Count > 0)
+        {
+            <!-- Curated Starter Products Configured for This Subcategory -->
+            <div class="dk-app-sub-products-grid">
+                @foreach (var cur in activePage.CuratedProducts)
+                {
+                    <div class="dk-app-sub-prod-card">
+                        @if (!string.IsNullOrWhiteSpace(cur.DiscountBadge))
+                        {
+                            <span class="dk-app-sub-badge-corner">@cur.DiscountBadge</span>
+                        }
+                        <div class="dk-app-sub-prod-img-box">
+                            @if (cur.IsUploadingSoon || string.IsNullOrWhiteSpace(cur.ImageUrl))
+                            {
+                                <div class="dk-app-sub-prod-placeholder">
+                                    <span class="dk-app-sub-prod-emoji">@activePage.Emoji</span>
+                                    <span class="dk-app-sub-prod-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@cur.ImageUrl" alt="@cur.Name" class="dk-app-sub-prod-img" loading="lazy"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-app-sub-prod-placeholder" style="display: none;">
+                                    <span class="dk-app-sub-prod-emoji">@activePage.Emoji</span>
+                                    <span class="dk-app-sub-prod-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="dk-app-sub-prod-body">
+                            <span class="dk-app-sub-prod-cat">@cur.Brand &bull; @activePage.CategoryName</span>
+                            <span class="dk-app-sub-prod-title">@cur.Name</span>
+
+                            @if (!string.IsNullOrWhiteSpace(cur.KeySpecs))
+                            {
+                                <p style="font-size: 11.5px; color: #64748b; margin: 4px 0 8px 0; line-height: 1.4;">@cur.KeySpecs</p>
+                            }
+
+                            <div class="dk-app-sub-prod-pricing">
+                                <span class="dk-app-sub-price-current">₹@cur.Price.ToString("N0")</span>
+                                @if (cur.OriginalPrice > cur.Price)
+                                {
+                                    <span class="dk-app-sub-price-mrp">₹@cur.OriginalPrice.ToString("N0")</span>
+                                    <span class="dk-app-sub-price-disc">@cur.DiscountBadge</span>
+                                }
+                            </div>
+
+                            <div class="dk-app-sub-prod-actions">
+                                <a href="/category/appliances/@activePage.CategorySlug?q=@Uri.EscapeDataString(cur.Brand)" class="dk-app-sub-btn-view">
+                                    <span>Explore Brand Models</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <!-- Default Starter Items -->
+            <div class="dk-app-sub-products-grid">
+                @{
+                    var sampleItems = new[]
+                    {
+                        new { Name = $"{activePage.CategoryName} Pro Edition (Universal 110V-240V)", Price = 12999, Mrp = 19999, Disc = "35% OFF", Badge = "TOP SELLER" },
+                        new { Name = $"{activePage.CategoryName} Smart Inverter Energy Saver", Price = 8499, Mrp = 12999, Disc = "35% OFF", Badge = "5-STAR" },
+                        new { Name = $"{activePage.CategoryName} Compact Dorm Edition", Price = 4999, Mrp = 7999, Disc = "37% OFF", Badge = "MUST HAVE" },
+                        new { Name = $"{activePage.CategoryName} Heavy-Duty Student Kit", Price = 2899, Mrp = 4499, Disc = "36% OFF", Badge = "VERIFIED" }
+                    };
+                }
+
+                @foreach (var sample in sampleItems)
+                {
+                    <div class="dk-app-sub-prod-card">
+                        <span class="dk-app-sub-badge-corner">@sample.Badge</span>
+                        <div class="dk-app-sub-prod-img-box">
+                            <div class="dk-app-sub-prod-placeholder">
+                                <span class="dk-app-sub-prod-emoji">@activePage.Emoji</span>
+                                <span class="dk-app-sub-prod-soon-badge">Uploading Soon</span>
+                            </div>
+                        </div>
+
+                        <div class="dk-app-sub-prod-body">
+                            <span class="dk-app-sub-prod-cat">@activePage.CategoryName</span>
+                            <span class="dk-app-sub-prod-title">@sample.Name</span>
+
+                            <div class="dk-app-sub-prod-pricing">
+                                <span class="dk-app-sub-price-current">₹@sample.Price.ToString("N0")</span>
+                                <span class="dk-app-sub-price-mrp">₹@sample.Mrp.ToString("N0")</span>
+                                <span class="dk-app-sub-price-disc">@sample.Disc</span>
+                            </div>
+
+                            <div class="dk-app-sub-prod-actions">
+                                <a href="/category/appliances" class="dk-app-sub-btn-view">
+                                    <span>Browse All Appliances</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+    </section>
+
+    <!-- ============================================================
+         4. REASSURANCE TRUST BAR
+    ============================================================ -->
+    <section class="dk-app-trust-section" aria-label="Student Shopping Guarantee">
+        <div class="dk-app-trust-grid">
+            <div class="dk-app-trust-item">
+                <div class="dk-app-trust-icon">⚡</div>
+                <div class="dk-app-trust-text">
+                    <h4>110V–240V Voltage Tested</h4>
+                    <p>Ensured safe with surge suppression for international converters &amp; student dorms.</p>
+                </div>
+            </div>
+            <div class="dk-app-trust-item">
+                <div class="dk-app-trust-icon">🛡️</div>
+                <div class="dk-app-trust-text">
+                    <h4>100% Genuine Certified</h4>
+                    <p>Direct OEM supply with official warranty card &amp; verified pan-India brand support.</p>
+                </div>
+            </div>
+            <div class="dk-app-trust-item">
+                <div class="dk-app-trust-icon">🚚</div>
+                <div class="dk-app-trust-text">
+                    <h4>Free Installation &amp; Delivery</h4>
+                    <p>Professional unboxing, wall mounting, and testing at your doorstep.</p>
+                </div>
+            </div>
+            <div class="dk-app-trust-item">
+                <div class="dk-app-trust-icon">🔄</div>
+                <div class="dk-app-trust-text">
+                    <h4>Easy 7-Day Replacement</h4>
+                    <p>Instant hassle-free replacement guarantee on any transit or manufacturing defect.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<style>
+/* APPLIANCES SUBCATEGORY HUB STYLING */
+.dk-app-sub-hub-root {
+    width: 100%;
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 8px 16px 40px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+}
+
+/* Admin bar */
+.dk-app-sub-admin-bar {
+    background: linear-gradient(90deg, #ea580c 0%, #c2410c 100%);
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 10px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.25);
+}
+.dk-app-sub-admin-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-app-sub-admin-badge {
+    background: #ffffff;
+    color: #c2410c;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.dk-app-sub-admin-hint {
+    font-size: 13px;
+    color: #ffedd5;
+}
+.dk-app-sub-admin-btn {
+    background: #ffffff;
+    color: #c2410c;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-radius: 7px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.18s ease;
+}
+.dk-app-sub-admin-btn:hover {
+    background: #fff7ed;
+    color: #9a3412;
+    transform: translateY(-1px);
+}
+
+/* Subcategory Navigation Bar */
+.dk-app-sub-nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+.dk-app-sub-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.dk-app-sub-nav-emoji {
+    font-size: 28px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-app-sub-nav-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+}
+.dk-app-sub-nav-tag {
+    font-size: 12px;
+    color: #ea580c;
+    font-weight: 600;
+}
+.dk-app-sub-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+.dk-app-sub-back-link:hover {
+    background: #ea580c;
+    color: #ffffff;
+    border-color: #ea580c;
+}
+
+/* 1. HERO BANNER */
+.dk-app-sub-hero-section {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
+    background: #0f172a;
+    min-height: 380px;
+}
+.dk-app-sub-hero-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+.dk-app-sub-hero-soon {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #431407 0%, #7c2d12 40%, #ea580c 100%);
+    z-index: 1;
+}
+.dk-app-sub-soon-img {
+    max-width: 220px;
+    opacity: 0.88;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+.dk-app-sub-soon-pill {
+    background: rgba(255, 255, 255, 0.95);
+    color: #c2410c;
+    font-size: 12px;
+    font-weight: 900;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    letter-spacing: 0.8px;
+    margin-top: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.dk-app-sub-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.75) 50%, rgba(15, 23, 42, 0.4) 100%);
+    z-index: 2;
+}
+.dk-app-sub-hero-content {
+    position: relative;
+    z-index: 3;
+    padding: 40px 36px;
+    max-width: 720px;
+}
+.dk-app-sub-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fed7aa;
+    font-size: 11.5px;
+    font-weight: 800;
+    padding: 5px 12px;
+    border-radius: 9999px;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+}
+.dk-app-sub-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fb923c;
+    box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.7);
+    animation: appSubPulse 2s infinite;
+}
+@@keyframes appSubPulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 7px rgba(251, 146, 60, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(251, 146, 60, 0); }
+}
+.dk-app-sub-hero-title {
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1.2;
+    color: #ffffff;
+    margin: 0 0 14px 0;
+    letter-spacing: -0.5px;
+}
+.dk-app-sub-hero-highlight {
+    display: block;
+    background: linear-gradient(90deg, #fdba74 0%, #fb923c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.dk-app-sub-hero-desc {
+    font-size: 15px;
+    color: #e2e8f0;
+    line-height: 1.55;
+    margin: 0 0 24px 0;
+}
+.dk-app-sub-badges-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.dk-app-sub-badge-chip {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* 2. SHOP BY BRANDS SECTION */
+.dk-app-brands-section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+.dk-app-brands-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 12px;
+}
+.dk-app-brands-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0;
+}
+.dk-app-brands-sub {
+    font-size: 13.5px;
+    color: #64748b;
+    margin: 4px 0 0 0;
+}
+.dk-app-brands-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: #ea580c;
+    background: #fff7ed;
+    border: 1px solid #ffedd5;
+    padding: 4px 12px;
+    border-radius: 9999px;
+}
+.dk-app-brands-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 14px;
+}
+@@media (max-width: 1200px) {
+    .dk-app-brands-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@@media (max-width: 640px) {
+    .dk-app-brands-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.dk-app-brand-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dk-app-brand-card:hover {
+    transform: translateY(-3px);
+    border-color: #ea580c;
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.12);
+    background: #ffffff;
+}
+.dk-app-brand-logo-box {
+    width: 68px;
+    height: 68px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    overflow: hidden;
+    position: relative;
+}
+.dk-app-brand-logo-img {
+    max-width: 85%;
+    max-height: 85%;
+    object-fit: contain;
+}
+.dk-app-brand-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+.dk-app-brand-initial {
+    font-size: 20px;
+    font-weight: 900;
+    color: #c2410c;
+    line-height: 1;
+}
+.dk-app-brand-soon-badge {
+    font-size: 8px;
+    font-weight: 800;
+    color: #c2410c;
+    background: #ffffff;
+    padding: 1px 4px;
+    border-radius: 4px;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border: 1px solid #fed7aa;
+}
+.dk-app-brand-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.3;
+}
+
+/* 3. SUBCATEGORY PRODUCTS CATALOG */
+.dk-app-products-section {
+    margin-bottom: 36px;
+}
+.dk-app-products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.dk-app-products-heading {
+    font-size: 22px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0;
+}
+.dk-app-products-subtext {
+    font-size: 13px;
+    color: #64748b;
+    margin: 2px 0 0 0;
+}
+.dk-app-products-live-count {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #334155;
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+.dk-app-sub-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+}
+.dk-app-sub-prod-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: all 0.2s ease;
+}
+.dk-app-sub-prod-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    border-color: #cbd5e1;
+}
+.dk-app-sub-badge-corner {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    background: #ea580c;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+.dk-app-sub-prod-img-box {
+    width: 100%;
+    height: 190px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+}
+.dk-app-sub-prod-img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+.dk-app-sub-prod-card:hover .dk-app-sub-prod-img {
+    transform: scale(1.05);
+}
+.dk-app-sub-prod-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.dk-app-sub-prod-emoji {
+    font-size: 38px;
+}
+.dk-app-sub-prod-soon-badge {
+    background: #ffffff;
+    color: #c2410c;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid #fdba74;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.dk-app-sub-prod-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.dk-app-sub-prod-cat {
+    font-size: 11px;
+    font-weight: 700;
+    color: #ea580c;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 4px;
+}
+.dk-app-sub-prod-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.35;
+    margin-bottom: 10px;
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 38px;
+}
+.dk-app-sub-prod-title:hover {
+    color: #ea580c;
+}
+.dk-app-sub-prod-pricing {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: auto;
+    margin-bottom: 12px;
+}
+.dk-app-sub-price-current {
+    font-size: 18px;
+    font-weight: 900;
+    color: #0f172a;
+}
+.dk-app-sub-price-mrp {
+    font-size: 12.5px;
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+.dk-app-sub-price-disc {
+    font-size: 12px;
+    font-weight: 800;
+    color: #16a34a;
+}
+.dk-app-sub-prod-actions {
+    margin-top: 4px;
+}
+.dk-app-sub-btn-view {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #1e293b;
+    font-size: 12.5px;
+    font-weight: 700;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+.dk-app-sub-btn-view:hover {
+    background: #ea580c;
+    color: #ffffff;
+    border-color: #ea580c;
+}
+
+/* 4. REASSURANCE TRUST BAR */
+.dk-app-trust-section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 22px;
+    margin-top: 20px;
+}
+.dk-app-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+@@media (max-width: 900px) {
+    .dk-app-trust-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@@media (max-width: 500px) {
+    .dk-app-trust-grid { grid-template-columns: 1fr; }
+}
+.dk-app-trust-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+.dk-app-trust-icon {
+    font-size: 26px;
+    background: #fff7ed;
+    border: 1px solid #ffedd5;
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.dk-app-trust-text h4 {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 3px 0;
+}
+.dk-app-trust-text p {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.45;
+}
+</style>

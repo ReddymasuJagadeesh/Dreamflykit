@@ -203,6 +203,16 @@
             {
                 <span class="dk-breadcrumb-current">Mobiles</span>
             }
+            else if (Model.IsAppliancesHub && !string.IsNullOrWhiteSpace(Model.CurrentSubcategorySlug))
+            {
+                <a href="/category/appliances" class="dk-breadcrumb-item">Appliances</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">@(Model.CurrentSubcategoryName ?? Model.CurrentSubcategorySlug)</span>
+            }
+            else if (Model.IsAppliancesHub && Model.ViewMode == "hub")
+            {
+                <span class="dk-breadcrumb-current">Appliances</span>
+            }
             else if (Model.IsElectronicsCategory && !string.IsNullOrWhiteSpace(Model.CurrentSubcategorySlug))
             {
                 <a href="/category/electronics" class="dk-breadcrumb-item">Electronics</a>
@@ -298,10 +308,17 @@
         </div>
     }
 
-    @if (Model.IsAppliancesHub && Model.AppliancesHub != null && Model.ViewMode == "hub")
+    @if (Model.IsAppliancesHub && Model.AppliancesHub != null)
     {
         <div style="width: 100%; margin-bottom: 24px;">
-            <partial name="_AppliancesCategoryHub" model="Model.AppliancesHub" />
+            @if (Model.ViewMode == "hub" && string.IsNullOrWhiteSpace(Model.CurrentSubcategorySlug))
+            {
+                <partial name="_AppliancesCategoryHub" model="Model.AppliancesHub" />
+            }
+            else
+            {
+                <partial name="_AppliancesSubcategoryHub" model="Model" />
+            }
         </div>
     }
 
@@ -371,7 +388,7 @@
                                Model.IsStudyEssentialsHub ||
                                (Model.IsHealthCareHub && Model.ViewMode == "hub") ||
                                (Model.IsMobilesHub && Model.ViewMode == "hub") ||
-                               (Model.IsAppliancesHub && Model.ViewMode == "hub") ||
+                               (Model.IsAppliancesHub && (Model.ViewMode == "hub" || Model.IsAppliancesSubcategoryHub)) ||
                                Model.IsBeautyHub ||
                                Model.IsFoodHub ||
                                (Model.IsTravelHub && Model.ViewMode == "hub") ||

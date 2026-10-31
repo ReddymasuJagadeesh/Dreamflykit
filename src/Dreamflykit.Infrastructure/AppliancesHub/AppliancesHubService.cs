@@ -98,6 +98,11 @@ public sealed class AppliancesHubService : IAppliancesHubService
                         dto.KitchenAppliancesDeals ??= def.KitchenAppliancesDeals;
                         dto.NoCostEmiSection ??= def.NoCostEmiSection;
                         dto.EverydayLivingSection ??= def.EverydayLivingSection;
+                        dto.SubcategoryPages ??= def.SubcategoryPages;
+                        if (dto.SubcategoryPages == null || dto.SubcategoryPages.Count == 0)
+                        {
+                            dto.SubcategoryPages = def.SubcategoryPages;
+                        }
 
                         _cache.Set(CacheKey, dto, TimeSpan.FromHours(4));
                         return dto;

@@ -14,6 +14,7 @@ public sealed class AppliancesHubDto
     public AppliancesTabbedDealsDto KitchenAppliancesDeals { get; set; } = new();
     public AppliancesEmiSectionDto NoCostEmiSection { get; set; } = new();
     public AppliancesEverydayLivingDto EverydayLivingSection { get; set; } = new();
+    public List<AppliancesSubcategoryPageDto> SubcategoryPages { get; set; } = new();
 
     public static AppliancesHubDto CreateDefault()
     {
@@ -57,7 +58,7 @@ public sealed class AppliancesHubDto
                         PriceHighlight = "From ₹38,999*",
                         Subtitle = "The big league screen experience. Dolby Vision Atmos, 120Hz gaming & Google TV.",
                         ImageUrl = "/images/appliances/hero-slide-2.jpg",
-                        TargetUrl = "/category/appliances?sub=television",
+                        TargetUrl = "/category/appliances/television",
                         ButtonText = "Explore 4K TVs →",
                         IsUploadingSoon = false
                     },
@@ -69,7 +70,7 @@ public sealed class AppliancesHubDto
                         PriceHighlight = "Lowest Prices Guaranteed*",
                         Subtitle = "Convertible Multi-Door Fridges, Inverter ACs, Dishwashers with 100% Exchange Bonus.",
                         ImageUrl = "/images/appliances/hero-slide-3.jpg",
-                        TargetUrl = "/category/kitchen-appliances",
+                        TargetUrl = "/category/appliances/kitchen-appliances",
                         ButtonText = "Shop Mega Sale →",
                         IsUploadingSoon = false
                     }
@@ -93,21 +94,21 @@ public sealed class AppliancesHubDto
                 Items = new List<AppliancesSubCategoryItemDto>
                 {
                     new() { Title = "Television", Icon = "📺", Slug = "television", TargetUrl = "/category/appliances?sub=television" },
-                    new() { Title = "Laundry", Icon = "🧺", Slug = "laundry", TargetUrl = "/category/appliances?sub=laundry" },
-                    new() { Title = "ACs", Icon = "❄️", Slug = "air-conditioners", TargetUrl = "/category/appliances?sub=air-conditioners" },
-                    new() { Title = "Fans", Icon = "🌀", Slug = "fans", TargetUrl = "/category/appliances?sub=fans" },
-                    new() { Title = "Microwaves", Icon = "🍲", Slug = "microwaves", TargetUrl = "/category/appliances?sub=microwaves" },
-                    new() { Title = "Value 365", Icon = "🏷️", Slug = "value-365", TargetUrl = "/category/appliances?sub=value-365" },
-                    new() { Title = "Appliances", Icon = "🔌", Slug = "small-appliances", TargetUrl = "/category/appliances?sub=small-appliances" },
-                    new() { Title = "Geysers", Icon = "🚿", Slug = "geysers", TargetUrl = "/category/appliances?sub=geysers" },
-                    new() { Title = "Stabilizers", Icon = "⚡", Slug = "stabilizers", TargetUrl = "/category/appliances?sub=stabilizers" },
+                    new() { Title = "Laundry", Icon = "🧺", Slug = "laundry", TargetUrl = "/category/appliances/laundry" },
+                    new() { Title = "ACs", Icon = "❄️", Slug = "air-conditioners", TargetUrl = "/category/appliances/air-conditioners" },
+                    new() { Title = "Fans", Icon = "🌀", Slug = "fans", TargetUrl = "/category/appliances/fans" },
+                    new() { Title = "Microwaves", Icon = "🍲", Slug = "microwaves", TargetUrl = "/category/appliances/microwaves" },
+                    new() { Title = "Value 365", Icon = "🏷️", Slug = "value-365", TargetUrl = "/category/appliances/value-365" },
+                    new() { Title = "Appliances", Icon = "🔌", Slug = "small-appliances", TargetUrl = "/category/appliances/small-appliances" },
+                    new() { Title = "Geysers", Icon = "🚿", Slug = "geysers", TargetUrl = "/category/appliances/geysers" },
+                    new() { Title = "Stabilizers", Icon = "⚡", Slug = "stabilizers", TargetUrl = "/category/appliances/stabilizers" },
                     new() { Title = "Kitchen", Icon = "🍳", Slug = "kitchen-appliances", TargetUrl = "/category/kitchen-appliances" },
-                    new() { Title = "Fridges", Icon = "🧊", Slug = "refrigerators", TargetUrl = "/category/appliances?sub=refrigerators" },
-                    new() { Title = "Home", Icon = "🏠", Slug = "home-appliances", TargetUrl = "/category/appliances?sub=home-appliances" },
-                    new() { Title = "Breakfast", Icon = "☕", Slug = "breakfast-appliances", TargetUrl = "/category/kitchen-appliances?sub=breakfast" },
-                    new() { Title = "FK Originals", Icon = "⭐", Slug = "top-rated", TargetUrl = "/category/appliances?sub=top-rated" },
-                    new() { Title = "Power Backup", Icon = "🔋", Slug = "inverters", TargetUrl = "/category/appliances?sub=inverters" },
-                    new() { Title = "Dishwashers", Icon = "🍽️", Slug = "dishwashers", TargetUrl = "/category/appliances?sub=dishwashers" }
+                    new() { Title = "Fridges", Icon = "🧊", Slug = "refrigerators", TargetUrl = "/category/appliances/refrigerators" },
+                    new() { Title = "Home", Icon = "🏠", Slug = "home-appliances", TargetUrl = "/category/appliances/home-appliances" },
+                    new() { Title = "Breakfast", Icon = "☕", Slug = "breakfast-appliances", TargetUrl = "/category/appliances/breakfast-appliances" },
+                    new() { Title = "FK Originals", Icon = "⭐", Slug = "top-rated", TargetUrl = "/category/appliances/top-rated" },
+                    new() { Title = "Power Backup", Icon = "🔋", Slug = "inverters", TargetUrl = "/category/appliances/inverters" },
+                    new() { Title = "Dishwashers", Icon = "🍽️", Slug = "dishwashers", TargetUrl = "/category/appliances/dishwashers" }
                 }
             },
 
@@ -339,6 +340,7 @@ public sealed class AppliancesHubDto
                 }
             },
 
+            SubcategoryPages = CreateDefaultSubcategoryPages(),
             EverydayLivingSection = new AppliancesEverydayLivingDto
             {
                 IsEnabled = true,
@@ -355,6 +357,673 @@ public sealed class AppliancesHubDto
             }
         };
     }
+
+    public static List<AppliancesSubcategoryPageDto> CreateDefaultSubcategoryPages()
+    {
+        return new List<AppliancesSubcategoryPageDto>
+        {
+            // 1. Television
+            new()
+            {
+                Id = "app_sub_tv",
+                CategorySlug = "television",
+                CategoryName = "Television",
+                Emoji = "📺",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "4K Ultra HD & Smart TVs for",
+                    TitleHighlight = "Campus Entertainment & Cinema",
+                    Subtitle = "Dolby Vision Atmos, Google TV, 120Hz refresh rate, 110V-240V dual voltage tested with student exchange bonuses.",
+                    TagBadge = "⚡ 4K QLED & OLED ENTERTAINMENT • 100% GENUINE",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "4K Ultra HD & Dolby Atmos", "Google TV & AirPlay 2", "110V–240V Dual Voltage", "Up to 3-Year Warranty" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Top certified TV manufacturers with genuine panels and official on-site warranties.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_tv_1", Name = "Samsung", Slug = "samsung", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_tv_2", Name = "LG", Slug = "lg", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_tv_3", Name = "Sony", Slug = "sony", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_tv_4", Name = "TCL", Slug = "tcl", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_tv_5", Name = "Xiaomi", Slug = "xiaomi", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_tv_6", Name = "Hisense", Slug = "hisense", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_tv_7", Name = "OnePlus", Slug = "oneplus", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_tv_8", Name = "Panasonic", Slug = "panasonic", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_tv_1", Name = "Samsung 43\" Crystal 4K Vivid Pro Smart TV", Slug = "samsung-43-crystal-4k", Brand = "Samsung", Price = 28990, OriginalPrice = 44900, DiscountBadge = "35% OFF", Rating = 4.8, RatingCount = 420, KeySpecs = "4K Ultra HD • PurColor • HDR 10+ • Q-Symphony Sound" },
+                    new() { Id = "p_tv_2", Name = "LG 55\" 4K Nanocell AI ThinQ Smart WebOS TV", Slug = "lg-55-nanocell-4k", Brand = "LG", Price = 42990, OriginalPrice = 79990, DiscountBadge = "46% OFF", Rating = 4.7, RatingCount = 310, KeySpecs = "Nanocell Color • Alpha 5 Gen6 AI • Apple AirPlay • Magic Remote" },
+                    new() { Id = "p_tv_3", Name = "Sony Bravia 50\" Google TV with Dolby Audio", Slug = "sony-bravia-50-google-tv", Brand = "Sony", Price = 54990, OriginalPrice = 85900, DiscountBadge = "36% OFF", Rating = 4.9, RatingCount = 680, KeySpecs = "X1 4K Processor • Google TV • Motionflow XR • Open Baffle Speaker" }
+                }
+            },
+
+            // 2. Laundry
+            new()
+            {
+                Id = "app_sub_laundry",
+                CategorySlug = "laundry",
+                CategoryName = "Laundry",
+                Emoji = "🧺",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Smart Inverter Washing Machines",
+                    TitleHighlight = "Gentle Fabric Care for University Life",
+                    Subtitle = "Front load & top load energy-efficient washers with hygiene steam, quick 15-min wash cycles, and silent inverter motors.",
+                    TagBadge = "⚡ 5-STAR ENERGY RATED • SILENT INVERTER",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "Hygiene Steam Allergy Care", "AI Direct Drive Motor", "15-Min Quick Wash", "Free In-Home Installation" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Premium laundry appliances offering high efficiency and deep fabric protection.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_ldy_1", Name = "LG", Slug = "lg", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_ldy_2", Name = "Samsung", Slug = "samsung", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_ldy_3", Name = "Bosch", Slug = "bosch", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_ldy_4", Name = "Whirlpool", Slug = "whirlpool", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_ldy_5", Name = "IFB", Slug = "ifb", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_ldy_6", Name = "Godrej", Slug = "godrej", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_ldy_7", Name = "Haier", Slug = "haier", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_ldy_8", Name = "Panasonic", Slug = "panasonic", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_ldy_1", Name = "LG 8 Kg 5 Star AI Direct Drive Front Load Washer", Slug = "lg-8kg-front-load", Brand = "LG", Price = 34990, OriginalPrice = 49990, DiscountBadge = "30% OFF", Rating = 4.8, RatingCount = 540, KeySpecs = "Steam Allergy Care • TurboWash • 6 Motion DD • Wi-Fi ThinQ" },
+                    new() { Id = "p_ldy_2", Name = "Bosch 7 Kg 5 Star Fully-Automatic Inverter Front Load", Slug = "bosch-7kg-front-load", Brand = "Bosch", Price = 31490, OriginalPrice = 43990, DiscountBadge = "28% OFF", Rating = 4.9, RatingCount = 380, KeySpecs = "Anti-Tangle • Anti-Vibration Design • 1200 RPM • SpeedPerfect" }
+                }
+            },
+
+            // 3. ACs
+            new()
+            {
+                Id = "app_sub_acs",
+                CategorySlug = "air-conditioners",
+                CategoryName = "ACs",
+                Emoji = "❄️",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Energy Efficient Split & Inverter ACs",
+                    TitleHighlight = "Rapid Turbo Cooling & Dust Protection",
+                    Subtitle = "5-star AI convertible air conditioners with copper condenser, anti-bacterial PM 2.5 filters, and stabilizer-free operation.",
+                    TagBadge = "⚡ AI CONVERTIBLE 6-IN-1 • COPPER CONDENSER",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "Rapid 10-Second Turbo Cooling", "PM 2.5 Anti-Bacterial Filter", "Stabilizer-Free 140V–290V", "10-Year Compressor Warranty" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Market leaders in Japanese, European and Indian heavy-duty cooling technologies.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_ac_1", Name = "Daikin", Slug = "daikin", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_ac_2", Name = "Voltas", Slug = "voltas", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_ac_3", Name = "Blue Star", Slug = "blue-star", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_ac_4", Name = "LG", Slug = "lg", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_ac_5", Name = "Panasonic", Slug = "panasonic", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_ac_6", Name = "Lloyd", Slug = "lloyd", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_ac_7", Name = "Carrier", Slug = "carrier", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_ac_8", Name = "Hitachi", Slug = "hitachi", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_ac_1", Name = "Daikin 1.5 Ton 5 Star Inverter Split AC (Copper)", Slug = "daikin-15ton-5star-ac", Brand = "Daikin", Price = 44990, OriginalPrice = 67200, DiscountBadge = "33% OFF", Rating = 4.8, RatingCount = 760, KeySpecs = "PM 2.5 Filter • Dew Clean Tech • 3D Airflow • Triple Display" },
+                    new() { Id = "p_ac_2", Name = "Voltas 1.5 Ton 3 Star Inverter Split AC", Slug = "voltas-15ton-3star-ac", Brand = "Voltas", Price = 32990, OriginalPrice = 62990, DiscountBadge = "47% OFF", Rating = 4.6, RatingCount = 920, KeySpecs = "4-in-1 Adjustable Mode • Anti-Dust Filter • Dual Temp Display" }
+                }
+            },
+
+            // 4. Fans
+            new()
+            {
+                Id = "app_sub_fans",
+                CategorySlug = "fans",
+                CategoryName = "Fans",
+                Emoji = "🌀",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "BLDC Energy-Saving Ceiling & Table Fans",
+                    TitleHighlight = "Silent Whisper High Air Delivery",
+                    Subtitle = "Brushless DC motor fans saving up to 65% electricity with RF remote control, timer modes, and aerodynamic aerofoil blades.",
+                    TagBadge = "⚡ 28W BLDC LOW POWER • 5-STAR SAVINGS",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "65% Electricity Savings", "Smart Remote Control & Timer", "Silent High-Speed 380 RPM", "Rust-Proof Aluminum Blades" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Top energy-efficient BLDC and high-speed ceiling, pedestal, and exhaust fan brands.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_fan_1", Name = "Atomberg", Slug = "atomberg", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_fan_2", Name = "Havells", Slug = "havells", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_fan_3", Name = "Crompton", Slug = "crompton", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_fan_4", Name = "Orient Electric", Slug = "orient-electric", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_fan_5", Name = "Usha", Slug = "usha", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_fan_6", Name = "Bajaj", Slug = "bajaj", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_fan_7", Name = "Luminous", Slug = "luminous", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_fan_8", Name = "Polycab", Slug = "polycab", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_fan_1", Name = "Atomberg Renesa 1200mm BLDC Motor Ceiling Fan with Remote", Slug = "atomberg-renesa-1200mm", Brand = "Atomberg", Price = 3699, OriginalPrice = 5290, DiscountBadge = "30% OFF", Rating = 4.8, RatingCount = 1200, KeySpecs = "28W Power Consumption • RF Remote with Sleep Timer • LED Speed Indicators" }
+                }
+            },
+
+            // 5. Microwaves
+            new()
+            {
+                Id = "app_sub_micro",
+                CategorySlug = "microwaves",
+                CategoryName = "Microwaves",
+                Emoji = "🍲",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Convection & Solo Smart Microwaves",
+                    TitleHighlight = "Quick Healthy Cooking & Reheating",
+                    Subtitle = "Auto-cook student recipes, oil-free air fry baking, express defrost presets, and anti-bacterial easy-clean ceramic enamel cavity.",
+                    TagBadge = "⚡ OIL-FREE AIR FRY & BAKE • 300+ PRESETS",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "Convection Bake & Grill", "Auto-Cook Student Menu", "Ceramic Enamel Easy Clean", "Express 30s Reheat" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Versatile culinary microwave ovens crafted for instant cooking and effortless baking.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_mw_1", Name = "LG", Slug = "lg", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_mw_2", Name = "Samsung", Slug = "samsung", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_mw_3", Name = "IFB", Slug = "ifb", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_mw_4", Name = "Panasonic", Slug = "panasonic", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_mw_5", Name = "Morphy Richards", Slug = "morphy-richards", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_mw_6", Name = "Bajaj", Slug = "bajaj", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_mw_7", Name = "Haier", Slug = "haier", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_mw_8", Name = "Whirlpool", Slug = "whirlpool", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_mw_1", Name = "Samsung 28L Convection Microwave with Slim Fry", Slug = "samsung-28l-slim-fry", Brand = "Samsung", Price = 11990, OriginalPrice = 17990, DiscountBadge = "33% OFF", Rating = 4.7, RatingCount = 480, KeySpecs = "Slim Fry No Oil • Tandoor & Curd Making • Ceramic Cavity 10-Yr Warranty" }
+                }
+            },
+
+            // 6. Value 365
+            new()
+            {
+                Id = "app_sub_val365",
+                CategorySlug = "value-365",
+                CategoryName = "Value 365",
+                Emoji = "🏷️",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Everyday Budget Appliances",
+                    TitleHighlight = "Unbeatable Value 365 Days a Year",
+                    Subtitle = "High durability, essential student dorm appliances, steam irons, sandwich makers, and kettles at best-in-class everyday prices.",
+                    TagBadge = "⚡ LOWEST PRICE GUARANTEE • VALUE 365",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "Affordable Student Pricing", "Zero Compromise on Quality", "1-Year Doorstep Warranty", "Free Fast Shipping" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Verified high-value brands delivering reliable performance on student budgets.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_v365_1", Name = "Godrej", Slug = "godrej", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_v365_2", Name = "Voltas Beko", Slug = "voltas-beko", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_v365_3", Name = "Thomson", Slug = "thomson", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_v365_4", Name = "Sansui", Slug = "sansui", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_v365_5", Name = "Lifelong", Slug = "lifelong", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_v365_6", Name = "Prestige", Slug = "prestige", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_v365_7", Name = "Croma", Slug = "croma", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_v365_8", Name = "Candes", Slug = "candes", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_v365_1", Name = "Lifelong 1000W Dry Iron with Teflon Coating", Slug = "lifelong-1000w-iron", Brand = "Lifelong", Price = 499, OriginalPrice = 999, DiscountBadge = "50% OFF", Rating = 4.4, RatingCount = 180, KeySpecs = "Non-Stick Soleplate • 360 Swivel Cord • Thermal Fuse Protection" }
+                }
+            },
+
+            // 7. Appliances (Small Appliances)
+            new()
+            {
+                Id = "app_sub_small",
+                CategorySlug = "small-appliances",
+                CategoryName = "Appliances",
+                Emoji = "🔌",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Smart Small Living Appliances",
+                    TitleHighlight = "Compact Convenience for Student Rooms",
+                    Subtitle = "Handheld garment steamers, cordless stick vacuums, room heaters, water purifiers, and air fryers designed for modern living.",
+                    TagBadge = "⚡ COMPACT DORM ESSENTIALS • 100% GENUINE",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "Compact & Foldable Storage", "Quick 1000W+ Heating", "Dual Voltage Friendly", "Student Campus Approved" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Compact living technology engineered for dorm rooms and compact apartments.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_sml_1", Name = "Philips", Slug = "philips", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_sml_2", Name = "Bajaj", Slug = "bajaj", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_sml_3", Name = "Morphy Richards", Slug = "morphy-richards", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_sml_4", Name = "Usha", Slug = "usha", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_sml_5", Name = "Prestige", Slug = "prestige", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_sml_6", Name = "Kent", Slug = "kent", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_sml_7", Name = "Crompton", Slug = "crompton", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_sml_8", Name = "Wonderchef", Slug = "wonderchef", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_sml_1", Name = "Philips Handheld Garment Steamer 1000 Series", Slug = "philips-garment-steamer", Brand = "Philips", Price = 2499, OriginalPrice = 3995, DiscountBadge = "37% OFF", Rating = 4.6, RatingCount = 610, KeySpecs = "Continuous Steam 20g/min • Kills 99.9% Bacteria • Safe on All Fabrics" }
+                }
+            },
+
+            // 8. Geysers
+            new()
+            {
+                Id = "app_sub_geysers",
+                CategorySlug = "geysers",
+                CategoryName = "Geysers",
+                Emoji = "🚿",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Instant & Storage Water Geysers",
+                    TitleHighlight = "Instant Hot Showers in Chilly Winters",
+                    Subtitle = "5-star energy rated glass-lined titanium tanks, magnesium anode rod, shock-proof bodies, and variable temperature dials.",
+                    TagBadge = "⚡ 5-STAR RATED • GLASS-LINED TANK",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "Instant 3-Sec Quick Heat", "High Pressure High-Rise Ready", "Shock-Proof Waterproof Body", "8-Year Tank Warranty" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Trusted water heater brands with high energy-efficiency and rust-proof protection.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_gys_1", Name = "AO Smith", Slug = "ao-smith", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_gys_2", Name = "Racold", Slug = "racold", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_gys_3", Name = "Havells", Slug = "havells", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_gys_4", Name = "Crompton", Slug = "crompton", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_gys_5", Name = "Bajaj", Slug = "bajaj", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_gys_6", Name = "V-Guard", Slug = "v-guard", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_gys_7", Name = "Venus", Slug = "venus", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_gys_8", Name = "Orient", Slug = "orient", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_gys_1", Name = "AO Smith HSE-VAS-X-015 Storage 15 Litre 5 Star Geyser", Slug = "ao-smith-15l-geyser", Brand = "AO Smith", Price = 7499, OriginalPrice = 11800, DiscountBadge = "36% OFF", Rating = 4.8, RatingCount = 590, KeySpecs = "Blue Diamond Glass Lining • 8 Bar High Rise Ready • Anode Rod" }
+                }
+            },
+
+            // 9. Stabilizers
+            new()
+            {
+                Id = "app_sub_stab",
+                CategorySlug = "stabilizers",
+                CategoryName = "Stabilizers",
+                Emoji = "⚡",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Mainline & Appliance Voltage Stabilizers",
+                    TitleHighlight = "Surge Protection for Valuable Equipment",
+                    Subtitle = "Digital micro-controlled copper wound stabilizers for ACs, TVs, and Refrigerators with high-low voltage cutoff and thermal overload protection.",
+                    TagBadge = "⚡ MICRO-CONTROLLED COPPER • SURGE SAFE",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "High/Low Voltage Auto Cutoff", "100% Pure Copper Winding", "Digital LED Status Display", "3-Year Replacement Guarantee" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Reliable surge suppression and automatic voltage regulation brands.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_stb_1", Name = "V-Guard", Slug = "v-guard", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_stb_2", Name = "Microtek", Slug = "microtek", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_stb_3", Name = "Luminous", Slug = "luminous", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_stb_4", Name = "Everest", Slug = "everest", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_stb_5", Name = "Syska", Slug = "syska", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_stb_6", Name = "Bluebird", Slug = "bluebird", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_stb_7", Name = "Livguard", Slug = "livguard", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_stb_8", Name = "Servokon", Slug = "servokon", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_stb_1", Name = "V-Guard VG 400 for 1.5 Ton Inverter AC (130V-280V)", Slug = "vguard-vg400-ac-stabilizer", Brand = "V-Guard", Price = 2399, OriginalPrice = 3290, DiscountBadge = "27% OFF", Rating = 4.8, RatingCount = 1420, KeySpecs = "Intelligent Time Delay System • Thermal Overload Protection • Wall Mount" }
+                }
+            },
+
+            // 10. Kitchen
+            new()
+            {
+                Id = "app_sub_kitchen",
+                CategorySlug = "kitchen-appliances",
+                CategoryName = "Kitchen",
+                Emoji = "🍳",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Smart Kitchen & Cooking Appliances",
+                    TitleHighlight = "Nutritious Meals in Minutes",
+                    Subtitle = "High-speed mixer grinders, multi-cookers, induction cooktops, and air fryers with student-safe automatic shutoff.",
+                    TagBadge = "⚡ QUICK STUDENT COOKING • FOOD GRADE",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "Induction Friendly & Auto Shutoff", "750W Heavy Duty Copper Motors", "Dishwasher Safe Stainless Steel", "Pre-Programmed Menus" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "India and Europe's premier smart kitchen, culinary and cookware makers.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_ktc_1", Name = "Philips", Slug = "philips", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_ktc_2", Name = "Prestige", Slug = "prestige", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_ktc_3", Name = "Bajaj", Slug = "bajaj", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_ktc_4", Name = "Wonderchef", Slug = "wonderchef", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_ktc_5", Name = "Butterfly", Slug = "butterfly", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_ktc_6", Name = "Morphy Richards", Slug = "morphy-richards", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_ktc_7", Name = "Bosch", Slug = "bosch", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_ktc_8", Name = "Sujata", Slug = "sujata", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_ktc_1", Name = "Philips HL7756/00 750 Watt Mixer Grinder (3 Jars)", Slug = "philips-750w-mixer-grinder", Brand = "Philips", Price = 3499, OriginalPrice = 5295, DiscountBadge = "34% OFF", Rating = 4.7, RatingCount = 890, KeySpecs = "750W Turbo Motor • Advanced Air Ventilation • Leak-proof Jars" }
+                }
+            },
+
+            // 11. Fridges
+            new()
+            {
+                Id = "app_sub_fridges",
+                CategorySlug = "refrigerators",
+                CategoryName = "Fridges",
+                Emoji = "🧊",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Frost-Free & Single-Door Refrigerators",
+                    TitleHighlight = "Fresh Groceries & Meal Preps Stored Right",
+                    Subtitle = "Convertible multi-door refrigerators, mini dorm fridges, digital inverter compressors, and toughened glass spill-proof shelves.",
+                    TagBadge = "⚡ DIGITAL INVERTER • 10-YEAR WARRANTY",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "Multi-Air Flow Even Cooling", "Convertible Freezer-to-Fridge", "Stabilizer-Free Operation", "Door Cooling+ Technology" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Top refrigeration brands renowned for food freshness and minimal electricity usage.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_frg_1", Name = "Samsung", Slug = "samsung", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_frg_2", Name = "LG", Slug = "lg", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_frg_3", Name = "Whirlpool", Slug = "whirlpool", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_frg_4", Name = "Godrej", Slug = "godrej", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_frg_5", Name = "Haier", Slug = "haier", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_frg_6", Name = "Bosch", Slug = "bosch", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_frg_7", Name = "Liebherr", Slug = "liebherr", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_frg_8", Name = "Panasonic", Slug = "panasonic", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_frg_1", Name = "Samsung 236L 3 Star Inverter Double Door Refrigerator", Slug = "samsung-236l-double-door", Brand = "Samsung", Price = 24990, OriginalPrice = 37990, DiscountBadge = "34% OFF", Rating = 4.8, RatingCount = 430, KeySpecs = "Digital Inverter • MoistFresh Zone • Toughened Glass • All Round Cooling" }
+                }
+            },
+
+            // 12. Home
+            new()
+            {
+                Id = "app_sub_home",
+                CategorySlug = "home-appliances",
+                CategoryName = "Home",
+                Emoji = "🏠",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Complete Home Comfort & Clean Living",
+                    TitleHighlight = "Smart Climate & Air Purification",
+                    Subtitle = "True HEPA air purifiers, robotic vacuum cleaners, dehumidifiers, and garment care for a fresh, allergen-free student apartment.",
+                    TagBadge = "⚡ SMART IOT ENABLED • HEPA FILTRATION",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "True HEPA H13 Filtration", "Laser Smart Room Mapping", "Ultra-Low Noise Sleep Mode", "Mobile App & Voice Control" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Pioneering smart home cleaning and environment purification systems.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_hm_1", Name = "Dyson", Slug = "dyson", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_hm_2", Name = "Eureka Forbes", Slug = "eureka-forbes", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_hm_3", Name = "Philips", Slug = "philips", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_hm_4", Name = "Havells", Slug = "havells", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_hm_5", Name = "Kent", Slug = "kent", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_hm_6", Name = "Xiaomi", Slug = "xiaomi", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_hm_7", Name = "Black+Decker", Slug = "black-decker", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_hm_8", Name = "AGARO", Slug = "agaro", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_hm_1", Name = "Eureka Forbes Robo Vac n Mop Robotic Cleaner with LiDAR", Slug = "eureka-forbes-robo-vac", Brand = "Eureka Forbes", Price = 17990, OriginalPrice = 29990, DiscountBadge = "40% OFF", Rating = 4.6, RatingCount = 260, KeySpecs = "LiDAR Navigation • 2-in-1 Mopping & Vacuum • 2700Pa Suction" }
+                }
+            },
+
+            // 13. Breakfast
+            new()
+            {
+                Id = "app_sub_breakfast",
+                CategorySlug = "breakfast-appliances",
+                CategoryName = "Breakfast",
+                Emoji = "☕",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Quick Morning Breakfast Appliances",
+                    TitleHighlight = "Fast Campus Mornings Made Easy",
+                    Subtitle = "Pop-up toasters, electric kettles, egg boilers, sandwich grillers, and drip coffee makers for energetic student mornings.",
+                    TagBadge = "⚡ 2-MINUTE BREAKFAST • EASY CLEAN",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "Rapid 1500W Water Boiling", "Non-Stick Grill Plates", "Auto Shut-off Dry Boil Protection", "Cool Touch Exterior" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Instant breakfast makers designed for quick dorm routines and healthy morning starts.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_bkf_1", Name = "Morphy Richards", Slug = "morphy-richards", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_bkf_2", Name = "Philips", Slug = "philips", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_bkf_3", Name = "Prestige", Slug = "prestige", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_bkf_4", Name = "Kent", Slug = "kent", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_bkf_5", Name = "Wonderchef", Slug = "wonderchef", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_bkf_6", Name = "AGARO", Slug = "agaro", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_bkf_7", Name = "Borosil", Slug = "borosil", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_bkf_8", Name = "Pigeon", Slug = "pigeon", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_bkf_1", Name = "Prestige PKOSS 1.5L Stainless Steel Electric Kettle", Slug = "prestige-electric-kettle", Brand = "Prestige", Price = 749, OriginalPrice = 1295, DiscountBadge = "42% OFF", Rating = 4.7, RatingCount = 2100, KeySpecs = "1500W Fast Boil • 360 Swivel Base • Auto Shut-off Indicator" }
+                }
+            },
+
+            // 14. FK Originals
+            new()
+            {
+                Id = "app_sub_originals",
+                CategorySlug = "top-rated",
+                CategoryName = "FK Originals",
+                Emoji = "⭐",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Top-Rated Flipkart & Brand Certified Tech",
+                    TitleHighlight = "Direct Factory Tested & Highly Rated",
+                    Subtitle = "Customer-certified bestsellers with verified 4.5+ star ratings, express door delivery, and extended multi-year peace of mind.",
+                    TagBadge = "⚡ VERIFIED 4.5+ STAR BESTSELLERS",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "Top Customer Satisfaction Score", "Express Pre-Flight Dispatch", "Strict Quality Certification", "100% Genuine Replacement" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "Exclusive top-rated brands vetted for maximum reliability and value.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_orig_1", Name = "MarQ", Slug = "marq", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_orig_2", Name = "Motorola", Slug = "motorola", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_orig_3", Name = "Nokia", Slug = "nokia", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_orig_4", Name = "Samsung", Slug = "samsung", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_orig_5", Name = "LG", Slug = "lg", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_orig_6", Name = "Whirlpool", Slug = "whirlpool", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_orig_7", Name = "Voltas", Slug = "voltas", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_orig_8", Name = "Philips", Slug = "philips", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_orig_1", Name = "MarQ by Flipkart 7.5 Kg Semi-Automatic Washing Machine", Slug = "marq-75kg-washer", Brand = "MarQ", Price = 7990, OriginalPrice = 14999, DiscountBadge = "46% OFF", Rating = 4.5, RatingCount = 890, KeySpecs = "5-Star Energy • Deep Clean Pulsator • Rust-Proof Body" }
+                }
+            },
+
+            // 15. Power Backup
+            new()
+            {
+                Id = "app_sub_backup",
+                CategorySlug = "inverters",
+                CategoryName = "Power Backup",
+                Emoji = "🔋",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Sine Wave Home Inverters & Batteries",
+                    TitleHighlight = "Uninterrupted Power for Study & Work",
+                    Subtitle = "Pure sine wave inverter UPS with heavy-duty tubular batteries, fast adaptive charging, and zero switchover lag for sensitive electronics.",
+                    TagBadge = "⚡ PURE SINE WAVE • HEAVY-DUTY TUBULAR",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "Zero Lag UPS Mode for PCs", "Heavy Duty Long-Life Tubular", "Smart Adaptive Battery Charging", "36-Month Battery Warranty" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "India's highest rated pure sine wave and heavy duty battery power solutions.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_pwr_1", Name = "Luminous", Slug = "luminous", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_pwr_2", Name = "Microtek", Slug = "microtek", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_pwr_3", Name = "Exide", Slug = "exide", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_pwr_4", Name = "V-Guard", Slug = "v-guard", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_pwr_5", Name = "Livguard", Slug = "livguard", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_pwr_6", Name = "Amaron", Slug = "amaron", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_pwr_7", Name = "Sukam", Slug = "sukam", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_pwr_8", Name = "Okaya", Slug = "okaya", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_pwr_1", Name = "Luminous Zelio+ 1100 Pure Sine Wave Inverter 900VA", Slug = "luminous-zelio-1100", Brand = "Luminous", Price = 5999, OriginalPrice = 8500, DiscountBadge = "29% OFF", Rating = 4.8, RatingCount = 1150, KeySpecs = "LED Display Hours & Mins • MCB Protection • Bypass Switch" }
+                }
+            },
+
+            // 16. Dishwashers
+            new()
+            {
+                Id = "app_sub_dishwashers",
+                CategorySlug = "dishwashers",
+                CategoryName = "Dishwashers",
+                Emoji = "🍽️",
+                HeroBanner = new AppliancesSubcategoryHeroBannerDto
+                {
+                    IsEnabled = true,
+                    Title = "Hygienic Smart Kitchen Dishwashers",
+                    TitleHighlight = "Zero Scrubbing, 99.9% Germ-Free Cleaning",
+                    Subtitle = "Intensive 70°C Kadhai wash programs, water-saving eco cycles, flexible cutlery racks, and silent BLDC inverter pumps.",
+                    TagBadge = "⚡ 70°C HYGIENE INTENSIVE • SILENT BLDC",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    FeaturePills = new List<string> { "70°C Intensive Stain Removal", "Saves Up to 80% Water", "Silent Inverter BLDC Motor", "Adjustable Cutlery Basket" }
+                },
+                ShopByBrands = new AppliancesShopByBrandsDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Brands",
+                    Subtitle = "World-class kitchen hygiene dishwashers designed for tough stains and heavy cookware.",
+                    Brands = new List<AppliancesBrandItemDto>
+                    {
+                        new() { Id = "b_dsh_1", Name = "Bosch", Slug = "bosch", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1 },
+                        new() { Id = "b_dsh_2", Name = "LG", Slug = "lg", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2 },
+                        new() { Id = "b_dsh_3", Name = "IFB", Slug = "ifb", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3 },
+                        new() { Id = "b_dsh_4", Name = "Siemens", Slug = "siemens", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4 },
+                        new() { Id = "b_dsh_5", Name = "Voltas Beko", Slug = "voltas-beko", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5 },
+                        new() { Id = "b_dsh_6", Name = "Faber", Slug = "faber", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6 },
+                        new() { Id = "b_dsh_7", Name = "Midea", Slug = "midea", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 7 },
+                        new() { Id = "b_dsh_8", Name = "Godrej", Slug = "godrej", LogoUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 8 }
+                    }
+                },
+                CuratedProducts = new List<AppliancesCuratedProductDto>
+                {
+                    new() { Id = "p_dsh_1", Name = "Bosch 13 Place Settings Free-Standing Dishwasher (Intensive Kadhai)", Slug = "bosch-13-place-dishwasher", Brand = "Bosch", Price = 38990, OriginalPrice = 52990, DiscountBadge = "26% OFF", Rating = 4.9, RatingCount = 420, KeySpecs = "Intensive Kadhai 70°C • EcoSilence Drive • DosageAssist • VarioSpeed" }
+                }
+            }
+        };
+    }
+
 }
 
 public sealed class AppliancesThemeSettingsDto
@@ -536,4 +1205,67 @@ public sealed class AppliancesEverydayItemDto
     public string ImageUrl { get; set; } = "";
     public string TargetUrl { get; set; } = "/category/kitchen-appliances";
     public bool IsUploadingSoon { get; set; } = false;
+}
+
+
+
+public sealed class AppliancesBrandItemDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N");
+    public string Name { get; set; } = string.Empty;
+    public string Slug { get; set; } = string.Empty;
+    public string LogoUrl { get; set; } = "/images/fashion-hub/uploading-soon-placeholder.svg";
+    public bool IsUploadingSoon { get; set; } = true;
+    public string TargetUrl { get; set; } = string.Empty;
+    public int DisplayOrder { get; set; } = 1;
+    public bool IsActive { get; set; } = true;
+}
+
+public sealed class AppliancesShopByBrandsDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public string Title { get; set; } = "Shop by Brands";
+    public string Subtitle { get; set; } = "Verified manufacturers with authorized pan-India service and student warranty";
+    public List<AppliancesBrandItemDto> Brands { get; set; } = new();
+}
+
+public sealed class AppliancesSubcategoryHeroBannerDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public string Title { get; set; } = string.Empty;
+    public string TitleHighlight { get; set; } = string.Empty;
+    public string Subtitle { get; set; } = string.Empty;
+    public string TagBadge { get; set; } = "⚡ STUDENT CERTIFIED • 100% GENUINE";
+    public string ImageUrl { get; set; } = "/images/fashion-hub/uploading-soon-placeholder.svg";
+    public bool IsUploadingSoon { get; set; } = true;
+    public string TargetUrl { get; set; } = string.Empty;
+    public string ButtonText { get; set; } = "Shop Now →";
+    public List<string> FeaturePills { get; set; } = new();
+}
+
+public sealed class AppliancesCuratedProductDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N");
+    public string Name { get; set; } = string.Empty;
+    public string Slug { get; set; } = string.Empty;
+    public string Brand { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public decimal OriginalPrice { get; set; }
+    public string DiscountBadge { get; set; } = string.Empty;
+    public double Rating { get; set; } = 4.5;
+    public int RatingCount { get; set; } = 120;
+    public string ImageUrl { get; set; } = "/images/fashion-hub/uploading-soon-placeholder.svg";
+    public bool IsUploadingSoon { get; set; } = true;
+    public string KeySpecs { get; set; } = string.Empty;
+}
+
+public sealed class AppliancesSubcategoryPageDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N");
+    public string CategorySlug { get; set; } = string.Empty;
+    public string CategoryName { get; set; } = string.Empty;
+    public string Emoji { get; set; } = "🔌";
+    public AppliancesSubcategoryHeroBannerDto HeroBanner { get; set; } = new();
+    public AppliancesShopByBrandsDto ShopByBrands { get; set; } = new();
+    public List<AppliancesCuratedProductDto> CuratedProducts { get; set; } = new();
 }
