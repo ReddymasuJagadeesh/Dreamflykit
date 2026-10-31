@@ -46,6 +46,22 @@ public sealed class ProductListViewModel
 
     public string? CurrentSubcatItem { get; init; }
 
+        public string? CurrentAppliancesBrandSlug { get; init; }
+    public string? CurrentAppliancesBrandName { get; init; }
+    public Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandHeroBannerDto? AppliancesBrandHero { get; init; }
+    public List<Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandFilterGroupDto>? AppliancesBrandFilters { get; init; }
+    public List<Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandProductDto>? AppliancesBrandProducts { get; init; }
+
+    public string? CurrentBrandSlug { get; init; }
+
+    public string? CurrentBrandName { get; init; }
+
+    public Dreamflykit.Application.ElectronicsHub.Models.ElectronicsBrandHeroBannerDto? ElectronicsBrandHero { get; init; }
+
+    public List<Dreamflykit.Application.ElectronicsHub.Models.ElectronicsBrandFilterGroupDto>? ElectronicsBrandFilters { get; init; }
+
+    public List<Dreamflykit.Application.ElectronicsHub.Models.ElectronicsBrandProductDto>? ElectronicsBrandProducts { get; init; }
+
     public IReadOnlyList<Dreamflykit.Application.Categories.Models.SubcategoryListItem> Subcategories { get; init; }
         = Array.Empty<Dreamflykit.Application.Categories.Models.SubcategoryListItem>();
 
@@ -158,8 +174,13 @@ public sealed class ProductListViewModel
     public bool IsAppliancesMainHub =>
         IsAppliancesHub && !SubcategoryId.HasValue && string.IsNullOrWhiteSpace(CurrentSubcategorySlug);
 
+    public bool IsAppliancesBrandHub =>
+        IsAppliancesHub &&
+        !string.IsNullOrWhiteSpace(CurrentSubcategorySlug) &&
+        !string.IsNullOrWhiteSpace(CurrentAppliancesBrandSlug);
+
     public bool IsAppliancesSubcategoryHub =>
-        IsAppliancesHub && (!string.IsNullOrWhiteSpace(CurrentSubcategorySlug) || SubcategoryId.HasValue);
+        IsAppliancesHub && !IsAppliancesBrandHub && (!string.IsNullOrWhiteSpace(CurrentSubcategorySlug) || SubcategoryId.HasValue);
 
     public bool IsElectronicsCategory =>
         string.Equals(CategorySlug, "electronics", StringComparison.OrdinalIgnoreCase) ||
@@ -168,8 +189,13 @@ public sealed class ProductListViewModel
     public bool IsElectronicsHub =>
         IsElectronicsCategory && !SubcategoryId.HasValue && string.IsNullOrWhiteSpace(CurrentSubcategorySlug);
 
+    public bool IsElectronicsBrandHub =>
+        IsElectronicsCategory &&
+        !string.IsNullOrWhiteSpace(CurrentSubcategorySlug) &&
+        !string.IsNullOrWhiteSpace(CurrentBrandSlug);
+
     public bool IsElectronicsSubcategoryHub =>
-        IsElectronicsCategory && (!string.IsNullOrWhiteSpace(CurrentSubcategorySlug) || SubcategoryId.HasValue);
+        IsElectronicsCategory && !IsElectronicsBrandHub && (!string.IsNullOrWhiteSpace(CurrentSubcategorySlug) || SubcategoryId.HasValue);
 
     public bool IsBeautyHub =>
         string.Equals(CategorySlug, "beauty", StringComparison.OrdinalIgnoreCase) ||

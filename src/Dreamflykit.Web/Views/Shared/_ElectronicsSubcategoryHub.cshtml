@@ -171,9 +171,12 @@
             <div class="dk-elec-brands-grid">
                 @foreach (var brand in brands)
                 {
-                    var brandUrl = !string.IsNullOrWhiteSpace(brand.TargetUrl)
+                    var brandSlug = !string.IsNullOrWhiteSpace(brand.Slug)
+                        ? brand.Slug
+                        : brand.Name.Trim().ToLowerInvariant().Replace(" ", "-").Replace("&", "and");
+                    var brandUrl = !string.IsNullOrWhiteSpace(brand.TargetUrl) && !brand.TargetUrl.Contains("?q=")
                         ? brand.TargetUrl
-                        : $"/category/electronics/{activePage.CategorySlug}?q={Uri.EscapeDataString(brand.Name)}";
+                        : $"/category/electronics/{activePage.CategorySlug}/{brandSlug}";
 
                     var isBrandSoon = brand.IsUploadingSoon || string.IsNullOrWhiteSpace(brand.LogoUrl) || brand.LogoUrl.Contains("uploading-soon");
 

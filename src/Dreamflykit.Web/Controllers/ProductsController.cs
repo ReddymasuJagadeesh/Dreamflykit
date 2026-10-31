@@ -62,8 +62,10 @@ public sealed class ProductsController : Controller
     [HttpGet("/products/search")]
     [HttpGet("/category/{category}")]
     [HttpGet("/category/{category}/{subcategorySlug}")]
+    [HttpGet("/category/{category}/{subcategorySlug}/{brandSlug}")]
     [HttpGet("/categories/{category}")]
     [HttpGet("/categories/{category}/{subcategorySlug}")]
+    [HttpGet("/categories/{category}/{subcategorySlug}/{brandSlug}")]
     public async Task<IActionResult> Index(
         [FromQuery(Name = "q")] string? q = null,
         [FromQuery] string? search = null,
@@ -72,6 +74,8 @@ public sealed class ProductsController : Controller
         [FromQuery(Name = "category")] string? queryCategory = null,
         [FromRoute] string? subcategorySlug = null,
         [FromQuery(Name = "subcategory")] string? querySubcategory = null,
+        [FromRoute] string? brandSlug = null,
+        [FromQuery(Name = "brand")] string? queryBrand = null,
         [FromQuery] Guid? subcategoryId = null,
         [FromQuery(Name = "subcatItem")] string? subcatItem = null,
         [FromQuery(Name = "item")] string? item = null,
@@ -197,7 +201,18 @@ public sealed class ProductsController : Controller
             }
         }
 
-        if (isElectronicsCategory && !string.IsNullOrWhiteSpace(currentSubcategorySlug) && string.IsNullOrWhiteSpace(currentSubcategoryName))
+        string? effectiveBrand = !string.IsNullOrWhiteSpace(brandSlug)
+            ? brandSlug.Trim().ToLowerInvariant()
+            : (!string.IsNullOrWhiteSpace(queryBrand) ? queryBrand.Trim().ToLowerInvariant() : null);
+
+        Dreamflykit.Application.ElectronicsHub.Models.ElectronicsBrandShowcaseData? elecBrandShowcase = null;
+        Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandShowcaseData? appBrandShowcase = null;
+        string? currentAppliancesBrandSlug = null;
+        string? currentAppliancesBrandName = null;
+        string? currentBrandSlug = null;
+        string? currentBrandName = null;
+
+        if (isElectronicsCategory && !string.IsNullOrWhiteSpace(currentSubcategorySlug))
         {
             var elecHubConfig = await _electronicsHubService.GetConfigAsync(cancellationToken);
             var subPage = elecHubConfig.SubcategoryPages?.FirstOrDefault(p =>
@@ -217,10 +232,32 @@ public sealed class ProductsController : Controller
             {
                 currentSubcategoryName = subPage.CategoryName;
                 currentSubcategorySlug = subPage.CategorySlug;
+
+                var searchCandidate = !string.IsNullOrWhiteSpace(q) ? q.Trim() : (!string.IsNullOrWhiteSpace(search) ? search.Trim() : null);
+                if (string.IsNullOrWhiteSpace(effectiveBrand) && !string.IsNullOrWhiteSpace(searchCandidate))
+                {
+                    var matchedBrand = subPage.ShopByBrands?.Brands?.FirstOrDefault(b =>
+                        string.Equals(b.Slug, searchCandidate, StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(b.Name, searchCandidate, StringComparison.OrdinalIgnoreCase) ||
+                        searchCandidate.Contains(b.Slug, StringComparison.OrdinalIgnoreCase) ||
+                        searchCandidate.Contains(b.Name, StringComparison.OrdinalIgnoreCase));
+                    if (matchedBrand != null)
+                    {
+                        effectiveBrand = matchedBrand.Slug;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(effectiveBrand))
+                {
+                    elecBrandShowcase = Dreamflykit.Application.ElectronicsHub.Services.ElectronicsBrandCatalogService.GetBrandShowcase(
+                        currentSubcategorySlug, effectiveBrand, elecHubConfig);
+                    currentBrandSlug = elecBrandShowcase.BrandSlug;
+                    currentBrandName = elecBrandShowcase.BrandName;
+                }
             }
         }
 
-        if (isAppliancesCategory && !string.IsNullOrWhiteSpace(currentSubcategorySlug) && string.IsNullOrWhiteSpace(currentSubcategoryName))
+        if (isAppliancesCategory && !string.IsNullOrWhiteSpace(currentSubcategorySlug))
         {
             var appHubConfig = await _appliancesHubService.GetConfigAsync(cancellationToken);
             var subPage = appHubConfig.SubcategoryPages?.FirstOrDefault(p =>
@@ -249,6 +286,29 @@ public sealed class ProductsController : Controller
             {
                 currentSubcategoryName = subPage.CategoryName;
                 currentSubcategorySlug = subPage.CategorySlug;
+
+                effectiveBrand = brandSlug ?? queryBrand;
+                var searchCandidate = !string.IsNullOrWhiteSpace(q) ? q.Trim() : (!string.IsNullOrWhiteSpace(search) ? search.Trim() : null);
+                if (string.IsNullOrWhiteSpace(effectiveBrand) && !string.IsNullOrWhiteSpace(searchCandidate))
+                {
+                    var matchedBrand = subPage.ShopByBrands?.Brands?.FirstOrDefault(b =>
+                        string.Equals(b.Slug, searchCandidate, StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(b.Name, searchCandidate, StringComparison.OrdinalIgnoreCase) ||
+                        searchCandidate.Contains(b.Slug, StringComparison.OrdinalIgnoreCase) ||
+                        searchCandidate.Contains(b.Name, StringComparison.OrdinalIgnoreCase));
+                    if (matchedBrand != null)
+                    {
+                        effectiveBrand = matchedBrand.Slug;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(effectiveBrand))
+                {
+                    appBrandShowcase = Dreamflykit.Application.AppliancesHub.Services.AppliancesBrandCatalogService.GetBrandShowcase(
+                        currentSubcategorySlug, effectiveBrand, appHubConfig);
+                    currentAppliancesBrandSlug = appBrandShowcase.BrandSlug;
+                    currentAppliancesBrandName = appBrandShowcase.BrandName;
+                }
             }
         }
 
@@ -385,13 +445,14 @@ public sealed class ProductsController : Controller
                 ? "hub"
                 : (!string.IsNullOrWhiteSpace(view)
                     ? view.Trim().ToLowerInvariant()
-                    : (isEthnicWearCategory ? "ethnic-wear" :
+                    : (elecBrandShowcase != null || appBrandShowcase != null ? "brand" :
+                      (isEthnicWearCategory ? "ethnic-wear" :
                       (isThermalsCategory ? "thermals" :
                       (isHoodiesCategory ? "hoodies" :
                       (isSweatshirtsCategory ? "sweatshirts" :
                       (isWomenClothingCategory ? "women-clothing" :
                       (isMenClothingCategory ? "men-clothing" :
-                      ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory || isAppliancesCategory || isBeautyCategory || isFoodCategory || isTravelCategory || isElectronicsCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories")))))))),
+                      ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory || isAppliancesCategory || isBeautyCategory || isFoodCategory || isTravelCategory || isElectronicsCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"))))))))),
             StudyHub = isStudyCategory
                         ? await _studyHubService.GetConfigAsync(cancellationToken)
                         : null,
@@ -421,7 +482,17 @@ public sealed class ProductsController : Controller
                         : null,
             ElectronicsHub = isElectronicsCategory
                         ? await _electronicsHubService.GetConfigAsync(cancellationToken)
-                        : null
+                        : null,
+            CurrentAppliancesBrandSlug = currentAppliancesBrandSlug,
+            CurrentAppliancesBrandName = currentAppliancesBrandName,
+            AppliancesBrandHero = appBrandShowcase?.HeroBanner,
+            AppliancesBrandFilters = appBrandShowcase?.FilterGroups,
+            AppliancesBrandProducts = appBrandShowcase?.Products,
+            CurrentBrandSlug = currentBrandSlug,
+            CurrentBrandName = currentBrandName,
+            ElectronicsBrandHero = elecBrandShowcase?.HeroBanner,
+            ElectronicsBrandFilters = elecBrandShowcase?.FilterGroups,
+            ElectronicsBrandProducts = elecBrandShowcase?.Products
         };
 
         var isAjax = string.Equals(Request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase) ||
