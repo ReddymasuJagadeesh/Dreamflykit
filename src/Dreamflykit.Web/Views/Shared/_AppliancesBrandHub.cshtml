@@ -1,0 +1,1332 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var brandSlug = Model.CurrentAppliancesBrandSlug ?? "samsung";
+    var brandName = Model.CurrentAppliancesBrandName ?? "Samsung";
+    var subSlug = Model.CurrentSubcategorySlug ?? "television";
+    var subName = Model.CurrentSubcategoryName ?? "Television";
+
+    var hero = Model.AppliancesBrandHero ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandHeroBannerDto
+    {
+        IsEnabled = true,
+        Title = $"{brandName} {subName}",
+        TitleHighlight = "Official Store & Student Privilege Deals",
+        Subtitle = $"Explore authentic {brandName} {subName.ToLowerInvariant()} curated with 110V-240V dual voltage testing, 5-Star energy efficiency, and free on-site campus delivery & installation.",
+        TagBadge = "⚡ OFFICIAL APPLIANCES PARTNER • 100% GENUINE",
+        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+        IsUploadingSoon = true,
+        BannerHeight = 360,
+        TitleColor = "#ffffff",
+        TitleHighlightColor = "#fbbf24",
+        SubtitleColor = "#fef08a"
+    };
+
+    var filterGroups = Model.AppliancesBrandFilters ?? new List<Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandFilterGroupDto>();
+    var products = Model.AppliancesBrandProducts ?? new List<Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandProductDto>();
+    var totalProducts = products.Count;
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="dk-app-brand-page-root" id="appliancesBrandRoot">
+
+    <!-- Admin Quick Bar -->
+    @if (canManage)
+    {
+        <div class="dk-brand-admin-bar">
+            <div class="dk-brand-admin-left">
+                <span class="dk-brand-admin-badge">⚡ Admin Mode</span>
+                <span class="dk-brand-admin-hint">
+                    Managing Brand: <strong>@brandName</strong> under <strong>@subName</strong>. Banner, logos &amp; filters can be managed in Admin.
+                </span>
+            </div>
+            <a href="/Admin/AppliancesHub#sub-@subSlug" class="dk-brand-admin-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                Manage @subName Brands
+            </a>
+        </div>
+    }
+
+    <!-- Brand Navigation & Breadcrumb Header -->
+    <div class="dk-brand-nav-bar">
+        <div class="dk-brand-nav-left">
+            <a href="/category/appliances/@subSlug" class="dk-brand-back-btn" title="Back to all @subName Brands">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span>All @subName Brands</span>
+            </a>
+            <span class="dk-brand-nav-sep">/</span>
+            <span class="dk-brand-nav-current">@brandName Official Store</span>
+        </div>
+        <div class="dk-brand-nav-right">
+            <span class="dk-brand-live-pill">
+                <span class="dk-brand-pulse-dot"></span>
+                <strong>@totalProducts</strong> Models Available for Students
+            </span>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         1. BRAND HERO BANNER (Full Width Panoramic)
+    ============================================================ -->
+    @if (hero.IsEnabled)
+    {
+        var minHeight = hero.BannerHeight > 0 ? hero.BannerHeight : 340;
+        var isHeroSoon = hero.IsUploadingSoon || string.IsNullOrWhiteSpace(hero.ImageUrl) || hero.ImageUrl.Contains("uploading-soon");
+
+        <section class="dk-app-brand-hero-section" style="min-height: @(minHeight)px;" aria-label="@brandName @subName Showcase">
+            
+            @if (isHeroSoon)
+            {
+                <div class="dk-brand-hero-soon">
+                    <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon Placeholder" class="dk-brand-soon-img" />
+                    <div class="dk-brand-soon-pill">⏳ HERO BANNER UPLOADING SOON &bull; ADMIN REPLACEABLE</div>
+                </div>
+            }
+            else
+            {
+                <img src="@hero.ImageUrl"
+                     alt="@hero.Title"
+                     class="dk-brand-hero-bg"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="dk-brand-hero-soon" style="display: none;">
+                    <img src="/images/fashion-hub/uploading-soon-placeholder.svg" alt="Uploading Soon Placeholder" class="dk-brand-soon-img" />
+                    <div class="dk-brand-soon-pill">⏳ HERO BANNER UPLOADING SOON</div>
+                </div>
+            }
+
+            <div class="dk-brand-hero-overlay"></div>
+
+            <div class="dk-brand-hero-content">
+                <div class="dk-brand-hero-tag">
+                    <span class="dk-brand-sparkle">✨</span>
+                    <span>@hero.TagBadge</span>
+                </div>
+
+                <h1 class="dk-brand-hero-title" style="color: @hero.TitleColor;">
+                    @hero.Title
+                    <span class="dk-brand-hero-highlight" style="color: @hero.TitleHighlightColor;">@hero.TitleHighlight</span>
+                </h1>
+
+                <p class="dk-brand-hero-desc" style="color: @hero.SubtitleColor;">
+                    @hero.Subtitle
+                </p>
+
+                <!-- Campus Badges Strip -->
+                <div class="dk-brand-badges-row">
+                    <div class="dk-brand-badge-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        <span>110V–240V Dual Voltage Safe</span>
+                    </div>
+                    <div class="dk-brand-badge-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span>Official In-Home Brand Warranty</span>
+                    </div>
+                    <div class="dk-brand-badge-item">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>Free On-Site Student Delivery &amp; Demo</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    }
+
+    <!-- ============================================================
+         2. MAIN 2-COLUMN CATALOG: FILTERS (LEFT) & PRODUCTS (RIGHT)
+    ============================================================ -->
+    <div class="dk-brand-layout-container">
+        
+        <!-- ========================================================
+             LEFT COLUMN: FACETED FILTERS SIDEBAR
+        ========================================================= -->
+        <aside class="dk-brand-filters-sidebar" id="brandFilterSidebar">
+            
+            <div class="dk-bfs-header">
+                <div class="dk-bfs-title-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                    <span class="dk-bfs-title">Filters for @brandName</span>
+                </div>
+                <button type="button" class="dk-bfs-clear-btn" onclick="clearAllAppBrandFilters()">
+                    Clear All
+                </button>
+            </div>
+
+            <div class="dk-bfs-body">
+                @foreach (var grp in filterGroups)
+                {
+                    <div class="dk-filter-group-card" data-group-key="@grp.Key">
+                        <div class="dk-fg-header" onclick="toggleAppFilterGroup(this)">
+                            <h3 class="dk-fg-title">@grp.Title</h3>
+                            <svg class="dk-fg-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                        </div>
+                        <div class="dk-fg-options-list">
+                            @foreach (var opt in grp.Options)
+                            {
+                                <label class="dk-fg-opt-label">
+                                    <input type="checkbox" 
+                                           class="dk-fg-checkbox app-brand-filter-cb" 
+                                           data-group="@grp.Key" 
+                                           data-val="@opt.Value.ToLowerInvariant()" 
+                                           onchange="applyAppBrandFilters()" />
+                                    <span class="dk-fg-custom-cb"></span>
+                                    <span class="dk-fg-opt-text">@opt.Label</span>
+                                    @if (opt.Count > 0)
+                                    {
+                                        <span class="dk-fg-opt-count">(@opt.Count)</span>
+                                    }
+                                </label>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </aside>
+
+        <!-- ========================================================
+             RIGHT COLUMN: PRODUCTS SHOWCASE & TOOLBAR
+        ========================================================= -->
+        <main class="dk-brand-main-content">
+            
+            <!-- Toolbar -->
+            <div class="dk-brand-toolbar">
+                <div class="dk-brand-toolbar-left">
+                    <span class="dk-bt-results-text">
+                        Showing <strong id="lblVisibleCount">@totalProducts</strong> of <strong>@totalProducts</strong> models for <strong>@brandName</strong>
+                    </span>
+                    <div class="dk-bt-active-tags" id="activeFilterTags"></div>
+                </div>
+
+                <div class="dk-brand-toolbar-right">
+                    <label for="brandProductSort" class="dk-bt-sort-label">Sort By:</label>
+                    <select id="brandProductSort" class="dk-bt-sort-select" onchange="sortAppBrandProducts(this.value)">
+                        <option value="relevance" selected>Relevance</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="rating-desc">Customer Rating</option>
+                        <option value="discount-desc">Highest Discount</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="dk-brand-products-grid" id="brandProductsGrid">
+                @for (int pIdx = 0; pIdx < products.Count; pIdx++)
+                {
+                    var p = products[pIdx];
+                    var isProdSoon = p.IsUploadingSoon || string.IsNullOrWhiteSpace(p.ImageUrl) || p.ImageUrl.Contains("uploading-soon");
+
+                    <div class="dk-brand-prod-card"
+                         id="prod_card_@pIdx"
+                         data-price="@p.Price"
+                         data-rating="@p.Rating"
+                         data-discount="@p.DiscountPercent"
+                         data-screensize="@p.ScreenSize.ToLowerInvariant()"
+                         data-displaytech="@p.DisplayTech.ToLowerInvariant()"
+                         data-smarttvos="@p.SmartTvOs.ToLowerInvariant()"
+                         data-refreshrate="@p.RefreshRate.ToLowerInvariant()"
+                         data-type="@p.ApplianceType.ToLowerInvariant()"
+                         data-capacity="@p.Capacity.ToLowerInvariant()"
+                         data-tonnage="@p.Capacity.ToLowerInvariant()"
+                         data-energystar="@p.EnergyStar.ToLowerInvariant()"
+                         data-features="@p.Features.ToLowerInvariant()">
+
+                        <!-- Top Ribbon: Discount Badge -->
+                        @if (p.DiscountPercent > 0)
+                        {
+                            <span class="dk-brand-discount-badge">@p.DiscountPercent% OFF</span>
+                        }
+
+                        <!-- Image Box -->
+                        <a href="/products/@p.Slug" class="dk-brand-prod-img-box" title="@p.Name">
+                            @if (isProdSoon)
+                            {
+                                <div class="dk-brand-prod-placeholder">
+                                    <span class="dk-brand-prod-initial">@brandName.FirstOrDefault()</span>
+                                    <span class="dk-brand-prod-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@p.ImageUrl"
+                                     alt="@p.Name"
+                                     loading="lazy"
+                                     class="dk-brand-prod-img"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-brand-prod-placeholder" style="display: none;">
+                                    <span class="dk-brand-prod-initial">@brandName.FirstOrDefault()</span>
+                                    <span class="dk-brand-prod-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                        </a>
+
+                        <!-- Card Body -->
+                        <div class="dk-brand-prod-body">
+                            
+                            <!-- Brand & Rating Row -->
+                            <div class="dk-brand-meta-row">
+                                <span class="dk-brand-chip">@brandName</span>
+                                @if (!string.IsNullOrWhiteSpace(p.EnergyStar))
+                                {
+                                    <span class="dk-brand-energy-badge">⚡ @p.EnergyStar</span>
+                                }
+                                <div class="dk-brand-stars">
+                                    <span class="dk-star-icon">★</span>
+                                    <span class="dk-rating-num">@p.Rating</span>
+                                    <span class="dk-review-count">(@p.ReviewCount)</span>
+                                </div>
+                            </div>
+
+                            <!-- Title -->
+                            <a href="/products/@p.Slug" class="dk-brand-prod-title" title="@p.Name">
+                                @p.Name
+                            </a>
+
+                            <!-- Key Specs Pills -->
+                            @if (p.KeySpecs != null && p.KeySpecs.Count > 0)
+                            {
+                                <div class="dk-brand-specs-pills">
+                                    @foreach (var spec in p.KeySpecs.Take(4))
+                                    {
+                                        <span class="dk-brand-spec-pill">@spec</span>
+                                    }
+                                </div>
+                            }
+
+                            <!-- Pricing Row -->
+                            <div class="dk-brand-pricing-row">
+                                <div class="dk-brand-price-box">
+                                    <span class="dk-brand-curr">₹</span>
+                                    <span class="dk-brand-price-val">@p.Price.ToString("N0")</span>
+                                </div>
+                                @if (p.OriginalPrice > p.Price)
+                                {
+                                    <span class="dk-brand-mrp">₹@p.OriginalPrice.ToString("N0")</span>
+                                }
+                            </div>
+
+                            <!-- Campus Perk Note -->
+                            <div class="dk-brand-perk-row">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>@p.CampusPerk</span>
+                            </div>
+
+                            <!-- Actions Row -->
+                            <div class="dk-brand-actions-row">
+                                <button type="button" 
+                                        class="dk-brand-btn-cart" 
+                                        onclick="handleAppBrandAddToCart('@p.Id', '@p.Name', @p.Price, this)">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                                    <span>Add to Cart</span>
+                                </button>
+                                <a href="/products/@p.Slug" class="dk-brand-btn-view">
+                                    <span>Details →</span>
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+            </div>
+
+            <!-- Empty State when filters yield zero items -->
+            <div class="dk-brand-empty-state" id="emptyBrandState" style="display: none;">
+                <div class="dk-empty-icon">🔍</div>
+                <h3 class="dk-empty-title">No matching @brandName models found</h3>
+                <p class="dk-empty-desc">We couldn't find any appliance models matching your selected filter combination. Try adjusting or clearing your filters to see more options.</p>
+                <button type="button" class="dk-empty-clear-btn" onclick="clearAllAppBrandFilters()">
+                    Reset All Filters
+                </button>
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+<!-- Cart Added Toast Notification -->
+<div class="dk-brand-toast" id="brandCartToast" style="display: none;">
+    <div class="dk-toast-content">
+        <span class="dk-toast-icon">✓</span>
+        <div class="dk-toast-text">
+            <strong id="toastTitle">Added to Cart!</strong>
+            <span id="toastSub">Item is ready for checkout in your Dreamflykit Cart.</span>
+        </div>
+    </div>
+    <a href="/cart" class="dk-toast-btn">View Cart →</a>
+</div>
+
+<!-- ============================================================
+     STYLING FOR APPLIANCES BRAND HUB
+============================================================ -->
+<style>
+    /* Root */
+    .dk-app-brand-page-root {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: #0f172a;
+        margin-bottom: 40px;
+    }
+
+    /* Admin Bar */
+    .dk-brand-admin-bar {
+        background: #0f172a;
+        color: #ffffff;
+        padding: 8px 18px;
+        border-radius: 8px;
+        margin-bottom: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 13px;
+    }
+    .dk-brand-admin-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .dk-brand-admin-badge {
+        background: #ea580c;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 3px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+    }
+    .dk-brand-admin-btn {
+        background: #ea580c;
+        color: #fff;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        transition: background 0.15s;
+    }
+    .dk-brand-admin-btn:hover {
+        background: #c2410c;
+    }
+
+    /* Navigation Bar */
+    .dk-brand-nav-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 16px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .dk-brand-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+    }
+    .dk-brand-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #ea580c;
+        font-weight: 700;
+        text-decoration: none;
+        padding: 4px 8px;
+        border-radius: 6px;
+        background: #fff7ed;
+        transition: background 0.15s;
+    }
+    .dk-brand-back-btn:hover {
+        background: #ffedd5;
+    }
+    .dk-brand-nav-sep {
+        color: #cbd5e1;
+    }
+    .dk-brand-nav-current {
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .dk-brand-live-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        color: #475569;
+    }
+    .dk-brand-pulse-dot {
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        display: inline-block;
+        animation: dkBrandPulse 1.8s infinite;
+    }
+    @@keyframes dkBrandPulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.3); opacity: 0.6; }
+    }
+
+    /* Hero Banner */
+    .dk-app-brand-hero-section {
+        position: relative;
+        overflow: hidden;
+        border-radius: 14px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        padding: 40px 36px;
+        background: linear-gradient(135deg, #1c1917 0%, #431407 50%, #7c2d12 100%);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    }
+    .dk-brand-hero-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
+    }
+    .dk-brand-hero-soon {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        background: radial-gradient(circle, rgba(124,45,18,0.75) 0%, rgba(28,25,23,0.95) 100%);
+        padding: 20px;
+        text-align: center;
+    }
+    .dk-brand-soon-img {
+        width: 64px;
+        height: 64px;
+        opacity: 0.85;
+        margin-bottom: 10px;
+    }
+    .dk-brand-soon-pill {
+        background: rgba(251, 191, 36, 0.15);
+        color: #fbbf24;
+        border: 1px dashed rgba(251, 191, 36, 0.5);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        padding: 5px 12px;
+        border-radius: 999px;
+    }
+    .dk-brand-hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(15,23,42,0.94) 0%, rgba(15,23,42,0.75) 50%, rgba(15,23,42,0.4) 100%);
+        z-index: 2;
+    }
+    .dk-brand-hero-content {
+        position: relative;
+        z-index: 3;
+        max-width: 680px;
+    }
+    .dk-brand-hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(234, 88, 12, 0.25);
+        color: #fed7aa;
+        border: 1px solid rgba(234, 88, 12, 0.5);
+        font-size: 11px;
+        font-weight: 800;
+        padding: 4px 10px;
+        border-radius: 999px;
+        margin-bottom: 12px;
+        letter-spacing: 0.5px;
+    }
+    .dk-brand-hero-title {
+        font-size: 32px;
+        font-weight: 900;
+        line-height: 1.15;
+        margin: 0 0 10px;
+        letter-spacing: -0.5px;
+    }
+    .dk-brand-hero-highlight {
+        display: block;
+        font-size: 24px;
+        font-weight: 800;
+        margin-top: 4px;
+    }
+    .dk-brand-hero-desc {
+        font-size: 14px;
+        line-height: 1.5;
+        margin: 0 0 18px;
+        opacity: 0.95;
+    }
+    .dk-brand-badges-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .dk-brand-badge-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.18);
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 5px 10px;
+        border-radius: 6px;
+        backdrop-filter: blur(4px);
+    }
+
+    /* 2-Column Catalog Container */
+    .dk-brand-layout-container {
+        display: grid;
+        grid-template-columns: 270px 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+
+    /* Left Sidebar: Faceted Filters */
+    .dk-brand-filters-sidebar {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 80px;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+    .dk-bfs-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f1f5f9;
+        margin-bottom: 12px;
+    }
+    .dk-bfs-title-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #0f172a;
+        font-weight: 800;
+        font-size: 14px;
+    }
+    .dk-bfs-clear-btn {
+        background: none;
+        border: none;
+        color: #ea580c;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    .dk-bfs-clear-btn:hover {
+        background: #fff7ed;
+    }
+    .dk-filter-group-card {
+        border-bottom: 1px solid #f8fafc;
+        padding: 10px 0;
+    }
+    .dk-filter-group-card:last-child {
+        border-bottom: none;
+    }
+    .dk-fg-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        padding: 4px 0;
+        user-select: none;
+    }
+    .dk-fg-title {
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #334155;
+        margin: 0;
+    }
+    .dk-fg-arrow {
+        color: #94a3b8;
+        transition: transform 0.2s;
+    }
+    .dk-filter-group-card.collapsed .dk-fg-arrow {
+        transform: rotate(-90deg);
+    }
+    .dk-filter-group-card.collapsed .dk-fg-options-list {
+        display: none;
+    }
+    .dk-fg-options-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 8px;
+    }
+    .dk-fg-opt-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: #475569;
+        cursor: pointer;
+        padding: 2px 0;
+    }
+    .dk-fg-opt-label:hover {
+        color: #0f172a;
+    }
+    .dk-fg-checkbox {
+        display: none;
+    }
+    .dk-fg-custom-cb {
+        width: 15px;
+        height: 15px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s;
+        flex-shrink: 0;
+    }
+    .dk-fg-checkbox:checked + .dk-fg-custom-cb {
+        background: #ea580c;
+        border-color: #ea580c;
+    }
+    .dk-fg-checkbox:checked + .dk-fg-custom-cb::after {
+        content: "✓";
+        color: #fff;
+        font-size: 11px;
+        font-weight: 900;
+    }
+    .dk-fg-opt-text {
+        flex: 1;
+    }
+    .dk-fg-opt-count {
+        font-size: 11px;
+        color: #94a3b8;
+    }
+
+    /* Right Column: Toolbar & Grid */
+    .dk-brand-main-content {
+        min-width: 0;
+    }
+    .dk-brand-toolbar {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px 16px;
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .dk-brand-toolbar-left {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .dk-bt-results-text {
+        font-size: 13px;
+        color: #475569;
+    }
+    .dk-bt-results-text strong {
+        color: #0f172a;
+    }
+    .dk-bt-active-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .dk-active-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #ffedd5;
+        color: #9a3412;
+        border: 1px solid #fed7aa;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 999px;
+    }
+    .dk-active-remove {
+        background: none;
+        border: none;
+        color: #9a3412;
+        cursor: pointer;
+        font-size: 11px;
+        padding: 0;
+        line-height: 1;
+    }
+    .dk-brand-toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .dk-bt-sort-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748b;
+    }
+    .dk-bt-sort-select {
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #0f172a;
+        background: #fff;
+        outline: none;
+        cursor: pointer;
+    }
+
+    /* Products Grid */
+    .dk-brand-products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 16px;
+    }
+
+    /* Product Card */
+    .dk-brand-prod-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+        position: relative;
+    }
+    .dk-brand-prod-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        border-color: #ea580c;
+    }
+    .dk-brand-discount-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 900;
+        padding: 3px 7px;
+        border-radius: 4px;
+        z-index: 2;
+    }
+    .dk-brand-prod-img-box {
+        position: relative;
+        width: 100%;
+        height: 180px;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        overflow: hidden;
+    }
+    .dk-brand-prod-img {
+        max-width: 85%;
+        max-height: 85%;
+        object-fit: contain;
+        transition: transform 0.2s;
+    }
+    .dk-brand-prod-card:hover .dk-brand-prod-img {
+        transform: scale(1.05);
+    }
+    .dk-brand-prod-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+        gap: 6px;
+    }
+    .dk-brand-prod-initial {
+        font-size: 32px;
+        font-weight: 900;
+        color: #ea580c;
+    }
+    .dk-brand-prod-soon-badge {
+        font-size: 10px;
+        font-weight: 800;
+        color: #c2410c;
+        background: rgba(234, 88, 12, 0.15);
+        padding: 2px 8px;
+        border-radius: 999px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .dk-brand-prod-body {
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .dk-brand-meta-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+        gap: 6px;
+    }
+    .dk-brand-chip {
+        font-size: 11px;
+        font-weight: 800;
+        color: #ea580c;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .dk-brand-energy-badge {
+        font-size: 10px;
+        font-weight: 800;
+        color: #15803d;
+        background: #dcfce7;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    .dk-brand-stars {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .dk-star-icon {
+        color: #f59e0b;
+    }
+    .dk-review-count {
+        color: #94a3b8;
+        font-weight: 500;
+    }
+    .dk-brand-prod-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0f172a;
+        text-decoration: none;
+        line-height: 1.35;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 35px;
+    }
+    .dk-brand-prod-title:hover {
+        color: #ea580c;
+    }
+    .dk-brand-specs-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-bottom: 10px;
+    }
+    .dk-brand-spec-pill {
+        font-size: 10px;
+        font-weight: 600;
+        color: #475569;
+        background: #f1f5f9;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    .dk-brand-pricing-row {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+    .dk-brand-price-box {
+        display: flex;
+        align-items: baseline;
+        color: #0f172a;
+        font-weight: 900;
+    }
+    .dk-brand-curr {
+        font-size: 12px;
+        margin-right: 1px;
+    }
+    .dk-brand-price-val {
+        font-size: 18px;
+    }
+    .dk-brand-mrp {
+        font-size: 12px;
+        color: #94a3b8;
+        text-decoration: line-through;
+    }
+    .dk-brand-perk-row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        color: #059669;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+    .dk-brand-actions-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 6px;
+        margin-top: auto;
+    }
+    .dk-brand-btn-cart {
+        background: #ea580c;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 7px 10px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: background 0.15s, transform 0.1s;
+    }
+    .dk-brand-btn-cart:hover {
+        background: #c2410c;
+    }
+    .dk-brand-btn-view {
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        color: #475569;
+        border-radius: 6px;
+        padding: 7px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s;
+    }
+    .dk-brand-btn-view:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+    }
+
+    /* Empty State */
+    .dk-brand-empty-state {
+        background: #ffffff;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 48px 24px;
+        text-align: center;
+    }
+    .dk-empty-icon {
+        font-size: 40px;
+        margin-bottom: 8px;
+    }
+    .dk-empty-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 6px;
+    }
+    .dk-empty-desc {
+        font-size: 13px;
+        color: #64748b;
+        max-width: 440px;
+        margin: 0 auto 16px;
+        line-height: 1.4;
+    }
+    .dk-empty-clear-btn {
+        background: #ea580c;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    /* Toast */
+    .dk-brand-toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: #0f172a;
+        color: #ffffff;
+        padding: 12px 18px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        z-index: 9999;
+        animation: dkToastSlide 0.25s ease-out;
+    }
+    @@keyframes dkToastSlide {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    .dk-toast-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .dk-toast-icon {
+        background: #10b981;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 900;
+    }
+    .dk-toast-text {
+        display: flex;
+        flex-direction: column;
+        font-size: 12px;
+    }
+    .dk-toast-btn {
+        background: #ea580c;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    /* Responsive */
+    @@media (max-width: 900px) {
+        .dk-brand-layout-container {
+            grid-template-columns: 1fr;
+        }
+        .dk-brand-filters-sidebar {
+            position: static;
+            max-height: none;
+        }
+        .dk-app-brand-hero-section {
+            padding: 24px 20px;
+        }
+        .dk-brand-hero-title {
+            font-size: 24px;
+        }
+        .dk-brand-hero-highlight {
+            font-size: 18px;
+        }
+    }
+</style>
+
+<!-- ============================================================
+     CLIENT-SIDE INTERACTIVE FILTER ENGINE
+============================================================ -->
+<script>
+    function toggleAppFilterGroup(el) {
+        var card = el.closest(".dk-filter-group-card");
+        if (card) card.classList.toggle("collapsed");
+    }
+
+    function applyAppBrandFilters() {
+        var cbs = document.querySelectorAll(".app-brand-filter-cb:checked");
+        var activeFilters = {};
+
+        cbs.forEach(function (cb) {
+            var grp = cb.getAttribute("data-group");
+            var val = cb.getAttribute("data-val");
+            if (!activeFilters[grp]) activeFilters[grp] = [];
+            activeFilters[grp].push(val);
+        });
+
+        renderAppActiveFilterTags(activeFilters);
+
+        var cards = document.querySelectorAll(".dk-brand-prod-card");
+        var visibleCount = 0;
+
+        cards.forEach(function (card) {
+            var match = true;
+
+            for (var grp in activeFilters) {
+                var selectedVals = activeFilters[grp];
+                if (!selectedVals || selectedVals.length === 0) continue;
+
+                var grpMatched = false;
+
+                if (grp === "price") {
+                    var price = parseFloat(card.getAttribute("data-price")) || 0;
+                    for (var i = 0; i < selectedVals.length; i++) {
+                        var pVal = selectedVals[i];
+                        if (pVal === "under-25k" && price < 25000) grpMatched = true;
+                        else if (pVal === "25k-50k" && price >= 25000 && price <= 50000) grpMatched = true;
+                        else if (pVal === "above-50k" && price > 50000) grpMatched = true;
+                        else if (pVal === "under-20k" && price < 20000) grpMatched = true;
+                        else if (pVal === "20k-35k" && price >= 20000 && price <= 35000) grpMatched = true;
+                        else if (pVal === "35k-50k" && price >= 35000 && price <= 50000) grpMatched = true;
+                        else if (pVal === "under-30k" && price < 30000) grpMatched = true;
+                        else if (pVal === "30k-45k" && price >= 30000 && price <= 45000) grpMatched = true;
+                        else if (pVal === "45k-60k" && price >= 45000 && price <= 60000) grpMatched = true;
+                        else if (pVal === "above-60k" && price > 60000) grpMatched = true;
+                        else if (pVal === "under-8k" && price < 8000) grpMatched = true;
+                        else if (pVal === "8k-15k" && price >= 8000 && price <= 15000) grpMatched = true;
+                        else if (pVal === "under-5k" && price < 5000) grpMatched = true;
+                        else if (pVal === "5k-15k" && price >= 5000 && price <= 15000) grpMatched = true;
+                        else if (pVal === "under-2k" && price < 2000) grpMatched = true;
+                        else if (pVal === "2k-5k" && price >= 2000 && price <= 5000) grpMatched = true;
+                        else if (pVal === "under-4k" && price < 4000) grpMatched = true;
+                        else if (pVal === "4k-8k" && price >= 4000 && price <= 8000) grpMatched = true;
+                        else if (pVal === "above-8k" && price > 8000) grpMatched = true;
+                        else if (pVal === "under-35k" && price < 35000) grpMatched = true;
+                        else if (pVal === "35k-50k" && price >= 35000 && price <= 50000) grpMatched = true;
+                        if (grpMatched) break;
+                    }
+                } else {
+                    var cardVal = (card.getAttribute("data-" + grp) || "").toLowerCase();
+                    for (var i = 0; i < selectedVals.length; i++) {
+                        var sv = selectedVals[i];
+                        if (cardVal.indexOf(sv) !== -1 || sv.indexOf(cardVal) !== -1) {
+                            grpMatched = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!grpMatched) {
+                    match = false;
+                    break;
+                }
+            }
+
+            if (match) {
+                card.style.display = "flex";
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        // Update counts & empty state
+        var lblCount = document.getElementById("lblVisibleCount");
+        if (lblCount) lblCount.textContent = visibleCount;
+
+        var emptyBox = document.getElementById("emptyBrandState");
+        var gridBox = document.getElementById("brandProductsGrid");
+        if (emptyBox && gridBox) {
+            if (visibleCount === 0) {
+                emptyBox.style.display = "block";
+            } else {
+                emptyBox.style.display = "none";
+            }
+        }
+    }
+
+    function renderAppActiveFilterTags(activeFilters) {
+        var container = document.getElementById("activeFilterTags");
+        if (!container) return;
+        container.innerHTML = "";
+
+        for (var grp in activeFilters) {
+            var vals = activeFilters[grp];
+            for (var i = 0; i < vals.length; i++) {
+                var val = vals[i];
+                var pill = document.createElement("span");
+                pill.className = "dk-active-pill";
+                pill.innerHTML = '<span>' + val.toUpperCase() + '</span><button type="button" class="dk-active-remove" onclick="removeAppBrandFilter('' + grp + '', '' + val + '')">✕</button>';
+                container.appendChild(pill);
+            }
+        }
+    }
+
+    function removeAppBrandFilter(grp, val) {
+        var cb = document.querySelector('.app-brand-filter-cb[data-group="' + grp + '"][data-val="' + val + '"]');
+        if (cb) {
+            cb.checked = false;
+            applyAppBrandFilters();
+        }
+    }
+
+    function clearAllAppBrandFilters() {
+        var cbs = document.querySelectorAll(".app-brand-filter-cb");
+        cbs.forEach(function (cb) { cb.checked = false; });
+        applyAppBrandFilters();
+    }
+
+    function sortAppBrandProducts(opt) {
+        var grid = document.getElementById("brandProductsGrid");
+        if (!grid) return;
+        var cards = Array.from(grid.querySelectorAll(".dk-brand-prod-card"));
+
+        cards.sort(function (a, b) {
+            var priceA = parseFloat(a.getAttribute("data-price")) || 0;
+            var priceB = parseFloat(b.getAttribute("data-price")) || 0;
+            var ratingA = parseFloat(a.getAttribute("data-rating")) || 0;
+            var ratingB = parseFloat(b.getAttribute("data-rating")) || 0;
+            var discountA = parseFloat(a.getAttribute("data-discount")) || 0;
+            var discountB = parseFloat(b.getAttribute("data-discount")) || 0;
+
+            if (opt === "price-asc") return priceA - priceB;
+            if (opt === "price-desc") return priceB - priceA;
+            if (opt === "rating-desc") return ratingB - ratingA;
+            if (opt === "discount-desc") return discountB - discountA;
+            return 0; // relevance
+        });
+
+        cards.forEach(function (card) { grid.appendChild(card); });
+    }
+
+    function handleAppBrandAddToCart(prodId, prodName, price, btn) {
+        var originalHtml = btn.innerHTML;
+        btn.innerHTML = '<span>Adding...</span>';
+        btn.disabled = true;
+
+        setTimeout(function () {
+            btn.innerHTML = '<span>✓ Added!</span>';
+            btn.style.background = "#10b981";
+
+            showAppBrandToast(prodName);
+
+            // Update global cart badge if present
+            var badge = document.querySelector(".dk-cart-badge, .dk-header-action-badge");
+            if (badge) {
+                var current = parseInt(badge.textContent, 10) || 0;
+                badge.textContent = current + 1;
+                badge.style.display = "inline-flex";
+            }
+
+            setTimeout(function () {
+                btn.innerHTML = originalHtml;
+                btn.style.background = "";
+                btn.disabled = false;
+            }, 1800);
+        }, 400);
+    }
+
+    function showAppBrandToast(name) {
+        var toast = document.getElementById("brandCartToast");
+        var title = document.getElementById("toastTitle");
+        if (title) title.textContent = name;
+        if (toast) {
+            toast.style.display = "flex";
+            setTimeout(function () {
+                toast.style.display = "none";
+            }, 4000);
+        }
+    }
+</script>

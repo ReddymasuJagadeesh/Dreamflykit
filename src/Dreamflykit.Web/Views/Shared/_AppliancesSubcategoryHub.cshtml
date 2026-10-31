@@ -186,9 +186,12 @@
             <div class="dk-app-brands-grid">
                 @foreach (var brand in brands)
                 {
-                    var brandUrl = !string.IsNullOrWhiteSpace(brand.TargetUrl)
+                    var brandSlug = !string.IsNullOrWhiteSpace(brand.Slug)
+                        ? brand.Slug
+                        : brand.Name.Trim().ToLowerInvariant().Replace(" ", "-").Replace("&", "and");
+                    var brandUrl = !string.IsNullOrWhiteSpace(brand.TargetUrl) && !brand.TargetUrl.Contains("?q=")
                         ? brand.TargetUrl
-                        : $"/category/appliances/{activePage.CategorySlug}?q={Uri.EscapeDataString(brand.Name)}";
+                        : $"/category/appliances/{activePage.CategorySlug}/{brandSlug}";
 
                     var isBrandSoon = brand.IsUploadingSoon || string.IsNullOrWhiteSpace(brand.LogoUrl) || brand.LogoUrl.Contains("uploading-soon");
 

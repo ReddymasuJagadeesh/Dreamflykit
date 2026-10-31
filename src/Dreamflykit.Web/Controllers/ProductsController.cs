@@ -206,6 +206,9 @@ public sealed class ProductsController : Controller
             : (!string.IsNullOrWhiteSpace(queryBrand) ? queryBrand.Trim().ToLowerInvariant() : null);
 
         Dreamflykit.Application.ElectronicsHub.Models.ElectronicsBrandShowcaseData? elecBrandShowcase = null;
+        Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandShowcaseData? appBrandShowcase = null;
+        string? currentAppliancesBrandSlug = null;
+        string? currentAppliancesBrandName = null;
         string? currentBrandSlug = null;
         string? currentBrandName = null;
 
@@ -254,7 +257,7 @@ public sealed class ProductsController : Controller
             }
         }
 
-        if (isAppliancesCategory && !string.IsNullOrWhiteSpace(currentSubcategorySlug) && string.IsNullOrWhiteSpace(currentSubcategoryName))
+        if (isAppliancesCategory && !string.IsNullOrWhiteSpace(currentSubcategorySlug))
         {
             var appHubConfig = await _appliancesHubService.GetConfigAsync(cancellationToken);
             var subPage = appHubConfig.SubcategoryPages?.FirstOrDefault(p =>
@@ -283,6 +286,29 @@ public sealed class ProductsController : Controller
             {
                 currentSubcategoryName = subPage.CategoryName;
                 currentSubcategorySlug = subPage.CategorySlug;
+
+                effectiveBrand = brandSlug ?? queryBrand;
+                var searchCandidate = !string.IsNullOrWhiteSpace(q) ? q.Trim() : (!string.IsNullOrWhiteSpace(search) ? search.Trim() : null);
+                if (string.IsNullOrWhiteSpace(effectiveBrand) && !string.IsNullOrWhiteSpace(searchCandidate))
+                {
+                    var matchedBrand = subPage.ShopByBrands?.Brands?.FirstOrDefault(b =>
+                        string.Equals(b.Slug, searchCandidate, StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(b.Name, searchCandidate, StringComparison.OrdinalIgnoreCase) ||
+                        searchCandidate.Contains(b.Slug, StringComparison.OrdinalIgnoreCase) ||
+                        searchCandidate.Contains(b.Name, StringComparison.OrdinalIgnoreCase));
+                    if (matchedBrand != null)
+                    {
+                        effectiveBrand = matchedBrand.Slug;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(effectiveBrand))
+                {
+                    appBrandShowcase = Dreamflykit.Application.AppliancesHub.Services.AppliancesBrandCatalogService.GetBrandShowcase(
+                        currentSubcategorySlug, effectiveBrand, appHubConfig);
+                    currentAppliancesBrandSlug = appBrandShowcase.BrandSlug;
+                    currentAppliancesBrandName = appBrandShowcase.BrandName;
+                }
             }
         }
 
@@ -419,7 +445,7 @@ public sealed class ProductsController : Controller
                 ? "hub"
                 : (!string.IsNullOrWhiteSpace(view)
                     ? view.Trim().ToLowerInvariant()
-                    : (elecBrandShowcase != null ? "brand" :
+                    : (elecBrandShowcase != null || appBrandShowcase != null ? "brand" :
                       (isEthnicWearCategory ? "ethnic-wear" :
                       (isThermalsCategory ? "thermals" :
                       (isHoodiesCategory ? "hoodies" :
@@ -457,6 +483,11 @@ public sealed class ProductsController : Controller
             ElectronicsHub = isElectronicsCategory
                         ? await _electronicsHubService.GetConfigAsync(cancellationToken)
                         : null,
+            CurrentAppliancesBrandSlug = currentAppliancesBrandSlug,
+            CurrentAppliancesBrandName = currentAppliancesBrandName,
+            AppliancesBrandHero = appBrandShowcase?.HeroBanner,
+            AppliancesBrandFilters = appBrandShowcase?.FilterGroups,
+            AppliancesBrandProducts = appBrandShowcase?.Products,
             CurrentBrandSlug = currentBrandSlug,
             CurrentBrandName = currentBrandName,
             ElectronicsBrandHero = elecBrandShowcase?.HeroBanner,

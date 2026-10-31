@@ -1219,6 +1219,9 @@ public sealed class AppliancesBrandItemDto
     public string TargetUrl { get; set; } = string.Empty;
     public int DisplayOrder { get; set; } = 1;
     public bool IsActive { get; set; } = true;
+    public string? Tagline { get; set; }
+    public string? Description { get; set; }
+    public AppliancesBrandHeroBannerDto? HeroBanner { get; set; }
 }
 
 public sealed class AppliancesShopByBrandsDto
