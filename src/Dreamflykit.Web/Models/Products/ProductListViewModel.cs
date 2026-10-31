@@ -155,6 +155,12 @@ public sealed class ProductListViewModel
         string.Equals(CategorySlug, "kitchen_appliances", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "tv-and-appliances", StringComparison.OrdinalIgnoreCase);
 
+    public bool IsAppliancesMainHub =>
+        IsAppliancesHub && !SubcategoryId.HasValue && string.IsNullOrWhiteSpace(CurrentSubcategorySlug);
+
+    public bool IsAppliancesSubcategoryHub =>
+        IsAppliancesHub && (!string.IsNullOrWhiteSpace(CurrentSubcategorySlug) || SubcategoryId.HasValue);
+
     public bool IsElectronicsCategory =>
         string.Equals(CategorySlug, "electronics", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(CategorySlug, "electronic", StringComparison.OrdinalIgnoreCase);

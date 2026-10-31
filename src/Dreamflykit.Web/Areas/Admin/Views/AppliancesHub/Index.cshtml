@@ -10,6 +10,10 @@
     var subCats = hub.SubCategories?.Items ?? new List<Dreamflykit.Application.AppliancesHub.Models.AppliancesSubCategoryItemDto>();
     var spotlight = hub.BrandSpotlight ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandSpotlightDto();
     var goldenHighlights = hub.GoldenHighlights ?? new Dreamflykit.Application.AppliancesHub.Models.AppliancesGoldenHighlightsDto();
+    
+    var subPages = hub.SubcategoryPages != null && hub.SubcategoryPages.Count > 0
+        ? hub.SubcategoryPages
+        : Dreamflykit.Application.AppliancesHub.Models.AppliancesHubDto.CreateDefaultSubcategoryPages();
 }
 
 @Html.AntiForgeryToken()
@@ -25,15 +29,15 @@
             </div>
             <h1 style="font-size: 24px; font-weight: 900; color: #0f172a; margin: 0;">Appliances Store &amp; Offers Management</h1>
             <p style="font-size: 13.5px; color: #64748b; margin: 4px 0 0 0;">
-                Full control over hero banners, bank offers, 16 sub-category icons, golden blockbuster frames, flash deals, and everyday living items.
+                Full control over festival themes, hero banner carousel, 16 subcategory pages, "Shop by Brands" grids, bank discounts, and image uploads.
             </p>
         </div>
 
-        <div style="display: flex; gap: 10px; align-items: center;">
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
             <a href="/category/appliances" target="_blank" class="dk-btn" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 9px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
                 <span>👁️</span> Preview Live Store
             </a>
-            <button type="button" class="dk-btn" id="btnSaveAppliancesTop" style="background: #ea580c; color: #ffffff; border: none; padding: 10px 24px; font-size: 13.5px; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);">
+            <button type="button" class="dk-btn" id="btnSaveAppliancesTop" onclick="saveAllAppliancesConfig()" style="background: #ea580c; color: #ffffff; border: none; padding: 10px 24px; font-size: 13.5px; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                 Save All Changes
             </button>
@@ -47,286 +51,572 @@
         </div>
     }
 
-    <!-- 0. FESTIVAL THEME SETTINGS -->
-    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-            <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">0. Festival Theme &amp; Styling Control</h2>
-                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Toggle festival theme (Diwali/Festive), choose accent colors, and background.</p>
-            </div>
-            <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 800; color: #ea580c; cursor: pointer;">
-                <input type="checkbox" id="themeIsFestiveEnabled" @(theme.IsFestiveEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #ea580c;" />
-                🎉 Enable Festival / Diwali Mode
-            </label>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-            <div>
-                <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Theme Title</label>
-                <input type="text" id="themeName" value="@theme.ThemeName" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
-            </div>
-            <div>
-                <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Badge Text</label>
-                <input type="text" id="themeBadgeText" value="@theme.BadgeText" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
-            </div>
-            <div>
-                <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Accent Gold Color</label>
-                <input type="color" id="themeAccentGold" value="@theme.AccentGold" style="width: 100%; height: 42px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px;" />
-            </div>
-            <div>
-                <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Tagline</label>
-                <input type="text" id="themeTagline" value="@theme.ThemeTagline" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
-            </div>
-        </div>
+    <!-- TAB SELECTORS -->
+    <div style="display: flex; gap: 8px; border-bottom: 2px solid #e2e8f0; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px;">
+        <button type="button" class="dk-app-tab-btn active" onclick="switchAppTab('hub', this)">
+            🎆 1. Festival Theme, Hero Carousel &amp; Home Hub
+        </button>
+        <button type="button" class="dk-app-tab-btn" onclick="switchAppTab('subcategories', this)">
+            🏷️ 2. Subcategory Pages &amp; Shop by Brands (All 16 Appliances)
+        </button>
     </div>
 
-    <!-- 1. HERO BANNER CAROUSEL -->
-    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-            <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">1. Full-Width Big Hero Banner (Carousel)</h2>
-                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Slide interval seconds, auto-play, image upload, and "Uploading Soon" marker.</p>
+    <!-- ========================================================
+         TAB 1: FESTIVAL THEME, HERO CAROUSEL & HOME HUB
+    ========================================================= -->
+    <div id="tab_hub" class="dk-app-tab-pane active">
+
+        <!-- 0. FESTIVAL THEME SETTINGS -->
+        <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                <div>
+                    <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">0. Festival Theme &amp; Styling Control</h2>
+                    <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Toggle festival theme (Diwali/Festive), choose accent colors, and background.</p>
+                </div>
+                <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 800; color: #ea580c; cursor: pointer;">
+                    <input type="checkbox" id="themeIsFestiveEnabled" @(theme.IsFestiveEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #ea580c;" />
+                    🎉 Enable Festival / Diwali Mode
+                </label>
             </div>
-            <div style="display: flex; gap: 16px; align-items: center;">
-                <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
-                    <input type="checkbox" id="heroIsEnabled" @(hero.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" />
-                    Enabled
-                </label>
-                <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
-                    <input type="checkbox" id="heroAutoPlay" @(hero.AutoPlay ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" />
-                    Auto-Rotate
-                </label>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                <div>
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Theme Title</label>
+                    <input type="text" id="themeName" value="@theme.ThemeName" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Badge Text</label>
+                    <input type="text" id="themeBadgeText" value="@theme.BadgeText" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Accent Gold Color</label>
+                    <input type="color" id="themeAccentGold" value="@theme.AccentGold" style="width: 100%; height: 42px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">Tagline</label>
+                    <input type="text" id="themeTagline" value="@theme.ThemeTagline" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+                </div>
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
-            <div>
-                <label style="display: block; font-size: 13px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">⏱️ Slide Duration / Interval (Seconds)</label>
-                <input type="number" id="heroIntervalSeconds" value="@hero.IntervalSeconds" min="1" max="60" style="width: 100%; padding: 9px 12px; border: 2px solid #ea580c; border-radius: 8px; font-size: 14px; font-weight: 800;" />
+        <!-- 1. HERO BANNER CAROUSEL -->
+        <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                <div>
+                    <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">1. Full-Width Big Hero Banner (Carousel)</h2>
+                    <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Slide interval seconds, auto-play, image upload, and "Uploading Soon" marker.</p>
+                </div>
+                <div style="display: flex; gap: 16px; align-items: center;">
+                    <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
+                        <input type="checkbox" id="heroIsEnabled" @(hero.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" />
+                        Enabled
+                    </label>
+                    <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
+                        <input type="checkbox" id="heroAutoPlay" @(hero.AutoPlay ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" />
+                        Auto-Rotate
+                    </label>
+                </div>
             </div>
-            <div>
-                <span style="font-size: 12.5px; color: #64748b; margin-top: 28px; display: block;">Total slides configured: <strong>@slides.Count</strong></span>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                <div>
+                    <label style="display: block; font-size: 13px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">⏱️ Slide Duration / Interval (Seconds)</label>
+                    <input type="number" id="heroIntervalSeconds" value="@hero.IntervalSeconds" min="1" max="60" style="width: 100%; padding: 9px 12px; border: 2px solid #ea580c; border-radius: 8px; font-size: 14px; font-weight: 800;" />
+                </div>
+                <div>
+                    <span style="font-size: 12.5px; color: #64748b; margin-top: 28px; display: block;">Total slides configured: <strong>@slides.Count</strong></span>
+                </div>
+            </div>
+
+            <!-- Hero Slides List -->
+            <div id="heroSlidesList" style="display: flex; flex-direction: column; gap: 16px;">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    var s = slides[i];
+                    <div class="hero-slide-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="font-weight: 800; font-size: 13px; color: #0f172a;">Slide #@(i + 1)</span>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <label style="font-size: 12px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 2px 8px; border-radius: 6px; cursor: pointer;">
+                                    <input type="checkbox" class="slide-uploading-soon" @(s.IsUploadingSoon ? "checked" : "") /> ⏳ Uploading Soon
+                                </label>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 2fr 1.5fr 1fr; gap: 12px; margin-bottom: 10px;">
+                            <div>
+                                <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Slide Title</label>
+                                <input type="text" class="slide-title" value="@s.Title" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Subtitle</label>
+                                <input type="text" class="slide-subtitle" value="@s.Subtitle" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Price Highlight</label>
+                                <input type="text" class="slide-price" value="@s.PriceHighlight" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 3fr 1.5fr; gap: 12px;">
+                            <div>
+                                <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Image URL</label>
+                                <div style="display: flex; gap: 6px;">
+                                    <input type="text" class="slide-image-url" value="@s.ImageUrl" style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                                    <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">Upload</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Target URL</label>
+                                <input type="text" class="slide-target-url" value="@s.TargetUrl" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
 
-        <!-- Hero Slides List -->
-        <div id="heroSlidesList" style="display: flex; flex-direction: column; gap: 16px;">
-            @for (int i = 0; i < slides.Count; i++)
-            {
-                var s = slides[i];
-                <div class="hero-slide-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-weight: 800; font-size: 13px; color: #0f172a;">Slide #@(i + 1)</span>
-                        <div style="display: flex; gap: 12px; align-items: center;">
-                            <label style="font-size: 12px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 2px 8px; border-radius: 6px; cursor: pointer;">
-                                <input type="checkbox" class="slide-uploading-soon" @(s.IsUploadingSoon ? "checked" : "") /> ⏳ Uploading Soon
+        <!-- 2. BANK OFFER STRIP -->
+        <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">2. Bank Offer Strip (SBI 10% Instant Discount)</h2>
+                <label style="font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
+                    <input type="checkbox" id="bankIsEnabled" @(bankOffer.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" /> Enabled
+                </label>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">
+                <div>
+                    <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Offer Text</label>
+                    <input type="text" id="bankOfferText" value="@bankOffer.OfferText" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Offer Subtext</label>
+                    <input type="text" id="bankOfferSubtext" value="@bankOffer.OfferSubtext" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+                </div>
+            </div>
+            <div>
+                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Bank Logo Image URL</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="bankLogoUrl" value="@bankOffer.BankLogoUrl" style="flex: 1; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
+                    <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 16px; border-radius: 8px; font-size: 13px; cursor: pointer;">Upload Logo</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. SHOP BY CATEGORY ICONS (16 Items) -->
+        <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                <div>
+                    <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">3. "Shop by Category" Grid (16 Sub-Category Cards)</h2>
+                    <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Television, Laundry, ACs, Fans, Microwaves, Geysers, Stabilizers, Fridges, etc.</p>
+                </div>
+            </div>
+            <div id="subCatsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+                @for (int i = 0; i < subCats.Count; i++)
+                {
+                    var sc = subCats[i];
+                    <div class="subcat-item-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-weight: 800; font-size: 13px; color: #1e293b;">@sc.Icon @sc.Title</span>
+                            <label style="font-size: 11px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 1px 6px; border-radius: 4px; cursor: pointer;">
+                                <input type="checkbox" class="subcat-uploading-soon" @(sc.IsUploadingSoon ? "checked" : "") /> Soon
                             </label>
                         </div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 2fr 1.5fr 1fr; gap: 12px; margin-bottom: 10px;">
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Slide Title</label>
-                            <input type="text" class="slide-title" value="@s.Title" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Subtitle</label>
-                            <input type="text" class="slide-subtitle" value="@s.Subtitle" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Price Highlight</label>
-                            <input type="text" class="slide-price" value="@s.PriceHighlight" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
-                        </div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 3fr 1.5fr; gap: 12px;">
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Image URL</label>
-                            <div style="display: flex; gap: 6px;">
-                                <input type="text" class="slide-image-url" value="@s.ImageUrl" style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
-                                <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">Upload</button>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
+                            <div>
+                                <label style="font-size: 11px; font-weight: 700;">Title</label>
+                                <input type="text" class="subcat-title" value="@sc.Title" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: 700;">Badge</label>
+                                <input type="text" class="subcat-badge" value="@sc.Badge" placeholder="e.g. Value 365" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
                             </div>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px;">Target URL</label>
-                            <input type="text" class="slide-target-url" value="@s.TargetUrl" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                            <label style="font-size: 11px; font-weight: 700;">Image URL</label>
+                            <div style="display: flex; gap: 4px;">
+                                <input type="text" class="subcat-image-url" value="@sc.ImageUrl" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                                <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 8px; border-radius: 4px; font-size: 11px; cursor: pointer;">Upload</button>
+                            </div>
                         </div>
+                        <input type="hidden" class="subcat-target-url" value="@sc.TargetUrl" />
+                        <input type="hidden" class="subcat-icon" value="@sc.Icon" />
+                        <input type="hidden" class="subcat-slug" value="@sc.Slug" />
                     </div>
+                }
+            </div>
+        </div>
+
+        <!-- 4. BRAND IN SPOTLIGHT -->
+        <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">4. Brand in Spotlight (e.g., TCL 85" QLED TV)</h2>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <label style="font-size: 12px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 2px 8px; border-radius: 6px; cursor: pointer;">
+                        <input type="checkbox" id="spotlightIsUploadingSoon" @(spotlight.IsUploadingSoon ? "checked" : "") /> ⏳ Uploading Soon
+                    </label>
+                    <label style="font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
+                        <input type="checkbox" id="spotlightIsEnabled" @(spotlight.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" /> Enabled
+                    </label>
                 </div>
-            }
-        </div>
-    </div>
-
-    <!-- 2. BANK OFFER STRIP -->
-    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">2. Bank Offer Strip (SBI 10% Instant Discount)</h2>
-            <label style="font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
-                <input type="checkbox" id="bankIsEnabled" @(bankOffer.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" /> Enabled
-            </label>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">
-            <div>
-                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Offer Text</label>
-                <input type="text" id="bankOfferText" value="@bankOffer.OfferText" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
             </div>
-            <div>
-                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Offer Subtext</label>
-                <input type="text" id="bankOfferSubtext" value="@bankOffer.OfferSubtext" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
-            </div>
-        </div>
-        <div>
-            <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Bank Logo Image URL</label>
-            <div style="display: flex; gap: 8px;">
-                <input type="text" id="bankLogoUrl" value="@bankOffer.BankLogoUrl" style="flex: 1; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px;" />
-                <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 16px; border-radius: 8px; font-size: 13px; cursor: pointer;">Upload Logo</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. SUB-CATEGORY ICONS (16 Items) -->
-    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-            <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">3. Sub-Category Icons Grid (16 Items)</h2>
-                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Television, Laundry, ACs, Fans, Microwaves, Geysers, Stabilizers, Fridges, etc.</p>
-            </div>
-        </div>
-        <div id="subCatsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
-            @for (int i = 0; i < subCats.Count; i++)
-            {
-                var sc = subCats[i];
-                <div class="subcat-item-row" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-weight: 800; font-size: 13px; color: #1e293b;">@sc.Title</span>
-                        <label style="font-size: 11px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 1px 6px; border-radius: 4px; cursor: pointer;">
-                            <input type="checkbox" class="subcat-uploading-soon" @(sc.IsUploadingSoon ? "checked" : "") /> Soon
-                        </label>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px;">
-                        <div>
-                            <label style="font-size: 11px; font-weight: 700;">Title</label>
-                            <input type="text" class="subcat-title" value="@sc.Title" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
-                        </div>
-                        <div>
-                            <label style="font-size: 11px; font-weight: 700;">Badge</label>
-                            <input type="text" class="subcat-badge" value="@sc.Badge" placeholder="e.g. Value 365" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
-                        </div>
-                    </div>
-                    <div>
-                        <label style="font-size: 11px; font-weight: 700;">Image URL</label>
-                        <div style="display: flex; gap: 4px;">
-                            <input type="text" class="subcat-image-url" value="@sc.ImageUrl" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
-                            <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 8px; border-radius: 4px; font-size: 11px; cursor: pointer;">Upload</button>
-                        </div>
-                    </div>
-                    <input type="hidden" class="subcat-target-url" value="@sc.TargetUrl" />
-                    <input type="hidden" class="subcat-icon" value="@sc.Icon" />
-                    <input type="hidden" class="subcat-slug" value="@sc.Slug" />
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <div>
+                    <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Product Title</label>
+                    <input type="text" id="spotlightTitle" value="@spotlight.ProductTitle" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px;" />
                 </div>
-            }
+                <div>
+                    <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Price Highlight</label>
+                    <input type="text" id="spotlightPrice" value="@spotlight.PriceHighlight" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Brand Name</label>
+                    <input type="text" id="spotlightBrand" value="@spotlight.BrandName" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px;" />
+                </div>
+            </div>
+            <div>
+                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Spotlight Banner Image URL</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="spotlightImageUrl" value="@spotlight.ImageUrl" style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
+                    <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 16px; border-radius: 6px; font-size: 12.5px; cursor: pointer;">Upload Banner</button>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- 4. BRAND IN SPOTLIGHT -->
-    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">4. Brand in Spotlight (e.g., TCL 85" QLED TV)</h2>
-            <div style="display: flex; gap: 12px; align-items: center;">
-                <label style="font-size: 12px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 2px 8px; border-radius: 6px; cursor: pointer;">
-                    <input type="checkbox" id="spotlightIsUploadingSoon" @(spotlight.IsUploadingSoon ? "checked" : "") /> ⏳ Uploading Soon
-                </label>
+        <!-- 5. GOLDEN BLOCKBUSTER DEALS (6 Cards) -->
+        <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                <div>
+                    <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">5. Golden Frame Blockbuster Deals (6 Highlight Cards)</h2>
+                    <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Festive frames for high-value student appliance recommendations.</p>
+                </div>
                 <label style="font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
-                    <input type="checkbox" id="spotlightIsEnabled" @(spotlight.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" /> Enabled
+                    <input type="checkbox" id="goldenIsEnabled" @(goldenHighlights.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" /> Enabled
                 </label>
             </div>
-        </div>
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-            <div>
-                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Product Title</label>
-                <input type="text" id="spotlightTitle" value="@spotlight.ProductTitle" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px;" />
-            </div>
-            <div>
-                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Price Highlight</label>
-                <input type="text" id="spotlightPrice" value="@spotlight.PriceHighlight" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px;" />
-            </div>
-            <div>
-                <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Brand Name</label>
-                <input type="text" id="spotlightBrand" value="@spotlight.BrandName" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px;" />
-            </div>
-        </div>
-        <div>
-            <label style="display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 4px;">Spotlight Banner Image URL</label>
-            <div style="display: flex; gap: 8px;">
-                <input type="text" id="spotlightImageUrl" value="@spotlight.ImageUrl" style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" />
-                <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 16px; border-radius: 6px; font-size: 12.5px; cursor: pointer;">Upload Banner</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 5. GOLDEN BLOCKBUSTER DEALS (6 Cards) -->
-    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
-            <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">5. Golden Frame Blockbuster Deals (6 Highlight Cards)</h2>
-                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Solid red festive frame with yellow price pill, Samsung TV, Bespoke AI Washer, Exide Inverter, etc.</p>
-            </div>
-            <label style="font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
-                <input type="checkbox" id="goldenIsEnabled" @(goldenHighlights.IsEnabled ? "checked" : "") style="width: 16px; height: 16px; accent-color: #ea580c;" /> Enabled
-            </label>
-        </div>
-        <div id="goldenCardsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
-            @for (int i = 0; i < goldenHighlights.Items.Count; i++)
-            {
-                var g = goldenHighlights.Items[i];
-                <div class="golden-item-row" style="background: #fff8f8; border: 1px solid #fecdd3; border-radius: 8px; padding: 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-weight: 800; font-size: 13px; color: #b91c1c;">Card #@(i + 1)</span>
-                        <label style="font-size: 11px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 1px 6px; border-radius: 4px; cursor: pointer;">
-                            <input type="checkbox" class="golden-uploading-soon" @(g.IsUploadingSoon ? "checked" : "") /> Soon
-                        </label>
-                    </div>
-                    <div style="margin-bottom: 6px;">
-                        <label style="font-size: 11px; font-weight: 700;">Title</label>
-                        <input type="text" class="golden-name" value="@g.Title" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
-                    </div>
-                    <div style="margin-bottom: 6px;">
-                        <label style="font-size: 11px; font-weight: 700;">Price Text</label>
-                        <input type="text" class="golden-price" value="@g.PriceText" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
-                    </div>
-                    <div>
-                        <label style="font-size: 11px; font-weight: 700;">Image URL</label>
-                        <div style="display: flex; gap: 4px;">
-                            <input type="text" class="golden-image-url" value="@g.ImageUrl" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
-                            <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 8px; border-radius: 4px; font-size: 11px; cursor: pointer;">Upload</button>
+            <div id="goldenCardsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+                @for (int i = 0; i < goldenHighlights.Items.Count; i++)
+                {
+                    var g = goldenHighlights.Items[i];
+                    <div class="golden-item-row" style="background: #fff8f8; border: 1px solid #fecdd3; border-radius: 8px; padding: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-weight: 800; font-size: 13px; color: #b91c1c;">Card #@(i + 1)</span>
+                            <label style="font-size: 11px; font-weight: 700; color: #854d0e; background: #fef08a; padding: 1px 6px; border-radius: 4px; cursor: pointer;">
+                                <input type="checkbox" class="golden-uploading-soon" @(g.IsUploadingSoon ? "checked" : "") /> Soon
+                            </label>
                         </div>
+                        <div style="margin-bottom: 6px;">
+                            <label style="font-size: 11px; font-weight: 700;">Title</label>
+                            <input type="text" class="golden-name" value="@g.Title" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                        </div>
+                        <div style="margin-bottom: 6px;">
+                            <label style="font-size: 11px; font-weight: 700;">Price Text</label>
+                            <input type="text" class="golden-price" value="@g.PriceText" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                        </div>
+                        <div>
+                            <label style="font-size: 11px; font-weight: 700;">Image URL</label>
+                            <div style="display: flex; gap: 4px;">
+                                <input type="text" class="golden-image-url" value="@g.ImageUrl" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                                <button type="button" onclick="triggerHubUpload(this)" style="background: #334155; color: #fff; border: none; padding: 0 8px; border-radius: 4px; font-size: 11px; cursor: pointer;">Upload</button>
+                            </div>
+                        </div>
+                        <input type="hidden" class="golden-target-url" value="@g.TargetUrl" />
                     </div>
-                    <input type="hidden" class="golden-target-url" value="@g.TargetUrl" />
-                </div>
-            }
+                }
+            </div>
         </div>
+
     </div>
 
-    <!-- BOTTOM SAVE BUTTON -->
-    <div style="display: flex; justify-content: flex-end; margin-top: 32px;">
-        <button type="button" class="dk-btn" id="btnSaveAppliancesBottom" style="background: #ea580c; color: #ffffff; border: none; padding: 12px 32px; font-size: 15px; font-weight: 800; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 16px rgba(234, 88, 12, 0.4);">
+    <!-- ========================================================
+         TAB 2: SUBCATEGORY PAGES & SHOP BY BRANDS (ALL 16 APPLIANCES)
+    ========================================================= -->
+    <div id="tab_subcategories" class="dk-app-tab-pane">
+
+        <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            
+            <div style="margin-bottom: 20px;">
+                <h2 style="font-size: 19px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">
+                    🏷️ Subcategory Pages &amp; "Shop by Brands" (All 16 Appliances)
+                </h2>
+                <p style="font-size: 13.5px; color: #64748b; margin: 0;">
+                    Select an appliance subcategory below to customize its dedicated Hero Banner, edit "Shop by Brands" logos &amp; names, and toggle "Uploading Soon" badges.
+                </p>
+            </div>
+
+            <!-- Subcategory Selector Pills -->
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; padding: 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
+                @for (var idx = 0; idx < subPages.Count; idx++)
+                {
+                    var p = subPages[idx];
+                    <button type="button"
+                            class="subpage-pill-btn @(idx == 0 ? "active" : "")"
+                            onclick="selectSubPageAdmin('@p.CategorySlug')"
+                            id="pill_btn_@p.CategorySlug"
+                            style="padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 800; cursor: pointer; border: 1px solid #cbd5e1; background: #fff; color: #334155; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s ease;">
+                        <span>@p.Emoji</span>
+                        <span>@p.CategoryName</span>
+                    </button>
+                }
+            </div>
+
+            <!-- Panels for Each Subcategory -->
+            <div id="subCategoryPanelsContainer">
+                @for (var idx = 0; idx < subPages.Count; idx++)
+                {
+                    var p = subPages[idx];
+                    var pHero = p.HeroBanner ?? new();
+                    var pBrandsSection = p.ShopByBrands ?? new();
+                    var pBrands = pBrandsSection.Brands ?? new List<Dreamflykit.Application.AppliancesHub.Models.AppliancesBrandItemDto>();
+
+                    <div class="subpage-panel-pane @(idx == 0 ? "active" : "")" id="sub_panel_@p.CategorySlug" data-subslug="@p.CategorySlug" data-subname="@p.CategoryName" data-emoji="@p.Emoji" style="display: @(idx == 0 ? "block" : "none");">
+                        
+                        <!-- Header Bar for this Subcategory -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 14px 18px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; flex-wrap: wrap; gap: 12px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 24px;">@p.Emoji</span>
+                                <div>
+                                    <h3 style="font-size: 17px; font-weight: 900; color: #9a3412; margin: 0;">@p.CategoryName Subcategory Hub</h3>
+                                    <span style="font-size: 12px; color: #c2410c;">Dedicated route: <code>/category/appliances/@p.CategorySlug</code></span>
+                                </div>
+                            </div>
+                            <a href="/category/appliances/@p.CategorySlug" target="_blank" class="dk-btn" style="background: #ffffff; color: #c2410c; border: 1px solid #fed7aa; font-size: 12.5px; font-weight: 700; padding: 6px 14px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                                <span>👁️</span> Preview Subcategory Page
+                            </a>
+                        </div>
+
+                        <!-- 1. Hero Banner for this Subcategory -->
+                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; margin-bottom: 24px;">
+                            <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 14px;">
+                                ⚡ Hero Banner for @p.CategoryName
+                            </h4>
+
+                            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                                <div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                        <div>
+                                            <label class="dk-admin-label">Title</label>
+                                            <input type="text" id="sub_hero_title_@p.CategorySlug" class="dk-admin-input" value="@pHero.Title" />
+                                        </div>
+                                        <div>
+                                            <label class="dk-admin-label">Title Highlight</label>
+                                            <input type="text" id="sub_hero_highlight_@p.CategorySlug" class="dk-admin-input" value="@pHero.TitleHighlight" />
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 12px;">
+                                        <label class="dk-admin-label">Subtitle Text</label>
+                                        <textarea id="sub_hero_sub_@p.CategorySlug" class="dk-admin-input" rows="2">@pHero.Subtitle</textarea>
+                                    </div>
+
+                                    <div style="display: flex; align-items: center; gap: 12px; padding-top: 4px;">
+                                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #0f172a; cursor: pointer;">
+                                            <input type="checkbox" id="sub_hero_soon_@p.CategorySlug" @(pHero.IsUploadingSoon ? "checked" : "") />
+                                            <span>Show "UPLOADING SOON" Badge on Hero</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Image & Upload -->
+                                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                                    <label class="dk-admin-label" style="margin: 0;">Hero Background Image</label>
+                                    <div style="width: 100%; height: 110px; border-radius: 6px; overflow: hidden; background: #e2e8f0;">
+                                        <img id="sub_hero_preview_@p.CategorySlug" src="@pHero.ImageUrl" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                                    </div>
+                                    <input type="text" id="sub_hero_img_@p.CategorySlug" class="dk-admin-input" value="@pHero.ImageUrl" style="font-size: 11.5px;" oninput="document.getElementById('sub_hero_preview_@p.CategorySlug').src=this.value;" />
+                                    <div style="display: flex; gap: 6px; align-items: center;">
+                                        <input type="file" id="sub_hero_file_@p.CategorySlug" accept="image/*" style="display: none;" onchange="uploadSubHeroImage('@p.CategorySlug', this)" />
+                                        <button type="button" onclick="document.getElementById('sub_hero_file_@p.CategorySlug').click()" class="dk-btn" style="background: #ea580c; color: #fff; border: none; font-size: 11.5px; font-weight: 700; padding: 6px 12px; border-radius: 5px; cursor: pointer;">
+                                            📁 Upload Image
+                                        </button>
+                                        <span id="sub_hero_status_@p.CategorySlug" style="font-size: 10.5px; color: #64748b;">Max 8MB</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Shop By Brands for this Subcategory -->
+                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                                <div>
+                                    <h4 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0;">
+                                        🏷️ "Shop by Brands" for @p.CategoryName
+                                    </h4>
+                                    <span style="font-size: 12.5px; color: #64748b;">Configure brand cards displayed below the hero banner.</span>
+                                </div>
+                                <button type="button" onclick="addNewBrandCard('@p.CategorySlug')" class="dk-btn" style="background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
+                                    ＋ Add Brand
+                                </button>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                                <div>
+                                    <label class="dk-admin-label">Section Heading</label>
+                                    <input type="text" id="sub_brands_title_@p.CategorySlug" class="dk-admin-input" value="@pBrandsSection.Title" />
+                                </div>
+                                <div>
+                                    <label class="dk-admin-label">Section Subtitle</label>
+                                    <input type="text" id="sub_brands_sub_@p.CategorySlug" class="dk-admin-input" value="@pBrandsSection.Subtitle" />
+                                </div>
+                            </div>
+
+                            <!-- Brand Cards Grid -->
+                            <div id="brands_list_@p.CategorySlug" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">
+                                @for (var b = 0; b < pBrands.Count; b++)
+                                {
+                                    var brand = pBrands[b];
+                                    <div class="brand-item-card brand-card-@p.CategorySlug" id="brand_row_@(p.CategorySlug)_@b" data-index="@b" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                                        
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <span style="font-weight: 800; font-size: 13px; color: #c2410c;" id="brand_title_lbl_@(p.CategorySlug)_@b">#@(b + 1) @brand.Name</span>
+                                            <button type="button" onclick="removeBrandCard('@p.CategorySlug', @b)" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;">🗑️</button>
+                                        </div>
+
+                                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+                                            <div>
+                                                <label class="dk-admin-label">Brand Name</label>
+                                                <input type="text" id="brand_name_@(p.CategorySlug)_@b" class="dk-admin-input" value="@brand.Name" oninput="document.getElementById('brand_title_lbl_@(p.CategorySlug)_@b').innerText = '#' + (@(b + 1)) + ' ' + this.value;" />
+                                            </div>
+                                            <div>
+                                                <label class="dk-admin-label">Slug</label>
+                                                <input type="text" id="brand_slug_@(p.CategorySlug)_@b" class="dk-admin-input" value="@brand.Slug" />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #0f172a; cursor: pointer;">
+                                                <input type="checkbox" id="brand_soon_@(p.CategorySlug)_@b" @(brand.IsUploadingSoon ? "checked" : "") />
+                                                <span>Show "UPLOADING SOON" Badge</span>
+                                            </label>
+                                        </div>
+
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <div style="width: 36px; height: 36px; border-radius: 6px; background: #fff; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                                                <img id="brand_preview_@(p.CategorySlug)_@b" src="@brand.LogoUrl" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                                            </div>
+                                            <input type="text" id="brand_logo_@(p.CategorySlug)_@b" class="dk-admin-input" value="@brand.LogoUrl" style="font-size: 11px; flex: 1;" oninput="document.getElementById('brand_preview_@(p.CategorySlug)_@b').src=this.value;" />
+                                            <input type="file" id="brand_file_@(p.CategorySlug)_@b" accept="image/*" style="display: none;" onchange="uploadBrandLogoImg('@p.CategorySlug', @b, this)" />
+                                            <button type="button" onclick="document.getElementById('brand_file_@(p.CategorySlug)_@b').click()" class="dk-btn" style="background: #334155; color: #fff; border: none; font-size: 11px; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+                                                Upload
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- BOTTOM ACTION BAR -->
+    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+        <button type="button" class="dk-btn" id="btnSaveAppliancesBottom" onclick="saveAllAppliancesConfig()" style="background: #ea580c; color: #ffffff; border: none; padding: 11px 28px; font-size: 14px; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
             Save All Changes
         </button>
     </div>
 
-    <!-- Hidden File Input for universal upload -->
-    <input type="file" id="universalHubFileInput" accept="image/*" style="display: none;" />
 </div>
 
-<script>
-let currentTargetInput = null;
+<!-- Hidden File Input for Shared Uploads -->
+<input type="file" id="hubSharedFileInput" accept="image/*" style="display: none;" />
 
-function triggerHubUpload(btn) {
-    const parent = btn.parentElement;
-    currentTargetInput = parent.querySelector('input[type="text"]');
-    document.getElementById('universalHubFileInput').click();
+<style>
+.dk-admin-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 4px;
+}
+.dk-admin-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s ease;
+    box-sizing: border-box;
+}
+.dk-admin-input:focus {
+    border-color: #ea580c;
+}
+.dk-app-tab-btn {
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 800;
+    color: #64748b;
+    padding: 10px 18px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+}
+.dk-app-tab-btn:hover {
+    color: #0f172a;
+    background: #f8fafc;
+}
+.dk-app-tab-btn.active {
+    color: #ea580c;
+    border-bottom: 3px solid #ea580c;
+    background: #fff7ed;
+}
+.dk-app-tab-pane {
+    display: none;
+}
+.dk-app-tab-pane.active {
+    display: block;
+}
+.subpage-pill-btn.active {
+    background: #ea580c !important;
+    color: #ffffff !important;
+    border-color: #ea580c !important;
+    box-shadow: 0 4px 10px rgba(234, 88, 12, 0.28);
+}
+</style>
+
+<script>
+let currentUploadTargetInput = null;
+
+function switchAppTab(tabId, btn) {
+    document.querySelectorAll('.dk-app-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.dk-app-tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const pane = document.getElementById('tab_' + tabId);
+    if (pane) pane.classList.add('active');
 }
 
-document.getElementById('universalHubFileInput').addEventListener('change', async function() {
-    if (!this.files || this.files.length === 0 || !currentTargetInput) return;
+function selectSubPageAdmin(slug) {
+    document.querySelectorAll('.subpage-pill-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.subpage-panel-pane').forEach(p => {
+        p.classList.remove('active');
+        p.style.display = 'none';
+    });
+
+    const activeBtn = document.getElementById('pill_btn_' + slug);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    const activePanel = document.getElementById('sub_panel_' + slug);
+    if (activePanel) {
+        activePanel.classList.add('active');
+        activePanel.style.display = 'block';
+    }
+}
+
+function triggerHubUpload(btn) {
+    currentUploadTargetInput = btn.previousElementSibling;
+    const fi = document.getElementById('hubSharedFileInput');
+    fi.value = '';
+    fi.click();
+}
+
+document.getElementById('hubSharedFileInput').addEventListener('change', async function () {
+    if (!this.files || this.files.length === 0 || !currentUploadTargetInput) return;
     const file = this.files[0];
     const formData = new FormData();
     formData.append('file', file);
@@ -341,60 +631,169 @@ document.getElementById('universalHubFileInput').addEventListener('change', asyn
             },
             body: formData
         });
-
-        const data = await resp.json();
-        if (data.success && data.url) {
-            currentTargetInput.value = data.url;
-            alert('Image uploaded successfully!');
+        const res = await resp.json();
+        if (res.success && res.url) {
+            currentUploadTargetInput.value = res.url;
+            currentUploadTargetInput.dispatchEvent(new Event('input', { bubbles: true }));
         } else {
-            alert('Upload failed: ' + (data.message || 'Unknown error'));
+            alert('Upload failed: ' + (res.message || 'Unknown error'));
         }
     } catch (err) {
         alert('Upload error: ' + err.message);
-    } finally {
-        this.value = '';
     }
 });
 
-// Master Save Function
+async function uploadSubHeroImage(subSlug, input) {
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    const statusSpan = document.getElementById('sub_hero_status_' + subSlug);
+    if (statusSpan) statusSpan.innerText = 'Uploading...';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('targetField', 'sub_hero_' + subSlug);
+
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+    try {
+        const resp = await fetch('/Admin/AppliancesHub/UploadImage', {
+            method: 'POST',
+            headers: { 'RequestVerificationToken': token },
+            body: formData
+        });
+        const res = await resp.json();
+        if (res.success && res.url) {
+            const imgInput = document.getElementById('sub_hero_img_' + subSlug);
+            const preview = document.getElementById('sub_hero_preview_' + subSlug);
+            if (imgInput) imgInput.value = res.url;
+            if (preview) preview.src = res.url;
+            if (statusSpan) statusSpan.innerText = '✅ Uploaded!';
+        } else {
+            alert('Upload failed: ' + (res.message || 'Unknown error'));
+            if (statusSpan) statusSpan.innerText = 'Failed';
+        }
+    } catch (err) {
+        alert('Upload error: ' + err.message);
+        if (statusSpan) statusSpan.innerText = 'Error';
+    }
+}
+
+async function uploadBrandLogoImg(subSlug, bIndex, input) {
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+    try {
+        const resp = await fetch('/Admin/AppliancesHub/UploadImage', {
+            method: 'POST',
+            headers: { 'RequestVerificationToken': token },
+            body: formData
+        });
+        const res = await resp.json();
+        if (res.success && res.url) {
+            const logoInput = document.getElementById('brand_logo_' + subSlug + '_' + bIndex);
+            const preview = document.getElementById('brand_preview_' + subSlug + '_' + bIndex);
+            if (logoInput) logoInput.value = res.url;
+            if (preview) preview.src = res.url;
+        } else {
+            alert('Upload failed: ' + (res.message || 'Unknown error'));
+        }
+    } catch (err) {
+        alert('Upload error: ' + err.message);
+    }
+}
+
+function removeBrandCard(subSlug, bIndex) {
+    const card = document.getElementById('brand_row_' + subSlug + '_' + bIndex);
+    if (card) {
+        card.remove();
+    }
+}
+
+function addNewBrandCard(subSlug) {
+    const container = document.getElementById('brands_list_' + subSlug);
+    if (!container) return;
+    const newIdx = container.querySelectorAll('.brand-item-card').length;
+
+    const div = document.createElement('div');
+    div.className = 'brand-item-card brand-card-' + subSlug;
+    div.id = 'brand_row_' + subSlug + '_' + newIdx;
+    div.setAttribute('data-index', newIdx);
+    div.style.cssText = 'background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;';
+
+    div.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 800; font-size: 13px; color: #c2410c;" id="brand_title_lbl_${subSlug}_${newIdx}">#${newIdx + 1} New Brand</span>
+            <button type="button" onclick="removeBrandCard('${subSlug}', ${newIdx})" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;">🗑️</button>
+        </div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+            <div>
+                <label class="dk-admin-label">Brand Name</label>
+                <input type="text" id="brand_name_${subSlug}_${newIdx}" class="dk-admin-input" value="New Brand" oninput="document.getElementById('brand_title_lbl_${subSlug}_${newIdx}').innerText = '#' + (${newIdx + 1}) + ' ' + this.value;" />
+            </div>
+            <div>
+                <label class="dk-admin-label">Slug</label>
+                <input type="text" id="brand_slug_${subSlug}_${newIdx}" class="dk-admin-input" value="new-brand" />
+            </div>
+        </div>
+        <div>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #0f172a; cursor: pointer;">
+                <input type="checkbox" id="brand_soon_${subSlug}_${newIdx}" checked />
+                <span>Show "UPLOADING SOON" Badge</span>
+            </label>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <div style="width: 36px; height: 36px; border-radius: 6px; background: #fff; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                <img id="brand_preview_${subSlug}_${newIdx}" src="/images/fashion-hub/uploading-soon-placeholder.svg" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+            </div>
+            <input type="text" id="brand_logo_${subSlug}_${newIdx}" class="dk-admin-input" value="/images/fashion-hub/uploading-soon-placeholder.svg" style="font-size: 11px; flex: 1;" oninput="document.getElementById('brand_preview_${subSlug}_${newIdx}').src=this.value;" />
+            <input type="file" id="brand_file_${subSlug}_${newIdx}" accept="image/*" style="display: none;" onchange="uploadBrandLogoImg('${subSlug}', ${newIdx}, this)" />
+            <button type="button" onclick="document.getElementById('brand_file_${subSlug}_${newIdx}').click()" class="dk-btn" style="background: #334155; color: #fff; border: none; font-size: 11px; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+                Upload
+            </button>
+        </div>
+    `;
+
+    container.appendChild(div);
+}
+
 async function saveAllAppliancesConfig() {
     const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
 
-    // Collect slides
-    const slideRows = document.querySelectorAll('.hero-slide-row');
+    // Collect hero slides
     const slides = [];
-    slideRows.forEach((row, idx) => {
+    document.querySelectorAll('.hero-slide-row').forEach((row, idx) => {
         slides.push({
             id: 'app-slide-' + (idx + 1),
             title: row.querySelector('.slide-title')?.value || '',
             subtitle: row.querySelector('.slide-subtitle')?.value || '',
             priceHighlight: row.querySelector('.slide-price')?.value || '',
             imageUrl: row.querySelector('.slide-image-url')?.value || '',
-            targetUrl: row.querySelector('.slide-target-url')?.value || '/category/appliances',
-            buttonText: 'Grab Deals →',
+            targetUrl: row.querySelector('.slide-target-url')?.value || '',
             isUploadingSoon: row.querySelector('.slide-uploading-soon')?.checked || false
         });
     });
 
-    // Collect subcats
-    const subcatRows = document.querySelectorAll('.subcat-item-row');
+    // Collect subcategories
     const subCats = [];
-    subcatRows.forEach((row, idx) => {
+    document.querySelectorAll('.subcat-item-row').forEach(row => {
         subCats.push({
             title: row.querySelector('.subcat-title')?.value || '',
+            icon: row.querySelector('.subcat-icon')?.value || '🔌',
             badge: row.querySelector('.subcat-badge')?.value || '',
             imageUrl: row.querySelector('.subcat-image-url')?.value || '',
-            targetUrl: row.querySelector('.subcat-target-url')?.value || '/category/appliances',
-            icon: row.querySelector('.subcat-icon')?.value || '🔌',
+            targetUrl: row.querySelector('.subcat-target-url')?.value || '',
             slug: row.querySelector('.subcat-slug')?.value || '',
             isUploadingSoon: row.querySelector('.subcat-uploading-soon')?.checked || false
         });
     });
 
     // Collect golden cards
-    const goldenRows = document.querySelectorAll('.golden-item-row');
     const goldenItems = [];
-    goldenRows.forEach((row, idx) => {
+    document.querySelectorAll('.golden-item-row').forEach(row => {
         goldenItems.push({
             title: row.querySelector('.golden-name')?.value || '',
             priceText: row.querySelector('.golden-price')?.value || '',
@@ -404,6 +803,70 @@ async function saveAllAppliancesConfig() {
             imageUrl: row.querySelector('.golden-image-url')?.value || '',
             targetUrl: row.querySelector('.golden-target-url')?.value || '/category/appliances',
             isUploadingSoon: row.querySelector('.golden-uploading-soon')?.checked || false
+        });
+    });
+
+    // Collect Subcategory Pages (All 16 Categories)
+    const subPages = [];
+    document.querySelectorAll('.subpage-panel-pane').forEach(panel => {
+        const slug = panel.getAttribute('data-subslug');
+        const name = panel.getAttribute('data-subname');
+        const emoji = panel.getAttribute('data-emoji') || '🔌';
+
+        const heroTitle = document.getElementById('sub_hero_title_' + slug)?.value || '';
+        const heroHighlight = document.getElementById('sub_hero_highlight_' + slug)?.value || '';
+        const heroSub = document.getElementById('sub_hero_sub_' + slug)?.value || '';
+        const heroImg = document.getElementById('sub_hero_img_' + slug)?.value || '';
+        const heroSoon = document.getElementById('sub_hero_soon_' + slug)?.checked || false;
+
+        const brandsTitle = document.getElementById('sub_brands_title_' + slug)?.value || 'Shop by Brands';
+        const brandsSub = document.getElementById('sub_brands_sub_' + slug)?.value || '';
+
+        const brandsList = [];
+        panel.querySelectorAll('.brand-item-card').forEach((card, bIdx) => {
+            const idxAttr = card.getAttribute('data-index');
+            const bName = document.getElementById('brand_name_' + slug + '_' + idxAttr)?.value || '';
+            const bSlug = document.getElementById('brand_slug_' + slug + '_' + idxAttr)?.value || '';
+            const bLogo = document.getElementById('brand_logo_' + slug + '_' + idxAttr)?.value || '';
+            const bSoon = document.getElementById('brand_soon_' + slug + '_' + idxAttr)?.checked || false;
+
+            if (bName) {
+                brandsList.push({
+                    id: 'b_' + slug + '_' + bIdx,
+                    name: bName,
+                    slug: bSlug,
+                    logoUrl: bLogo,
+                    isUploadingSoon: bSoon,
+                    targetUrl: '/category/appliances/' + slug + '?q=' + encodeURIComponent(bName),
+                    displayOrder: bIdx + 1,
+                    isActive: true
+                });
+            }
+        });
+
+        subPages.push({
+            id: 'app_sub_' + slug,
+            categorySlug: slug,
+            categoryName: name,
+            emoji: emoji,
+            heroBanner: {
+                isEnabled: true,
+                title: heroTitle,
+                titleHighlight: heroHighlight,
+                subtitle: heroSub,
+                tagBadge: '⚡ STUDENT CERTIFIED • 100% GENUINE APPLIANCES',
+                imageUrl: heroImg,
+                isUploadingSoon: heroSoon,
+                targetUrl: '/category/appliances/' + slug,
+                buttonText: 'Shop Now →',
+                featurePills: ['110V–240V Dual Voltage', 'Brand Warranty Included', 'Free In-Home Installation']
+            },
+            shopByBrands: {
+                isEnabled: true,
+                title: brandsTitle,
+                subtitle: brandsSub,
+                brands: brandsList
+            }
         });
     });
 
@@ -451,7 +914,8 @@ async function saveAllAppliancesConfig() {
             title: 'Blockbuster Deals',
             subtitle: '',
             items: goldenItems
-        }
+        },
+        subcategoryPages: subPages
     };
 
     try {
@@ -467,7 +931,7 @@ async function saveAllAppliancesConfig() {
 
         const data = await resp.json();
         if (data.success) {
-            alert('Appliances Hub settings saved successfully!');
+            alert('✅ Appliances Hub & all 16 Subcategory Pages saved successfully!');
             window.location.reload();
         } else {
             alert('Failed to save: ' + (data.message || 'Unknown error'));
@@ -476,7 +940,4 @@ async function saveAllAppliancesConfig() {
         alert('Error saving configuration: ' + err.message);
     }
 }
-
-document.getElementById('btnSaveAppliancesTop').addEventListener('click', saveAllAppliancesConfig);
-document.getElementById('btnSaveAppliancesBottom').addEventListener('click', saveAllAppliancesConfig);
 </script>

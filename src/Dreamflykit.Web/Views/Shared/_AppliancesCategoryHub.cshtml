@@ -146,10 +146,24 @@
         @if (subCats.Count > 0)
         {
             <section class="dk-app-subcats-section" aria-label="Appliances Categories">
+                <div class="dk-app-section-header" style="margin-bottom: 16px; padding: 0 4px;">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
+                        <div>
+                            <h3 class="dk-app-section-title" style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 8px;">
+                                <span>Shop by Category</span>
+                            </h3>
+                            <p style="font-size: 13px; color: #64748b; margin: 4px 0 0 0;">Explore genuine student &amp; home appliances from verified brands</p>
+                        </div>
+                        <span style="font-size: 12px; font-weight: 700; color: #ea580c; background: #fff7ed; padding: 4px 12px; border-radius: 9999px; border: 1px solid #ffedd5;">16 Categories</span>
+                    </div>
+                </div>
                 <div class="dk-app-subcats-grid">
                     @foreach (var sub in subCats)
                     {
-                        <a href="@sub.TargetUrl" class="dk-app-subcat-card" title="@sub.Title">
+                        var catTargetUrl = !string.IsNullOrWhiteSpace(sub.TargetUrl) && !sub.TargetUrl.Contains("?sub=")
+                            ? sub.TargetUrl
+                            : $"/category/appliances/{sub.Slug}";
+                        <a href="@catTargetUrl" class="dk-app-subcat-card" title="@sub.Title">
                             <div class="dk-app-subcat-icon-box">
                                 @if (sub.IsUploadingSoon || string.IsNullOrWhiteSpace(sub.ImageUrl))
                                 {

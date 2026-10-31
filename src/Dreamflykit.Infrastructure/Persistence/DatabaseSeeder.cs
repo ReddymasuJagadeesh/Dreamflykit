@@ -745,6 +745,50 @@ public static class DatabaseSeeder
             await context.SaveChangesAsync(cancellationToken);
         }
 
+        // Ensure Appliances Category Subcategories (16 Subcategories)
+        if (catMap.TryGetValue("appliances", out var appCatId))
+        {
+            var existingAppSubs = await context.Subcategories
+                .Where(s => s.CategoryId == appCatId)
+                .ToListAsync(cancellationToken);
+
+            var requiredAppSubs = new (string Name, string Slug, int Order)[]
+            {
+                ("Television", "television", 1),
+                ("Laundry", "laundry", 2),
+                ("ACs", "air-conditioners", 3),
+                ("Fans", "fans", 4),
+                ("Microwaves", "microwaves", 5),
+                ("Value 365", "value-365", 6),
+                ("Appliances", "small-appliances", 7),
+                ("Geysers", "geysers", 8),
+                ("Stabilizers", "stabilizers", 9),
+                ("Kitchen", "kitchen-appliances", 10),
+                ("Fridges", "refrigerators", 11),
+                ("Home", "home-appliances", 12),
+                ("Breakfast", "breakfast-appliances", 13),
+                ("FK Originals", "top-rated", 14),
+                ("Power Backup", "inverters", 15),
+                ("Dishwashers", "dishwashers", 16)
+            };
+
+            foreach (var (subName, subSlug, subOrder) in requiredAppSubs)
+            {
+                var existingSub = existingAppSubs.FirstOrDefault(s => string.Equals(s.Slug, subSlug, StringComparison.OrdinalIgnoreCase));
+                if (existingSub == null)
+                {
+                    var newSub = new Subcategory(appCatId, subName, subSlug, subOrder);
+                    context.Subcategories.Add(newSub);
+                }
+                else
+                {
+                    existingSub.Update(subName, subSlug, subOrder);
+                    existingSub.Activate();
+                }
+            }
+            await context.SaveChangesAsync(cancellationToken);
+        }
+
         // B. Reassign products from obsolete categories & remove obsolete categories
         var obsoleteCategories = currentCategories.Where(c => !finalSlugs.Contains(c.Slug)).ToList();
         if (obsoleteCategories.Count > 0)

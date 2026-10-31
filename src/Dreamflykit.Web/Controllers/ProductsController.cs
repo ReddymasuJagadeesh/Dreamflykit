@@ -75,6 +75,7 @@ public sealed class ProductsController : Controller
         [FromQuery] Guid? subcategoryId = null,
         [FromQuery(Name = "subcatItem")] string? subcatItem = null,
         [FromQuery(Name = "item")] string? item = null,
+        [FromQuery(Name = "sub")] string? sub = null,
         [FromQuery] decimal? minPrice = null,
         [FromQuery] decimal? maxPrice = null,
         [FromQuery] bool? inStockOnly = null,
@@ -101,7 +102,9 @@ public sealed class ProductsController : Controller
 
         string? currentSubcategorySlug = !string.IsNullOrWhiteSpace(subcategorySlug)
             ? subcategorySlug.Trim().ToLowerInvariant()
-            : (!string.IsNullOrWhiteSpace(querySubcategory) ? querySubcategory.Trim().ToLowerInvariant() : null);
+            : (!string.IsNullOrWhiteSpace(querySubcategory)
+                ? querySubcategory.Trim().ToLowerInvariant()
+                : (!string.IsNullOrWhiteSpace(sub) ? sub.Trim().ToLowerInvariant() : null));
 
         if (!string.IsNullOrWhiteSpace(effectiveCategory) && studyCategorySlugs.Contains(effectiveCategory))
         {
@@ -209,6 +212,38 @@ public sealed class ProductsController : Controller
                 (currentSubcategorySlug.Contains("cable") && p.CategorySlug.Contains("cable")) ||
                 (currentSubcategorySlug.Contains("monitor") && p.CategorySlug.Contains("monitor")) ||
                 (currentSubcategorySlug.Contains("calculator") && p.CategorySlug.Contains("calculator")));
+
+            if (subPage != null)
+            {
+                currentSubcategoryName = subPage.CategoryName;
+                currentSubcategorySlug = subPage.CategorySlug;
+            }
+        }
+
+        if (isAppliancesCategory && !string.IsNullOrWhiteSpace(currentSubcategorySlug) && string.IsNullOrWhiteSpace(currentSubcategoryName))
+        {
+            var appHubConfig = await _appliancesHubService.GetConfigAsync(cancellationToken);
+            var subPage = appHubConfig.SubcategoryPages?.FirstOrDefault(p =>
+                string.Equals(p.CategorySlug, currentSubcategorySlug, StringComparison.OrdinalIgnoreCase) ||
+                (currentSubcategorySlug.Contains("tv") && p.CategorySlug.Contains("television")) ||
+                (currentSubcategorySlug.Contains("telev") && p.CategorySlug.Contains("television")) ||
+                (currentSubcategorySlug.Contains("laund") && p.CategorySlug.Contains("laundry")) ||
+                (currentSubcategorySlug.Contains("wash") && p.CategorySlug.Contains("laundry")) ||
+                (currentSubcategorySlug.Contains("ac") && p.CategorySlug.Contains("air-conditioners")) ||
+                (currentSubcategorySlug.Contains("fan") && p.CategorySlug.Contains("fans")) ||
+                (currentSubcategorySlug.Contains("micro") && p.CategorySlug.Contains("microwaves")) ||
+                (currentSubcategorySlug.Contains("365") && p.CategorySlug.Contains("value-365")) ||
+                (currentSubcategorySlug.Contains("appliance") && p.CategorySlug.Contains("small-appliances")) ||
+                (currentSubcategorySlug.Contains("geys") && p.CategorySlug.Contains("geysers")) ||
+                (currentSubcategorySlug.Contains("stab") && p.CategorySlug.Contains("stabilizers")) ||
+                (currentSubcategorySlug.Contains("kitch") && p.CategorySlug.Contains("kitchen-appliances")) ||
+                (currentSubcategorySlug.Contains("fridg") && p.CategorySlug.Contains("refrigerators")) ||
+                (currentSubcategorySlug.Contains("refrig") && p.CategorySlug.Contains("refrigerators")) ||
+                (currentSubcategorySlug.Contains("home") && p.CategorySlug.Contains("home-appliances")) ||
+                (currentSubcategorySlug.Contains("break") && p.CategorySlug.Contains("breakfast-appliances")) ||
+                ((currentSubcategorySlug.Contains("top") || currentSubcategorySlug.Contains("fk")) && p.CategorySlug.Contains("top-rated")) ||
+                ((currentSubcategorySlug.Contains("invert") || currentSubcategorySlug.Contains("backup")) && p.CategorySlug.Contains("inverters")) ||
+                (currentSubcategorySlug.Contains("dish") && p.CategorySlug.Contains("dishwashers")));
 
             if (subPage != null)
             {
