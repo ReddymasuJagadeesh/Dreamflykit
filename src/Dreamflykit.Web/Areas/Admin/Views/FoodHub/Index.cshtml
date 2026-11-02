@@ -6,6 +6,7 @@
     var theme = hub.ThemeSettings ?? new();
     var notice = hub.TopNoticeBar ?? new();
     var hero = hub.HeroBanner ?? new();
+    var slides = hero.Slides ?? new List<Dreamflykit.Application.FoodHub.Models.FoodHeroSlideDto>();
     var shopCats = hub.ShopByCategories?.Cards ?? new();
     var promos = hub.PromoCards?.Cards ?? new();
     var bottomTrust = hub.BottomTrustBar ?? new();
@@ -56,7 +57,7 @@
     <!-- TABS BAR -->
     <div style="display: flex; gap: 8px; border-bottom: 2px solid #e2e8f0; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px;">
         <button type="button" class="dk-hub-tab-btn active" onclick="switchFoodTab('hero', this)">
-            🌾 1. Full-Width Hero Banner
+            🌾 1. Full-Width Hero Slider &amp; Slides (@slides.Count Slides)
         </button>
         <button type="button" class="dk-hub-tab-btn" onclick="switchFoodTab('categories', this)">
             🛒 2. Shop By 7 Categories
@@ -73,77 +74,181 @@
     </div>
 
     <!-- ========================================================
-         TAB 1: FULL-WIDTH HERO BANNER
+         TAB 1: FULL-WIDTH HERO SLIDER & SLIDES
     ========================================================= -->
     <div id="tab_hero" class="dk-hub-tab-pane active">
         <div class="dk-admin-card" style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px;">
-            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 16px;">
-                🌾 Main Hero Banner (Full-Width Top Showcase)
-            </h2>
-
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; flex-wrap: wrap; gap: 14px;">
                 <div>
-                    <div style="margin-bottom: 16px;">
-                        <label class="dk-admin-label">Main Heading</label>
-                        <input type="text" id="hero_heading" class="dk-admin-input" value="@hero.Heading" placeholder="Good Food. Good Mood." />
-                    </div>
-
-                    <div style="margin-bottom: 16px;">
-                        <label class="dk-admin-label">Subtitle Text</label>
-                        <input type="text" id="hero_subtitle" class="dk-admin-input" value="@hero.Subtitle" placeholder="Your one-stop shop for groceries, snacks & more." />
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
-                        <div>
-                            <label class="dk-admin-label">Button Text</label>
-                            <input type="text" id="hero_btn_text" class="dk-admin-input" value="@hero.ButtonText" placeholder="Shop Now →" />
-                        </div>
-                        <div>
-                            <label class="dk-admin-label">Button Target URL</label>
-                            <input type="text" id="hero_btn_url" class="dk-admin-input" value="@hero.ButtonUrl" placeholder="#best-sellers-section" />
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 16px;">
-                        <label class="dk-admin-label">Hero Banner Image URL</label>
-                        <div style="display: flex; gap: 8px;">
-                            <input type="text" id="hero_img_url" class="dk-admin-input" value="@hero.ImageUrl" placeholder="/images/food-hub/hero-food-basket.webp" onchange="previewImg(this.value, 'hero_img_preview')" />
-                            <label class="dk-btn" style="background: #234d20; color: #fff; padding: 10px 16px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-size: 13px; font-weight: 700;">
-                                📁 Upload Image
-                                <input type="file" accept="image/*" style="display: none;" onchange="uploadImageAsync(this, 'hero_img_url', 'hero_img_preview')" />
-                            </label>
-                        </div>
-                        <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Recommended aspect ratio: 4:3 or 16:9 high resolution (e.g. 1200x800px). Supports JPG, PNG, WEBP, SVG.</p>
-                    </div>
-
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13.5px; font-weight: 600; color: #334155;">
-                            <input type="checkbox" id="hero_uploading_soon" @(hero.IsUploadingSoon ? "checked" : "") style="width: 17px; height: 17px; accent-color: #234d20;" />
-                            <span>Show "TEST PIC / Super Admin Replaceable" fallback badge</span>
-                        </label>
-                    </div>
-
-                    <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin: 20px 0 10px 0;">4 Trust Badges Below Button</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        @for (var b = 0; b < 4; b++)
-                        {
-                            var badgeVal = hero.TrustBadges != null && hero.TrustBadges.Count > b ? hero.TrustBadges[b] : "";
-                            <div>
-                                <label class="dk-admin-label">Badge @(b + 1)</label>
-                                <input type="text" id="hero_badge_@b" class="dk-admin-input" value="@badgeVal" />
-                            </div>
-                        }
-                    </div>
+                    <h2 style="font-size: 19px; font-weight: 900; color: #0f172a; margin: 0 0 4px 0;">
+                        🌾 Full-Width Hero Slider &amp; Slides Manager
+                    </h2>
+                    <p style="font-size: 13px; color: #64748b; margin: 0;">
+                        Manage edge-to-edge promotional carousel slides for the Food &amp; Grocery store. Upload high-res images, configure CTA links, and toggle "Uploading Soon" badges.
+                    </p>
                 </div>
+                
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; color: #1e293b; cursor: pointer;">
+                        <input type="checkbox" id="hero_enabled" @(hero.IsEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #1f3d24;" />
+                        Slider Enabled
+                    </label>
 
-                <!-- Preview Column -->
-                <div>
-                    <label class="dk-admin-label">Hero Image Live Preview</label>
-                    <div style="border: 2px dashed #cbd5e1; border-radius: 12px; padding: 12px; background: #f8fafc; text-align: center;">
-                        <img id="hero_img_preview" src="@hero.ImageUrl" alt="Hero Preview" style="max-width: 100%; max-height: 280px; object-fit: contain; border-radius: 8px;" onerror="this.onerror=null;this.src='/images/food-hub/hero-food-basket.svg';" />
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <label style="font-size: 12.5px; font-weight: 700; color: #475569;">Auto-Slide:</label>
+                        <select id="hero_auto_interval" class="dk-admin-input" style="padding: 6px 10px; width: auto; font-size: 13px;">
+                            <option value="3" selected="@(hero.AutoSlideIntervalSeconds == 3)">Every 3 Seconds</option>
+                            <option value="5" selected="@(hero.AutoSlideIntervalSeconds == 5 || hero.AutoSlideIntervalSeconds == 0)">Every 5 Seconds</option>
+                            <option value="7" selected="@(hero.AutoSlideIntervalSeconds == 7)">Every 7 Seconds</option>
+                            <option value="10" selected="@(hero.AutoSlideIntervalSeconds == 10)">Every 10 Seconds</option>
+                        </select>
                     </div>
+
+                    <button type="button" onclick="addNewSlideCard()" class="dk-btn" style="background: #1f3d24; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        <span>+</span> Add New Slide
+                    </button>
                 </div>
             </div>
+
+            <!-- SLIDES LIST CONTAINER -->
+            <div id="foodSlidesContainer" style="display: flex; flex-direction: column; gap: 18px;">
+                @for (int s = 0; s < slides.Count; s++)
+                {
+                    var sl = slides[s];
+                    <div class="dk-slide-edit-card" data-index="@s" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px; position: relative;">
+                        <input type="hidden" class="slide-id" value="@sl.Id" />
+
+                        <!-- Slide Card Header -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: #dcfce7; color: #166534; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px;">SLIDE #@(s + 1)</span>
+                                <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #0f172a;" class="slide-title-preview">@sl.Title</h4>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <button type="button" onclick="moveSlideUp(this)" title="Move Up" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px; font-weight: 700;">▲</button>
+                                <button type="button" onclick="moveSlideDown(this)" title="Move Down" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px; font-weight: 700;">▼</button>
+                                <label style="display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; cursor: pointer; margin-left: 6px;">
+                                    <input type="checkbox" class="slide-is-active" @(sl.IsActive ? "checked" : "") style="accent-color: #1f3d24;" />
+                                    Active
+                                </label>
+                                <button type="button" onclick="removeSlideCard(this)" style="background: #fee2e2; color: #dc2626; border: none; padding: 4px 10px; font-size: 12px; font-weight: 700; border-radius: 4px; cursor: pointer; margin-left: 6px;">
+                                    ✕ Remove
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Slide Card Body -->
+                        <div style="display: grid; grid-template-columns: 160px 1.4fr 1fr; gap: 18px; align-items: start;">
+                            
+                            <!-- Col 1: Image & Uploading Soon -->
+                            <div>
+                                <label class="dk-admin-label" style="margin-bottom: 4px;">Slide Graphic</label>
+                                <div style="width: 160px; height: 120px; border-radius: 8px; background: #f8fafc; border: 1px solid #cbd5e1; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+                                    <img class="slide-img-preview" 
+                                         src="@(string.IsNullOrWhiteSpace(sl.ImageUrl) ? "/images/placeholder.svg" : sl.ImageUrl)" 
+                                         alt="Slide Graphic" 
+                                         style="width: 100%; height: 100%; object-fit: cover;" 
+                                         onerror="this.src='/images/placeholder.svg';" />
+                                    <div class="slide-soon-badge" style="position: absolute; bottom: 6px; right: 6px; background: #f59e0b; color: #fff; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 3px; @(sl.IsUploadingSoon ? "" : "display:none;")">
+                                        SOON
+                                    </div>
+                                </div>
+
+                                <label class="dk-btn" style="display: block; text-align: center; background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; padding: 5px 8px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; margin-bottom: 6px;">
+                                    📁 Upload Image
+                                    <input type="file" accept="image/*" style="display:none;" onchange="uploadSlideImageAsync(this)" />
+                                </label>
+                                <input type="text" class="dk-admin-input slide-img-url" value="@sl.ImageUrl" placeholder="/images/food-hub/..." style="font-size: 11px; padding: 4px 8px; margin-bottom: 6px;" />
+                                
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #475569; cursor: pointer;">
+                                    <input type="checkbox" class="slide-uploading-soon" @(sl.IsUploadingSoon ? "checked" : "") onchange="toggleSlideSoonBadge(this)" style="accent-color: #1f3d24;" />
+                                    Uploading Soon
+                                </label>
+                            </div>
+
+                            <!-- Col 2: Content (Title, Subtitle, Badge, CTA) -->
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div>
+                                    <label class="dk-admin-label">Slide Title</label>
+                                    <input type="text" class="dk-admin-input slide-title" value="@sl.Title" placeholder="Good Food. Good Mood." oninput="updateSlideTitlePreview(this)" />
+                                </div>
+                                <div>
+                                    <label class="dk-admin-label">Subtitle Description</label>
+                                    <textarea class="dk-admin-input slide-subtitle" rows="2" placeholder="Authentic Indian groceries, daily staples, spices...">@sl.Subtitle</textarea>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <div>
+                                        <label class="dk-admin-label">Eyebrow Badge</label>
+                                        <input type="text" class="dk-admin-input slide-badge" value="@sl.Badge" placeholder="TASTE OF HOME • 100% GENUINE" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-admin-label">Button Text</label>
+                                        <input type="text" class="dk-admin-input slide-btn-text" value="@sl.ButtonText" placeholder="Shop Groceries →" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="dk-admin-label">Button Target URL</label>
+                                    <input type="text" class="dk-admin-input slide-btn-url" value="@sl.ButtonUrl" placeholder="/category/food?subcatItem=Groceries" />
+                                </div>
+                            </div>
+
+                            <!-- Col 3: Background Styling & Presets -->
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div>
+                                    <label class="dk-admin-label">Background Gradient (CSS)</label>
+                                    <input type="text" class="dk-admin-input slide-bg-gradient" value="@sl.BgGradient" placeholder="linear-gradient(...)" />
+                                </div>
+                                <div>
+                                    <label class="dk-admin-label" style="margin-bottom: 4px;">Preset Themes:</label>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                                        <button type="button" onclick="setSlidePresetGradient(this, 'linear-gradient(135deg, #1e3d24 0%, #2b5732 50%, #166534 100%)')" style="background: #1e3d24; color: #fff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 10.5px; font-weight: 700; cursor: pointer;">Forest Green</button>
+                                        <button type="button" onclick="setSlidePresetGradient(this, 'linear-gradient(135deg, #7c2d12 0%, #9a3412 50%, #c2410c 100%)')" style="background: #7c2d12; color: #fff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 10.5px; font-weight: 700; cursor: pointer;">Terracotta</button>
+                                        <button type="button" onclick="setSlidePresetGradient(this, 'linear-gradient(135deg, #831843 0%, #9d174d 50%, #be185d 100%)')" style="background: #831843; color: #fff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 10.5px; font-weight: 700; cursor: pointer;">Royal Berry</button>
+                                        <button type="button" onclick="setSlidePresetGradient(this, 'linear-gradient(135deg, #14532d 0%, #15803d 50%, #16a34a 100%)')" style="background: #15803d; color: #fff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 10.5px; font-weight: 700; cursor: pointer;">Emerald</button>
+                                        <button type="button" onclick="setSlidePresetGradient(this, 'linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%)')" style="background: #d97706; color: #fff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 10.5px; font-weight: 700; cursor: pointer;">Sunny Amber</button>
+                                        <button type="button" onclick="setSlidePresetGradient(this, 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)')" style="background: #1e293b; color: #fff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 10.5px; font-weight: 700; cursor: pointer;">Midnight</button>
+                                    </div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <div>
+                                        <label class="dk-admin-label">Text Color</label>
+                                        <input type="text" class="dk-admin-input slide-text-color" value="@sl.TextColor" placeholder="#ffffff" />
+                                    </div>
+                                    <div>
+                                        <label class="dk-admin-label">Display Order</label>
+                                        <input type="number" class="dk-admin-input slide-order" value="@sl.DisplayOrder" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Bottom Add Slide Button -->
+            <div style="margin-top: 18px; text-align: center;">
+                <button type="button" onclick="addNewSlideCard()" class="dk-btn" style="background: #f8fafc; color: #1f3d24; border: 2px dashed #86efac; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 800; cursor: pointer; width: 100%;">
+                    + Add Another Hero Slide
+                </button>
+            </div>
+
+            <!-- 4 Trust Badges -->
+            <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin: 0 0 12px 0;">4 Trust Badges (Shown on Hero Slides)</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+                    @for (var b = 0; b < 4; b++)
+                    {
+                        var badgeVal = hero.TrustBadges != null && hero.TrustBadges.Count > b ? hero.TrustBadges[b] : "";
+                        <div>
+                            <label class="dk-admin-label">Badge @(b + 1)</label>
+                            <input type="text" id="hero_badge_@b" class="dk-admin-input" value="@badgeVal" />
+                        </div>
+                    }
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -547,6 +652,26 @@
             });
         }
 
+                var slides = [];
+        document.querySelectorAll('.dk-slide-edit-card').forEach(function(card, idx) {
+            slides.push({
+                Id: card.querySelector('.slide-id')?.value || ('slide-' + (idx + 1)),
+                Title: card.querySelector('.slide-title')?.value || '',
+                Subtitle: card.querySelector('.slide-subtitle')?.value || '',
+                Badge: card.querySelector('.slide-badge')?.value || '',
+                ButtonText: card.querySelector('.slide-btn-text')?.value || 'Shop Now →',
+                ButtonUrl: card.querySelector('.slide-btn-url')?.value || '/category/food',
+                ImageUrl: card.querySelector('.slide-img-url')?.value || '',
+                IsUploadingSoon: card.querySelector('.slide-uploading-soon')?.checked || false,
+                BgGradient: card.querySelector('.slide-bg-gradient')?.value || 'linear-gradient(135deg, #1e3d24 0%, #2b5732 50%, #166534 100%)',
+                TextColor: card.querySelector('.slide-text-color')?.value || '#ffffff',
+                DisplayOrder: idx + 1,
+                IsActive: card.querySelector('.slide-is-active')?.checked || false
+            });
+        });
+
+        var firstSlide = slides.length > 0 ? slides[0] : null;
+
         var payload = {
             ThemeSettings: {
                 StoreTitle: document.getElementById('theme_title')?.value || 'FreshBasket • Food & Grocery',
@@ -562,14 +687,17 @@
                 Item4Text: document.getElementById('notice_item_4')?.value || ''
             },
             HeroBanner: {
-                IsEnabled: true,
-                Heading: document.getElementById('hero_heading')?.value || '',
-                Subtitle: document.getElementById('hero_subtitle')?.value || '',
-                ButtonText: document.getElementById('hero_btn_text')?.value || 'Shop Now →',
-                ButtonUrl: document.getElementById('hero_btn_url')?.value || '#best-sellers-section',
-                ImageUrl: document.getElementById('hero_img_url')?.value || '',
-                IsUploadingSoon: document.getElementById('hero_uploading_soon')?.checked || false,
-                TrustBadges: trustBadges
+                IsEnabled: document.getElementById('hero_enabled')?.checked || true,
+                IsFullWidth: true,
+                AutoSlideIntervalSeconds: parseInt(document.getElementById('hero_auto_interval')?.value || '5'),
+                Heading: firstSlide ? firstSlide.Title : 'Good Food. Good Mood.',
+                Subtitle: firstSlide ? firstSlide.Subtitle : 'Your one-stop shop for groceries, snacks & more.',
+                ButtonText: firstSlide ? firstSlide.ButtonText : 'Shop Now →',
+                ButtonUrl: firstSlide ? firstSlide.ButtonUrl : '#best-sellers-section',
+                ImageUrl: firstSlide ? firstSlide.ImageUrl : '/images/food-hub/hero-food-basket.webp',
+                IsUploadingSoon: firstSlide ? firstSlide.IsUploadingSoon : false,
+                TrustBadges: trustBadges,
+                Slides: slides
             },
             ShopByCategories: {
                 Heading: document.getElementById('cats_heading')?.value || 'Shop By Categories',

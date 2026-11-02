@@ -87,11 +87,11 @@ public sealed class CountryKitsHubDto
     public static string NormalizeSlug(string input)
     {
         if (string.IsNullOrWhiteSpace(input)) return "usa";
-        var cleaned = input.Trim().ToLowerInvariant();
+        var cleaned = input.Trim().ToLowerInvariant().Replace(" ", "-");
         return cleaned switch
         {
-            "united states" or "united-states" or "us" => "usa",
-            "united kingdom" or "united-kingdom" or "great britain" => "uk",
+            "united-states" or "united-states-of-america" or "us" or "usa" => "usa",
+            "united-kingdom" or "great-britain" or "uk" => "uk",
             _ => cleaned
         };
     }

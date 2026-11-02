@@ -77,6 +77,10 @@ public sealed class FoodHubService : IFoodHubService
                         {
                             dto.HeroBanner.TrustBadges = def.HeroBanner.TrustBadges;
                         }
+                        if (dto.HeroBanner.Slides == null || dto.HeroBanner.Slides.Count == 0)
+                        {
+                            dto.HeroBanner.Slides = def.HeroBanner.Slides;
+                        }
 
                         dto.ShopByCategories ??= def.ShopByCategories;
                         if (dto.ShopByCategories.Cards == null || dto.ShopByCategories.Cards.Count == 0)

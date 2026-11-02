@@ -18,13 +18,73 @@
     "Subtitle": "Your one-stop shop for groceries, snacks & more.",
     "ButtonText": "Shop Now →",
     "ButtonUrl": "#best-sellers-section",
-    "ImageUrl": "/images/food-hub/hero-food-basket.webp",
+    "ImageUrl": "/images/food-hub/hero-slide-groceries.svg",
     "IsUploadingSoon": false,
     "TrustBadges": [
       "100% Quality Products",
       "Wide Variety",
       "Best Prices Everyday",
       "Delivered With Care"
+    ],
+    "IsFullWidth": true,
+    "AutoSlideIntervalSeconds": 5,
+    "Slides": [
+      {
+        "Id": "slide-1",
+        "Title": "Good Food. Good Mood.",
+        "Subtitle": "Authentic Indian groceries, daily staples, spices & comfort foods for international students.",
+        "Badge": "TASTE OF HOME • 100% GENUINE",
+        "ButtonText": "Shop Groceries →",
+        "ButtonUrl": "/category/food?subcatItem=Groceries",
+        "ImageUrl": "/images/food-hub/hero-slide-groceries.svg",
+        "IsUploadingSoon": false,
+        "BgGradient": "linear-gradient(135deg, #1e3d24 0%, #2b5732 50%, #166534 100%)",
+        "TextColor": "#ffffff",
+        "DisplayOrder": 1,
+        "IsActive": true
+      },
+      {
+        "Id": "slide-2",
+        "Title": "Quick Cook & 2-Minute Comfort Meals",
+        "Subtitle": "Maggi noodles, cup ramen, hakka noodles & ready-to-eat desi snacks for busy study nights.",
+        "Badge": "CAMPUS ESSENTIALS • UP TO 25% OFF",
+        "ButtonText": "Explore Instant Meals →",
+        "ButtonUrl": "/category/food?subcatItem=Instant Noodles",
+        "ImageUrl": "/images/food-hub/hero-slide-noodles.svg",
+        "IsUploadingSoon": false,
+        "BgGradient": "linear-gradient(135deg, #7c2d12 0%, #9a3412 50%, #c2410c 100%)",
+        "TextColor": "#ffffff",
+        "DisplayOrder": 2,
+        "IsActive": true
+      },
+      {
+        "Id": "slide-3",
+        "Title": "Aromatic Spices & Homestyle Masalas",
+        "Subtitle": "Everest, MDH & pure regional spices to bring authentic home-cooked flavors to your kitchen abroad.",
+        "Badge": "AUTHENTIC BLENDS • 100% PURE",
+        "ButtonText": "Shop Spices →",
+        "ButtonUrl": "/category/food?subcatItem=Spices & Seasonings",
+        "ImageUrl": "/images/food-hub/hero-slide-spices.svg",
+        "IsUploadingSoon": false,
+        "BgGradient": "linear-gradient(135deg, #831843 0%, #9d174d 50%, #be185d 100%)",
+        "TextColor": "#ffffff",
+        "DisplayOrder": 3,
+        "IsActive": true
+      },
+      {
+        "Id": "slide-4",
+        "Title": "High-Protein Nuts & Dried Fruits",
+        "Subtitle": "Crunchy California almonds, rich cashews, golden raisins & power mixes for quick energy.",
+        "Badge": "STUDY POWER • PREMIUM SELECTION",
+        "ButtonText": "Shop Dry Fruits →",
+        "ButtonUrl": "/category/food?subcatItem=Nuts & Dry Fruits",
+        "ImageUrl": "/images/food-hub/hero-slide-nuts.svg",
+        "IsUploadingSoon": false,
+        "BgGradient": "linear-gradient(135deg, #14532d 0%, #15803d 50%, #16a34a 100%)",
+        "TextColor": "#ffffff",
+        "DisplayOrder": 4,
+        "IsActive": true
+      }
     ]
   },
   "ShopByCategories": {
@@ -48,7 +108,7 @@
         "Id": "cat-instant-noodles",
         "Title": "Instant Noodles",
         "Slug": "instant-noodles",
-        "ImageUrl": "/images/food-hub/cat-noodles.webp",
+        "ImageUrl": "/images/food-hub/hero-slide-noodles.svg",
         "TargetUrl": "/category/food?subcatItem=Instant Noodles",
         "Icon": "noodles",
         "Items": [
@@ -62,7 +122,7 @@
         "Id": "cat-nuts-dry-fruits",
         "Title": "Nuts & Dry Fruits",
         "Slug": "nuts-dry-fruits",
-        "ImageUrl": "/images/food-hub/cat-nuts.webp",
+        "ImageUrl": "/images/food-hub/hero-slide-nuts.svg",
         "TargetUrl": "/category/food?subcatItem=Nuts & Dry Fruits",
         "Icon": "nuts",
         "Items": [
@@ -76,7 +136,7 @@
         "Id": "cat-spices-seasonings",
         "Title": "Spices & Seasonings",
         "Slug": "spices-seasonings",
-        "ImageUrl": "/images/food-hub/cat-spices.webp",
+        "ImageUrl": "/images/food-hub/hero-slide-spices.svg",
         "TargetUrl": "/category/food?subcatItem=Spices & Seasonings",
         "Icon": "spices",
         "Items": [
