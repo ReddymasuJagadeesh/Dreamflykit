@@ -1,0 +1,2272 @@
+@model Dreamflykit.Application.StoryBooksHub.Models.StoryBooksHubDto
+@{
+    var theme = Model.ThemeSettings ?? new Dreamflykit.Application.StoryBooksHub.Models.StoryBooksThemeSettingsDto();
+    var billboard = Model.HeroBillboard ?? new Dreamflykit.Application.StoryBooksHub.Models.StoryBooksHeroBillboardDto();
+    var sbBanner = Model.StoryBooksBanner ?? new Dreamflykit.Application.StoryBooksHub.Models.StoryBooksTabHeroBannerDto();
+    var npBanner = Model.NewPopularBanner ?? new Dreamflykit.Application.StoryBooksHub.Models.StoryBooksTabHeroBannerDto();
+    var langBanner = Model.LanguagesBanner ?? new Dreamflykit.Application.StoryBooksHub.Models.StoryBooksTabHeroBannerDto();
+    var sections = Model.Sections ?? new List<Dreamflykit.Application.StoryBooksHub.Models.StoryBooksSectionDto>();
+    var allBooks = Model.GetAllBooks();
+    var continueReading = Model.GetContinueReadingBooks();
+    var top10Books = Model.GetTop10Books();
+    var genres = Model.Genres ?? new List<Dreamflykit.Application.StoryBooksHub.Models.StoryBookGenreDto>();
+    var languages = Model.Languages ?? new List<Dreamflykit.Application.StoryBooksHub.Models.StoryBookLanguageDto>();
+    var preferences = Model.Preferences ?? new List<Dreamflykit.Application.StoryBooksHub.Models.StoryBookPreferenceDto>();
+}
+
+<div class="sbf-netflix-container" id="booksflix-hub" data-brand="@theme.BrandName">
+    <!-- Netflix-Style Sticky Sub-Navigation -->
+    <nav class="sbf-subnav" id="sbf-subnav" aria-label="BooksFlix Navigation">
+        <div class="sbf-subnav-left">
+            <div class="sbf-brand-badge" title="BooksFlix - Dreamflykit Story Hub" onclick="switchNavTab('sbf-home')">
+                <span class="sbf-brand-n">B</span>
+                <span class="sbf-brand-title">@theme.BrandName</span>
+            </div>
+
+            <ul class="sbf-nav-links" id="sbf-main-tabs" role="tablist">
+                <li class="sbf-nav-item">
+                    <button type="button" class="sbf-tab-btn active" data-tab="sbf-home" role="tab" aria-selected="true" onclick="switchNavTab('sbf-home')">Home</button>
+                </li>
+                <li class="sbf-nav-item">
+                    <button type="button" class="sbf-tab-btn" data-tab="sbf-storybooks" role="tab" aria-selected="false" onclick="switchNavTab('sbf-storybooks')">Story Books</button>
+                </li>
+                <li class="sbf-nav-item">
+                    <button type="button" class="sbf-tab-btn" data-tab="sbf-newpopular" role="tab" aria-selected="false" onclick="switchNavTab('sbf-newpopular')">New &amp; Popular</button>
+                </li>
+                <li class="sbf-nav-item">
+                    <button type="button" class="sbf-tab-btn" data-tab="sbf-languages" role="tab" aria-selected="false" onclick="switchNavTab('sbf-languages')">Browse by Language</button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sbf-subnav-right">
+            <!-- Hub Quick Search -->
+            <div class="sbf-search-box">
+                <button type="button" class="sbf-search-toggle" id="sbf-search-toggle" aria-label="Search Books">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+                <input type="search" id="sbf-search-input" class="sbf-search-input" placeholder="Titles, authors, journals..." aria-label="Search story books" />
+            </div>
+
+            <!-- Notifications Bell -->
+            <div class="sbf-notifications-dropdown" id="sbf-notifications">
+                <button type="button" class="sbf-icon-btn" aria-label="Hub Notifications" title="Hub Notifications">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="sbf-badge-dot">3</span>
+                </button>
+                <div class="sbf-flyout-menu sbf-notif-flyout">
+                    <div class="sbf-flyout-header">
+                        <strong>Campus Library Updates</strong>
+                    </div>
+                    <ul class="sbf-flyout-list">
+                        <li>
+                            <span class="sbf-notif-tag">NEW</span>
+                            <div>
+                                <p class="sbf-notif-text">Harvard Business Review Spring 2025 Journal added</p>
+                                <small>2 hours ago</small>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="sbf-notif-tag">TOP 10</span>
+                            <div>
+                                <p class="sbf-notif-text">Bon Appétit, Your Majesty reached #1 in Campus Fiction</p>
+                                <small>Yesterday</small>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="sbf-notif-tag">OFFER</span>
+                            <div>
+                                <p class="sbf-notif-text">Special 40% discount for international university students</p>
+                                <small>3 days ago</small>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Student Profile Avatar -->
+            <div class="sbf-profile-dropdown">
+                <div class="sbf-avatar-btn" title="Student Reader Profile">
+                    <span class="sbf-avatar-icon">📚</span>
+                    <span class="sbf-avatar-name">Student</span>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                        <path d="M7 10l5 5 5-5z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Admin Manage Direct Link -->
+            <a href="/Admin/StoryBooksHub" class="sbf-admin-pill" title="Edit Hub via Admin Dashboard">
+                ⚙ Edit Hub
+            </a>
+        </div>
+    </nav>
+
+    <!-- USER REQUESTED: Below Navbar, on Left Side: JOURNAL DROPDOWN -->
+    <div class="sbf-subbar" id="sbf-subbar">
+        <div class="sbf-subbar-left">
+            <span class="sbf-journal-tag-label">Journal:</span>
+            <div class="sbf-select-custom">
+                <select id="sbf-global-journal-select" class="sbf-journal-dropdown-bar" onchange="onGlobalJournalSelect(this.value)">
+                    <option value="all">📚 All Journals &amp; Books (@allBooks.Count)</option>
+                    @foreach (var genre in genres)
+                    {
+                        <option value="@genre.Slug">@genre.Emoji @genre.Name (@allBooks.Count(b => b.GenreSlug == genre.Slug))</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="sbf-subbar-right">
+            <span class="sbf-active-pill" id="sbf-active-pill">Viewing: Home Spotlight</span>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         TAB 1: HOME (Hero Billboard + Top 10 + Continue Reading + Curated Shelves)
+    ========================================================= -->
+    <section class="sbf-tab-pane active" id="sbf-home" role="tabpanel">
+        <!-- Full-Width Hero Billboard Banner -->
+        @if (billboard.IsEnabled)
+        {
+            <div class="sbf-hero-banner sbf-billboard" style="background-image: linear-gradient(77deg, rgba(20,20,20,.95) 0%, rgba(20,20,20,.7) 45%, rgba(20,20,20,.15) 100%), url('@billboard.ImageUrl');">
+                <div class="sbf-billboard-content">
+                    @if (!string.IsNullOrWhiteSpace(billboard.TagBadge))
+                    {
+                        <div class="sbf-billboard-badge">
+                            <span class="sbf-top10-tag">TOP 10</span>
+                            <span class="sbf-badge-subtitle">@billboard.TagBadge</span>
+                        </div>
+                    }
+
+                    <h1 class="sbf-billboard-title">@billboard.Title</h1>
+
+                    <div class="sbf-billboard-meta">
+                        <span class="sbf-meta-author">By @billboard.Author</span>
+                        <span class="sbf-meta-divider">•</span>
+                        <span class="sbf-meta-rating">★ @billboard.Rating.ToString("0.0")</span>
+                        <span class="sbf-meta-reviews">(@billboard.ReviewCount.ToString("N0") reviews)</span>
+                        <span class="sbf-meta-divider">•</span>
+                        <span class="sbf-meta-pill">@billboard.ReadTime</span>
+                        <span class="sbf-meta-pill">@billboard.Language</span>
+                    </div>
+
+                    <p class="sbf-billboard-genres">@billboard.GenreTags</p>
+                    <p class="sbf-billboard-synopsis">@billboard.Synopsis</p>
+
+                    <div class="sbf-billboard-price-row">
+                        <span class="sbf-billboard-price">₹@billboard.Price.ToString("N0")</span>
+                        @if (billboard.OriginalPrice > billboard.Price)
+                        {
+                            <span class="sbf-billboard-mrp">₹@billboard.OriginalPrice.ToString("N0")</span>
+                            <span class="sbf-billboard-discount">(@billboard.DiscountPercent% OFF)</span>
+                        }
+                    </div>
+
+                    <div class="sbf-billboard-actions">
+                        <button type="button" class="sbf-btn sbf-btn-primary" onclick="openBookModal('@billboard.Title', '@billboard.Author', '@billboard.Synopsis', '@billboard.ImageUrl', '@billboard.Price', '@billboard.OriginalPrice', '@billboard.Rating', '@billboard.GenreTags', '@billboard.Language', '@billboard.ReadTime')">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                            <span>@billboard.PrimaryButtonText</span>
+                        </button>
+
+                        <button type="button" class="sbf-btn sbf-btn-secondary" onclick="openBookModal('@billboard.Title', '@billboard.Author', '@billboard.Synopsis', '@billboard.ImageUrl', '@billboard.Price', '@billboard.OriginalPrice', '@billboard.Rating', '@billboard.GenreTags', '@billboard.Language', '@billboard.ReadTime')">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            <span>@billboard.SecondaryButtonText</span>
+                        </button>
+
+                        <button type="button" class="sbf-btn sbf-btn-cart" onclick="addHubBookToCart('@billboard.Title', @billboard.Price)">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            <span>Add to Cart</span>
+                        </button>
+                    </div>
+                </div>
+
+                @if (billboard.IsUploadingSoon)
+                {
+                    <div class="sbf-billboard-uploading-tag">
+                        <span class="sbf-badge-pulse">●</span> Image Uploading Soon (Admin Replaceable)
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- Continue Reading for Student Row (if available) -->
+        @if (continueReading.Any())
+        {
+            <div class="sbf-shelf-section">
+                <div class="sbf-shelf-header">
+                    <h2 class="sbf-shelf-title">Continue Reading for Student</h2>
+                    <span class="sbf-shelf-subtitle">Pick up right where you left off</span>
+                </div>
+
+                <div class="sbf-carousel-wrapper">
+                    <button type="button" class="sbf-arrow sbf-arrow-prev" onclick="scrollShelf(this, -1)" aria-label="Scroll Left">‹</button>
+                    <div class="sbf-carousel-track">
+                        @foreach (var book in continueReading)
+                        {
+                            <div class="sbf-book-card sbf-reading-card" data-book-id="@book.Id" data-title="@book.Title" data-author="@book.Author" data-genre="@book.GenreSlug" data-lang="@book.Language" data-pref="@book.EditionPreference">
+                                <div class="sbf-card-poster">
+                                    <img src="@book.CoverImageUrl" alt="@book.Title" loading="lazy" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                                    @if (book.IsUploadingSoon)
+                                    {
+                                        <div class="sbf-uploading-tag">Uploading Soon</div>
+                                    }
+                                    <div class="sbf-card-overlay">
+                                        <button type="button" class="sbf-mini-btn sbf-mini-play" title="Resume Reading" onclick="openBookModal('@book.Title', '@book.Author', '@book.Synopsis', '@book.CoverImageUrl', '@book.Price', '@book.OriginalPrice', '@book.Rating', '@book.GenreName', '@book.Language', '@book.Pages pages')">▶</button>
+                                        <button type="button" class="sbf-mini-btn" title="Add to Wishlist" onclick="toggleWishlist(this, '@book.Title')">♡</button>
+                                        <button type="button" class="sbf-mini-btn" title="Add to Cart" onclick="addHubBookToCart('@book.Title', @book.Price)">🛒</button>
+                                    </div>
+                                    <div class="sbf-reading-bar-wrap">
+                                        <div class="sbf-reading-bar-fill" style="width: @(book.ProgressPercent)%;"></div>
+                                    </div>
+                                </div>
+                                <div class="sbf-card-info">
+                                    <h3 class="sbf-card-title">@book.Title</h3>
+                                    <p class="sbf-card-author">@book.Author</p>
+                                    <div class="sbf-card-progress-text">@book.ReadingProgress (@book.ProgressPercent%)</div>
+                                    <div class="sbf-card-price-row">
+                                        <span class="sbf-card-price">₹@book.Price.ToString("N0")</span>
+                                        @if (book.OriginalPrice > book.Price)
+                                        {
+                                            <span class="sbf-card-mrp">₹@book.OriginalPrice.ToString("N0")</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <button type="button" class="sbf-arrow sbf-arrow-next" onclick="scrollShelf(this, 1)" aria-label="Scroll Right">›</button>
+                </div>
+            </div>
+        }
+
+        <!-- Top 10 Books Today Row (Netflix Giant Numbers Style) -->
+        @if (top10Books.Any())
+        {
+            <div class="sbf-shelf-section sbf-top10-shelf">
+                <div class="sbf-shelf-header">
+                    <h2 class="sbf-shelf-title">
+                        <span class="sbf-red-mark">Top 10 Books</span> Today in University Circles
+                    </h2>
+                    <span class="sbf-shelf-subtitle">Most read &amp; discussed by students this week</span>
+                </div>
+
+                <div class="sbf-carousel-wrapper">
+                    <button type="button" class="sbf-arrow sbf-arrow-prev" onclick="scrollShelf(this, -1)" aria-label="Scroll Left">‹</button>
+                    <div class="sbf-carousel-track sbf-top10-track">
+                        @foreach (var book in top10Books)
+                        {
+                            <div class="sbf-top10-item" data-title="@book.Title" data-author="@book.Author" data-genre="@book.GenreSlug" data-lang="@book.Language" data-pref="@book.EditionPreference">
+                                <div class="sbf-top10-number">@book.Top10Rank</div>
+                                <div class="sbf-book-card sbf-top10-card">
+                                    <div class="sbf-card-poster">
+                                        <img src="@book.CoverImageUrl" alt="@book.Title" loading="lazy" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                                        @if (book.IsUploadingSoon)
+                                        {
+                                            <div class="sbf-uploading-tag">Uploading Soon</div>
+                                        }
+                                        <div class="sbf-card-overlay">
+                                            <button type="button" class="sbf-mini-btn sbf-mini-play" title="Start Reading" onclick="openBookModal('@book.Title', '@book.Author', '@book.Synopsis', '@book.CoverImageUrl', '@book.Price', '@book.OriginalPrice', '@book.Rating', '@book.GenreName', '@book.Language', '@book.Pages pages')">▶</button>
+                                            <button type="button" class="sbf-mini-btn" title="Add to Wishlist" onclick="toggleWishlist(this, '@book.Title')">♡</button>
+                                            <button type="button" class="sbf-mini-btn" title="Add to Cart" onclick="addHubBookToCart('@book.Title', @book.Price)">🛒</button>
+                                        </div>
+                                    </div>
+                                    <div class="sbf-card-info">
+                                        <h3 class="sbf-card-title">@book.Title</h3>
+                                        <p class="sbf-card-author">@book.Author</p>
+                                        <div class="sbf-card-meta-line">
+                                            <span class="sbf-star">★ @book.Rating.ToString("0.0")</span>
+                                            <span class="sbf-tag-sm">@book.GenreName</span>
+                                        </div>
+                                        <div class="sbf-card-price-row">
+                                            <span class="sbf-card-price">₹@book.Price.ToString("N0")</span>
+                                            @if (book.OriginalPrice > book.Price)
+                                            {
+                                                <span class="sbf-card-mrp">₹@book.OriginalPrice.ToString("N0")</span>
+                                                <span class="sbf-card-disc">@book.DiscountPercent% off</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <button type="button" class="sbf-arrow sbf-arrow-next" onclick="scrollShelf(this, 1)" aria-label="Scroll Right">›</button>
+                </div>
+            </div>
+        }
+
+        <!-- Standard Curated Shelves (Trending, Academic Journals, Fiction, etc.) -->
+        @foreach (var sec in sections.Where(s => s.IsActive && s.DisplayType != "top10" && s.DisplayType != "continue-reading").OrderBy(s => s.DisplayOrder))
+        {
+            <div class="sbf-shelf-section">
+                <div class="sbf-shelf-header">
+                    <h2 class="sbf-shelf-title">@sec.Title</h2>
+                    @if (!string.IsNullOrWhiteSpace(sec.Subtitle))
+                    {
+                        <span class="sbf-shelf-subtitle">@sec.Subtitle</span>
+                    }
+                </div>
+
+                <div class="sbf-carousel-wrapper">
+                    <button type="button" class="sbf-arrow sbf-arrow-prev" onclick="scrollShelf(this, -1)" aria-label="Scroll Left">‹</button>
+                    <div class="sbf-carousel-track">
+                        @foreach (var book in sec.Books)
+                        {
+                            <div class="sbf-book-card" data-book-id="@book.Id" data-title="@book.Title" data-author="@book.Author" data-genre="@book.GenreSlug" data-lang="@book.Language" data-pref="@book.EditionPreference">
+                                <div class="sbf-card-poster">
+                                    <img src="@book.CoverImageUrl" alt="@book.Title" loading="lazy" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                                    @if (book.IsUploadingSoon)
+                                    {
+                                        <div class="sbf-uploading-tag">Uploading Soon</div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(book.BadgeText))
+                                    {
+                                        <div class="sbf-tag-badge">@book.BadgeText</div>
+                                    }
+                                    <div class="sbf-card-overlay">
+                                        <button type="button" class="sbf-mini-btn sbf-mini-play" title="Read / Preview" onclick="openBookModal('@book.Title', '@book.Author', '@book.Synopsis', '@book.CoverImageUrl', '@book.Price', '@book.OriginalPrice', '@book.Rating', '@book.GenreName', '@book.Language', '@book.Pages pages')">▶</button>
+                                        <button type="button" class="sbf-mini-btn" title="Add to Wishlist" onclick="toggleWishlist(this, '@book.Title')">♡</button>
+                                        <button type="button" class="sbf-mini-btn" title="Add to Cart" onclick="addHubBookToCart('@book.Title', @book.Price)">🛒</button>
+                                    </div>
+                                </div>
+                                <div class="sbf-card-info">
+                                    <h3 class="sbf-card-title">@book.Title</h3>
+                                    <p class="sbf-card-author">@book.Author</p>
+                                    <div class="sbf-card-meta-line">
+                                        <span class="sbf-star">★ @book.Rating.ToString("0.0")</span>
+                                        <span class="sbf-tag-sm">@book.GenreName</span>
+                                        <span class="sbf-tag-lang">@book.Language</span>
+                                    </div>
+                                    <div class="sbf-card-price-row">
+                                        <span class="sbf-card-price">₹@book.Price.ToString("N0")</span>
+                                        @if (book.OriginalPrice > book.Price)
+                                        {
+                                            <span class="sbf-card-mrp">₹@book.OriginalPrice.ToString("N0")</span>
+                                            <span class="sbf-card-disc">@book.DiscountPercent% off</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <button type="button" class="sbf-arrow sbf-arrow-next" onclick="scrollShelf(this, 1)" aria-label="Scroll Right">›</button>
+                </div>
+            </div>
+        }
+    </section>
+
+    <!-- ========================================================
+         TAB 2: STORY BOOKS (Full-Width Hero Banner + Journal Filtered Books)
+    ========================================================= -->
+    <section class="sbf-tab-pane" id="sbf-storybooks" role="tabpanel">
+        <!-- USER REQUESTED: Full-Width Hero Banner for Story Books -->
+        @if (sbBanner.IsEnabled)
+        {
+            <div class="sbf-hero-banner" style="background-image: linear-gradient(77deg, rgba(20,20,20,.95) 0%, rgba(20,20,20,.7) 45%, rgba(20,20,20,.15) 100%), url('@sbBanner.ImageUrl');">
+                <div class="sbf-billboard-content">
+                    <div class="sbf-billboard-badge">
+                        <span class="sbf-top10-tag" id="sbf-sb-badge-tag">JOURNALS &amp; NOVELS</span>
+                        <span class="sbf-badge-subtitle" id="sbf-sb-badge-sub">@sbBanner.TagBadge</span>
+                    </div>
+
+                    <h1 class="sbf-billboard-title" id="sbf-sb-title">@sbBanner.Title</h1>
+                    <p class="sbf-billboard-genres" id="sbf-sb-meta">@sbBanner.MetaTags</p>
+                    <p class="sbf-billboard-synopsis" id="sbf-sb-synopsis">@sbBanner.Subtitle</p>
+
+                    <div class="sbf-billboard-actions">
+                        <button type="button" class="sbf-btn sbf-btn-primary" onclick="scrollShelfIntoView('sbf-genre-grid')">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                            <span>@sbBanner.PrimaryButtonText</span>
+                        </button>
+                        <button type="button" class="sbf-btn sbf-btn-secondary" onclick="alert('Viewing comprehensive index of scholarly journals & university novels.')">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            <span>@sbBanner.SecondaryButtonText</span>
+                        </button>
+                    </div>
+                </div>
+
+                @if (sbBanner.IsUploadingSoon)
+                {
+                    <div class="sbf-billboard-uploading-tag">
+                        <span class="sbf-badge-pulse">●</span> Image Uploading Soon (Admin Replaceable)
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="sbf-pane-header">
+            <div class="sbf-pane-title-group">
+                <h2 class="sbf-pane-title" id="sbf-pane-genre-heading">Story Books &amp; Academic Journals</h2>
+                <p class="sbf-pane-subtitle" id="sbf-pane-genre-sub">Showing books filtered by the journal dropdown above</p>
+            </div>
+            <div class="sbf-genre-status-badge" id="sbf-genre-status-badge">
+                Showing all @allBooks.Count books
+            </div>
+        </div>
+
+        <!-- Dynamic Filtered Book Grid -->
+        <div class="sbf-books-grid" id="sbf-genre-grid">
+            @foreach (var book in allBooks)
+            {
+                <div class="sbf-grid-item" data-genre="@book.GenreSlug" data-lang="@book.Language" data-pref="@book.EditionPreference" data-title="@book.Title" data-author="@book.Author">
+                    <div class="sbf-book-card">
+                        <div class="sbf-card-poster">
+                            <img src="@book.CoverImageUrl" alt="@book.Title" loading="lazy" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                            @if (book.IsUploadingSoon)
+                            {
+                                <div class="sbf-uploading-tag">Uploading Soon</div>
+                            }
+                            @if (book.IsTop10)
+                            {
+                                <div class="sbf-tag-badge sbf-badge-red">TOP 10 #@book.Top10Rank</div>
+                            }
+                            <div class="sbf-card-overlay">
+                                <button type="button" class="sbf-mini-btn sbf-mini-play" title="Read / Preview" onclick="openBookModal('@book.Title', '@book.Author', '@book.Synopsis', '@book.CoverImageUrl', '@book.Price', '@book.OriginalPrice', '@book.Rating', '@book.GenreName', '@book.Language', '@book.Pages pages')">▶</button>
+                                <button type="button" class="sbf-mini-btn" title="Add to Wishlist" onclick="toggleWishlist(this, '@book.Title')">♡</button>
+                                <button type="button" class="sbf-mini-btn" title="Add to Cart" onclick="addHubBookToCart('@book.Title', @book.Price)">🛒</button>
+                            </div>
+                        </div>
+                        <div class="sbf-card-info">
+                            <h3 class="sbf-card-title">@book.Title</h3>
+                            <p class="sbf-card-author">@book.Author</p>
+                            <div class="sbf-card-meta-line">
+                                <span class="sbf-star">★ @book.Rating.ToString("0.0")</span>
+                                <span class="sbf-tag-sm">@book.GenreName</span>
+                            </div>
+                            <div class="sbf-card-price-row">
+                                <span class="sbf-card-price">₹@book.Price.ToString("N0")</span>
+                                @if (book.OriginalPrice > book.Price)
+                                {
+                                    <span class="sbf-card-mrp">₹@book.OriginalPrice.ToString("N0")</span>
+                                    <span class="sbf-card-disc">@book.DiscountPercent% off</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div id="sbf-genre-empty" class="sbf-empty-state" style="display: none;">
+            <div class="sbf-empty-icon">📖</div>
+            <h3>No books found for this journal category</h3>
+            <p>Admin will add new literary works and journals to this collection soon.</p>
+            <button type="button" class="sbf-btn sbf-btn-secondary" onclick="resetJournalFilter()">View All Books</button>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         TAB 3: NEW & POPULAR (Full-Width Hero Banner + Books Grid)
+    ========================================================= -->
+    <section class="sbf-tab-pane" id="sbf-newpopular" role="tabpanel">
+        <!-- USER REQUESTED: Full-Width Hero Banner for New & Popular -->
+        @if (npBanner.IsEnabled)
+        {
+            <div class="sbf-hero-banner" style="background-image: linear-gradient(77deg, rgba(20,20,20,.95) 0%, rgba(20,20,20,.7) 45%, rgba(20,20,20,.15) 100%), url('@npBanner.ImageUrl');">
+                <div class="sbf-billboard-content">
+                    <div class="sbf-billboard-badge">
+                        <span class="sbf-top10-tag">FRESH THIS WEEK</span>
+                        <span class="sbf-badge-subtitle">@npBanner.TagBadge</span>
+                    </div>
+
+                    <h1 class="sbf-billboard-title">@npBanner.Title</h1>
+                    <p class="sbf-billboard-genres">@npBanner.MetaTags</p>
+                    <p class="sbf-billboard-synopsis">@npBanner.Subtitle</p>
+
+                    <div class="sbf-billboard-actions">
+                        <button type="button" class="sbf-btn sbf-btn-primary" onclick="scrollShelfIntoView('sbf-newpopular-grid')">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                            <span>@npBanner.PrimaryButtonText</span>
+                        </button>
+                        <button type="button" class="sbf-btn sbf-btn-secondary" onclick="alert('Viewing international university student choice rankings.')">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            <span>@npBanner.SecondaryButtonText</span>
+                        </button>
+                    </div>
+                </div>
+
+                @if (npBanner.IsUploadingSoon)
+                {
+                    <div class="sbf-billboard-uploading-tag">
+                        <span class="sbf-badge-pulse">●</span> Image Uploading Soon (Admin Replaceable)
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="sbf-pane-header">
+            <div class="sbf-pane-title-group">
+                <h2 class="sbf-pane-title">New Releases &amp; Campus Favorites</h2>
+                <p class="sbf-pane-subtitle">Trending university releases, international student award nominees, and newly cataloged journals</p>
+            </div>
+        </div>
+
+        <!-- Top Ranked Releases Grid -->
+        <div class="sbf-books-grid" id="sbf-newpopular-grid">
+            @foreach (var book in allBooks.OrderByDescending(b => b.Rating).ThenByDescending(b => b.ReviewCount))
+            {
+                <div class="sbf-grid-item" data-title="@book.Title" data-author="@book.Author">
+                    <div class="sbf-book-card">
+                        <div class="sbf-card-poster">
+                            <img src="@book.CoverImageUrl" alt="@book.Title" loading="lazy" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                            @if (book.IsUploadingSoon)
+                            {
+                                <div class="sbf-uploading-tag">Uploading Soon</div>
+                            }
+                            <div class="sbf-tag-badge sbf-badge-new">NEW THIS WEEK</div>
+                            <div class="sbf-card-overlay">
+                                <button type="button" class="sbf-mini-btn sbf-mini-play" title="Read / Preview" onclick="openBookModal('@book.Title', '@book.Author', '@book.Synopsis', '@book.CoverImageUrl', '@book.Price', '@book.OriginalPrice', '@book.Rating', '@book.GenreName', '@book.Language', '@book.Pages pages')">▶</button>
+                                <button type="button" class="sbf-mini-btn" title="Add to Wishlist" onclick="toggleWishlist(this, '@book.Title')">♡</button>
+                                <button type="button" class="sbf-mini-btn" title="Add to Cart" onclick="addHubBookToCart('@book.Title', @book.Price)">🛒</button>
+                            </div>
+                        </div>
+                        <div class="sbf-card-info">
+                            <h3 class="sbf-card-title">@book.Title</h3>
+                            <p class="sbf-card-author">@book.Author</p>
+                            <div class="sbf-card-meta-line">
+                                <span class="sbf-star">★ @book.Rating.ToString("0.0")</span>
+                                <span class="sbf-tag-sm">@book.GenreName</span>
+                                <span class="sbf-tag-lang">@book.Language</span>
+                            </div>
+                            <div class="sbf-card-price-row">
+                                <span class="sbf-card-price">₹@book.Price.ToString("N0")</span>
+                                @if (book.OriginalPrice > book.Price)
+                                {
+                                    <span class="sbf-card-mrp">₹@book.OriginalPrice.ToString("N0")</span>
+                                    <span class="sbf-card-disc">@book.DiscountPercent% off</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ========================================================
+         TAB 4: BROWSE BY LANGUAGE (Full-Width Hero Banner + Preferences Controls + Grid)
+    ========================================================= -->
+    <section class="sbf-tab-pane" id="sbf-languages" role="tabpanel">
+        <!-- USER REQUESTED: Full-Width Hero Banner for Browse by Language -->
+        @if (langBanner.IsEnabled)
+        {
+            <div class="sbf-hero-banner" style="background-image: linear-gradient(77deg, rgba(20,20,20,.95) 0%, rgba(20,20,20,.7) 45%, rgba(20,20,20,.15) 100%), url('@langBanner.ImageUrl');">
+                <div class="sbf-billboard-content">
+                    <div class="sbf-billboard-badge">
+                        <span class="sbf-top10-tag">WORLD LITERATURE</span>
+                        <span class="sbf-badge-subtitle">@langBanner.TagBadge</span>
+                    </div>
+
+                    <h1 class="sbf-billboard-title">@langBanner.Title</h1>
+                    <p class="sbf-billboard-genres">@langBanner.MetaTags</p>
+                    <p class="sbf-billboard-synopsis">@langBanner.Subtitle</p>
+
+                    <div class="sbf-billboard-actions">
+                        <button type="button" class="sbf-btn sbf-btn-primary" onclick="scrollShelfIntoView('sbf-language-grid')">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                            <span>@langBanner.PrimaryButtonText</span>
+                        </button>
+                        <button type="button" class="sbf-btn sbf-btn-secondary" onclick="alert('Accessing multi-lingual campus translation dictionary and reading guides.')">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            <span>@langBanner.SecondaryButtonText</span>
+                        </button>
+                    </div>
+                </div>
+
+                @if (langBanner.IsUploadingSoon)
+                {
+                    <div class="sbf-billboard-uploading-tag">
+                        <span class="sbf-badge-pulse">●</span> Image Uploading Soon (Admin Replaceable)
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- Exact Match to Screenshot 3 Header -->
+        <div class="sbf-language-header-row">
+            <!-- Left Side Title -->
+            <div class="sbf-browse-title-group">
+                <h2 class="sbf-browse-title">Browse by Languages</h2>
+            </div>
+
+            <!-- Right Side Controls matching User Screenshot 3 -->
+            <div class="sbf-language-controls-group">
+                <span class="sbf-pref-label">Select Your Preferences</span>
+
+                <!-- Preference Dropdown (Original Language / Translation / Bilingual) -->
+                <div class="sbf-select-custom">
+                    <select id="sbf-pref-select" class="sbf-lang-dropdown" onchange="filterLanguageGrid()">
+                        <option value="all">Original Language</option>
+                        @foreach (var pref in preferences)
+                        {
+                            <option value="@pref.Key">@pref.Label</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Language Dropdown (English, Telugu, Hindi, Tamil, etc.) -->
+                <div class="sbf-select-custom">
+                    <select id="sbf-lang-select" class="sbf-lang-dropdown" onchange="filterLanguageGrid()">
+                        <option value="all">All Languages</option>
+                        @foreach (var lang in languages)
+                        {
+                            <option value="@lang.Name">@lang.Name (@lang.NativeLabel)</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtered Grid for Language Tab -->
+        <div class="sbf-books-grid" id="sbf-language-grid">
+            @foreach (var book in allBooks)
+            {
+                <div class="sbf-grid-item sbf-lang-card-item" data-lang="@book.Language" data-pref="@book.EditionPreference" data-title="@book.Title" data-author="@book.Author">
+                    <div class="sbf-book-card">
+                        <div class="sbf-card-poster">
+                            <img src="@book.CoverImageUrl" alt="@book.Title" loading="lazy" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                            @if (book.IsUploadingSoon)
+                            {
+                                <div class="sbf-uploading-tag">Uploading Soon</div>
+                            }
+                            <div class="sbf-tag-badge sbf-badge-lang">@book.Language</div>
+                            <div class="sbf-card-overlay">
+                                <button type="button" class="sbf-mini-btn sbf-mini-play" title="Read / Preview" onclick="openBookModal('@book.Title', '@book.Author', '@book.Synopsis', '@book.CoverImageUrl', '@book.Price', '@book.OriginalPrice', '@book.Rating', '@book.GenreName', '@book.Language', '@book.Pages pages')">▶</button>
+                                <button type="button" class="sbf-mini-btn" title="Add to Wishlist" onclick="toggleWishlist(this, '@book.Title')">♡</button>
+                                <button type="button" class="sbf-mini-btn" title="Add to Cart" onclick="addHubBookToCart('@book.Title', @book.Price)">🛒</button>
+                            </div>
+                        </div>
+                        <div class="sbf-card-info">
+                            <h3 class="sbf-card-title">@book.Title</h3>
+                            <p class="sbf-card-author">@book.Author</p>
+                            <div class="sbf-card-meta-line">
+                                <span class="sbf-star">★ @book.Rating.ToString("0.0")</span>
+                                <span class="sbf-tag-sm">@book.GenreName</span>
+                            </div>
+                            <div class="sbf-card-price-row">
+                                <span class="sbf-card-price">₹@book.Price.ToString("N0")</span>
+                                @if (book.OriginalPrice > book.Price)
+                                {
+                                    <span class="sbf-card-mrp">₹@book.OriginalPrice.ToString("N0")</span>
+                                    <span class="sbf-card-disc">@book.DiscountPercent% off</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div id="sbf-lang-empty" class="sbf-empty-state" style="display: none;">
+            <div class="sbf-empty-icon">🌐</div>
+            <h3>No books found for this language and edition</h3>
+            <p>Admin will be adding more regional &amp; global language translations soon.</p>
+            <button type="button" class="sbf-btn sbf-btn-secondary" onclick="resetLanguageFilters()">Reset Filters</button>
+        </div>
+    </section>
+
+    <!-- Netflix Book Details Modal -->
+    <div class="sbf-modal-backdrop" id="sbf-modal" onclick="closeBookModal(event)">
+        <div class="sbf-modal-content" onclick="event.stopPropagation()">
+            <button type="button" class="sbf-modal-close" onclick="closeBookModal(null)" aria-label="Close modal">✕</button>
+            <div class="sbf-modal-hero" id="modal-hero-bg">
+                <div class="sbf-modal-hero-overlay">
+                    <h2 class="sbf-modal-title" id="modal-title">Book Title</h2>
+                    <p class="sbf-modal-author" id="modal-author">By Author</p>
+                    <div class="sbf-modal-meta-row">
+                        <span class="sbf-star" id="modal-rating">★ 4.9</span>
+                        <span class="sbf-meta-pill" id="modal-pages">320 Pages</span>
+                        <span class="sbf-meta-pill" id="modal-lang">English</span>
+                        <span class="sbf-meta-pill" id="modal-genre">Campus Fiction</span>
+                    </div>
+                    <div class="sbf-modal-actions">
+                        <button type="button" class="sbf-btn sbf-btn-primary" onclick="alert('Opening reading preview mode in BooksFlix Reader...')">
+                            ▶ Read Sample
+                        </button>
+                        <button type="button" class="sbf-btn sbf-btn-cart" id="modal-cart-btn">
+                            🛒 Add to Cart (₹<span id="modal-price">499</span>)
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="sbf-modal-body">
+                <div class="sbf-modal-main">
+                    <h4 class="sbf-modal-subhead">Synopsis &amp; Abstract</h4>
+                    <p class="sbf-modal-synopsis" id="modal-synopsis">Synopsis content goes here...</p>
+                    <div class="sbf-modal-features">
+                        <div class="sbf-feature-pill">✓ 100% Verified University Text</div>
+                        <div class="sbf-feature-pill">✓ Digital &amp; Print Ready</div>
+                        <div class="sbf-feature-pill">✓ Student Pricing Approved</div>
+                        <div class="sbf-feature-pill">✓ Fast Campus Delivery</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Toast Notification -->
+    <div class="sbf-toast" id="sbf-toast" role="alert" aria-live="polite"></div>
+</div>
+
+<style>
+/* ========================================================
+   BOOKSFLIX NETFLIX THEME STYLES
+   Dark palette: #141414, #181818, Red: #E50914, White: #FFF
+   ======================================================== */
+.sbf-netflix-container {
+    background-color: #141414;
+    color: #FFFFFF;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    padding-bottom: 60px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.sbf-netflix-container *, .sbf-netflix-container *::before, .sbf-netflix-container *::after {
+    box-sizing: inherit;
+}
+
+/* Netflix Sticky Sub-Navbar */
+.sbf-subnav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 40px;
+    background: linear-gradient(180deg, rgba(20,20,20,0.98) 0%, rgba(20,20,20,0.9) 70%, rgba(20,20,20,0.7) 100%);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sbf-subnav-left {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.sbf-brand-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sbf-brand-n {
+    color: #E50914;
+    font-size: 26px;
+    font-weight: 900;
+    font-family: "Impact", "Arial Black", sans-serif;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 8px rgba(229, 9, 20, 0.4);
+}
+
+.sbf-brand-title {
+    color: #E50914;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.sbf-nav-links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 20px;
+}
+
+.sbf-tab-btn {
+    background: none;
+    border: none;
+    color: #E5E5E5;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 4px;
+    transition: color 0.2s ease, font-weight 0.2s ease;
+    outline: none;
+    position: relative;
+}
+
+.sbf-tab-btn:hover {
+    color: #FFFFFF;
+}
+
+.sbf-tab-btn.active {
+    color: #FFFFFF;
+    font-weight: 700;
+}
+
+.sbf-tab-btn.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #E50914;
+    border-radius: 2px;
+}
+
+/* Sub-Nav Right */
+.sbf-subnav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.sbf-search-box {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 4px;
+    padding: 4px 8px;
+    transition: border-color 0.2s;
+}
+
+.sbf-search-box:focus-within {
+    border-color: #E50914;
+}
+
+.sbf-search-toggle {
+    background: none;
+    border: none;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+}
+
+.sbf-search-input {
+    background: transparent;
+    border: none;
+    color: #FFFFFF;
+    font-size: 13px;
+    padding: 4px 8px;
+    width: 180px;
+    outline: none;
+    transition: width 0.3s;
+}
+
+.sbf-search-input:focus {
+    width: 240px;
+}
+
+.sbf-search-input::placeholder {
+    color: #888888;
+}
+
+.sbf-notifications-dropdown {
+    position: relative;
+}
+
+.sbf-icon-btn {
+    background: none;
+    border: none;
+    color: #FFFFFF;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.sbf-badge-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: #E50914;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sbf-flyout-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    width: 320px;
+    background: #181818;
+    border: 1px solid #333333;
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    padding: 12px;
+    z-index: 120;
+}
+
+.sbf-notifications-dropdown:hover .sbf-flyout-menu {
+    display: block;
+}
+
+.sbf-flyout-header {
+    font-size: 13px;
+    color: #CCCCCC;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #282828;
+    margin-bottom: 8px;
+}
+
+.sbf-flyout-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sbf-flyout-list li {
+    display: flex;
+    gap: 10px;
+    padding: 8px 4px;
+    border-bottom: 1px solid #222222;
+}
+
+.sbf-flyout-list li:last-child {
+    border-bottom: none;
+}
+
+.sbf-notif-tag {
+    background: #E50914;
+    color: #FFF;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 5px;
+    border-radius: 3px;
+    height: fit-content;
+}
+
+.sbf-notif-text {
+    font-size: 12px;
+    margin: 0 0 2px 0;
+    color: #EEE;
+}
+
+.sbf-avatar-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #EEE;
+}
+
+.sbf-avatar-icon {
+    font-size: 18px;
+}
+
+.sbf-admin-pill {
+    background: rgba(229, 9, 20, 0.15);
+    border: 1px solid #E50914;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.sbf-admin-pill:hover {
+    background: #E50914;
+    color: #FFFFFF;
+}
+
+/* ========================================================
+   USER REQUESTED: SUB-BAR WITH JOURNAL DROPDOWN (LEFT SIDE)
+   ======================================================== */
+.sbf-subbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 40px;
+    background: rgba(20, 20, 20, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 61px;
+    z-index: 90;
+    backdrop-filter: blur(8px);
+}
+
+.sbf-subbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sbf-journal-tag-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #E5E5E5;
+    letter-spacing: 0.5px;
+}
+
+.sbf-journal-dropdown-bar {
+    background-color: #000000;
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    font-size: 13.5px;
+    font-weight: 700;
+    padding: 7px 34px 7px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    transition: border-color 0.2s, background-color 0.2s;
+    min-width: 250px;
+}
+
+.sbf-journal-dropdown-bar:hover, .sbf-journal-dropdown-bar:focus {
+    border-color: #E50914;
+    background-color: #0c0c0c;
+}
+
+.sbf-subbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.sbf-active-pill {
+    background: rgba(229, 9, 20, 0.15);
+    border: 1px solid rgba(229, 9, 20, 0.4);
+    color: #E50914;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+}
+
+/* ========================================================
+   USER REQUESTED: FULL-WIDTH HERO BANNER (FOR EVERY TAB)
+   ======================================================== */
+.sbf-hero-banner {
+    position: relative;
+    width: 100%;
+    min-height: 440px;
+    background-size: cover;
+    background-position: center 30%;
+    display: flex;
+    align-items: center;
+    padding: 60px 50px 70px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sbf-billboard-content {
+    max-width: 700px;
+    z-index: 2;
+}
+
+.sbf-billboard-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.sbf-top10-tag {
+    background: #E50914;
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 3px 6px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+}
+
+.sbf-badge-subtitle {
+    color: #CCCCCC;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.sbf-billboard-title {
+    font-size: 40px;
+    font-weight: 900;
+    margin: 0 0 12px 0;
+    line-height: 1.15;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+    letter-spacing: -0.5px;
+}
+
+.sbf-billboard-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 13px;
+    color: #CCCCCC;
+    margin-bottom: 8px;
+}
+
+.sbf-meta-author {
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.sbf-meta-rating {
+    color: #46D369;
+    font-weight: 700;
+}
+
+.sbf-meta-pill {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 11px;
+}
+
+.sbf-billboard-genres {
+    color: #AAAAAA;
+    font-size: 13px;
+    margin: 0 0 12px 0;
+}
+
+.sbf-billboard-synopsis {
+    color: #DDDDDD;
+    font-size: 15px;
+    line-height: 1.55;
+    margin: 0 0 20px 0;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.sbf-billboard-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.sbf-billboard-price {
+    font-size: 24px;
+    font-weight: 800;
+    color: #FFFFFF;
+}
+
+.sbf-billboard-mrp {
+    font-size: 16px;
+    color: #888888;
+    text-decoration: line-through;
+}
+
+.sbf-billboard-discount {
+    font-size: 13px;
+    font-weight: 700;
+    color: #46D369;
+}
+
+.sbf-billboard-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.sbf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.15s, opacity 0.15s;
+    outline: none;
+}
+
+.sbf-btn:hover {
+    transform: scale(1.03);
+}
+
+.sbf-btn-primary {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+.sbf-btn-primary:hover {
+    background-color: rgba(255, 255, 255, 0.85);
+}
+
+.sbf-btn-secondary {
+    background-color: rgba(109, 109, 110, 0.7);
+    color: #FFFFFF;
+}
+
+.sbf-btn-secondary:hover {
+    background-color: rgba(109, 109, 110, 0.45);
+}
+
+.sbf-btn-cart {
+    background-color: #E50914;
+    color: #FFFFFF;
+}
+
+.sbf-btn-cart:hover {
+    background-color: #f40612;
+}
+
+.sbf-billboard-uploading-tag {
+    position: absolute;
+    bottom: 20px;
+    right: 40px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(229, 9, 20, 0.8);
+    color: #FFFFFF;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.sbf-badge-pulse {
+    color: #E50914;
+    animation: sbfPulse 1.5s infinite;
+}
+
+@@keyframes sbfPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Tab Panels (No page reload) */
+.sbf-tab-pane {
+    display: none;
+    animation: sbfFadeIn 0.3s ease forwards;
+}
+
+.sbf-tab-pane.active {
+    display: block;
+}
+
+@@keyframes sbfFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================================
+   SHELF SECTIONS & CAROUSELS
+   ======================================================== */
+.sbf-shelf-section {
+    padding: 12px 40px 28px;
+    position: relative;
+}
+
+.sbf-shelf-header {
+    margin-bottom: 14px;
+}
+
+.sbf-shelf-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #E5E5E5;
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sbf-red-mark {
+    color: #E50914;
+}
+
+.sbf-shelf-subtitle {
+    font-size: 13px;
+    color: #888888;
+}
+
+.sbf-carousel-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.sbf-carousel-track {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 16px 4px 20px 4px;
+    scrollbar-width: none;
+}
+
+.sbf-carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.sbf-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(20, 20, 20, 0.8);
+    border: none;
+    color: #FFFFFF;
+    font-size: 28px;
+    width: 38px;
+    height: 70px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 15;
+    transition: background 0.2s, opacity 0.2s;
+    opacity: 0.8;
+}
+
+.sbf-arrow:hover {
+    background: rgba(229, 9, 20, 0.8);
+    opacity: 1;
+}
+
+.sbf-arrow-prev {
+    left: -20px;
+}
+
+.sbf-arrow-next {
+    right: -20px;
+}
+
+/* ========================================================
+   BOOK CARDS (Netflix Poster + Scale Hover)
+   ======================================================== */
+.sbf-book-card {
+    flex: 0 0 190px;
+    background: #181818;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, z-index 0.25s;
+    cursor: pointer;
+    border: 1px solid #282828;
+}
+
+.sbf-book-card:hover {
+    transform: translateY(-6px) scale(1.04);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9), 0 0 10px rgba(229, 9, 20, 0.3);
+    z-index: 10;
+    border-color: #E50914;
+}
+
+.sbf-card-poster {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    background: #202020;
+    overflow: hidden;
+}
+
+.sbf-card-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.sbf-uploading-tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #FFFFFF;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.sbf-tag-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #E50914;
+    color: #FFFFFF;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+}
+
+.sbf-badge-new {
+    background: #46D369;
+}
+
+.sbf-badge-lang {
+    background: #0284C7;
+}
+
+/* Card Hover Action Bar */
+.sbf-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.85) 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.sbf-book-card:hover .sbf-card-overlay {
+    opacity: 1;
+}
+
+.sbf-mini-btn {
+    background: rgba(42, 42, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #FFFFFF;
+    font-size: 13px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+}
+
+.sbf-mini-btn:hover {
+    background: #FFFFFF;
+    color: #000000;
+    transform: scale(1.1);
+}
+
+.sbf-mini-play {
+    background: #FFFFFF;
+    color: #000000;
+}
+
+.sbf-mini-play:hover {
+    background: #E50914;
+    color: #FFFFFF;
+    border-color: #E50914;
+}
+
+/* Card Reading Progress Bar */
+.sbf-reading-bar-wrap {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.sbf-reading-bar-fill {
+    height: 100%;
+    background: #E50914;
+}
+
+.sbf-card-progress-text {
+    font-size: 11px;
+    color: #E50914;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+/* Card Information */
+.sbf-card-info {
+    padding: 10px 12px 12px;
+}
+
+.sbf-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin: 0 0 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sbf-card-author {
+    font-size: 12px;
+    color: #AAAAAA;
+    margin: 0 0 6px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sbf-card-meta-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+    font-size: 11px;
+}
+
+.sbf-star {
+    color: #46D369;
+    font-weight: 700;
+}
+
+.sbf-tag-sm {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #CCC;
+}
+
+.sbf-tag-lang {
+    color: #0284C7;
+    font-weight: 600;
+}
+
+.sbf-card-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.sbf-card-price {
+    font-size: 14px;
+    font-weight: 800;
+    color: #FFFFFF;
+}
+
+.sbf-card-mrp {
+    font-size: 11px;
+    color: #777777;
+    text-decoration: line-through;
+}
+
+.sbf-card-disc {
+    font-size: 10px;
+    font-weight: 700;
+    color: #46D369;
+}
+
+/* ========================================================
+   TOP 10 GIANT NUMBER SECTION (Authentic Netflix Style)
+   ======================================================== */
+.sbf-top10-track {
+    gap: 20px;
+}
+
+.sbf-top10-item {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    position: relative;
+}
+
+.sbf-top10-number {
+    font-size: 140px;
+    font-weight: 900;
+    font-family: "Impact", "Arial Black", sans-serif;
+    color: #141414;
+    -webkit-text-stroke: 4px #595959;
+    line-height: 1;
+    margin-right: -24px;
+    z-index: 1;
+    user-select: none;
+    transition: -webkit-text-stroke-color 0.25s, color 0.25s;
+}
+
+.sbf-top10-item:hover .sbf-top10-number {
+    -webkit-text-stroke-color: #E50914;
+}
+
+.sbf-top10-card {
+    flex: 0 0 170px;
+    z-index: 2;
+}
+
+/* ========================================================
+   PANE HEADERS & CONTROLS
+   ======================================================== */
+.sbf-pane-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 24px 40px 18px;
+    border-bottom: 1px solid #242424;
+}
+
+.sbf-pane-title-group {
+    max-width: 600px;
+}
+
+.sbf-pane-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin: 0 0 4px 0;
+}
+
+.sbf-pane-subtitle {
+    font-size: 13px;
+    color: #888888;
+    margin: 0;
+}
+
+.sbf-genre-status-badge {
+    background: #1f1f1f;
+    border: 1px solid #333;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #46D369;
+}
+
+.sbf-select-custom {
+    position: relative;
+}
+
+.sbf-lang-dropdown {
+    background-color: #000000;
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 32px 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    transition: border-color 0.2s;
+}
+
+.sbf-lang-dropdown:focus {
+    border-color: #E50914;
+}
+
+/* ========================================================
+   BROWSE BY LANGUAGE HEADER (Exact to Screenshot 3)
+   ======================================================== */
+.sbf-language-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 24px 40px 20px;
+    border-bottom: 1px solid #242424;
+}
+
+.sbf-browse-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.sbf-language-controls-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.sbf-pref-label {
+    font-size: 14px;
+    color: #CCCCCC;
+    font-weight: 500;
+}
+
+/* ========================================================
+   RESPONSIVE BOOK GRID
+   ======================================================== */
+.sbf-books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    padding: 24px 40px;
+}
+
+.sbf-grid-item .sbf-book-card {
+    flex: none;
+    width: 100%;
+}
+
+.sbf-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #888888;
+}
+
+.sbf-empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.sbf-empty-state h3 {
+    color: #FFFFFF;
+    font-size: 18px;
+    margin: 0 0 6px 0;
+}
+
+.sbf-empty-state p {
+    font-size: 13px;
+    margin: 0 0 16px 0;
+}
+
+/* ========================================================
+   MODAL POPUP (Netflix Details Modal)
+   ======================================================== */
+.sbf-modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.sbf-modal-backdrop.open {
+    display: flex;
+    animation: sbfFadeIn 0.2s ease;
+}
+
+.sbf-modal-content {
+    background: #181818;
+    color: #FFFFFF;
+    width: 100%;
+    max-width: 680px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+    border: 1px solid #333333;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.sbf-modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: #181818;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #FFFFFF;
+    font-size: 16px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+
+.sbf-modal-close:hover {
+    background: #E50914;
+    border-color: #E50914;
+}
+
+.sbf-modal-hero {
+    position: relative;
+    min-height: 240px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+}
+
+.sbf-modal-hero-overlay {
+    width: 100%;
+    padding: 24px;
+    background: linear-gradient(180deg, transparent 0%, rgba(24, 24, 24, 0.95) 70%, #181818 100%);
+}
+
+.sbf-modal-title {
+    font-size: 26px;
+    font-weight: 800;
+    margin: 0 0 4px 0;
+}
+
+.sbf-modal-author {
+    color: #AAAAAA;
+    font-size: 14px;
+    margin: 0 0 10px 0;
+}
+
+.sbf-modal-meta-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.sbf-modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.sbf-modal-body {
+    padding: 20px 24px 28px;
+}
+
+.sbf-modal-subhead {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #AAAAAA;
+    margin: 0 0 8px 0;
+    letter-spacing: 0.5px;
+}
+
+.sbf-modal-synopsis {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #CCCCCC;
+    margin: 0 0 18px 0;
+}
+
+.sbf-modal-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.sbf-feature-pill {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #46D369;
+}
+
+/* ========================================================
+   FLOATING TOAST NOTIFICATION
+   ======================================================== */
+.sbf-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #181818;
+    color: #FFFFFF;
+    border-left: 4px solid #E50914;
+    padding: 12px 20px;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+    z-index: 2000;
+    animation: sbfSlideUp 0.25s ease;
+}
+
+.sbf-toast.show {
+    display: block;
+}
+
+@@keyframes sbfSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments */
+@@media (max-width: 900px) {
+    .sbf-subnav {
+        padding: 12px 18px;
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    .sbf-subnav-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .sbf-subbar {
+        padding: 10px 18px;
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+        top: 100px;
+    }
+    .sbf-journal-dropdown-bar {
+        min-width: 200px;
+    }
+    .sbf-hero-banner {
+        padding: 40px 20px 50px;
+        min-height: 380px;
+    }
+    .sbf-billboard-title {
+        font-size: 28px;
+    }
+    .sbf-shelf-section {
+        padding: 12px 20px 20px;
+    }
+    .sbf-language-header-row {
+        padding: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .sbf-books-grid {
+        padding: 16px 20px;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+    .sbf-top10-number {
+        font-size: 100px;
+        margin-right: -16px;
+    }
+}
+</style>
+
+<script>
+(function() {
+    // ----------------------------------------------------
+    // Tab Navigation (No Page Reload)
+    // ----------------------------------------------------
+    window.switchNavTab = function(targetId) {
+        if (!targetId) return;
+
+        const tabButtons = document.querySelectorAll('.sbf-tab-btn');
+        const tabPanes = document.querySelectorAll('.sbf-tab-pane');
+        const activePill = document.getElementById('sbf-active-pill');
+
+        tabButtons.forEach(b => {
+            if (b.getAttribute('data-tab') === targetId) {
+                b.classList.add('active');
+                b.setAttribute('aria-selected', 'true');
+            } else {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            }
+        });
+
+        tabPanes.forEach(p => {
+            if (p.id === targetId) {
+                p.classList.add('active');
+            } else {
+                p.classList.remove('active');
+            }
+        });
+
+        // Update active indicator
+        if (activePill) {
+            if (targetId === 'sbf-home') activePill.innerText = 'Viewing: Home Spotlight';
+            else if (targetId === 'sbf-storybooks') activePill.innerText = 'Viewing: Story Books & Journals';
+            else if (targetId === 'sbf-newpopular') activePill.innerText = 'Viewing: New & Popular';
+            else if (targetId === 'sbf-languages') activePill.innerText = 'Viewing: Browse by Language';
+        }
+
+        // Scroll smoothly to top of hub
+        const hub = document.getElementById('booksflix-hub');
+        if (hub) {
+            hub.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
+    // ----------------------------------------------------
+    // Global Journal Selector (Under Navbar Left Side)
+    // ----------------------------------------------------
+    window.onGlobalJournalSelect = function(selectedGenre) {
+        // Automatically switch to Story Books tab to show the journal content
+        switchNavTab('sbf-storybooks');
+
+        const grid = document.getElementById('sbf-genre-grid');
+        const emptyState = document.getElementById('sbf-genre-empty');
+        const statusBadge = document.getElementById('sbf-genre-status-badge');
+        const heading = document.getElementById('sbf-pane-genre-heading');
+        const activePill = document.getElementById('sbf-active-pill');
+
+        // Update Story Books Hero Banner dynamically for selected journal
+        const sbTitle = document.getElementById('sbf-sb-title');
+        const sbSynopsis = document.getElementById('sbf-sb-synopsis');
+        const sbSub = document.getElementById('sbf-sb-badge-sub');
+
+        const selectEl = document.getElementById('sbf-global-journal-select');
+        const selectedText = selectEl.options[selectEl.selectedIndex]?.text || 'All Journals & Books';
+
+        if (selectedGenre !== 'all') {
+            if (sbTitle) sbTitle.innerText = selectedText.replace(/^[^\w\s]+/, '').trim() + ' Archive';
+            if (sbSynopsis) sbSynopsis.innerText = `Curated student edition literature, research volumes, and verified university publications for ${selectedText}.`;
+            if (sbSub) sbSub.innerText = 'FEATURED JOURNAL COLLECTION';
+            if (heading) heading.innerText = selectedText;
+            if (activePill) activePill.innerText = 'Journal: ' + selectedText.replace(/^[^\w\s]+/, '').trim();
+        } else {
+            if (sbTitle) sbTitle.innerText = '@sbBanner.Title';
+            if (sbSynopsis) sbSynopsis.innerText = '@sbBanner.Subtitle';
+            if (sbSub) sbSub.innerText = '@sbBanner.TagBadge';
+            if (heading) heading.innerText = 'Story Books & Academic Journals';
+            if (activePill) activePill.innerText = 'Viewing: Story Books & Journals';
+        }
+
+        if (!grid) return;
+        const items = grid.querySelectorAll('.sbf-grid-item');
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const genre = item.getAttribute('data-genre') || '';
+            if (selectedGenre === 'all' || genre.toLowerCase() === selectedGenre.toLowerCase()) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        if (statusBadge) {
+            statusBadge.innerText = `Showing ${visibleCount} books`;
+        }
+
+        if (emptyState) {
+            emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        showToast(`Showing collection for: ${selectedText.replace(/^[^\w\s]+/, '').trim()}`);
+    };
+
+    window.resetJournalFilter = function() {
+        const select = document.getElementById('sbf-global-journal-select');
+        if (select) {
+            select.value = 'all';
+            window.onGlobalJournalSelect('all');
+        }
+    };
+
+    // ----------------------------------------------------
+    // Shelf Horizontal Scroll
+    // ----------------------------------------------------
+    window.scrollShelf = function(btn, direction) {
+        const wrapper = btn.closest('.sbf-carousel-wrapper');
+        if (!wrapper) return;
+        const track = wrapper.querySelector('.sbf-carousel-track');
+        if (!track) return;
+        const scrollAmount = track.clientWidth * 0.75 * direction;
+        track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    };
+
+    window.scrollShelfIntoView = function(targetId) {
+        const target = document.getElementById(targetId);
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
+    // ----------------------------------------------------
+    // Language & Preference Filter (Browse by Language Tab)
+    // ----------------------------------------------------
+    window.filterLanguageGrid = function() {
+        const prefSelect = document.getElementById('sbf-pref-select');
+        const langSelect = document.getElementById('sbf-lang-select');
+        const grid = document.getElementById('sbf-language-grid');
+        const emptyState = document.getElementById('sbf-lang-empty');
+
+        if (!grid) return;
+
+        const selectedPref = prefSelect ? prefSelect.value.toLowerCase() : 'all';
+        const selectedLang = langSelect ? langSelect.value.toLowerCase() : 'all';
+
+        const items = grid.querySelectorAll('.sbf-lang-card-item');
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const itemLang = (item.getAttribute('data-lang') || '').toLowerCase();
+            const itemPref = (item.getAttribute('data-pref') || '').toLowerCase();
+
+            const matchLang = (selectedLang === 'all' || itemLang === selectedLang);
+            const matchPref = (selectedPref === 'all' || itemPref === selectedPref);
+
+            if (matchLang && matchPref) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        if (emptyState) {
+            emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+    };
+
+    window.resetLanguageFilters = function() {
+        const prefSelect = document.getElementById('sbf-pref-select');
+        const langSelect = document.getElementById('sbf-lang-select');
+        if (prefSelect) prefSelect.value = 'all';
+        if (langSelect) langSelect.value = 'all';
+        window.filterLanguageGrid();
+    };
+
+    // ----------------------------------------------------
+    // Live Search in Story Books Hub
+    // ----------------------------------------------------
+    const searchInput = document.getElementById('sbf-search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const term = this.value.trim().toLowerCase();
+            const allCards = document.querySelectorAll('.sbf-book-card');
+
+            if (!term) {
+                allCards.forEach(card => card.parentElement.style.display = '');
+                return;
+            }
+
+            allCards.forEach(card => {
+                const title = (card.getAttribute('data-title') || card.querySelector('.sbf-card-title')?.innerText || '').toLowerCase();
+                const author = (card.getAttribute('data-author') || card.querySelector('.sbf-card-author')?.innerText || '').toLowerCase();
+                const parent = card.parentElement;
+
+                if (title.includes(term) || author.includes(term)) {
+                    parent.style.display = '';
+                } else {
+                    parent.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    // ----------------------------------------------------
+    // Modal Popup Handler
+    // ----------------------------------------------------
+    window.openBookModal = function(title, author, synopsis, imgUrl, price, origPrice, rating, genre, lang, pages) {
+        const modal = document.getElementById('sbf-modal');
+        if (!modal) return;
+
+        document.getElementById('modal-title').innerText = title || 'Book Details';
+        document.getElementById('modal-author').innerText = 'By ' + (author || 'Author');
+        document.getElementById('modal-synopsis').innerText = synopsis || 'Exclusive literature and scholarly insights published for global students.';
+        document.getElementById('modal-rating').innerText = '★ ' + (rating || '4.8');
+        document.getElementById('modal-pages').innerText = pages || '280 Pages';
+        document.getElementById('modal-lang').innerText = lang || 'English';
+        document.getElementById('modal-genre').innerText = genre || 'Academic Fiction';
+        document.getElementById('modal-price').innerText = price || '499';
+
+        const heroBg = document.getElementById('modal-hero-bg');
+        if (heroBg) {
+            heroBg.style.backgroundImage = `linear-gradient(180deg, rgba(20,20,20,.4) 0%, #181818 100%), url('${imgUrl || '/images/fashion-hub/uploading-soon-placeholder.svg'}')`;
+        }
+
+        const cartBtn = document.getElementById('modal-cart-btn');
+        if (cartBtn) {
+            cartBtn.onclick = function() {
+                addHubBookToCart(title, price);
+                closeBookModal();
+            };
+        }
+
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeBookModal = function(e) {
+        const modal = document.getElementById('sbf-modal');
+        if (modal) {
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+    };
+
+    // Close modal on Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeBookModal();
+        }
+    });
+
+    // ----------------------------------------------------
+    // Wishlist Toggle
+    // ----------------------------------------------------
+    window.toggleWishlist = function(btn, title) {
+        if (btn.classList.contains('active')) {
+            btn.classList.remove('active');
+            btn.innerText = '♡';
+            showToast(`Removed "${title}" from Wishlist`);
+        } else {
+            btn.classList.add('active');
+            btn.innerText = '♥';
+            btn.style.color = '#E50914';
+            showToast(`Added "${title}" to Wishlist`);
+        }
+    };
+
+    // ----------------------------------------------------
+    // Add to Cart
+    // ----------------------------------------------------
+    window.addHubBookToCart = function(title, price) {
+        showToast(`✓ Added "${title}" (₹${price}) to your Cart!`);
+    };
+
+    // ----------------------------------------------------
+    // Toast Notification Utility
+    // ----------------------------------------------------
+    function showToast(msg) {
+        const toast = document.getElementById('sbf-toast');
+        if (!toast) return;
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3200);
+    }
+})();
+</script>

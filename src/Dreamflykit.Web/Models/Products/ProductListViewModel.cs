@@ -92,8 +92,15 @@ public sealed class ProductListViewModel
     public Dreamflykit.Application.TravelHub.Models.TravelHubDto? TravelHub { get; init; }
     public Dreamflykit.Application.LuggageHub.Models.LuggageHubDto? LuggageHub { get; init; }
     public Dreamflykit.Application.ElectronicsHub.Models.ElectronicsHubDto? ElectronicsHub { get; init; }
+    public Dreamflykit.Application.StoryBooksHub.Models.StoryBooksHubDto? StoryBooksHub { get; init; }
 
     public string? ViewMode { get; init; }
+
+    public bool IsStoryBooksHub =>
+        string.Equals(CategorySlug, "story-books", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "story_books", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "storybooks", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "books", StringComparison.OrdinalIgnoreCase);
 
     public bool IsStudyEssentialsHub =>
         string.Equals(CategorySlug, "study-essentials", StringComparison.OrdinalIgnoreCase) ||

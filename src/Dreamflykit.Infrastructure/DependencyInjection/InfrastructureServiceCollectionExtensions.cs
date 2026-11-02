@@ -307,6 +307,9 @@ public static class InfrastructureServiceCollectionExtensions
         // Electronics Category Hub Service
         services.AddScoped<Dreamflykit.Application.ElectronicsHub.Interfaces.IElectronicsHubService, Dreamflykit.Infrastructure.ElectronicsHub.ElectronicsHubService>();
 
+        // Story Books Category Hub Service (BooksFlix Netflix Theme)
+        services.AddScoped<Dreamflykit.Application.StoryBooksHub.Interfaces.IStoryBooksHubService, Dreamflykit.Infrastructure.StoryBooksHub.StoryBooksHubService>();
+
         // Central Enterprise Audit Logging
         services.AddScoped<Dreamflykit.Application.Audit.Interfaces.IAuditLogService, Dreamflykit.Infrastructure.Audit.AuditLogService>();
     }
