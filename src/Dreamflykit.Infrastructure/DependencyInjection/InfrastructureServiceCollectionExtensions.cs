@@ -310,6 +310,9 @@ public static class InfrastructureServiceCollectionExtensions
         // Story Books Category Hub Service (BooksFlix Netflix Theme)
         services.AddScoped<Dreamflykit.Application.StoryBooksHub.Interfaces.IStoryBooksHubService, Dreamflykit.Infrastructure.StoryBooksHub.StoryBooksHubService>();
 
+        // 3-Section Synchronized Category Sliders (All Categories)
+        services.AddScoped<Dreamflykit.Application.CategoryShowcase.Interfaces.ICategoryThreeSectionSliderService, Dreamflykit.Infrastructure.CategoryShowcase.CategoryThreeSectionSliderService>();
+
         // Central Enterprise Audit Logging
         services.AddScoped<Dreamflykit.Application.Audit.Interfaces.IAuditLogService, Dreamflykit.Infrastructure.Audit.AuditLogService>();
     }
