@@ -1,4 +1,5 @@
 @model Dreamflykit.Web.Models.Home.HomeViewModel
+@inject Dreamflykit.Application.CountryKits.Interfaces.ICountryKitsHubService? CountryKitsHubService
 
 @{
     ViewData["Title"] = "Home";
@@ -285,154 +286,89 @@
 
 
         <div class="dk-country-grid">
+            @{
+                Dreamflykit.Application.CountryKits.Models.CountryKitsHubDto? countryHub = null;
+                if (CountryKitsHubService != null)
+                {
+                    try { countryHub = await CountryKitsHubService.GetAllProfilesAsync(); } catch { }
+                }
+                var dynamicCountries = countryHub?.Countries?.Values?.Where(c => c.IsActive)?.OrderBy(c => c.DisplayOrder)?.ToList();
+            }
 
-
-            <a href="/kits/USA"
-               class="dk-country-card">
-
-                <img src="~/images/countries/usa.webp"
-                     alt="USA Kit"
-                     class="dk-country-image" />
-
-                <div class="dk-country-content">
-
-                    <h3>USA</h3>
-
-                    <p class="dk-country-description">
-                        Study in the Land of Opportunities
-                    </p>
-
-                    <div class="dk-country-price">
-                        From ₹4,999
+            @if (dynamicCountries != null && dynamicCountries.Any())
+            {
+                foreach (var c in dynamicCountries)
+                {
+                    var cImg = !string.IsNullOrWhiteSpace(c.LandmarkImageUrl) ? c.LandmarkImageUrl : Url.Content($"~/images/countries/{c.CountrySlug}.webp");
+                    <a href="/kits/@c.CountrySlug" class="dk-country-card">
+                        <img src="@cImg"
+                             alt="@c.CountryName Kit"
+                             class="dk-country-image"
+                             onerror="this.src='/images/placeholder.svg';" />
+                        <div class="dk-country-content">
+                            <h3>@c.CountryName</h3>
+                            <p class="dk-country-description">
+                                @(string.IsNullOrWhiteSpace(c.Tagline) ? $"Curated study kits for {c.CountryName}" : c.Tagline)
+                            </p>
+                            <div class="dk-country-price">
+                                @(c.StartingPrice > 0 ? $"From ₹{c.StartingPrice:N0}" : "From ₹4,999")
+                            </div>
+                        </div>
+                    </a>
+                }
+            }
+            else
+            {
+                <a href="/kits/USA" class="dk-country-card">
+                    <img src="~/images/countries/usa.webp" alt="USA Kit" class="dk-country-image" />
+                    <div class="dk-country-content">
+                        <h3>USA</h3>
+                        <p class="dk-country-description">Study in the Land of Opportunities</p>
+                        <div class="dk-country-price">From ₹4,999</div>
                     </div>
-
-                </div>
-
-            </a>
-
-
-            <a href="/kits/UK"
-               class="dk-country-card">
-
-                <img src="~/images/countries/uk.webp"
-                     alt="UK Kit"
-                     class="dk-country-image" />
-
-                <div class="dk-country-content">
-
-                    <h3>UK</h3>
-
-                    <p class="dk-country-description">
-                        Experience World-Class Education
-                    </p>
-
-                    <div class="dk-country-price">
-                        From ₹4,499
+                </a>
+                <a href="/kits/UK" class="dk-country-card">
+                    <img src="~/images/countries/uk.webp" alt="UK Kit" class="dk-country-image" />
+                    <div class="dk-country-content">
+                        <h3>UK</h3>
+                        <p class="dk-country-description">Experience World-Class Education</p>
+                        <div class="dk-country-price">From ₹4,499</div>
                     </div>
-
-                </div>
-
-            </a>
-
-
-            <a href="/kits/Canada"
-               class="dk-country-card">
-
-                <img src="~/images/countries/canada.webp"
-                     alt="Canada Kit"
-                     class="dk-country-image" />
-
-                <div class="dk-country-content">
-
-                    <h3>Canada</h3>
-
-                    <p class="dk-country-description">
-                        Your Future, Our Essentials
-                    </p>
-
-                    <div class="dk-country-price">
-                        From ₹4,499
+                </a>
+                <a href="/kits/Canada" class="dk-country-card">
+                    <img src="~/images/countries/canada.webp" alt="Canada Kit" class="dk-country-image" />
+                    <div class="dk-country-content">
+                        <h3>Canada</h3>
+                        <p class="dk-country-description">Your Future, Our Essentials</p>
+                        <div class="dk-country-price">From ₹4,499</div>
                     </div>
-
-                </div>
-
-            </a>
-
-
-            <a href="/kits/Australia"
-               class="dk-country-card">
-
-                <img src="~/images/countries/australia.webp"
-                     alt="Australia Kit"
-                     class="dk-country-image" />
-
-                <div class="dk-country-content">
-
-                    <h3>Australia</h3>
-
-                    <p class="dk-country-description">
-                        Discover. Learn. Grow Abroad.
-                    </p>
-
-                    <div class="dk-country-price">
-                        From ₹4,999
+                </a>
+                <a href="/kits/Australia" class="dk-country-card">
+                    <img src="~/images/countries/australia.webp" alt="Australia Kit" class="dk-country-image" />
+                    <div class="dk-country-content">
+                        <h3>Australia</h3>
+                        <p class="dk-country-description">Discover. Learn. Grow Abroad.</p>
+                        <div class="dk-country-price">From ₹4,999</div>
                     </div>
-
-                </div>
-
-            </a>
-
-
-            <a href="/kits/Germany"
-               class="dk-country-card">
-
-                <img src="~/images/countries/germany.webp"
-                     alt="Germany Kit"
-                     class="dk-country-image" />
-
-                <div class="dk-country-content">
-
-                    <h3>Germany</h3>
-
-                    <p class="dk-country-description">
-                        Excellence in Education Awaits
-                    </p>
-
-                    <div class="dk-country-price">
-                        From ₹4,999
+                </a>
+                <a href="/kits/Germany" class="dk-country-card">
+                    <img src="~/images/countries/germany.webp" alt="Germany Kit" class="dk-country-image" />
+                    <div class="dk-country-content">
+                        <h3>Germany</h3>
+                        <p class="dk-country-description">Excellence in Education Awaits</p>
+                        <div class="dk-country-price">From ₹4,999</div>
                     </div>
-
-                </div>
-
-            </a>
-
-
-            <a href="/kits/Ireland"
-               class="dk-country-card">
-
-                <img src="~/images/countries/ireland.webp"
-                     alt="Ireland Kit"
-                     class="dk-country-image" />
-
-                <div class="dk-country-content">
-
-                    <h3>Ireland</h3>
-
-                    <p class="dk-country-description">
-                        Your Gateway to Global Success
-                    </p>
-
-                    <div class="dk-country-price">
-                        From ₹4,499
+                </a>
+                <a href="/kits/Ireland" class="dk-country-card">
+                    <img src="~/images/countries/ireland.webp" alt="Ireland Kit" class="dk-country-image" />
+                    <div class="dk-country-content">
+                        <h3>Ireland</h3>
+                        <p class="dk-country-description">Your Gateway to Global Success</p>
+                        <div class="dk-country-price">From ₹4,499</div>
                     </div>
-
-                </div>
-
-            </a>
-
-
+                </a>
+            }
         </div>
-
     </section>
 
 

@@ -1,93 +1,1299 @@
-﻿@model Dreamflykit.Web.Models.Kits.CountryKitsViewModel
-
+@model Dreamflykit.Web.Models.Kits.CountryKitsViewModel
 @{
-    ViewData["Title"] = $"{Model.CountryName} Kits";
+    ViewData["Title"] = $"{Model.CountryName} Student Kits - Dreamflykit";
+    var filteredKits = Model.GetFilteredKits();
+    var allCount = Model.CuratedKits.Count;
+    var smallCount = Model.CuratedKits.Count(k => string.Equals(k.Size, "small", StringComparison.OrdinalIgnoreCase));
+    var medCount = Model.CuratedKits.Count(k => string.Equals(k.Size, "medium", StringComparison.OrdinalIgnoreCase));
+    var largeCount = Model.CuratedKits.Count(k => string.Equals(k.Size, "large", StringComparison.OrdinalIgnoreCase));
 }
 
-<div class="mx-auto max-w-7xl px-4 py-12">
+<div class="dk-ck-page">
+    <div class="dk-shell">
 
-    <div class="mb-10">
-        <p class="text-sm font-semibold uppercase tracking-wide">
-            Dreamflykit Kits
-        </p>
+        <!-- 1. BREADCRUMBS -->
+        <nav class="dk-ck-breadcrumb" aria-label="Breadcrumb">
+            <a href="/" class="dk-ck-crumb-link">Home</a>
+            <span class="dk-ck-crumb-sep">›</span>
+            <a href="/" class="dk-ck-crumb-link">Country Kits</a>
+            <span class="dk-ck-crumb-sep">›</span>
+            <span class="dk-ck-crumb-current">@Model.HeroTitle</span>
+        </nav>
 
-        <h1 class="mt-2 text-3xl font-bold">
-            Kits for @Model.CountryName
-        </h1>
-
-        <p class="mt-3">
-            Choose from the available Dreamflykit kits for
-            your destination.
-        </p>
-    </div>
-
-    @if (Model.Kits.Count == 0)
-    {
-        <div class="rounded-2xl border p-8">
-            <h2 class="text-xl font-semibold">
-                No kits available
-            </h2>
-
-            <p class="mt-2">
-                There are currently no active kits configured
-                for this destination.
-            </p>
-        </div>
-    }
-    else
-    {
-        <div class="grid gap-6 md:grid-cols-3">
-
-            @foreach (var kit in Model.Kits)
-            {
-                <article class="rounded-2xl border p-6">
-
-                    @if (kit.IsFeatured)
+        <!-- 2. HERO BANNER (Matches User Screenshot 1) -->
+        <section class="dk-ck-hero-banner" aria-label="@Model.HeroTitle Showcase">
+            <div class="dk-ck-hero-left">
+                <div class="dk-ck-landmark-box">
+                    <img src="@Model.LandmarkImageUrl" 
+                         alt="@Model.CountryName Landmark" 
+                         class="dk-ck-landmark-img"
+                         onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                    @if (Model.IsLandmarkUploadingSoon)
                     {
-                        <span class="text-sm font-semibold">
-                            Featured
-                        </span>
+                        <div class="dk-ck-landmark-soon">
+                            <span>Uploading Soon</span>
+                        </div>
                     }
-
-                    <h2 class="mt-2 text-xl font-bold">
-                        @kit.Name
-                    </h2>
-
-                    <p class="mt-2 text-sm font-medium">
-                        @kit.SizeName Kit
-                    </p>
-
-                    <p class="mt-4 text-sm">
-                        @kit.Description
-                    </p>
-
-                    <div class="mt-6">
-                        <span class="text-sm line-through">
-                            ₹@kit.Mrp.ToString("N2")
-                        </span>
-
-                        <span class="ml-2 text-xl font-bold">
-                            ₹@kit.SellingPrice.ToString("N2")
-                        </span>
+                    <div class="dk-ck-flag-badge" title="@Model.CountryName">
+                        <span class="dk-ck-flag-icon">@Model.FlagEmoji</span>
                     </div>
+                </div>
 
-                    @if (kit.DiscountPercentage > 0)
-                    {
-                        <p class="mt-2 text-sm font-semibold">
-                            @kit.DiscountPercentage% off
-                        </p>
-                    }
+                <div class="dk-ck-hero-text">
+                    <h1 class="dk-ck-hero-title">@Model.HeroTitle</h1>
+                    <p class="dk-ck-hero-subtitle">@Model.HeroSubtitle</p>
+                </div>
+            </div>
 
-                    <a asp-controller="Kits"
-                       asp-action="Details"
-                       asp-route-kitSlug="@kit.Slug"
-                       class="mt-6 block rounded-lg border px-5 py-3 text-center font-semibold">
-                        View Kit
+            <div class="dk-ck-hero-features">
+                <div class="dk-ck-feature-item">
+                    <span class="dk-ck-feat-icon">📦</span>
+                    <span class="dk-ck-feat-text">@Model.Feature1</span>
+                </div>
+                <div class="dk-ck-feature-item">
+                    <span class="dk-ck-feat-icon">🚚</span>
+                    <span class="dk-ck-feat-text">@Model.Feature2</span>
+                </div>
+                <div class="dk-ck-feature-item">
+                    <span class="dk-ck-feat-icon">🛡️</span>
+                    <span class="dk-ck-feat-text">@Model.Feature3</span>
+                </div>
+                <div class="dk-ck-feature-item">
+                    <span class="dk-ck-feat-icon">🏷️</span>
+                    <span class="dk-ck-feat-text">@Model.Feature4</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. MAIN 2-COLUMN LAYOUT -->
+        <div class="dk-ck-main-layout">
+
+            <!-- LEFT SIDEBAR FILTERS -->
+            <aside class="dk-ck-sidebar" aria-label="Kit Filters">
+                <!-- Size Navigation Card -->
+                <div class="dk-ck-filter-card">
+                    <div class="dk-ck-card-header-navy">
+                        <h3>Shop @Model.CountryName Kits</h3>
+                    </div>
+                    <ul class="dk-ck-size-nav">
+                        <li>
+                            <a href="/kits/@Model.CountrySlug?size=all" class="dk-ck-nav-item @(Model.SelectedSize == "all" ? "active" : "")">
+                                <span>All @Model.CountryName Kits</span>
+                                <span class="dk-ck-nav-count">(@allCount)</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/kits/@Model.CountrySlug?size=small" class="dk-ck-nav-item @(Model.SelectedSize == "small" ? "active" : "")">
+                                <span>Small Kit</span>
+                                <span class="dk-ck-nav-count">(@smallCount)</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/kits/@Model.CountrySlug?size=medium" class="dk-ck-nav-item @(Model.SelectedSize == "medium" ? "active" : "")">
+                                <span>Medium Kit</span>
+                                <span class="dk-ck-nav-count">(@medCount)</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/kits/@Model.CountrySlug?size=large" class="dk-ck-nav-item @(Model.SelectedSize == "large" ? "active" : "")">
+                                <span>Large Kit</span>
+                                <span class="dk-ck-nav-count">(@largeCount)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Price Range Filter -->
+                <div class="dk-ck-filter-box">
+                    <h4 class="dk-ck-filter-heading">Price Range</h4>
+                    <div class="dk-ck-price-slider-wrap">
+                        <input type="range" id="priceRangeInput" min="999" max="25000" step="1000" value="@(Model.MaxPrice ?? 25000)" oninput="onPriceSliderChange(this.value)" />
+                        <div class="dk-ck-price-range-labels">
+                            <span>₹999</span>
+                            <span id="priceRangeDisplay">₹@((Model.MaxPrice ?? 25000).ToString("N0"))+</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kit Includes Filter -->
+                <div class="dk-ck-filter-box">
+                    <h4 class="dk-ck-filter-heading">Kit Includes</h4>
+                    <div class="dk-ck-checkbox-list">
+                        <label class="dk-ck-check-item">
+                            <input type="checkbox" checked onchange="filterKitCards()" />
+                            <span>Study Essentials</span>
+                        </label>
+                        <label class="dk-ck-check-item">
+                            <input type="checkbox" checked onchange="filterKitCards()" />
+                            <span>Electronics</span>
+                        </label>
+                        <label class="dk-ck-check-item">
+                            <input type="checkbox" checked onchange="filterKitCards()" />
+                            <span>Travel Essentials</span>
+                        </label>
+                        <label class="dk-ck-check-item">
+                            <input type="checkbox" checked onchange="filterKitCards()" />
+                            <span>Room &amp; Living</span>
+                        </label>
+                        <label class="dk-ck-check-item">
+                            <input type="checkbox" checked onchange="filterKitCards()" />
+                            <span>Kitchen &amp; Dining</span>
+                        </label>
+                    </div>
+                    <button type="button" class="dk-ck-show-more-btn" onclick="alert('All primary student kit categories are currently included in this curation.');">+ Show More</button>
+                </div>
+
+                <!-- Customer Rating Filter -->
+                <div class="dk-ck-filter-box">
+                    <h4 class="dk-ck-filter-heading">Customer Rating</h4>
+                    <div class="dk-ck-rating-list">
+                        <label class="dk-ck-rating-option">
+                            <input type="radio" name="starRating" value="5" onchange="filterKitCards()" />
+                            <span class="dk-ck-stars">★★★★★</span>
+                            <span class="dk-ck-rating-label">&amp; Up</span>
+                        </label>
+                        <label class="dk-ck-rating-option">
+                            <input type="radio" name="starRating" value="4" checked onchange="filterKitCards()" />
+                            <span class="dk-ck-stars">★★★★☆</span>
+                            <span class="dk-ck-rating-label">&amp; Up</span>
+                        </label>
+                        <label class="dk-ck-rating-option">
+                            <input type="radio" name="starRating" value="3" onchange="filterKitCards()" />
+                            <span class="dk-ck-stars">★★★☆☆</span>
+                            <span class="dk-ck-rating-label">&amp; Up</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Switch Country Shortcut -->
+                @if (Model.AllCountries.Count > 1)
+                {
+                    <div class="dk-ck-filter-box dk-ck-other-countries">
+                        <h4 class="dk-ck-filter-heading">Other Destinations</h4>
+                        <div class="dk-ck-country-pills">
+                            @foreach (var c in Model.AllCountries.Where(x => !string.Equals(x.CountrySlug, Model.CountrySlug, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                <a href="/kits/@c.CountrySlug" class="dk-ck-country-pill" title="@c.CountryName Kits">
+                                    <span>@c.FlagEmoji</span>
+                                    <span>@c.CountryName</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            </aside>
+
+            <!-- RIGHT COLUMN: KIT SIZE CARDS + KITS GRID -->
+            <main class="dk-ck-content">
+                <!-- Content Top Header -->
+                <div class="dk-ck-content-header">
+                    <div>
+                        <h2 class="dk-ck-content-title">@Model.HeroTitle</h2>
+                        <p class="dk-ck-content-subtitle">Choose the perfect kit based on your needs</p>
+                    </div>
+                    <div class="dk-ck-sort-box">
+                        <label for="sortKitsSelect">Sort By:</label>
+                        <select id="sortKitsSelect" class="dk-ck-sort-select" onchange="onSortChange(this.value)">
+                            <option value="popular" selected="@(Model.SelectedSort == "popular")">Popular</option>
+                            <option value="price-low" selected="@(Model.SelectedSort == "price-low")">Price: Low to High</option>
+                            <option value="price-high" selected="@(Model.SelectedSort == "price-high")">Price: High to Low</option>
+                            <option value="rating" selected="@(Model.SelectedSort == "rating")">Customer Rating</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 3 Kit Size Selector Cards (Matches Screenshot 1) -->
+                <div class="dk-ck-size-cards-grid">
+                    <a href="/kits/@Model.CountrySlug?size=small" class="dk-ck-size-card @(Model.SelectedSize == "small" ? "active" : "")">
+                        <div class="dk-ck-size-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="7" width="18" height="14" rx="2"></rect>
+                                <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path>
+                            </svg>
+                        </div>
+                        <div class="dk-ck-size-info">
+                            <strong>Small Kit</strong>
+                            <span>Perfect for Minimalists</span>
+                        </div>
+                        <span class="dk-ck-size-arrow">›</span>
                     </a>
 
-                </article>
-            }
+                    <a href="/kits/@Model.CountrySlug?size=medium" class="dk-ck-size-card @(Model.SelectedSize == "medium" ? "active" : "")">
+                        <div class="dk-ck-size-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                        </div>
+                        <div class="dk-ck-size-info">
+                            <strong>Medium Kit</strong>
+                            <span>Most Popular Choice</span>
+                        </div>
+                        <span class="dk-ck-size-arrow">›</span>
+                    </a>
 
+                    <a href="/kits/@Model.CountrySlug?size=large" class="dk-ck-size-card @(Model.SelectedSize == "large" ? "active" : "")">
+                        <div class="dk-ck-size-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+                                <line x1="12" y1="7" x2="12" y2="21"></line>
+                                <path d="M16 7V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3"></path>
+                            </svg>
+                        </div>
+                        <div class="dk-ck-size-info">
+                            <strong>Large Kit</strong>
+                            <span>Complete &amp; Comfortable</span>
+                        </div>
+                        <span class="dk-ck-size-arrow">›</span>
+                    </a>
+                </div>
+
+                <!-- Results Counter -->
+                <div class="dk-ck-results-bar">
+                    <span class="dk-ck-results-text">Showing 1-@filteredKits.Count of @filteredKits.Count results</span>
+                </div>
+
+                <!-- Products / Kits Grid -->
+                <div class="dk-ck-kits-grid" id="kitsGrid">
+                    @foreach (var kit in filteredKits)
+                    {
+                        var badgeClass = kit.Badge?.ToLowerInvariant() switch
+                        {
+                            "best seller" => "dk-ck-badge-bestseller",
+                            "most popular" => "dk-ck-badge-popular",
+                            "best value" => "dk-ck-badge-bestvalue",
+                            _ => "dk-ck-badge-default"
+                        };
+
+                        <div class="dk-ck-kit-card" 
+                             data-size="@kit.Size" 
+                             data-price="@kit.SellingPrice" 
+                             data-rating="@kit.Rating"
+                             data-name="@kit.Name">
+                             
+                            <!-- Badge -->
+                            @if (!string.IsNullOrWhiteSpace(kit.Badge))
+                            {
+                                <div class="dk-ck-badge @badgeClass">@kit.Badge</div>
+                            }
+
+                            <!-- Kit Image -->
+                            <div class="dk-ck-img-box">
+                                <img src="@kit.ImageUrl" 
+                                     alt="@kit.Name" 
+                                     class="dk-ck-kit-img" 
+                                     loading="lazy" 
+                                     onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                                @if (kit.IsUploadingSoon)
+                                {
+                                    <div class="dk-ck-soon-tag">
+                                        <span>⏳ Uploading Soon</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Kit Info -->
+                            <div class="dk-ck-card-info">
+                                <h3 class="dk-ck-kit-name">@kit.Name</h3>
+                                <p class="dk-ck-kit-desc">@kit.Description</p>
+
+                                <div class="dk-ck-price-row">
+                                    <span class="dk-ck-price-selling">₹@kit.SellingPrice.ToString("N0")</span>
+                                    @if (kit.Mrp > kit.SellingPrice)
+                                    {
+                                        <span class="dk-ck-price-mrp">₹@kit.Mrp.ToString("N0")</span>
+                                        <span class="dk-ck-price-discount">@kit.DiscountPercentage% OFF</span>
+                                    }
+                                </div>
+
+                                <div class="dk-ck-rating-row">
+                                    <span class="dk-ck-star-icon">★</span>
+                                    <span class="dk-ck-rating-num">@kit.Rating.ToString("0.0")</span>
+                                    <span class="dk-ck-rating-count">(@kit.ReviewCount.ToString("N0"))</span>
+                                </div>
+
+                                <div class="dk-ck-actions">
+                                    <a href="/kit/@kit.Slug" class="dk-ck-btn-details">
+                                        View Details
+                                    </a>
+                                    <button type="button" class="dk-ck-btn-cart" onclick="addCountryKitToCart('@kit.Name', @kit.SellingPrice)" title="Add to Cart">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="9" cy="21" r="1"></circle>
+                                            <circle cx="20" cy="21" r="1"></circle>
+                                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Pagination -->
+                <div class="dk-ck-pagination-bar">
+                    <div class="dk-ck-pages">
+                        <button type="button" class="dk-ck-page-btn" disabled>‹</button>
+                        <button type="button" class="dk-ck-page-btn active">1</button>
+                        <button type="button" class="dk-ck-page-btn">2</button>
+                        <button type="button" class="dk-ck-page-btn">3</button>
+                        <button type="button" class="dk-ck-page-btn">›</button>
+                    </div>
+                    <div class="dk-ck-page-size">
+                        <span>Show:</span>
+                        <select class="dk-ck-page-select">
+                            <option value="12" selected>12</option>
+                            <option value="24">24</option>
+                            <option value="36">36</option>
+                        </select>
+                    </div>
+                </div>
+            </main>
         </div>
-    }
+
+        <!-- 4. BOTTOM REASSURANCE STRIP (Matches Screenshot 1) -->
+        <section class="dk-ck-trust-strip" aria-label="Store Guarantees">
+            <div class="dk-ck-trust-col">
+                <div class="dk-ck-trust-icon">🚚</div>
+                <div class="dk-ck-trust-text">
+                    <strong>Worldwide Shipping</strong>
+                    <small>Fast &amp; Reliable Delivery</small>
+                </div>
+            </div>
+            <div class="dk-ck-trust-col">
+                <div class="dk-ck-trust-icon">🛡️</div>
+                <div class="dk-ck-trust-text">
+                    <strong>100% Secure Payments</strong>
+                    <small>Multiple Payment Options</small>
+                </div>
+            </div>
+            <div class="dk-ck-trust-col">
+                <div class="dk-ck-trust-icon">🔄</div>
+                <div class="dk-ck-trust-text">
+                    <strong>Easy Returns</strong>
+                    <small>Hassle Free Returns</small>
+                </div>
+            </div>
+            <div class="dk-ck-trust-col">
+                <div class="dk-ck-trust-icon">🎧</div>
+                <div class="dk-ck-trust-text">
+                    <strong>24/7 Customer Support</strong>
+                    <small>We're Here to Help</small>
+                </div>
+            </div>
+            <div class="dk-ck-trust-col">
+                <div class="dk-ck-trust-icon">🎒</div>
+                <div class="dk-ck-trust-text">
+                    <strong>Premium Quality</strong>
+                    <small>Carefully Selected Products</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. NEWSLETTER STRIP (Matches Screenshot 1) -->
+        <section class="dk-ck-newsletter" aria-label="Stay Updated">
+            <div class="dk-ck-nl-left">
+                <div class="dk-ck-nl-icon">✉️</div>
+                <div class="dk-ck-nl-text">
+                    <strong>Stay Updated with Best Deals &amp; Offers!</strong>
+                    <small>Subscribe to our newsletter and get exclusive campus offers.</small>
+                </div>
+            </div>
+            <form class="dk-ck-nl-form" onsubmit="event.preventDefault(); alert('Thank you for subscribing to Dreamflykit student updates!');">
+                <input type="email" class="dk-ck-nl-input" placeholder="Enter your email address" required />
+                <button type="submit" class="dk-ck-nl-btn">Subscribe</button>
+            </form>
+            <div class="dk-ck-nl-socials">
+                <small>Follow Us</small>
+                <div class="dk-ck-social-icons">
+                    <span title="Facebook">📘</span>
+                    <span title="Instagram">📸</span>
+                    <span title="YouTube">📺</span>
+                    <span title="Twitter">🐦</span>
+                    <span title="LinkedIn">💼</span>
+                    <span title="Pinterest">📌</span>
+                </div>
+            </div>
+        </section>
+    </div>
 </div>
+
+<!-- Quick Toast Notification -->
+<div id="dk-ck-toast" class="dk-ck-toast"></div>
+
+<style>
+/* ========================================================
+   COUNTRY KITS PAGE STYLES (MATCHES USER SCREENSHOT 1)
+   ======================================================== */
+.dk-ck-page {
+    background-color: #f8fafc;
+    padding: 16px 0 40px 0;
+    color: #1e293b;
+    font-family: inherit;
+}
+
+/* 1. Breadcrumbs */
+.dk-ck-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 16px;
+}
+.dk-ck-crumb-link {
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+.dk-ck-crumb-link:hover {
+    color: #0284c7;
+}
+.dk-ck-crumb-sep {
+    color: #cbd5e1;
+}
+.dk-ck-crumb-current {
+    color: #0f172a;
+    font-weight: 600;
+}
+
+/* 2. Hero Banner */
+.dk-ck-hero-banner {
+    background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+    border: 1px solid #bae6fd;
+    border-radius: 14px;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 10px rgba(186, 230, 253, 0.25);
+}
+.dk-ck-hero-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+.dk-ck-landmark-box {
+    position: relative;
+    width: 210px;
+    height: 110px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #0f172a;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+.dk-ck-landmark-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.dk-ck-landmark-soon {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #38bdf8;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+.dk-ck-flag-badge {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.dk-ck-hero-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.3px;
+}
+.dk-ck-hero-subtitle {
+    font-size: 13.5px;
+    color: #475569;
+    margin: 0;
+    line-height: 1.5;
+    max-width: 460px;
+}
+.dk-ck-hero-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 18px;
+    flex-shrink: 0;
+}
+.dk-ck-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: #334155;
+    font-weight: 600;
+}
+.dk-ck-feat-icon {
+    font-size: 16px;
+}
+
+/* 3. Main 2-Column Layout */
+.dk-ck-main-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 24px;
+    align-items: start;
+    margin-bottom: 36px;
+}
+
+/* Left Sidebar */
+.dk-ck-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.dk-ck-filter-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+.dk-ck-card-header-navy {
+    background: #0f2b48;
+    color: #ffffff;
+    padding: 12px 16px;
+}
+.dk-ck-card-header-navy h3 {
+    margin: 0;
+    font-size: 14.5px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+}
+.dk-ck-size-nav {
+    list-style: none;
+    margin: 0;
+    padding: 6px 0;
+}
+.dk-ck-nav-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+.dk-ck-nav-item:hover {
+    background: #f1f5f9;
+    color: #0284c7;
+}
+.dk-ck-nav-item.active {
+    background: #e0f2fe;
+    color: #0284c7;
+    font-weight: 800;
+    border-left: 3px solid #0284c7;
+}
+.dk-ck-nav-count {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.dk-ck-filter-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+.dk-ck-filter-heading {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 10px 0;
+}
+.dk-ck-price-slider-wrap input[type=range] {
+    width: 100%;
+    accent-color: #0284c7;
+}
+.dk-ck-price-range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: #64748b;
+    font-weight: 600;
+    margin-top: 4px;
+}
+.dk-ck-checkbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.dk-ck-check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: #334155;
+    cursor: pointer;
+}
+.dk-ck-check-item input {
+    accent-color: #0284c7;
+}
+.dk-ck-show-more-btn {
+    background: none;
+    border: none;
+    color: #0284c7;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 0 0 0;
+    cursor: pointer;
+    text-align: left;
+}
+.dk-ck-rating-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.dk-ck-rating-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+.dk-ck-rating-option input {
+    accent-color: #0284c7;
+}
+.dk-ck-stars {
+    color: #f59e0b;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+.dk-ck-rating-label {
+    color: #64748b;
+}
+
+.dk-ck-country-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.dk-ck-country-pill {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #334155;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.dk-ck-country-pill:hover {
+    background: #e0f2fe;
+    border-color: #7dd3fc;
+    color: #0284c7;
+}
+
+/* Right Content Column */
+.dk-ck-content {
+    min-width: 0;
+}
+.dk-ck-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 16px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.dk-ck-content-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 2px 0;
+}
+.dk-ck-content-subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+}
+.dk-ck-sort-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #64748b;
+}
+.dk-ck-sort-select {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #0f172a;
+    background: #ffffff;
+    cursor: pointer;
+    outline: none;
+}
+
+/* 3 Kit Size Selector Cards */
+.dk-ck-size-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+.dk-ck-size-card {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #0f172a;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+.dk-ck-size-card:hover {
+    border-color: #0284c7;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(2, 132, 199, 0.1);
+}
+.dk-ck-size-card.active {
+    border-color: #0284c7;
+    background: #f0f9ff;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.12);
+}
+.dk-ck-size-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #0f2b48;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.dk-ck-size-info {
+    flex: 1;
+    min-width: 0;
+}
+.dk-ck-size-info strong {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.dk-ck-size-info span {
+    display: block;
+    font-size: 11.5px;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dk-ck-size-arrow {
+    font-size: 18px;
+    color: #94a3b8;
+    font-weight: 700;
+}
+
+.dk-ck-results-bar {
+    margin-bottom: 14px;
+}
+.dk-ck-results-text {
+    font-size: 12.5px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* Kits Products Grid */
+.dk-ck-kits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.dk-ck-kit-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+.dk-ck-kit-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+.dk-ck-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    z-index: 2;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+.dk-ck-badge-bestseller {
+    background: #ef4444;
+    color: #ffffff;
+}
+.dk-ck-badge-popular {
+    background: #0284c7;
+    color: #ffffff;
+}
+.dk-ck-badge-bestvalue {
+    background: #10b981;
+    color: #ffffff;
+}
+.dk-ck-badge-default {
+    background: #475569;
+    color: #ffffff;
+}
+
+.dk-ck-img-box {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.dk-ck-kit-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+    transition: transform 0.3s;
+}
+.dk-ck-kit-card:hover .dk-ck-kit-img {
+    transform: scale(1.05);
+}
+.dk-ck-soon-tag {
+    position: absolute;
+    bottom: 8px;
+    background: rgba(15, 23, 42, 0.85);
+    color: #38bdf8;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+.dk-ck-card-info {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.dk-ck-kit-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+}
+.dk-ck-kit-desc {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+    min-height: 34px;
+}
+
+.dk-ck-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.dk-ck-price-selling {
+    font-size: 17px;
+    font-weight: 900;
+    color: #0f172a;
+}
+.dk-ck-price-mrp {
+    font-size: 12px;
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+.dk-ck-price-discount {
+    font-size: 11px;
+    font-weight: 800;
+    color: #ea580c;
+}
+
+.dk-ck-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #475569;
+    margin-bottom: 12px;
+}
+.dk-ck-star-icon {
+    color: #f59e0b;
+    font-size: 13px;
+}
+.dk-ck-rating-num {
+    font-weight: 800;
+    color: #0f172a;
+}
+.dk-ck-rating-count {
+    color: #94a3b8;
+}
+
+.dk-ck-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+}
+.dk-ck-btn-details {
+    flex: 1;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    color: #0f172a;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 7px 10px;
+    border-radius: 6px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.15s;
+}
+.dk-ck-btn-details:hover {
+    border-color: #0284c7;
+    color: #0284c7;
+    background: #f0f9ff;
+}
+.dk-ck-btn-cart {
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    color: #0f172a;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+.dk-ck-btn-cart:hover {
+    border-color: #ea580c;
+    color: #ea580c;
+    background: #fff7ed;
+}
+
+/* Pagination */
+.dk-ck-pagination-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 16px;
+}
+.dk-ck-pages {
+    display: flex;
+    gap: 6px;
+}
+.dk-ck-page-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.dk-ck-page-btn:hover:not(:disabled) {
+    border-color: #0284c7;
+    color: #0284c7;
+}
+.dk-ck-page-btn.active {
+    background: #0f2b48;
+    color: #ffffff;
+    border-color: #0f2b48;
+}
+.dk-ck-page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.dk-ck-page-size {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: #64748b;
+}
+.dk-ck-page-select {
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* 4. Bottom Trust Strip */
+.dk-ck-trust-strip {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px 24px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+.dk-ck-trust-col {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-ck-trust-icon {
+    font-size: 26px;
+}
+.dk-ck-trust-text strong {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.dk-ck-trust-text small {
+    display: block;
+    font-size: 11px;
+    color: #64748b;
+}
+
+/* 5. Newsletter Strip */
+.dk-ck-newsletter {
+    background: #0f2b48;
+    border-radius: 12px;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    color: #ffffff;
+}
+.dk-ck-nl-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.dk-ck-nl-icon {
+    font-size: 28px;
+}
+.dk-ck-nl-text strong {
+    display: block;
+    font-size: 14.5px;
+    font-weight: 800;
+}
+.dk-ck-nl-text small {
+    display: block;
+    font-size: 11.5px;
+    color: #94a3b8;
+}
+.dk-ck-nl-form {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    max-width: 440px;
+}
+.dk-ck-nl-input {
+    flex: 1;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+}
+.dk-ck-nl-btn {
+    background: #ea580c;
+    color: #ffffff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.dk-ck-nl-btn:hover {
+    background: #c2410c;
+}
+.dk-ck-nl-socials {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+.dk-ck-nl-socials small {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 700;
+}
+.dk-ck-social-icons {
+    display: flex;
+    gap: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Toast */
+.dk-ck-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #0f172a;
+    color: #ffffff;
+    border-left: 4px solid #10b981;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    font-size: 13.5px;
+    font-weight: 700;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+}
+.dk-ck-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Responsive */
+@@media (max-width: 1024px) {
+    .dk-ck-hero-banner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .dk-ck-main-layout {
+        grid-template-columns: 1fr;
+    }
+    .dk-ck-kits-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dk-ck-trust-strip {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dk-ck-newsletter {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@@media (max-width: 640px) {
+    .dk-ck-hero-left {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .dk-ck-landmark-box {
+        width: 100%;
+        height: 140px;
+    }
+    .dk-ck-size-cards-grid {
+        grid-template-columns: 1fr;
+    }
+    .dk-ck-kits-grid {
+        grid-template-columns: 1fr;
+    }
+    .dk-ck-trust-strip {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+function onSortChange(sortVal) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('sort', sortVal);
+    window.location.href = url.toString();
+}
+
+function onPriceSliderChange(val) {
+    document.getElementById('priceRangeDisplay').innerText = '₹' + parseInt(val, 10).toLocaleString('en-IN') + '+';
+    filterKitCards();
+}
+
+function filterKitCards() {
+    const maxP = parseInt(document.getElementById('priceRangeInput')?.value || '25000', 10);
+    const starEl = document.querySelector('input[name="starRating"]:checked');
+    const minStar = parseFloat(starEl ? starEl.value : '0');
+
+    const cards = document.querySelectorAll('.dk-ck-kit-card');
+    let visible = 0;
+
+    cards.forEach(card => {
+        const p = parseFloat(card.getAttribute('data-price') || '0');
+        const r = parseFloat(card.getAttribute('data-rating') || '0');
+
+        if (p <= maxP && r >= minStar) {
+            card.style.display = '';
+            visible++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    const resultsEl = document.querySelector('.dk-ck-results-text');
+    if (resultsEl) {
+        resultsEl.innerText = `Showing 1-${visible} of ${visible} results`;
+    }
+}
+
+function addCountryKitToCart(name, price) {
+    showToast(`✓ Added "${name}" (₹${price.toLocaleString('en-IN')}) to your Cart!`);
+}
+
+function showToast(msg) {
+    const t = document.getElementById('dk-ck-toast');
+    if (!t) return;
+    t.innerText = msg;
+    t.classList.add('show');
+    setTimeout(() => {
+        t.classList.remove('show');
+    }, 3200);
+}
+</script>

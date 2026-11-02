@@ -1,0 +1,489 @@
+@inject Dreamflykit.Application.CategoryShowcase.Interfaces.ICategoryThreeSectionSliderService SliderService
+@model dynamic
+@{
+    Dreamflykit.Application.CategoryShowcase.Models.CategoryThreeSectionConfigDto? config = null;
+    if (Model is Dreamflykit.Application.CategoryShowcase.Models.CategoryThreeSectionConfigDto cfg)
+    {
+        config = cfg;
+    }
+    else if (Model is string slug && !string.IsNullOrWhiteSpace(slug))
+    {
+        config = await SliderService.GetCategorySliderAsync(slug);
+    }
+
+    if (config == null || !config.IsEnabled || config.Slides == null || config.Slides.Count == 0)
+    {
+        return;
+    }
+
+    var activeSlides = config.Slides.Where(s => s.IsActive).OrderBy(s => s.DisplayOrder).ToList();
+    if (activeSlides.Count == 0) return;
+
+    // Ensure we have at least 6 slides for seamless 3-section infinite wrapping
+    var displaySlides = new List<Dreamflykit.Application.CategoryShowcase.Models.CategorySliderSlideDto>(activeSlides);
+    while (displaySlides.Count < 6)
+    {
+        foreach (var s in activeSlides)
+        {
+            displaySlides.Add(new Dreamflykit.Application.CategoryShowcase.Models.CategorySliderSlideDto
+            {
+                Id = Guid.NewGuid().ToString("N"),
+                CategorySlug = s.CategorySlug,
+                BadgeText = s.BadgeText,
+                Rating = s.Rating,
+                Title = s.Title,
+                Tagline = s.Tagline,
+                PriceText = s.PriceText,
+                OriginalPriceText = s.OriginalPriceText,
+                EmiBadgeText = s.EmiBadgeText,
+                OfferDisclaimer = s.OfferDisclaimer,
+                ThemeGlowColor = s.ThemeGlowColor,
+                ImageUrl = s.ImageUrl,
+                IsUploadingSoon = s.IsUploadingSoon,
+                TargetUrl = s.TargetUrl,
+                DisplayOrder = s.DisplayOrder,
+                IsActive = true
+            });
+        }
+    }
+
+    var sliderId = "dkTriSlider_" + config.CategorySlug.Replace("-", "_");
+    var intervalMs = config.SlideIntervalSeconds > 0 ? config.SlideIntervalSeconds * 1000 : 4000;
+}
+
+<div class="dk-tri-slider-section" 
+     id="@sliderId" 
+     data-slug="@config.CategorySlug" 
+     data-autoplay="@(config.AutoPlay ? "true" : "false")"
+     data-interval="@intervalMs"
+     data-duration="@config.TransitionDurationMs"
+     aria-label="3-Section Showcase for @config.CategoryName">
+     
+    <div class="dk-tri-slider-viewport">
+        <div class="dk-tri-slider-track" id="@(sliderId)_track">
+            @for (int i = 0; i < displaySlides.Count; i++)
+            {
+                var slide = displaySlides[i];
+                <a href="@slide.TargetUrl" 
+                   class="dk-tri-card" 
+                   style="--glow-color: @slide.ThemeGlowColor;" 
+                   title="@slide.Title - @slide.Tagline">
+                    
+                    <!-- 3D Metallic Glowing Ribbon Border (Matching Mobiles Screenshot) -->
+                    <div class="dk-tri-ribbon-border"></div>
+
+                    <!-- Top Row: Badge + Star Rating Pill -->
+                    <div class="dk-tri-card-header">
+                        <span class="dk-tri-badge">@(string.IsNullOrWhiteSpace(slide.BadgeText) ? "FEATURED DEAL" : slide.BadgeText)</span>
+                        @if (!string.IsNullOrWhiteSpace(slide.Rating))
+                        {
+                            <div class="dk-tri-rating-badge">
+                                <span class="dk-tri-star">★</span>
+                                <span class="dk-tri-rating-text">@slide.Rating</span>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Card Body & 3D Visual -->
+                    <div class="dk-tri-card-body">
+                        <!-- Left Info -->
+                        <div class="dk-tri-text-wrap">
+                            <h3 class="dk-tri-title">@slide.Title</h3>
+                            <p class="dk-tri-tagline">@slide.Tagline</p>
+
+                            <!-- Price & Strike MRP -->
+                            <div class="dk-tri-prices">
+                                <span class="dk-tri-selling-price">@slide.PriceText</span>
+                                @if (!string.IsNullOrWhiteSpace(slide.OriginalPriceText))
+                                {
+                                    <span class="dk-tri-mrp-price">@slide.OriginalPriceText</span>
+                                }
+                            </div>
+
+                            <!-- 0% EMI Gold Medallion Pill (Flipkart Style) -->
+                            @if (!string.IsNullOrWhiteSpace(slide.EmiBadgeText))
+                            {
+                                <div class="dk-tri-emi-medallion">
+                                    <div class="dk-tri-emi-coin">
+                                        <span>0%</span>
+                                        <small>EMI</small>
+                                    </div>
+                                    <div class="dk-tri-emi-amount">
+                                        @slide.EmiBadgeText.Replace("0% EMI", "").Trim()
+                                    </div>
+                                </div>
+                            }
+
+                            <span class="dk-tri-disclaimer-text">@slide.OfferDisclaimer</span>
+                        </div>
+
+                        <!-- Right 3D Visual Pop-out Wrap -->
+                        <div class="dk-tri-visual-wrap">
+                            <img src="@slide.ImageUrl" 
+                                 alt="@slide.Title" 
+                                 class="dk-tri-product-img" 
+                                 loading="lazy" 
+                                 onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg';" />
+                            <div class="dk-tri-popout-glow"></div>
+                            @if (slide.IsUploadingSoon)
+                            {
+                                <div class="dk-tri-uploading-tag">
+                                    <span>Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+/* ========================================================
+   3-SECTION SYNCHRONIZED SLIDER (AUTHENTIC FLIPKART/MOBILES STYLE)
+   ======================================================== */
+.dk-tri-slider-section {
+    position: relative;
+    width: 100%;
+    margin: 20px 0 28px 0;
+    overflow: hidden;
+    user-select: none;
+}
+
+.dk-tri-slider-viewport {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 18px;
+    padding: 4px 2px;
+}
+
+.dk-tri-slider-track {
+    display: flex;
+    gap: 16px;
+    will-change: transform;
+    transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* 3 Cards Side by Side */
+.dk-tri-card {
+    flex: 0 0 calc((100% - 32px) / 3);
+    min-width: 0;
+    position: relative;
+    background: radial-gradient(circle at 75% 30%, #1e293b 0%, #090d16 100%);
+    border-radius: 18px;
+    padding: 16px 18px 18px 18px;
+    text-decoration: none;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    overflow: hidden;
+    box-sizing: border-box;
+    min-height: 195px;
+}
+
+@@media (max-width: 1024px) {
+    .dk-tri-card {
+        flex: 0 0 calc((100% - 16px) / 2);
+    }
+}
+
+@@media (max-width: 640px) {
+    .dk-tri-card {
+        flex: 0 0 100%;
+    }
+}
+
+/* 3D Glowing Fiery Ribbon Border */
+.dk-tri-ribbon-border {
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--glow-color, #f97316) 0%, #fbbf24 35%, var(--glow-color, #f97316) 70%, #dc2626 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    box-shadow: inset 0 0 12px var(--glow-color, rgba(249, 115, 22, 0.5));
+}
+
+.dk-tri-card:hover {
+    transform: translateY(-5px) scale(1.015);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 0 20px var(--glow-color, rgba(249, 115, 22, 0.4));
+}
+
+/* Top Row: Badge & Rating */
+.dk-tri-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 3;
+}
+
+.dk-tri-badge {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-size: 9.5px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.dk-tri-rating-badge {
+    background: #eab308;
+    color: #000000;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 1px 7px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 2px 6px rgba(234, 179, 8, 0.4);
+}
+
+.dk-tri-star {
+    font-size: 11px;
+    line-height: 1;
+}
+
+/* Card Body */
+.dk-tri-card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.dk-tri-text-wrap {
+    flex: 1;
+    min-width: 0;
+}
+
+.dk-tri-title {
+    font-size: 16.5px;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0 0 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.2px;
+}
+
+.dk-tri-tagline {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 0 0 8px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.dk-tri-prices {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.dk-tri-selling-price {
+    font-size: 17px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+}
+
+.dk-tri-mrp-price {
+    font-size: 11.5px;
+    color: #64748b;
+    text-decoration: line-through;
+}
+
+/* 0% EMI Gold Medallion Pill */
+.dk-tri-emi-medallion {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.22) 0%, rgba(202, 138, 4, 0.12) 100%);
+    border: 1px solid rgba(234, 179, 8, 0.55);
+    border-radius: 9999px;
+    padding: 2px 8px 2px 3px;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.dk-tri-emi-coin {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #facc15 0%, #ca8a04 100%);
+    box-shadow: 0 2px 5px rgba(202, 138, 4, 0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    line-height: 1;
+}
+
+.dk-tri-emi-coin span {
+    font-size: 8px;
+    font-weight: 900;
+}
+
+.dk-tri-emi-coin small {
+    font-size: 5.5px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+
+.dk-tri-emi-amount {
+    font-size: 11px;
+    font-weight: 800;
+    color: #fef08a;
+    letter-spacing: 0.2px;
+}
+
+.dk-tri-disclaimer-text {
+    display: block;
+    font-size: 10px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Right 3D Visual Pop-out */
+.dk-tri-visual-wrap {
+    width: 100px;
+    height: 110px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dk-tri-product-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.7));
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s;
+    transform: perspective(600px) rotateY(-8deg) rotateX(4deg);
+    position: relative;
+    z-index: 2;
+}
+
+.dk-tri-card:hover .dk-tri-product-img {
+    transform: perspective(600px) rotateY(-2deg) rotateX(0deg) scale(1.1) translateY(-4px);
+    filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 14px var(--glow-color, rgba(249, 115, 22, 0.5)));
+}
+
+.dk-tri-popout-glow {
+    position: absolute;
+    inset: 10px;
+    background: radial-gradient(circle, var(--glow-color, rgba(249, 115, 22, 0.35)) 0%, transparent 70%);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.3s;
+}
+
+.dk-tri-card:hover .dk-tri-popout-glow {
+    opacity: 0.9;
+}
+
+.dk-tri-uploading-tag {
+    position: absolute;
+    bottom: -2px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #38bdf8;
+    font-size: 8px;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    z-index: 4;
+}
+</style>
+
+<script>
+(function() {
+    const sliderRoot = document.getElementById("@sliderId");
+    if (!sliderRoot) return;
+
+    const track = document.getElementById("@(sliderId)_track");
+    if (!track) return;
+
+    const autoPlay = sliderRoot.getAttribute("data-autoplay") === "true";
+    const intervalMs = parseInt(sliderRoot.getAttribute("data-interval") || "4000", 10);
+    const durationMs = parseInt(sliderRoot.getAttribute("data-duration") || "650", 10);
+
+    let isAnimating = false;
+    let timer = null;
+
+    // Slide one slot to the left: Right card moves to center, center moves to left, left exits left, new enters right
+    function slideNext() {
+        if (isAnimating) return;
+        const cards = track.querySelectorAll(".dk-tri-card");
+        if (cards.length <= 3) return;
+
+        isAnimating = true;
+
+        const firstCard = cards[0];
+        const cardWidth = firstCard.getBoundingClientRect().width;
+        const gap = 16; // CSS gap
+        const step = cardWidth + gap;
+
+        // Apply smooth transition moving left
+        track.style.transition = `transform ${durationMs}ms cubic-bezier(0.25, 1, 0.5, 1)`;
+        track.style.transform = `translateX(-${step}px)`;
+
+        setTimeout(() => {
+            // Move first card to the end in DOM
+            track.appendChild(firstCard);
+            // Instantly reset transform without animation
+            track.style.transition = "none";
+            track.style.transform = "translateX(0)";
+            // Trigger reflow
+            void track.offsetHeight;
+            isAnimating = false;
+        }, durationMs + 20);
+    }
+
+    function startTimer() {
+        if (!autoPlay) return;
+        stopTimer();
+        timer = setInterval(slideNext, intervalMs);
+    }
+
+    function stopTimer() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    // Pause on hover, resume on mouse leave
+    sliderRoot.addEventListener("mouseenter", stopTimer);
+    sliderRoot.addEventListener("mouseleave", startTimer);
+
+    // Start auto slider
+    startTimer();
+})();
+</script>
+

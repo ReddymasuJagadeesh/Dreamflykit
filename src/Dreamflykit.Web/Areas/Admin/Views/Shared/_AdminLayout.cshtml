@@ -453,6 +453,22 @@
                     <span>📚 Story Books Hub (BooksFlix)</span>
                 </a>
 
+                <a href="/Admin/CategorySliders" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "CategorySliders" ? "active" : "")" style="color: #f97316;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                    <span>⚡ 3-Section Category Sliders</span>
+                </a>
+
+                <a href="/Admin/CountryKits" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "CountryKits" ? "active" : "")" style="color: #0284c7;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                    <span>🌍 Country Kits Hub</span>
+                </a>
+
 
                 @if (User.IsInRole("SuperAdmin"))
 

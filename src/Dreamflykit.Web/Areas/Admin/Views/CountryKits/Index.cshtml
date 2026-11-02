@@ -1,0 +1,831 @@
+@model Dreamflykit.Web.Areas.Admin.Models.CountryKitAdminViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Country Kits Management";
+    var profile = Model.SelectedProfile ?? new();
+    var countries = Model.Countries ?? new();
+    var kits = profile.Kits ?? new();
+}
+
+@Html.AntiForgeryToken()
+
+<div class="dk-admin-content-container" style="max-width: 1400px; margin: 0 auto; padding: 24px 20px;">
+
+    <!-- TOP HEADER -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                <span style="background: #0284c7; color: #ffffff; font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 4px; letter-spacing: 0.5px;">🌍 GLOBAL KITS ADMIN</span>
+                <span style="background: #1e293b; color: #94a3b8; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px;">@profile.FlagEmoji @profile.CountryName</span>
+            </div>
+            <h1 style="font-size: 26px; font-weight: 900; color: #0f172a; margin: 0;">Country Kits &amp; Destinations Management</h1>
+            <p style="font-size: 13.5px; color: #64748b; margin: 4px 0 0 0;">
+                Full administrative control over study abroad country pages, landmark visuals, trust pillars, kit sizing (Small, Medium, Large), and images.
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <a href="/kits/@profile.CountrySlug" target="_blank" class="dk-btn" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 10px 18px; font-size: 13.5px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <span>👁️</span> Preview Live Store
+            </a>
+
+            <button type="button" class="dk-btn" onclick="openAddCountryModal()" style="background: #0f766e; color: #ffffff; border: none; padding: 10px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                <span>+</span> Add Country
+            </button>
+
+            <form asp-action="ResetDefaults" method="post" style="display: inline;" onsubmit="return confirm('Reset Country Kits for @profile.CountryName to defaults?');">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="countrySlug" value="@profile.CountrySlug" />
+                <button type="submit" class="dk-btn" style="background: #fff; color: #dc2626; border: 1px solid #fca5a5; padding: 10px 16px; font-size: 13px; font-weight: 700; border-radius: 8px; cursor: pointer;">
+                    ↺ Reset Defaults
+                </button>
+            </form>
+
+            <button type="button" class="dk-btn" id="btnSaveCountryTop" onclick="saveCountryProfile()" style="background: #0284c7; color: #ffffff; border: none; padding: 11px 26px; font-size: 14px; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save Changes
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; color: #065f46; font-weight: 600;">
+            ✓ @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; color: #991b1b; font-weight: 600;">
+            ✕ @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- COUNTRY SWITCHER TABS -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; overflow-x: auto; padding: 4px 0; max-width: 100%;">
+            <span style="font-size: 13px; font-weight: 800; color: #64748b; white-space: nowrap; margin-right: 6px;">SELECT DESTINATION:</span>
+            @foreach (var c in countries)
+            {
+                var isSelected = string.Equals(c.CountrySlug, profile.CountrySlug, StringComparison.OrdinalIgnoreCase);
+                <a href="/Admin/CountryKits?countrySlug=@c.CountrySlug" 
+                   class="dk-country-pill-btn"
+                   style="padding: 8px 16px; border-radius: 20px; font-size: 13.5px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; transition: all 0.2s; @(isSelected ? "background: #0284c7; color: #ffffff; box-shadow: 0 2px 8px rgba(2,132,199,0.3);" : "background: #f8fafc; color: #475569; border: 1px solid #cbd5e1;")">
+                    <span>@c.FlagEmoji</span>
+                    <span>@c.CountryName</span>
+                    <span style="font-size: 11px; opacity: 0.8; background: @(isSelected ? "rgba(255,255,255,0.25)" : "#e2e8f0"); padding: 2px 6px; border-radius: 10px;">@c.Kits.Count</span>
+                </a>
+            }
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <button type="button" onclick="deleteCurrentCountry('@profile.CountrySlug', '@profile.CountryName')" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 7px 12px; font-size: 12.5px; font-weight: 700; border-radius: 6px; cursor: pointer;">
+                🗑️ Delete '@profile.CountryName'
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN FORM CONTAINER -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 24px;">
+
+        <!-- 1. COUNTRY PROFILE & HERO BANNER CONFIG -->
+        <div class="dk-card" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">1. Country Profile &amp; Hero Banner</h2>
+                    <p style="margin: 2px 0 0 0; font-size: 13px; color: #64748b;">Configure header banner, landmark image, trust pillars, and destination metadata.</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13.5px; cursor: pointer;">
+                        <input type="checkbox" id="country_IsActive" @(profile.IsActive ? "checked" : "") style="width: 18px; height: 18px; accent-color: #0284c7;" />
+                        Active in Store
+                    </label>
+                </div>
+            </div>
+
+            <!-- Country Basics -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                <div>
+                    <label class="ck-label">Country Name</label>
+                    <input type="text" id="country_Name" class="ck-input" value="@profile.CountryName" />
+                </div>
+                <div>
+                    <label class="ck-label">Country Slug (URL)</label>
+                    <input type="text" id="country_Slug" class="ck-input" value="@profile.CountrySlug" readonly style="background: #f8fafc; color: #64748b;" />
+                </div>
+                <div>
+                    <label class="ck-label">Flag Emoji</label>
+                    <input type="text" id="country_Flag" class="ck-input" value="@profile.FlagEmoji" />
+                </div>
+                <div>
+                    <label class="ck-label">Starting Price Display</label>
+                    <input type="number" id="country_StartingPrice" class="ck-input" value="@profile.StartingPrice" placeholder="4999" />
+                </div>
+                <div>
+                    <label class="ck-label">Display Order</label>
+                    <input type="number" id="country_DisplayOrder" class="ck-input" value="@profile.DisplayOrder" />
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label class="ck-label">Homepage Tagline</label>
+                <input type="text" id="country_Tagline" class="ck-input" value="@profile.Tagline" placeholder="Study in the Land of Opportunities" />
+            </div>
+
+            <!-- Hero Banner Section -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                <h3 style="margin: 0 0 14px 0; font-size: 15px; font-weight: 800; color: #1e293b;">Hero Banner Visuals &amp; Copy</h3>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                    <div>
+                        <div style="margin-bottom: 14px;">
+                            <label class="ck-label">Hero Title (H1)</label>
+                            <input type="text" id="country_HeroTitle" class="ck-input" value="@profile.HeroTitle" placeholder="@profile.CountryName Student Kits" />
+                        </div>
+
+                        <div style="margin-bottom: 14px;">
+                            <label class="ck-label">Hero Subtitle</label>
+                            <textarea id="country_HeroSubtitle" class="ck-input" rows="3">@profile.HeroSubtitle</textarea>
+                        </div>
+
+                        <!-- Landmark Image URL & Upload -->
+                        <div>
+                            <label class="ck-label">Landmark Image (Statue of Liberty / Big Ben / etc.)</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="country_LandmarkImageUrl" class="ck-input" value="@profile.LandmarkImageUrl" placeholder="/images/countries/landmark-usa.webp" />
+                                <label class="dk-btn" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; padding: 8px 14px; font-size: 13px; font-weight: 700; border-radius: 6px; cursor: pointer; white-space: nowrap;">
+                                    📁 Upload
+                                    <input type="file" accept="image/*" style="display:none;" onchange="uploadImageHandler(this, 'country_LandmarkImageUrl', 'landmarkPreviewImg', 'country_IsLandmarkUploadingSoon')" />
+                                </label>
+                            </div>
+                            <div style="margin-top: 8px; display: flex; align-items: center; gap: 12px;">
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer;">
+                                    <input type="checkbox" id="country_IsLandmarkUploadingSoon" @(profile.IsLandmarkUploadingSoon ? "checked" : "") style="width: 16px; height: 16px; accent-color: #0284c7;" />
+                                    Show "Uploading Soon" Placeholder Badge on Landmark
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Landmark Preview Box -->
+                    <div>
+                        <label class="ck-label">Landmark Preview</label>
+                        <div style="width: 100%; height: 180px; border-radius: 8px; background: #e2e8f0; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
+                            <img id="landmarkPreviewImg" 
+                                 src="@(string.IsNullOrWhiteSpace(profile.LandmarkImageUrl) ? "/images/placeholder.svg" : profile.LandmarkImageUrl)" 
+                                 alt="Landmark Preview" 
+                                 style="width: 100%; height: 100%; object-fit: cover;" 
+                                 onerror="this.src='/images/placeholder.svg';" />
+                            <div id="landmarkSoonBadge" style="position: absolute; bottom: 8px; right: 8px; background: rgba(2, 132, 199, 0.9); color: #fff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px; @(profile.IsLandmarkUploadingSoon ? "" : "display:none;")">
+                                UPLOADING SOON
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Trust Feature Pillars -->
+            <div>
+                <h3 style="margin: 0 0 14px 0; font-size: 15px; font-weight: 800; color: #1e293b;">4 Trust Feature Pillars (Shown on Hero Banner)</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;">
+                    <div>
+                        <label class="ck-label">Pillar 1</label>
+                        <input type="text" id="country_Feature1" class="ck-input" value="@profile.Feature1" placeholder="Curated for American Lifestyle" />
+                    </div>
+                    <div>
+                        <label class="ck-label">Pillar 2</label>
+                        <input type="text" id="country_Feature2" class="ck-input" value="@profile.Feature2" placeholder="Essential Items for Every Student" />
+                    </div>
+                    <div>
+                        <label class="ck-label">Pillar 3</label>
+                        <input type="text" id="country_Feature3" class="ck-input" value="@profile.Feature3" placeholder="Premium Quality Products" />
+                    </div>
+                    <div>
+                        <label class="ck-label">Pillar 4</label>
+                        <input type="text" id="country_Feature4" class="ck-input" value="@profile.Feature4" placeholder="Value for Your Money" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. KITS PRODUCT CATALOG FOR SELECTED COUNTRY -->
+        <div class="dk-card" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">
+                        2. Curated Kits for @profile.CountryName (@kits.Count Kits)
+                    </h2>
+                    <p style="margin: 2px 0 0 0; font-size: 13px; color: #64748b;">
+                        Manage Small, Medium, and Large student kits with pricing, badges, inclusions, and image uploads.
+                    </p>
+                </div>
+                <button type="button" class="dk-btn" onclick="addNewKitCard()" style="background: #0284c7; color: #fff; border: none; padding: 8px 18px; font-size: 13px; font-weight: 700; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                    <span>+</span> Add New Kit
+                </button>
+            </div>
+
+            <!-- KITS CONTAINER LIST -->
+            <div id="kitsContainer" style="display: flex; flex-direction: column; gap: 16px;">
+                @for (int i = 0; i < kits.Count; i++)
+                {
+                    var kit = kits[i];
+                    <div class="ck-kit-card" data-index="@i" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px; position: relative;">
+                        <input type="hidden" class="kit-id" value="@kit.Id" />
+                        <input type="hidden" class="kit-slug" value="@kit.Slug" />
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: #e0f2fe; color: #0369a1; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px;">#@(i + 1)</span>
+                                <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #0f172a;">@kit.Name</h4>
+                                <span class="ck-size-badge" style="background: #f1f5f9; color: #475569; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; text-transform: uppercase;">@kit.Size</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                    <input type="checkbox" class="kit-active" @(kit.IsActive ? "checked" : "") style="accent-color: #0284c7;" />
+                                    Active
+                                </label>
+                                <button type="button" onclick="removeKitCard(this)" style="background: #fee2e2; color: #dc2626; border: none; padding: 4px 10px; font-size: 12px; font-weight: 700; border-radius: 4px; cursor: pointer;">
+                                    ✕ Remove
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 140px 1fr 1fr 1fr; gap: 16px; align-items: start;">
+                            <!-- Kit Image Preview & Upload -->
+                            <div>
+                                <div style="width: 140px; height: 110px; border-radius: 6px; background: #f8fafc; border: 1px solid #e2e8f0; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 6px;">
+                                    <img class="kit-preview-img" 
+                                         src="@(string.IsNullOrWhiteSpace(kit.ImageUrl) ? "/images/placeholder.svg" : kit.ImageUrl)" 
+                                         alt="Kit Preview" 
+                                         style="width: 100%; height: 100%; object-fit: cover;" 
+                                         onerror="this.src='/images/placeholder.svg';" />
+                                    <div class="kit-soon-badge" style="position: absolute; bottom: 4px; right: 4px; background: rgba(2, 132, 199, 0.9); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 3px; @(kit.IsUploadingSoon ? "" : "display:none;")">
+                                        SOON
+                                    </div>
+                                </div>
+                                <label class="dk-btn" style="display: block; text-align: center; background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; padding: 4px 8px; font-size: 11.5px; font-weight: 700; border-radius: 4px; cursor: pointer;">
+                                    📁 Change Image
+                                    <input type="file" accept="image/*" style="display:none;" onchange="uploadKitItemImage(this)" />
+                                </label>
+                                <input type="hidden" class="kit-image-url" value="@kit.ImageUrl" />
+                                <div style="margin-top: 4px;">
+                                    <label style="display: flex; align-items: center; gap: 4px; font-size: 11.5px; color: #475569; cursor: pointer;">
+                                        <input type="checkbox" class="kit-uploading-soon" @(kit.IsUploadingSoon ? "checked" : "") onchange="toggleKitSoonBadge(this)" style="accent-color: #0284c7;" />
+                                        Uploading Soon
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Column 1: Details -->
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div>
+                                    <label class="ck-label">Kit Name</label>
+                                    <input type="text" class="ck-input kit-name" value="@kit.Name" />
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <div>
+                                        <label class="ck-label">Kit Size</label>
+                                        <select class="ck-input kit-size">
+                                            <option value="small" selected="@(kit.Size.ToLower() == "small")">Small Kit</option>
+                                            <option value="medium" selected="@(kit.Size.ToLower() == "medium")">Medium Kit</option>
+                                            <option value="large" selected="@(kit.Size.ToLower() == "large")">Large Kit</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="ck-label">Badge</label>
+                                        <select class="ck-input kit-badge">
+                                            <option value="" selected="@(string.IsNullOrEmpty(kit.Badge))">None</option>
+                                            <option value="Best Seller" selected="@(kit.Badge == "Best Seller")">Best Seller</option>
+                                            <option value="Most Popular" selected="@(kit.Badge == "Most Popular")">Most Popular</option>
+                                            <option value="Best Value" selected="@(kit.Badge == "Best Value")">Best Value</option>
+                                            <option value="Student Choice" selected="@(kit.Badge == "Student Choice")">Student Choice</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Column 2: Pricing & Ratings -->
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <div>
+                                        <label class="ck-label">Price (₹)</label>
+                                        <input type="number" class="ck-input kit-price" value="@kit.SellingPrice" oninput="calcDiscount(this)" />
+                                    </div>
+                                    <div>
+                                        <label class="ck-label">MRP (₹)</label>
+                                        <input type="number" class="ck-input kit-mrp" value="@kit.Mrp" oninput="calcDiscount(this)" />
+                                    </div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+                                    <div>
+                                        <label class="ck-label">Discount %</label>
+                                        <input type="number" class="ck-input kit-discount" value="@kit.DiscountPercentage" />
+                                    </div>
+                                    <div>
+                                        <label class="ck-label">Rating</label>
+                                        <input type="number" step="0.1" class="ck-input kit-rating" value="@kit.Rating" />
+                                    </div>
+                                    <div>
+                                        <label class="ck-label">Reviews</label>
+                                        <input type="number" class="ck-input kit-reviews" value="@kit.ReviewCount" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Column 3: Description & Inclusions -->
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div>
+                                    <label class="ck-label">Description</label>
+                                    <textarea class="ck-input kit-desc" rows="2">@kit.Description</textarea>
+                                </div>
+                                <div>
+                                    <label class="ck-label">Included Categories (comma separated)</label>
+                                    <input type="text" class="ck-input kit-included" value="@string.Join(", ", kit.IncludedCategories)" placeholder="Study Essentials, Electronics, Room & Living" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <!-- BOTTOM FLOATING SAVE BAR -->
+    <div style="position: sticky; bottom: 20px; background: #0f172a; color: #ffffff; padding: 14px 24px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-top: 30px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); z-index: 100;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 18px;">💾</span>
+            <span style="font-size: 14px; font-weight: 700;">Saving destination settings for: @profile.FlagEmoji @profile.CountryName</span>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <a href="/kits/@profile.CountrySlug" target="_blank" style="color: #94a3b8; font-size: 13px; font-weight: 600; text-decoration: underline;">Open Live Store</a>
+            <button type="button" class="dk-btn" onclick="saveCountryProfile()" style="background: #0284c7; color: #ffffff; border: none; padding: 9px 24px; font-size: 13.5px; font-weight: 800; border-radius: 6px; cursor: pointer;">
+                Save Changes Now
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<!-- ADD COUNTRY MODAL -->
+<div id="addCountryModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: #ffffff; width: 90%; max-width: 520px; border-radius: 12px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+            <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: #0f172a;">Add New Destination Country</h3>
+            <button type="button" onclick="closeAddCountryModal()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #64748b;">✕</button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+            <div>
+                <label class="ck-label">Country Name</label>
+                <input type="text" id="new_CountryName" class="ck-input" placeholder="e.g. Japan, Singapore, Italy" oninput="autoGenerateSlug(this)" />
+            </div>
+            <div>
+                <label class="ck-label">Country Slug</label>
+                <input type="text" id="new_CountrySlug" class="ck-input" placeholder="e.g. japan" />
+            </div>
+            <div>
+                <label class="ck-label">Flag Emoji</label>
+                <input type="text" id="new_FlagEmoji" class="ck-input" placeholder="🇯🇵" />
+            </div>
+            <div>
+                <label class="ck-label">Tagline</label>
+                <input type="text" id="new_Tagline" class="ck-input" placeholder="e.g. Innovation Meets Tradition" />
+            </div>
+            <div>
+                <label class="ck-label">Starting Price</label>
+                <input type="number" id="new_StartingPrice" class="ck-input" placeholder="5499" />
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" onclick="closeAddCountryModal()" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                Cancel
+            </button>
+            <button type="button" onclick="submitAddCountry()" style="background: #0284c7; color: #ffffff; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 800; cursor: pointer;">
+                Add Country
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ck-label {
+        display: block;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 5px;
+    }
+    .ck-input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 13.5px;
+        color: #0f172a;
+        background: #ffffff;
+        box-sizing: border-box;
+    }
+    .ck-input:focus {
+        border-color: #0284c7;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+    .ck-kit-card:hover {
+        border-color: #94a3b8;
+    }
+</style>
+
+<script>
+function getVerificationToken() {
+    return document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+}
+
+function autoGenerateSlug(el) {
+    const slugEl = document.getElementById('new_CountrySlug');
+    if (slugEl) {
+        slugEl.value = el.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    }
+}
+
+function openAddCountryModal() {
+    document.getElementById('addCountryModal').style.display = 'flex';
+}
+
+function closeAddCountryModal() {
+    document.getElementById('addCountryModal').style.display = 'none';
+}
+
+async function submitAddCountry() {
+    const name = document.getElementById('new_CountryName').value.trim();
+    const slug = document.getElementById('new_CountrySlug').value.trim();
+    const flag = document.getElementById('new_FlagEmoji').value.trim() || '🌍';
+    const tagline = document.getElementById('new_Tagline').value.trim() || ('Study in ' + name);
+    const startPrice = parseFloat(document.getElementById('new_StartingPrice').value) || 4999;
+
+    if (!name) {
+        alert('Please enter a country name.');
+        return;
+    }
+
+    const payload = {
+        CountryName: name,
+        CountrySlug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        FlagEmoji: flag,
+        Tagline: tagline,
+        HeroTitle: name + ' Student Kits',
+        HeroSubtitle: 'Everything you need for a comfortable and successful study abroad journey in ' + name + '.',
+        StartingPrice: startPrice,
+        IsActive: true
+    };
+
+    try {
+        const resp = await fetch('/Admin/CountryKits/AddCountry', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': getVerificationToken(),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const res = await resp.json();
+        if (res.success) {
+            alert('✓ Country added successfully!');
+            window.location.href = '/Admin/CountryKits?countrySlug=' + (res.slug || payload.CountrySlug);
+        } else {
+            alert('Failed to add country: ' + (res.message || 'Error'));
+        }
+    } catch (e) {
+        alert('Error: ' + e.message);
+    }
+}
+
+async function deleteCurrentCountry(slug, name) {
+    if (!confirm('Are you sure you want to delete ' + name + ' (' + slug + ')? This will remove all its kits.')) {
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('countrySlug', slug);
+
+    try {
+        const resp = await fetch('/Admin/CountryKits/DeleteCountry', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': getVerificationToken(),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        });
+
+        const res = await resp.json();
+        if (res.success) {
+            alert('✓ Country deleted.');
+            window.location.href = '/Admin/CountryKits';
+        } else {
+            alert('Delete failed: ' + (res.message || 'Error'));
+        }
+    } catch (e) {
+        alert('Error: ' + e.message);
+    }
+}
+
+async function uploadImageHandler(fileInput, urlTargetId, previewImgId, soonCheckboxId) {
+    if (!fileInput.files || !fileInput.files[0]) return;
+    const file = fileInput.files[0];
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const resp = await fetch('/Admin/CountryKits/UploadImage', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': getVerificationToken(),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        });
+
+        const res = await resp.json();
+        if (res.success && res.url) {
+            document.getElementById(urlTargetId).value = res.url;
+            const prev = document.getElementById(previewImgId);
+            if (prev) prev.src = res.url;
+            if (soonCheckboxId) {
+                const soonCb = document.getElementById(soonCheckboxId);
+                if (soonCb) {
+                    soonCb.checked = false;
+                    const badge = document.getElementById('landmarkSoonBadge');
+                    if (badge) badge.style.display = 'none';
+                }
+            }
+            alert('✓ Image uploaded successfully!');
+        } else {
+            alert('Upload failed: ' + (res.message || 'Error'));
+        }
+    } catch (e) {
+        alert('Upload error: ' + e.message);
+    }
+}
+
+async function uploadKitItemImage(fileInput) {
+    if (!fileInput.files || !fileInput.files[0]) return;
+    const file = fileInput.files[0];
+    const card = fileInput.closest('.ck-kit-card');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const resp = await fetch('/Admin/CountryKits/UploadImage', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': getVerificationToken(),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        });
+
+        const res = await resp.json();
+        if (res.success && res.url) {
+            card.querySelector('.kit-image-url').value = res.url;
+            const prev = card.querySelector('.kit-preview-img');
+            if (prev) prev.src = res.url;
+            const soonCb = card.querySelector('.kit-uploading-soon');
+            if (soonCb) {
+                soonCb.checked = false;
+                toggleKitSoonBadge(soonCb);
+            }
+            alert('✓ Kit image uploaded!');
+        } else {
+            alert('Upload failed: ' + (res.message || 'Error'));
+        }
+    } catch (e) {
+        alert('Upload error: ' + e.message);
+    }
+}
+
+function toggleKitSoonBadge(cb) {
+    const card = cb.closest('.ck-kit-card');
+    const badge = card.querySelector('.kit-soon-badge');
+    if (badge) {
+        badge.style.display = cb.checked ? 'block' : 'none';
+    }
+}
+
+function calcDiscount(el) {
+    const card = el.closest('.ck-kit-card');
+    const price = parseFloat(card.querySelector('.kit-price').value) || 0;
+    const mrp = parseFloat(card.querySelector('.kit-mrp').value) || 0;
+    const discInput = card.querySelector('.kit-discount');
+    if (mrp > price && price > 0) {
+        const disc = Math.round(((mrp - price) / mrp) * 100);
+        discInput.value = disc;
+    }
+}
+
+function addNewKitCard() {
+    const container = document.getElementById('kitsContainer');
+    const currentCount = container.querySelectorAll('.ck-kit-card').length;
+    const countryName = document.getElementById('country_Name').value || 'Country';
+    const countrySlug = document.getElementById('country_Slug').value || 'country';
+
+    const cardHtml = `
+    <div class="ck-kit-card" data-index="${currentCount}" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px; position: relative;">
+        <input type="hidden" class="kit-id" value="${countrySlug}-kit-${currentCount + 1}" />
+        <input type="hidden" class="kit-slug" value="kit-${currentCount + 1}" />
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="background: #e0f2fe; color: #0369a1; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px;">#${currentCount + 1}</span>
+                <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #0f172a;">${countryName} Kit ${currentCount + 1}</h4>
+                <span class="ck-size-badge" style="background: #f1f5f9; color: #475569; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 12px; text-transform: uppercase;">MEDIUM</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                    <input type="checkbox" class="kit-active" checked style="accent-color: #0284c7;" />
+                    Active
+                </label>
+                <button type="button" onclick="removeKitCard(this)" style="background: #fee2e2; color: #dc2626; border: none; padding: 4px 10px; font-size: 12px; font-weight: 700; border-radius: 4px; cursor: pointer;">
+                    ✕ Remove
+                </button>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 140px 1fr 1fr 1fr; gap: 16px; align-items: start;">
+            <div>
+                <div style="width: 140px; height: 110px; border-radius: 6px; background: #f8fafc; border: 1px solid #e2e8f0; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 6px;">
+                    <img class="kit-preview-img" src="/images/placeholder.svg" alt="Kit Preview" style="width: 100%; height: 100%; object-fit: cover;" />
+                    <div class="kit-soon-badge" style="position: absolute; bottom: 4px; right: 4px; background: rgba(2, 132, 199, 0.9); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 3px;">
+                        SOON
+                    </div>
+                </div>
+                <label class="dk-btn" style="display: block; text-align: center; background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; padding: 4px 8px; font-size: 11.5px; font-weight: 700; border-radius: 4px; cursor: pointer;">
+                    📁 Change Image
+                    <input type="file" accept="image/*" style="display:none;" onchange="uploadKitItemImage(this)" />
+                </label>
+                <input type="hidden" class="kit-image-url" value="" />
+                <div style="margin-top: 4px;">
+                    <label style="display: flex; align-items: center; gap: 4px; font-size: 11.5px; color: #475569; cursor: pointer;">
+                        <input type="checkbox" class="kit-uploading-soon" checked onchange="toggleKitSoonBadge(this)" style="accent-color: #0284c7;" />
+                        Uploading Soon
+                    </label>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div>
+                    <label class="ck-label">Kit Name</label>
+                    <input type="text" class="ck-input kit-name" value="${countryName} Kit" />
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                        <label class="ck-label">Kit Size</label>
+                        <select class="ck-input kit-size">
+                            <option value="small">Small Kit</option>
+                            <option value="medium" selected>Medium Kit</option>
+                            <option value="large">Large Kit</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="ck-label">Badge</label>
+                        <select class="ck-input kit-badge">
+                            <option value="" selected>None</option>
+                            <option value="Best Seller">Best Seller</option>
+                            <option value="Most Popular">Most Popular</option>
+                            <option value="Best Value">Best Value</option>
+                            <option value="Student Choice">Student Choice</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                        <label class="ck-label">Price (₹)</label>
+                        <input type="number" class="ck-input kit-price" value="9999" oninput="calcDiscount(this)" />
+                    </div>
+                    <div>
+                        <label class="ck-label">MRP (₹)</label>
+                        <input type="number" class="ck-input kit-mrp" value="13499" oninput="calcDiscount(this)" />
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+                    <div>
+                        <label class="ck-label">Discount %</label>
+                        <input type="number" class="ck-input kit-discount" value="26" />
+                    </div>
+                    <div>
+                        <label class="ck-label">Rating</label>
+                        <input type="number" step="0.1" class="ck-input kit-rating" value="4.8" />
+                    </div>
+                    <div>
+                        <label class="ck-label">Reviews</label>
+                        <input type="number" class="ck-input kit-reviews" value="1200" />
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div>
+                    <label class="ck-label">Description</label>
+                    <textarea class="ck-input kit-desc" rows="2">Curated kit items for students traveling to ${countryName}.</textarea>
+                </div>
+                <div>
+                    <label class="ck-label">Included Categories</label>
+                    <input type="text" class="ck-input kit-included" value="Study Essentials, Electronics, Travel Essentials" />
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+    container.insertAdjacentHTML('beforeend', cardHtml);
+}
+
+function removeKitCard(btn) {
+    if (confirm('Remove this kit card?')) {
+        btn.closest('.ck-kit-card').remove();
+    }
+}
+
+async function saveCountryProfile() {
+    const slug = document.getElementById('country_Slug').value.trim();
+    if (!slug) {
+        alert('Invalid country slug.');
+        return;
+    }
+
+    const kits = [];
+    document.querySelectorAll('.ck-kit-card').forEach((card, idx) => {
+        const incRaw = card.querySelector('.kit-included').value;
+        const incList = incRaw.split(',').map(s => s.trim()).filter(s => s.length > 0);
+
+        kits.push({
+            Id: card.querySelector('.kit-id').value || (slug + '-kit-' + (idx + 1)),
+            CountrySlug: slug,
+            Name: card.querySelector('.kit-name').value.trim(),
+            Slug: card.querySelector('.kit-slug').value.trim() || ('kit-' + (idx + 1)),
+            Size: card.querySelector('.kit-size').value,
+            Badge: card.querySelector('.kit-badge').value,
+            Description: card.querySelector('.kit-desc').value.trim(),
+            SellingPrice: parseFloat(card.querySelector('.kit-price').value) || 0,
+            Mrp: parseFloat(card.querySelector('.kit-mrp').value) || 0,
+            DiscountPercentage: parseInt(card.querySelector('.kit-discount').value) || 0,
+            Rating: parseFloat(card.querySelector('.kit-rating').value) || 4.8,
+            ReviewCount: parseInt(card.querySelector('.kit-reviews').value) || 0,
+            IncludedCategories: incList,
+            ImageUrl: card.querySelector('.kit-image-url').value.trim(),
+            IsUploadingSoon: card.querySelector('.kit-uploading-soon').checked,
+            DisplayOrder: idx + 1,
+            IsActive: card.querySelector('.kit-active').checked
+        });
+    });
+
+    const payload = {
+        CountrySlug: slug,
+        CountryName: document.getElementById('country_Name').value.trim(),
+        FlagEmoji: document.getElementById('country_Flag').value.trim(),
+        Tagline: document.getElementById('country_Tagline').value.trim(),
+        HeroTitle: document.getElementById('country_HeroTitle').value.trim(),
+        HeroSubtitle: document.getElementById('country_HeroSubtitle').value.trim(),
+        LandmarkImageUrl: document.getElementById('country_LandmarkImageUrl').value.trim(),
+        IsLandmarkUploadingSoon: document.getElementById('country_IsLandmarkUploadingSoon').checked,
+        StartingPrice: parseFloat(document.getElementById('country_StartingPrice').value) || 4999,
+        Feature1: document.getElementById('country_Feature1').value.trim(),
+        Feature2: document.getElementById('country_Feature2').value.trim(),
+        Feature3: document.getElementById('country_Feature3').value.trim(),
+        Feature4: document.getElementById('country_Feature4').value.trim(),
+        DisplayOrder: parseInt(document.getElementById('country_DisplayOrder').value) || 0,
+        IsActive: document.getElementById('country_IsActive').checked,
+        Kits: kits
+    };
+
+    try {
+        const resp = await fetch('/Admin/CountryKits/Save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': getVerificationToken(),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const res = await resp.json();
+        if (res.success) {
+            alert('✓ ' + (res.message || 'Country profile saved successfully!'));
+            window.location.reload();
+        } else {
+            alert('Save failed: ' + (res.message || 'Unknown error'));
+        }
+    } catch (e) {
+        alert('Save error: ' + e.message);
+    }
+}
+</script>
+

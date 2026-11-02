@@ -1,4 +1,5 @@
-﻿using Dreamflykit.Application.Geography;
+using Dreamflykit.Application.CountryKits.Interfaces;
+using Dreamflykit.Application.Geography;
 using Dreamflykit.Application.Kits.Interfaces;
 using Dreamflykit.Application.Kits.Models;
 using Dreamflykit.Web.Models.Kits;
@@ -12,15 +13,18 @@ public sealed class KitsController : Controller
     private readonly IFindMyKitService _findMyKitService;
     private readonly ICountryService _countryService;
     private readonly IKitService _kitService;
+    private readonly ICountryKitsHubService? _countryKitsHubService;
 
     public KitsController(
         IFindMyKitService findMyKitService,
         ICountryService countryService,
-        IKitService kitService)
+        IKitService kitService,
+        ICountryKitsHubService? countryKitsHubService = null)
     {
         _findMyKitService = findMyKitService;
         _countryService = countryService;
         _kitService = kitService;
+        _countryKitsHubService = countryKitsHubService;
     }
 
     // ============================================================
@@ -109,57 +113,86 @@ public sealed class KitsController : Controller
     }
 
     // ============================================================
-    // COUNTRY KITS
+    // COUNTRY KITS (Matches User Reference Screenshot)
     // ============================================================
 
-    [HttpGet( "/kits/{countrySlug}", Name = "CountryKits")]
+    [HttpGet("/kits/{countrySlug}", Name = "CountryKits")]
+    [HttpGet("/country-kits/{countrySlug}")]
     public async Task<IActionResult> CountryKits(
         string countrySlug,
-        CancellationToken cancellationToken)
+        [FromQuery] string? size = null,
+        [FromQuery] decimal? minPrice = null,
+        [FromQuery] decimal? maxPrice = null,
+        [FromQuery] string? sort = null,
+        CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(countrySlug))
         {
             return NotFound();
         }
 
-        var kits =
-            await _kitService.GetCountryKitsAsync(
-                countrySlug,
-                cancellationToken);
+        var normalizedSlug = Application.CountryKits.Models.CountryKitsHubDto.NormalizeSlug(countrySlug);
 
+        // Try getting profile from rich CountryKitsHubService
+        if (_countryKitsHubService != null)
+        {
+            var profile = await _countryKitsHubService.GetCountryProfileAsync(normalizedSlug, cancellationToken);
+            var allProfiles = await _countryKitsHubService.GetAllProfilesAsync(cancellationToken);
+
+            var model = new CountryKitsViewModel
+            {
+                CountrySlug = profile.CountrySlug,
+                CountryName = profile.CountryName,
+                FlagEmoji = profile.FlagEmoji,
+                HeroTitle = profile.HeroTitle,
+                HeroSubtitle = profile.HeroSubtitle,
+                LandmarkImageUrl = profile.LandmarkImageUrl,
+                IsLandmarkUploadingSoon = profile.IsLandmarkUploadingSoon,
+                Feature1 = profile.Feature1,
+                Feature2 = profile.Feature2,
+                Feature3 = profile.Feature3,
+                Feature4 = profile.Feature4,
+                SelectedSize = string.IsNullOrWhiteSpace(size) ? "all" : size.ToLowerInvariant(),
+                MinPrice = minPrice,
+                MaxPrice = maxPrice,
+                SelectedSort = string.IsNullOrWhiteSpace(sort) ? "popular" : sort.ToLowerInvariant(),
+                CuratedKits = profile.Kits ?? new(),
+                AllCountries = allProfiles?.Countries?.Values?.Where(c => c.IsActive)?.OrderBy(c => c.DisplayOrder)?.ToList() ?? new()
+            };
+
+            return View("CountryKits", model);
+        }
+
+        // Fallback to legacy database service
+        var kits = await _kitService.GetCountryKitsAsync(countrySlug, cancellationToken);
         if (kits.Count == 0)
         {
             return NotFound();
         }
 
-        var model =
-            new CountryKitsViewModel
-            {
-                CountryName =
-                    kits.First().CountryName,
+        var legacyModel = new CountryKitsViewModel
+        {
+            CountrySlug = countrySlug,
+            CountryName = kits.First().CountryName,
+            HeroTitle = $"{kits.First().CountryName} Student Kits",
+            HeroSubtitle = $"Everything you need for a comfortable and successful study abroad journey in {kits.First().CountryName}.",
+            Kits = kits
+                .Select(kit => new CountryKitItemViewModel
+                {
+                    KitId = kit.KitId,
+                    Name = kit.Name,
+                    Slug = kit.Slug,
+                    Description = kit.Description,
+                    SizeName = kit.SizeName,
+                    Mrp = kit.Mrp,
+                    SellingPrice = kit.SellingPrice,
+                    DiscountPercentage = kit.DiscountPercentage,
+                    IsFeatured = kit.IsFeatured
+                })
+                .ToList()
+        };
 
-                Kits = kits
-                    .Select(kit =>
-                        new CountryKitItemViewModel
-                        {
-                            KitId = kit.KitId,
-                            Name = kit.Name,
-                            Slug = kit.Slug,
-                            Description = kit.Description,
-                            SizeName = kit.SizeName,
-                            Mrp = kit.Mrp,
-                            SellingPrice = kit.SellingPrice,
-                            DiscountPercentage =
-                                kit.DiscountPercentage,
-                            IsFeatured =
-                                kit.IsFeatured
-                        })
-                    .ToList()
-            };
-
-        return View(
-            "CountryKits",
-            model);
+        return View("CountryKits", legacyModel);
     }
 
     // ============================================================

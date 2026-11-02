@@ -300,7 +300,9 @@
         var hasSections = highlight.Sections != null && highlight.Sections.Count > 0;
         if (hasSections)
         {
-            <section class="dk-flagship-three-section" 
+            <!-- 3-SECTION SYNCHRONIZED SLIDER SHOWCASE (RIGHT-TO-LEFT SLIDE) -->
+            <partial name="_CategoryThreeSectionSlider" model='"mobiles"' />
+            <section class="dk-flagship-three-section" style="display:none;" 
                      id="flagshipThreeSection" 
                      aria-label="Flagship Smartphone 3-Section Showcase"
                      data-autoplay="@(highlight.AutoPlay ? "true" : "false")"
