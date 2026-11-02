@@ -239,6 +239,10 @@
             {
                 <span class="dk-breadcrumb-current">Electronics</span>
             }
+            else if (Model.IsStoryBooksHub)
+            {
+                <span class="dk-breadcrumb-current">Story Books</span>
+            }
             else if (!string.IsNullOrWhiteSpace(Model.CategoryName))
             {
                 <a href="/categories" class="dk-breadcrumb-item">Categories</a>
@@ -403,6 +407,13 @@
         </div>
     }
 
+    @if (Model.IsStoryBooksHub && Model.StoryBooksHub != null)
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_StoryBooksHub" model="Model.StoryBooksHub" />
+        </div>
+    }
+
     @{
         var isSpecializedHub = (Model.IsFashionHub && Model.ViewMode == "hub") ||
                                Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear" ||
@@ -419,7 +430,8 @@
                                Model.IsFoodHub ||
                                (Model.IsTravelHub && Model.ViewMode == "hub") ||
                                (Model.IsElectronicsCategory && (Model.ViewMode == "hub" || Model.IsElectronicsSubcategoryHub || Model.IsElectronicsBrandHub)) ||
-                               Model.IsLuggageHub;
+                               Model.IsLuggageHub ||
+                               Model.IsStoryBooksHub;
     }
 
     @if (!isSpecializedHub)

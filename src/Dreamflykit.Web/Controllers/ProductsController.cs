@@ -23,6 +23,7 @@ public sealed class ProductsController : Controller
     private readonly Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService _travelHubService;
     private readonly Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService _luggageHubService;
     private readonly Dreamflykit.Application.ElectronicsHub.Interfaces.IElectronicsHubService _electronicsHubService;
+    private readonly Dreamflykit.Application.StoryBooksHub.Interfaces.IStoryBooksHubService? _storyBooksHubService;
 
     public ProductsController(
         IProductService productService,
@@ -36,7 +37,8 @@ public sealed class ProductsController : Controller
         Dreamflykit.Application.FoodHub.Interfaces.IFoodHubService foodHubService,
         Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService travelHubService,
         Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService luggageHubService,
-        Dreamflykit.Application.ElectronicsHub.Interfaces.IElectronicsHubService electronicsHubService)
+        Dreamflykit.Application.ElectronicsHub.Interfaces.IElectronicsHubService electronicsHubService,
+        Dreamflykit.Application.StoryBooksHub.Interfaces.IStoryBooksHubService? storyBooksHubService = null)
     {
         _productService = productService;
         _categoryService = categoryService;
@@ -50,6 +52,7 @@ public sealed class ProductsController : Controller
         _travelHubService = travelHubService;
         _luggageHubService = luggageHubService;
         _electronicsHubService = electronicsHubService;
+        _storyBooksHubService = storyBooksHubService;
     }
 
     [HttpGet("/category/study-essentials/category/study-essentials/{slug}")]
@@ -153,6 +156,11 @@ public sealed class ProductsController : Controller
 
         var isElectronicsCategory = string.Equals(effectiveCategory, "electronics", StringComparison.OrdinalIgnoreCase) ||
                                    string.Equals(effectiveCategory, "electronic", StringComparison.OrdinalIgnoreCase);
+
+        var isStoryBooksCategory = string.Equals(effectiveCategory, "story-books", StringComparison.OrdinalIgnoreCase) ||
+                                   string.Equals(effectiveCategory, "story_books", StringComparison.OrdinalIgnoreCase) ||
+                                   string.Equals(effectiveCategory, "storybooks", StringComparison.OrdinalIgnoreCase) ||
+                                   string.Equals(effectiveCategory, "books", StringComparison.OrdinalIgnoreCase);
 
         var isLuggageCategory = string.Equals(effectiveCategory, "luggage-bags", StringComparison.OrdinalIgnoreCase) ||
                                 string.Equals(effectiveCategory, "luggage_bags", StringComparison.OrdinalIgnoreCase) ||
@@ -452,7 +460,7 @@ public sealed class ProductsController : Controller
                       (isSweatshirtsCategory ? "sweatshirts" :
                       (isWomenClothingCategory ? "women-clothing" :
                       (isMenClothingCategory ? "men-clothing" :
-                      ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory || isAppliancesCategory || isBeautyCategory || isFoodCategory || isTravelCategory || isElectronicsCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"))))))))),
+                      ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory || isAppliancesCategory || isBeautyCategory || isFoodCategory || isTravelCategory || isElectronicsCategory || isStoryBooksCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"))))))))),
             StudyHub = isStudyCategory
                         ? await _studyHubService.GetConfigAsync(cancellationToken)
                         : null,
@@ -482,6 +490,9 @@ public sealed class ProductsController : Controller
                         : null,
             ElectronicsHub = isElectronicsCategory
                         ? await _electronicsHubService.GetConfigAsync(cancellationToken)
+                        : null,
+            StoryBooksHub = (isStoryBooksCategory && _storyBooksHubService != null)
+                        ? await _storyBooksHubService.GetConfigAsync(cancellationToken)
                         : null,
             CurrentAppliancesBrandSlug = currentAppliancesBrandSlug,
             CurrentAppliancesBrandName = currentAppliancesBrandName,

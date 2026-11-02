@@ -445,6 +445,14 @@
                     <span>🧳 Luggage &amp; Bags Hub</span>
                 </a>
 
+                <a href="/Admin/StoryBooksHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "StoryBooksHub" ? "active" : "")" style="color: #ef4444;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <span>📚 Story Books Hub (BooksFlix)</span>
+                </a>
+
 
                 @if (User.IsInRole("SuperAdmin"))
 
