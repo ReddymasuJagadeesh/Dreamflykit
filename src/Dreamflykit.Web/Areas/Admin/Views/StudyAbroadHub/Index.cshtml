@@ -15,12 +15,17 @@
     var eduDocGroups = edu.DocumentGroups ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanDocGroupDto>();
     var eduRateRows = edu.RateRows ?? new List<Dreamflykit.Application.StudyHub.Models.EducationLoanRateRowDto>();
     var consult = Model.ConsultancyDetailsPage ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultConsultancyDetailsPage();
+    consult.EnsureDefaults();
     var consultPills = consult.CategoryPills ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyCategoryPillDto>();
     var consultPartners = consult.Partners ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyPartnerLogoDto>();
     var consultTrending = consult.TrendingCourses ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyCourseDto>();
     var consultPopular = consult.PopularPrograms ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyCourseDto>();
     var consultCountries = consult.Countries ?? new List<Dreamflykit.Application.StudyHub.Models.ConsultancyCountryDto>();
     var activeCountry = consultCountries.FirstOrDefault(c => c.IsActive) ?? consultCountries.FirstOrDefault() ?? new Dreamflykit.Application.StudyHub.Models.ConsultancyCountryDto();
+    var consultSearchBar = consult.SearchBar ?? new Dreamflykit.Application.StudyHub.Models.ConsultancySearchBarDto();
+    var consultWhyChoose = consult.WhyChooseUs ?? new Dreamflykit.Application.StudyHub.Models.ConsultancyWhyChooseSectionDto();
+    var consultTopDestinations = consult.TopDestinations ?? new Dreamflykit.Application.StudyHub.Models.ConsultancyTopDestinationsSectionDto();
+    var consultTopUniversities = consult.TopUniversities ?? new Dreamflykit.Application.StudyHub.Models.ConsultancyTopUniversitiesSectionDto();
 }
 
 <div class="dk-admin-page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
@@ -1339,6 +1344,10 @@
                     <input type="radio" name="consult_hero_media_type" value="video" @(consult.HeroMediaType == "video" ? "checked" : "") onchange="toggleConsultHeroMedia('video')" />
                     <span>🎥 Background Video</span>
                 </label>
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; cursor: pointer; border-left: 1px solid #cbd5e1; padding-left: 10px;">
+                    <input type="checkbox" id="consult_enable_3d_animation" @(consult.EnableHero3dAnimation ? "checked" : "") />
+                    <span>✨ Realistic 3D Tilt &amp; Depth</span>
+                </label>
             </div>
         </div>
 
@@ -1666,6 +1675,271 @@
                     <label class="dk-sh-form-label" style="font-size: 10px;">Stat 4 (Value &amp; Label)</label>
                     <input type="text" id="consult_stat_4_val" class="dk-admin-form-input" value="@s4.Value" style="margin-bottom: 4px; font-weight: 800; color: #e52d27;" />
                     <input type="text" id="consult_stat_4_lbl" class="dk-admin-form-input" value="@s4.Label" style="font-size: 11px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5.8 REDBUS-STYLE HORIZONTAL SEARCH BAR CONFIGURATION -->
+    <div style="background: #ffffff; border: 1.5px solid #fed7aa; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #ffedd5; padding-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="background: #ea580c; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px;">Search Widget</span>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #9a3412; margin: 0;">5.8 Horizontal Search Bar Options (RedBus Style)</h3>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Search Widget Title</label>
+                <input type="text" id="consult_searchbar_title" class="dk-admin-form-input" value="@consultSearchBar.Title" placeholder="Find Your Dream Global University & Course" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Destination Label</label>
+                <input type="text" id="consult_searchbar_dest_lbl" class="dk-admin-form-input" value="@consultSearchBar.DestinationLabel" placeholder="Destination" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Centre Label</label>
+                <input type="text" id="consult_searchbar_centre_lbl" class="dk-admin-form-input" value="@consultSearchBar.CentreLabel" placeholder="Nearest Centre" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Intake Label</label>
+                <input type="text" id="consult_searchbar_intake_lbl" class="dk-admin-form-input" value="@consultSearchBar.IntakeLabel" placeholder="Preferred Intake" />
+            </div>
+        </div>
+
+        <!-- Destinations Sub-list -->
+        <div style="background: #fff7ed; border: 1px solid #ffedd5; border-radius: 10px; padding: 14px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-size: 12px; font-weight: 800; color: #c2410c;">Destination Country Options in Dropdown</span>
+                <button type="button" class="dk-btn" style="background: #ea580c; color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 6px;" onclick="addConsultSearchDestination()">+ Add Country</button>
+            </div>
+            <div id="consult_dest_options_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px;">
+                @foreach (var d in consultSearchBar.Destinations)
+                {
+                    <div class="dest-opt-row" style="background: #ffffff; border: 1px solid #fed7aa; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 6px;">
+                        <input type="text" class="dk-admin-form-input d-flag" value="@d.FlagEmoji" style="width: 38px; text-align: center; padding: 4px;" title="Emoji Flag" />
+                        <input type="text" class="dk-admin-form-input d-name" value="@d.CountryName" placeholder="Country" style="flex: 1; padding: 4px 8px; font-weight: 700;" />
+                        <input type="text" class="dk-admin-form-input d-code" value="@d.CountryCode" placeholder="Code (e.g. GB)" style="width: 55px; text-align: center; padding: 4px;" />
+                        <input type="text" class="dk-admin-form-input d-count" value="@d.UniversityCountText" placeholder="Unis count" style="width: 75px; padding: 4px 6px;" />
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 4px 8px;" onclick="this.closest('.dest-opt-row').remove()">✕</button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Centres Sub-list -->
+        <div style="background: #fff7ed; border: 1px solid #ffedd5; border-radius: 10px; padding: 14px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-size: 12px; font-weight: 800; color: #c2410c;">Nearest Branch Centres Options in Dropdown</span>
+                <button type="button" class="dk-btn" style="background: #ea580c; color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 6px;" onclick="addConsultSearchCentre()">+ Add Centre</button>
+            </div>
+            <div id="consult_centre_options_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px;">
+                @foreach (var c in consultSearchBar.Centres)
+                {
+                    <div class="centre-opt-row" style="background: #ffffff; border: 1px solid #fed7aa; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 6px;">
+                        <input type="text" class="dk-admin-form-input c-name" value="@c.CentreName" placeholder="Centre name" style="flex: 1.2; padding: 4px 6px; font-weight: 700;" />
+                        <input type="text" class="dk-admin-form-input c-city" value="@c.City" placeholder="City" style="flex: 0.8; padding: 4px 6px;" />
+                        <label style="display: flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; white-space: nowrap;">
+                            <input type="checkbox" class="c-online" @(c.IsOnline ? "checked" : "") /> Online
+                        </label>
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 4px 8px;" onclick="this.closest('.centre-opt-row').remove()">✕</button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Intakes Sub-list -->
+        <div style="background: #fff7ed; border: 1px solid #ffedd5; border-radius: 10px; padding: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-size: 12px; font-weight: 800; color: #c2410c;">Preferred Intake Options in Dropdown</span>
+                <button type="button" class="dk-btn" style="background: #ea580c; color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 6px;" onclick="addConsultSearchIntake()">+ Add Intake</button>
+            </div>
+            <div id="consult_intake_options_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
+                @foreach (var inOption in consultSearchBar.Intakes)
+                {
+                    <div class="intake-opt-row" style="background: #ffffff; border: 1px solid #fed7aa; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 6px;">
+                        <input type="text" class="dk-admin-form-input i-name" value="@inOption.IntakeName" placeholder="e.g. Fall / Sept 2026" style="flex: 1; padding: 4px 6px; font-weight: 700;" />
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 4px 8px;" onclick="this.closest('.intake-opt-row').remove()">✕</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 5.9 WHY CHOOSE US BENEFIT CARDS (Image 3) -->
+    <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #dcfce7; padding-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="background: #059669; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px;">Section A</span>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #065f46; margin: 0;">5.9 Why Choose Us Benefit Cards (Image 3)</h3>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Section Title</label>
+                <input type="text" id="consult_whychoose_title" class="dk-admin-form-input" value="@consultWhyChoose.Title" placeholder="Why Choose Leverage Edu & Dreamflykit Global?" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Section Subtitle</label>
+                <input type="text" id="consult_whychoose_sub" class="dk-admin-form-input" value="@consultWhyChoose.Subtitle" placeholder="From university shortlisting to landing in your dorm..." />
+            </div>
+        </div>
+
+        <div id="consult_whychoose_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px;">
+            @for (int bi = 0; bi < consultWhyChoose.Cards.Count; bi++)
+            {
+                var card = consultWhyChoose.Cards[bi];
+                <div class="whychoose-card-row" style="background: #ffffff; border: 1px solid #86efac; border-radius: 10px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-size: 11px; font-weight: 800; color: #059669;">Card #@(bi + 1)</span>
+                        <select class="dk-admin-form-input wc-icon" style="width: 140px; font-size: 11px; padding: 3px 6px;">
+                            <option value="partners" selected="@(card.IconType == "partners")">Partners Icon</option>
+                            <option value="support" selected="@(card.IconType == "support")">Support Shield</option>
+                            <option value="stories" selected="@(card.IconType == "stories")">Success Stories</option>
+                            <option value="acceptance" selected="@(card.IconType == "acceptance")">Acceptance Target</option>
+                            <option value="scholarship" selected="@(card.IconType == "scholarship")">Scholarship Medal</option>
+                            <option value="beyond" selected="@(card.IconType == "beyond")">Beyond Admissions</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Card Title</label>
+                        <input type="text" class="dk-admin-form-input wc-title" value="@card.Title" placeholder="e.g. 850+ University Partners" style="font-size: 12px; font-weight: 700; padding: 4px 6px;" />
+                    </div>
+                    <div>
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Card Description</label>
+                        <textarea class="dk-admin-form-input wc-desc" rows="2" style="font-size: 11px; padding: 4px 6px;">@card.Description</textarea>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 5.10 TOP STUDY DESTINATIONS (Image 3) -->
+    <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #e0f2fe; padding-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="background: #0284c7; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px;">Section B</span>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #0369a1; margin: 0;">5.10 Top Study Destinations (Image 3)</h3>
+            </div>
+            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; padding: 6px 12px;" onclick="addConsultTopDestination()">+ Add Destination Card</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Section Title</label>
+                <input type="text" id="consult_topdest_title" class="dk-admin-form-input" value="@consultTopDestinations.Destinations.Count > 0 ? consultTopDestinations.Title : "Top Study Destinations"" placeholder="Top Study Destinations" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Section Subtitle</label>
+                <input type="text" id="consult_topdest_sub" class="dk-admin-form-input" value="@consultTopDestinations.Subtitle" placeholder="Explore premier global education hubs..." />
+            </div>
+        </div>
+
+        <div id="consult_topdest_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px;">
+            @for (int di = 0; di < consultTopDestinations.Destinations.Count; di++)
+            {
+                var d = consultTopDestinations.Destinations[di];
+                <div class="topdest-card-row" style="background: #ffffff; border: 1px solid #7dd3fc; border-radius: 12px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-size: 11px; font-weight: 800; color: #0284c7;">Destination #@(di + 1)</span>
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="this.closest('.topdest-card-row').remove()">✕ Remove</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 38px 1fr 55px; gap: 6px; margin-bottom: 6px;">
+                        <input type="text" class="dk-admin-form-input td-flag" value="@d.FlagEmoji" style="text-align: center; padding: 4px;" title="Emoji Flag" />
+                        <input type="text" class="dk-admin-form-input td-name" value="@d.CountryName" placeholder="Country" style="padding: 4px 6px; font-weight: 700;" />
+                        <input type="text" class="dk-admin-form-input td-code" value="@d.CountryCode" placeholder="Code" style="text-align: center; padding: 4px;" />
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                        <input type="text" class="dk-admin-form-input td-count" value="@d.UniversityCount" placeholder="e.g. 250+ Universities" style="font-size: 11px; padding: 4px 6px;" />
+                        <input type="text" class="dk-admin-form-input td-streams" value="@d.PopularStreams" placeholder="e.g. BUSINESS | LAW | STEM" style="font-size: 11px; padding: 4px 6px;" />
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Destination Photo / Graphic</label>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <div style="width: 44px; height: 32px; border-radius: 4px; overflow: hidden; background: #0f172a; border: 1px solid #cbd5e1; flex-shrink: 0;">
+                                <img id="prev_td_@di" src="@(string.IsNullOrWhiteSpace(d.ImageUrl) ? $"/images/study-hub/dest-{d.Slug}.svg" : d.ImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/upload-soon.svg';" />
+                            </div>
+                            <input type="text" id="inp_td_@di" class="dk-admin-form-input td-img" value="@d.ImageUrl" placeholder="/images/study-hub/dest-uk.svg" style="font-size: 11px; padding: 4px 6px; flex: 1;" oninput="updateLivePreview('inp_td_@di', 'prev_td_@di')" />
+                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 8px;" onclick="triggerHubUpload('inp_td_@di', 'prev_td_@di')">📷 Upload</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 6px 10px; border-radius: 6px;">
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #b45309; cursor: pointer;">
+                            <input type="checkbox" class="td-upload-soon" @(d.IsUploadingSoon ? "checked" : "") />
+                            <span>⏳ Show "Uploading Soon" Badge</span>
+                        </label>
+                        <input type="hidden" class="td-slug" value="@d.Slug" />
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 5.11 TOP UNIVERSITIES (Image 3) -->
+    <div style="background: #faf5ff; border: 1.5px solid #e9d5ff; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #f3e8ff; padding-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="background: #7c3aed; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 999px;">Section C</span>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #5b21b6; margin: 0;">5.11 Top Universities with Country Tabs &amp; Courses (Image 3)</h3>
+            </div>
+            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 11px; padding: 6px 12px; background: #7c3aed;" onclick="addConsultTopUniversity()">+ Add University Card</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Section Title</label>
+                <input type="text" id="consult_topunis_title" class="dk-admin-form-input" value="@consultTopUniversities.Title" placeholder="Top Universities" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Section Subtitle</label>
+                <input type="text" id="consult_topunis_sub" class="dk-admin-form-input" value="@consultTopUniversities.Subtitle" placeholder="Discover accredited global universities..." />
+            </div>
+        </div>
+
+        <div id="consult_topunis_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px;">
+            @for (int ui = 0; ui < consultTopUniversities.Universities.Count; ui++)
+            {
+                var uni = consultTopUniversities.Universities[ui];
+                <div class="topuni-card-row" style="background: #ffffff; border: 1px solid #d8b4fe; border-radius: 12px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-size: 11px; font-weight: 800; color: #7c3aed;">University #@(ui + 1)</span>
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="this.closest('.topuni-card-row').remove()">✕ Remove</button>
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">University Name</label>
+                        <input type="text" class="dk-admin-form-input tu-name" value="@uni.Name" placeholder="e.g. University of Liverpool" style="font-size: 12px; font-weight: 700; padding: 4px 6px;" />
+                    </div>
+                    <div style="display: grid; grid-template-columns: 38px 1fr 55px; gap: 6px; margin-bottom: 6px;">
+                        <input type="text" class="dk-admin-form-input tu-flag" value="@uni.FlagEmoji" style="text-align: center; padding: 4px;" title="Emoji Flag" />
+                        <input type="text" class="dk-admin-form-input tu-country" value="@uni.Country" placeholder="Country" style="padding: 4px 6px;" />
+                        <input type="text" class="dk-admin-form-input tu-code" value="@uni.CountryCode" placeholder="Code" style="text-align: center; padding: 4px;" />
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                        <input type="text" class="dk-admin-form-input tu-courses" value="@uni.CoursesCount" placeholder="e.g. 400+ COURSES" style="font-size: 11px; padding: 4px 6px;" />
+                        <input type="text" class="dk-admin-form-input tu-ranking" value="@uni.RankingTag" placeholder="e.g. World Top 150" style="font-size: 11px; padding: 4px 6px;" />
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Campus Photo / Blueprint</label>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <div style="width: 44px; height: 32px; border-radius: 4px; overflow: hidden; background: #0f172a; border: 1px solid #cbd5e1; flex-shrink: 0;">
+                                <img id="prev_tu_@ui" src="@(string.IsNullOrWhiteSpace(uni.ImageUrl) ? "/images/study-hub/upload-soon.svg" : uni.ImageUrl)" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/upload-soon.svg';" />
+                            </div>
+                            <input type="text" id="inp_tu_@ui" class="dk-admin-form-input tu-img" value="@uni.ImageUrl" placeholder="/images/study-hub/uni-liverpool.svg" style="font-size: 11px; padding: 4px 6px; flex: 1;" oninput="updateLivePreview('inp_tu_@ui', 'prev_tu_@ui')" />
+                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 8px; background: #7c3aed;" onclick="triggerHubUpload('inp_tu_@ui', 'prev_tu_@ui')">📷 Upload</button>
+                        </div>
+                    </div>
+                    <div style="background: #fdf4ff; padding: 6px 10px; border-radius: 6px;">
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #a21caf; cursor: pointer;">
+                            <input type="checkbox" class="tu-upload-soon" @(uni.IsUploadingSoon ? "checked" : "") />
+                            <span>⏳ Show "Uploading Soon" Badge</span>
+                        </label>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
                 </div>
             </div>
         </div>
@@ -2879,7 +3153,267 @@
             FloatingCallButtonText: "Free Counselling",
             FloatingContactPhone: "1800-DREAMFLY",
             LeadModalTitle: "Book Free 1-on-1 Study Abroad & Career Counselling",
-            LeadModalSubtitle: "Speak with certified advisors for university matching, visa guidance & scholarships."
+            LeadModalSubtitle: "Speak with certified advisors for university matching, visa guidance & scholarships.",
+            EnableHero3dAnimation: document.getElementById("consult_enable_3d_animation") ? document.getElementById("consult_enable_3d_animation").checked : true,
+            SearchBar: gatherConsultancySearchBarConfig(),
+            WhyChooseUs: gatherConsultancyWhyChooseConfig(),
+            TopDestinations: gatherConsultancyTopDestinationsConfig(),
+            TopUniversities: gatherConsultancyTopUniversitiesConfig()
         };
+    }
+
+    function gatherConsultancySearchBarConfig() {
+        const dests = [];
+        document.querySelectorAll("#consult_dest_options_container .dest-opt-row").forEach(r => {
+            const name = r.querySelector(".d-name")?.value.trim();
+            if (name) {
+                dests.push({
+                    CountryName: name,
+                    CountryCode: r.querySelector(".d-code")?.value.trim() || "",
+                    FlagEmoji: r.querySelector(".d-flag")?.value.trim() || "🌍",
+                    UniversityCountText: r.querySelector(".d-count")?.value.trim() || "200+ Universities"
+                });
+            }
+        });
+
+        const centres = [];
+        document.querySelectorAll("#consult_centre_options_container .centre-opt-row").forEach(r => {
+            const name = r.querySelector(".c-name")?.value.trim();
+            if (name) {
+                centres.push({
+                    CentreName: name,
+                    City: r.querySelector(".c-city")?.value.trim() || "",
+                    IsOnline: r.querySelector(".c-online")?.checked || false
+                });
+            }
+        });
+
+        const intakes = [];
+        document.querySelectorAll("#consult_intake_options_container .intake-opt-row").forEach(r => {
+            const name = r.querySelector(".i-name")?.value.trim();
+            if (name) {
+                intakes.push({
+                    IntakeName: name
+                });
+            }
+        });
+
+        return {
+            Title: document.getElementById("consult_searchbar_title")?.value || "Find Your Dream Global University & Course",
+            DestinationLabel: document.getElementById("consult_searchbar_dest_lbl")?.value || "Destination",
+            CentreLabel: document.getElementById("consult_searchbar_centre_lbl")?.value || "Nearest Centre",
+            IntakeLabel: document.getElementById("consult_searchbar_intake_lbl")?.value || "Preferred Intake",
+            SearchButtonText: "Search Programs",
+            Destinations: dests,
+            Centres: centres,
+            Intakes: intakes
+        };
+    }
+
+    function gatherConsultancyWhyChooseConfig() {
+        const cards = [];
+        document.querySelectorAll("#consult_whychoose_container .whychoose-card-row").forEach(r => {
+            const title = r.querySelector(".wc-title")?.value.trim();
+            if (title) {
+                cards.push({
+                    Title: title,
+                    Description: r.querySelector(".wc-desc")?.value.trim() || "",
+                    IconType: r.querySelector(".wc-icon")?.value || "partners"
+                });
+            }
+        });
+
+        return {
+            Title: document.getElementById("consult_whychoose_title")?.value || "Why Choose Leverage Edu & Dreamflykit Global?",
+            Subtitle: document.getElementById("consult_whychoose_sub")?.value || "From university shortlisting to landing in your dorm, we are with you at every step of your study abroad journey.",
+            Cards: cards
+        };
+    }
+
+    let dynConsultDestIdx = 100;
+    function addConsultTopDestination() {
+        dynConsultDestIdx++;
+        const container = document.getElementById("consult_topdest_container");
+        if (!container) return;
+        const div = document.createElement("div");
+        div.className = "topdest-card-row";
+        div.style = "background: #ffffff; border: 1px solid #7dd3fc; border-radius: 12px; padding: 12px;";
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 11px; font-weight: 800; color: #0284c7;">New Destination</span>
+                <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="this.closest('.topdest-card-row').remove()">✕ Remove</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 38px 1fr 55px; gap: 6px; margin-bottom: 6px;">
+                <input type="text" class="dk-admin-form-input td-flag" value="🌍" style="text-align: center; padding: 4px;" title="Emoji Flag" />
+                <input type="text" class="dk-admin-form-input td-name" value="" placeholder="Country" style="padding: 4px 6px; font-weight: 700;" />
+                <input type="text" class="dk-admin-form-input td-code" value="" placeholder="Code" style="text-align: center; padding: 4px;" />
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                <input type="text" class="dk-admin-form-input td-count" value="100+ Universities" placeholder="e.g. 250+ Universities" style="font-size: 11px; padding: 4px 6px;" />
+                <input type="text" class="dk-admin-form-input td-streams" value="BUSINESS | STEM" placeholder="e.g. BUSINESS | LAW | STEM" style="font-size: 11px; padding: 4px 6px;" />
+            </div>
+            <div style="margin-bottom: 8px;">
+                <label class="dk-sh-form-label" style="font-size: 10px;">Destination Photo / Graphic</label>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                    <div style="width: 44px; height: 32px; border-radius: 4px; overflow: hidden; background: #0f172a; border: 1px solid #cbd5e1; flex-shrink: 0;">
+                        <img id="prev_td_${dynConsultDestIdx}" src="/images/study-hub/upload-soon.svg" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/upload-soon.svg';" />
+                    </div>
+                    <input type="text" id="inp_td_${dynConsultDestIdx}" class="dk-admin-form-input td-img" value="" placeholder="/images/study-hub/dest-uk.svg" style="font-size: 11px; padding: 4px 6px; flex: 1;" oninput="updateLivePreview('inp_td_${dynConsultDestIdx}', 'prev_td_${dynConsultDestIdx}')" />
+                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 8px;" onclick="triggerHubUpload('inp_td_${dynConsultDestIdx}', 'prev_td_${dynConsultDestIdx}')">📷 Upload</button>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 6px 10px; border-radius: 6px;">
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #b45309; cursor: pointer;">
+                    <input type="checkbox" class="td-upload-soon" checked />
+                    <span>⏳ Show "Uploading Soon" Badge</span>
+                </label>
+                <input type="hidden" class="td-slug" value="" />
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    function gatherConsultancyTopDestinationsConfig() {
+        const destinations = [];
+        document.querySelectorAll("#consult_topdest_container .topdest-card-row").forEach(r => {
+            const name = r.querySelector(".td-name")?.value.trim();
+            if (name) {
+                destinations.push({
+                    CountryName: name,
+                    CountryCode: r.querySelector(".td-code")?.value.trim() || "",
+                    FlagEmoji: r.querySelector(".td-flag")?.value.trim() || "🌍",
+                    UniversityCount: r.querySelector(".td-count")?.value.trim() || "250+ Universities",
+                    PopularStreams: r.querySelector(".td-streams")?.value.trim() || "BUSINESS | LAW | STEM",
+                    ImageUrl: r.querySelector(".td-img")?.value.trim() || "",
+                    IsUploadingSoon: r.querySelector(".td-upload-soon")?.checked || false,
+                    Slug: r.querySelector(".td-slug")?.value.trim() || name.toLowerCase().replace(/[^a-z0-9]/g, "-")
+                });
+            }
+        });
+
+        return {
+            Title: document.getElementById("consult_topdest_title")?.value || "Top Study Destinations",
+            Subtitle: document.getElementById("consult_topdest_sub")?.value || "Explore premier global education hubs with world-class faculty, flexible post-study work visas, and massive career opportunities.",
+            Destinations: destinations
+        };
+    }
+
+    let dynConsultUniIdx = 200;
+    function addConsultTopUniversity() {
+        dynConsultUniIdx++;
+        const container = document.getElementById("consult_topunis_container");
+        if (!container) return;
+        const div = document.createElement("div");
+        div.className = "topuni-card-row";
+        div.style = "background: #ffffff; border: 1px solid #d8b4fe; border-radius: 12px; padding: 12px;";
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 11px; font-weight: 800; color: #7c3aed;">New University</span>
+                <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="this.closest('.topuni-card-row').remove()">✕ Remove</button>
+            </div>
+            <div style="margin-bottom: 6px;">
+                <label class="dk-sh-form-label" style="font-size: 10px;">University Name</label>
+                <input type="text" class="dk-admin-form-input tu-name" value="" placeholder="e.g. University of Manchester" style="font-size: 12px; font-weight: 700; padding: 4px 6px;" />
+            </div>
+            <div style="display: grid; grid-template-columns: 38px 1fr 55px; gap: 6px; margin-bottom: 6px;">
+                <input type="text" class="dk-admin-form-input tu-flag" value="🌍" style="text-align: center; padding: 4px;" title="Emoji Flag" />
+                <input type="text" class="dk-admin-form-input tu-country" value="" placeholder="Country" style="padding: 4px 6px;" />
+                <input type="text" class="dk-admin-form-input tu-code" value="" placeholder="Code" style="text-align: center; padding: 4px;" />
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                <input type="text" class="dk-admin-form-input tu-courses" value="300+ COURSES" placeholder="e.g. 400+ COURSES" style="font-size: 11px; padding: 4px 6px;" />
+                <input type="text" class="dk-admin-form-input tu-ranking" value="World Top 200" placeholder="e.g. World Top 150" style="font-size: 11px; padding: 4px 6px;" />
+            </div>
+            <div style="margin-bottom: 8px;">
+                <label class="dk-sh-form-label" style="font-size: 10px;">Campus Photo / Blueprint</label>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                    <div style="width: 44px; height: 32px; border-radius: 4px; overflow: hidden; background: #0f172a; border: 1px solid #cbd5e1; flex-shrink: 0;">
+                        <img id="prev_tu_${dynConsultUniIdx}" src="/images/study-hub/upload-soon.svg" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/upload-soon.svg';" />
+                    </div>
+                    <input type="text" id="inp_tu_${dynConsultUniIdx}" class="dk-admin-form-input tu-img" value="" placeholder="/images/study-hub/uni-liverpool.svg" style="font-size: 11px; padding: 4px 6px; flex: 1;" oninput="updateLivePreview('inp_tu_${dynConsultUniIdx}', 'prev_tu_${dynConsultUniIdx}')" />
+                    <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 8px; background: #7c3aed;" onclick="triggerHubUpload('inp_tu_${dynConsultUniIdx}', 'prev_tu_${dynConsultUniIdx}')">📷 Upload</button>
+                </div>
+            </div>
+            <div style="background: #fdf4ff; padding: 6px 10px; border-radius: 6px;">
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #a21caf; cursor: pointer;">
+                    <input type="checkbox" class="tu-upload-soon" checked />
+                    <span>⏳ Show "Uploading Soon" Badge</span>
+                </label>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    function gatherConsultancyTopUniversitiesConfig() {
+        const universities = [];
+        document.querySelectorAll("#consult_topunis_container .topuni-card-row").forEach(r => {
+            const name = r.querySelector(".tu-name")?.value.trim();
+            if (name) {
+                universities.push({
+                    Name: name,
+                    Country: r.querySelector(".tu-country")?.value.trim() || "",
+                    CountryCode: r.querySelector(".tu-code")?.value.trim() || "",
+                    FlagEmoji: r.querySelector(".tu-flag")?.value.trim() || "🌍",
+                    CoursesCount: r.querySelector(".tu-courses")?.value.trim() || "400+ COURSES",
+                    RankingTag: r.querySelector(".tu-ranking")?.value.trim() || "World Top 200",
+                    ImageUrl: r.querySelector(".tu-img")?.value.trim() || "",
+                    IsUploadingSoon: r.querySelector(".tu-upload-soon")?.checked || false,
+                    DetailsUrl: "#consultancy-lead-modal",
+                    EligibilityUrl: "#consultancy-lead-modal"
+                });
+            }
+        });
+
+        return {
+            Title: document.getElementById("consult_topunis_title")?.value || "Top Universities",
+            Subtitle: document.getElementById("consult_topunis_sub")?.value || "Discover accredited global universities offering globally recognized degrees and top campus placements.",
+            Universities: universities
+        };
+    }
+
+    function addConsultSearchDestination() {
+        const container = document.getElementById("consult_dest_options_container");
+        if (!container) return;
+        const div = document.createElement("div");
+        div.className = "dest-opt-row";
+        div.style = "background: #ffffff; border: 1px solid #fed7aa; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 6px;";
+        div.innerHTML = `
+            <input type="text" class="dk-admin-form-input d-flag" value="🌍" style="width: 38px; text-align: center; padding: 4px;" title="Emoji Flag" />
+            <input type="text" class="dk-admin-form-input d-name" value="" placeholder="Country" style="flex: 1; padding: 4px 8px; font-weight: 700;" />
+            <input type="text" class="dk-admin-form-input d-code" value="" placeholder="Code (e.g. GB)" style="width: 55px; text-align: center; padding: 4px;" />
+            <input type="text" class="dk-admin-form-input d-count" value="100+ Universities" placeholder="Unis count" style="width: 75px; padding: 4px 6px;" />
+            <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 4px 8px;" onclick="this.closest('.dest-opt-row').remove()">✕</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function addConsultSearchCentre() {
+        const container = document.getElementById("consult_centre_options_container");
+        if (!container) return;
+        const div = document.createElement("div");
+        div.className = "centre-opt-row";
+        div.style = "background: #ffffff; border: 1px solid #fed7aa; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 6px;";
+        div.innerHTML = `
+            <input type="text" class="dk-admin-form-input c-name" value="" placeholder="Centre name" style="flex: 1.2; padding: 4px 6px; font-weight: 700;" />
+            <input type="text" class="dk-admin-form-input c-city" value="" placeholder="City" style="flex: 0.8; padding: 4px 6px;" />
+            <label style="display: flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; white-space: nowrap;">
+                <input type="checkbox" class="c-online" /> Online
+            </label>
+            <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 4px 8px;" onclick="this.closest('.centre-opt-row').remove()">✕</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function addConsultSearchIntake() {
+        const container = document.getElementById("consult_intake_options_container");
+        if (!container) return;
+        const div = document.createElement("div");
+        div.className = "intake-opt-row";
+        div.style = "background: #ffffff; border: 1px solid #fed7aa; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 6px;";
+        div.innerHTML = `
+            <input type="text" class="dk-admin-form-input i-name" value="" placeholder="e.g. Fall / Sept 2026" style="flex: 1; padding: 4px 6px; font-weight: 700;" />
+            <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 4px 8px;" onclick="this.closest('.intake-opt-row').remove()">✕</button>
+        `;
+        container.appendChild(div);
     }
 </script>

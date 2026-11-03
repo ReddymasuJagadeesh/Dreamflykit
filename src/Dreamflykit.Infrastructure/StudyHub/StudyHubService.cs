@@ -152,10 +152,13 @@ public sealed class StudyHubService : IStudyHubService
                             dto.EducationLoansPage = def.EducationLoansPage;
                         if (dto.ConsultancyDetailsPage == null || string.IsNullOrWhiteSpace(dto.ConsultancyDetailsPage.HeroHeadline))
                             dto.ConsultancyDetailsPage = def.ConsultancyDetailsPage;
+                        dto.ConsultancyDetailsPage.EnsureDefaults();
                         if (dto.AbroadProfile == null || dto.AbroadProfile.Services.Count == 0)
                             dto.AbroadProfile = def.AbroadProfile;
                         if (dto.AbroadProfile.ConsultancyDetailsPage == null)
                             dto.AbroadProfile.ConsultancyDetailsPage = dto.ConsultancyDetailsPage;
+                        else
+                            dto.AbroadProfile.ConsultancyDetailsPage.EnsureDefaults();
                         if (dto.AbroadProfile.EducationLoansPage == null)
                             dto.AbroadProfile.EducationLoansPage = dto.EducationLoansPage;
                         if (dto.GuidePages == null || dto.GuidePages.Count == 0)
