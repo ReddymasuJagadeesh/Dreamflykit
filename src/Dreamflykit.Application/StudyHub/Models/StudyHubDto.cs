@@ -1208,7 +1208,7 @@ public sealed class StudyHubDto
 
     public static ConsultancyDetailsPageDto CreateDefaultConsultancyDetailsPage()
     {
-        return new ConsultancyDetailsPageDto
+        var page = new ConsultancyDetailsPageDto
         {
             BrandName = "Dreamflykit",
             LogoUrl = "/images/branding/dreamflykit-logo-clean.webp",
@@ -1517,6 +1517,9 @@ public sealed class StudyHubDto
             LeadModalTitle = "Book Free 1-on-1 Study Abroad & Career Counselling",
             LeadModalSubtitle = "Get evaluated by certified consultants for profile scoring, university shortlists & scholarships."
         };
+        page.EnsureDefaults();
+        return page;
+
     }
 
     public static StudyAbroadHubProfileDto CreateDefaultAbroadProfile()
@@ -2882,11 +2885,24 @@ public sealed class ConsultancyDetailsPageDto
     public string HeroMediaType { get; set; } = "image"; // "image" or "video"
     public string HeroImageUrl { get; set; } = "/images/study-hub/consultancy-hero-campus.jpg";
     public string HeroVideoUrl { get; set; } = "";
+    public bool EnableHero3dAnimation { get; set; } = true;
     public string HeroHeadline { get; set; } = "For Your Every Next";
     public string HeroHeadlineHighlight { get; set; } = "Opportunity";
     public string SearchPlaceholder { get; set; } = "Tell us what you're looking to learn...";
     public string SearchButtonUrl { get; set; } = "#trending-courses";
     public List<ConsultancyCategoryPillDto> CategoryPills { get; set; } = new();
+
+    // RedBus-Style Horizontal Search Bar (Directly below Hero Banner)
+    public ConsultancySearchBarDto SearchBar { get; set; } = new();
+
+    // Section 1: Why Choose Leverage Edu & Dreamflykit Global? (Image 3)
+    public ConsultancyWhyChooseSectionDto WhyChooseUs { get; set; } = new();
+
+    // Section 2: Top Study Destinations (Image 3)
+    public ConsultancyTopDestinationsSectionDto TopDestinations { get; set; } = new();
+
+    // Section 3: Top Universities with Country Tabs (Image 3)
+    public ConsultancyTopUniversitiesSectionDto TopUniversities { get; set; } = new();
 
     // Sub-Banner
     public string SubBannerPrefix { get; set; } = "Master tomorrow's skills";
@@ -2918,6 +2934,194 @@ public sealed class ConsultancyDetailsPageDto
     public string FloatingContactPhone { get; set; } = "1800-DREAMFLY";
     public string LeadModalTitle { get; set; } = "Book Free 1-on-1 Study Abroad & Career Counselling";
     public string LeadModalSubtitle { get; set; } = "Speak with certified advisors for university matching, visa guidance & scholarships.";
+
+    public void EnsureDefaults()
+    {
+        SearchBar ??= new();
+        if (SearchBar.Destinations == null || SearchBar.Destinations.Count == 0)
+        {
+            SearchBar.Destinations = new List<ConsultancySearchOptionDto>
+            {
+                new()
+                {
+                    CountryName = "United Kingdom",
+                    CountryCode = "GB",
+                    FlagEmoji = "🇬🇧",
+                    UniversityCountText = "250+ Unis",
+                    SuggestedCentres = new() { "London - Holborn Office", "Online Global Virtual Centre", "Delhi NCR - Connaught Place", "Mumbai - Andheri West" },
+                    AvailableIntakes = new() { "Fall / Sept 2026", "Spring / Jan 2027", "Fall / Sept 2027" }
+                },
+                new()
+                {
+                    CountryName = "United States",
+                    CountryCode = "US",
+                    FlagEmoji = "🇺🇸",
+                    UniversityCountText = "350+ Unis",
+                    SuggestedCentres = new() { "Hyderabad - Madhapur", "Bengaluru - Koramangala", "Mumbai - Andheri West", "Delhi NCR - Connaught Place" },
+                    AvailableIntakes = new() { "Fall / Sept 2026", "Spring / Jan 2027", "Fall / Sept 2027" }
+                },
+                new()
+                {
+                    CountryName = "Canada",
+                    CountryCode = "CA",
+                    FlagEmoji = "🇨🇦",
+                    UniversityCountText = "120+ Unis",
+                    SuggestedCentres = new() { "Delhi NCR - Connaught Place", "Bengaluru - Koramangala", "Pune - Shivaji Nagar", "Online Global Virtual Centre" },
+                    AvailableIntakes = new() { "Fall / Sept 2026", "Spring / Jan 2027", "Summer / May 2027" }
+                },
+                new()
+                {
+                    CountryName = "Germany",
+                    CountryCode = "DE",
+                    FlagEmoji = "🇩🇪",
+                    UniversityCountText = "40+ Unis",
+                    SuggestedCentres = new() { "Bengaluru - Koramangala", "Pune - Shivaji Nagar", "Hyderabad - Madhapur", "Online Global Virtual Centre" },
+                    AvailableIntakes = new() { "Winter / Oct 2026", "Summer / April 2027", "Winter / Oct 2027" }
+                },
+                new()
+                {
+                    CountryName = "Australia",
+                    CountryCode = "AU",
+                    FlagEmoji = "🇦🇺",
+                    UniversityCountText = "60+ Unis",
+                    SuggestedCentres = new() { "Chennai - Nungambakkam", "Hyderabad - Madhapur", "Mumbai - Andheri West", "Online Global Virtual Centre" },
+                    AvailableIntakes = new() { "Feb / Semester 1 2027", "July / Semester 2 2026", "Nov 2026" }
+                },
+                new()
+                {
+                    CountryName = "Ireland",
+                    CountryCode = "IE",
+                    FlagEmoji = "🇮🇪",
+                    UniversityCountText = "35+ Unis",
+                    SuggestedCentres = new() { "Bengaluru - Koramangala", "Hyderabad - Madhapur", "London - Holborn Office", "Online Global Virtual Centre" },
+                    AvailableIntakes = new() { "Autumn / Sept 2026", "Spring / Jan 2027" }
+                },
+                new()
+                {
+                    CountryName = "Italy",
+                    CountryCode = "IT",
+                    FlagEmoji = "🇮🇹",
+                    UniversityCountText = "30+ Unis",
+                    SuggestedCentres = new() { "Mumbai - Andheri West", "Delhi NCR - Connaught Place", "Online Global Virtual Centre" },
+                    AvailableIntakes = new() { "Fall / Sept 2026", "Spring / Feb 2027" }
+                },
+                new()
+                {
+                    CountryName = "UAE (Dubai)",
+                    CountryCode = "AE",
+                    FlagEmoji = "🇦🇪",
+                    UniversityCountText = "20+ Unis",
+                    SuggestedCentres = new() { "Mumbai - Andheri West", "Hyderabad - Madhapur", "Delhi NCR - Connaught Place", "Online Global Virtual Centre" },
+                    AvailableIntakes = new() { "Sept 2026", "Jan 2027", "May 2027" }
+                },
+                new()
+                {
+                    CountryName = "France",
+                    CountryCode = "FR",
+                    FlagEmoji = "🇫🇷",
+                    UniversityCountText = "45+ Unis",
+                    SuggestedCentres = new() { "Delhi NCR - Connaught Place", "Mumbai - Andheri West", "Online Global Virtual Centre" },
+                    AvailableIntakes = new() { "Fall / Sept 2026", "Spring / Jan 2027" }
+                },
+                new()
+                {
+                    CountryName = "New Zealand",
+                    CountryCode = "NZ",
+                    FlagEmoji = "🇳🇿",
+                    UniversityCountText = "15+ Unis",
+                    SuggestedCentres = new() { "Chennai - Nungambakkam", "Hyderabad - Madhapur", "Online Global Virtual Centre" },
+                    AvailableIntakes = new() { "Feb 2027", "July 2026" }
+                }
+            };
+        }
+
+        if (SearchBar.Centres == null || SearchBar.Centres.Count == 0)
+        {
+            SearchBar.Centres = new List<ConsultancyCentreOptionDto>
+            {
+                new() { CentreName = "Hyderabad - Madhapur", City = "Hyderabad", Address = "Plot 12, HITEC City Main Rd, Madhapur" },
+                new() { CentreName = "Bengaluru - Koramangala", City = "Bengaluru", Address = "80 Feet Rd, 4th Block, Koramangala" },
+                new() { CentreName = "Mumbai - Andheri West", City = "Mumbai", Address = "Veera Desai Industrial Estate, Andheri West" },
+                new() { CentreName = "Delhi NCR - Connaught Place", City = "New Delhi", Address = "Barakhamba Road, Statesman House, Connaught Place" },
+                new() { CentreName = "Chennai - Nungambakkam", City = "Chennai", Address = "High Road, Nungambakkam" },
+                new() { CentreName = "Pune - Shivaji Nagar", City = "Pune", Address = "FC Road, Shivaji Nagar" },
+                new() { CentreName = "London - Holborn Office", City = "London, UK", Address = "High Holborn, WC1V 6BX, United Kingdom" },
+                new() { CentreName = "Online Global Virtual Centre", City = "Virtual 24x7", Address = "Interactive Video & Digital Counseling Room", IsOnline = true }
+            };
+        }
+
+        if (SearchBar.Intakes == null || SearchBar.Intakes.Count == 0)
+        {
+            SearchBar.Intakes = new List<ConsultancyIntakeOptionDto>
+            {
+                new() { IntakeName = "Fall / Sept 2026", Season = "Fall", Year = "2026" },
+                new() { IntakeName = "Spring / Jan 2027", Season = "Spring", Year = "2027" },
+                new() { IntakeName = "Summer / May 2027", Season = "Summer", Year = "2027" },
+                new() { IntakeName = "Winter / Oct 2026", Season = "Winter", Year = "2026" },
+                new() { IntakeName = "Fall / Sept 2027", Season = "Fall", Year = "2027" }
+            };
+        }
+
+        WhyChooseUs ??= new();
+        if (WhyChooseUs.Cards == null || WhyChooseUs.Cards.Count == 0)
+        {
+            WhyChooseUs.Title = "Why Choose Leverage Edu & Dreamflykit Global?";
+            WhyChooseUs.Subtitle = "From university shortlisting to landing in your dorm — we empower your entire international student journey.";
+            WhyChooseUs.Cards = new List<ConsultancyBenefitCardDto>
+            {
+                new() { Title = "850+ University Partners", Description = "Direct tie-ups and official representations across top QS-ranked global universities.", IconType = "partners" },
+                new() { Title = "End-To-End Support", Description = "Comprehensive guidance from test prep, profiling, SOP review to visa filing and arrival.", IconType = "support" },
+                new() { Title = "200K+ Success Stories", Description = "Over 200,000 students successfully placed in top international degree programs.", IconType = "stories" },
+                new() { Title = "Best-In-Class Acceptance Rate", Description = "98.4% visa and university offer letter success rate with tailored application strategies.", IconType = "acceptance" },
+                new() { Title = "Scholarship Support", Description = "Access to over ₹50 Crore in global scholarships and institutional financial grants.", IconType = "scholarship" },
+                new() { Title = "Support Beyond Admissions", Description = "Complete pre-departure kits, foreign exchange, student accommodation & SIM cards.", IconType = "beyond" }
+            };
+        }
+
+        TopDestinations ??= new();
+        if (TopDestinations.Destinations == null || TopDestinations.Destinations.Count == 0)
+        {
+            TopDestinations.Title = "Top Study Destinations";
+            TopDestinations.Subtitle = "Explore premier global education hubs with world-leading universities and generous post-study work rights.";
+            TopDestinations.Destinations = new List<ConsultancyStudyDestinationDto>
+            {
+                new() { CountryName = "United Kingdom", CountryCode = "GB", FlagEmoji = "🇬🇧", UniversityCount = "250+ Universities", PopularStreams = "BUSINESS | LAW | STEM", ImageUrl = "/images/study-hub/dest-uk.svg", IsUploadingSoon = true, Slug = "united-kingdom" },
+                new() { CountryName = "Germany", CountryCode = "DE", FlagEmoji = "🇩🇪", UniversityCount = "40+ Universities", PopularStreams = "STEM | BUSINESS | ENGG", ImageUrl = "/images/study-hub/dest-germany.svg", IsUploadingSoon = true, Slug = "germany" },
+                new() { CountryName = "Italy", CountryCode = "IT", FlagEmoji = "🇮🇹", UniversityCount = "30+ Universities", PopularStreams = "DESIGN | ARTS | FASHION", ImageUrl = "/images/study-hub/dest-italy.svg", IsUploadingSoon = true, Slug = "italy" },
+                new() { CountryName = "UAE (Dubai)", CountryCode = "AE", FlagEmoji = "🇦🇪", UniversityCount = "20+ Universities", PopularStreams = "BUSINESS | HOSPITALITY | AI", ImageUrl = "/images/study-hub/dest-dubai.svg", IsUploadingSoon = true, Slug = "uae-dubai" },
+                new() { CountryName = "Ireland", CountryCode = "IE", FlagEmoji = "🇮🇪", UniversityCount = "35+ Universities", PopularStreams = "TECH | PHARMA | DATA", ImageUrl = "/images/study-hub/dest-ireland.svg", IsUploadingSoon = true, Slug = "ireland" },
+                new() { CountryName = "Canada", CountryCode = "CA", FlagEmoji = "🇨🇦", UniversityCount = "120+ Universities", PopularStreams = "IT | MANAGEMENT | HEALTH", ImageUrl = "/images/study-hub/dest-canada.svg", IsUploadingSoon = true, Slug = "canada" },
+                new() { CountryName = "United States", CountryCode = "US", FlagEmoji = "🇺🇸", UniversityCount = "350+ Universities", PopularStreams = "CS | ENGINEERING | FINANCE", ImageUrl = "/images/study-hub/dest-usa.svg", IsUploadingSoon = true, Slug = "usa" },
+                new() { CountryName = "Australia", CountryCode = "AU", FlagEmoji = "🇦🇺", UniversityCount = "60+ Universities", PopularStreams = "COMMERCE | BIOTECH | IT", ImageUrl = "/images/study-hub/dest-australia.svg", IsUploadingSoon = true, Slug = "australia" }
+            };
+        }
+
+        TopUniversities ??= new();
+        if (TopUniversities.Tabs == null || TopUniversities.Tabs.Count == 0)
+        {
+            TopUniversities.Tabs = new List<string> { "ALL", "UNITED KINGDOM", "GERMANY", "ITALY", "UAE (DUBAI)", "IRELAND", "CANADA", "USA", "OTHERS" };
+        }
+        if (TopUniversities.Universities == null || TopUniversities.Universities.Count == 0)
+        {
+            TopUniversities.Title = "Top Universities";
+            TopUniversities.Subtitle = "Discover accredited global universities with high visa success, top ROI, and extensive course offerings.";
+            TopUniversities.Universities = new List<ConsultancyUniversityDto>
+            {
+                new() { Name = "University of Liverpool", Country = "United Kingdom", CountryCode = "GB", FlagEmoji = "🇬🇧", City = "Liverpool", CoursesCount = "400+ COURSES", RankingTag = "World Top 150", ImageUrl = "/images/study-hub/uni-liverpool.svg", IsUploadingSoon = true },
+                new() { Name = "Queen Mary University of London", Country = "United Kingdom", CountryCode = "GB", FlagEmoji = "🇬🇧", City = "London", CoursesCount = "350+ COURSES", RankingTag = "Russell Group", ImageUrl = "/images/study-hub/uni-queen-mary.svg", IsUploadingSoon = true },
+                new() { Name = "University of Birmingham", Country = "United Kingdom", CountryCode = "GB", FlagEmoji = "🇬🇧", City = "Birmingham", CoursesCount = "450+ COURSES", RankingTag = "World Top 100", ImageUrl = "/images/study-hub/uni-birmingham.svg", IsUploadingSoon = true },
+                new() { Name = "University of Sheffield", Country = "United Kingdom", CountryCode = "GB", FlagEmoji = "🇬🇧", City = "Sheffield", CoursesCount = "380+ COURSES", RankingTag = "World Top 100", ImageUrl = "/images/study-hub/uni-sheffield.svg", IsUploadingSoon = true },
+                new() { Name = "Coventry University", Country = "United Kingdom", CountryCode = "GB", FlagEmoji = "🇬🇧", City = "Coventry", CoursesCount = "300+ COURSES", RankingTag = "5-Star QS Rated", ImageUrl = "/images/study-hub/uni-coventry.svg", IsUploadingSoon = true },
+                new() { Name = "Technical University of Munich", Country = "Germany", CountryCode = "DE", FlagEmoji = "🇩🇪", City = "Munich", CoursesCount = "200+ COURSES", RankingTag = "Germany #1 STEM", ImageUrl = "/images/study-hub/uni-tum.svg", IsUploadingSoon = true },
+                new() { Name = "Politecnico di Milano", Country = "Italy", CountryCode = "IT", FlagEmoji = "🇮🇹", City = "Milan", CoursesCount = "150+ COURSES", RankingTag = "Italy #1 Tech & Design", ImageUrl = "/images/study-hub/uni-polimi.svg", IsUploadingSoon = true },
+                new() { Name = "Heriot-Watt University Dubai", Country = "UAE (Dubai)", CountryCode = "AE", FlagEmoji = "🇦🇪", City = "Dubai", CoursesCount = "120+ COURSES", RankingTag = "UK Accredited Campus", ImageUrl = "/images/study-hub/uni-dubai.svg", IsUploadingSoon = true },
+                new() { Name = "Trinity College Dublin", Country = "Ireland", CountryCode = "IE", FlagEmoji = "🇮🇪", City = "Dublin", CoursesCount = "220+ COURSES", RankingTag = "Ireland #1 University", ImageUrl = "/images/study-hub/uni-trinity.svg", IsUploadingSoon = true },
+                new() { Name = "University of Toronto", Country = "Canada", CountryCode = "CA", FlagEmoji = "🇨🇦", City = "Toronto", CoursesCount = "500+ COURSES", RankingTag = "Global Top 25", ImageUrl = "/images/study-hub/uni-toronto.svg", IsUploadingSoon = true },
+                new() { Name = "Northeastern University", Country = "USA", CountryCode = "US", FlagEmoji = "🇺🇸", City = "Boston", CoursesCount = "420+ COURSES", RankingTag = "Top US Co-op & Research", ImageUrl = "/images/study-hub/uni-northeastern.svg", IsUploadingSoon = true },
+                new() { Name = "University of Melbourne", Country = "Others", CountryCode = "AU", FlagEmoji = "🇦🇺", City = "Melbourne", CoursesCount = "380+ COURSES", RankingTag = "Australia #1", ImageUrl = "/images/study-hub/uni-melbourne.svg", IsUploadingSoon = true }
+            };
+        }
+    }
 }
 
 public sealed class ConsultancyCategoryPillDto
@@ -2978,6 +3182,116 @@ public sealed class ConsultancyLeadDto
     public string DestinationCountry { get; set; } = string.Empty;
     public string InterestedProgram { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
+}
+
+// -------------------------------------------------------------
+// DTOs for Consultancy Search Bar, Why Choose Us & Top Universities
+// -------------------------------------------------------------
+
+public sealed class ConsultancySearchBarDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public string Title { get; set; } = "Find Your Dream Global University & Course";
+    public string DestinationLabel { get; set; } = "Destination";
+    public string CentreLabel { get; set; } = "Nearest Centre";
+    public string IntakeLabel { get; set; } = "Preferred Intake";
+    public string SearchButtonText { get; set; } = "Search Programs";
+    public List<ConsultancySearchOptionDto> Destinations { get; set; } = new();
+    public List<ConsultancyCentreOptionDto> Centres { get; set; } = new();
+    public List<ConsultancyIntakeOptionDto> Intakes { get; set; } = new();
+}
+
+public sealed class ConsultancySearchOptionDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string CountryName { get; set; } = string.Empty;
+    public string CountryCode { get; set; } = string.Empty;
+    public string FlagEmoji { get; set; } = "🌍";
+    public string UniversityCountText { get; set; } = "200+ Unis";
+    public List<string> SuggestedCentres { get; set; } = new();
+    public List<string> AvailableIntakes { get; set; } = new();
+}
+
+public sealed class ConsultancyCentreOptionDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string CentreName { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
+    public bool IsOnline { get; set; } = false;
+}
+
+public sealed class ConsultancyIntakeOptionDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string IntakeName { get; set; } = string.Empty;
+    public string Season { get; set; } = "Fall";
+    public string Year { get; set; } = "2026";
+}
+
+public sealed class ConsultancyWhyChooseSectionDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public string Title { get; set; } = "Why Choose Leverage Edu & Dreamflykit Global?";
+    public string Subtitle { get; set; } = "From university shortlisting to landing in your dorm — we empower your entire international student journey.";
+    public List<ConsultancyBenefitCardDto> Cards { get; set; } = new();
+}
+
+public sealed class ConsultancyBenefitCardDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string IconType { get; set; } = "partners";
+}
+
+public sealed class ConsultancyTopDestinationsSectionDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public string Title { get; set; } = "Top Study Destinations";
+    public string Subtitle { get; set; } = "Explore premier global education hubs with world-leading universities and generous post-study work rights.";
+    public List<ConsultancyStudyDestinationDto> Destinations { get; set; } = new();
+}
+
+public sealed class ConsultancyStudyDestinationDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string CountryName { get; set; } = string.Empty;
+    public string CountryCode { get; set; } = "GB";
+    public string FlagEmoji { get; set; } = "🇬🇧";
+    public string UniversityCount { get; set; } = "250+ Universities";
+    public string PopularStreams { get; set; } = "BUSINESS | LAW | STEM";
+    public string ImageUrl { get; set; } = string.Empty;
+    public bool IsUploadingSoon { get; set; } = true;
+    public string Slug { get; set; } = "united-kingdom";
+}
+
+public sealed class ConsultancyTopUniversitiesSectionDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public string Title { get; set; } = "Top Universities";
+    public string Subtitle { get; set; } = "Discover accredited global universities with high visa success, top ROI, and extensive course offerings.";
+    public List<string> Tabs { get; set; } = new()
+    {
+        "ALL", "UNITED KINGDOM", "GERMANY", "ITALY", "UAE (DUBAI)", "IRELAND", "CANADA", "USA", "OTHERS"
+    };
+    public List<ConsultancyUniversityDto> Universities { get; set; } = new();
+}
+
+public sealed class ConsultancyUniversityDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N")[..8];
+    public string Name { get; set; } = string.Empty;
+    public string Country { get; set; } = string.Empty;
+    public string CountryCode { get; set; } = "GB";
+    public string FlagEmoji { get; set; } = "🇬🇧";
+    public string ImageUrl { get; set; } = string.Empty;
+    public bool IsUploadingSoon { get; set; } = true;
+    public string CoursesCount { get; set; } = "400+ COURSES";
+    public string RankingTag { get; set; } = "World Top 150";
+    public string City { get; set; } = string.Empty;
+    public string DetailsUrl { get; set; } = "#consultancy-lead-modal";
+    public string EligibilityUrl { get; set; } = "#consultancy-lead-modal";
 }
 
 

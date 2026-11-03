@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 650" width="1920" height="650">
+  <defs>
+    <linearGradient id="bgNu" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="50%" stop-color="#047857"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <radialGradient id="glowNu" cx="75%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#34d399" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#064e3b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="650" fill="url(#bgNu)"/>
+  <rect width="1920" height="650" fill="url(#glowNu)"/>
+
+  <g transform="translate(1120, 100)">
+    <!-- Wooden Bowl of Almonds & Cashews -->
+    <ellipse cx="480" cy="380" rx="260" ry="90" fill="#000000" fill-opacity="0.25"/>
+    <path d="M 260 280 C 260 420, 700 420, 700 280 Z" fill="#78350f" fill-opacity="0.8" stroke="#ffffff" stroke-opacity="0.2" stroke-width="4"/>
+    <ellipse cx="480" cy="280" rx="220" ry="70" fill="#92400e"/>
+
+    <!-- Almonds inside bowl -->
+    <g transform="translate(380, 240)">
+      <ellipse cx="30" cy="20" rx="28" ry="14" fill="#d97706" transform="rotate(-20 30 20)"/>
+      <ellipse cx="70" cy="40" rx="28" ry="14" fill="#b45309" transform="rotate(15 70 40)"/>
+      <ellipse cx="120" cy="25" rx="28" ry="14" fill="#d97706" transform="rotate(-35 120 25)"/>
+      <ellipse cx="160" cy="45" rx="28" ry="14" fill="#ca8a04" transform="rotate(25 160 45)"/>
+    </g>
+
+    <!-- Cashews (Curved crescents) -->
+    <g transform="translate(420, 280)">
+      <path d="M 10 20 Q 30 0 50 20 Q 35 35 10 20 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+      <path d="M 70 30 Q 90 10 110 30 Q 95 45 70 30 Z" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/>
+    </g>
+
+    <!-- Walnuts & Golden Raisins -->
+    <circle cx="340" cy="270" r="14" fill="#ca8a04"/>
+    <circle cx="365" cy="285" r="12" fill="#eab308"/>
+    <circle cx="610" cy="275" r="14" fill="#ca8a04"/>
+    <circle cx="635" cy="290" r="13" fill="#eab308"/>
+  </g>
+</svg>

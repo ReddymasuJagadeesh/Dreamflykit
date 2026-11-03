@@ -2,6 +2,7 @@
 @{
     Layout = "_Layout";
     var cPage = Model ?? Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultConsultancyDetailsPage();
+    cPage.EnsureDefaults();
     ViewData["Title"] = $"{cPage.HeroHeadline} {cPage.HeroHeadlineHighlight} — {cPage.BrandName} Global Programs";
     var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
 
@@ -26,6 +27,11 @@
         : Dreamflykit.Application.StudyHub.Models.StudyHubDto.CreateDefaultConsultancyDetailsPage().Countries;
 
     var activeCountry = countries.FirstOrDefault(c => c.IsActive) ?? countries.FirstOrDefault() ?? new Dreamflykit.Application.StudyHub.Models.ConsultancyCountryDto();
+
+    var searchBar = cPage.SearchBar ?? new Dreamflykit.Application.StudyHub.Models.ConsultancySearchBarDto();
+    var whyChoose = cPage.WhyChooseUs ?? new Dreamflykit.Application.StudyHub.Models.ConsultancyWhyChooseSectionDto();
+    var topDestinations = cPage.TopDestinations ?? new Dreamflykit.Application.StudyHub.Models.ConsultancyTopDestinationsSectionDto();
+    var topUniversities = cPage.TopUniversities ?? new Dreamflykit.Application.StudyHub.Models.ConsultancyTopUniversitiesSectionDto();
 }
 
 <div class="dk-upg-root" id="consultancyRoot">
@@ -140,18 +146,49 @@
     </header>
 
     <!-- ========================================================
-         2. HERO SECTION (Secure Image or Video Banner)
+         2. HERO SECTION (Secure Image or Video Banner with Realistic 3D Tilt)
     ========================================================= -->
-    <section class="dk-upg-hero-section" id="heroBanner">
+    <section class="dk-upg-hero-section @(cPage.EnableHero3dAnimation ? "has-3d-tilt" : "")" id="heroBanner">
+        <div class="dk-hero-3d-sheen" id="heroSheen"></div>
+
+        <!-- 3D Floating Badges / Visual Parallax Accents -->
+        <div class="dk-hero-3d-floating-layer" aria-hidden="true">
+            <div class="dk-float-chip chip-1">
+                <span class="chip-dot"></span>
+                <span>🏛️ 850+ University Partners</span>
+            </div>
+            <div class="dk-float-chip chip-2">
+                <span class="chip-dot green"></span>
+                <span>🎓 98.4% Visa Acceptance</span>
+            </div>
+            <div class="dk-float-chip chip-3">
+                <span class="chip-dot gold"></span>
+                <span>💰 ₹50Cr+ Scholarships</span>
+            </div>
+        </div>
+
         <!-- Media Backdrop: Video or Image -->
         @if (cPage.HeroMediaType == "video" && !string.IsNullOrWhiteSpace(cPage.HeroVideoUrl))
         {
             <div class="dk-upg-hero-media-wrapper">
-                <video class="dk-upg-hero-video" autoplay muted loop playsinline poster="@cPage.HeroImageUrl">
+                <video id="heroVideoPlayer" class="dk-upg-hero-video" autoplay muted loop playsinline poster="@cPage.HeroImageUrl">
                     <source src="@cPage.HeroVideoUrl" type="video/mp4" />
                     <source src="@cPage.HeroVideoUrl" type="video/webm" />
                 </video>
                 <div class="dk-upg-hero-overlay"></div>
+                <!-- Video Controls Badge -->
+                <div class="dk-hero-video-controls">
+                    <span class="dk-video-live-dot"></span>
+                    <span class="dk-video-label">Campus Video Feed</span>
+                    <button type="button" class="dk-video-ctrl-btn" onclick="toggleHeroVideoPlay(this)" title="Play / Pause Video">
+                        <svg class="icon-pause" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                        <svg class="icon-play" style="display:none;" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    </button>
+                    <button type="button" class="dk-video-ctrl-btn" onclick="toggleHeroVideoAudio(this)" title="Mute / Unmute Audio">
+                        <svg class="icon-muted" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                        <svg class="icon-unmuted" style="display:none;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                    </button>
+                </div>
             </div>
         }
         else
@@ -162,47 +199,403 @@
             </div>
         }
 
-        <div class="dk-upg-hero-content">
-            <!-- Headline matching Image 2 -->
-            <h1 class="dk-upg-hero-title">
-                <span class="dk-upg-title-serif">@cPage.HeroHeadline</span>
-                <span class="dk-upg-title-sans">@cPage.HeroHeadlineHighlight</span>
-            </h1>
+    </section>
 
-            <!-- Interactive Search Box -->
-            <div class="dk-upg-search-card">
-                <div class="dk-upg-search-inner">
-                    <span class="dk-upg-search-icon">
-                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#e52d27" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                    </span>
-                    <input type="text" 
-                           id="upgCourseSearchInput" 
-                           class="dk-upg-search-input" 
-                           placeholder="@cPage.SearchPlaceholder" 
-                           oninput="handleSearchCourses(this.value)" 
-                           autocomplete="off" />
-                    <button type="button" class="dk-upg-search-action-btn" onclick="triggerSearchScroll()" aria-label="Search Programs">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    <!-- ========================================================
+         2.5 REDBUS-STYLE HORIZONTAL SEARCH BAR WIDGET
+         All 4 sections (Destination, Nearest Centre, Preferred Intake, Booking for Counselling)
+         contained INSIDE the single bar + Hanging Red Search Button
+    ========================================================= -->
+    <section class="dk-redbus-search-section" id="consultancySearchBarSection">
+        <div class="dk-redbus-search-container">
+            <div class="dk-redbus-outer-card">
+                <!-- Unified Single 4-Segment Input Bar -->
+                <div class="dk-redbus-segmented-box">
+                    <!-- Segment 1: Destination -->
+                    <div class="dk-redbus-seg dk-seg-dest" id="segDestination" 
+                         onmouseenter="handleSegMouseEnter('menuDestination')" 
+                         onmouseleave="handleSegMouseLeave('menuDestination')" 
+                         onclick="handleSegClick('menuDestination', event)">
+                        <div class="dk-redbus-seg-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <div class="dk-redbus-seg-text-group">
+                            <span class="dk-redbus-seg-label">@searchBar.DestinationLabel</span>
+                            <div class="dk-redbus-seg-value">
+                                <span class="dk-seg-flag" id="dispDestFlag">🇬🇧</span>
+                                <span class="dk-seg-title" id="dispDestName">United Kingdom</span>
+                                <span class="dk-seg-badge" id="dispDestCount">250+ Unis</span>
+                            </div>
+                        </div>
+                        <div class="dk-redbus-seg-arrow">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                        </div>
+
+                        <!-- Dropdown 1: Destination Popover -->
+                        <div class="dk-redbus-dropdown-panel" id="menuDestination" 
+                             onmouseenter="cancelHideDropdown()" 
+                             onmouseleave="handleSegMouseLeave('menuDestination')" 
+                             onclick="event.stopPropagation()">
+                            <div class="dk-dropdown-filter-wrap">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                                <input type="text" class="dk-dropdown-filter-input" placeholder="Search destination country..." oninput="filterDestList(this.value)" autocomplete="off" />
+                            </div>
+                            <div class="dk-dropdown-options-list" id="destOptionsList">
+                                <div class="dk-drop-opt-item" onclick="selectDestination('ALL', 'All Destinations', '🌍', '850+ Unis', event)">
+                                    <span class="opt-flag">🌍</span>
+                                    <div class="opt-info">
+                                        <div class="opt-name">All Study Destinations</div>
+                                        <div class="opt-sub">850+ Partner Universities Worldwide</div>
+                                    </div>
+                                </div>
+                                @foreach (var d in searchBar.Destinations)
+                                {
+                                    <div class="dk-drop-opt-item @(d.CountryCode == "GB" ? "active" : "")" 
+                                         data-code="@d.CountryCode" 
+                                         data-country="@d.CountryName" 
+                                         data-centres="@string.Join(",", d.SuggestedCentres)" 
+                                         data-intakes="@string.Join(",", d.AvailableIntakes)" 
+                                         onclick="selectDestination('@d.CountryCode', '@d.CountryName', '@d.FlagEmoji', '@d.UniversityCountText', event)">
+                                        <span class="opt-flag">@d.FlagEmoji</span>
+                                        <div class="opt-info">
+                                            <div class="opt-name">@d.CountryName</div>
+                                            <div class="opt-sub">@d.UniversityCountText • High Visa Success</div>
+                                        </div>
+                                        <span class="opt-check">✓</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Divider 1 -->
+                    <div class="dk-redbus-divider"></div>
+
+                    <!-- Segment 2: Nearest Centre -->
+                    <div class="dk-redbus-seg dk-seg-centre" id="segCentre" 
+                         onmouseenter="handleSegMouseEnter('menuCentre')" 
+                         onmouseleave="handleSegMouseLeave('menuCentre')" 
+                         onclick="handleSegClick('menuCentre', event)">
+                        <div class="dk-redbus-seg-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <div class="dk-redbus-seg-text-group">
+                            <span class="dk-redbus-seg-label">@searchBar.CentreLabel</span>
+                            <div class="dk-redbus-seg-value">
+                                <span class="dk-seg-title" id="dispCentreName">Hyderabad - Madhapur</span>
+                                <span class="dk-seg-badge" id="dispCentreSub">In-Person &amp; Hybrid</span>
+                            </div>
+                        </div>
+                        <div class="dk-redbus-seg-arrow">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                        </div>
+
+                        <!-- Dropdown 2: Nearest Centre Popover -->
+                        <div class="dk-redbus-dropdown-panel" id="menuCentre" 
+                             onmouseenter="cancelHideDropdown()" 
+                             onmouseleave="handleSegMouseLeave('menuCentre')" 
+                             onclick="event.stopPropagation()">
+                            <div class="dk-dropdown-filter-wrap">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                                <input type="text" class="dk-dropdown-filter-input" placeholder="Search branch or city..." oninput="filterCentreList(this.value)" autocomplete="off" />
+                            </div>
+                            <div class="dk-dropdown-options-list" id="centreOptionsList">
+                                @foreach (var c in searchBar.Centres)
+                                {
+                                    <div class="dk-drop-opt-item centre-opt-item" data-centre="@c.CentreName" data-city="@c.City" onclick="selectCentre('@c.CentreName', '@c.City', event)">
+                                        <span class="opt-flag">@(c.IsOnline ? "💻" : "📍")</span>
+                                        <div class="opt-info">
+                                            <div class="opt-name">@c.CentreName</div>
+                                            <div class="opt-sub">@c.Address</div>
+                                        </div>
+                                        @if (c.IsOnline)
+                                        {
+                                            <span class="opt-badge-online">24x7 Digital</span>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Divider 2 -->
+                    <div class="dk-redbus-divider"></div>
+
+                    <!-- Segment 3: Preferred Intake -->
+                    <div class="dk-redbus-seg dk-seg-intake" id="segIntake" 
+                         onmouseenter="handleSegMouseEnter('menuIntake')" 
+                         onmouseleave="handleSegMouseLeave('menuIntake')" 
+                         onclick="handleSegClick('menuIntake', event)">
+                        <div class="dk-redbus-seg-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </div>
+                        <div class="dk-redbus-seg-text-group">
+                            <span class="dk-redbus-seg-label">@searchBar.IntakeLabel</span>
+                            <div class="dk-redbus-seg-value">
+                                <span class="dk-seg-title" id="dispIntakeName">Fall / Sept 2026</span>
+                                <span class="dk-seg-subnote" id="dispIntakeSub">(Upcoming)</span>
+                            </div>
+                        </div>
+                        <div class="dk-redbus-seg-arrow">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                        </div>
+
+                        <!-- Dropdown 3: Preferred Intake Popover (Right Aligned) -->
+                        <div class="dk-redbus-dropdown-panel dk-panel-right" id="menuIntake" 
+                             onmouseenter="cancelHideDropdown()" 
+                             onmouseleave="handleSegMouseLeave('menuIntake')" 
+                             onclick="event.stopPropagation()">
+                            <div class="dk-dropdown-header">Select Academic Intake Window</div>
+                            <div class="dk-dropdown-options-list" id="intakeOptionsList">
+                                @foreach (var intake in searchBar.Intakes)
+                                {
+                                    <div class="dk-drop-opt-item intake-opt-item @(intake.IntakeName.Contains("Fall / Sept 2026") ? "active" : "")" data-intake="@intake.IntakeName" onclick="selectIntake('@intake.IntakeName', event)">
+                                        <span class="opt-flag">📅</span>
+                                        <div class="opt-info">
+                                            <div class="opt-name">@intake.IntakeName</div>
+                                            <div class="opt-sub">@intake.Season Term @intake.Year</div>
+                                        </div>
+                                        <span class="opt-intake-badge">Open</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Divider 3 -->
+                    <div class="dk-redbus-divider"></div>
+
+                    <!-- Segment 4: Booking for Counselling (Inside the single bar!) -->
+                    <div class="dk-redbus-seg-counselling">
+                        <div class="dk-counsellor-avatar-wrap">
+                            <svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+                                <circle cx="20" cy="20" r="19" fill="#fdf2f8" stroke="#fbcfe8" stroke-width="1.5"/>
+                                <path d="M20 10c-3.1 0-5.6 2.5-5.6 5.6 0 2.2 1.2 4.1 3 5v1.4c0 .6.4 1 1 1h3.2c.6 0 1-.4 1-1v-1.4c1.8-.9 3-2.8 3-5 0-3.1-2.5-5.6-5.6-5.6z" fill="#ec4899"/>
+                                <path d="M12 32c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#db2777" stroke-width="2.2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="dk-counsellor-content">
+                            <div class="dk-counsellor-title">Booking for Counselling</div>
+                            <a href="#consultancy-lead-modal" class="dk-counsellor-link" onclick="openConsultancyModal('Search Bar Advisory'); return false;">Know more</a>
+                        </div>
+                        <label class="dk-redbus-toggle" title="Toggle free profile evaluation & scholarship counselling">
+                            <input type="checkbox" id="advisoryToggle" checked onchange="handleAdvisoryToggle(this)" />
+                            <span class="dk-toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Centered Hanging Search Button -->
+                <div class="dk-redbus-btn-center-wrap">
+                    <button type="button" class="dk-redbus-hanging-btn" onclick="executeHubSearch()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <span>Search Programs</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         2.6 SECTION A: WHY CHOOSE LEVERAGE EDU & DREAMFLYKIT GLOBAL? (Image 3)
+    ========================================================= -->
+    <section class="dk-whychoose-section" id="whyChooseSection">
+        <div class="dk-upg-container">
+            <div class="dk-section-center-head">
+                <span class="dk-sec-pill-tag">GLOBAL EXCELLENCE</span>
+                <h2 class="dk-sec-heading-dark">@whyChoose.Title</h2>
+                <p class="dk-sec-subheading">@whyChoose.Subtitle</p>
+            </div>
+
+            <div class="dk-whychoose-grid">
+                @foreach (var card in whyChoose.Cards)
+                {
+                    <div class="dk-whychoose-card">
+                        <div class="dk-whychoose-icon-wrap">
+                            @if (card.IconType == "partners")
+                            {
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            }
+                            else if (card.IconType == "support")
+                            {
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            }
+                            else if (card.IconType == "stories")
+                            {
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                            }
+                            else if (card.IconType == "acceptance")
+                            {
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                            }
+                            else if (card.IconType == "scholarship")
+                            {
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+                            }
+                            else
+                            {
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+                            }
+                        </div>
+                        <div class="dk-whychoose-body">
+                            <h3 class="dk-whychoose-title">@card.Title</h3>
+                            <p class="dk-whychoose-desc">@card.Description</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         2.7 SECTION B: TOP STUDY DESTINATIONS (Image 3)
+         Cards with Photos or "⏳ UPLOADING SOON" Badge
+    ========================================================= -->
+    <section class="dk-top-destinations-section" id="topDestinationsSection">
+        <div class="dk-upg-container">
+            <div class="dk-section-split-head">
+                <div>
+                    <span class="dk-sec-pill-tag">GLOBAL HUBS</span>
+                    <h2 class="dk-sec-heading-dark">@topDestinations.Title</h2>
+                    <p class="dk-sec-subheading">@topDestinations.Subtitle</p>
+                </div>
+                <div class="dk-dest-scroll-btns">
+                    <button type="button" class="dk-scroll-arrow-btn" onclick="scrollDestCards(-320)" aria-label="Previous Destinations">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    </button>
+                    <button type="button" class="dk-scroll-arrow-btn" onclick="scrollDestCards(320)" aria-label="Next Destinations">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
                 </div>
             </div>
 
-            <!-- Category Pills Bar (Image 2 style) -->
-            <div class="dk-upg-pills-row" id="pillsBar">
-                @foreach (var pill in pills)
+            <div class="dk-dest-cards-track" id="destCardsTrack">
+                @foreach (var dest in topDestinations.Destinations)
                 {
-                    <button type="button" class="dk-upg-pill" data-tag="@pill.FilterTag" onclick="filterCategory('@pill.FilterTag', this)">
-                        <span class="dk-upg-pill-icon">@pill.Icon</span>
-                        <span class="dk-upg-pill-label">@pill.Title</span>
-                    </button>
+                    <div class="dk-dest-card" data-country="@dest.CountryName" data-code="@dest.CountryCode" onclick="selectDestination('@dest.CountryCode', '@dest.CountryName', '@dest.FlagEmoji', '@dest.UniversityCount')">
+                        <div class="dk-dest-card-media">
+                            <img src="@(string.IsNullOrWhiteSpace(dest.ImageUrl) ? $"/images/study-hub/dest-{dest.Slug}.svg" : dest.ImageUrl)" alt="@dest.CountryName" class="dk-dest-card-img" onerror="this.src='/images/study-hub/upload-soon.svg';" loading="lazy" />
+                            @if (dest.IsUploadingSoon)
+                            {
+                                <div class="dk-upload-soon-overlay-badge">
+                                    <span>⏳ UPLOADING SOON</span>
+                                </div>
+                            }
+                            <div class="dk-dest-flag-badge">
+                                <span class="dest-emoji">@dest.FlagEmoji</span>
+                            </div>
+                        </div>
+
+                        <div class="dk-dest-card-body">
+                            <h3 class="dk-dest-card-name">@dest.CountryName</h3>
+                            <div class="dk-dest-card-count">@dest.UniversityCount</div>
+                            <div class="dk-dest-streams-pill">
+                                <span>@dest.PopularStreams</span>
+                            </div>
+                            <div class="dk-dest-explore-link">
+                                <span>Explore Universities</span>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+                    </div>
                 }
             </div>
         </div>
+    </section>
 
-        <!-- Sub-Banner beneath Hero (Image 2) -->
-        <div class="dk-upg-subbanner">
-            <div class="dk-upg-subbanner-text">
-                <span class="dk-upg-highlight-red">@cPage.SubBannerPrefix</span> @cPage.SubBannerHighlight
+    <!-- ========================================================
+         2.8 SECTION C: TOP UNIVERSITIES WITH COUNTRY TABS (Image 3)
+         Dynamic Filtering, Campus Photos, "⏳ UPLOADING SOON" Badge & Actions
+    ========================================================= -->
+    <section class="dk-top-universities-section" id="topUniversitiesSection">
+        <div class="dk-upg-container">
+            <div class="dk-section-center-head">
+                <span class="dk-sec-pill-tag">GLOBAL CAMPUSES</span>
+                <h2 class="dk-sec-heading-dark">@topUniversities.Title</h2>
+                <p class="dk-sec-subheading">@topUniversities.Subtitle</p>
+            </div>
+
+            <!-- Country Filter Tabs Bar matching Image 3 -->
+            <div class="dk-uni-tabs-bar" id="uniTabsBar">
+                @foreach (var tab in topUniversities.Tabs)
+                {
+                    <button type="button" class="dk-uni-tab-btn @(tab == "ALL" ? "active" : "")" data-tab="@tab" onclick="switchUniTab('@tab', this)">
+                        <span>@tab</span>
+                    </button>
+                }
+            </div>
+
+            <!-- Active Filter Status & Reset Strip -->
+            <div class="dk-uni-filter-status-bar">
+                <div class="dk-filter-status-text">
+                    Showing <strong id="uniCountText">@topUniversities.Universities.Count</strong> universities <span id="uniCurrentFilterText">across all destinations</span>
+                </div>
+                <button type="button" class="dk-filter-reset-link" onclick="resetUniFilters()">
+                    <span>↺ Show All Universities</span>
+                </button>
+            </div>
+
+            <!-- University Cards Grid -->
+            <div class="dk-uni-cards-grid" id="uniCardsGrid">
+                @foreach (var uni in topUniversities.Universities)
+                {
+                    <div class="dk-uni-card" data-name="@uni.Name" data-country="@uni.Country.ToUpperInvariant()" data-code="@uni.CountryCode">
+                        <div class="dk-uni-card-media">
+                            <img src="@(string.IsNullOrWhiteSpace(uni.ImageUrl) ? $"/images/study-hub/upload-soon.svg" : uni.ImageUrl)" alt="@uni.Name" class="dk-uni-card-img" onerror="this.src='/images/study-hub/upload-soon.svg';" loading="lazy" />
+                            @if (uni.IsUploadingSoon)
+                            {
+                                <div class="dk-upload-soon-overlay-badge">
+                                    <span>⏳ UPLOADING SOON</span>
+                                </div>
+                            }
+                            <div class="dk-uni-country-badge">
+                                <span>@uni.FlagEmoji @uni.Country</span>
+                            </div>
+                            <div class="dk-uni-ranking-badge">
+                                <span>@uni.RankingTag</span>
+                            </div>
+                        </div>
+
+                        <div class="dk-uni-card-body">
+                            <h3 class="dk-uni-card-title" title="@uni.Name">@uni.Name</h3>
+                            <div class="dk-uni-courses-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/></svg>
+                                <span>@uni.CoursesCount</span>
+                            </div>
+
+                            <div class="dk-uni-card-actions">
+                                <button type="button" class="dk-uni-btn-details" onclick="openUniDetailsModal('@uni.Name', '@uni.Country', '@uni.CoursesCount', '@uni.RankingTag')">
+                                    <span>View Details</span>
+                                </button>
+                                <button type="button" class="dk-uni-btn-eligibility" onclick="checkUniEligibility('@uni.Name', '@uni.Country')">
+                                    <span>Check Eligibility</span>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Empty State if no cards match filter -->
+            <div class="dk-uni-empty-state" id="uniEmptyState" style="display: none;">
+                <div class="dk-empty-icon">🔍</div>
+                <h3>No universities found for this filter</h3>
+                <p>We work with 850+ universities worldwide. Speak directly with our international counselling advisors to apply for unlisted institutions.</p>
+                <button type="button" class="dk-redbus-action-btn" onclick="resetUniFilters()" style="margin: 12px auto 0 auto; display: inline-flex;">
+                    <span>View All Universities</span>
+                </button>
             </div>
         </div>
     </section>
@@ -723,17 +1116,17 @@
         box-shadow: 0 6px 18px rgba(229, 45, 39, 0.45);
     }
 
-    /* Hero Section (Image 2) */
+    /* Hero Section (Full 3D Stage) */
     .dk-upg-hero-section {
         position: relative;
-        min-height: 480px;
+        height: 490px;
+        min-height: 440px;
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
         overflow: hidden;
-        background: #0f172a;
-        padding: 60px 20px 70px 20px;
+        background: #0b132b;
+        padding: 0;
         box-sizing: border-box;
     }
     .dk-upg-hero-media-wrapper {
@@ -743,6 +1136,8 @@
         height: 100%;
         z-index: 1;
         overflow: hidden;
+        transform: scale(1.02);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .dk-upg-hero-video {
         width: 100%;
@@ -758,8 +1153,8 @@
     .dk-upg-hero-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.85) 60%, #ffffff 100%);
-        backdrop-filter: blur(2px);
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.12) 0%, rgba(15, 23, 42, 0.0) 50%, rgba(15, 23, 42, 0.32) 100%);
+        pointer-events: none;
     }
     .dk-upg-hero-content {
         position: relative;
@@ -1603,6 +1998,1090 @@
         margin-top: 10px;
     }
 
+    /* ========================================================
+       3D REALISTIC HERO TILT & VIDEO CONTROLS
+    ======================================================== */
+    .dk-upg-hero-section.has-3d-tilt {
+        perspective: 1200px;
+        transform-style: preserve-3d;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dk-hero-3d-sheen {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 3;
+        transition: background 0.15s ease-out;
+    }
+
+    .dk-upg-hero-content {
+        transition: transform 0.15s ease-out;
+        transform-style: preserve-3d;
+        will-change: transform;
+    }
+
+    .dk-hero-3d-floating-layer {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 2;
+        overflow: hidden;
+    }
+
+    .dk-float-chip {
+        position: absolute;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 999px;
+        color: #ffffff;
+        font-size: 12.5px;
+        font-weight: 700;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        animation: floatY 5s ease-in-out infinite alternate;
+    }
+
+    .dk-float-chip.chip-1 {
+        top: 22%;
+        left: 4%;
+        animation-delay: 0s;
+    }
+
+    .dk-float-chip.chip-2 {
+        top: 38%;
+        right: 5%;
+        animation-delay: 1.5s;
+    }
+
+    .dk-float-chip.chip-3 {
+        bottom: 24%;
+        left: 8%;
+        animation-delay: 3s;
+    }
+
+    .chip-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #38bdf8;
+        box-shadow: 0 0 10px #38bdf8;
+    }
+    .chip-dot.green { background: #10b981; box-shadow: 0 0 10px #10b981; }
+    .chip-dot.gold { background: #fbbf24; box-shadow: 0 0 10px #fbbf24; }
+
+    @@keyframes floatY {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-12px) rotate(1deg); }
+        100% { transform: translateY(6px) rotate(-1deg); }
+    }
+
+    .dk-hero-video-controls {
+        position: absolute;
+        top: 18px;
+        right: 24px;
+        z-index: 4;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(8px);
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .dk-video-live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ef4444;
+        box-shadow: 0 0 8px #ef4444;
+        animation: pulseRed 2s infinite;
+    }
+
+    @@keyframes pulseRed {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+
+    .dk-video-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: 0.4px;
+        margin-right: 4px;
+    }
+
+    .dk-video-ctrl-btn {
+        background: rgba(255, 255, 255, 0.12);
+        border: none;
+        color: #ffffff;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .dk-video-ctrl-btn:hover { background: rgba(255, 255, 255, 0.25); }
+
+    /* ========================================================
+       2.5 REDBUS-STYLE HORIZONTAL SEARCH BAR WIDGET
+       Unified 4-segment bar: Destination | Nearest Centre | Preferred Intake | Counselling
+    ======================================================== */
+    .dk-redbus-search-section {
+        padding: 0 20px;
+        margin-top: -36px;
+        position: relative;
+        z-index: 50;
+        margin-bottom: 45px;
+        overflow: visible !important;
+    }
+
+    .dk-redbus-search-container {
+        max-width: 1240px;
+        margin: 0 auto;
+        position: relative;
+        overflow: visible !important;
+    }
+
+    .dk-redbus-outer-card {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 14px 35px -8px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(226, 232, 240, 0.95);
+        padding: 10px 14px 25px 14px;
+        position: relative;
+        overflow: visible !important;
+    }
+
+    /* Single continuous segmented box holding all 4 sections */
+    .dk-redbus-segmented-box {
+        display: flex;
+        align-items: stretch;
+        width: 100%;
+        background: #ffffff;
+        border: 1px solid #d5d7db;
+        border-radius: 14px;
+        position: relative;
+        min-height: 68px;
+        overflow: visible !important;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .dk-redbus-segmented-box:focus-within {
+        border-color: #94a3b8;
+    }
+
+    .dk-redbus-seg {
+        flex: 1;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        position: relative;
+        user-select: none;
+        border-radius: 12px;
+        transition: background-color 0.15s;
+    }
+
+    .dk-redbus-seg:hover,
+    .dk-redbus-seg.is-active {
+        background-color: #f8fafc;
+    }
+
+    .dk-redbus-seg-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: #475569;
+    }
+
+    .dk-redbus-seg-text-group {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .dk-redbus-seg-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 2px;
+        display: block;
+        line-height: 1.2;
+    }
+
+    .dk-redbus-seg-value {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .dk-seg-flag {
+        font-size: 16px;
+        line-height: 1;
+    }
+
+    .dk-seg-title {
+        font-size: 14.5px;
+        font-weight: 800;
+        color: #0f172a;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .dk-seg-badge {
+        font-size: 11px;
+        font-weight: 700;
+        color: #059669;
+        background: #ecfdf5;
+        padding: 1px 7px;
+        border-radius: 4px;
+        white-space: nowrap;
+    }
+
+    .dk-seg-subnote {
+        font-size: 11px;
+        font-weight: 500;
+        color: #94a3b8;
+        white-space: nowrap;
+    }
+
+    .dk-redbus-seg-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        transition: transform 0.2s, color 0.2s;
+    }
+
+    .dk-redbus-seg.is-active .dk-redbus-seg-arrow {
+        transform: rotate(180deg);
+        color: #d84e55;
+    }
+
+    .dk-redbus-divider {
+        width: 1px;
+        background: #e2e8f0;
+        margin: 10px 0;
+        flex-shrink: 0;
+    }
+
+    /* Segment 4: Booking for Counselling INSIDE THE BAR */
+    .dk-redbus-seg-counselling {
+        flex: 1.15;
+        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        cursor: default;
+        position: relative;
+        border-radius: 12px;
+        background: #ffffff;
+    }
+
+    .dk-counsellor-avatar-wrap {
+        width: 38px;
+        height: 38px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dk-counsellor-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .dk-counsellor-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.25;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .dk-counsellor-link {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #2563eb;
+        text-decoration: none;
+        transition: color 0.15s;
+    }
+
+    .dk-counsellor-link:hover {
+        color: #1d4ed8;
+        text-decoration: underline;
+    }
+
+    /* Toggle Switch matching screenshot */
+    .dk-redbus-toggle {
+        position: relative;
+        display: inline-block;
+        width: 46px;
+        height: 26px;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+
+    .dk-redbus-toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .dk-toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #cbd5e1;
+        transition: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        border-radius: 999px;
+    }
+
+    .dk-toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 3px;
+        bottom: 3px;
+        background-color: #ffffff;
+        transition: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+    }
+
+    .dk-redbus-toggle input:checked + .dk-toggle-slider {
+        background-color: #334155;
+    }
+
+    .dk-redbus-toggle input:checked + .dk-toggle-slider:before {
+        transform: translateX(20px);
+    }
+
+    /* Centered Hanging Red Pill Search Button */
+    .dk-redbus-btn-center-wrap {
+        position: absolute;
+        bottom: -22px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 60;
+    }
+
+    .dk-redbus-hanging-btn {
+        background: #d84e55;
+        color: #ffffff;
+        border: none;
+        border-radius: 999px;
+        padding: 13px 40px;
+        font-size: 15.5px;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        box-shadow: 0 8px 22px rgba(216, 78, 85, 0.45);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        white-space: nowrap;
+        outline: none;
+        letter-spacing: 0.3px;
+    }
+
+    .dk-redbus-hanging-btn:hover {
+        background: #c53c43;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(216, 78, 85, 0.55);
+    }
+
+    .dk-redbus-hanging-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 12px rgba(216, 78, 85, 0.35);
+    }
+
+    /* Dropdown Menus */
+    .dk-redbus-dropdown-panel {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 0;
+        min-width: 330px;
+        max-width: 440px;
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 24px 50px -10px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(226, 232, 240, 0.95);
+        padding: 10px;
+        z-index: 99999;
+        display: none;
+        animation: dkDropFadeIn 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dk-redbus-dropdown-panel.dk-panel-right {
+        left: auto;
+        right: 0;
+    }
+
+    .dk-redbus-dropdown-panel.is-open {
+        display: block;
+    }
+
+    @@keyframes dkDropFadeIn {
+        from { opacity: 0; transform: translateY(-6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dk-dropdown-filter-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: #f8fafc;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 8px;
+    }
+
+    .dk-dropdown-filter-wrap:focus-within {
+        border-color: #d84e55;
+        box-shadow: 0 0 0 3px rgba(216, 78, 85, 0.1);
+        background: #ffffff;
+    }
+
+    .dk-dropdown-filter-input {
+        width: 100%;
+        border: none;
+        background: transparent;
+        font-size: 13px;
+        font-family: inherit;
+        outline: none;
+        color: #0f172a;
+    }
+
+    .dk-dropdown-header {
+        font-size: 11px;
+        font-weight: 800;
+        color: #64748b;
+        text-transform: uppercase;
+        padding: 6px 10px 8px 10px;
+        border-bottom: 1px solid #f1f5f9;
+        margin-bottom: 4px;
+        letter-spacing: 0.5px;
+    }
+
+    .dk-dropdown-options-list {
+        max-height: 280px;
+        overflow-y: auto;
+        padding: 4px 0;
+    }
+
+    .dk-drop-opt-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 9px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+        position: relative;
+    }
+
+    .dk-drop-opt-item:hover {
+        background: #f8fafc;
+    }
+
+    .dk-drop-opt-item.active {
+        background: #fef2f2;
+        border-left: 3px solid #d84e55;
+    }
+
+    .dk-drop-opt-item .opt-flag {
+        font-size: 20px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .dk-drop-opt-item .opt-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .dk-drop-opt-item .opt-name {
+        font-size: 13.5px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.25;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .dk-drop-opt-item:hover .opt-name {
+        color: #d84e55;
+    }
+
+    .dk-drop-opt-item .opt-sub {
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 1px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .dk-drop-opt-item .opt-check {
+        color: #d84e55;
+        font-weight: 900;
+        font-size: 14px;
+        opacity: 0;
+    }
+
+    .dk-drop-opt-item.active .opt-check {
+        opacity: 1;
+    }
+
+    .dk-drop-opt-item .opt-badge-online {
+        font-size: 10.5px;
+        font-weight: 800;
+        color: #0284c7;
+        background: #e0f2fe;
+        padding: 2px 7px;
+        border-radius: 999px;
+        flex-shrink: 0;
+    }
+
+    .dk-drop-opt-item .opt-intake-badge {
+        font-size: 10px;
+        font-weight: 800;
+        color: #059669;
+        background: #ecfdf5;
+        padding: 2px 6px;
+        border-radius: 4px;
+        flex-shrink: 0;
+    }
+
+    /* Responsive */
+    @@media (max-width: 992px) {
+        .dk-redbus-segmented-box {
+            flex-direction: column;
+        }
+        .dk-redbus-divider {
+            width: 100%;
+            height: 1px;
+            margin: 0;
+        }
+        .dk-redbus-dropdown-panel,
+        .dk-redbus-dropdown-panel.dk-panel-right {
+            left: 0;
+            right: 0;
+            min-width: 100%;
+            max-width: 100%;
+        }
+    }
+
+    /* ========================================================
+       SECTION HEADINGS SHARED
+    ======================================================== */
+    .dk-section-center-head {
+        text-align: center;
+        max-width: 760px;
+        margin: 0 auto 36px auto;
+    }
+
+    .dk-section-split-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .dk-sec-pill-tag {
+        display: inline-block;
+        background: #ecfdf5;
+        color: #059669;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        margin-bottom: 10px;
+    }
+
+    .dk-sec-heading-dark {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0 0 10px 0;
+        letter-spacing: -0.5px;
+    }
+
+    .dk-sec-subheading {
+        font-size: 14.5px;
+        color: #64748b;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    /* ========================================================
+       2.6 SECTION A: WHY CHOOSE US (Image 3)
+    ======================================================== */
+    .dk-whychoose-section {
+        padding: 60px 0 50px 0;
+        background: #ffffff;
+    }
+
+    .dk-whychoose-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    .dk-whychoose-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 22px;
+        background: #ffffff;
+        border: 1px solid #f1f5f9;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .dk-whychoose-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(5, 150, 105, 0.08);
+        border-color: #a7f3d0;
+    }
+
+    .dk-whychoose-icon-wrap {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: #ecfdf5;
+        border: 1.5px solid #a7f3d0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .dk-whychoose-body { flex: 1; }
+    .dk-whychoose-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+    }
+    .dk-whychoose-desc {
+        font-size: 13.5px;
+        color: #64748b;
+        line-height: 1.55;
+        margin: 0;
+    }
+
+    /* ========================================================
+       2.7 SECTION B: TOP STUDY DESTINATIONS (Image 3)
+    ======================================================== */
+    .dk-top-destinations-section {
+        padding: 55px 0 65px 0;
+        background: #f8fafc;
+        border-top: 1px solid #f1f5f9;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .dk-dest-scroll-btns {
+        display: flex;
+        gap: 8px;
+    }
+
+    .dk-scroll-arrow-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1.5px solid #cbd5e1;
+        background: #ffffff;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .dk-scroll-arrow-btn:hover {
+        background: #0f172a;
+        color: #ffffff;
+        border-color: #0f172a;
+    }
+
+    .dk-dest-cards-track {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+    .dk-dest-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+        display: flex;
+        flex-direction: column;
+    }
+    .dk-dest-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+        border-color: #cbd5e1;
+    }
+
+    .dk-dest-card-media {
+        height: 165px;
+        position: relative;
+        overflow: hidden;
+        background: #0f172a;
+    }
+
+    .dk-dest-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .dk-dest-card:hover .dk-dest-card-img {
+        transform: scale(1.05);
+    }
+
+    .dk-upload-soon-overlay-badge {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(2px);
+    }
+    .dk-upload-soon-overlay-badge span {
+        background: rgba(245, 158, 11, 0.95);
+        color: #0f172a;
+        font-size: 11.5px;
+        font-weight: 900;
+        letter-spacing: 0.5px;
+        padding: 5px 12px;
+        border-radius: 999px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .dk-dest-flag-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(4px);
+        border-radius: 6px;
+        padding: 3px 8px;
+    }
+    .dest-emoji { font-size: 16px; }
+
+    .dk-dest-card-body {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .dk-dest-card-name {
+        font-size: 17px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 4px 0;
+    }
+
+    .dk-dest-card-count {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0284c7;
+        margin-bottom: 8px;
+    }
+
+    .dk-dest-streams-pill {
+        font-size: 11px;
+        font-weight: 700;
+        color: #64748b;
+        background: #f1f5f9;
+        padding: 3px 8px;
+        border-radius: 6px;
+        margin-bottom: 12px;
+        letter-spacing: 0.4px;
+    }
+
+    .dk-dest-explore-link {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12.5px;
+        font-weight: 800;
+        color: #e52d27;
+        transition: gap 0.2s;
+    }
+    .dk-dest-card:hover .dk-dest-explore-link { gap: 10px; }
+
+    /* ========================================================
+       2.8 SECTION C: TOP UNIVERSITIES (Image 3)
+    ======================================================== */
+    .dk-top-universities-section {
+        padding: 65px 0 70px 0;
+        background: #ffffff;
+    }
+
+    .dk-uni-tabs-bar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .dk-uni-tab-btn {
+        padding: 9px 18px;
+        border-radius: 999px;
+        font-size: 12.5px;
+        font-weight: 800;
+        border: 1.5px solid #e2e8f0;
+        background: #ffffff;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        letter-spacing: 0.4px;
+    }
+    .dk-uni-tab-btn:hover:not(.active) {
+        background: #f1f5f9;
+        color: #0f172a;
+        border-color: #cbd5e1;
+    }
+    .dk-uni-tab-btn.active {
+        background: #0f172a;
+        color: #ffffff;
+        border-color: #0f172a;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+    }
+
+    .dk-uni-filter-status-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px 18px;
+        margin-bottom: 26px;
+        font-size: 13px;
+        color: #475569;
+    }
+
+    .dk-filter-reset-link {
+        background: none;
+        border: none;
+        color: #e52d27;
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 0;
+    }
+    .dk-filter-reset-link:hover { text-decoration: underline; }
+
+    .dk-uni-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 22px;
+    }
+
+    .dk-uni-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .dk-uni-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.09);
+        border-color: #cbd5e1;
+    }
+
+    .dk-uni-card-media {
+        height: 160px;
+        position: relative;
+        overflow: hidden;
+        background: #0f172a;
+    }
+
+    .dk-uni-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .dk-uni-card:hover .dk-uni-card-img {
+        transform: scale(1.05);
+    }
+
+    .dk-uni-country-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(4px);
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+
+    .dk-uni-ranking-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(2, 132, 199, 0.95);
+        color: #ffffff;
+        font-size: 10.5px;
+        font-weight: 800;
+        padding: 3px 8px;
+        border-radius: 6px;
+    }
+
+    .dk-uni-card-body {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .dk-uni-card-title {
+        font-size: 15.5px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+        line-height: 1.35;
+        min-height: 42px;
+    }
+
+    .dk-uni-courses-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11.5px;
+        font-weight: 800;
+        color: #0284c7;
+        background: #f0f9ff;
+        padding: 4px 10px;
+        border-radius: 6px;
+        margin-bottom: 14px;
+        width: fit-content;
+    }
+
+    .dk-uni-card-actions {
+        display: grid;
+        grid-template-columns: 1fr 1.15fr;
+        gap: 8px;
+        margin-top: auto;
+    }
+
+    .dk-uni-btn-details {
+        padding: 9px 8px;
+        border-radius: 8px;
+        border: 1.5px solid #cbd5e1;
+        background: #ffffff;
+        color: #0f172a;
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+    .dk-uni-btn-details:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+    }
+
+    .dk-uni-btn-eligibility {
+        padding: 9px 8px;
+        border-radius: 8px;
+        border: none;
+        background: #e52d27;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-align: center;
+    }
+    .dk-uni-btn-eligibility:hover {
+        background: #b91c1c;
+    }
+
+    .dk-uni-empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        background: #f8fafc;
+        border: 1.5px dashed #cbd5e1;
+        border-radius: 16px;
+        margin-top: 10px;
+    }
+    .dk-empty-icon { font-size: 36px; margin-bottom: 10px; }
+    .dk-uni-empty-state h3 { font-size: 18px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0; }
+    .dk-uni-empty-state p { font-size: 14px; color: #64748b; max-width: 500px; margin: 0 auto; line-height: 1.5; }
+
+    @@media (max-width: 1024px) {
+        .dk-dest-cards-track { grid-template-columns: repeat(2, 1fr); }
+        .dk-uni-cards-grid { grid-template-columns: repeat(2, 1fr); }
+        .dk-whychoose-grid { grid-template-columns: repeat(2, 1fr); }
+        .dk-redbus-segments-bar { flex-direction: column; }
+        .dk-seg-divider { height: 1px; width: 100%; margin: 0; }
+        .dk-search-dropdown-menu { width: 100%; max-width: 100%; }
+    }
+
+    @@media (max-width: 640px) {
+        .dk-dest-cards-track { grid-template-columns: 1fr; }
+        .dk-uni-cards-grid { grid-template-columns: 1fr; }
+        .dk-whychoose-grid { grid-template-columns: 1fr; }
+        .dk-float-chip { display: none; }
+    }
+
     /* Responsive */
     @@media (max-width: 900px) {
         .dk-upg-nav-menu { display: none; }
@@ -1690,7 +3169,7 @@
         if (!c) return;
         const stage = document.getElementById("destHeroStage");
         if (stage && c.HeroImageUrl) {
-            stage.style.backgroundImage = `url('\${c.HeroImageUrl}')`;
+            stage.style.backgroundImage = `url('${c.HeroImageUrl}')`;
         }
         const slideNum = document.getElementById("destSlideNum");
         if (slideNum) {
@@ -1704,16 +3183,16 @@
                 <div class="dk-upg-dest-program-card">
                     <div class="dk-upg-dest-card-header">
                         <div class="dk-upg-dest-flag-icon">🎓</div>
-                        <div class="dk-upg-dest-inst">\${p.Institution}</div>
+                        <div class="dk-upg-dest-inst">${p.Institution}</div>
                     </div>
-                    <h4 class="dk-upg-dest-card-title">\${p.Title}</h4>
-                    \${p.BadgeTag ? `<div class="dk-upg-dest-accred-badge">\${p.BadgeTag}</div>` : ''}
+                    <h4 class="dk-upg-dest-card-title">${p.Title}</h4>
+                    ${p.BadgeTag ? `<div class="dk-upg-dest-accred-badge">${p.BadgeTag}</div>` : ''}
                     <div class="dk-upg-dest-meta-row">
-                        <span>🎓 \${p.BadgeType}</span>
-                        <span>⏱ \${p.Duration}</span>
+                        <span>🎓 ${p.BadgeType}</span>
+                        <span>⏱ ${p.Duration}</span>
                     </div>
-                    <button type="button" class="dk-upg-dest-btn-red" onclick="openProgramDetails('\${p.Institution}', '\${p.Title}', 'destination')">
-                        \${p.Button1Text || 'View Program'}
+                    <button type="button" class="dk-upg-dest-btn-red" onclick="openProgramDetails('${p.Institution}', '${p.Title}', 'destination')">
+                        ${p.Button1Text || 'View Program'}
                     </button>
                 </div>
             `).join('');
@@ -1724,8 +3203,8 @@
         if (statsBar && c.Stats) {
             statsBar.innerHTML = c.Stats.map(s => `
                 <div class="dk-upg-stat-item">
-                    <div class="dk-upg-stat-val">\${s.Value}</div>
-                    <div class="dk-upg-stat-label">\${s.Label}</div>
+                    <div class="dk-upg-stat-val">${s.Value}</div>
+                    <div class="dk-upg-stat-label">${s.Label}</div>
                 </div>
             `).join('');
         }
@@ -1786,17 +3265,17 @@
 
         if (mode === 'syllabus') {
             if (modalTitle) modalTitle.textContent = "Download Complete Syllabus & Curriculum";
-            if (modalSub) modalSub.textContent = `Get the official curriculum brochure for \${title} (\${institution}).`;
+            if (modalSub) modalSub.textContent = `Get the official curriculum brochure for ${title} (${institution}).`;
         } else if (mode === 'apply') {
             if (modalTitle) modalTitle.textContent = "Apply for Admission & Scholarship";
-            if (modalSub) modalSub.textContent = `Submit your interest for \${title} at \${institution}.`;
+            if (modalSub) modalSub.textContent = `Submit your interest for ${title} at ${institution}.`;
         } else {
-            if (modalTitle) modalTitle.textContent = `1-on-1 Consultation: \${title}`;
-            if (modalSub) modalSub.textContent = `Speak directly with a program advisor for \${institution}.`;
+            if (modalTitle) modalTitle.textContent = `1-on-1 Consultation: ${title}`;
+            if (modalSub) modalSub.textContent = `Speak directly with a program advisor for ${institution}.`;
         }
 
         if (programField) {
-            programField.value = `\${institution} - \${title}`;
+            programField.value = `${institution} - ${title}`;
         }
 
         const modal = document.getElementById("consultancyModal");
@@ -1854,6 +3333,423 @@
                 btn.innerHTML = oldText;
             }
         }
+    }
+
+    // --------------------------------------------------------
+    // 3D Realistic Hero Tilt Interaction
+    // --------------------------------------------------------
+    (function initHero3d() {
+        const hero = document.getElementById("heroBanner");
+        const stage = document.getElementById("hero3dContent");
+        const sheen = document.getElementById("heroSheen");
+        if (!hero || !stage) return;
+
+        let bounds = null;
+        function updateBounds() {
+            bounds = hero.getBoundingClientRect();
+        }
+        window.addEventListener("resize", updateBounds);
+        updateBounds();
+
+        hero.addEventListener("mousemove", function(e) {
+            if (!bounds) updateBounds();
+            const mouseX = e.clientX - bounds.left;
+            const mouseY = e.clientY - bounds.top;
+            const normX = (mouseX / bounds.width) - 0.5;
+            const normY = (mouseY / bounds.height) - 0.5;
+
+            const rotateY = normX * 10;
+            const rotateX = -normY * 10;
+
+            stage.style.transform = `perspective(1200px) rotateY(${rotateY.toFixed(2)}deg) rotateX(${rotateX.toFixed(2)}deg) translateZ(12px)`;
+
+            if (sheen) {
+                const px = ((normX + 0.5) * 100).toFixed(1);
+                const py = ((normY + 0.5) * 100).toFixed(1);
+                sheen.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 65%)`;
+            }
+        });
+
+        hero.addEventListener("mouseleave", function() {
+            stage.style.transform = "perspective(1200px) rotateY(0deg) rotateX(0deg) translateZ(0px)";
+            if (sheen) {
+                sheen.style.background = "none";
+            }
+        });
+    })();
+
+    // Video Controls
+    function toggleHeroVideoPlay(btn) {
+        const video = document.getElementById("heroVideoPlayer");
+        if (!video) return;
+        const pauseIcon = btn.querySelector(".icon-pause");
+        const playIcon = btn.querySelector(".icon-play");
+
+        if (video.paused) {
+            video.play();
+            if (pauseIcon) pauseIcon.style.display = "block";
+            if (playIcon) playIcon.style.display = "none";
+        } else {
+            video.pause();
+            if (pauseIcon) pauseIcon.style.display = "none";
+            if (playIcon) playIcon.style.display = "block";
+        }
+    }
+
+    function toggleHeroVideoAudio(btn) {
+        const video = document.getElementById("heroVideoPlayer");
+        if (!video) return;
+        const mutedIcon = btn.querySelector(".icon-muted");
+        const unmutedIcon = btn.querySelector(".icon-unmuted");
+
+        video.muted = !video.muted;
+        if (video.muted) {
+            if (mutedIcon) mutedIcon.style.display = "block";
+            if (unmutedIcon) unmutedIcon.style.display = "none";
+        } else {
+            if (mutedIcon) mutedIcon.style.display = "none";
+            if (unmutedIcon) unmutedIcon.style.display = "block";
+        }
+    }
+
+    // --------------------------------------------------------
+    // RedBus-Style Search Bar Interactions (Hover & Click Dropdowns)
+    // --------------------------------------------------------
+    let selectedDestCode = "GB";
+    let selectedDestName = "United Kingdom";
+    let dropdownHoverTimer = null;
+
+    function showDropdown(menuId) {
+        clearTimeout(dropdownHoverTimer);
+        const targetMenu = document.getElementById(menuId);
+        if (!targetMenu) return;
+
+        // Close other dropdowns
+        document.querySelectorAll(".dk-redbus-dropdown-panel").forEach(m => {
+            if (m !== targetMenu) {
+                m.classList.remove("is-open");
+                m.style.display = "none";
+                m.closest(".dk-redbus-seg")?.classList.remove("is-active");
+            }
+        });
+
+        targetMenu.classList.add("is-open");
+        targetMenu.style.display = "block";
+        const seg = targetMenu.closest(".dk-redbus-seg");
+        if (seg) seg.classList.add("is-active");
+    }
+
+    function hideDropdown(menuId, delay = 240) {
+        dropdownHoverTimer = setTimeout(() => {
+            const targetMenu = document.getElementById(menuId);
+            if (!targetMenu) return;
+
+            targetMenu.classList.remove("is-open");
+            targetMenu.style.display = "none";
+            const seg = targetMenu.closest(".dk-redbus-seg");
+            if (seg) seg.classList.remove("is-active");
+        }, delay);
+    }
+
+    function cancelHideDropdown() {
+        clearTimeout(dropdownHoverTimer);
+    }
+
+    function handleSegMouseEnter(menuId) {
+        showDropdown(menuId);
+    }
+
+    function handleSegMouseLeave(menuId) {
+        hideDropdown(menuId, 250);
+    }
+
+    function handleSegClick(menuId, event) {
+        if (event) event.stopPropagation();
+        const targetMenu = document.getElementById(menuId);
+        if (!targetMenu) return;
+
+        const isCurrentlyOpen = targetMenu.classList.contains("is-open") && targetMenu.style.display === "block";
+        if (isCurrentlyOpen) {
+            const filterInput = targetMenu.querySelector(".dk-dropdown-filter-input");
+            if (filterInput && document.activeElement !== filterInput) {
+                filterInput.focus();
+            }
+        } else {
+            showDropdown(menuId);
+            const filterInput = targetMenu.querySelector(".dk-dropdown-filter-input");
+            if (filterInput) {
+                setTimeout(() => filterInput.focus(), 60);
+            }
+        }
+    }
+
+    function toggleSearchDropdown(menuId, event) {
+        handleSegClick(menuId, event);
+    }
+
+    function closeAllSearchDropdowns() {
+        clearTimeout(dropdownHoverTimer);
+        document.querySelectorAll(".dk-redbus-dropdown-panel").forEach(m => {
+            m.classList.remove("is-open");
+            m.style.display = "none";
+        });
+        document.querySelectorAll(".dk-redbus-seg").forEach(s => {
+            s.classList.remove("is-active");
+        });
+    }
+
+    // Close on outside click
+    document.addEventListener("click", function(e) {
+        if (!e.target.closest(".dk-redbus-dropdown-panel") && !e.target.closest(".dk-redbus-seg")) {
+            closeAllSearchDropdowns();
+        }
+    });
+
+    // Close on Escape key
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+            closeAllSearchDropdowns();
+        }
+    });
+
+    function filterDestList(query) {
+        const q = (query || "").toLowerCase().trim();
+        document.querySelectorAll("#destOptionsList .dk-drop-opt-item").forEach(item => {
+            const country = (item.dataset.country || "").toLowerCase();
+            const text = item.textContent.toLowerCase();
+            if (!q || country.includes(q) || text.includes(q)) {
+                item.style.display = "flex";
+            } else {
+                item.style.display = "none";
+            }
+        });
+    }
+
+    function filterCentreList(query) {
+        const q = (query || "").toLowerCase().trim();
+        document.querySelectorAll("#centreOptionsList .dk-drop-opt-item").forEach(item => {
+            const centre = (item.dataset.centre || "").toLowerCase();
+            const city = (item.dataset.city || "").toLowerCase();
+            const text = item.textContent.toLowerCase();
+            if (!q || centre.includes(q) || city.includes(q) || text.includes(q)) {
+                item.style.display = "flex";
+            } else {
+                item.style.display = "none";
+            }
+        });
+    }
+
+    function selectDestination(code, name, flag, count, event) {
+        if (event) event.stopPropagation();
+        selectedDestCode = code;
+        selectedDestName = name;
+
+        // Update Search Bar UI
+        const flagEl = document.getElementById("dispDestFlag");
+        const nameEl = document.getElementById("dispDestName");
+        const countEl = document.getElementById("dispDestCount");
+
+        if (flagEl) flagEl.textContent = flag || "🌍";
+        if (nameEl) nameEl.textContent = name;
+        if (countEl) countEl.textContent = count;
+
+        // Mark active item in list
+        document.querySelectorAll("#destOptionsList .dk-drop-opt-item").forEach(item => {
+            if (item.dataset.code === code) {
+                item.classList.add("active");
+            } else {
+                item.classList.remove("active");
+            }
+        });
+
+        // Close dropdown
+        closeAllSearchDropdowns();
+
+        // Cascading adaptation: Update active suggested centres & intakes if applicable
+        const destItem = document.querySelector(`#destOptionsList .dk-drop-opt-item[data-code="${code}"]`);
+        if (destItem) {
+            const suggestedCentres = (destItem.dataset.centres || "").split(",").filter(Boolean);
+            if (suggestedCentres.length > 0) {
+                const currCentre = document.getElementById("dispCentreName")?.textContent || "";
+                if (code === "GB" && !currCentre.includes("London")) {
+                    selectCentre("London - Holborn Office", "London, UK");
+                }
+            }
+            const availableIntakes = (destItem.dataset.intakes || "").split(",").filter(Boolean);
+            if (availableIntakes.length > 0) {
+                const intakeEl = document.getElementById("dispIntakeName");
+                if (intakeEl && !availableIntakes.includes(intakeEl.textContent)) {
+                    intakeEl.textContent = availableIntakes[0];
+                }
+            }
+        }
+
+        // Dynamically Filter Top Universities Section below!
+        filterUniversitiesByCountry(code, name);
+    }
+
+    function selectCentre(centreName, city, event) {
+        if (event) event.stopPropagation();
+        const nameEl = document.getElementById("dispCentreName");
+        const subEl = document.getElementById("dispCentreSub");
+        if (nameEl) nameEl.textContent = centreName;
+        if (subEl) subEl.textContent = city || "Verified Hub";
+
+        // Mark active item in list
+        document.querySelectorAll("#centreOptionsList .dk-drop-opt-item").forEach(item => {
+            if (item.dataset.centre === centreName) {
+                item.classList.add("active");
+            } else {
+                item.classList.remove("active");
+            }
+        });
+
+        closeAllSearchDropdowns();
+    }
+
+    function selectIntake(intakeName, event) {
+        if (event) event.stopPropagation();
+        const intakeEl = document.getElementById("dispIntakeName");
+        if (intakeEl) intakeEl.textContent = intakeName;
+
+        // Mark active item in list
+        document.querySelectorAll("#intakeOptionsList .dk-drop-opt-item").forEach(item => {
+            if (item.dataset.intake === intakeName) {
+                item.classList.add("active");
+            } else {
+                item.classList.remove("active");
+            }
+        });
+
+        closeAllSearchDropdowns();
+    }
+
+    function handleAdvisoryToggle(checkbox) {
+        const isChecked = checkbox.checked;
+        if (isChecked) {
+            showToastMessage("✓ 1-on-1 Dedicated Counsellor and Scholarship Profile Scoring enabled for your search!");
+        }
+    }
+
+    function showToastMessage(msg) {
+        let toast = document.getElementById("dkConsultancyToast");
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "dkConsultancyToast";
+            toast.style = "position: fixed; bottom: 30px; right: 30px; background: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 10px; font-size: 13.5px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 999999; display: flex; align-items: center; gap: 8px; transition: opacity 0.3s, transform 0.3s; opacity: 0; transform: translateY(15px); pointer-events: none;";
+            document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.opacity = "1";
+        toast.style.transform = "translateY(0)";
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            toast.style.transform = "translateY(15px)";
+        }, 3500);
+    }
+
+    function executeHubSearch() {
+        filterUniversitiesByCountry(selectedDestCode, selectedDestName);
+        const uniSec = document.getElementById("topUniversitiesSection") || document.getElementById("whyChooseSection");
+        if (uniSec) {
+            uniSec.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+
+    function switchUniTab(tabName, tabBtn) {
+        document.querySelectorAll(".dk-uni-tab-btn").forEach(btn => btn.classList.remove("active"));
+        if (tabBtn) tabBtn.classList.add("active");
+
+        const tabToCode = {
+            'ALL': 'ALL',
+            'UNITED KINGDOM': 'GB',
+            'GERMANY': 'DE',
+            'ITALY': 'IT',
+            'UAE (DUBAI)': 'AE',
+            'IRELAND': 'IE',
+            'CANADA': 'CA',
+            'USA': 'US',
+            'OTHERS': 'OTHERS'
+        };
+
+        const code = tabToCode[tabName.toUpperCase()] || tabName;
+        filterUniversitiesByCountry(code, tabName, false);
+    }
+
+    function filterUniversitiesByCountry(countryCode, countryName, syncTab = true) {
+        const cards = document.querySelectorAll("#uniCardsGrid .dk-uni-card");
+        let visibleCount = 0;
+
+        const normCode = (countryCode || "").toUpperCase();
+        const normName = (countryName || "").toUpperCase();
+
+        cards.forEach(card => {
+            const cardCountry = (card.dataset.country || "").toUpperCase();
+            const cardCode = (card.dataset.code || "").toUpperCase();
+
+            let match = false;
+            if (normCode === "ALL" || !normCode) {
+                match = true;
+            } else if (normCode === "OTHERS") {
+                match = (cardCountry !== "UNITED KINGDOM" && cardCountry !== "GERMANY" && cardCountry !== "ITALY" && cardCountry !== "UAE (DUBAI)" && cardCountry !== "IRELAND" && cardCountry !== "CANADA" && cardCountry !== "USA");
+            } else {
+                match = (cardCode === normCode || cardCountry.includes(normName) || normName.includes(cardCountry));
+            }
+
+            if (match) {
+                card.style.display = "flex";
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        // Update count text
+        const countEl = document.getElementById("uniCountText");
+        const filterTextEl = document.getElementById("uniCurrentFilterText");
+        const emptyState = document.getElementById("uniEmptyState");
+
+        if (countEl) countEl.textContent = visibleCount;
+        if (filterTextEl) {
+            filterTextEl.textContent = normCode === "ALL" ? "across all destinations" : `for ${countryName}`;
+        }
+
+        if (emptyState) {
+            emptyState.style.display = visibleCount === 0 ? "block" : "none";
+        }
+
+        // Sync tab if requested
+        if (syncTab) {
+            document.querySelectorAll(".dk-uni-tab-btn").forEach(btn => {
+                const btnTab = (btn.dataset.tab || "").toUpperCase();
+                if (normCode === "ALL" && btnTab === "ALL") {
+                    btn.classList.add("active");
+                } else if (btnTab.includes(normName) || normName.includes(btnTab)) {
+                    btn.classList.add("active");
+                } else {
+                    btn.classList.remove("active");
+                }
+            });
+        }
+    }
+
+    function resetUniFilters() {
+        selectDestination('ALL', 'All Destinations', '🌍', '850+ Unis');
+    }
+
+    function scrollDestCards(distance) {
+        const track = document.getElementById("destCardsTrack");
+        if (track) {
+            track.scrollBy({ left: distance, behavior: 'smooth' });
+        }
+    }
+
+    function openUniDetailsModal(name, country, courses, ranking) {
+        openProgramDetails(name, `${courses} • ${ranking} (${country})`, 'overview');
+    }
+
+    function checkUniEligibility(name, country) {
+        openConsultancyModal(`${name} (${country}) - Eligibility Check`);
     }
 
     // Scroll to Top visibility

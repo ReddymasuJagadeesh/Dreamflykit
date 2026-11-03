@@ -1,17 +1,23 @@
 using Dreamflykit.Application.FoodHub.Models;
+using Dreamflykit.Application.Media.Interfaces;
+using Dreamflykit.Application.Media.Models;
 using Dreamflykit.Infrastructure.FoodHub;
+using Dreamflykit.Web.Areas.Admin.Controllers;
 using Dreamflykit.Web.Models.Products;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using Xunit;
 
 namespace Dreamflykit.Tests;
 
 public class FoodHubTests
 {
     [Fact]
-    public void FoodHubDto_CreateDefault_InitializesFullFreshBasketTemplate()
+    public void FoodHubDto_CreateDefault_InitializesFullFreshBasketTemplateWithFullWidthSlides()
     {
         // Act
         var hub = FoodHubDto.CreateDefault();
@@ -26,14 +32,31 @@ public class FoodHubTests
         Assert.True(hub.TopNoticeBar.IsEnabled);
         Assert.Contains("Free Shipping", hub.TopNoticeBar.Item1Text);
 
-        // Hero Banner
+        // Hero Banner & Full-Width Slides
         Assert.NotNull(hub.HeroBanner);
         Assert.True(hub.HeroBanner.IsEnabled);
+        Assert.True(hub.HeroBanner.IsFullWidth);
+        Assert.Equal(5, hub.HeroBanner.AutoSlideIntervalSeconds);
         Assert.Equal("Good Food. Good Mood.", hub.HeroBanner.Heading);
         Assert.Equal("Your one-stop shop for groceries, snacks & more.", hub.HeroBanner.Subtitle);
         Assert.Equal("Shop Now →", hub.HeroBanner.ButtonText);
         Assert.NotNull(hub.HeroBanner.TrustBadges);
         Assert.Equal(4, hub.HeroBanner.TrustBadges.Count);
+
+        // Multi-slides verification
+        Assert.NotNull(hub.HeroBanner.Slides);
+        Assert.True(hub.HeroBanner.Slides.Count >= 4, "Expected at least 4 default hero slides");
+
+        foreach (var slide in hub.HeroBanner.Slides)
+        {
+            Assert.False(string.IsNullOrWhiteSpace(slide.Id));
+            Assert.False(string.IsNullOrWhiteSpace(slide.Title));
+            Assert.False(string.IsNullOrWhiteSpace(slide.Subtitle));
+            Assert.False(string.IsNullOrWhiteSpace(slide.ButtonText));
+            Assert.False(string.IsNullOrWhiteSpace(slide.ButtonUrl));
+            Assert.False(string.IsNullOrWhiteSpace(slide.BgGradient));
+            Assert.True(slide.IsActive);
+        }
 
         // Shop by 7 Categories
         Assert.NotNull(hub.ShopByCategories);
@@ -111,7 +134,7 @@ public class FoodHubTests
     }
 
     [Fact]
-    public async Task FoodHubService_GetConfigAsync_ReturnsConfigAndCachesResult()
+    public async Task FoodHubService_GetConfigAsync_PreservesSlidesOnSave()
     {
         // Arrange
         var tempDir = Path.Combine(Path.GetTempPath(), "Dreamflykit_FoodHub_Test_" + Guid.NewGuid().ToString("N"));
@@ -130,15 +153,92 @@ public class FoodHubTests
 
             // Assert
             Assert.NotNull(config);
-            Assert.Equal("Good Food. Good Mood.", config.HeroBanner.Heading);
+            Assert.NotEmpty(config.HeroBanner.Slides);
 
-            // Mutate and save
-            config.HeroBanner.Heading = "Fresh Groceries Delivered Daily";
+            // Add custom slide
+            config.HeroBanner.Slides.Add(new FoodHeroSlideDto
+            {
+                Id = "custom-slide-unit-test",
+                Title = "Fresh Festive Sweets & Namkeen",
+                Subtitle = "Traditional festival sweets crafted with pure desi ghee.",
+                ButtonText = "Shop Sweets →",
+                ButtonUrl = "/category/food?subcatItem=Sweets",
+                BgGradient = "linear-gradient(135deg, #b45309 0%, #f59e0b 100%)",
+                IsActive = true
+            });
+
             await service.UpdateConfigAsync(config, "UnitTestUser");
 
-            // Re-fetch (should get updated config)
+            // Re-fetch
             var updated = await service.GetConfigAsync();
-            Assert.Equal("Fresh Groceries Delivered Daily", updated.HeroBanner.Heading);
+            Assert.Contains(updated.HeroBanner.Slides, s => s.Id == "custom-slide-unit-test");
+            var addedSlide = updated.HeroBanner.Slides.First(s => s.Id == "custom-slide-unit-test");
+            Assert.Equal("Fresh Festive Sweets & Namkeen", addedSlide.Title);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                try { Directory.Delete(tempDir, true); } catch { }
+            }
+        }
+    }
+
+    [Fact]
+    public async Task AdminFoodHubController_UploadImage_ReturnsUrl()
+    {
+        // Arrange
+        var tempDir = Path.Combine(Path.GetTempPath(), "Dreamflykit_FoodHub_UploadTest_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var envMock = new Mock<IWebHostEnvironment>();
+            envMock.Setup(e => e.WebRootPath).Returns(tempDir);
+
+            var cache = new MemoryCache(new MemoryCacheOptions());
+            var service = new FoodHubService(cache, envMock.Object, NullLogger<FoodHubService>.Instance);
+            var mediaMock = new Mock<IMediaService>();
+            var urlMock = new Mock<IMediaUrlService>();
+
+            var uploadAsset = new Dreamflykit.Application.Media.Models.MediaAssetDto
+            {
+                Id = Guid.NewGuid(),
+                ObjectKey = "banners/food-test.webp"
+            };
+            mediaMock.Setup(m => m.UploadAsync(It.IsAny<MediaUploadRequest>(), It.IsAny<CancellationToken>()))
+                     .ReturnsAsync(MediaUploadResult.Success(uploadAsset));
+            urlMock.Setup(u => u.GetUrl(It.IsAny<string>()))
+                   .Returns("/media/banners/food-test.webp");
+
+            var controller = new FoodHubController(service, mediaMock.Object, urlMock.Object, envMock.Object, NullLogger<FoodHubController>.Instance);
+            var user = new System.Security.Claims.ClaimsPrincipal(new System.Security.Claims.ClaimsIdentity(new[]
+            {
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, "Admin")
+            }, "mock"));
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user }
+            };
+
+            // Mock an image file upload
+            var content = "fake image bytes"u8.ToArray();
+            var formFile = new FormFile(new MemoryStream(content), 0, content.Length, "file", "test-banner.webp")
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = "image/webp"
+            };
+
+            // Act
+            var result = await controller.UploadImage(formFile, "slide_img", default);
+
+            // Assert
+            var jsonResult = Assert.IsType<JsonResult>(result);
+            var json = System.Text.Json.JsonSerializer.Serialize(jsonResult.Value);
+            using var doc = System.Text.Json.JsonDocument.Parse(json);
+            Assert.True(doc.RootElement.GetProperty("success").GetBoolean());
+            Assert.False(string.IsNullOrWhiteSpace(doc.RootElement.GetProperty("url").GetString()));
         }
         finally
         {
@@ -149,4 +249,3 @@ public class FoodHubTests
         }
     }
 }
-

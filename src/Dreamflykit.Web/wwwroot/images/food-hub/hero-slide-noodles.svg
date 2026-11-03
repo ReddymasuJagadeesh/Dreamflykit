@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 650" width="1920" height="650">
+  <defs>
+    <linearGradient id="bgN" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4a1505"/>
+      <stop offset="50%" stop-color="#7c2d12"/>
+      <stop offset="100%" stop-color="#9a3412"/>
+    </linearGradient>
+    <radialGradient id="glowN" cx="75%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fb923c" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#4a1505" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="650" fill="url(#bgN)"/>
+  <rect width="1920" height="650" fill="url(#glowN)"/>
+
+  <g transform="translate(1120, 100)">
+    <!-- Ramen Bowl Silhouette -->
+    <ellipse cx="500" cy="380" rx="260" ry="80" fill="#000000" fill-opacity="0.25"/>
+    <path d="M 270 300 C 270 430, 730 430, 730 300 Z" fill="#ffffff" fill-opacity="0.12" stroke="#ffffff" stroke-opacity="0.3" stroke-width="4"/>
+    <ellipse cx="500" cy="300" rx="230" ry="60" fill="#ea580c" fill-opacity="0.8"/>
+    
+    <!-- Noodles wavy lines inside bowl -->
+    <path d="M 330 290 Q 420 320 500 290 T 670 290" fill="none" stroke="#fef08a" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 350 310 Q 440 335 520 310 T 650 305" fill="none" stroke="#fde047" stroke-width="7" stroke-linecap="round"/>
+    <path d="M 380 280 Q 460 300 540 280 T 630 280" fill="none" stroke="#facc15" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Maggi Pack Floating -->
+    <g transform="translate(260, 100) rotate(-15)">
+      <rect x="0" y="0" width="180" height="130" rx="14" fill="#facc15" stroke="#ca8a04" stroke-width="3"/>
+      <rect x="15" y="15" width="150" height="36" rx="6" fill="#dc2626"/>
+      <text x="90" y="40" font-family="Arial, sans-serif" font-size="20" font-weight="900" fill="#ffffff" text-anchor="middle">MAGGI</text>
+      <text x="90" y="85" font-family="Arial, sans-serif" font-size="16" font-weight="900" fill="#78350f" text-anchor="middle">2-MINUTE</text>
+      <text x="90" y="108" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#a16207" text-anchor="middle">MASALA NOODLES</text>
+    </g>
+
+    <!-- Chopsticks -->
+    <line x1="420" y1="80" x2="620" y2="340" stroke="#fcd34d" stroke-width="10" stroke-linecap="round"/>
+    <line x1="450" y1="70" x2="650" y2="330" stroke="#fbbf24" stroke-width="10" stroke-linecap="round"/>
+
+    <!-- Steam swirls -->
+    <path d="M 460 250 Q 440 180 470 140" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="4" stroke-linecap="round"/>
+    <path d="M 520 240 Q 550 170 510 130" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>
