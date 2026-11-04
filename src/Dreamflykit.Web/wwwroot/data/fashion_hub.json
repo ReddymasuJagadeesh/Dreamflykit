@@ -2829,5 +2829,1224 @@
         ]
       }
     ]
+  },
+  "MenFootwear": {
+    "IsEnabled": true,
+    "FestivalTheme": {
+      "IsEnabled": true,
+      "FestivalName": "Campus Walk & Performance Edit",
+      "AnnouncementText": "👟 Step Up Your Journey: Premium campus footwear with shock absorption & special student discounts!",
+      "BadgeText": "FOOTWEAR SPECIAL",
+      "BannerHighlight": "Up to 50% Off",
+      "BgGradient": "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)"
+    },
+    "HeroBanner": {
+      "IsEnabled": true,
+      "Title": "Men's Footwear",
+      "TitleHighlight": "Step into Comfort & Performance",
+      "Subtitle": "Engineered for international students — all-day campus walking, workouts, and formal presentations.",
+      "Description": "Lightweight memory-foam cushioning, high-abrasion rubber soles, and breathable weather-ready designs.",
+      "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+      "IsUploadingSoon": true,
+      "TitleColor": "#0369a1",
+      "TitleHighlightColor": "#ea580c",
+      "SubtitleColor": "#334155",
+      "BannerHeight": 440,
+      "Badges": [
+        {
+          "Id": "mfb1",
+          "Label": "Shock Absorption",
+          "Icon": "shield"
+        },
+        {
+          "Id": "mfb2",
+          "Label": "All-Weather Grip",
+          "Icon": "compass"
+        },
+        {
+          "Id": "mfb3",
+          "Label": "Lightweight & Breathable",
+          "Icon": "feather"
+        },
+        {
+          "Id": "mfb4",
+          "Label": "Loved by 15K+ Students",
+          "Icon": "users"
+        }
+      ],
+      "RightCard": {
+        "Title": "Walk Far.",
+        "TitleHighlight": "Stay Agile.",
+        "Features": [
+          {
+            "Id": "mff1",
+            "Title": "Shock Absorption",
+            "Icon": "shield"
+          },
+          {
+            "Id": "mff2",
+            "Title": "All-Weather Grip",
+            "Icon": "compass"
+          },
+          {
+            "Id": "mff3",
+            "Title": "Breathable Mesh",
+            "Icon": "wind"
+          },
+          {
+            "Id": "mff4",
+            "Title": "All-Day Comfort",
+            "Icon": "feather"
+          }
+        ]
+      }
+    },
+    "CategoriesSection": {
+      "IsEnabled": true,
+      "Title": "Shop by Category",
+      "ViewAllText": "View All Categories →",
+      "ViewAllUrl": "/category/fashion/men-footwear",
+      "Categories": [
+        {
+          "Id": "mfc1",
+          "Name": "Casual Shoes",
+          "Slug": "casual-shoes",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 1,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mfc2",
+          "Name": "Sports Shoes",
+          "Slug": "sports-shoes",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 2,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mfc3",
+          "Name": "Formal Shoes",
+          "Slug": "formal-shoes",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 3,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mfc4",
+          "Name": "Sneakers",
+          "Slug": "sneakers",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 4,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mfc5",
+          "Name": "Sandals & Floaters",
+          "Slug": "sandals-floaters",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 5,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mfc6",
+          "Name": "Flip Flops",
+          "Slug": "flip-flops",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 6,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mfc7",
+          "Name": "Socks",
+          "Slug": "socks",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 7,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        }
+      ]
+    },
+    "TopPicksSection": {
+      "IsEnabled": true,
+      "Title": "Top Picks for You",
+      "ViewAllText": "View All Products →",
+      "ViewAllUrl": "/category/fashion/men-footwear",
+      "Products": [
+        {
+          "Id": "mfp1",
+          "Name": "Urban Street Low-Top Leather Sneakers",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "sneakers",
+          "Price": 1499.0,
+          "OriginalPrice": 2999.0,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/sneakers",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "UK 7",
+            "UK 8",
+            "UK 9",
+            "UK 10",
+            "UK 11"
+          ],
+          "Colors": [
+            "White",
+            "Black",
+            "Grey"
+          ]
+        },
+        {
+          "Id": "mfp2",
+          "Name": "Air-Cushion Campus Running Sports Shoes",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "sports-shoes",
+          "Price": 1799.0,
+          "OriginalPrice": 3499.0,
+          "Rating": 4.8,
+          "ReviewsCount": 185,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/sports-shoes",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Trending",
+          "Sizes": [
+            "UK 6",
+            "UK 7",
+            "UK 8",
+            "UK 9",
+            "UK 10",
+            "UK 11",
+            "UK 12"
+          ],
+          "Colors": [
+            "Black",
+            "Navy",
+            "Neon"
+          ]
+        },
+        {
+          "Id": "mfp3",
+          "Name": "Classic Handcrafted Leather Oxford Formal Shoes",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "formal-shoes",
+          "Price": 2199.0,
+          "OriginalPrice": 4299.0,
+          "Rating": 4.9,
+          "ReviewsCount": 142,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/formal-shoes",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Formal Star",
+          "Sizes": [
+            "UK 7",
+            "UK 8",
+            "UK 9",
+            "UK 10",
+            "UK 11"
+          ],
+          "Colors": [
+            "Black",
+            "Dark Tan"
+          ]
+        },
+        {
+          "Id": "mfp4",
+          "Name": "Memory Foam Slip-On Casual Canvas Loafers",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "casual-shoes",
+          "Price": 999.0,
+          "OriginalPrice": 1999.0,
+          "Rating": 4.7,
+          "ReviewsCount": 164,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/casual-shoes",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Campus Pick",
+          "Sizes": [
+            "UK 6",
+            "UK 7",
+            "UK 8",
+            "UK 9",
+            "UK 10"
+          ],
+          "Colors": [
+            "Navy",
+            "Charcoal",
+            "Beige"
+          ]
+        },
+        {
+          "Id": "mfp5",
+          "Name": "All-Terrain Adventure Grip Floaters",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "sandals-floaters",
+          "Price": 899.0,
+          "OriginalPrice": 1799.0,
+          "Rating": 4.8,
+          "ReviewsCount": 118,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/sandals-floaters",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Rugged Grip",
+          "Sizes": [
+            "UK 7",
+            "UK 8",
+            "UK 9",
+            "UK 10"
+          ],
+          "Colors": [
+            "Olive",
+            "Black"
+          ]
+        },
+        {
+          "Id": "mfp6",
+          "Name": "Anti-Skid Ultra-Light Comfort Flip Flops",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "flip-flops",
+          "Price": 449.0,
+          "OriginalPrice": 899.0,
+          "Rating": 4.6,
+          "ReviewsCount": 95,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/flip-flops",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Waterproof",
+          "Sizes": [
+            "UK 6",
+            "UK 7",
+            "UK 8",
+            "UK 9",
+            "UK 10"
+          ],
+          "Colors": [
+            "Black",
+            "Blue"
+          ]
+        },
+        {
+          "Id": "mfp7",
+          "Name": "5-Pack Anti-Odor Breathable Cotton Ankle Socks",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "socks",
+          "Price": 399.0,
+          "OriginalPrice": 799.0,
+          "Rating": 4.9,
+          "ReviewsCount": 230,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/socks",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Value Pack",
+          "Sizes": [
+            "Free Size"
+          ],
+          "Colors": [
+            "Black",
+            "White",
+            "Grey"
+          ]
+        }
+      ]
+    },
+    "TrustBadgesSection": {
+      "IsEnabled": true,
+      "Badges": [
+        {
+          "Id": "mft1",
+          "Title": "Curated for Students",
+          "Subtitle": "All-day comfort designed for campus walking",
+          "Icon": "box"
+        },
+        {
+          "Id": "mft2",
+          "Title": "100% Genuine Quality",
+          "Subtitle": "Durable materials & high-traction soles",
+          "Icon": "shield"
+        },
+        {
+          "Id": "mft3",
+          "Title": "Affordable Value",
+          "Subtitle": "Unmatched student price guarantee",
+          "Icon": "tag"
+        },
+        {
+          "Id": "mft4",
+          "Title": "Fast Campus Delivery",
+          "Subtitle": "Delivered right to your doorstep",
+          "Icon": "truck"
+        },
+        {
+          "Id": "mft5",
+          "Title": "7-Day Easy Returns",
+          "Subtitle": "Hassle-free size replacement",
+          "Icon": "return"
+        },
+        {
+          "Id": "mft6",
+          "Title": "24/7 Student Support",
+          "Subtitle": "Dedicated assistance whenever needed",
+          "Icon": "headset"
+        }
+      ]
+    },
+    "BottomBanner": {
+      "IsEnabled": true,
+      "QuizTitle": "Not Sure Which Size or Style?",
+      "QuizSubtitle": "Take our 30-second shoe finder quiz to find your ideal fit",
+      "QuizButtonText": "Find My Shoe Size",
+      "QuizButtonUrl": "/find-my-kit",
+      "DestinationsTitle": "Weather-Ready Footwear for Top Destinations",
+      "DestinationsSubtitle": "USA, UK, Canada, Australia & Europe",
+      "BulkTitle": "Group Orders for Student Clubs",
+      "BulkSubtitle": "Special bulk pricing for university sports teams",
+      "BulkButtonText": "Contact Us",
+      "BulkButtonUrl": "/contact"
+    },
+    "SubcategoryPages": [
+      {
+        "CategorySlug": "casual-shoes",
+        "CategoryName": "Casual Shoes",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Casual Shoes",
+          "TitleHighlight": "EVERYDAY COMFORT • MEMORY FOAM",
+          "Subtitle": "Breathable canvas slip-ons, lightweight knit loafers, and casual boat shoes built for lectures and campus strolls.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "cs1",
+            "Name": "Memory Foam Slip-On Canvas Loafers",
+            "CategoryName": "Casual Shoes",
+            "CategorySlug": "casual-shoes",
+            "Price": 999.0,
+            "OriginalPrice": 1999.0,
+            "Rating": 4.8,
+            "ReviewsCount": 145,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/casual-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Navy",
+              "Charcoal",
+              "Beige"
+            ]
+          },
+          {
+            "Id": "cs2",
+            "Name": "Breathable Knit Flexible Walking Shoes",
+            "CategoryName": "Casual Shoes",
+            "CategorySlug": "casual-shoes",
+            "Price": 1199.0,
+            "OriginalPrice": 2399.0,
+            "Rating": 4.7,
+            "ReviewsCount": 98,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/casual-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Trending",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Black",
+              "Grey"
+            ]
+          },
+          {
+            "Id": "cs3",
+            "Name": "Casual Suede Handcrafted Driving Loafers",
+            "CategoryName": "Casual Shoes",
+            "CategorySlug": "casual-shoes",
+            "Price": 1499.0,
+            "OriginalPrice": 2999.0,
+            "Rating": 4.9,
+            "ReviewsCount": 112,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/casual-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Premium Suede",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Tan",
+              "Brown",
+              "Navy"
+            ]
+          },
+          {
+            "Id": "cs4",
+            "Name": "Classic Deck Boat Shoes with Anti-Slip Sole",
+            "CategoryName": "Casual Shoes",
+            "CategorySlug": "casual-shoes",
+            "Price": 1299.0,
+            "OriginalPrice": 2599.0,
+            "Rating": 4.6,
+            "ReviewsCount": 80,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/casual-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "All-Day Grip",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Brown",
+              "Navy"
+            ]
+          }
+        ]
+      },
+      {
+        "CategorySlug": "sports-shoes",
+        "CategoryName": "Sports Shoes",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Sports Shoes",
+          "TitleHighlight": "HIGH PERFORMANCE • SHOCK ABSORPTION",
+          "Subtitle": "Air-cushioned running trainers, gym trainers, and durable turf shoes built for maximum speed and shock protection.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "ss1",
+            "Name": "Air-Cushion Campus Running Sports Shoes",
+            "CategoryName": "Sports Shoes",
+            "CategorySlug": "sports-shoes",
+            "Price": 1799.0,
+            "OriginalPrice": 3499.0,
+            "Rating": 4.9,
+            "ReviewsCount": 220,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sports-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11",
+              "UK 12"
+            ],
+            "Colors": [
+              "Black",
+              "Navy",
+              "Neon"
+            ]
+          },
+          {
+            "Id": "ss2",
+            "Name": "Ultra-Lightweight Gym Mesh Training Trainers",
+            "CategoryName": "Sports Shoes",
+            "CategorySlug": "sports-shoes",
+            "Price": 1399.0,
+            "OriginalPrice": 2799.0,
+            "Rating": 4.8,
+            "ReviewsCount": 135,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sports-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Workout Pro",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Grey",
+              "Black",
+              "Red"
+            ]
+          },
+          {
+            "Id": "ss3",
+            "Name": "High-Traction All-Weather Marathon Runners",
+            "CategoryName": "Sports Shoes",
+            "CategorySlug": "sports-shoes",
+            "Price": 2199.0,
+            "OriginalPrice": 4399.0,
+            "Rating": 5.0,
+            "ReviewsCount": 94,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sports-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Pro Runner",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Blue",
+              "Black"
+            ]
+          },
+          {
+            "Id": "ss4",
+            "Name": "Cross-Training Court & Badminton Shoes",
+            "CategoryName": "Sports Shoes",
+            "CategorySlug": "sports-shoes",
+            "Price": 1599.0,
+            "OriginalPrice": 3199.0,
+            "Rating": 4.7,
+            "ReviewsCount": 88,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sports-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Indoor Court",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "White",
+              "Neon Orange"
+            ]
+          }
+        ]
+      },
+      {
+        "CategorySlug": "formal-shoes",
+        "CategoryName": "Formal Shoes",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Formal Shoes",
+          "TitleHighlight": "TIMELESS ELEGANCE • GENUINE LEATHER",
+          "Subtitle": "Sharp Oxford brogues, polished patent Derbys, and slip-on monk straps engineered for presentations, interviews, and formal banquets.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "fs1",
+            "Name": "Classic Handcrafted Leather Oxford Formal Shoes",
+            "CategoryName": "Formal Shoes",
+            "CategorySlug": "formal-shoes",
+            "Price": 2199.0,
+            "OriginalPrice": 4299.0,
+            "Rating": 4.9,
+            "ReviewsCount": 168,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/formal-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Black",
+              "Dark Tan"
+            ]
+          },
+          {
+            "Id": "fs2",
+            "Name": "Glossy Patent Derby Formal Lace-Up Shoes",
+            "CategoryName": "Formal Shoes",
+            "CategorySlug": "formal-shoes",
+            "Price": 1899.0,
+            "OriginalPrice": 3799.0,
+            "Rating": 4.8,
+            "ReviewsCount": 114,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/formal-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Sharp Look",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Black"
+            ]
+          },
+          {
+            "Id": "fs3",
+            "Name": "Double Monk Strap Italian Style Leather Shoes",
+            "CategoryName": "Formal Shoes",
+            "CategorySlug": "formal-shoes",
+            "Price": 2499.0,
+            "OriginalPrice": 4999.0,
+            "Rating": 4.9,
+            "ReviewsCount": 92,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/formal-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Italian Style",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Burgundy",
+              "Cognac Brown"
+            ]
+          },
+          {
+            "Id": "fs4",
+            "Name": "Cushioned Slip-On Formal Penny Loafers",
+            "CategoryName": "Formal Shoes",
+            "CategorySlug": "formal-shoes",
+            "Price": 1699.0,
+            "OriginalPrice": 3399.0,
+            "Rating": 4.7,
+            "ReviewsCount": 85,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/formal-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Comfort Sole",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Black",
+              "Dark Brown"
+            ]
+          }
+        ]
+      },
+      {
+        "CategorySlug": "sneakers",
+        "CategoryName": "Sneakers",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Sneakers",
+          "TitleHighlight": "STREET CULTURE • ICONIC VIBE",
+          "Subtitle": "Retro low-tops, chunky platform kicks, and minimalist court sneakers tailored for your unique everyday campus aesthetic.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "sn1",
+            "Name": "Urban Street Low-Top Leather Sneakers",
+            "CategoryName": "Sneakers",
+            "CategorySlug": "sneakers",
+            "Price": 1499.0,
+            "OriginalPrice": 2999.0,
+            "Rating": 4.9,
+            "ReviewsCount": 245,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sneakers",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "White",
+              "Black",
+              "Grey"
+            ]
+          },
+          {
+            "Id": "sn2",
+            "Name": "Chunky Retro 90s Platform Streetwear Sneakers",
+            "CategoryName": "Sneakers",
+            "CategorySlug": "sneakers",
+            "Price": 1899.0,
+            "OriginalPrice": 3799.0,
+            "Rating": 4.8,
+            "ReviewsCount": 175,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sneakers",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Trending",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "White",
+              "Multi-Color"
+            ]
+          },
+          {
+            "Id": "sn3",
+            "Name": "High-Top Canvas Streetwear Skate Sneakers",
+            "CategoryName": "Sneakers",
+            "CategorySlug": "sneakers",
+            "Price": 1299.0,
+            "OriginalPrice": 2599.0,
+            "Rating": 4.7,
+            "ReviewsCount": 130,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sneakers",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Skate Classic",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Black",
+              "Red",
+              "Navy"
+            ]
+          },
+          {
+            "Id": "sn4",
+            "Name": "Minimalist Court All-White Daily Sneakers",
+            "CategoryName": "Sneakers",
+            "CategorySlug": "sneakers",
+            "Price": 1599.0,
+            "OriginalPrice": 3199.0,
+            "Rating": 4.9,
+            "ReviewsCount": 190,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sneakers",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Campus Clean",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11",
+              "UK 12"
+            ],
+            "Colors": [
+              "All-White"
+            ]
+          }
+        ]
+      },
+      {
+        "CategorySlug": "sandals-floaters",
+        "CategoryName": "Sandals & Floaters",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Sandals & Floaters",
+          "TitleHighlight": "ALL-TERRAIN GRIP • WEATHERPROOF",
+          "Subtitle": "Multi-strap ergonomic sandals, water-resistant hiking floaters, and cushioned comfort slides for tropical days and casual trips.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "sf1",
+            "Name": "All-Terrain Adventure Grip Floaters",
+            "CategoryName": "Sandals & Floaters",
+            "CategorySlug": "sandals-floaters",
+            "Price": 899.0,
+            "OriginalPrice": 1799.0,
+            "Rating": 4.8,
+            "ReviewsCount": 152,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sandals-floaters",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Olive",
+              "Black"
+            ]
+          },
+          {
+            "Id": "sf2",
+            "Name": "Ergonomic Dual-Strap Adjustable Sandals",
+            "CategoryName": "Sandals & Floaters",
+            "CategorySlug": "sandals-floaters",
+            "Price": 999.0,
+            "OriginalPrice": 1999.0,
+            "Rating": 4.7,
+            "ReviewsCount": 108,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sandals-floaters",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Ergonomic",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Brown",
+              "Tan"
+            ]
+          },
+          {
+            "Id": "sf3",
+            "Name": "Water-Resistant Quick-Dry Trail Floaters",
+            "CategoryName": "Sandals & Floaters",
+            "CategorySlug": "sandals-floaters",
+            "Price": 1199.0,
+            "OriginalPrice": 2399.0,
+            "Rating": 4.9,
+            "ReviewsCount": 96,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sandals-floaters",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Waterproof",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Black",
+              "Navy"
+            ]
+          },
+          {
+            "Id": "sf4",
+            "Name": "Soft-Footbed Comfort Casual Slides",
+            "CategoryName": "Sandals & Floaters",
+            "CategorySlug": "sandals-floaters",
+            "Price": 749.0,
+            "OriginalPrice": 1499.0,
+            "Rating": 4.6,
+            "ReviewsCount": 74,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sandals-floaters",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Soft Bed",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Charcoal",
+              "Navy"
+            ]
+          }
+        ]
+      },
+      {
+        "CategorySlug": "flip-flops",
+        "CategoryName": "Flip Flops",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Flip Flops",
+          "TitleHighlight": "FEATHER-LIGHT EVA • ANTI-SKID",
+          "Subtitle": "Soft EVA foam flip flops, beach thongs, and dormitory shower slippers engineered with anti-slip textured footbeds.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "ff1",
+            "Name": "Anti-Skid Ultra-Light Comfort Flip Flops",
+            "CategoryName": "Flip Flops",
+            "CategorySlug": "flip-flops",
+            "Price": 449.0,
+            "OriginalPrice": 899.0,
+            "Rating": 4.7,
+            "ReviewsCount": 186,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/flip-flops",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Black",
+              "Blue"
+            ]
+          },
+          {
+            "Id": "ff2",
+            "Name": "Lightweight EVA Foam Campus Chappals",
+            "CategoryName": "Flip Flops",
+            "CategorySlug": "flip-flops",
+            "Price": 349.0,
+            "OriginalPrice": 699.0,
+            "Rating": 4.6,
+            "ReviewsCount": 120,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/flip-flops",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Super Light",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Grey",
+              "Black"
+            ]
+          },
+          {
+            "Id": "ff3",
+            "Name": "Dormitory Shower Anti-Slip Waterproof Slides",
+            "CategoryName": "Flip Flops",
+            "CategorySlug": "flip-flops",
+            "Price": 499.0,
+            "OriginalPrice": 999.0,
+            "Rating": 4.8,
+            "ReviewsCount": 142,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/flip-flops",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Dorm Essential",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Navy",
+              "White"
+            ]
+          },
+          {
+            "Id": "ff4",
+            "Name": "Cushioned Wave-Grip Beach Thong Slippers",
+            "CategoryName": "Flip Flops",
+            "CategorySlug": "flip-flops",
+            "Price": 399.0,
+            "OriginalPrice": 799.0,
+            "Rating": 4.5,
+            "ReviewsCount": 92,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/flip-flops",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Beach Ready",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Orange",
+              "Black"
+            ]
+          }
+        ]
+      },
+      {
+        "CategorySlug": "socks",
+        "CategoryName": "Socks",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Socks",
+          "TitleHighlight": "ANTI-ODOR BAMBOO • REINFORCED HEEL",
+          "Subtitle": "Multipack breathable cotton ankle socks, winter merino thermal crew socks, and sports compression athletic socks.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "sk1",
+            "Name": "5-Pack Anti-Odor Breathable Cotton Ankle Socks",
+            "CategoryName": "Socks",
+            "CategorySlug": "socks",
+            "Price": 399.0,
+            "OriginalPrice": 799.0,
+            "Rating": 4.9,
+            "ReviewsCount": 280,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/socks",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "Free Size"
+            ],
+            "Colors": [
+              "Black",
+              "White",
+              "Grey"
+            ]
+          },
+          {
+            "Id": "sk2",
+            "Name": "3-Pack Winter Merino Thermal Crew Warm Socks",
+            "CategoryName": "Socks",
+            "CategorySlug": "socks",
+            "Price": 599.0,
+            "OriginalPrice": 1199.0,
+            "Rating": 4.9,
+            "ReviewsCount": 195,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/socks",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Winter Warm",
+            "Sizes": [
+              "Free Size"
+            ],
+            "Colors": [
+              "Charcoal",
+              "Navy"
+            ]
+          },
+          {
+            "Id": "sk3",
+            "Name": "4-Pack Athletic Arch Compression Sports Socks",
+            "CategoryName": "Socks",
+            "CategorySlug": "socks",
+            "Price": 499.0,
+            "OriginalPrice": 999.0,
+            "Rating": 4.8,
+            "ReviewsCount": 140,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/socks",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Compression",
+            "Sizes": [
+              "Free Size"
+            ],
+            "Colors": [
+              "White",
+              "Black"
+            ]
+          },
+          {
+            "Id": "sk4",
+            "Name": "5-Pack Formal Antibacterial Bamboo Dress Socks",
+            "CategoryName": "Socks",
+            "CategorySlug": "socks",
+            "Price": 549.0,
+            "OriginalPrice": 1099.0,
+            "Rating": 4.8,
+            "ReviewsCount": 112,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/socks",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Formal Pack",
+            "Sizes": [
+              "Free Size"
+            ],
+            "Colors": [
+              "Black",
+              "Navy",
+              "Dark Grey"
+            ]
+          }
+        ]
+      }
+    ]
   }
 }

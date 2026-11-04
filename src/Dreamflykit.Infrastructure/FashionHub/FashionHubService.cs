@@ -88,6 +88,10 @@ public sealed class FashionHubService : IFashionHubService
                             dto.MenClothing = def.MenClothing;
                         }
                         dto.WomenClothing ??= def.WomenClothing;
+                        if (dto.MenFootwear == null || dto.MenFootwear.CategoriesSection == null || dto.MenFootwear.CategoriesSection.Categories.Count < 7)
+                        {
+                            dto.MenFootwear = def.MenFootwear;
+                        }
                         dto.Hoodies ??= def.Hoodies;
                         dto.Sweatshirts ??= def.Sweatshirts;
                         if (dto.EthnicWear == null || dto.EthnicWear.CategoriesSection == null || dto.EthnicWear.CategoriesSection.Categories.Count < 15)
@@ -129,12 +133,14 @@ public sealed class FashionHubService : IFashionHubService
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        if (dto.EthnicWear == null || dto.Thermals == null || dto.MenClothing == null)
+        if (dto.EthnicWear == null || dto.Thermals == null || dto.MenClothing == null || dto.WomenClothing == null || dto.MenFootwear == null)
         {
             var existing = await GetConfigAsync(cancellationToken);
             dto.EthnicWear ??= existing.EthnicWear ?? FashionEthnicWearDto.CreateDefault();
             dto.Thermals ??= existing.Thermals ?? FashionThermalsDto.CreateDefault();
             dto.MenClothing ??= existing.MenClothing ?? FashionMenClothingDto.CreateDefault();
+            dto.WomenClothing ??= existing.WomenClothing ?? FashionWomenClothingDto.CreateDefault();
+            dto.MenFootwear ??= existing.MenFootwear ?? FashionMenFootwearDto.CreateDefault();
         }
 
         try

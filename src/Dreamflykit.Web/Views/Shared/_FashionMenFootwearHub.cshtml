@@ -1,0 +1,1249 @@
+@model Dreamflykit.Application.FashionHub.Models.FashionMenFootwearDto
+@{
+    var footwear = Model ?? Dreamflykit.Application.FashionHub.Models.FashionMenFootwearDto.CreateDefault();
+    var hero = footwear.HeroBanner ?? new();
+    var catSection = footwear.CategoriesSection ?? new();
+    var picksSection = footwear.TopPicksSection ?? new();
+    var trustSection = footwear.TrustBadgesSection ?? new();
+    var bottomBanner = footwear.BottomBanner ?? new();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="dk-footwear-hub-container" id="men-footwear-hub-root">
+
+    @if (footwear.FestivalTheme != null && footwear.FestivalTheme.IsEnabled && !string.IsNullOrWhiteSpace(footwear.FestivalTheme.AnnouncementText))
+    {
+        <div class="dk-footwear-fest-ribbon" style="background: @(!string.IsNullOrWhiteSpace(footwear.FestivalTheme.BgGradient) ? footwear.FestivalTheme.BgGradient : "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)");">
+            <span class="dk-footwear-fest-badge">@(!string.IsNullOrWhiteSpace(footwear.FestivalTheme.BadgeText) ? footwear.FestivalTheme.BadgeText : "FOOTWEAR SPECIAL")</span>
+            <span class="dk-footwear-fest-text">@footwear.FestivalTheme.AnnouncementText</span>
+            @if (!string.IsNullOrWhiteSpace(footwear.FestivalTheme.BannerHighlight))
+            {
+                <span class="dk-footwear-fest-highlight">@footwear.FestivalTheme.BannerHighlight</span>
+            }
+        </div>
+    }
+
+    @if (canManage)
+    {
+        <div class="dk-footwear-admin-bar">
+            <div class="dk-footwear-admin-bar-left">
+                <span class="dk-footwear-admin-badge">Admin Controls</span>
+                <span class="dk-footwear-admin-hint">You can edit banners, categories, products, and campaign themes in the admin panel.</span>
+            </div>
+            <a href="/Admin/FashionHub#tab-men-footwear" class="dk-footwear-admin-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Edit Men Footwear in Admin
+            </a>
+        </div>
+    }
+
+    <!-- ============================================================
+         1. HERO BANNER SECTION (FULL WIDTH)
+    ============================================================ -->
+    @if (hero.IsEnabled)
+    {
+        <section class="dk-footwear-hero-section" aria-label="Men Footwear Hero Banner">
+            <div class="dk-footwear-hero-glow"></div>
+            <div class="dk-footwear-hero-card">
+                
+                <!-- Left: Headline, Subtitle, Badges -->
+                <div class="dk-footwear-hero-left">
+                    <h1 class="dk-footwear-hero-heading" style="color: @(!string.IsNullOrWhiteSpace(hero.TitleColor) ? hero.TitleColor : "#0369a1");">
+                        @(string.IsNullOrWhiteSpace(hero.Title) ? "Men's Footwear" : hero.Title)
+                    </h1>
+                    @if (!string.IsNullOrWhiteSpace(hero.TitleHighlight))
+                    {
+                        <p class="dk-footwear-hero-highlight" style="color: @(!string.IsNullOrWhiteSpace(hero.TitleHighlightColor) ? hero.TitleHighlightColor : "#ea580c");">
+                            @hero.TitleHighlight
+                        </p>
+                    }
+                    <p class="dk-footwear-hero-sub" style="color: @(!string.IsNullOrWhiteSpace(hero.SubtitleColor) ? hero.SubtitleColor : "#334155");">
+                        @(string.IsNullOrWhiteSpace(hero.Subtitle)
+                            ? "Engineered for international students — all-day campus walking, workouts, and formal presentations."
+                            : hero.Subtitle)
+                    </p>
+
+                    <!-- Badges Row -->
+                    @if (hero.Badges != null && hero.Badges.Count > 0)
+                    {
+                        <div class="dk-footwear-badges-row">
+                            @foreach (var badge in hero.Badges)
+                            {
+                                <span class="dk-footwear-badge-pill">
+                                    <span class="dk-footwear-badge-ico">@GetBadgeIcon(badge.Icon)</span>
+                                    <span class="dk-footwear-badge-txt">@badge.Label</span>
+                                </span>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- Center: Image or Uploading Soon Radar -->
+                <div class="dk-footwear-hero-center">
+                    @if (hero.IsUploadingSoon || string.IsNullOrWhiteSpace(hero.ImageUrl) || hero.ImageUrl.Contains("uploading-soon"))
+                    {
+                        <div class="dk-footwear-hero-placeholder">
+                            <div class="dk-footwear-placeholder-radar">
+                                <span class="dk-footwear-radar-wave"></span>
+                                <span class="dk-footwear-radar-icon">👟</span>
+                            </div>
+                            <span class="dk-footwear-radar-tag">UPLOADING SOON</span>
+                            <span class="dk-footwear-radar-sub">Curated Student Footwear</span>
+                            <span class="dk-footwear-radar-sub-admin">Admin can upload banner anytime</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <img src="@hero.ImageUrl" 
+                             alt="@hero.Title" 
+                             class="dk-footwear-hero-img"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                        <div class="dk-footwear-hero-placeholder" style="display: none;">
+                            <div class="dk-footwear-placeholder-radar">
+                                <span class="dk-footwear-radar-wave"></span>
+                                <span class="dk-footwear-radar-icon">👟</span>
+                            </div>
+                            <span class="dk-footwear-radar-tag">UPLOADING SOON</span>
+                            <span class="dk-footwear-radar-sub">Curated Student Footwear</span>
+                        </div>
+                    }
+                    <div class="dk-footwear-hero-upload-badge">
+                        <span class="dk-footwear-upload-badge-icon">⏳</span>
+                        <span>HERO BANNER UPLOADING SOON</span>
+                    </div>
+                </div>
+
+                <!-- Right: Feature Callout Card -->
+                @if (hero.RightCard != null)
+                {
+                    <div class="dk-footwear-hero-right">
+                        <div class="dk-footwear-callout-card">
+                            <h3 class="dk-footwear-callout-title">
+                                @hero.RightCard.Title
+                                @if (!string.IsNullOrWhiteSpace(hero.RightCard.TitleHighlight))
+                                {
+                                    <span class="dk-footwear-callout-hl">@hero.RightCard.TitleHighlight</span>
+                                }
+                            </h3>
+                            <ul class="dk-footwear-callout-list">
+                                @if (hero.RightCard.Features != null && hero.RightCard.Features.Count > 0)
+                                {
+                                    foreach (var f in hero.RightCard.Features)
+                                    {
+                                        <li class="dk-footwear-callout-item">
+                                            <span class="dk-footwear-callout-icon">@GetFeatureIcon(f.Icon)</span>
+                                            <span class="dk-footwear-callout-text">@f.Title</span>
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li class="dk-footwear-callout-item">
+                                        <span class="dk-footwear-callout-icon">🛡️</span>
+                                        <span class="dk-footwear-callout-text">Shock Absorption</span>
+                                    </li>
+                                    <li class="dk-footwear-callout-item">
+                                        <span class="dk-footwear-callout-icon">🧭</span>
+                                        <span class="dk-footwear-callout-text">All-Weather Grip</span>
+                                    </li>
+                                    <li class="dk-footwear-callout-item">
+                                        <span class="dk-footwear-callout-icon">💨</span>
+                                        <span class="dk-footwear-callout-text">Breathable Mesh</span>
+                                    </li>
+                                    <li class="dk-footwear-callout-item">
+                                        <span class="dk-footwear-callout-icon">🪶</span>
+                                        <span class="dk-footwear-callout-text">All-Day Comfort</span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         2. SHOP BY CATEGORY SECTION (EXACTLY THE 7 CATEGORIES)
+    ============================================================ -->
+    @if (catSection.IsEnabled && catSection.Categories != null && catSection.Categories.Count > 0)
+    {
+        <section class="dk-footwear-section" aria-label="Shop Men Footwear by Category">
+            <div class="dk-footwear-section-header">
+                <h2 class="dk-footwear-section-heading">@catSection.Title</h2>
+                <a href="/category/fashion/men-footwear" class="dk-footwear-section-link">
+                    @catSection.ViewAllText
+                </a>
+            </div>
+
+            <div class="dk-footwear-categories-grid">
+                @foreach (var cat in catSection.Categories.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder))
+                {
+                    var catUrl = $"/category/fashion/men-footwear/{cat.Slug}";
+                    <a href="@catUrl" class="dk-footwear-cat-card" title="@cat.Name">
+                        <div class="dk-footwear-cat-img-box">
+                            @if (cat.IsUploadingSoon || string.IsNullOrWhiteSpace(cat.ImageUrl) || cat.ImageUrl.Contains("uploading-soon"))
+                            {
+                                <div class="dk-footwear-cat-placeholder">
+                                    <span class="dk-footwear-cat-emoji">@GetFootwearEmoji(cat.Slug)</span>
+                                    <span class="dk-footwear-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@cat.ImageUrl" 
+                                     alt="@cat.Name" 
+                                     loading="lazy" 
+                                     class="dk-footwear-cat-img" 
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-footwear-cat-placeholder" style="display: none;">
+                                    <span class="dk-footwear-cat-emoji">@GetFootwearEmoji(cat.Slug)</span>
+                                    <span class="dk-footwear-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+                        <span class="dk-footwear-cat-title">@cat.Name</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         3. TOP PICKS FOR YOU SECTION (FOOTWEAR CAROUSEL / GRID)
+    ============================================================ -->
+    @if (picksSection.IsEnabled && picksSection.Products != null && picksSection.Products.Count > 0)
+    {
+        <section class="dk-footwear-section" aria-label="Top Picks for You">
+            <div class="dk-footwear-section-header">
+                <h2 class="dk-footwear-section-heading">@picksSection.Title</h2>
+                <div class="dk-footwear-section-nav">
+                    <button type="button" class="dk-footwear-arrow-btn" id="btnFootwearPrev" aria-label="Previous Products" onclick="slideFootwear(-1)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <button type="button" class="dk-footwear-arrow-btn" id="btnFootwearNext" aria-label="Next Products" onclick="slideFootwear(1)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                    <a href="/category/fashion/men-footwear" class="dk-footwear-section-link">
+                        @picksSection.ViewAllText
+                    </a>
+                </div>
+            </div>
+
+            <div class="dk-footwear-picks-scroll" id="footwearPicksRow">
+                @foreach (var prod in picksSection.Products.Where(p => p.IsActive))
+                {
+                    var discountPct = 0;
+                    if (prod.OriginalPrice.HasValue && prod.OriginalPrice.Value > prod.Price)
+                    {
+                        discountPct = (int)Math.Round((1m - (prod.Price / prod.OriginalPrice.Value)) * 100m);
+                    }
+                    var itemUrl = !string.IsNullOrWhiteSpace(prod.ProductUrl) ? prod.ProductUrl : $"/category/fashion/men-footwear/{prod.CategorySlug ?? "casual-shoes"}";
+
+                    <div class="dk-footwear-product-card" data-id="@prod.Id">
+                        <div class="dk-footwear-card-img-box">
+                            <button type="button" class="dk-footwear-wishlist-btn" title="Add to Wishlist" onclick="toggleFootwearWishlist(this, event)">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                            </button>
+                            @if (!string.IsNullOrWhiteSpace(prod.Badge))
+                            {
+                                <span class="dk-footwear-prod-badge">@prod.Badge</span>
+                            }
+                            @if (prod.IsUploadingSoon || string.IsNullOrWhiteSpace(prod.ImageUrl) || prod.ImageUrl.Contains("uploading-soon"))
+                            {
+                                <div class="dk-footwear-card-placeholder">
+                                    <span class="dk-footwear-card-emoji">@GetFootwearEmoji(prod.CategorySlug)</span>
+                                    <span class="dk-footwear-soon-pill">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@prod.ImageUrl" 
+                                     alt="@prod.Name" 
+                                     loading="lazy" 
+                                     class="dk-footwear-card-img" 
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-footwear-card-placeholder" style="display: none;">
+                                    <span class="dk-footwear-card-emoji">@GetFootwearEmoji(prod.CategorySlug)</span>
+                                    <span class="dk-footwear-soon-pill">Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="dk-footwear-card-info">
+                            <span class="dk-footwear-card-cat">@prod.CategoryName</span>
+                            <a href="@itemUrl" class="dk-footwear-card-title-link">
+                                <h3 class="dk-footwear-card-title">@prod.Name</h3>
+                            </a>
+
+                            <div class="dk-footwear-card-prices">
+                                <span class="dk-footwear-price">₹@prod.Price.ToString("N0")</span>
+                                @if (prod.OriginalPrice.HasValue && prod.OriginalPrice.Value > prod.Price)
+                                {
+                                    <span class="dk-footwear-original-price">₹@prod.OriginalPrice.Value.ToString("N0")</span>
+                                    @if (discountPct > 0)
+                                    {
+                                        <span class="dk-footwear-discount-badge">@discountPct% OFF</span>
+                                    }
+                                }
+                            </div>
+
+                            <div class="dk-footwear-card-rating">
+                                <span class="dk-footwear-stars">★★★★★</span>
+                                <span class="dk-footwear-score">@prod.Rating.ToString("0.0")</span>
+                                <span class="dk-footwear-reviews">(@prod.ReviewsCount)</span>
+                            </div>
+
+                            <button type="button" class="dk-footwear-cart-btn" onclick="addToFootwearCart('@prod.Id', '@prod.Name', @prod.Price, event)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                </svg>
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         4. TRUST BADGES SECTION
+    ============================================================ -->
+    @if (trustSection.IsEnabled && trustSection.Badges != null && trustSection.Badges.Count > 0)
+    {
+        <section class="dk-footwear-trust-section" aria-label="Our Guarantees">
+            <div class="dk-footwear-trust-grid">
+                @foreach (var b in trustSection.Badges)
+                {
+                    <div class="dk-footwear-trust-card">
+                        <div class="dk-footwear-trust-icon-box">
+                            @GetTrustIcon(b.Icon)
+                        </div>
+                        <h4 class="dk-footwear-trust-title">@b.Title</h4>
+                        <p class="dk-footwear-trust-desc">@b.Subtitle</p>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         5. BOTTOM BANNER / INTERACTIVE HELPERS
+    ============================================================ -->
+    @if (bottomBanner.IsEnabled)
+    {
+        <section class="dk-footwear-bottom-banner" aria-label="Shoe Finder and Group Orders">
+            <div class="dk-footwear-bottom-grid">
+                <div class="dk-footwear-quiz-box">
+                    <span class="dk-footwear-bottom-pill">👟 Shoe Finder Tool</span>
+                    <h3 class="dk-footwear-quiz-heading">@bottomBanner.QuizTitle</h3>
+                    <p class="dk-footwear-quiz-sub">@bottomBanner.QuizSubtitle</p>
+                    <a href="@bottomBanner.QuizButtonUrl" class="dk-footwear-quiz-btn">@bottomBanner.QuizButtonText</a>
+                </div>
+
+                <div class="dk-footwear-dest-box">
+                    <span class="dk-footwear-bottom-pill">✈️ Weather Ready</span>
+                    <h3 class="dk-footwear-dest-heading">@bottomBanner.DestinationsTitle</h3>
+                    <p class="dk-footwear-dest-sub">@bottomBanner.DestinationsSubtitle</p>
+                </div>
+
+                <div class="dk-footwear-bulk-box">
+                    <span class="dk-footwear-bottom-pill">👥 University Clubs</span>
+                    <h3 class="dk-footwear-bulk-heading">@bottomBanner.BulkTitle</h3>
+                    <p class="dk-footwear-bulk-sub">@bottomBanner.BulkSubtitle</p>
+                    <a href="@bottomBanner.BulkButtonUrl" class="dk-footwear-bulk-btn">@bottomBanner.BulkButtonText</a>
+                </div>
+            </div>
+        </section>
+    }
+
+</div>
+
+@functions {
+    public static string GetFootwearEmoji(string? slug)
+    {
+        if (string.IsNullOrWhiteSpace(slug)) return "👟";
+        var s = slug.ToLowerInvariant();
+        if (s.Contains("casual")) return "👞";
+        if (s.Contains("sport") || s.Contains("running")) return "🏃";
+        if (s.Contains("formal") || s.Contains("oxford")) return "👞";
+        if (s.Contains("sneaker")) return "👟";
+        if (s.Contains("sandal") || s.Contains("floater")) return "👡";
+        if (s.Contains("flip") || s.Contains("flop") || s.Contains("slide")) return "🩴";
+        if (s.Contains("sock")) return "🧦";
+        return "👟";
+    }
+
+    public static string GetBadgeIcon(string? icon)
+    {
+        return icon?.ToLowerInvariant() switch
+        {
+            "shield" => "🛡️",
+            "compass" => "🧭",
+            "feather" => "🪶",
+            "users" => "👥",
+            "wind" => "💨",
+            _ => "👟"
+        };
+    }
+
+    public static string GetFeatureIcon(string? icon)
+    {
+        return icon?.ToLowerInvariant() switch
+        {
+            "shield" => "🛡️",
+            "compass" => "🧭",
+            "wind" => "💨",
+            "feather" => "🪶",
+            _ => "👟"
+        };
+    }
+
+    public static string GetTrustIcon(string? icon)
+    {
+        return icon?.ToLowerInvariant() switch
+        {
+            "box" => "📦",
+            "shield" => "🛡️",
+            "tag" => "🏷️",
+            "truck" => "🚚",
+            "return" => "🔄",
+            "headset" => "🎧",
+            _ => "✨"
+        };
+    }
+}
+
+<style>
+/* ========================================================
+   DREAMFLYKIT MEN FOOTWEAR HUB STYLING (PIXEL-PERFECT MATCH)
+======================================================== */
+.dk-footwear-hub-container {
+    width: 100%;
+    margin: 0 auto;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1e293b;
+}
+
+/* Festival Ribbon */
+.dk-footwear-fest-ribbon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 10px 20px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
+}
+.dk-footwear-fest-badge {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    backdrop-filter: blur(4px);
+}
+.dk-footwear-fest-highlight {
+    background: #f59e0b;
+    color: #0f172a;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* Admin Bar */
+.dk-footwear-admin-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f0f9ff;
+    border: 1px dashed #0284c7;
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+}
+.dk-footwear-admin-badge {
+    background: #0284c7;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-right: 8px;
+}
+.dk-footwear-admin-hint {
+    font-size: 13px;
+    color: #0369a1;
+}
+.dk-footwear-admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #0284c7;
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+.dk-footwear-admin-btn:hover {
+    background: #0369a1;
+    transform: translateY(-1px);
+}
+
+/* HERO BANNER SECTION */
+.dk-footwear-hero-section {
+    position: relative;
+    width: 100%;
+    margin-bottom: 36px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%);
+    border: 1px solid #bae6fd;
+    box-shadow: 0 10px 30px -10px rgba(2, 132, 199, 0.15);
+}
+.dk-footwear-hero-glow {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    top: -200px;
+    right: -100px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+    pointer-events: none;
+}
+.dk-footwear-hero-card {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 0.9fr;
+    align-items: center;
+    gap: 32px;
+    padding: 44px 48px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Hero Left */
+.dk-footwear-hero-heading {
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.8px;
+    margin: 0 0 8px 0;
+}
+.dk-footwear-hero-highlight {
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.3px;
+}
+.dk-footwear-hero-sub {
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0 0 24px 0;
+    max-width: 520px;
+}
+.dk-footwear-badges-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.dk-footwear-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    border: 1px solid #bae6fd;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0369a1;
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.08);
+}
+.dk-footwear-badge-ico {
+    font-size: 14px;
+}
+
+/* Hero Center */
+.dk-footwear-hero-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+}
+.dk-footwear-hero-img {
+    max-width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+    border-radius: 16px;
+    filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.12));
+    transition: transform 0.3s ease;
+}
+.dk-footwear-hero-img:hover {
+    transform: translateY(-4px) scale(1.02);
+}
+.dk-footwear-hero-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.85);
+    border: 2px dashed #7dd3fc;
+    border-radius: 20px;
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 300px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 24px rgba(2, 132, 199, 0.08);
+}
+.dk-footwear-placeholder-radar {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+.dk-footwear-radar-wave {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid #0284c7;
+    animation: footwearRadarPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@@keyframes footwearRadarPulse {
+    0% { transform: scale(0.85); opacity: 0.9; }
+    50% { transform: scale(1.3); opacity: 0.3; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+.dk-footwear-radar-icon {
+    font-size: 34px;
+    position: relative;
+    z-index: 2;
+}
+.dk-footwear-radar-tag {
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    margin-bottom: 6px;
+}
+.dk-footwear-radar-sub {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+.dk-footwear-radar-sub-admin {
+    font-size: 11px;
+    color: #64748b;
+}
+.dk-footwear-hero-upload-badge {
+    margin-top: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #0284c7;
+    color: #ffffff;
+    padding: 6px 16px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+}
+
+/* Hero Right Callout Card */
+.dk-footwear-hero-right {
+    display: flex;
+    justify-content: flex-end;
+}
+.dk-footwear-callout-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    padding: 24px;
+    width: 100%;
+    max-width: 280px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+}
+.dk-footwear-callout-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 16px 0;
+    line-height: 1.2;
+}
+.dk-footwear-callout-hl {
+    display: block;
+    color: #0284c7;
+}
+.dk-footwear-callout-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.dk-footwear-callout-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+.dk-footwear-callout-icon {
+    font-size: 16px;
+    width: 24px;
+    text-align: center;
+}
+
+/* SECTION HEADERS */
+.dk-footwear-section {
+    margin-bottom: 40px;
+}
+.dk-footwear-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.dk-footwear-section-heading {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.4px;
+    margin: 0;
+}
+.dk-footwear-section-link {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0284c7;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.dk-footwear-section-link:hover {
+    color: #0369a1;
+    text-decoration: underline;
+}
+
+/* SHOP BY CATEGORY GRID (7 CATEGORIES) */
+.dk-footwear-categories-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 16px;
+}
+.dk-footwear-cat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 18px 12px 14px 12px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+.dk-footwear-cat-card:hover {
+    transform: translateY(-4px);
+    border-color: #0284c7;
+    box-shadow: 0 12px 24px -6px rgba(2, 132, 199, 0.2);
+}
+.dk-footwear-cat-img-box {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #f1f5f9;
+}
+.dk-footwear-cat-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.dk-footwear-cat-card:hover .dk-footwear-cat-img {
+    transform: scale(1.06);
+}
+.dk-footwear-cat-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+.dk-footwear-cat-emoji {
+    font-size: 36px;
+}
+.dk-footwear-soon-badge {
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+.dk-footwear-cat-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+/* TOP PICKS CAROUSEL / ROW */
+.dk-footwear-section-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dk-footwear-arrow-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.dk-footwear-arrow-btn:hover {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+}
+.dk-footwear-picks-scroll {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 6px 2px 16px 2px;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+.dk-footwear-picks-scroll::-webkit-scrollbar {
+    height: 6px;
+}
+.dk-footwear-picks-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+.dk-footwear-product-card {
+    flex: 0 0 260px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+.dk-footwear-product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -6px rgba(2, 132, 199, 0.15);
+    border-color: #7dd3fc;
+}
+.dk-footwear-card-img-box {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    background: #f8fafc;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-footwear-wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    z-index: 3;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+}
+.dk-footwear-wishlist-btn:hover {
+    color: #e11d48;
+    transform: scale(1.1);
+}
+.dk-footwear-prod-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    z-index: 3;
+}
+.dk-footwear-card-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+.dk-footwear-card-emoji {
+    font-size: 48px;
+}
+.dk-footwear-soon-pill {
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 9999px;
+}
+.dk-footwear-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.dk-footwear-card-info {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.dk-footwear-card-cat {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0284c7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+.dk-footwear-card-title-link {
+    text-decoration: none;
+    color: inherit;
+}
+.dk-footwear-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 10px 0;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 38px;
+}
+.dk-footwear-card-prices {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.dk-footwear-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.dk-footwear-original-price {
+    font-size: 13px;
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+.dk-footwear-discount-badge {
+    font-size: 11px;
+    font-weight: 800;
+    color: #16a34a;
+    background: #dcfce7;
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+.dk-footwear-card-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    margin-bottom: 14px;
+}
+.dk-footwear-stars {
+    color: #f59e0b;
+    font-size: 11px;
+}
+.dk-footwear-score {
+    font-weight: 700;
+    color: #0f172a;
+}
+.dk-footwear-reviews {
+    color: #64748b;
+}
+.dk-footwear-cart-btn {
+    margin-top: auto;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    background: #0284c7;
+    color: #ffffff;
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.dk-footwear-cart-btn:hover {
+    background: #0369a1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+/* TRUST SECTION */
+.dk-footwear-trust-section {
+    margin-bottom: 40px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 28px 24px;
+}
+.dk-footwear-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+}
+.dk-footwear-trust-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.dk-footwear-trust-icon-box {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+.dk-footwear-trust-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+}
+.dk-footwear-trust-desc {
+    font-size: 11px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.35;
+}
+
+/* BOTTOM BANNER */
+.dk-footwear-bottom-banner {
+    margin-bottom: 40px;
+}
+.dk-footwear-bottom-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1.2fr;
+    gap: 20px;
+}
+.dk-footwear-quiz-box, .dk-footwear-dest-box, .dk-footwear-bulk-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+.dk-footwear-bottom-pill {
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    margin-bottom: 12px;
+}
+.dk-footwear-quiz-heading, .dk-footwear-dest-heading, .dk-footwear-bulk-heading {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+}
+.dk-footwear-quiz-sub, .dk-footwear-dest-sub, .dk-footwear-bulk-sub {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0 0 18px 0;
+    line-height: 1.45;
+}
+.dk-footwear-quiz-btn, .dk-footwear-bulk-btn {
+    display: inline-block;
+    background: #0284c7;
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+    margin-top: auto;
+}
+.dk-footwear-quiz-btn:hover, .dk-footwear-bulk-btn:hover {
+    background: #0369a1;
+}
+
+/* RESPONSIVE */
+@@media (max-width: 1024px) {
+    .dk-footwear-hero-card {
+        grid-template-columns: 1fr;
+        padding: 32px 24px;
+        gap: 24px;
+    }
+    .dk-footwear-hero-right {
+        justify-content: flex-start;
+    }
+    .dk-footwear-categories-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .dk-footwear-trust-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .dk-footwear-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@@media (max-width: 640px) {
+    .dk-footwear-categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dk-footwear-trust-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dk-footwear-hero-heading {
+        font-size: 28px;
+    }
+}
+</style>
+
+<script>
+function slideFootwear(direction) {
+    var container = document.getElementById('footwearPicksRow');
+    if (container) {
+        container.scrollBy({ left: direction * 280, behavior: 'smooth' });
+    }
+}
+
+function toggleFootwearWishlist(btn, ev) {
+    ev.stopPropagation();
+    btn.classList.toggle('active');
+    var svg = btn.querySelector('svg');
+    if (btn.classList.contains('active')) {
+        svg.setAttribute('fill', '#e11d48');
+        svg.setAttribute('stroke', '#e11d48');
+        showFootwearToast('Saved to your Wishlist! ❤️');
+    } else {
+        svg.setAttribute('fill', 'none');
+        svg.setAttribute('stroke', 'currentColor');
+        showFootwearToast('Removed from Wishlist');
+    }
+}
+
+function addToFootwearCart(id, name, price, ev) {
+    ev.stopPropagation();
+    var btn = ev.currentTarget;
+    var originalText = btn.innerHTML;
+    btn.innerHTML = '✓ Added to Cart';
+    btn.style.background = '#16a34a';
+    btn.disabled = true;
+
+    // Increment header cart counter if present
+    var cartBadge = document.querySelector('.dk-header-cart-count, .dk-cart-count, [data-cart-count]');
+    if (cartBadge) {
+        var count = parseInt(cartBadge.textContent || '0', 10);
+        cartBadge.textContent = count + 1;
+    }
+
+    showFootwearToast('Added "' + name + '" to your cart!');
+
+    setTimeout(function() {
+        btn.innerHTML = originalText;
+        btn.style.background = '';
+        btn.disabled = false;
+    }, 1800);
+}
+
+function showFootwearToast(msg) {
+    var toast = document.createElement('div');
+    toast.className = 'dk-footwear-toast';
+    toast.textContent = msg;
+    toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#0f172a;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.25);z-index:99999;opacity:0;transform:translateY(10px);transition:all 0.3s ease;display:flex;align-items:center;gap:8px;';
+    document.body.appendChild(toast);
+    setTimeout(function() {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+    }, 50);
+    setTimeout(function() {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        setTimeout(function() { toast.remove(); }, 300);
+    }, 3000);
+}
+</script>
