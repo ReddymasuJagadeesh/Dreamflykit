@@ -24,6 +24,7 @@ public sealed class ProductsController : Controller
     private readonly Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService _luggageHubService;
     private readonly Dreamflykit.Application.ElectronicsHub.Interfaces.IElectronicsHubService _electronicsHubService;
     private readonly Dreamflykit.Application.StoryBooksHub.Interfaces.IStoryBooksHubService? _storyBooksHubService;
+    private readonly Dreamflykit.Application.GamingHub.Interfaces.IGamingHubService? _gamingHubService;
 
     public ProductsController(
         IProductService productService,
@@ -38,7 +39,8 @@ public sealed class ProductsController : Controller
         Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService travelHubService,
         Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService luggageHubService,
         Dreamflykit.Application.ElectronicsHub.Interfaces.IElectronicsHubService electronicsHubService,
-        Dreamflykit.Application.StoryBooksHub.Interfaces.IStoryBooksHubService? storyBooksHubService = null)
+        Dreamflykit.Application.StoryBooksHub.Interfaces.IStoryBooksHubService? storyBooksHubService = null,
+        Dreamflykit.Application.GamingHub.Interfaces.IGamingHubService? gamingHubService = null)
     {
         _productService = productService;
         _categoryService = categoryService;
@@ -53,6 +55,7 @@ public sealed class ProductsController : Controller
         _luggageHubService = luggageHubService;
         _electronicsHubService = electronicsHubService;
         _storyBooksHubService = storyBooksHubService;
+        _gamingHubService = gamingHubService;
     }
 
     [HttpGet("/category/study-essentials/category/study-essentials/{slug}")]
@@ -162,6 +165,31 @@ public sealed class ProductsController : Controller
                                    string.Equals(effectiveCategory, "storybooks", StringComparison.OrdinalIgnoreCase) ||
                                    string.Equals(effectiveCategory, "books", StringComparison.OrdinalIgnoreCase);
 
+        var isGamingCategory = string.Equals(effectiveCategory, "gaming-hub", StringComparison.OrdinalIgnoreCase) ||
+                               string.Equals(effectiveCategory, "gaming_hub", StringComparison.OrdinalIgnoreCase) ||
+                               string.Equals(effectiveCategory, "gaming", StringComparison.OrdinalIgnoreCase) ||
+                               string.Equals(effectiveCategory, "gaming-zone", StringComparison.OrdinalIgnoreCase);
+
+        var gamingSubcategorySlugs = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "playstation", "xbox", "nintendo", "steam-deck", "vr-gaming",
+            "steering-wheels", "preloaded-consoles", "asus-rog", "lenovo-legion",
+            "retro-gaming-arcade", "game-projector", "open-box-gaming", "drones",
+            "bluetooth-speaker", "gaming-hard-drive", "motion-sensor", "fitness-gaming",
+            "microphone", "controllers-and-gamepads", "playstation-ecosystem",
+            "xbox-ecosystem", "retro-budget-gaming"
+        };
+
+        if (!isGamingCategory && !string.IsNullOrWhiteSpace(effectiveCategory) && gamingSubcategorySlugs.Contains(effectiveCategory))
+        {
+            if (string.IsNullOrWhiteSpace(currentSubcategorySlug))
+            {
+                currentSubcategorySlug = effectiveCategory;
+            }
+            effectiveCategory = "gaming-hub";
+            isGamingCategory = true;
+        }
+
         var isLuggageCategory = string.Equals(effectiveCategory, "luggage-bags", StringComparison.OrdinalIgnoreCase) ||
                                 string.Equals(effectiveCategory, "luggage_bags", StringComparison.OrdinalIgnoreCase) ||
                                 string.Equals(effectiveCategory, "luggage", StringComparison.OrdinalIgnoreCase) ||
@@ -206,6 +234,22 @@ public sealed class ProductsController : Controller
             {
                 currentSubcategoryName = matchingSub.Name;
                 currentSubcategorySlug = matchingSub.Slug;
+            }
+        }
+
+        Dreamflykit.Application.GamingHub.Models.GamingHubDto? gamingHubConfig = null;
+        Dreamflykit.Application.GamingHub.Models.GamingSubcategoryPageDto? gamingSubPage = null;
+
+        if (isGamingCategory && _gamingHubService != null)
+        {
+            gamingHubConfig = await _gamingHubService.GetConfigAsync(cancellationToken);
+            if (!string.IsNullOrWhiteSpace(currentSubcategorySlug))
+            {
+                gamingSubPage = await _gamingHubService.GetSubcategoryPageAsync(currentSubcategorySlug, cancellationToken);
+                if (gamingSubPage != null && string.IsNullOrWhiteSpace(currentSubcategoryName))
+                {
+                    currentSubcategoryName = gamingSubPage.CategoryName;
+                }
             }
         }
 
@@ -405,6 +449,38 @@ public sealed class ProductsController : Controller
 
         var isAnyFashionTemplate = isFashionCategory || isMenClothingCategory || isWomenClothingCategory || isHoodiesCategory || isSweatshirtsCategory || isEthnicWearCategory || isThermalsCategory;
 
+        string determinedViewMode;
+        if (isGamingCategory)
+        {
+            determinedViewMode = !string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "gaming-sub" : "hub";
+        }
+        else if (isLuggageCategory)
+        {
+            determinedViewMode = "hub";
+        }
+        else if (!string.IsNullOrWhiteSpace(view))
+        {
+            determinedViewMode = view.Trim().ToLowerInvariant();
+        }
+        else if (elecBrandShowcase != null || appBrandShowcase != null)
+        {
+            determinedViewMode = "brand";
+        }
+        else if (isEthnicWearCategory) determinedViewMode = "ethnic-wear";
+        else if (isThermalsCategory) determinedViewMode = "thermals";
+        else if (isHoodiesCategory) determinedViewMode = "hoodies";
+        else if (isSweatshirtsCategory) determinedViewMode = "sweatshirts";
+        else if (isWomenClothingCategory) determinedViewMode = "women-clothing";
+        else if (isMenClothingCategory) determinedViewMode = "men-clothing";
+        else if ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory || isAppliancesCategory || isBeautyCategory || isFoodCategory || isTravelCategory || isElectronicsCategory || isStoryBooksCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug))
+        {
+            determinedViewMode = "hub";
+        }
+        else
+        {
+            determinedViewMode = "categories";
+        }
+
         var model = new ProductListViewModel
         {
             Products = result.Items,
@@ -416,8 +492,10 @@ public sealed class ProductsController : Controller
             HasNextPage = result.HasNextPage,
             SearchTerm = effectiveSearch,
             CategoryId = categoryId,
-            CategorySlug = isLuggageCategory ? "luggage-bags" : (result.CurrentCategorySlug ?? effectiveCategory),
-            CategoryName = (isStudyCategory && !string.IsNullOrWhiteSpace(currentSubcategoryName))
+            CategorySlug = isLuggageCategory ? "luggage-bags" : (isGamingCategory ? "gaming-hub" : (result.CurrentCategorySlug ?? effectiveCategory)),
+            CategoryName = isGamingCategory
+                           ? (!string.IsNullOrWhiteSpace(currentSubcategoryName) ? currentSubcategoryName : "Gaming Hub")
+                           : ((isStudyCategory && !string.IsNullOrWhiteSpace(currentSubcategoryName))
                            ? currentSubcategoryName
                            : (isEthnicWearCategory ? "Ethnic Wear" :
                            (isThermalsCategory ? "Thermals" :
@@ -426,7 +504,7 @@ public sealed class ProductsController : Controller
                            (isWomenClothingCategory ? "Women Clothing" :
                            (isMenClothingCategory ? "Men Clothing" :
                            (isLuggageCategory ? "Luggage & Bags" :
-                           (result.CurrentCategoryName ?? catDetails?.Name)))))))),
+                           (result.CurrentCategoryName ?? catDetails?.Name))))))))),
             CategoryImageUrl = catDetails?.ImageUrl,
             CategoryDescription = !string.IsNullOrWhiteSpace(catDetails?.Name)
                 ? $"Explore premium {catDetails.Name} student essentials, verified university supplies, and travel-ready gear curated for international students."
@@ -449,18 +527,7 @@ public sealed class ProductsController : Controller
             Categories = result.Categories,
             PriceRanges = result.PriceRanges,
             Discounts = result.Discounts,
-            ViewMode = isLuggageCategory
-                ? "hub"
-                : (!string.IsNullOrWhiteSpace(view)
-                    ? view.Trim().ToLowerInvariant()
-                    : (elecBrandShowcase != null || appBrandShowcase != null ? "brand" :
-                      (isEthnicWearCategory ? "ethnic-wear" :
-                      (isThermalsCategory ? "thermals" :
-                      (isHoodiesCategory ? "hoodies" :
-                      (isSweatshirtsCategory ? "sweatshirts" :
-                      (isWomenClothingCategory ? "women-clothing" :
-                      (isMenClothingCategory ? "men-clothing" :
-                      ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory || isAppliancesCategory || isBeautyCategory || isFoodCategory || isTravelCategory || isElectronicsCategory || isStoryBooksCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "hub" : "categories"))))))))),
+            ViewMode = determinedViewMode,
             StudyHub = isStudyCategory
                         ? await _studyHubService.GetConfigAsync(cancellationToken)
                         : null,
@@ -494,6 +561,8 @@ public sealed class ProductsController : Controller
             StoryBooksHub = (isStoryBooksCategory && _storyBooksHubService != null)
                         ? await _storyBooksHubService.GetConfigAsync(cancellationToken)
                         : null,
+            GamingHub = gamingHubConfig,
+            GamingSubcategoryPage = gamingSubPage,
             CurrentAppliancesBrandSlug = currentAppliancesBrandSlug,
             CurrentAppliancesBrandName = currentAppliancesBrandName,
             AppliancesBrandHero = appBrandShowcase?.HeroBanner,

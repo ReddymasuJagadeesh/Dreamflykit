@@ -1377,6 +1377,13 @@
                 <label class="dk-sh-form-label">Search Input Placeholder Text</label>
                 <input type="text" id="consult_search_placeholder" class="dk-admin-form-input" value="@consult.SearchPlaceholder" placeholder="Tell us what you're looking to learn..." />
             </div>
+            <div>
+                <label class="dk-sh-form-label">Hero Banner Height (px)</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="number" id="consult_hero_height" class="dk-admin-form-input" value="@(consult.HeroBannerHeight > 0 ? consult.HeroBannerHeight : 620)" min="400" max="900" step="10" style="max-width: 160px;" />
+                    <small style="color: #64748b; font-size: 11px;">Default is 620px for spacious 3D video &amp; campus visual view.</small>
+                </div>
+            </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
@@ -1829,7 +1836,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px; margin-bottom: 14px;">
             <div>
                 <label class="dk-sh-form-label">Section Title</label>
-                <input type="text" id="consult_topdest_title" class="dk-admin-form-input" value="@consultTopDestinations.Destinations.Count > 0 ? consultTopDestinations.Title : "Top Study Destinations"" placeholder="Top Study Destinations" />
+                <input type="text" id="consult_topdest_title" class="dk-admin-form-input" value="@(!string.IsNullOrWhiteSpace(consultTopDestinations.Title) ? consultTopDestinations.Title.TrimEnd(' ', ':') : "Top Country Destinations")" placeholder="Top Country Destinations" />
             </div>
             <div>
                 <label class="dk-sh-form-label">Section Subtitle</label>
@@ -3128,6 +3135,7 @@
             SignUpButtonText: document.getElementById("consult_signup_text")?.value || "SIGN UP",
             SignUpButtonUrl: document.getElementById("consult_signup_url")?.value || "#consultancy-lead-modal",
             HeroMediaType: mediaType,
+            HeroBannerHeight: parseInt(document.getElementById("consult_hero_height")?.value) || 620,
             HeroImageUrl: document.getElementById("consult_hero_img")?.value || "/images/study-hub/consultancy-hero-campus.jpg",
             HeroVideoUrl: document.getElementById("consult_hero_video")?.value || "",
             HeroHeadline: document.getElementById("consult_hero_headline")?.value || "For Your Every Next",
@@ -3292,7 +3300,7 @@
         });
 
         return {
-            Title: document.getElementById("consult_topdest_title")?.value || "Top Study Destinations",
+            Title: document.getElementById("consult_topdest_title")?.value || "Top Country Destinations",
             Subtitle: document.getElementById("consult_topdest_sub")?.value || "Explore premier global education hubs with world-class faculty, flexible post-study work visas, and massive career opportunities.",
             Destinations: destinations
         };
