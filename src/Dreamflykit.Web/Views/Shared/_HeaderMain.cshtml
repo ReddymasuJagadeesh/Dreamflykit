@@ -64,51 +64,24 @@
     <div class="dk-bob-composite-header">
         <div class="dk-bob-main-container">
 
-            <!-- LEFT TALL LOGO SECTION (EXTENDS FROM TOP DOWN TO BASE OF SEARCH BAR) -->
-            <div class="dk-bob-tall-logo-wing">
-
-                <!-- SECTION 1: 'D' LOGO SECTION -->
-                <a href="/" class="dk-logo-section-1" title="Dreamflykit Home" aria-label="Dreamflykit Home">
-                    @if (logoSettings.Section1UploadingSoon)
-                    {
-                        <div class="dk-logo-uploading-soon" title="Section 1: Logo Uploading Soon">
-                            <span>Uploading Soon</span>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="dk-logo-s1-box">
-                            <img src="@logoSettings.Section1DLogoUrl" alt="Dreamflykit 'D' Logo" class="dk-logo-s1-img" />
-                        </div>
-                    }
+            <!-- LEFT WHITE LOGO BOX SECTION (NO ORANGE BEHIND LOGO, NO CURVE) -->
+            <div class="dk-header-logo-wing">
+                <a href="/" class="dk-brand-logo-link" title="Dreamflykit Home" aria-label="Dreamflykit Home">
+                    <div class="dk-logo-box-section">
+                        @if (logoSettings.Section2UploadingSoon)
+                        {
+                            <div class="dk-logo-uploading-soon" title="Logo Uploading Soon">
+                                <span>Uploading Soon</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <img src="@(string.IsNullOrWhiteSpace(logoSettings.Section2BrandLogoUrl) ? "/images/branding/dreamflykit-brand-logo.png" : logoSettings.Section2BrandLogoUrl)"
+                                 alt="@logoSettings.SiteTitle"
+                                 class="dk-main-brand-logo-img" />
+                        }
+                    </div>
                 </a>
-
-                <!-- SECTION 2: 'DREAMFLYKIT' BRAND LOGO SECTION (COLLAPSES ON SCROLL) -->
-                <a href="/" class="dk-logo-section-2" title="Dreamflykit Home" aria-label="Dreamflykit Home">
-                    @if (logoSettings.Section2UploadingSoon)
-                    {
-                        <div class="dk-logo-uploading-soon dk-s2-uploading" title="Section 2: Logo Uploading Soon">
-                            <span>Uploading Soon</span>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="dk-logo-s2-box">
-                            <img src="@logoSettings.Section2BrandLogoUrl" alt="@logoSettings.SiteTitle" class="dk-logo-s2-img" />
-                        </div>
-                    }
-                </a>
-
-                <!-- THE BANK OF BARODA REVERSE INWARD C-SHAPE CURVE (MIDDLE SCOOPS INSIDE) -->
-                <div class="dk-bob-curve-shape" aria-hidden="true">
-                    <svg viewBox="0 0 32 40" preserveAspectRatio="none" class="dk-bob-curve-svg">
-                        <!-- Orange wing on left: scoops inward into orange in the middle (C-shape) -->
-                        <path d="M 0 0 L 28 0 C 14 0, 4 8, 4 20 C 4 32, 14 40, 28 40 L 0 40 Z" fill="#f26522" />
-                        <!-- White strip on right: smoothly fills the inward C-scoop -->
-                        <path d="M 28 0 C 14 0, 4 8, 4 20 C 4 32, 14 40, 28 40 L 32 40 L 32 0 Z" fill="#ffffff" />
-                    </svg>
-                </div>
-
             </div>
 
             <!-- RIGHT 2-TIER PANEL: PROFILES (TOP) + SEARCH BAR & ACTIONS (BOTTOM) -->

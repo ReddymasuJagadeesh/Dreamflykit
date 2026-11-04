@@ -14,6 +14,7 @@ public class LogoImageProcessor
         }
 
         Assert.True(Directory.Exists(rootDir), $"Directory must exist: {rootDir}");
+        Assert.True(File.Exists(Path.Combine(rootDir, "dreamflykit-brand-logo.png")), "dreamflykit-brand-logo.png must exist");
         Assert.True(File.Exists(Path.Combine(rootDir, "dreamflykit-d-bob-white.png")), "dreamflykit-d-bob-white.png must exist");
         Assert.True(File.Exists(Path.Combine(rootDir, "dreamflykit-brand-bob-white.png")), "dreamflykit-brand-bob-white.png must exist");
         Assert.True(File.Exists(Path.Combine(rootDir, "dreamflykit-d-symbol-transparent.png")), "dreamflykit-d-symbol-transparent.png must exist");
