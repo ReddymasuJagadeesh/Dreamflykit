@@ -8635,11 +8635,11 @@ img {
 }
 
 /* ========================================================
-   BANK OF BARODA COMPOSITE HEADER (ORANGE & WHITE WITH REVERSE INWARD CURVE)
+   DREAMFLYKIT COMPOSITE HEADER (CLEAN WHITE LOGO BOX + NO CURVE)
    ======================================================== */
 .dk-bob-composite-header {
     width: 100%;
-    background: #f26522;
+    background: #ffffff;
     position: relative;
 }
 
@@ -8647,40 +8647,73 @@ img {
     display: flex;
     align-items: stretch;
     width: 100%;
-    background: #f26522;
+    background: #ffffff;
     position: relative;
 }
 
-/* LEFT TALL LOGO SECTION (EXTENDS FROM TOP DOWN TO BASE OF SEARCH BAR) */
+/* LEFT WHITE LOGO SECTION (NO ORANGE BEHIND LOGO, NO CURVE) */
+.dk-header-logo-wing,
 .dk-bob-tall-logo-wing {
     display: inline-flex;
     align-items: center;
-    gap: 14px;
-    background: #f26522;
-    padding: 6px 14px 6px 24px;
+    justify-content: center;
+    background: #ffffff !important;
+    padding: 6px 16px 6px 20px;
     flex-shrink: 0;
     position: relative;
     z-index: 10;
+    border-right: 1px solid #e2e8f0;
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* THE BANK OF BARODA REVERSE INWARD C-SHAPE CURVE (MIDDLE SCOOPS INSIDE) */
+.dk-brand-logo-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none !important;
+}
+
+/* THE CLEAN WHITE LOGO BOX SECTION */
+.dk-logo-box-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 6px 18px;
+    height: 80px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dk-logo-box-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
+}
+
+.dk-main-brand-logo-img {
+    height: 60px;
+    width: auto;
+    max-width: 250px;
+    object-fit: contain;
+    display: block;
+    background: transparent;
+    image-rendering: -webkit-optimize-contrast;
+    transition: transform 0.2s ease;
+}
+
+.dk-logo-box-section:hover .dk-main-brand-logo-img {
+    transform: scale(1.02);
+}
+
+/* CURVE REMOVED */
 .dk-bob-curve-shape {
-    position: absolute;
-    right: -28px;
-    top: 0;
-    width: 32px;
-    height: 40px;
-    flex-shrink: 0;
-    z-index: 10;
-    pointer-events: none;
-    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    display: none !important;
 }
 
 .dk-bob-curve-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
+    display: none !important;
 }
 
 /* RIGHT 2-TIER PANEL: WHITE STRIP (TOP) + ORANGE ACTION LINE (BOTTOM) */
@@ -8697,8 +8730,9 @@ img {
     background: #ffffff;
     display: flex;
     align-items: center;
-    padding: 0 24px 0 36px; /* Pad left to clear the reverse C-curve */
+    padding: 0 24px 0 16px; /* No curve offset */
     transition: all 0.25s ease;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .dk-bob-white-top-inner {
@@ -9274,45 +9308,34 @@ img {
 /* ========================================================
    DYNAMIC SCROLL TRANSITION (SECTION 2 COLLAPSE ON SCROLL)
    ======================================================== */
+.dk-header.is-scrolled .dk-header-logo-wing,
 .dk-header.is-scrolled .dk-bob-tall-logo-wing {
-    padding: 5px 12px 5px 20px !important;
+    padding: 4px 12px 4px 16px !important;
+    background: #ffffff !important;
+}
+
+.dk-header.is-scrolled .dk-logo-box-section {
+    height: 44px !important;
+    padding: 4px 12px !important;
+    border-radius: 8px !important;
+}
+
+.dk-header.is-scrolled .dk-main-brand-logo-img {
+    height: 34px !important;
+    max-width: 170px !important;
 }
 
 .dk-header.is-scrolled .dk-bob-curve-shape {
-    height: 38px !important;
+    display: none !important;
 }
 
 .dk-header.is-scrolled .dk-bob-white-top-strip {
     height: 38px !important;
 }
 
-.dk-header.is-scrolled .dk-logo-section-2 {
-    max-width: 0 !important;
-    opacity: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    transform: scaleX(0.5) !important;
-    pointer-events: none !important;
-}
-
 .dk-header.is-scrolled .dk-bob-orange-action-line,
 .dk-header.is-scrolled .dk-bob-orange-bar {
     padding: 5px 24px 5px 12px !important;
-}
-
-.dk-header.is-scrolled .dk-logo-s1-box {
-    width: auto !important;
-    height: 48px !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-}
-
-.dk-header.is-scrolled .dk-logo-s1-img {
-    height: 46px !important;
-    width: auto !important;
-    max-width: 58px !important;
 }
 
 .dk-header.is-scrolled .dk-search-orange-bar {
@@ -10557,4 +10580,4 @@ img {
     .dk-abroad-hero-title {
         font-size: 26px;
     }
-}
+}
