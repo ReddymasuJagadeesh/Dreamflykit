@@ -148,7 +148,7 @@
     <!-- ========================================================
          2. HERO SECTION (Secure Image or Video Banner with Realistic 3D Tilt)
     ========================================================= -->
-    <section class="dk-upg-hero-section @(cPage.EnableHero3dAnimation ? "has-3d-tilt" : "")" id="heroBanner">
+    <section class="dk-upg-hero-section @(cPage.EnableHero3dAnimation ? "has-3d-tilt" : "")" id="heroBanner" style="height: @(cPage.HeroBannerHeight > 0 ? cPage.HeroBannerHeight : 620)px; min-height: @(cPage.HeroBannerHeight > 0 ? cPage.HeroBannerHeight : 620)px;">
         <div class="dk-hero-3d-sheen" id="heroSheen"></div>
 
         <!-- 3D Floating Badges / Visual Parallax Accents -->
@@ -467,7 +467,7 @@
             <div class="dk-section-split-head">
                 <div>
                     <span class="dk-sec-pill-tag">GLOBAL HUBS</span>
-                    <h2 class="dk-sec-heading-dark">@topDestinations.Title</h2>
+                    <h2 class="dk-sec-heading-dark">@(!string.IsNullOrWhiteSpace(topDestinations.Title) ? topDestinations.Title.TrimEnd(' ', ':') : "Top Country Destinations")</h2>
                     <p class="dk-sec-subheading">@topDestinations.Subtitle</p>
                 </div>
                 <div class="dk-dest-scroll-btns">
@@ -961,7 +961,7 @@
         color: #1e293b;
         background: #ffffff;
         position: relative;
-        overflow-x: hidden;
+        overflow-x: clip; /* Prevents horizontal scroll without breaking position: sticky */
     }
 
     /* Admin Bar */
@@ -970,9 +970,8 @@
         color: #e2e8f0;
         padding: 9px 24px;
         font-size: 13px;
-        position: sticky;
-        top: 0;
-        z-index: 10001;
+        position: relative;
+        z-index: 100;
         border-bottom: 1px solid #334155;
     }
     .dk-upg-admin-inner {
@@ -1010,10 +1009,16 @@
     .dk-upg-header {
         background: #ffffff;
         border-bottom: 1px solid #e2e8f0;
+        position: -webkit-sticky;
         position: sticky;
-        top: 0;
-        z-index: 9999;
+        top: 86px; /* Dynamically adjusted via syncConsultancyStickyNav() */
+        z-index: 998;
         box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        transition: box-shadow 0.2s ease, top 0.15s ease;
+    }
+    .dk-upg-header.is-stuck {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        border-bottom-color: #cbd5e1;
     }
     .dk-upg-nav-container {
         max-width: 1380px;
@@ -1119,8 +1124,8 @@
     /* Hero Section (Full 3D Stage) */
     .dk-upg-hero-section {
         position: relative;
-        height: 490px;
-        min-height: 440px;
+        height: 620px;
+        min-height: 560px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -1128,6 +1133,19 @@
         background: #0b132b;
         padding: 0;
         box-sizing: border-box;
+        transition: height 0.3s ease;
+    }
+    @@media (min-width: 1400px) {
+        .dk-upg-hero-section {
+            height: 660px;
+            min-height: 600px;
+        }
+    }
+    @@media (max-width: 768px) {
+        .dk-upg-hero-section {
+            height: 440px;
+            min-height: 400px;
+        }
     }
     .dk-upg-hero-media-wrapper {
         position: absolute;
@@ -3751,6 +3769,29 @@
     function checkUniEligibility(name, country) {
         openConsultancyModal(`${name} (${country}) - Eligibility Check`);
     }
+
+    // Dynamic Sticky Navbar Sync with Site Header (.dk-header)
+    function syncConsultancyStickyNav() {
+        const mainHeader = document.querySelector(".dk-header");
+        const upgHeader = document.querySelector(".dk-upg-header");
+        if (!upgHeader) return;
+        if (mainHeader) {
+            const rect = mainHeader.getBoundingClientRect();
+            const offset = Math.max(0, Math.round(rect.bottom));
+            upgHeader.style.top = offset + "px";
+            if (window.scrollY > 35) {
+                upgHeader.classList.add("is-stuck");
+            } else {
+                upgHeader.classList.remove("is-stuck");
+            }
+        } else {
+            upgHeader.style.top = "0px";
+        }
+    }
+    window.addEventListener("scroll", syncConsultancyStickyNav, { passive: true });
+    window.addEventListener("resize", syncConsultancyStickyNav);
+    document.addEventListener("DOMContentLoaded", syncConsultancyStickyNav);
+    setTimeout(syncConsultancyStickyNav, 100);
 
     // Scroll to Top visibility
     window.addEventListener("scroll", function() {

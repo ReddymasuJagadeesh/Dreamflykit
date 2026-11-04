@@ -866,6 +866,134 @@ public sealed class CategoryThreeSectionHubDto
             Slides = CreateDefaultSlidesFor("room-living", "Room & Living")
         };
 
+        // 13. GAMING HUB
+        hub.Categories["gaming-hub"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "gaming-hub",
+            CategoryName = "Gaming Hub",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "gaming_1",
+                    CategorySlug = "gaming-hub",
+                    BadgeText = "FLAGSHIP CONSOLE",
+                    Rating = "4.9",
+                    Title = "Sony PlayStation 5 Pro (2TB SSD)",
+                    Tagline = "Advanced Ray Tracing & 120 FPS 4K Gaming",
+                    PriceText = "₹1,69,999",
+                    OriginalPriceText = "₹1,84,999",
+                    EmiBadgeText = "0% EMI ₹14,166/m",
+                    OfferDisclaimer = "*Incl. DualSense Wireless",
+                    ThemeGlowColor = "#00439c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/gaming-hub/playstation",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "gaming_2",
+                    CategorySlug = "gaming-hub",
+                    BadgeText = "MICROSOFT POWER",
+                    Rating = "4.8",
+                    Title = "Xbox Series X (1TB Carbon Black)",
+                    Tagline = "12 Teraflops GPU & 100+ Game Pass Titles",
+                    PriceText = "₹49,990",
+                    OriginalPriceText = "₹55,990",
+                    EmiBadgeText = "0% EMI ₹4,165/m",
+                    OfferDisclaimer = "*Incl. 3-Month Game Pass",
+                    ThemeGlowColor = "#107c10",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/gaming-hub/xbox",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "gaming_3",
+                    CategorySlug = "gaming-hub",
+                    BadgeText = "HANDHELD CHAMPION",
+                    Rating = "4.9",
+                    Title = "Steam Deck OLED (1TB HDR)",
+                    Tagline = "90Hz Vivid OLED & Custom AMD Zen 2 APU",
+                    PriceText = "₹64,999",
+                    OriginalPriceText = "₹72,990",
+                    EmiBadgeText = "0% EMI ₹5,416/m",
+                    OfferDisclaimer = "*Incl. Hard Carrying Case",
+                    ThemeGlowColor = "#1a9fff",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/gaming-hub/steam-deck",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "gaming_4",
+                    CategorySlug = "gaming-hub",
+                    BadgeText = "NEXT-GEN VR",
+                    Rating = "4.8",
+                    Title = "PlayStation VR2 Sense Horizon Bundle",
+                    Tagline = "4K HDR OLED & Intelligent Eye Tracking",
+                    PriceText = "₹54,990",
+                    OriginalPriceText = "₹61,999",
+                    EmiBadgeText = "0% EMI ₹4,582/m",
+                    OfferDisclaimer = "*Haptic Feedback Triggers",
+                    ThemeGlowColor = "#d84e55",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/gaming-hub/vr-gaming",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "gaming_5",
+                    CategorySlug = "gaming-hub",
+                    BadgeText = "HYBRID MARVEL",
+                    Rating = "4.8",
+                    Title = "Nintendo Switch OLED (White Edition)",
+                    Tagline = "7-inch Vivid OLED & Enhanced Audio Dock",
+                    PriceText = "₹28,999",
+                    OriginalPriceText = "₹34,990",
+                    EmiBadgeText = "0% EMI ₹2,416/m",
+                    OfferDisclaimer = "*64GB Internal Storage",
+                    ThemeGlowColor = "#e60012",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/gaming-hub/nintendo",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "gaming_6",
+                    CategorySlug = "gaming-hub",
+                    BadgeText = "EXTREME RACING",
+                    Rating = "4.7",
+                    Title = "Logitech G29 Driving Force Racing Wheel",
+                    Tagline = "Dual-Motor Force Feedback & Stainless Shifters",
+                    PriceText = "₹26,490",
+                    OriginalPriceText = "₹36,995",
+                    EmiBadgeText = "0% EMI ₹2,207/m",
+                    OfferDisclaimer = "*900-degree Lock-to-Lock",
+                    ThemeGlowColor = "#00bcd4",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/gaming-hub/steering-wheels",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+
         return hub;
     }
 

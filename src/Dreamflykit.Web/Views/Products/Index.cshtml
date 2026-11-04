@@ -243,6 +243,15 @@
             {
                 <span class="dk-breadcrumb-current">Story Books</span>
             }
+            else if (Model.IsGamingHub)
+            {
+                <a href="/category/gaming-hub" class="dk-breadcrumb-item">Gaming Hub</a>
+                @if (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName) || !string.IsNullOrWhiteSpace(Model.CurrentSubcategorySlug))
+                {
+                    <span class="dk-breadcrumb-separator">›</span>
+                    <span class="dk-breadcrumb-current">@(Model.CurrentSubcategoryName ?? Model.CurrentSubcategorySlug)</span>
+                }
+            }
             else if (!string.IsNullOrWhiteSpace(Model.CategoryName))
             {
                 <a href="/categories" class="dk-breadcrumb-item">Categories</a>
@@ -414,6 +423,20 @@
         </div>
     }
 
+    @if (Model.IsGamingHub && Model.GamingHub != null)
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            @if (Model.IsGamingSubcategory || Model.ViewMode == "gaming-sub")
+            {
+                <partial name="_GamingSubcategoryHub" model="Model" />
+            }
+            else
+            {
+                <partial name="_GamingCategoryHub" model="Model" />
+            }
+        </div>
+    }
+
     @{
         var isSpecializedHub = (Model.IsFashionHub && Model.ViewMode == "hub") ||
                                Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear" ||
@@ -431,7 +454,8 @@
                                (Model.IsTravelHub && Model.ViewMode == "hub") ||
                                (Model.IsElectronicsCategory && (Model.ViewMode == "hub" || Model.IsElectronicsSubcategoryHub || Model.IsElectronicsBrandHub)) ||
                                Model.IsLuggageHub ||
-                               Model.IsStoryBooksHub;
+                               Model.IsStoryBooksHub ||
+                               Model.IsGamingHub;
     }
 
     @if (!isSpecializedHub)

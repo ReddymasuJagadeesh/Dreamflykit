@@ -1,0 +1,1157 @@
+@model Dreamflykit.Application.GamingHub.Models.GamingHubDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Gaming Hub Management";
+    var hub = Model ?? Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefault();
+    var hero = hub.HeroBanner ?? new();
+    var shopCategory = hub.ShopByCategory ?? new();
+    var subPages = hub.SubcategoryPages ?? new();
+    var topPicks = hub.TopPicks ?? new();
+}
+
+@Html.AntiForgeryToken()
+
+<div class="gm-admin-container">
+
+    <!-- TOP HEADER & CONTROLS -->
+    <div class="gm-admin-header">
+        <div>
+            <div class="gm-admin-title-row">
+                <span class="gm-badge-tag">GAMING HUB ADMIN</span>
+                <span class="gm-badge-status">● Live</span>
+            </div>
+            <h1 class="gm-admin-heading">Gaming Hub & Hardware Category Controls</h1>
+            <p class="gm-admin-subheading">Manage full-width hero slider, 22 shop-by-category subcategories, subcategory hero banners & product grids.</p>
+        </div>
+        <div class="gm-admin-actions">
+            <a href="/category/gaming-hub" target="_blank" class="gm-btn-secondary">
+                <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+                <span>Preview Hub</span>
+            </a>
+            <button type="button" class="gm-btn-primary" id="btnSaveConfig" onclick="saveGamingConfig()">
+                <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>Save All Changes</span>
+            </button>
+            <form asp-area="Admin" asp-controller="GamingHub" asp-action="ResetDefaults" method="post" style="display:inline;" onsubmit="return confirm('Reset Gaming Hub to default settings? Any unsaved edits will be lost.');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="gm-btn-danger" title="Reset all to defaults">↻ Reset</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TABS NAVIGATION -->
+    <div class="gm-tabs-nav">
+        <button type="button" class="gm-tab-btn active" onclick="switchTab('tabHero', this)">
+            <span>🎮 Hero Banner Slider</span>
+        </button>
+        <button type="button" class="gm-tab-btn" onclick="switchTab('tabCategories', this)">
+            <span>🛍️ Shop by Category (22 Items)</span>
+        </button>
+        <button type="button" class="gm-tab-btn" onclick="switchTab('tabSubpages', this)">
+            <span>📄 Subcategory Pages & Products</span>
+        </button>
+        <button type="button" class="gm-tab-btn" onclick="switchTab('tabTopPicks', this)">
+            <span>⚡ Deals & Top Picks</span>
+        </button>
+    </div>
+
+    <form id="gamingHubForm">
+        <!-- ========================================================
+             TAB 1: HERO BANNER SLIDES
+        ========================================================= -->
+        <div id="tabHero" class="gm-tab-panel active">
+            <div class="gm-card">
+                <div class="gm-card-header">
+                    <h2 class="gm-card-title">Full-Width Hero Slider Settings</h2>
+                    <label class="gm-switch">
+                        <input type="checkbox" id="heroIsEnabled" @(hero.IsEnabled ? "checked" : "") />
+                        <span class="gm-slider round"></span>
+                        <span class="gm-switch-label">Enable Hero Banner</span>
+                    </label>
+                </div>
+                <div class="gm-grid-3">
+                    <div class="gm-field">
+                        <label>Auto-Play Slides</label>
+                        <select id="heroAutoPlay" class="gm-input">
+                            <option value="true" selected="@(hero.AutoPlay ? "selected" : null)">Enabled (Automatic Rotation)</option>
+                            <option value="false" selected="@(!hero.AutoPlay ? "selected" : null)">Disabled</option>
+                        </select>
+                    </div>
+                    <div class="gm-field">
+                        <label>Slide Interval (Seconds)</label>
+                        <input type="number" id="heroInterval" class="gm-input" value="@hero.SlideIntervalSeconds" min="2" max="15" />
+                    </div>
+                    <div class="gm-field">
+                        <label>Banner Min Height (px)</label>
+                        <input type="number" id="heroHeight" class="gm-input" value="@hero.BannerHeight" min="300" max="700" />
+                    </div>
+                </div>
+
+                <div class="gm-sub-header">
+                    <h3>Hero Slides</h3>
+                    <button type="button" class="gm-btn-sm" onclick="addHeroSlide()">+ Add New Slide</button>
+                </div>
+
+                <div id="heroSlidesList" class="gm-slides-list">
+                    @for (int i = 0; i < hero.Slides.Count; i++)
+                    {
+                        var slide = hero.Slides[i];
+                        <div class="gm-slide-card" data-slide-card>
+                            <div class="gm-slide-top">
+                                <span class="gm-slide-drag">Slide #<span class="slide-num">@(i + 1)</span></span>
+                                <div class="gm-slide-actions">
+                                    <label class="gm-check-inline">
+                                        <input type="checkbox" class="slide-active" @(slide.IsActive ? "checked" : "") />
+                                        <span>Active</span>
+                                    </label>
+                                    <label class="gm-check-inline">
+                                        <input type="checkbox" class="slide-uploading-soon" @(slide.IsUploadingSoon ? "checked" : "") />
+                                        <span>Show "Uploading Soon"</span>
+                                    </label>
+                                    <button type="button" class="gm-btn-icon-del" onclick="removeSlideCard(this)">✕ Delete</button>
+                                </div>
+                            </div>
+
+                            <div class="gm-grid-2">
+                                <div class="gm-field">
+                                    <label>Badge Text</label>
+                                    <input type="text" class="gm-input slide-badge" value="@slide.BadgeText" placeholder="e.g. NEXT-GEN CONSOLES • UP TO 40% OFF" />
+                                </div>
+                                <div class="gm-field">
+                                    <label>Display Order</label>
+                                    <input type="number" class="gm-input slide-order" value="@slide.DisplayOrder" />
+                                </div>
+                            </div>
+
+                            <div class="gm-grid-2">
+                                <div class="gm-field">
+                                    <label>Title</label>
+                                    <input type="text" class="gm-input slide-title" value="@slide.Title" placeholder="Main title" />
+                                </div>
+                                <div class="gm-field">
+                                    <label>Title Highlight (Gradient Text)</label>
+                                    <input type="text" class="gm-input slide-highlight" value="@slide.TitleHighlight" placeholder="Gradient text" />
+                                </div>
+                            </div>
+
+                            <div class="gm-field">
+                                <label>Subtitle / Description</label>
+                                <textarea class="gm-textarea slide-subtitle" rows="2">@slide.Subtitle</textarea>
+                            </div>
+
+                            <div class="gm-grid-2">
+                                <div class="gm-field">
+                                    <label>Button Text</label>
+                                    <input type="text" class="gm-input slide-btn-text" value="@slide.ButtonText" placeholder="Shop Now" />
+                                </div>
+                                <div class="gm-field">
+                                    <label>Target URL</label>
+                                    <input type="text" class="gm-input slide-target-url" value="@slide.TargetUrl" placeholder="/category/gaming-hub/playstation" />
+                                </div>
+                            </div>
+
+                            <!-- Slide Image Upload -->
+                            <div class="gm-field">
+                                <label>Slide Image URL (Leave empty or check "Uploading Soon" for placeholder)</label>
+                                <div class="gm-upload-box">
+                                    <input type="text" class="gm-input slide-img-url" value="@slide.ImageUrl" placeholder="/images/gaming-hub/hero-slide.webp" />
+                                    <label class="gm-btn-upload">
+                                        <span>Upload Image</span>
+                                        <input type="file" accept="image/*" onchange="uploadFileDirect(this, this.closest('.gm-upload-box').querySelector('.slide-img-url'), this.closest('.gm-slide-card').querySelector('.slide-img-preview'))" style="display:none;" />
+                                    </label>
+                                </div>
+                                <div class="gm-preview-row">
+                                    <img src="@(string.IsNullOrWhiteSpace(slide.ImageUrl) ? "/images/placeholder.svg" : slide.ImageUrl)" class="slide-img-preview gm-thumb" alt="Preview" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB 2: SHOP BY CATEGORY (22 ITEMS)
+        ========================================================= -->
+        <div id="tabCategories" class="gm-tab-panel">
+            <div class="gm-card">
+                <div class="gm-card-header">
+                    <div>
+                        <h2 class="gm-card-title">Shop by Category Settings</h2>
+                        <p class="gm-card-desc">Mobile, Television, and Camera have been excluded. Edit icons, titles, and images below.</p>
+                    </div>
+                    <label class="gm-switch">
+                        <input type="checkbox" id="catSectionEnabled" @(shopCategory.IsEnabled ? "checked" : "") />
+                        <span class="gm-slider round"></span>
+                        <span class="gm-switch-label">Enable Section</span>
+                    </label>
+                </div>
+
+                <div class="gm-grid-2">
+                    <div class="gm-field">
+                        <label>Section Title</label>
+                        <input type="text" id="catSectionTitle" class="gm-input" value="@shopCategory.Title" />
+                    </div>
+                    <div class="gm-field">
+                        <label>Section Subtitle</label>
+                        <input type="text" id="catSectionSubtitle" class="gm-input" value="@shopCategory.Subtitle" />
+                    </div>
+                </div>
+
+                <div class="gm-sub-header">
+                    <h3>Category Items (@shopCategory.Items.Count total)</h3>
+                    <button type="button" class="gm-btn-sm" onclick="addCategoryItem()">+ Add Subcategory Item</button>
+                </div>
+
+                <div class="gm-cat-admin-table-wrap">
+                    <table class="gm-admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">Icon</th>
+                                <th>Subcategory Name</th>
+                                <th>Slug (URL)</th>
+                                <th>Subtitle</th>
+                                <th>Image URL / Upload</th>
+                                <th style="width: 100px;">Uploading Soon</th>
+                                <th style="width: 70px;">Order</th>
+                                <th style="width: 60px;">Active</th>
+                                <th style="width: 50px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="catItemsTableBody">
+                            @foreach (var itm in shopCategory.Items.OrderBy(i => i.DisplayOrder))
+                            {
+                                <tr data-cat-row>
+                                    <td>
+                                        <input type="text" class="gm-input gm-input-xs cat-emoji" value="@itm.IconEmoji" style="width: 44px; text-align: center;" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="gm-input gm-input-sm cat-name" value="@itm.Name" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="gm-input gm-input-sm cat-slug" value="@itm.Slug" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="gm-input gm-input-sm cat-subtitle" value="@itm.Subtitle" />
+                                    </td>
+                                    <td>
+                                        <div class="gm-upload-box-sm">
+                                            <input type="text" class="gm-input gm-input-sm cat-img-url" value="@itm.ImageUrl" placeholder="Image URL" />
+                                            <label class="gm-btn-upload-sm" title="Upload Image">
+                                                <span>📁</span>
+                                                <input type="file" accept="image/*" onchange="uploadFileDirect(this, this.closest('.gm-upload-box-sm').querySelector('.cat-img-url'))" style="display:none;" />
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <input type="checkbox" class="cat-uploading-soon" @(itm.IsUploadingSoon ? "checked" : "") />
+                                    </td>
+                                    <td>
+                                        <input type="number" class="gm-input gm-input-xs cat-order" value="@itm.DisplayOrder" style="width: 55px;" />
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <input type="checkbox" class="cat-active" @(itm.IsActive ? "checked" : "") />
+                                    </td>
+                                    <td>
+                                        <button type="button" class="gm-btn-del-sm" onclick="this.closest('tr').remove()" title="Delete">✕</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB 3: SUBCATEGORY PAGES & PRODUCTS (MATCHING IMAGE 3)
+        ========================================================= -->
+        <div id="tabSubpages" class="gm-tab-panel">
+            <div class="gm-card">
+                <div class="gm-card-header">
+                    <div>
+                        <h2 class="gm-card-title">Subcategory Redirection Page & Products Manager</h2>
+                        <p class="gm-card-desc">Select any of the 22 gaming subcategories to customize its hero banner and catalog products.</p>
+                    </div>
+                    <div style="min-width: 260px;">
+                        <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 4px; display: block;">Select Subcategory to Edit:</label>
+                        <select id="subpageSelector" class="gm-input" onchange="onSelectSubpage(this.value)">
+                            @foreach (var sp in subPages)
+                            {
+                                <option value="@sp.CategorySlug">@sp.CategoryName (@sp.CategorySlug)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Subpage Editor Panels -->
+                @for (int pIdx = 0; pIdx < subPages.Count; pIdx++)
+                {
+                    var subPageItem = subPages[pIdx];
+                    var pHero = subPageItem.HeroBanner ?? new();
+                    var pProds = subPageItem.Products ?? new();
+
+                    <div class="gm-subpage-editor @(pIdx == 0 ? "active" : "")" id="subpage_@subPageItem.CategorySlug" data-subpage-slug="@subPageItem.CategorySlug">
+                        
+                        <!-- Hero Banner for this subcategory -->
+                        <div class="gm-subpage-box">
+                            <h3 class="gm-subpage-box-title">Subcategory Hero Banner: @subPageItem.CategoryName</h3>
+                            <div class="gm-grid-2">
+                                <div class="gm-field">
+                                    <label>Banner Title</label>
+                                    <input type="text" class="gm-input subhero-title" value="@pHero.Title" />
+                                </div>
+                                <div class="gm-field">
+                                    <label>Highlight Badge Text</label>
+                                    <input type="text" class="gm-input subhero-highlight" value="@pHero.TitleHighlight" placeholder="GENUINE PRODUCTS • FAST DELIVERY" />
+                                </div>
+                            </div>
+                            <div class="gm-field">
+                                <label>Subtitle Description</label>
+                                <textarea class="gm-textarea subhero-subtitle" rows="2">@pHero.Subtitle</textarea>
+                            </div>
+                            <div class="gm-grid-2">
+                                <div class="gm-field">
+                                    <label>Banner Image URL</label>
+                                    <div class="gm-upload-box">
+                                        <input type="text" class="gm-input subhero-img-url" value="@pHero.ImageUrl" />
+                                        <label class="gm-btn-upload">
+                                            <span>Upload</span>
+                                            <input type="file" accept="image/*" onchange="uploadFileDirect(this, this.closest('.gm-upload-box').querySelector('.subhero-img-url'))" style="display:none;" />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="gm-field" style="display: flex; align-items: center; padding-top: 26px;">
+                                    <label class="gm-check-inline">
+                                        <input type="checkbox" class="subhero-uploading-soon" @(pHero.IsUploadingSoon ? "checked" : "") />
+                                        <span>Show "Uploading Soon" Placeholder Badge</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Products for this subcategory -->
+                        <div class="gm-subpage-box" style="margin-top: 24px;">
+                            <div class="gm-sub-header">
+                                <div>
+                                    <h3 class="gm-subpage-box-title">Hardware & Products for @subPageItem.CategoryName</h3>
+                                    <p style="font-size: 12px; color: #64748b; margin: 0;">Cards shown in the right-side products grid matching Image 3.</p>
+                                </div>
+                                <button type="button" class="gm-btn-sm" onclick="addSubpageProduct('@subPageItem.CategorySlug')">+ Add Product</button>
+                            </div>
+
+                            <div class="gm-sub-products-list" id="prods_@subPageItem.CategorySlug">
+                                @for (int pr = 0; pr < pProds.Count; pr++)
+                                {
+                                    var prod = pProds[pr];
+                                    <div class="gm-product-row-card" data-prod-row>
+                                        <div class="gm-prod-row-header">
+                                            <span style="font-weight: 700; font-size: 13px;">Product #@(pr + 1)</span>
+                                            <button type="button" class="gm-btn-del-sm" onclick="this.closest('.gm-product-row-card').remove()">✕ Remove Product</button>
+                                        </div>
+
+                                        <div class="gm-grid-3">
+                                            <div class="gm-field" style="grid-column: span 2;">
+                                                <label>Product Title</label>
+                                                <input type="text" class="gm-input prod-title" value="@prod.Title" placeholder="Full product title" />
+                                            </div>
+                                            <div class="gm-field">
+                                                <label>Brand</label>
+                                                <input type="text" class="gm-input prod-brand" value="@prod.Brand" placeholder="Sony / Microsoft / etc." />
+                                            </div>
+                                        </div>
+
+                                        <div class="gm-grid-4">
+                                            <div class="gm-field">
+                                                <label>Condition Badge</label>
+                                                <select class="gm-input prod-cond">
+                                                    <option value="Brand New" selected="@(prod.ConditionBadge == "Brand New" ? "selected" : null)">Brand New</option>
+                                                    <option value="Open Box" selected="@(prod.ConditionBadge == "Open Box" ? "selected" : null)">Open Box</option>
+                                                </select>
+                                            </div>
+                                            <div class="gm-field">
+                                                <label>Price Text (e.g. ₹54,990)</label>
+                                                <input type="text" class="gm-input prod-disc-price" value="@prod.PriceText" />
+                                            </div>
+                                            <div class="gm-field">
+                                                <label>Original Price (e.g. ₹64,990)</label>
+                                                <input type="text" class="gm-input prod-orig-price" value="@prod.OriginalPriceText" />
+                                            </div>
+                                            <div class="gm-field">
+                                                <label>Discount % (e.g. 15% off)</label>
+                                                <input type="text" class="gm-input prod-percent" value="@prod.DiscountPercent" />
+                                            </div>
+                                        </div>
+
+                                        <div class="gm-grid-3">
+                                            <div class="gm-field">
+                                                <label>Rating (e.g. 4.9)</label>
+                                                <input type="text" class="gm-input prod-rating" value="@prod.Rating" />
+                                            </div>
+                                            <div class="gm-field">
+                                                <label>Availability Status</label>
+                                                <select class="gm-input prod-stock">
+                                                    <option value="In stock" selected="@(prod.AvailabilityStatus?.Contains("In stock") == true ? "selected" : null)">In stock</option>
+                                                    <option value="Out of stock" selected="@(prod.AvailabilityStatus?.Contains("Out of stock") == true ? "selected" : null)">Out of stock</option>
+                                                </select>
+                                            </div>
+                                            <div class="gm-field" style="display: flex; align-items: center; padding-top: 24px;">
+                                                <label class="gm-check-inline">
+                                                    <input type="checkbox" class="prod-uploading-soon" @(prod.IsUploadingSoon ? "checked" : "") />
+                                                    <span>"Uploading Soon" Pill</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="gm-field">
+                                            <label>Product Image URL (Upload or paste path)</label>
+                                            <div class="gm-upload-box">
+                                                <input type="text" class="gm-input prod-img-url" value="@prod.ImageUrl" />
+                                                <label class="gm-btn-upload">
+                                                    <span>Upload</span>
+                                                    <input type="file" accept="image/*" onchange="uploadFileDirect(this, this.closest('.gm-upload-box').querySelector('.prod-img-url'))" style="display:none;" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB 4: DEALS & TOP PICKS
+        ========================================================= -->
+        <div id="tabTopPicks" class="gm-tab-panel">
+            <div class="gm-card">
+                <div class="gm-card-header">
+                    <div>
+                        <h2 class="gm-card-title">Top Picks & Weekly Deals Section</h2>
+                        <p class="gm-card-desc">Featured hardware cards displayed at the bottom of the Gaming Hub homepage.</p>
+                    </div>
+                    <label class="gm-switch">
+                        <input type="checkbox" id="topPicksEnabled" @(topPicks.IsEnabled ? "checked" : "") />
+                        <span class="gm-slider round"></span>
+                        <span class="gm-switch-label">Enable Section</span>
+                    </label>
+                </div>
+
+                <div class="gm-grid-2">
+                    <div class="gm-field">
+                        <label>Section Title</label>
+                        <input type="text" id="topPicksTitle" class="gm-input" value="@topPicks.Title" />
+                    </div>
+                    <div class="gm-field">
+                        <label>Section Subtitle</label>
+                        <input type="text" id="topPicksSubtitle" class="gm-input" value="@topPicks.Subtitle" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- ========================================================
+     ADMIN DASHBOARD STYLES
+========================================================= -->
+<style>
+    .gm-admin-container {
+        padding: 24px;
+        max-width: 1360px;
+        margin: 0 auto;
+        color: #1e293b;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .gm-admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .gm-admin-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+    }
+    .gm-badge-tag {
+        background: #0f172a;
+        color: #38bdf8;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 3px 10px;
+        border-radius: 4px;
+        letter-spacing: 0.05em;
+    }
+    .gm-badge-status {
+        color: #16a34a;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .gm-admin-heading {
+        font-size: 26px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+    }
+    .gm-admin-subheading {
+        font-size: 14px;
+        color: #64748b;
+        margin: 0;
+    }
+    .gm-admin-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    .gm-btn-primary {
+        background: #2563eb;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.2s;
+    }
+    .gm-btn-primary:hover { background: #1d4ed8; }
+    .gm-btn-secondary {
+        background: #ffffff;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.2s;
+    }
+    .gm-btn-secondary:hover { background: #f8fafc; color: #0f172a; }
+    .gm-btn-danger {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+    .gm-btn-danger:hover { background: #fca5a5; }
+
+    /* Tabs */
+    .gm-tabs-nav {
+        display: flex;
+        gap: 8px;
+        border-bottom: 2px solid #e2e8f0;
+        margin-bottom: 24px;
+        overflow-x: auto;
+    }
+    .gm-tab-btn {
+        background: none;
+        border: none;
+        padding: 12px 18px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #64748b;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+    .gm-tab-btn:hover { color: #0f172a; }
+    .gm-tab-btn.active {
+        color: #2563eb;
+        border-bottom-color: #2563eb;
+        font-weight: 700;
+    }
+    .gm-tab-panel {
+        display: none;
+    }
+    .gm-tab-panel.active {
+        display: block;
+    }
+
+    /* Cards & Fields */
+    .gm-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    .gm-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #f1f5f9;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .gm-card-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+    }
+    .gm-card-desc {
+        font-size: 13px;
+        color: #64748b;
+        margin: 4px 0 0 0;
+    }
+    .gm-sub-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 24px 0 14px 0;
+    }
+    .gm-sub-header h3 {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+    }
+    .gm-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+    .gm-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+    .gm-grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 14px; }
+
+    .gm-field { margin-bottom: 14px; }
+    .gm-field label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 6px;
+    }
+    .gm-input, .gm-textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 13.5px;
+        color: #0f172a;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .gm-input:focus, .gm-textarea:focus { border-color: #2563eb; }
+    .gm-input-sm { padding: 6px 8px; font-size: 12.5px; }
+    .gm-input-xs { padding: 4px 6px; font-size: 12px; }
+
+    /* Switch */
+    .gm-switch {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+    }
+    .gm-switch input { opacity: 0; width: 0; height: 0; }
+    .gm-slider {
+        position: relative;
+        display: inline-block;
+        width: 38px;
+        height: 22px;
+        background-color: #cbd5e1;
+        transition: .3s;
+        border-radius: 22px;
+    }
+    .gm-slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .3s;
+        border-radius: 50%;
+    }
+    .gm-switch input:checked + .gm-slider { background-color: #2563eb; }
+    .gm-switch input:checked + .gm-slider:before { transform: translateX(16px); }
+    .gm-switch-label { font-size: 13px; font-weight: 600; color: #334155; }
+
+    /* Slide Card */
+    .gm-slides-list { display: flex; flex-direction: column; gap: 16px; }
+    .gm-slide-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 18px;
+    }
+    .gm-slide-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .gm-slide-drag { font-weight: 700; font-size: 13px; color: #334155; }
+    .gm-slide-actions { display: flex; align-items: center; gap: 14px; }
+    .gm-check-inline {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #475569;
+        cursor: pointer;
+    }
+    .gm-btn-icon-del {
+        background: none;
+        border: none;
+        color: #ef4444;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+    .gm-btn-sm {
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12.5px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+    .gm-btn-sm:hover { background: #dbeafe; }
+
+    /* Upload box */
+    .gm-upload-box {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    .gm-btn-upload {
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .gm-btn-upload:hover { background: #e2e8f0; }
+    .gm-preview-row { margin-top: 8px; }
+    .gm-thumb {
+        width: 100px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+    }
+
+    /* Category table */
+    .gm-cat-admin-table-wrap {
+        overflow-x: auto;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+    }
+    .gm-admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+    .gm-admin-table th {
+        background: #f8fafc;
+        padding: 10px 12px;
+        text-align: left;
+        font-weight: 700;
+        color: #475569;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .gm-admin-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+    .gm-upload-box-sm {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+    }
+    .gm-btn-upload-sm {
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        padding: 4px 6px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+    .gm-btn-del-sm {
+        background: none;
+        border: none;
+        color: #ef4444;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    /* Subpage manager */
+    .gm-subpage-editor { display: none; }
+    .gm-subpage-editor.active { display: block; }
+    .gm-subpage-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 20px;
+    }
+    .gm-subpage-box-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 14px 0;
+    }
+    .gm-sub-products-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+    .gm-product-row-card {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 14px;
+    }
+    .gm-prod-row-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+</style>
+
+<!-- ========================================================
+     ADMIN JAVASCRIPT LOGIC
+========================================================= -->
+<script>
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.gm-tab-panel').forEach(function(p) { p.classList.remove('active'); });
+        document.querySelectorAll('.gm-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+        var target = document.getElementById(tabId);
+        if (target) target.classList.add('active');
+        if (btn) btn.classList.add('active');
+    }
+
+    function onSelectSubpage(slug) {
+        document.querySelectorAll('.gm-subpage-editor').forEach(function(e) { e.classList.remove('active'); });
+        var target = document.getElementById('subpage_' + slug);
+        if (target) target.classList.add('active');
+    }
+
+    // Direct Image Upload
+    function uploadFileDirect(fileInput, targetUrlInput, previewImg) {
+        if (!fileInput.files || fileInput.files.length === 0) return;
+        var file = fileInput.files[0];
+
+        var formData = new FormData();
+        formData.append('file', file);
+
+        var tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (tokenInput) {
+            formData.append('__RequestVerificationToken', tokenInput.value);
+        }
+
+        var oldBtnText = fileInput.parentElement ? fileInput.parentElement.innerText : '';
+        if (fileInput.parentElement) fileInput.parentElement.querySelector('span').textContent = 'Uploading...';
+
+        fetch('/Admin/GamingHub/UploadImage', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.success && data.url) {
+                targetUrlInput.value = data.url;
+                if (previewImg) previewImg.src = data.url;
+                alert('Image uploaded successfully: ' + data.url);
+            } else {
+                alert('Upload failed: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(function(err) {
+            alert('Upload error: ' + err.message);
+        })
+        .finally(function() {
+            if (fileInput.parentElement) fileInput.parentElement.querySelector('span').textContent = 'Upload';
+        });
+    }
+
+    // Add Slide
+    function addHeroSlide() {
+        var list = document.getElementById('heroSlidesList');
+        var count = list.querySelectorAll('[data-slide-card]').length + 1;
+        var div = document.createElement('div');
+        div.className = 'gm-slide-card';
+        div.setAttribute('data-slide-card', '');
+        div.innerHTML = `
+            <div class="gm-slide-top">
+                <span class="gm-slide-drag">Slide #<span class="slide-num">${count}</span></span>
+                <div class="gm-slide-actions">
+                    <label class="gm-check-inline"><input type="checkbox" class="slide-active" checked /> <span>Active</span></label>
+                    <label class="gm-check-inline"><input type="checkbox" class="slide-uploading-soon" checked /> <span>Show "Uploading Soon"</span></label>
+                    <button type="button" class="gm-btn-icon-del" onclick="removeSlideCard(this)">✕ Delete</button>
+                </div>
+            </div>
+            <div class="gm-grid-2">
+                <div class="gm-field"><label>Badge Text</label><input type="text" class="gm-input slide-badge" value="HOT DEAL" /></div>
+                <div class="gm-field"><label>Display Order</label><input type="number" class="gm-input slide-order" value="${count}" /></div>
+            </div>
+            <div class="gm-grid-2">
+                <div class="gm-field"><label>Title</label><input type="text" class="gm-input slide-title" value="New Gaming Hardware" /></div>
+                <div class="gm-field"><label>Title Highlight</label><input type="text" class="gm-input slide-highlight" value="Exclusive Launch" /></div>
+            </div>
+            <div class="gm-field"><label>Subtitle</label><textarea class="gm-textarea slide-subtitle" rows="2">Experience superior gaming performance.</textarea></div>
+            <div class="gm-grid-2">
+                <div class="gm-field"><label>Button Text</label><input type="text" class="gm-input slide-btn-text" value="Shop Now" /></div>
+                <div class="gm-field"><label>Target URL</label><input type="text" class="gm-input slide-target-url" value="/category/gaming-hub" /></div>
+            </div>
+            <div class="gm-field">
+                <label>Slide Image URL</label>
+                <div class="gm-upload-box">
+                    <input type="text" class="gm-input slide-img-url" value="" placeholder="Image path" />
+                    <label class="gm-btn-upload"><span>Upload</span><input type="file" accept="image/*" onchange="uploadFileDirect(this, this.closest('.gm-upload-box').querySelector('.slide-img-url'))" style="display:none;" /></label>
+                </div>
+            </div>
+        `;
+        list.appendChild(div);
+    }
+
+    function removeSlideCard(btn) {
+        var card = btn.closest('[data-slide-card]');
+        if (card) card.remove();
+    }
+
+    // Add Subcategory Item
+    function addCategoryItem() {
+        var tbody = document.getElementById('catItemsTableBody');
+        var tr = document.createElement('tr');
+        tr.setAttribute('data-cat-row', '');
+        tr.innerHTML = `
+            <td><input type="text" class="gm-input gm-input-xs cat-emoji" value="🎮" style="width: 44px; text-align: center;" /></td>
+            <td><input type="text" class="gm-input gm-input-sm cat-name" value="New Subcategory" /></td>
+            <td><input type="text" class="gm-input gm-input-sm cat-slug" value="new-subcategory" /></td>
+            <td><input type="text" class="gm-input gm-input-sm cat-subtitle" value="Consoles & Gear" /></td>
+            <td>
+                <div class="gm-upload-box-sm">
+                    <input type="text" class="gm-input gm-input-sm cat-img-url" value="" placeholder="Image URL" />
+                    <label class="gm-btn-upload-sm" title="Upload Image"><span>📁</span><input type="file" accept="image/*" onchange="uploadFileDirect(this, this.closest('.gm-upload-box-sm').querySelector('.cat-img-url'))" style="display:none;" /></label>
+                </div>
+            </td>
+            <td style="text-align: center;"><input type="checkbox" class="cat-uploading-soon" checked /></td>
+            <td><input type="number" class="gm-input gm-input-xs cat-order" value="99" style="width: 55px;" /></td>
+            <td style="text-align: center;"><input type="checkbox" class="cat-active" checked /></td>
+            <td><button type="button" class="gm-btn-del-sm" onclick="this.closest('tr').remove()">✕</button></td>
+        `;
+        tbody.appendChild(tr);
+    }
+
+    // Add Subpage Product
+    function addSubpageProduct(slug) {
+        var container = document.getElementById('prods_' + slug);
+        if (!container) return;
+        var div = document.createElement('div');
+        div.className = 'gm-product-row-card';
+        div.setAttribute('data-prod-row', '');
+        div.innerHTML = `
+            <div class="gm-prod-row-header">
+                <span style="font-weight: 700; font-size: 13px;">New Product</span>
+                <button type="button" class="gm-btn-del-sm" onclick="this.closest('.gm-product-row-card').remove()">✕ Remove Product</button>
+            </div>
+            <div class="gm-grid-3">
+                <div class="gm-field" style="grid-column: span 2;"><label>Product Title</label><input type="text" class="gm-input prod-title" value="Gaming Product Title" /></div>
+                <div class="gm-field"><label>Brand</label><input type="text" class="gm-input prod-brand" value="Sony" /></div>
+            </div>
+            <div class="gm-grid-4">
+                <div class="gm-field">
+                    <label>Condition Badge</label>
+                    <select class="gm-input prod-cond"><option value="Brand New">Brand New</option><option value="Open Box">Open Box</option></select>
+                </div>
+                <div class="gm-field"><label>Price Text (e.g. ₹49,990)</label><input type="text" class="gm-input prod-disc-price" value="₹49,990" /></div>
+                <div class="gm-field"><label>Original Price (e.g. ₹54,990)</label><input type="text" class="gm-input prod-orig-price" value="₹54,990" /></div>
+                <div class="gm-field"><label>Discount (e.g. 10% off)</label><input type="text" class="gm-input prod-percent" value="10% off" /></div>
+            </div>
+            <div class="gm-grid-3">
+                <div class="gm-field"><label>Rating</label><input type="text" class="gm-input prod-rating" value="4.8" /></div>
+                <div class="gm-field">
+                    <label>Availability Status</label>
+                    <select class="gm-input prod-stock"><option value="In stock">In stock</option><option value="Out of stock">Out of stock</option></select>
+                </div>
+                <div class="gm-field" style="display: flex; align-items: center; padding-top: 24px;">
+                    <label class="gm-check-inline"><input type="checkbox" class="prod-uploading-soon" checked /> <span>"Uploading Soon" Pill</span></label>
+                </div>
+            </div>
+            <div class="gm-field">
+                <label>Product Image URL</label>
+                <div class="gm-upload-box">
+                    <input type="text" class="gm-input prod-img-url" value="" />
+                    <label class="gm-btn-upload"><span>Upload</span><input type="file" accept="image/*" onchange="uploadFileDirect(this, this.closest('.gm-upload-box').querySelector('.prod-img-url'))" style="display:none;" /></label>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    // Save Entire Configuration via AJAX
+    function saveGamingConfig() {
+        var btn = document.getElementById('btnSaveConfig');
+        btn.disabled = true;
+        btn.querySelector('span').textContent = 'Saving...';
+
+        // 1. Hero
+        var hero = {
+            isEnabled: document.getElementById('heroIsEnabled').checked,
+            autoPlay: document.getElementById('heroAutoPlay').value === 'true',
+            slideIntervalSeconds: parseInt(document.getElementById('heroInterval').value || '4', 10),
+            bannerHeight: parseInt(document.getElementById('heroHeight').value || '440', 10),
+            slides: []
+        };
+
+        document.querySelectorAll('#heroSlidesList [data-slide-card]').forEach(function(card, idx) {
+            hero.slides.push({
+                id: 'gaming-slide-' + (idx + 1),
+                badgeText: card.querySelector('.slide-badge').value,
+                displayOrder: parseInt(card.querySelector('.slide-order').value || (idx + 1), 10),
+                title: card.querySelector('.slide-title').value,
+                titleHighlight: card.querySelector('.slide-highlight').value,
+                subtitle: card.querySelector('.slide-subtitle').value,
+                buttonText: card.querySelector('.slide-btn-text').value,
+                targetUrl: card.querySelector('.slide-target-url').value,
+                imageUrl: card.querySelector('.slide-img-url').value,
+                isUploadingSoon: card.querySelector('.slide-uploading-soon').checked,
+                isActive: card.querySelector('.slide-active').checked
+            });
+        });
+
+        // 2. Shop by Category
+        var shopCat = {
+            isEnabled: document.getElementById('catSectionEnabled').checked,
+            title: document.getElementById('catSectionTitle').value,
+            subtitle: document.getElementById('catSectionSubtitle').value,
+            items: []
+        };
+
+        document.querySelectorAll('#catItemsTableBody [data-cat-row]').forEach(function(row, idx) {
+            shopCat.items.push({
+                id: 'cat-itm-' + (idx + 1),
+                iconEmoji: row.querySelector('.cat-emoji').value,
+                name: row.querySelector('.cat-name').value,
+                slug: row.querySelector('.cat-slug').value,
+                subtitle: row.querySelector('.cat-subtitle').value,
+                imageUrl: row.querySelector('.cat-img-url').value,
+                isUploadingSoon: row.querySelector('.cat-uploading-soon').checked,
+                displayOrder: parseInt(row.querySelector('.cat-order').value || (idx + 1), 10),
+                isActive: row.querySelector('.cat-active').checked
+            });
+        });
+
+        // 3. Subcategory Pages
+        var subPages = [];
+        document.querySelectorAll('.gm-subpage-editor').forEach(function(subEl) {
+            var slug = subEl.getAttribute('data-subpage-slug');
+            var heroTitle = subEl.querySelector('.subhero-title').value;
+            var heroHighlight = subEl.querySelector('.subhero-highlight').value;
+            var heroSubtitle = subEl.querySelector('.subhero-subtitle').value;
+            var heroImg = subEl.querySelector('.subhero-img-url').value;
+            var heroUploading = subEl.querySelector('.subhero-uploading-soon').checked;
+
+            var prods = [];
+            subEl.querySelectorAll('[data-prod-row]').forEach(function(pRow, pIdx) {
+                prods.push({
+                    id: slug + '-prod-' + (pIdx + 1),
+                    title: pRow.querySelector('.prod-title').value,
+                    brand: pRow.querySelector('.prod-brand').value,
+                    conditionBadge: pRow.querySelector('.prod-cond').value,
+                    priceText: pRow.querySelector('.prod-disc-price').value,
+                    originalPriceText: pRow.querySelector('.prod-orig-price').value,
+                    discountPercent: pRow.querySelector('.prod-percent').value,
+                    rating: pRow.querySelector('.prod-rating').value,
+                    availabilityStatus: pRow.querySelector('.prod-stock').value,
+                    imageUrl: pRow.querySelector('.prod-img-url').value,
+                    isUploadingSoon: pRow.querySelector('.prod-uploading-soon').checked,
+                    slug: slug + '-hardware'
+                });
+            });
+
+            subPages.push({
+                categorySlug: slug,
+                categoryName: heroTitle,
+                heroBanner: {
+                    title: heroTitle,
+                    titleHighlight: heroHighlight,
+                    subtitle: heroSubtitle,
+                    imageUrl: heroImg,
+                    isUploadingSoon: heroUploading
+                },
+                products: prods
+            });
+        });
+
+        // 4. Top Picks
+        var topPicks = {
+            isEnabled: document.getElementById('topPicksEnabled').checked,
+            title: document.getElementById('topPicksTitle').value,
+            subtitle: document.getElementById('topPicksSubtitle').value,
+            products: []
+        };
+
+        var payload = {
+            heroBanner: hero,
+            shopByCategory: shopCat,
+            subcategoryPages: subPages,
+            topPicks: topPicks,
+            threeSectionSliderSlug: "gaming-hub"
+        };
+
+        var tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+
+        fetch('/Admin/GamingHub/Save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'RequestVerificationToken': tokenInput ? tokenInput.value : ''
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.success) {
+                alert('Success: ' + (data.message || 'Gaming Hub settings saved successfully!'));
+            } else {
+                alert('Error: ' + (data.message || 'Failed to save settings.'));
+            }
+        })
+        .catch(function(err) {
+            alert('Save error: ' + err.message);
+        })
+        .finally(function() {
+            btn.disabled = false;
+            btn.querySelector('span').textContent = 'Save All Changes';
+        });
+    }
+</script>

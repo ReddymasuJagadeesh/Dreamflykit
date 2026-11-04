@@ -1,0 +1,1102 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.GamingHub ?? Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefault();
+    var hero = hub.HeroBanner ?? new Dreamflykit.Application.GamingHub.Models.GamingHeroBannerDto();
+    var shopCategory = hub.ShopByCategory ?? new Dreamflykit.Application.GamingHub.Models.GamingShopByCategorySectionDto();
+    var topPicks = hub.TopPicks ?? new Dreamflykit.Application.GamingHub.Models.GamingTopPicksSectionDto();
+    var slides = hero.Slides?.Where(s => s.IsActive).OrderBy(s => s.DisplayOrder).ToList() ?? new();
+    if (slides.Count == 0)
+    {
+        slides = Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefault().HeroBanner.Slides;
+    }
+
+    var categoryItems = shopCategory.Items?.Where(i => i.IsActive).OrderBy(i => i.DisplayOrder).ToList() ?? new();
+    if (categoryItems.Count == 0)
+    {
+        categoryItems = Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefaultCategoryItems();
+    }
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="gm-hub-container">
+
+    <!-- ========================================================
+         HERO BANNER: FULL WIDTH SLIDER
+    ========================================================= -->
+    @if (hero.IsEnabled && slides.Count > 0)
+    {
+        <section class="gm-hero-section" aria-label="Gaming Hub Hero Banner">
+            <div class="gm-hero-slider-wrap" id="gmHeroSlider" data-autoplay="@(hero.AutoPlay.ToString().ToLower())" data-interval="@(hero.SlideIntervalSeconds * 1000)">
+                <div class="gm-hero-slides">
+                    @for (int i = 0; i < slides.Count; i++)
+                    {
+                        var slide = slides[i];
+                        var hasImage = !string.IsNullOrWhiteSpace(slide.ImageUrl) && !slide.ImageUrl.Contains("placeholder") && !slide.IsUploadingSoon;
+                        <div class="gm-hero-slide @(i == 0 ? "active" : "")" data-slide-index="@i">
+                            <div class="gm-hero-content-shell">
+                                <div class="gm-hero-text-col">
+                                    @if (!string.IsNullOrWhiteSpace(slide.BadgeText))
+                                    {
+                                        <div class="gm-hero-badge">
+                                            <span class="gm-badge-sparkle">⚡</span>
+                                            <span>@slide.BadgeText</span>
+                                        </div>
+                                    }
+                                    <h1 class="gm-hero-title">
+                                        @slide.Title
+                                        @if (!string.IsNullOrWhiteSpace(slide.TitleHighlight))
+                                        {
+                                            <span class="gm-title-gradient">@slide.TitleHighlight</span>
+                                        }
+                                    </h1>
+                                    @if (!string.IsNullOrWhiteSpace(slide.Subtitle))
+                                    {
+                                        <p class="gm-hero-desc">@slide.Subtitle</p>
+                                    }
+
+                                    <div class="gm-hero-actions">
+                                        <a href="@(string.IsNullOrWhiteSpace(slide.TargetUrl) ? "/category/gaming-hub/playstation" : slide.TargetUrl)" class="gm-hero-btn-primary">
+                                            <span>@(!string.IsNullOrWhiteSpace(slide.ButtonText) ? slide.ButtonText : "Shop Now")</span>
+                                            <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                                        </a>
+                                        <a href="#gm-shop-by-category" class="gm-hero-btn-secondary">
+                                            <span>Explore All Categories</span>
+                                        </a>
+                                    </div>
+
+                                    <div class="gm-hero-guarantees">
+                                        <div class="gm-guarantee-item">
+                                            <svg viewBox="0 0 20 20" width="15" height="15" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                            <span>100% Genuine Gear</span>
+                                        </div>
+                                        <div class="gm-guarantee-item">
+                                            <svg viewBox="0 0 20 20" width="15" height="15" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/></svg>
+                                            <span>Fast Global Delivery</span>
+                                        </div>
+                                        <div class="gm-guarantee-item">
+                                            <svg viewBox="0 0 20 20" width="15" height="15" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                            <span>Warranty Covered</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="gm-hero-media-col">
+                                    @if (hasImage)
+                                    {
+                                        <div class="gm-hero-image-box">
+                                            <img src="@slide.ImageUrl" alt="@slide.Title" class="gm-hero-img" loading="lazy" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="gm-hero-uploading-card">
+                                            <div class="gm-uploading-glow"></div>
+                                            <div class="gm-uploading-inner">
+                                                <div class="gm-uploading-radar">
+                                                    <span class="gm-radar-ring ring-1"></span>
+                                                    <span class="gm-radar-ring ring-2"></span>
+                                                    <div class="gm-radar-center">🎮</div>
+                                                </div>
+                                                <div class="gm-uploading-pill">
+                                                    <span class="gm-pulse-circle"></span>
+                                                    <span>Uploading Soon</span>
+                                                </div>
+                                                <p class="gm-uploading-subtext">Admin will upload official banner image</p>
+                                                @if (canManage)
+                                                {
+                                                    <a href="/Admin/GamingHub" class="gm-uploading-admin-link">Upload in Admin &rarr;</a>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                @if (slides.Count > 1)
+                {
+                    <button type="button" class="gm-slider-arrow gm-arrow-prev" aria-label="Previous slide" onclick="gmPrevSlide()">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <button type="button" class="gm-slider-arrow gm-arrow-next" aria-label="Next slide" onclick="gmNextSlide()">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+
+                    <div class="gm-slider-dots">
+                        @for (int d = 0; d < slides.Count; d++)
+                        {
+                            <button type="button" class="gm-slider-dot @(d == 0 ? "active" : "")" data-dot-index="@d" onclick="gmGoToSlide(@d)" aria-label="Go to slide @(d + 1)"></button>
+                        }
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         SHOP BY CATEGORY: 22 ITEMS (NO MOBILE, TV, CAMERA)
+    ========================================================= -->
+    @if (shopCategory.IsEnabled && categoryItems.Count > 0)
+    {
+        <section class="gm-categories-section dk-shell" id="gm-shop-by-category">
+            <div class="gm-section-header">
+                <div class="gm-header-left">
+                    <span class="gm-section-badge">EXPLORE HARDWARE & ACCESSORIES</span>
+                    <h2 class="gm-section-title">@shopCategory.Title</h2>
+                    <p class="gm-section-desc">@shopCategory.Subtitle</p>
+                </div>
+                <div class="gm-header-right">
+                    <span class="gm-category-count">@categoryItems.Count Subcategories Available</span>
+                    @if (canManage)
+                    {
+                        <a href="/Admin/GamingHub" class="gm-admin-chip" title="Edit in Admin Dashboard">
+                            ⚙ Manage Categories
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <div class="gm-categories-grid">
+                @foreach (var item in categoryItems)
+                {
+                    var itemHasImage = !string.IsNullOrWhiteSpace(item.ImageUrl) && !item.ImageUrl.Contains("placeholder") && !item.IsUploadingSoon;
+                    var itemUrl = $"/category/gaming-hub/{item.Slug}";
+                    <a href="@itemUrl" class="gm-cat-card" title="Browse @item.Name">
+                        <div class="gm-cat-media">
+                            @if (itemHasImage)
+                            {
+                                <img src="@item.ImageUrl" alt="@item.Name" class="gm-cat-img" loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="gm-cat-uploading-box">
+                                    <span class="gm-cat-emoji">@item.IconEmoji</span>
+                                    <div class="gm-cat-uploading-tag">
+                                        <span class="gm-mini-dot">●</span> Uploading Soon
+                                    </div>
+                                </div>
+                            }
+                            <span class="gm-cat-arrow-pill">
+                                <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                            </span>
+                        </div>
+                        <div class="gm-cat-info">
+                            <h3 class="gm-cat-title">@item.Name</h3>
+                            @if (!string.IsNullOrWhiteSpace(item.Subtitle))
+                            {
+                                <p class="gm-cat-sub">@item.Subtitle</p>
+                            }
+                        </div>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         3-SECTION SYNCHRONIZED SLIDES (DIRECTLY BELOW CATEGORIES)
+    ========================================================= -->
+    <section class="gm-three-section-slider-wrap" aria-label="Gaming Hardware Multi-Section Carousel">
+        <div class="gm-section-header dk-shell" style="margin-bottom: 12px;">
+            <div class="gm-header-left">
+                <span class="gm-section-badge">SYNCHRONIZED SHOWCASE</span>
+                <h2 class="gm-section-title">Spotlight Gaming Rigs & Gear</h2>
+                <p class="gm-section-desc">Curated consoles, handhelds, VR, and peripherals rotating simultaneously</p>
+            </div>
+            @if (canManage)
+            {
+                <a href="/Admin/CategorySliders?category=gaming-hub" class="gm-admin-chip" title="Manage Slider in Admin">
+                    ⚙ Manage 3-Section Slider
+                </a>
+            }
+        </div>
+        <partial name="_CategoryThreeSectionSlider" model='"gaming-hub"' />
+    </section>
+
+    <!-- ========================================================
+         TOP PICKS & HARDWARE DEALS
+    ========================================================= -->
+    @if (topPicks.IsEnabled && topPicks.Products?.Count > 0)
+    {
+        <section class="gm-top-picks-section dk-shell">
+            <div class="gm-section-header">
+                <div class="gm-header-left">
+                    <span class="gm-section-badge">DEALS OF THE WEEK</span>
+                    <h2 class="gm-section-title">@topPicks.Title</h2>
+                    <p class="gm-section-desc">@topPicks.Subtitle</p>
+                </div>
+            </div>
+
+            <div class="gm-picks-grid">
+                @foreach (var prod in topPicks.Products)
+                {
+                    var prodHasImg = !string.IsNullOrWhiteSpace(prod.ImageUrl) && !prod.ImageUrl.Contains("placeholder");
+                    <div class="gm-pick-card">
+                        <div class="gm-pick-media">
+                            @if (!string.IsNullOrWhiteSpace(prod.ConditionBadge))
+                            {
+                                <span class="gm-pick-condition">@prod.ConditionBadge</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(prod.DiscountPercent))
+                            {
+                                <span class="gm-pick-discount">@prod.DiscountPercent</span>
+                            }
+                            @if (prodHasImg)
+                            {
+                                <img src="@prod.ImageUrl" alt="@prod.Title" class="gm-pick-img" loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="gm-pick-uploading">
+                                    <div class="gm-pick-uploading-radar">🎮</div>
+                                    <span class="gm-pick-uploading-tag"><span class="gm-mini-dot">●</span> Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+                        <div class="gm-pick-details">
+                            <div class="gm-pick-meta">
+                                <span class="gm-pick-brand">@prod.Brand</span>
+                                @if (!string.IsNullOrWhiteSpace(prod.AvailabilityStatus))
+                                {
+                                    <span class="gm-pick-stock">● @prod.AvailabilityStatus</span>
+                                }
+                            </div>
+                            <h4 class="gm-pick-title" title="@prod.Title">@prod.Title</h4>
+                            <div class="gm-pick-rating">
+                                <span class="gm-stars">★★★★★</span>
+                                <span class="gm-rating-val">@prod.Rating</span>
+                            </div>
+                            <div class="gm-pick-pricing">
+                                <span class="gm-price-now">@prod.PriceText</span>
+                                @if (!string.IsNullOrWhiteSpace(prod.OriginalPriceText))
+                                {
+                                    <span class="gm-price-was">@prod.OriginalPriceText</span>
+                                }
+                            </div>
+                            <div class="gm-pick-actions">
+                                <a href="@(string.IsNullOrWhiteSpace(prod.Slug) ? "/category/gaming-hub/playstation" : $"/category/gaming-hub/{prod.Slug}")" class="gm-pick-btn">
+                                    <span>Options</span>
+                                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+</div>
+
+<!-- ========================================================
+     GAMING HUB STYLES
+========================================================= -->
+<style>
+    .gm-hub-container {
+        width: 100%;
+        background: #0f1218;
+        color: #f1f5f9;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        padding-bottom: 48px;
+    }
+
+    /* Hero Slider */
+    .gm-hero-section {
+        position: relative;
+        width: 100%;
+        background: radial-gradient(120% 120% at 50% 10%, #1a2233 0%, #0d111a 70%, #090c12 100%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+    }
+    .gm-hero-slider-wrap {
+        position: relative;
+        width: 100%;
+        min-height: 440px;
+    }
+    .gm-hero-slides {
+        position: relative;
+        width: 100%;
+        min-height: 440px;
+    }
+    .gm-hero-slide {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        width: 100%;
+    }
+    .gm-hero-slide.active {
+        display: block;
+        opacity: 1;
+    }
+    .gm-hero-content-shell {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 56px 24px;
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 48px;
+        align-items: center;
+        min-height: 440px;
+    }
+    .gm-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(90deg, rgba(239, 68, 68, 0.2), rgba(249, 115, 22, 0.15));
+        border: 1px solid rgba(249, 115, 22, 0.4);
+        padding: 6px 14px;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        color: #ff8a4c;
+        margin-bottom: 18px;
+    }
+    .gm-hero-title {
+        font-size: 42px;
+        line-height: 1.15;
+        font-weight: 800;
+        color: #ffffff;
+        margin: 0 0 16px 0;
+        letter-spacing: -0.02em;
+    }
+    .gm-title-gradient {
+        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: block;
+    }
+    .gm-hero-desc {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #94a3b8;
+        max-width: 540px;
+        margin: 0 0 28px 0;
+    }
+    .gm-hero-actions {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+    }
+    .gm-hero-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 14px;
+        padding: 13px 26px;
+        border-radius: 10px;
+        text-decoration: none;
+        box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5);
+        transition: all 0.2s ease;
+    }
+    .gm-hero-btn-primary:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af);
+        transform: translateY(-2px);
+        box-shadow: 0 14px 28px -5px rgba(37, 99, 235, 0.65);
+        color: #fff;
+    }
+    .gm-hero-btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.06);
+        color: #e2e8f0;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 13px 22px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .gm-hero-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+    .gm-hero-guarantees {
+        display: flex;
+        gap: 22px;
+        flex-wrap: wrap;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 20px;
+    }
+    .gm-guarantee-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #94a3b8;
+    }
+    .gm-guarantee-item svg {
+        color: #38bdf8;
+    }
+
+    /* Hero Media & Uploading Card */
+    .gm-hero-media-col {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .gm-hero-image-box {
+        position: relative;
+        width: 100%;
+        max-width: 480px;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .gm-hero-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+    }
+    .gm-hero-uploading-card {
+        position: relative;
+        width: 100%;
+        max-width: 440px;
+        min-height: 280px;
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+        border: 2px dashed rgba(56, 189, 248, 0.35);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 36px 24px;
+        text-align: center;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(12px);
+    }
+    .gm-uploading-glow {
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(129, 140, 248, 0.05) 60%, transparent 80%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    .gm-uploading-inner {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .gm-uploading-radar {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .gm-radar-ring {
+        position: absolute;
+        border-radius: 50%;
+        border: 1.5px solid rgba(56, 189, 248, 0.4);
+        animation: gmPulse 2.4s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    .gm-radar-ring.ring-1 { width: 100%; height: 100%; }
+    .gm-radar-ring.ring-2 { width: 70%; height: 70%; animation-delay: 0.6s; }
+    .gm-radar-center {
+        font-size: 34px;
+        z-index: 3;
+    }
+    .gm-uploading-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(56, 189, 248, 0.15);
+        border: 1px solid rgba(56, 189, 248, 0.45);
+        color: #7dd3fc;
+        padding: 6px 16px;
+        border-radius: 9999px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        margin-bottom: 8px;
+    }
+    .gm-pulse-circle {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #38bdf8;
+        box-shadow: 0 0 10px #38bdf8;
+        animation: gmBlink 1.4s infinite ease-in-out;
+    }
+    .gm-uploading-subtext {
+        font-size: 13px;
+        color: #94a3b8;
+        margin: 4px 0 12px 0;
+    }
+    .gm-uploading-admin-link {
+        font-size: 12px;
+        color: #38bdf8;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .gm-uploading-admin-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Slider Arrows & Dots */
+    .gm-slider-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(15, 23, 42, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(8px);
+    }
+    .gm-slider-arrow:hover {
+        background: rgba(37, 99, 235, 0.9);
+        border-color: #38bdf8;
+        transform: translateY(-50%) scale(1.08);
+    }
+    .gm-arrow-prev { left: 24px; }
+    .gm-arrow-next { right: 24px; }
+    .gm-slider-dots {
+        position: absolute;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+        z-index: 10;
+    }
+    .gm-slider-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.25);
+        border: none;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        padding: 0;
+    }
+    .gm-slider-dot.active {
+        width: 32px;
+        background: linear-gradient(90deg, #38bdf8, #2563eb);
+    }
+
+    /* Section Headers */
+    .gm-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .gm-section-badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: #38bdf8;
+        margin-bottom: 6px;
+    }
+    .gm-section-title {
+        font-size: 26px;
+        font-weight: 800;
+        color: #ffffff;
+        margin: 0 0 6px 0;
+        letter-spacing: -0.01em;
+    }
+    .gm-section-desc {
+        font-size: 14px;
+        color: #94a3b8;
+        margin: 0;
+    }
+    .gm-category-count {
+        font-size: 13px;
+        color: #64748b;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 6px 14px;
+        border-radius: 9999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gm-admin-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(59, 130, 246, 0.15);
+        border: 1px solid rgba(59, 130, 246, 0.4);
+        color: #93c5fd;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .gm-admin-chip:hover {
+        background: rgba(59, 130, 246, 0.25);
+        color: #ffffff;
+    }
+
+    /* Shop by Category Grid: 22 Items */
+    .gm-categories-section {
+        margin-top: 48px;
+        margin-bottom: 48px;
+    }
+    .gm-categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+    }
+    .gm-cat-card {
+        background: linear-gradient(180deg, #18202f 0%, #111723 100%);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 14px;
+        overflow: hidden;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+        position: relative;
+    }
+    .gm-cat-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(56, 189, 248, 0.45);
+        box-shadow: 0 14px 28px -8px rgba(0, 0, 0, 0.6), 0 0 16px rgba(56, 189, 248, 0.15);
+    }
+    .gm-cat-media {
+        position: relative;
+        width: 100%;
+        height: 120px;
+        background: radial-gradient(circle at center, #222d42 0%, #131926 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .gm-cat-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    .gm-cat-card:hover .gm-cat-img {
+        transform: scale(1.08);
+    }
+    .gm-cat-uploading-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        height: 100%;
+    }
+    .gm-cat-emoji {
+        font-size: 36px;
+        line-height: 1;
+        transition: transform 0.25s ease;
+    }
+    .gm-cat-card:hover .gm-cat-emoji {
+        transform: scale(1.15);
+    }
+    .gm-cat-uploading-tag {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: #7dd3fc;
+        background: rgba(56, 189, 248, 0.15);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        padding: 2px 8px;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        letter-spacing: 0.02em;
+    }
+    .gm-mini-dot {
+        color: #38bdf8;
+        font-size: 8px;
+        animation: gmBlink 1.4s infinite ease-in-out;
+    }
+    .gm-cat-arrow-pill {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.2s ease;
+    }
+    .gm-cat-card:hover .gm-cat-arrow-pill {
+        opacity: 1;
+        transform: scale(1);
+        color: #38bdf8;
+        border-color: #38bdf8;
+    }
+    .gm-cat-info {
+        padding: 12px 14px 14px 14px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .gm-cat-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #f1f5f9;
+        margin: 0;
+        line-height: 1.3;
+        transition: color 0.2s ease;
+    }
+    .gm-cat-card:hover .gm-cat-title {
+        color: #38bdf8;
+    }
+    .gm-cat-sub {
+        font-size: 11.5px;
+        color: #64748b;
+        margin: 4px 0 0 0;
+        line-height: 1.3;
+    }
+
+    /* 3-Section Synchronized Slides Section */
+    .gm-three-section-slider-wrap {
+        margin-top: 48px;
+        margin-bottom: 48px;
+        padding-top: 24px;
+        padding-bottom: 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.07);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        background: radial-gradient(120% 80% at 50% 50%, rgba(30, 41, 59, 0.35) 0%, rgba(15, 18, 24, 0) 100%);
+    }
+
+    /* Top Picks Section */
+    .gm-top-picks-section {
+        margin-top: 36px;
+    }
+    .gm-picks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+    }
+    .gm-pick-card {
+        background: linear-gradient(180deg, #18202f 0%, #111723 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.25s ease;
+    }
+    .gm-pick-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(56, 189, 248, 0.4);
+        box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.6);
+    }
+    .gm-pick-media {
+        position: relative;
+        width: 100%;
+        height: 190px;
+        background: radial-gradient(circle at center, #232d3f 0%, #141b26 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .gm-pick-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .gm-pick-uploading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    .gm-pick-uploading-radar {
+        font-size: 42px;
+    }
+    .gm-pick-uploading-tag {
+        font-size: 11px;
+        font-weight: 700;
+        color: #7dd3fc;
+        background: rgba(56, 189, 248, 0.15);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        padding: 3px 10px;
+        border-radius: 9999px;
+    }
+    .gm-pick-condition {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #e2e8f0;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 6px;
+        backdrop-filter: blur(4px);
+    }
+    .gm-pick-discount {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 3px 8px;
+        border-radius: 6px;
+    }
+    .gm-pick-details {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .gm-pick-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+    .gm-pick-brand {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #38bdf8;
+    }
+    .gm-pick-stock {
+        font-size: 11px;
+        font-weight: 600;
+        color: #10b981;
+    }
+    .gm-pick-title {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: #f8fafc;
+        margin: 0 0 10px 0;
+        line-height: 1.35;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .gm-pick-rating {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 12px;
+        font-size: 12px;
+    }
+    .gm-stars {
+        color: #f59e0b;
+        letter-spacing: 1px;
+        font-size: 11px;
+    }
+    .gm-rating-val {
+        font-weight: 700;
+        color: #f1f5f9;
+    }
+    .gm-rating-count {
+        color: #64748b;
+    }
+    .gm-pick-pricing {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-top: auto;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+    }
+    .gm-price-now {
+        font-size: 19px;
+        font-weight: 800;
+        color: #ffffff;
+    }
+    .gm-price-was {
+        font-size: 13px;
+        color: #64748b;
+        text-decoration: line-through;
+    }
+    .gm-save-badge {
+        font-size: 11px;
+        font-weight: 700;
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.12);
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    .gm-pick-actions {
+        width: 100%;
+    }
+    .gm-pick-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 10px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .gm-pick-btn:hover {
+        background: #2563eb;
+        border-color: #38bdf8;
+        color: #ffffff;
+    }
+
+    /* Keyframe Animations */
+    @@keyframes gmPulse {
+        0% { transform: scale(0.6); opacity: 1; }
+        100% { transform: scale(1.4); opacity: 0; }
+    }
+    @@keyframes gmBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+
+    /* Responsive */
+    @@media (max-width: 992px) {
+        .gm-hero-content-shell {
+            grid-template-columns: 1fr;
+            padding: 40px 20px;
+            gap: 32px;
+            text-align: center;
+        }
+        .gm-hero-desc {
+            margin: 0 auto 24px auto;
+        }
+        .gm-hero-actions {
+            justify-content: center;
+        }
+        .gm-hero-guarantees {
+            justify-content: center;
+        }
+        .gm-hero-title {
+            font-size: 32px;
+        }
+    }
+    @@media (max-width: 640px) {
+        .gm-categories-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .gm-picks-grid {
+            grid-template-columns: 1fr;
+        }
+        .gm-hero-title {
+            font-size: 26px;
+        }
+        .gm-slider-arrow {
+            display: none;
+        }
+    }
+</style>
+
+<!-- Slider JavaScript -->
+<script>
+    (function () {
+        var slider = document.getElementById('gmHeroSlider');
+        if (!slider) return;
+
+        var slides = slider.querySelectorAll('.gm-hero-slide');
+        var dots = slider.querySelectorAll('.gm-slider-dot');
+        var autoplay = slider.getAttribute('data-autoplay') === 'true';
+        var intervalMs = parseInt(slider.getAttribute('data-interval') || '4000', 10);
+        var currentIndex = 0;
+        var timer = null;
+
+        function showSlide(index) {
+            if (slides.length <= 1) return;
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
+
+            slides.forEach(function (s, i) {
+                if (i === index) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+
+            dots.forEach(function (d, i) {
+                if (i === index) {
+                    d.classList.add('active');
+                } else {
+                    d.classList.remove('active');
+                }
+            });
+
+            currentIndex = index;
+        }
+
+        window.gmNextSlide = function () {
+            showSlide(currentIndex + 1);
+            resetTimer();
+        };
+
+        window.gmPrevSlide = function () {
+            showSlide(currentIndex - 1);
+            resetTimer();
+        };
+
+        window.gmGoToSlide = function (idx) {
+            showSlide(idx);
+            resetTimer();
+        };
+
+        function resetTimer() {
+            if (timer) clearInterval(timer);
+            if (autoplay && slides.length > 1) {
+                timer = setInterval(function () {
+                    showSlide(currentIndex + 1);
+                }, intervalMs);
+            }
+        }
+
+        if (autoplay && slides.length > 1) {
+            resetTimer();
+            slider.addEventListener('mouseenter', function () {
+                if (timer) clearInterval(timer);
+            });
+            slider.addEventListener('mouseleave', function () {
+                resetTimer();
+            });
+        }
+    })();
+</script>

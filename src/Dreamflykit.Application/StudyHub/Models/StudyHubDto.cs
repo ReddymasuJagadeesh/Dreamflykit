@@ -1227,6 +1227,7 @@ public sealed class StudyHubDto
             HeroMediaType = "image",
             HeroImageUrl = "/images/study-hub/consultancy-hero-campus.jpg",
             HeroVideoUrl = "",
+            HeroBannerHeight = 620,
             HeroHeadline = "For Your Every Next",
             HeroHeadlineHighlight = "Opportunity",
             SearchPlaceholder = "Tell us what you're looking to learn...",
@@ -2886,6 +2887,7 @@ public sealed class ConsultancyDetailsPageDto
     public string HeroImageUrl { get; set; } = "/images/study-hub/consultancy-hero-campus.jpg";
     public string HeroVideoUrl { get; set; } = "";
     public bool EnableHero3dAnimation { get; set; } = true;
+    public int HeroBannerHeight { get; set; } = 620;
     public string HeroHeadline { get; set; } = "For Your Every Next";
     public string HeroHeadlineHighlight { get; set; } = "Opportunity";
     public string SearchPlaceholder { get; set; } = "Tell us what you're looking to learn...";
@@ -2937,6 +2939,7 @@ public sealed class ConsultancyDetailsPageDto
 
     public void EnsureDefaults()
     {
+        if (HeroBannerHeight <= 0) HeroBannerHeight = 620;
         SearchBar ??= new();
         if (SearchBar.Destinations == null || SearchBar.Destinations.Count == 0)
         {
@@ -3081,7 +3084,7 @@ public sealed class ConsultancyDetailsPageDto
         TopDestinations ??= new();
         if (TopDestinations.Destinations == null || TopDestinations.Destinations.Count == 0)
         {
-            TopDestinations.Title = "Top Study Destinations";
+            TopDestinations.Title = "Top Country Destinations";
             TopDestinations.Subtitle = "Explore premier global education hubs with world-leading universities and generous post-study work rights.";
             TopDestinations.Destinations = new List<ConsultancyStudyDestinationDto>
             {
@@ -3248,7 +3251,7 @@ public sealed class ConsultancyBenefitCardDto
 public sealed class ConsultancyTopDestinationsSectionDto
 {
     public bool IsEnabled { get; set; } = true;
-    public string Title { get; set; } = "Top Study Destinations";
+    public string Title { get; set; } = "Top Country Destinations";
     public string Subtitle { get; set; } = "Explore premier global education hubs with world-leading universities and generous post-study work rights.";
     public List<ConsultancyStudyDestinationDto> Destinations { get; set; } = new();
 }

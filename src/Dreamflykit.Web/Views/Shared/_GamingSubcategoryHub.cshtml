@@ -1,0 +1,1270 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.GamingHub ?? Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefault();
+    var subPage = Model.GamingSubcategoryPage;
+    var currentSlug = (Model.CurrentSubcategorySlug ?? "").Trim().ToLowerInvariant();
+
+    if (subPage == null)
+    {
+        subPage = hub.SubcategoryPages?.FirstOrDefault(p =>
+            string.Equals(p.CategorySlug, currentSlug, StringComparison.OrdinalIgnoreCase));
+    }
+
+    if (subPage == null)
+    {
+        var matchedItem = hub.ShopByCategory?.Items?.FirstOrDefault(i =>
+            string.Equals(i.Slug, currentSlug, StringComparison.OrdinalIgnoreCase));
+
+        var catName = matchedItem?.Name ?? (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName)
+            ? Model.CurrentSubcategoryName
+            : (string.IsNullOrWhiteSpace(currentSlug) ? "Gaming Consoles" : currentSlug.Replace("-", " ")));
+
+        subPage = new Dreamflykit.Application.GamingHub.Models.GamingSubcategoryPageDto
+        {
+            CategorySlug = currentSlug,
+            CategoryName = catName,
+            HeroBanner = new Dreamflykit.Application.GamingHub.Models.GamingSubcategoryHeroDto
+            {
+                Title = catName,
+                TitleHighlight = "GENUINE PRODUCTS • FAST DELIVERY",
+                Subtitle = $"Explore top-rated {catName} consoles, accessories, bundles & certified authentic gaming gear with fast delivery.",
+                IsUploadingSoon = true
+            },
+            Products = Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefault().SubcategoryPages.FirstOrDefault()?.Products
+                       ?? new List<Dreamflykit.Application.GamingHub.Models.GamingProductItemDto>()
+        };
+    }
+
+    var hero = subPage.HeroBanner ?? new Dreamflykit.Application.GamingHub.Models.GamingSubcategoryHeroDto();
+    var products = subPage.Products ?? new List<Dreamflykit.Application.GamingHub.Models.GamingProductItemDto>();
+    var allCategories = hub.ShopByCategory?.Items?.Where(i => i.IsActive).OrderBy(i => i.DisplayOrder).ToList()
+                        ?? Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefaultCategoryItems();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="gm-subpage-container dk-shell">
+
+    <!-- ========================================================
+         SUBCATEGORY HERO BANNER (MATCHING IMAGE 3)
+    ========================================================= -->
+    <section class="gm-sub-hero-card" aria-label="@subPage.CategoryName Banner">
+        <div class="gm-sub-hero-glow"></div>
+        <div class="gm-sub-hero-body">
+            <div class="gm-sub-hero-content">
+                <nav class="gm-sub-hero-breadcrumb" aria-label="Gaming breadcrumb">
+                    <a href="/category/gaming-hub">Gaming Hub</a>
+                    <span class="gm-sub-sep">/</span>
+                    <span class="gm-sub-crumb-active">@subPage.CategoryName</span>
+                </nav>
+
+                @if (!string.IsNullOrWhiteSpace(hero.TitleHighlight))
+                {
+                    <div class="gm-sub-hero-badge">
+                        <span class="gm-badge-dot">●</span>
+                        <span>@hero.TitleHighlight</span>
+                    </div>
+                }
+
+                <h1 class="gm-sub-hero-title">@subPage.CategoryName</h1>
+                <p class="gm-sub-hero-desc">
+                    @(string.IsNullOrWhiteSpace(hero.Subtitle)
+                        ? $"Discover our full range of official {subPage.CategoryName} systems, verified authentic controllers, and exclusive gaming bundles."
+                        : hero.Subtitle)
+                </p>
+
+                <div class="gm-sub-hero-chips">
+                    <span class="gm-hero-chip">✓ In Stock Guarantee</span>
+                    <span class="gm-hero-chip">✓ Secure Transit</span>
+                    <span class="gm-hero-chip">✓ 1-Year Warranty</span>
+                    @if (canManage)
+                    {
+                        <a href="/Admin/GamingHub" class="gm-sub-admin-link">⚙ Edit Subcategory in Admin</a>
+                    }
+                </div>
+            </div>
+
+            <div class="gm-sub-hero-media">
+                @if (!string.IsNullOrWhiteSpace(hero.ImageUrl) && !hero.ImageUrl.Contains("placeholder") && !hero.IsUploadingSoon)
+                {
+                    <div class="gm-sub-banner-img-wrap">
+                        <img src="@hero.ImageUrl" alt="@subPage.CategoryName" class="gm-sub-banner-img" />
+                    </div>
+                }
+                else
+                {
+                    <div class="gm-sub-hero-uploading">
+                        <div class="gm-sub-uploading-radar">
+                            <span class="gm-sub-radar-ring"></span>
+                            <span class="gm-sub-emoji">🎮</span>
+                        </div>
+                        <div class="gm-sub-uploading-pill">
+                            <span class="gm-mini-dot">●</span> Uploading Soon
+                        </div>
+                        <p class="gm-sub-uploading-text">Admin will upload banner image</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         TOP QUICK FILTER PILLS (MATCHING IMAGE 3)
+    ========================================================= -->
+    <div class="gm-quick-filters-bar">
+        <div class="gm-filter-pills-left">
+            <!-- Condition Dropdown Pill -->
+            <div class="gm-dropdown-pill" data-filter-group="condition">
+                <button type="button" class="gm-pill-btn" onclick="gmToggleDropdown(this)">
+                    <span>Condition</span>
+                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </button>
+                <div class="gm-pill-dropdown-menu">
+                    <label class="gm-pill-option"><input type="radio" name="pill_condition" value="all" checked onchange="gmApplyPillFilter('condition', 'all', this)"> All Conditions</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_condition" value="Brand New" onchange="gmApplyPillFilter('condition', 'Brand New', this)"> Brand New</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_condition" value="Open Box" onchange="gmApplyPillFilter('condition', 'Open Box', this)"> Open Box</label>
+                </div>
+            </div>
+
+            <!-- Compatibility Dropdown Pill -->
+            <div class="gm-dropdown-pill" data-filter-group="compatibility">
+                <button type="button" class="gm-pill-btn" onclick="gmToggleDropdown(this)">
+                    <span>Compatibility</span>
+                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </button>
+                <div class="gm-pill-dropdown-menu">
+                    <label class="gm-pill-option"><input type="radio" name="pill_compat" value="all" checked onchange="gmApplyPillFilter('compat', 'all', this)"> All Systems</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_compat" value="PS5" onchange="gmApplyPillFilter('compat', 'PS5', this)"> PS5</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_compat" value="PS4" onchange="gmApplyPillFilter('compat', 'PS4', this)"> PS4</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_compat" value="PC" onchange="gmApplyPillFilter('compat', 'PC', this)"> PC / Steam</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_compat" value="Universal" onchange="gmApplyPillFilter('compat', 'Universal', this)"> Universal</label>
+                </div>
+            </div>
+
+            <!-- Brand Dropdown Pill -->
+            <div class="gm-dropdown-pill" data-filter-group="brand">
+                <button type="button" class="gm-pill-btn" onclick="gmToggleDropdown(this)">
+                    <span>Brand</span>
+                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </button>
+                <div class="gm-pill-dropdown-menu">
+                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="all" checked onchange="gmApplyPillFilter('brand', 'all', this)"> All Brands</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="Sony" onchange="gmApplyPillFilter('brand', 'Sony', this)"> Sony PlayStation</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="Microsoft" onchange="gmApplyPillFilter('brand', 'Microsoft', this)"> Microsoft Xbox</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="Nintendo" onchange="gmApplyPillFilter('brand', 'Nintendo', this)"> Nintendo</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="Valve" onchange="gmApplyPillFilter('brand', 'Valve', this)"> Valve Steam Deck</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="Logitech" onchange="gmApplyPillFilter('brand', 'Logitech', this)"> Logitech</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="Asus" onchange="gmApplyPillFilter('brand', 'Asus', this)"> Asus ROG</label>
+                </div>
+            </div>
+
+            <!-- Storage Dropdown Pill -->
+            <div class="gm-dropdown-pill" data-filter-group="storage">
+                <button type="button" class="gm-pill-btn" onclick="gmToggleDropdown(this)">
+                    <span>Storage</span>
+                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </button>
+                <div class="gm-pill-dropdown-menu">
+                    <label class="gm-pill-option"><input type="radio" name="pill_storage" value="all" checked onchange="gmApplyPillFilter('storage', 'all', this)"> Any Storage</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_storage" value="512GB" onchange="gmApplyPillFilter('storage', '512GB', this)"> 512GB</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_storage" value="825GB" onchange="gmApplyPillFilter('storage', '825GB', this)"> 825GB</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_storage" value="1TB" onchange="gmApplyPillFilter('storage', '1TB', this)"> 1TB SSD</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_storage" value="2TB" onchange="gmApplyPillFilter('storage', '2TB', this)"> 2TB SSD</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="gm-filter-pills-right">
+            <!-- Sort By Dropdown -->
+            <div class="gm-dropdown-pill gm-sort-pill">
+                <button type="button" class="gm-pill-btn" onclick="gmToggleDropdown(this)">
+                    <span id="gmSortLabel">Sort by : Popularity</span>
+                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </button>
+                <div class="gm-pill-dropdown-menu gm-menu-right">
+                    <label class="gm-pill-option"><input type="radio" name="pill_sort" value="popularity" checked onchange="gmApplySort('popularity', 'Popularity')"> Popularity</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_sort" value="price-asc" onchange="gmApplySort('price-asc', 'Price: Low to High')"> Price: Low to High</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_sort" value="price-desc" onchange="gmApplySort('price-desc', 'Price: High to Low')"> Price: High to Low</label>
+                    <label class="gm-pill-option"><input type="radio" name="pill_sort" value="rating" onchange="gmApplySort('rating', 'Customer Rating')"> Customer Rating</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         2-COLUMN LAYOUT: FILTERS SIDEBAR + PRODUCTS GRID
+    ========================================================= -->
+    <div class="gm-sub-layout">
+
+        <!-- LEFT SIDEBAR: FILTERS -->
+        <aside class="gm-sub-sidebar" id="gmSubSidebar">
+
+            <!-- Category Links Facet -->
+            <div class="gm-filter-widget">
+                <h3 class="gm-widget-title">CATEGORIES</h3>
+                <div class="gm-cat-list">
+                    @foreach (var c in allCategories)
+                    {
+                        var isActive = string.Equals(c.Slug, currentSlug, StringComparison.OrdinalIgnoreCase);
+                        <a href="/category/gaming-hub/@c.Slug" class="gm-cat-nav-link @(isActive ? "active" : "")">
+                            <span class="gm-cat-nav-name">@c.Name</span>
+                            @if (isActive)
+                            {
+                                <span class="gm-cat-nav-dot">●</span>
+                            }
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <!-- Condition Filter -->
+            <div class="gm-filter-widget">
+                <h3 class="gm-widget-title">CONDITION</h3>
+                <div class="gm-checkbox-list">
+                    <label class="gm-checkbox-item">
+                        <input type="checkbox" class="gm-filter-checkbox" data-facet="condition" value="Brand New" onchange="gmRunFilters()" checked />
+                        <span>Brand New</span>
+                    </label>
+                    <label class="gm-checkbox-item">
+                        <input type="checkbox" class="gm-filter-checkbox" data-facet="condition" value="Open Box" onchange="gmRunFilters()" checked />
+                        <span>Open Box</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Availability Filter -->
+            <div class="gm-filter-widget">
+                <h3 class="gm-widget-title">AVAILABILITY</h3>
+                <div class="gm-checkbox-list">
+                    <label class="gm-checkbox-item">
+                        <input type="checkbox" class="gm-filter-checkbox" data-facet="stock" value="in-stock" onchange="gmRunFilters()" checked />
+                        <span>In Stock</span>
+                    </label>
+                    <label class="gm-checkbox-item">
+                        <input type="checkbox" class="gm-filter-checkbox" data-facet="stock" value="out-of-stock" onchange="gmRunFilters()" />
+                        <span>Out of Stock</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Price Range Filter -->
+            <div class="gm-filter-widget">
+                <h3 class="gm-widget-title">PRICE</h3>
+                <div class="gm-price-inputs">
+                    <div class="gm-price-field">
+                        <span class="gm-currency">₹</span>
+                        <input type="number" id="gmMinPriceInput" placeholder="Min" min="0" value="0" />
+                    </div>
+                    <span class="gm-price-sep">to</span>
+                    <div class="gm-price-field">
+                        <span class="gm-currency">₹</span>
+                        <input type="number" id="gmMaxPriceInput" placeholder="Max" min="0" value="100000" />
+                    </div>
+                    <button type="button" class="gm-price-btn" onclick="gmRunFilters()">Go</button>
+                </div>
+            </div>
+
+            <!-- Customer Rating Filter -->
+            <div class="gm-filter-widget">
+                <h3 class="gm-widget-title">CUSTOMER RATING</h3>
+                <div class="gm-rating-list">
+                    <label class="gm-rating-item">
+                        <input type="radio" name="rating_filter" value="4" onchange="gmRunFilters()" />
+                        <span class="gm-stars-gold">★★★★☆</span>
+                        <span class="gm-rating-label">& Up</span>
+                    </label>
+                    <label class="gm-rating-item">
+                        <input type="radio" name="rating_filter" value="3" onchange="gmRunFilters()" />
+                        <span class="gm-stars-gold">★★★☆☆</span>
+                        <span class="gm-rating-label">& Up</span>
+                    </label>
+                    <label class="gm-rating-item">
+                        <input type="radio" name="rating_filter" value="0" checked onchange="gmRunFilters()" />
+                        <span>All Ratings</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="gm-filter-reset-wrap">
+                <button type="button" class="gm-reset-btn" onclick="gmResetAllFilters()">
+                    ↻ Reset All Filters
+                </button>
+            </div>
+        </aside>
+
+        <!-- RIGHT COLUMN: PRODUCTS -->
+        <main class="gm-sub-products-area">
+            <div class="gm-results-header">
+                <span class="gm-results-count" id="gmResultsCount">Showing @products.Count results for @subPage.CategoryName</span>
+            </div>
+
+            <div class="gm-products-grid" id="gmProductsGrid">
+                @if (products.Count == 0)
+                {
+                    <div class="gm-no-products">
+                        <div class="gm-empty-icon">🎮</div>
+                        <h3>New Hardware Launching Soon</h3>
+                        <p>We are stocking up verified @subPage.CategoryName equipment. Check back shortly!</p>
+                        <a href="/category/gaming-hub" class="gm-empty-btn">&larr; Return to Gaming Hub</a>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var p in products)
+                    {
+                        var hasImg = !string.IsNullOrWhiteSpace(p.ImageUrl) && !p.ImageUrl.Contains("placeholder") && !p.IsUploadingSoon;
+                        var isStock = !string.IsNullOrWhiteSpace(p.AvailabilityStatus) && p.AvailabilityStatus.Contains("In stock", StringComparison.OrdinalIgnoreCase);
+                        var cleanPrice = (p.PriceText ?? "").Replace("₹", "").Replace(",", "").Trim();
+
+                        <article class="gm-prod-card"
+                                 data-product-id="@p.Id"
+                                 data-brand="@p.Brand"
+                                 data-condition="@p.ConditionBadge"
+                                 data-price="@cleanPrice"
+                                 data-rating="@p.Rating"
+                                 data-stock="@(isStock ? "in-stock" : "out-of-stock")"
+                                 data-title="@p.Title">
+                            
+                            <div class="gm-prod-media">
+                                @if (!string.IsNullOrWhiteSpace(p.ConditionBadge))
+                                {
+                                    <span class="gm-prod-badge-cond">@p.ConditionBadge</span>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(p.DiscountPercent))
+                                {
+                                    <span class="gm-prod-badge-disc">@p.DiscountPercent</span>
+                                }
+                                
+                                @if (hasImg)
+                                {
+                                    <img src="@p.ImageUrl" alt="@p.Title" class="gm-prod-img" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <div class="gm-prod-uploading">
+                                        <div class="gm-prod-uploading-icon">🎮</div>
+                                        <div class="gm-prod-uploading-pill">
+                                            <span class="gm-mini-dot">●</span> Uploading Soon
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="gm-prod-info">
+                                <div class="gm-prod-meta-row">
+                                    <span class="gm-prod-brand">@p.Brand</span>
+                                    <span class="gm-prod-stock @(isStock ? "in" : "out")">
+                                        ● @(string.IsNullOrWhiteSpace(p.AvailabilityStatus) ? "In stock" : p.AvailabilityStatus)
+                                    </span>
+                                </div>
+
+                                <h2 class="gm-prod-title" title="@p.Title">@p.Title</h2>
+
+                                <div class="gm-prod-rating-row">
+                                    <span class="gm-stars-gold">★★★★★</span>
+                                    <span class="gm-rating-num">@p.Rating</span>
+                                </div>
+
+                                <div class="gm-prod-price-row">
+                                    <span class="gm-price-current">@p.PriceText</span>
+                                    @if (!string.IsNullOrWhiteSpace(p.OriginalPriceText))
+                                    {
+                                        <span class="gm-price-original">@p.OriginalPriceText</span>
+                                    }
+                                </div>
+
+                                <div class="gm-prod-actions">
+                                    <a href="@(string.IsNullOrWhiteSpace(p.Slug) ? $"/category/gaming-hub/{currentSlug}" : $"/category/gaming-hub/{p.Slug}")" class="gm-prod-options-btn">
+                                        <span>Options</span>
+                                        <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                }
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- ========================================================
+     SUBCATEGORY HUB STYLES (MATCHING IMAGE 3)
+========================================================= -->
+<style>
+    .gm-subpage-container {
+        padding-top: 16px;
+        padding-bottom: 56px;
+        color: #0f172a;
+    }
+
+    /* Sub Hero Banner (Matching Image 3) */
+    .gm-sub-hero-card {
+        position: relative;
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    .gm-sub-hero-glow {
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 320px;
+        height: 320px;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(99, 102, 241, 0.1) 50%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    .gm-sub-hero-body {
+        position: relative;
+        z-index: 2;
+        padding: 32px 36px;
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 32px;
+        align-items: center;
+    }
+    .gm-sub-hero-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #94a3b8;
+        margin-bottom: 12px;
+    }
+    .gm-sub-hero-breadcrumb a {
+        color: #38bdf8;
+        text-decoration: none;
+    }
+    .gm-sub-hero-breadcrumb a:hover {
+        text-decoration: underline;
+    }
+    .gm-sub-sep {
+        color: #64748b;
+    }
+    .gm-sub-crumb-active {
+        color: #cbd5e1;
+        font-weight: 600;
+    }
+    .gm-sub-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(56, 189, 248, 0.15);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        color: #7dd3fc;
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        margin-bottom: 10px;
+    }
+    .gm-badge-dot {
+        font-size: 8px;
+        color: #38bdf8;
+    }
+    .gm-sub-hero-title {
+        font-size: 34px;
+        font-weight: 800;
+        color: #ffffff;
+        margin: 0 0 10px 0;
+        line-height: 1.2;
+    }
+    .gm-sub-hero-desc {
+        font-size: 14.5px;
+        color: #cbd5e1;
+        line-height: 1.5;
+        max-width: 580px;
+        margin: 0 0 20px 0;
+    }
+    .gm-sub-hero-chips {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .gm-hero-chip {
+        font-size: 12px;
+        font-weight: 600;
+        color: #94a3b8;
+        background: rgba(255, 255, 255, 0.06);
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gm-sub-admin-link {
+        font-size: 12px;
+        color: #38bdf8;
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 6px;
+    }
+    .gm-sub-admin-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Hero Media on Subcategory */
+    .gm-sub-hero-media {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .gm-sub-banner-img-wrap {
+        width: 100%;
+        max-width: 320px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .gm-sub-banner-img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    .gm-sub-hero-uploading {
+        width: 100%;
+        max-width: 280px;
+        padding: 24px 16px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1.5px dashed rgba(56, 189, 248, 0.4);
+        border-radius: 14px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .gm-sub-uploading-radar {
+        position: relative;
+        width: 54px;
+        height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+    .gm-sub-radar-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 1.5px solid rgba(56, 189, 248, 0.4);
+        animation: gmPulse 2.2s infinite ease-out;
+    }
+    .gm-sub-emoji {
+        font-size: 26px;
+        z-index: 2;
+    }
+    .gm-sub-uploading-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #7dd3fc;
+        background: rgba(56, 189, 248, 0.15);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        padding: 3px 10px;
+        border-radius: 9999px;
+        margin-bottom: 6px;
+    }
+    .gm-sub-uploading-text {
+        font-size: 11.5px;
+        color: #94a3b8;
+        margin: 0;
+    }
+
+    /* Top Quick Filter Pills Bar */
+    .gm-quick-filters-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 10px 16px;
+        margin-bottom: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        flex-wrap: wrap;
+    }
+    .gm-filter-pills-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .gm-filter-pills-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .gm-dropdown-pill {
+        position: relative;
+    }
+    .gm-pill-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 7px 14px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .gm-pill-btn:hover, .gm-pill-btn.active {
+        background: #f1f5f9;
+        border-color: #2563eb;
+        color: #2563eb;
+    }
+    .gm-pill-btn svg {
+        transition: transform 0.2s ease;
+    }
+    .gm-dropdown-pill.open .gm-pill-btn svg {
+        transform: rotate(180deg);
+    }
+    .gm-pill-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        min-width: 190px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.15);
+        padding: 8px 0;
+        z-index: 50;
+    }
+    .gm-dropdown-pill.open .gm-pill-dropdown-menu {
+        display: block;
+    }
+    .gm-menu-right {
+        left: auto;
+        right: 0;
+    }
+    .gm-pill-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        font-size: 13px;
+        color: #334155;
+        cursor: pointer;
+        transition: background 0.15s ease;
+    }
+    .gm-pill-option:hover {
+        background: #f8fafc;
+        color: #0f172a;
+    }
+    .gm-pill-option input[type="radio"] {
+        accent-color: #2563eb;
+    }
+
+    /* 2-Column Split Layout */
+    .gm-sub-layout {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 28px;
+        align-items: start;
+    }
+
+    /* Left Sidebar */
+    .gm-sub-sidebar {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .gm-filter-widget {
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 18px;
+        margin-bottom: 18px;
+    }
+    .gm-filter-widget:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+    .gm-widget-title {
+        font-size: 11.5px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        color: #64748b;
+        margin: 0 0 12px 0;
+        text-transform: uppercase;
+    }
+
+    /* Category Navigation List */
+    .gm-cat-list {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        max-height: 280px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+    .gm-cat-list::-webkit-scrollbar {
+        width: 4px;
+    }
+    .gm-cat-list::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+    .gm-cat-nav-link {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #475569;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+    .gm-cat-nav-link:hover {
+        background: #f8fafc;
+        color: #0f172a;
+    }
+    .gm-cat-nav-link.active {
+        background: #eff6ff;
+        color: #2563eb;
+        font-weight: 700;
+    }
+    .gm-cat-nav-dot {
+        font-size: 8px;
+        color: #2563eb;
+    }
+
+    /* Checkbox & Radio Facets */
+    .gm-checkbox-list, .gm-rating-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .gm-checkbox-item, .gm-rating-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #334155;
+        cursor: pointer;
+    }
+    .gm-checkbox-item input, .gm-rating-item input {
+        accent-color: #2563eb;
+    }
+    .gm-stars-gold {
+        color: #f59e0b;
+        letter-spacing: 1px;
+    }
+    .gm-rating-label {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    /* Price inputs */
+    .gm-price-inputs {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .gm-price-field {
+        position: relative;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 4px 6px;
+        background: #ffffff;
+    }
+    .gm-currency {
+        font-size: 12px;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+    .gm-price-field input {
+        width: 100%;
+        border: none;
+        outline: none;
+        font-size: 12px;
+        color: #0f172a;
+        padding-left: 2px;
+    }
+    .gm-price-sep {
+        font-size: 12px;
+        color: #94a3b8;
+    }
+    .gm-price-btn {
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .gm-price-btn:hover {
+        background: #2563eb;
+        color: #ffffff;
+        border-color: #2563eb;
+    }
+    .gm-filter-reset-wrap {
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px dashed #e2e8f0;
+    }
+    .gm-reset-btn {
+        width: 100%;
+        background: none;
+        border: 1px dashed #cbd5e1;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 7px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .gm-reset-btn:hover {
+        background: #f8fafc;
+        color: #0f172a;
+        border-color: #94a3b8;
+    }
+
+    /* Right Column: Products Grid */
+    .gm-sub-products-area {
+        min-width: 0;
+    }
+    .gm-results-header {
+        margin-bottom: 16px;
+    }
+    .gm-results-count {
+        font-size: 13.5px;
+        color: #64748b;
+        font-weight: 500;
+    }
+    .gm-products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 18px;
+    }
+
+    /* Product Card (Matching Image 3) */
+    .gm-prod-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .gm-prod-card:hover {
+        border-color: #93c5fd;
+        box-shadow: 0 10px 24px -5px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+    .gm-prod-media {
+        position: relative;
+        width: 100%;
+        height: 190px;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .gm-prod-badge-cond {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: rgba(15, 23, 42, 0.85);
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 4px;
+        z-index: 2;
+    }
+    .gm-prod-badge-disc {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 10.5px;
+        font-weight: 800;
+        padding: 3px 7px;
+        border-radius: 4px;
+        z-index: 2;
+    }
+    .gm-prod-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .gm-prod-uploading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    .gm-prod-uploading-icon {
+        font-size: 38px;
+    }
+    .gm-prod-uploading-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #e0f2fe;
+        color: #0369a1;
+        border: 1px solid #bae6fd;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 9999px;
+    }
+    .gm-prod-info {
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .gm-prod-meta-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+    .gm-prod-brand {
+        font-size: 11px;
+        font-weight: 700;
+        color: #2563eb;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .gm-prod-stock {
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .gm-prod-stock.in { color: #16a34a; }
+    .gm-prod-stock.out { color: #dc2626; }
+    .gm-prod-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+        line-height: 1.35;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .gm-prod-rating-row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11.5px;
+        margin-bottom: 10px;
+    }
+    .gm-rating-num {
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .gm-review-num {
+        color: #64748b;
+    }
+    .gm-prod-price-row {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin-top: auto;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+    .gm-price-current {
+        font-size: 17px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+    .gm-price-original {
+        font-size: 12px;
+        color: #94a3b8;
+        text-decoration: line-through;
+    }
+    .gm-save-pill {
+        font-size: 10px;
+        font-weight: 700;
+        color: #16a34a;
+        background: #dcfce7;
+        padding: 2px 5px;
+        border-radius: 4px;
+    }
+    .gm-prod-actions {
+        width: 100%;
+    }
+    .gm-prod-options-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        color: #0f172a;
+        font-size: 12.5px;
+        font-weight: 700;
+        padding: 8px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+    .gm-prod-options-btn:hover {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: #ffffff;
+    }
+
+    /* Empty state */
+    .gm-no-products {
+        grid-column: 1 / -1;
+        background: #ffffff;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 48px 24px;
+        text-align: center;
+    }
+    .gm-empty-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+    }
+    .gm-empty-btn {
+        display: inline-block;
+        margin-top: 14px;
+        background: #2563eb;
+        color: #ffffff;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    /* Responsive */
+    @@media (max-width: 900px) {
+        .gm-sub-layout {
+            grid-template-columns: 1fr;
+        }
+        .gm-sub-sidebar {
+            display: none; /* toggleable or collapsed on mobile */
+        }
+        .gm-sub-hero-body {
+            grid-template-columns: 1fr;
+            padding: 24px 20px;
+        }
+        .gm-sub-hero-media {
+            display: none;
+        }
+    }
+    @@media (max-width: 600px) {
+        .gm-products-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .gm-quick-filters-bar {
+            padding: 8px;
+        }
+        .gm-pill-btn {
+            font-size: 11.5px;
+            padding: 5px 10px;
+        }
+    }
+</style>
+
+<!-- Client-side Interactive Filter Script -->
+<script>
+    function gmToggleDropdown(btn) {
+        var pill = btn.closest('.gm-dropdown-pill');
+        var wasOpen = pill.classList.contains('open');
+        document.querySelectorAll('.gm-dropdown-pill').forEach(function(p) { p.classList.remove('open'); });
+        if (!wasOpen) {
+            pill.classList.add('open');
+        }
+    }
+
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.gm-dropdown-pill')) {
+            document.querySelectorAll('.gm-dropdown-pill').forEach(function(p) { p.classList.remove('open'); });
+        }
+    });
+
+    var activePillFilters = {
+        condition: 'all',
+        compat: 'all',
+        brand: 'all',
+        storage: 'all',
+        sort: 'popularity'
+    };
+
+    function gmApplyPillFilter(group, value, elem) {
+        activePillFilters[group] = value;
+        var pill = elem.closest('.gm-dropdown-pill');
+        if (pill) {
+            var btn = pill.querySelector('.gm-pill-btn span');
+            if (btn && value !== 'all') {
+                btn.textContent = value;
+                pill.querySelector('.gm-pill-btn').classList.add('active');
+            } else if (btn) {
+                // Restore group label
+                var grpName = group.charAt(0).toUpperCase() + group.slice(1);
+                if (group === 'compat') grpName = 'Compatibility';
+                btn.textContent = grpName;
+                pill.querySelector('.gm-pill-btn').classList.remove('active');
+            }
+            pill.classList.remove('open');
+        }
+        gmRunFilters();
+    }
+
+    function gmApplySort(sortVal, label) {
+        activePillFilters.sort = sortVal;
+        var sortLabel = document.getElementById('gmSortLabel');
+        if (sortLabel) sortLabel.textContent = 'Sort by : ' + label;
+        var pill = document.querySelector('.gm-sort-pill');
+        if (pill) pill.classList.remove('open');
+        gmRunSort();
+    }
+
+    function gmRunFilters() {
+        var cards = document.querySelectorAll('.gm-prod-card');
+        var visibleCount = 0;
+
+        // Facet checkboxes
+        var condCheckboxes = Array.from(document.querySelectorAll('.gm-filter-checkbox[data-facet="condition"]:checked')).map(function(c) { return c.value; });
+        var stockCheckboxes = Array.from(document.querySelectorAll('.gm-filter-checkbox[data-facet="stock"]:checked')).map(function(c) { return c.value; });
+
+        // Rating radio
+        var ratingRadio = document.querySelector('input[name="rating_filter"]:checked');
+        var minRating = ratingRadio ? parseFloat(ratingRadio.value) : 0;
+
+        // Price range
+        var minPriceInput = document.getElementById('gmMinPriceInput');
+        var maxPriceInput = document.getElementById('gmMaxPriceInput');
+        var minP = minPriceInput ? parseFloat(minPriceInput.value || '0') : 0;
+        var maxP = maxPriceInput ? parseFloat(maxPriceInput.value || '9999999') : 9999999;
+
+        cards.forEach(function (card) {
+            var brand = (card.getAttribute('data-brand') || '').trim();
+            var cond = (card.getAttribute('data-condition') || '').trim();
+            var price = parseFloat(card.getAttribute('data-price') || '0');
+            var rating = parseFloat(card.getAttribute('data-rating') || '0');
+            var stock = (card.getAttribute('data-stock') || '').trim();
+            var title = (card.getAttribute('data-title') || '').toLowerCase();
+
+            var matches = true;
+
+            // Pill filters
+            if (activePillFilters.condition !== 'all' && !cond.toLowerCase().includes(activePillFilters.condition.toLowerCase())) {
+                matches = false;
+            }
+            if (activePillFilters.brand !== 'all' && !brand.toLowerCase().includes(activePillFilters.brand.toLowerCase())) {
+                matches = false;
+            }
+            if (activePillFilters.compat !== 'all' && !title.includes(activePillFilters.compat.toLowerCase())) {
+                matches = false;
+            }
+            if (activePillFilters.storage !== 'all' && !title.includes(activePillFilters.storage.toLowerCase())) {
+                matches = false;
+            }
+
+            // Facet condition
+            if (condCheckboxes.length > 0 && !condCheckboxes.includes(cond)) {
+                matches = false;
+            }
+
+            // Facet stock
+            if (stockCheckboxes.length > 0 && !stockCheckboxes.includes(stock)) {
+                matches = false;
+            }
+
+            // Price
+            if (price < minP || price > maxP) {
+                matches = false;
+            }
+
+            // Rating
+            if (rating < minRating) {
+                matches = false;
+            }
+
+            if (matches) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        var countElem = document.getElementById('gmResultsCount');
+        if (countElem) {
+            countElem.textContent = 'Showing ' + visibleCount + ' results for @subPage.CategoryName';
+        }
+    }
+
+    function gmRunSort() {
+        var grid = document.getElementById('gmProductsGrid');
+        if (!grid) return;
+        var cards = Array.from(grid.querySelectorAll('.gm-prod-card'));
+
+        cards.sort(function (a, b) {
+            var pA = parseFloat(a.getAttribute('data-price') || '0');
+            var pB = parseFloat(b.getAttribute('data-price') || '0');
+            var rA = parseFloat(a.getAttribute('data-rating') || '0');
+            var rB = parseFloat(b.getAttribute('data-rating') || '0');
+
+            if (activePillFilters.sort === 'price-asc') return pA - pB;
+            if (activePillFilters.sort === 'price-desc') return pB - pA;
+            if (activePillFilters.sort === 'rating') return rB - rA;
+            return 0; // default order
+        });
+
+        cards.forEach(function (c) { grid.appendChild(c); });
+    }
+
+    function gmResetAllFilters() {
+        document.querySelectorAll('.gm-filter-checkbox').forEach(function(c) { c.checked = true; });
+        var minP = document.getElementById('gmMinPriceInput');
+        var maxP = document.getElementById('gmMaxPriceInput');
+        if (minP) minP.value = 0;
+        if (maxP) maxP.value = 100000;
+        var rAll = document.querySelector('input[name="rating_filter"][value="0"]');
+        if (rAll) rAll.checked = true;
+
+        activePillFilters = {
+            condition: 'all',
+            compat: 'all',
+            brand: 'all',
+            storage: 'all',
+            sort: 'popularity'
+        };
+
+        document.querySelectorAll('.gm-pill-btn').forEach(function(b) { b.classList.remove('active'); });
+        var sortLabel = document.getElementById('gmSortLabel');
+        if (sortLabel) sortLabel.textContent = 'Sort by : Popularity';
+
+        gmRunFilters();
+    }
+</script>
