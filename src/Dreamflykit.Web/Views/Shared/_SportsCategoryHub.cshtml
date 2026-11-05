@@ -1,0 +1,1355 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.SportsHub ?? Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefault();
+    var hero = hub.HeroBanner ?? new Dreamflykit.Application.SportsHub.Models.SportsHeroBannerDto();
+    var shopCategory = hub.ShopByCategory ?? new Dreamflykit.Application.SportsHub.Models.SportsShopByCategorySectionDto();
+    var topPicks = hub.TopPicks ?? new Dreamflykit.Application.SportsHub.Models.SportsTopPicksSectionDto();
+    var trustBadges = hub.TrustBadges ?? new Dreamflykit.Application.SportsHub.Models.SportsTrustBadgesSectionDto();
+    var bottomBanner = hub.BottomBanner ?? new Dreamflykit.Application.SportsHub.Models.SportsBottomBannerDto();
+    var festivalTheme = hub.FestivalTheme ?? new Dreamflykit.Application.SportsHub.Models.SportsFestivalThemeDto();
+
+    var slides = hero.Slides?.Where(s => s.IsActive).OrderBy(s => s.DisplayOrder).ToList() ?? new();
+    if (slides.Count == 0)
+    {
+        slides = Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefault().HeroBanner.Slides;
+    }
+
+    var categoryItems = shopCategory.Items?.Where(i => i.IsActive).OrderBy(i => i.DisplayOrder).ToList() ?? new();
+    if (categoryItems.Count == 0)
+    {
+        categoryItems = Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefaultCategoryItems();
+    }
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="sp-hub-container">
+
+    <!-- ========================================================
+         FESTIVAL / CAMPAIGN BANNER RIBBON
+    ========================================================= -->
+    @if (festivalTheme.IsEnabled && !string.IsNullOrWhiteSpace(festivalTheme.AnnouncementText))
+    {
+        <div class="sp-campaign-ribbon" style="background: @(!string.IsNullOrWhiteSpace(festivalTheme.BgGradient) ? festivalTheme.BgGradient : "linear-gradient(135deg, #059669 0%, #0d9488 50%, #0284c7 100%)");">
+            <div class="sp-ribbon-shell">
+                <span class="sp-ribbon-badge">@festivalTheme.BadgeText</span>
+                <span class="sp-ribbon-text">@festivalTheme.AnnouncementText</span>
+                @if (!string.IsNullOrWhiteSpace(festivalTheme.BannerHighlight))
+                {
+                    <span class="sp-ribbon-highlight">@festivalTheme.BannerHighlight</span>
+                }
+                @if (canManage)
+                {
+                    <a href="/Admin/SportsHub" class="sp-ribbon-admin-btn" title="Edit in Admin">⚙ Admin Settings</a>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- ========================================================
+         HERO BANNER: FULL WIDTH SLIDER
+    ========================================================= -->
+    @if (hero.IsEnabled && slides.Count > 0)
+    {
+        <section class="sp-hero-section" aria-label="Sports Hub Hero Banner">
+            <div class="sp-hero-slider-wrap" id="spHeroSlider" data-autoplay="@(hero.AutoPlay.ToString().ToLower())" data-interval="@(hero.SlideIntervalSeconds * 1000)">
+                <div class="sp-hero-slides">
+                    @for (int i = 0; i < slides.Count; i++)
+                    {
+                        var slide = slides[i];
+                        var hasImage = !string.IsNullOrWhiteSpace(slide.ImageUrl) && !slide.ImageUrl.Contains("placeholder") && !slide.IsUploadingSoon;
+                        <div class="sp-hero-slide @(i == 0 ? "active" : "")" data-slide-index="@i">
+                            <div class="sp-hero-content-shell">
+                                <div class="sp-hero-text-col">
+                                    @if (!string.IsNullOrWhiteSpace(slide.BadgeText))
+                                    {
+                                        <div class="sp-hero-badge">
+                                            <span class="sp-badge-sparkle">🏆</span>
+                                            <span>@slide.BadgeText</span>
+                                        </div>
+                                    }
+                                    <h1 class="sp-hero-title">
+                                        @slide.Title
+                                        @if (!string.IsNullOrWhiteSpace(slide.TitleHighlight))
+                                        {
+                                            <span class="sp-title-gradient">@slide.TitleHighlight</span>
+                                        }
+                                    </h1>
+                                    @if (!string.IsNullOrWhiteSpace(slide.Subtitle))
+                                    {
+                                        <p class="sp-hero-desc">@slide.Subtitle</p>
+                                    }
+
+                                    <div class="sp-hero-actions">
+                                        <a href="@(string.IsNullOrWhiteSpace(slide.TargetUrl) ? "/category/sports-hub/cricket" : slide.TargetUrl)" class="sp-hero-btn-primary">
+                                            <span>@(!string.IsNullOrWhiteSpace(slide.ButtonText) ? slide.ButtonText : "Explore Gear")</span>
+                                            <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                                        </a>
+                                        <a href="#sp-shop-by-category" class="sp-hero-btn-secondary">
+                                            <span>Shop All 12 Categories</span>
+                                        </a>
+                                    </div>
+
+                                    <div class="sp-hero-guarantees">
+                                        <div class="sp-guarantee-item">
+                                            <svg viewBox="0 0 20 20" width="15" height="15" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                            <span>100% Tournament Spec</span>
+                                        </div>
+                                        <div class="sp-guarantee-item">
+                                            <svg viewBox="0 0 20 20" width="15" height="15" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/></svg>
+                                            <span>Campus Fast Delivery</span>
+                                        </div>
+                                        <div class="sp-guarantee-item">
+                                            <svg viewBox="0 0 20 20" width="15" height="15" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                            <span>Free Size Exchange</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="sp-hero-media-col">
+                                    @if (hasImage)
+                                    {
+                                        <div class="sp-hero-image-box">
+                                            <img src="@slide.ImageUrl" alt="@slide.Title" class="sp-hero-img" loading="lazy" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="sp-hero-uploading-card">
+                                            <div class="sp-radar-container">
+                                                <div class="sp-radar-ping"></div>
+                                                <div class="sp-radar-ring sp-ring-1"></div>
+                                                <div class="sp-radar-ring sp-ring-2"></div>
+                                                <div class="sp-radar-ring sp-ring-3"></div>
+                                                <span class="sp-hero-icon-large">⚽</span>
+                                            </div>
+                                            <div class="sp-uploading-tag">
+                                                <span class="sp-pulsing-dot">●</span>
+                                                <span>UPLOADING SOON</span>
+                                            </div>
+                                            <p class="sp-uploading-sub">Images will be uploaded by admin</p>
+                                            <span class="sp-hero-preview-badge">SPORTS HUB TOURNAMENT SPEC</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Slider Controls -->
+                @if (slides.Count > 1)
+                {
+                    <button type="button" class="sp-slider-arrow sp-arrow-prev" aria-label="Previous slide" onclick="spPrevSlide()">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <button type="button" class="sp-slider-arrow sp-arrow-next" aria-label="Next slide" onclick="spNextSlide()">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+
+                    <div class="sp-slider-dots">
+                        @for (int d = 0; d < slides.Count; d++)
+                        {
+                            <button type="button" class="sp-slider-dot @(d == 0 ? "active" : "")" data-dot-index="@d" onclick="spGoToSlide(@d)" aria-label="Go to slide @(d + 1)"></button>
+                        }
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         SHOP BY CATEGORY: 12 ATHLETIC CATEGORIES
+    ========================================================= -->
+    @if (shopCategory.IsEnabled && categoryItems.Count > 0)
+    {
+        <section class="sp-categories-section dk-shell" id="sp-shop-by-category">
+            <div class="sp-section-header">
+                <div class="sp-header-left">
+                    <span class="sp-section-badge">VERIFIED TOURNAMENT & FITNESS KITS</span>
+                    <h2 class="sp-section-title">@shopCategory.Title</h2>
+                    <p class="sp-section-desc">@shopCategory.Subtitle</p>
+                </div>
+                <div class="sp-header-right">
+                    <span class="sp-category-count">@categoryItems.Count Categories Available</span>
+                    @if (canManage)
+                    {
+                        <a href="/Admin/SportsHub" class="sp-admin-chip" title="Edit in Admin Dashboard">
+                            ⚙ Manage Categories
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <div class="sp-categories-grid">
+                @foreach (var item in categoryItems)
+                {
+                    var itemHasImage = !string.IsNullOrWhiteSpace(item.ImageUrl) && !item.ImageUrl.Contains("placeholder") && !item.IsUploadingSoon;
+                    var itemUrl = $"/category/sports-hub/{item.Slug}";
+                    <a href="@itemUrl" class="sp-cat-card" title="Browse @item.Name">
+                        <div class="sp-cat-media">
+                            @if (itemHasImage)
+                            {
+                                <img src="@item.ImageUrl" alt="@item.Name" class="sp-cat-img" loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="sp-cat-uploading-box">
+                                    <span class="sp-cat-emoji">@item.IconEmoji</span>
+                                    <div class="sp-cat-uploading-tag">
+                                        <span class="sp-mini-dot">●</span> Uploading Soon
+                                    </div>
+                                </div>
+                            }
+                            <span class="sp-cat-arrow-pill">
+                                <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                            </span>
+                        </div>
+                        <div class="sp-cat-info">
+                            <h3 class="sp-cat-title">@item.Name</h3>
+                            @if (!string.IsNullOrWhiteSpace(item.Subtitle))
+                            {
+                                <p class="sp-cat-sub">@item.Subtitle</p>
+                            }
+                        </div>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         3-SECTION SYNCHRONIZED SLIDES (DIRECTLY BELOW CATEGORIES)
+    ========================================================= -->
+    <section class="sp-three-section-slider-wrap" aria-label="Sports Gear Multi-Section Carousel">
+        <div class="sp-section-header dk-shell" style="margin-bottom: 12px;">
+            <div class="sp-header-left">
+                <span class="sp-section-badge">SYNCHRONIZED SHOWCASE</span>
+                <h2 class="sp-section-title">Spotlight Match Gear & Training Rigs</h2>
+                <p class="sp-section-desc">Curated tournament bats, match balls, rackets, and fitness essentials rotating simultaneously</p>
+            </div>
+            @if (canManage)
+            {
+                <a href="/Admin/CategorySliders?category=sports-hub" class="sp-admin-chip" title="Manage Slider in Admin">
+                    ⚙ Manage 3-Section Slider
+                </a>
+            }
+        </div>
+        <partial name="_CategoryThreeSectionSlider" model='"sports-hub"' />
+    </section>
+
+    <!-- ========================================================
+         TOP PICKS & TOURNAMENT DEALS
+    ========================================================= -->
+    @if (topPicks.IsEnabled && topPicks.Products?.Count > 0)
+    {
+        <section class="sp-top-picks-section dk-shell">
+            <div class="sp-section-header">
+                <div class="sp-header-left">
+                    <span class="sp-section-badge">BESTSELLERS OF THE SEASON</span>
+                    <h2 class="sp-section-title">@topPicks.Title</h2>
+                    <p class="sp-section-desc">@topPicks.Subtitle</p>
+                </div>
+                <div class="sp-header-right">
+                    <span class="sp-top-count">@topPicks.Products.Count Top Rated Gear</span>
+                </div>
+            </div>
+
+            <div class="sp-products-grid">
+                @foreach (var prod in topPicks.Products)
+                {
+                    var prodHasImg = !string.IsNullOrWhiteSpace(prod.ImageUrl) && !prod.ImageUrl.Contains("placeholder") && !prod.IsUploadingSoon;
+                    var origPrice = prod.OriginalPrice ?? prod.Price;
+                    var discountPct = origPrice > prod.Price
+                        ? (int)Math.Round(((origPrice - prod.Price) / origPrice) * 100)
+                        : 0;
+
+                    <div class="sp-prod-card" data-product-id="@prod.Id">
+                        <div class="sp-prod-media">
+                            @if (!string.IsNullOrWhiteSpace(prod.Badge))
+                            {
+                                <span class="sp-prod-badge">@prod.Badge</span>
+                            }
+                            @if (prodHasImg)
+                            {
+                                <img src="@prod.ImageUrl" alt="@prod.Name" class="sp-prod-img" loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="sp-prod-uploading-frame">
+                                    <div class="sp-radar-mini">
+                                        <div class="sp-radar-ping"></div>
+                                        <span class="sp-prod-emoji">🏅</span>
+                                    </div>
+                                    <span class="sp-prod-uploading-text">Uploading Soon</span>
+                                    <span class="sp-prod-uploading-sub">Admin will upload image</span>
+                                </div>
+                            }
+                            @if (discountPct > 0)
+                            {
+                                <span class="sp-discount-pill">-@discountPct%</span>
+                            }
+                        </div>
+
+                        <div class="sp-prod-details">
+                            <span class="sp-prod-cat-tag">@prod.CategoryName</span>
+                            <h3 class="sp-prod-name">@prod.Name</h3>
+
+                            <div class="sp-prod-rating">
+                                <div class="sp-stars">★★★★★</div>
+                                <span class="sp-rating-num">@prod.Rating.ToString("0.0")</span>
+                                <span class="sp-rating-count">(@prod.ReviewsCount)</span>
+                            </div>
+
+                            <div class="sp-prod-pricing">
+                                <span class="sp-price-current">₹@prod.Price.ToString("N0")</span>
+                                @if (origPrice > prod.Price)
+                                {
+                                    <span class="sp-price-orig">₹@origPrice.ToString("N0")</span>
+                                }
+                            </div>
+
+                            @if (prod.Sizes != null && prod.Sizes.Count > 0)
+                            {
+                                <div class="sp-size-pills">
+                                    @foreach (var size in prod.Sizes.Take(3))
+                                    {
+                                        <span class="sp-size-chip">@size</span>
+                                    }
+                                    @if (prod.Sizes.Count > 3)
+                                    {
+                                        <span class="sp-size-more">+@(prod.Sizes.Count - 3)</span>
+                                    }
+                                </div>
+                            }
+
+                            <div class="sp-prod-actions">
+                                <button type="button" class="sp-btn-add-cart" onclick="spAddToCart('@prod.Id', '@prod.Name', @prod.Price, this)">
+                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.24-1.2A1 1 0 005.06 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+                                    <span>Add to Cart</span>
+                                </button>
+                                <a href="/category/sports-hub/@prod.CategorySlug" class="sp-btn-view-cat" title="View in @prod.CategoryName">
+                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         TRUST BADGES
+    ========================================================= -->
+    @if (trustBadges.IsEnabled && trustBadges.Badges?.Count > 0)
+    {
+        <section class="sp-trust-section dk-shell">
+            <div class="sp-trust-grid">
+                @foreach (var badge in trustBadges.Badges)
+                {
+                    <div class="sp-trust-card">
+                        <span class="sp-trust-emoji">@badge.IconEmoji</span>
+                        <div class="sp-trust-info">
+                            <h4 class="sp-trust-title">@badge.Title</h4>
+                            <p class="sp-trust-desc">@badge.Description</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ========================================================
+         BOTTOM BANNER
+    ========================================================= -->
+    @if (bottomBanner.IsEnabled && !string.IsNullOrWhiteSpace(bottomBanner.Title))
+    {
+        <section class="sp-bottom-banner dk-shell">
+            <div class="sp-bottom-shell">
+                <div class="sp-bottom-text">
+                    <span class="sp-bottom-tag">CAMPUS SPORTS PASS</span>
+                    <h2 class="sp-bottom-title">@bottomBanner.Title</h2>
+                    <p class="sp-bottom-desc">@bottomBanner.Subtitle</p>
+                </div>
+                <div class="sp-bottom-cta">
+                    <a href="@(string.IsNullOrWhiteSpace(bottomBanner.TargetUrl) ? "/category/sports-hub/cricket" : bottomBanner.TargetUrl)" class="sp-bottom-btn">
+                        <span>@(!string.IsNullOrWhiteSpace(bottomBanner.ButtonText) ? bottomBanner.ButtonText : "Claim Student Kit Offer")</span>
+                        <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+    }
+
+</div>
+
+<!-- ========================================================
+     CSS STYLING FOR SPORTS HUB CATEGORY VIEW
+========================================================= -->
+<style>
+    .sp-hub-container {
+        width: 100%;
+        background: #f8fafc;
+        padding-bottom: 50px;
+        color: #0f172a;
+        font-family: inherit;
+    }
+
+    /* Campaign Ribbon */
+    .sp-campaign-ribbon {
+        width: 100%;
+        padding: 10px 16px;
+        color: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    .sp-ribbon-shell {
+        max-width: 1320px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-size: 13.5px;
+    }
+    .sp-ribbon-badge {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(4px);
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+    .sp-ribbon-text {
+        font-weight: 500;
+    }
+    .sp-ribbon-highlight {
+        background: #fef08a;
+        color: #854d0e;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 12px;
+    }
+    .sp-ribbon-admin-btn {
+        background: rgba(0, 0, 0, 0.2);
+        color: #fff;
+        padding: 2px 10px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 8px;
+    }
+    .sp-ribbon-admin-btn:hover {
+        background: rgba(0, 0, 0, 0.4);
+    }
+
+    /* Hero Slider */
+    .sp-hero-section {
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        background: #0f172a;
+    }
+    .sp-hero-slider-wrap {
+        position: relative;
+        width: 100%;
+        min-height: 440px;
+    }
+    .sp-hero-slides {
+        position: relative;
+        width: 100%;
+        min-height: 440px;
+    }
+    .sp-hero-slide {
+        display: none;
+        width: 100%;
+        min-height: 440px;
+        background: linear-gradient(135deg, #064e3b 0%, #065f46 40%, #047857 70%, #0f172a 100%);
+        color: #ffffff;
+        opacity: 0;
+        transition: opacity 0.6s ease-in-out;
+    }
+    .sp-hero-slide.active {
+        display: block;
+        opacity: 1;
+    }
+    .sp-hero-content-shell {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 48px 24px;
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 36px;
+        align-items: center;
+        min-height: 440px;
+    }
+
+    .sp-hero-text-col {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .sp-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(16, 185, 129, 0.2);
+        border: 1px solid rgba(52, 211, 153, 0.4);
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        color: #6ee7b7;
+        width: fit-content;
+    }
+    .sp-hero-title {
+        font-size: 38px;
+        line-height: 1.2;
+        font-weight: 800;
+        color: #ffffff;
+        margin: 0;
+    }
+    .sp-title-gradient {
+        background: linear-gradient(135deg, #34d399 0%, #38bdf8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: block;
+    }
+    .sp-hero-desc {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #cbd5e1;
+        margin: 0;
+        max-width: 580px;
+    }
+
+    .sp-hero-actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+    }
+    .sp-hero-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #10b981;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 14px;
+        padding: 12px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+        transition: all 0.2s ease;
+    }
+    .sp-hero-btn-primary:hover {
+        background: #059669;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    }
+    .sp-hero-btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 12px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .sp-hero-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .sp-hero-guarantees {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+    .sp-guarantee-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12.5px;
+        color: #94a3b8;
+    }
+    .sp-guarantee-item svg {
+        color: #34d399;
+    }
+
+    /* Hero Media Column */
+    .sp-hero-media-col {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .sp-hero-image-box {
+        width: 100%;
+        max-height: 380px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+    .sp-hero-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Radar Uploading Soon Card */
+    .sp-hero-uploading-card {
+        width: 100%;
+        max-width: 440px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px dashed rgba(52, 211, 153, 0.4);
+        border-radius: 24px;
+        padding: 36px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+    }
+    .sp-radar-container {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+    .sp-radar-ring {
+        position: absolute;
+        border-radius: 50%;
+        border: 1.5px solid rgba(52, 211, 153, 0.3);
+        animation: spRadarPulse 3s infinite ease-out;
+    }
+    .sp-ring-1 { width: 50px; height: 50px; animation-delay: 0s; }
+    .sp-ring-2 { width: 85px; height: 85px; animation-delay: 1s; }
+    .sp-ring-3 { width: 120px; height: 120px; animation-delay: 2s; }
+    @@keyframes spRadarPulse {
+        0% { transform: scale(0.6); opacity: 0.8; }
+        100% { transform: scale(1.3); opacity: 0; }
+    }
+    .sp-hero-icon-large {
+        font-size: 50px;
+        z-index: 2;
+        filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+    }
+    .sp-uploading-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #10b981;
+        color: #ffffff;
+        font-size: 11.5px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        padding: 4px 14px;
+        border-radius: 999px;
+        margin-bottom: 8px;
+    }
+    .sp-pulsing-dot {
+        animation: spDotBlink 1.5s infinite;
+    }
+    @@keyframes spDotBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+    .sp-uploading-sub {
+        font-size: 13px;
+        color: #94a3b8;
+        margin: 0 0 12px 0;
+    }
+    .sp-hero-preview-badge {
+        font-size: 10.5px;
+        letter-spacing: 0.6px;
+        color: #6ee7b7;
+        background: rgba(16, 185, 129, 0.15);
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-weight: 700;
+    }
+
+    /* Slider Arrows & Dots */
+    .sp-slider-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.2s ease;
+    }
+    .sp-arrow-prev { left: 24px; }
+    .sp-arrow-next { right: 24px; }
+    .sp-slider-arrow:hover {
+        background: #10b981;
+        border-color: #10b981;
+        transform: translateY(-50%) scale(1.08);
+    }
+    .sp-slider-dots {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+        z-index: 10;
+    }
+    .sp-slider-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.3);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 0;
+    }
+    .sp-slider-dot.active {
+        width: 28px;
+        background: #10b981;
+    }
+
+    /* Section Headers */
+    .sp-section-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    .sp-section-badge {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        color: #059669;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+    }
+    .sp-section-title {
+        font-size: 26px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
+        line-height: 1.25;
+    }
+    .sp-section-desc {
+        font-size: 14px;
+        color: #64748b;
+        margin: 4px 0 0 0;
+    }
+    .sp-category-count, .sp-top-count {
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 600;
+        background: #e2e8f0;
+        padding: 4px 12px;
+        border-radius: 999px;
+    }
+    .sp-admin-chip {
+        display: inline-flex;
+        align-items: center;
+        background: #0f172a;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        margin-left: 8px;
+        transition: background 0.2s ease;
+    }
+    .sp-admin-chip:hover {
+        background: #059669;
+    }
+
+    /* Shop by Category Section */
+    .sp-categories-section {
+        padding: 40px 16px 20px 16px;
+        max-width: 1320px;
+        margin: 0 auto;
+    }
+    .sp-categories-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 16px;
+    }
+    @@media (max-width: 1200px) {
+        .sp-categories-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @@media (max-width: 768px) {
+        .sp-categories-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @@media (max-width: 480px) {
+        .sp-categories-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .sp-cat-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.25s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+    .sp-cat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 24px rgba(16, 185, 129, 0.15);
+        border-color: #10b981;
+    }
+    .sp-cat-media {
+        position: relative;
+        width: 100%;
+        height: 140px;
+        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .sp-cat-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .sp-cat-uploading-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    .sp-cat-emoji {
+        font-size: 38px;
+        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.1));
+    }
+    .sp-cat-uploading-tag {
+        font-size: 10px;
+        font-weight: 700;
+        color: #059669;
+        background: #d1fae5;
+        padding: 2px 8px;
+        border-radius: 999px;
+        letter-spacing: 0.4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .sp-mini-dot {
+        font-size: 8px;
+        color: #059669;
+    }
+    .sp-cat-arrow-pill {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #059669;
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.2s ease;
+    }
+    .sp-cat-card:hover .sp-cat-arrow-pill {
+        opacity: 1;
+        transform: scale(1);
+    }
+    .sp-cat-info {
+        padding: 12px;
+        text-align: center;
+    }
+    .sp-cat-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+        line-height: 1.3;
+    }
+    .sp-cat-sub {
+        font-size: 11px;
+        color: #64748b;
+        margin: 4px 0 0 0;
+    }
+
+    /* 3-Section Slider Container */
+    .sp-three-section-slider-wrap {
+        width: 100%;
+        padding: 30px 0;
+        background: #f1f5f9;
+        margin-top: 24px;
+    }
+
+    /* Top Picks Section */
+    .sp-top-picks-section {
+        padding: 40px 16px 20px 16px;
+        max-width: 1320px;
+        margin: 0 auto;
+    }
+    .sp-products-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    @@media (max-width: 992px) {
+        .sp-products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @@media (max-width: 580px) {
+        .sp-products-grid { grid-template-columns: 1fr; }
+    }
+
+    .sp-prod-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.25s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .sp-prod-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(16, 185, 129, 0.15);
+        border-color: #34d399;
+    }
+    .sp-prod-media {
+        position: relative;
+        width: 100%;
+        min-height: 240px;
+        aspect-ratio: 4/3;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .sp-prod-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .sp-prod-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #0f172a;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 6px;
+        z-index: 2;
+    }
+    .sp-discount-pill {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 4px 8px;
+        border-radius: 6px;
+        z-index: 2;
+    }
+    .sp-prod-uploading-frame {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 6px;
+        padding: 16px;
+    }
+    .sp-radar-mini {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 4px;
+    }
+    .sp-prod-emoji {
+        font-size: 32px;
+    }
+    .sp-prod-uploading-text {
+        font-size: 12px;
+        font-weight: 700;
+        color: #059669;
+        background: #d1fae5;
+        padding: 2px 10px;
+        border-radius: 999px;
+    }
+    .sp-prod-uploading-sub {
+        font-size: 11px;
+        color: #94a3b8;
+    }
+
+    .sp-prod-details {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .sp-prod-cat-tag {
+        font-size: 11px;
+        font-weight: 700;
+        color: #059669;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+    .sp-prod-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+        line-height: 1.35;
+    }
+    .sp-prod-rating {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+    .sp-stars {
+        color: #f59e0b;
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+    .sp-rating-num {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .sp-rating-count {
+        font-size: 12px;
+        color: #94a3b8;
+    }
+    .sp-prod-pricing {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .sp-price-current {
+        font-size: 18px;
+        font-weight: 800;
+        color: #059669;
+    }
+    .sp-price-orig {
+        font-size: 13px;
+        color: #94a3b8;
+        text-decoration: line-through;
+    }
+    .sp-size-pills {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+    .sp-size-chip {
+        font-size: 11px;
+        font-weight: 600;
+        background: #f1f5f9;
+        color: #475569;
+        padding: 3px 8px;
+        border-radius: 6px;
+    }
+    .sp-size-more {
+        font-size: 11px;
+        color: #94a3b8;
+        padding: 3px 6px;
+    }
+
+    .sp-prod-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+    }
+    .sp-btn-add-cart {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: #0f172a;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .sp-btn-add-cart:hover {
+        background: #10b981;
+    }
+    .sp-btn-view-cat {
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        color: #475569;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .sp-btn-view-cat:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    /* Trust Section */
+    .sp-trust-section {
+        padding: 30px 16px;
+        max-width: 1320px;
+        margin: 0 auto;
+    }
+    .sp-trust-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+    @@media (max-width: 992px) {
+        .sp-trust-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @@media (max-width: 480px) {
+        .sp-trust-grid { grid-template-columns: 1fr; }
+    }
+    .sp-trust-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    .sp-trust-emoji {
+        font-size: 32px;
+    }
+    .sp-trust-info {
+        display: flex;
+        flex-direction: column;
+    }
+    .sp-trust-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 2px 0;
+    }
+    .sp-trust-desc {
+        font-size: 12px;
+        color: #64748b;
+        margin: 0;
+    }
+
+    /* Bottom Banner */
+    .sp-bottom-banner {
+        padding: 20px 16px 40px 16px;
+        max-width: 1320px;
+        margin: 0 auto;
+    }
+    .sp-bottom-shell {
+        background: linear-gradient(135deg, #064e3b 0%, #065f46 60%, #047857 100%);
+        border-radius: 20px;
+        padding: 36px 32px;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        flex-wrap: wrap;
+        box-shadow: 0 16px 36px rgba(6, 78, 59, 0.25);
+    }
+    .sp-bottom-text {
+        max-width: 650px;
+    }
+    .sp-bottom-tag {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: #6ee7b7;
+        background: rgba(16, 185, 129, 0.25);
+        padding: 4px 10px;
+        border-radius: 6px;
+        display: inline-block;
+        margin-bottom: 8px;
+    }
+    .sp-bottom-title {
+        font-size: 26px;
+        font-weight: 800;
+        margin: 0 0 8px 0;
+    }
+    .sp-bottom-desc {
+        font-size: 14px;
+        color: #cbd5e1;
+        margin: 0;
+    }
+    .sp-bottom-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #ffffff;
+        color: #064e3b;
+        font-weight: 800;
+        font-size: 14px;
+        padding: 12px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .sp-bottom-btn:hover {
+        background: #f0fdf4;
+        transform: translateY(-2px);
+    }
+</style>
+
+<!-- Slider & Add to Cart JavaScript -->
+<script>
+    (function () {
+        var slider = document.getElementById('spHeroSlider');
+        if (!slider) return;
+
+        var slides = slider.querySelectorAll('.sp-hero-slide');
+        var dots = slider.querySelectorAll('.sp-slider-dot');
+        var autoplay = slider.getAttribute('data-autoplay') === 'true';
+        var intervalMs = parseInt(slider.getAttribute('data-interval') || '5000', 10);
+        var currentIndex = 0;
+        var timer = null;
+
+        function showSlide(index) {
+            if (slides.length <= 1) return;
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
+            currentIndex = index;
+
+            slides.forEach(function (s, i) {
+                if (i === currentIndex) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+
+            dots.forEach(function (d, i) {
+                if (i === currentIndex) {
+                    d.classList.add('active');
+                } else {
+                    d.classList.remove('active');
+                }
+            });
+        }
+
+        window.spPrevSlide = function () {
+            showSlide(currentIndex - 1);
+            resetAutoplay();
+        };
+
+        window.spNextSlide = function () {
+            showSlide(currentIndex + 1);
+            resetAutoplay();
+        };
+
+        window.spGoToSlide = function (i) {
+            showSlide(i);
+            resetAutoplay();
+        };
+
+        function startAutoplay() {
+            if (!autoplay || slides.length <= 1) return;
+            timer = setInterval(function () {
+                showSlide(currentIndex + 1);
+            }, intervalMs);
+        }
+
+        function resetAutoplay() {
+            if (timer) clearInterval(timer);
+            startAutoplay();
+        }
+
+        slider.addEventListener('mouseenter', function () {
+            if (timer) clearInterval(timer);
+        });
+
+        slider.addEventListener('mouseleave', function () {
+            startAutoplay();
+        });
+
+        startAutoplay();
+    })();
+
+    window.spAddToCart = function (productId, productName, price, btnEl) {
+        if (!btnEl) return;
+        var origText = btnEl.innerHTML;
+        btnEl.disabled = true;
+        btnEl.innerHTML = '<span>Adding...</span>';
+
+        fetch('/cart/add-ajax', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ productId: productId, quantity: 1 })
+        }).catch(function () {}).finally(function () {
+            btnEl.innerHTML = '<span>✓ Added!</span>';
+            btnEl.style.background = '#10b981';
+
+            // Increment header cart counter if present
+            var badge = document.querySelector('.dk-header-cart-count, .cart-count, [data-cart-count]');
+            if (badge) {
+                var c = parseInt(badge.textContent || '0', 10);
+                badge.textContent = c + 1;
+            }
+
+            setTimeout(function () {
+                btnEl.disabled = false;
+                btnEl.innerHTML = origText;
+                btnEl.style.background = '';
+            }, 1800);
+        });
+    };
+</script>

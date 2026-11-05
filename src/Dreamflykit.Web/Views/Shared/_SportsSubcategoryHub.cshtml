@@ -1,0 +1,1523 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.SportsHub ?? Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefault();
+    var subPage = Model.SportsSubcategoryPage;
+    var currentSlug = (Model.CurrentSubcategorySlug ?? "").Trim().ToLowerInvariant();
+
+    if (subPage == null)
+    {
+        subPage = hub.SubcategoryPages?.FirstOrDefault(p =>
+            string.Equals(p.CategorySlug, currentSlug, StringComparison.OrdinalIgnoreCase));
+    }
+
+    if (subPage == null)
+    {
+        var matchedItem = hub.ShopByCategory?.Items?.FirstOrDefault(i =>
+            string.Equals(i.Slug, currentSlug, StringComparison.OrdinalIgnoreCase));
+
+        var catName = matchedItem?.Name ?? (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName)
+            ? Model.CurrentSubcategoryName
+            : (string.IsNullOrWhiteSpace(currentSlug) ? "Sports Gear" : currentSlug.Replace("-", " ")));
+
+        subPage = new Dreamflykit.Application.SportsHub.Models.SportsSubcategoryPageDto
+        {
+            CategorySlug = currentSlug,
+            CategoryName = catName,
+            IconEmoji = matchedItem?.IconEmoji ?? "🏅",
+            HeroBanner = new Dreamflykit.Application.SportsHub.Models.SportsSubcategoryHeroDto
+            {
+                Title = catName,
+                TitleHighlight = "100% GENUINE • TOURNAMENT SPEC",
+                Subtitle = $"Explore top-rated {catName} match kits, tournament-grade equipment & student athletic supplies with express campus delivery.",
+                IsUploadingSoon = true
+            },
+            Products = Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefaultSubcategoryPages().FirstOrDefault()?.Products
+                       ?? new List<Dreamflykit.Application.SportsHub.Models.SportsProductItemDto>()
+        };
+    }
+
+    var hero = subPage.HeroBanner ?? new Dreamflykit.Application.SportsHub.Models.SportsSubcategoryHeroDto();
+    var products = subPage.Products ?? new List<Dreamflykit.Application.SportsHub.Models.SportsProductItemDto>();
+    var allCategories = hub.ShopByCategory?.Items?.Where(i => i.IsActive).OrderBy(i => i.DisplayOrder).ToList()
+                        ?? Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefaultCategoryItems();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="sp-subpage-container dk-shell">
+
+    <!-- ========================================================
+         SUBCATEGORY HERO BANNER (FULL WIDTH)
+    ========================================================= -->
+    <section class="sp-sub-hero-card" aria-label="@subPage.CategoryName Banner">
+        <div class="sp-sub-hero-glow"></div>
+        <div class="sp-sub-hero-body">
+            <div class="sp-sub-hero-content">
+                <nav class="sp-sub-hero-breadcrumb" aria-label="Sports breadcrumb">
+                    <a href="/category/sports-hub">Sports Hub</a>
+                    <span class="sp-sub-sep">/</span>
+                    <span class="sp-sub-crumb-active">@subPage.CategoryName</span>
+                </nav>
+
+                @if (!string.IsNullOrWhiteSpace(hero.TitleHighlight))
+                {
+                    <div class="sp-sub-hero-badge">
+                        <span class="sp-badge-dot">●</span>
+                        <span>@hero.TitleHighlight</span>
+                    </div>
+                }
+
+                <h1 class="sp-sub-hero-title">@subPage.CategoryName</h1>
+                <p class="sp-sub-hero-desc">
+                    @(string.IsNullOrWhiteSpace(hero.Subtitle)
+                        ? $"Discover verified university match equipment, tournament sets, and high-performance training gear for {subPage.CategoryName}."
+                        : hero.Subtitle)
+                </p>
+
+                <div class="sp-sub-hero-chips">
+                    <span class="sp-hero-chip">✓ Tournament Quality</span>
+                    <span class="sp-hero-chip">✓ Fast Campus Delivery</span>
+                    <span class="sp-hero-chip">✓ Free Size Replacement</span>
+                    @if (canManage)
+                    {
+                        <a href="/Admin/SportsHub" class="sp-sub-admin-link">⚙ Edit in Admin Dashboard</a>
+                    }
+                </div>
+            </div>
+
+            <div class="sp-sub-hero-media">
+                @if (!string.IsNullOrWhiteSpace(hero.ImageUrl) && !hero.ImageUrl.Contains("placeholder") && !hero.IsUploadingSoon)
+                {
+                    <div class="sp-sub-banner-img-wrap">
+                        <img src="@hero.ImageUrl" alt="@subPage.CategoryName" class="sp-sub-banner-img" />
+                    </div>
+                }
+                else
+                {
+                    <div class="sp-sub-hero-uploading">
+                        <div class="sp-sub-uploading-radar">
+                            <span class="sp-sub-radar-ring"></span>
+                            <span class="sp-sub-emoji">@subPage.IconEmoji</span>
+                        </div>
+                        <div class="sp-sub-uploading-pill">
+                            <span class="sp-mini-dot">●</span> Uploading Soon
+                        </div>
+                        <p class="sp-sub-uploading-text">Admin will upload banner image</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         TOP QUICK FILTER PILLS & SORTING BAR
+    ========================================================= -->
+    <div class="sp-quick-filters-bar">
+        <div class="sp-filter-pills-left">
+            <!-- Brand Dropdown Pill -->
+            <div class="sp-dropdown-pill" data-filter-group="brand">
+                <button type="button" class="sp-pill-btn" onclick="spToggleDropdown(this)">
+                    <span>Brand</span>
+                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </button>
+                <div class="sp-pill-dropdown-menu">
+                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="all" checked onchange="spApplyPillFilter('brand', 'all', this)"> All Brands</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Yonex" onchange="spApplyPillFilter('brand', 'Yonex', this)"> Yonex</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Nike" onchange="spApplyPillFilter('brand', 'Nike', this)"> Nike</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Adidas" onchange="spApplyPillFilter('brand', 'Adidas', this)"> Adidas</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Nivia" onchange="spApplyPillFilter('brand', 'Nivia', this)"> Nivia</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Cosco" onchange="spApplyPillFilter('brand', 'Cosco', this)"> Cosco</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Puma" onchange="spApplyPillFilter('brand', 'Puma', this)"> Puma</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Wilson" onchange="spApplyPillFilter('brand', 'Wilson', this)"> Wilson</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Decathlon" onchange="spApplyPillFilter('brand', 'Decathlon', this)"> Decathlon</label>
+                </div>
+            </div>
+
+            <!-- Price Dropdown Pill -->
+            <div class="sp-dropdown-pill" data-filter-group="price">
+                <button type="button" class="sp-pill-btn" onclick="spToggleDropdown(this)">
+                    <span>Price</span>
+                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </button>
+                <div class="sp-pill-dropdown-menu">
+                    <label class="sp-pill-option"><input type="radio" name="pill_price" value="all" checked onchange="spApplyPillFilter('price', 'all', this)"> Any Price</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_price" value="under-1000" onchange="spApplyPillFilter('price', 'under-1000', this)"> Under ₹1,000</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_price" value="1000-2500" onchange="spApplyPillFilter('price', '1000-2500', this)"> ₹1,000 - ₹2,500</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_price" value="2500-5000" onchange="spApplyPillFilter('price', '2500-5000', this)"> ₹2,500 - ₹5,000</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_price" value="above-5000" onchange="spApplyPillFilter('price', 'above-5000', this)"> ₹5,000 & Above</label>
+                </div>
+            </div>
+
+            <!-- Rating Pill -->
+            <div class="sp-dropdown-pill" data-filter-group="rating">
+                <button type="button" class="sp-pill-btn" onclick="spToggleDropdown(this)">
+                    <span>Rating</span>
+                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </button>
+                <div class="sp-pill-dropdown-menu">
+                    <label class="sp-pill-option"><input type="radio" name="pill_rating" value="all" checked onchange="spApplyPillFilter('rating', 'all', this)"> Any Rating</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_rating" value="4.5" onchange="spApplyPillFilter('rating', '4.5', this)"> 4.5★ & Above</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_rating" value="4.0" onchange="spApplyPillFilter('rating', '4.0', this)"> 4.0★ & Above</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="sp-filter-pills-right">
+            <!-- Sort By Dropdown -->
+            <div class="sp-dropdown-pill sp-sort-pill">
+                <button type="button" class="sp-pill-btn" onclick="spToggleDropdown(this)">
+                    <span id="spSortLabel">Sort by : Popularity</span>
+                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                </button>
+                <div class="sp-pill-dropdown-menu sp-menu-right">
+                    <label class="sp-pill-option"><input type="radio" name="pill_sort" value="popularity" checked onchange="spApplySort('popularity', 'Popularity')"> Popularity</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_sort" value="price-asc" onchange="spApplySort('price-asc', 'Price: Low to High')"> Price: Low to High</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_sort" value="price-desc" onchange="spApplySort('price-desc', 'Price: High to Low')"> Price: High to Low</label>
+                    <label class="sp-pill-option"><input type="radio" name="pill_sort" value="rating" onchange="spApplySort('rating', 'Customer Rating')"> Customer Rating</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         2-COLUMN LAYOUT: FILTERS SIDEBAR + PRODUCTS CATALOG
+    ========================================================= -->
+    <div class="sp-sub-layout">
+
+        <!-- LEFT SIDEBAR: ADVANCED FILTERS -->
+        <aside class="sp-sub-sidebar" id="spSubSidebar">
+            <div class="sp-sidebar-header">
+                <h3 class="sp-sidebar-title">
+                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/></svg>
+                    <span>Filters</span>
+                </h3>
+                <button type="button" class="sp-btn-clear-filters" onclick="spResetAllFilters()">Clear All</button>
+            </div>
+
+            <!-- Filter Group: Sports Categories Switcher -->
+            <div class="sp-filter-box">
+                <h4 class="sp-filter-title">Sports Categories</h4>
+                <div class="sp-cat-switcher-list">
+                    @foreach (var cat in allCategories)
+                    {
+                        var isActiveCat = string.Equals(cat.Slug, currentSlug, StringComparison.OrdinalIgnoreCase);
+                        <a href="/category/sports-hub/@cat.Slug" class="sp-cat-switch-item @(isActiveCat ? "active" : "")">
+                            <span class="sp-cat-switch-emoji">@cat.IconEmoji</span>
+                            <span class="sp-cat-switch-name">@cat.Name</span>
+                            @if (isActiveCat)
+                            {
+                                <span class="sp-cat-switch-dot">●</span>
+                            }
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <!-- Filter Group: Brand -->
+            <div class="sp-filter-box">
+                <h4 class="sp-filter-title">Brand</h4>
+                <div class="sp-filter-options-list">
+                    @{
+                        var commonBrands = new[] { "Yonex", "Nike", "Adidas", "Nivia", "Cosco", "Puma", "Wilson", "Decathlon" };
+                    }
+                    @foreach (var brand in commonBrands)
+                    {
+                        <label class="sp-checkbox-label">
+                            <input type="checkbox" class="sp-filter-cb" data-filter="brand" value="@brand" onchange="spTriggerFilter()">
+                            <span class="sp-cb-custom"></span>
+                            <span class="sp-cb-text">@brand</span>
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <!-- Filter Group: Price Range -->
+            <div class="sp-filter-box">
+                <h4 class="sp-filter-title">Price Range</h4>
+                <div class="sp-filter-options-list">
+                    <label class="sp-radio-label">
+                        <input type="radio" name="side_price" value="all" checked onchange="spSetPriceRange(0, 999999)">
+                        <span class="sp-radio-custom"></span>
+                        <span class="sp-cb-text">All Prices</span>
+                    </label>
+                    <label class="sp-radio-label">
+                        <input type="radio" name="side_price" value="under-1000" onchange="spSetPriceRange(0, 1000)">
+                        <span class="sp-radio-custom"></span>
+                        <span class="sp-cb-text">Under ₹1,000</span>
+                    </label>
+                    <label class="sp-radio-label">
+                        <input type="radio" name="side_price" value="1000-2500" onchange="spSetPriceRange(1000, 2500)">
+                        <span class="sp-radio-custom"></span>
+                        <span class="sp-cb-text">₹1,000 - ₹2,500</span>
+                    </label>
+                    <label class="sp-radio-label">
+                        <input type="radio" name="side_price" value="2500-5000" onchange="spSetPriceRange(2500, 5000)">
+                        <span class="sp-radio-custom"></span>
+                        <span class="sp-cb-text">₹2,500 - ₹5,000</span>
+                    </label>
+                    <label class="sp-radio-label">
+                        <input type="radio" name="side_price" value="above-5000" onchange="spSetPriceRange(5000, 999999)">
+                        <span class="sp-radio-custom"></span>
+                        <span class="sp-cb-text">₹5,000 & Above</span>
+                    </label>
+                </div>
+
+                <div class="sp-custom-price-inputs">
+                    <input type="number" id="spMinPriceInput" placeholder="Min ₹" min="0">
+                    <span class="sp-price-dash">-</span>
+                    <input type="number" id="spMaxPriceInput" placeholder="Max ₹" min="0">
+                    <button type="button" class="sp-btn-price-go" onclick="spApplyCustomPrice()">Go</button>
+                </div>
+            </div>
+
+            <!-- Filter Group: Minimum Discount -->
+            <div class="sp-filter-box">
+                <h4 class="sp-filter-title">Discount</h4>
+                <div class="sp-filter-options-list">
+                    <label class="sp-radio-label">
+                        <input type="radio" name="side_discount" value="0" checked onchange="spSetMinDiscount(0)">
+                        <span class="sp-radio-custom"></span>
+                        <span class="sp-cb-text">All Items</span>
+                    </label>
+                    <label class="sp-radio-label">
+                        <input type="radio" name="side_discount" value="20" onchange="spSetMinDiscount(20)">
+                        <span class="sp-radio-custom"></span>
+                        <span class="sp-cb-text">20% or more</span>
+                    </label>
+                    <label class="sp-radio-label">
+                        <input type="radio" name="side_discount" value="40" onchange="spSetMinDiscount(40)">
+                        <span class="sp-radio-custom"></span>
+                        <span class="sp-cb-text">40% or more</span>
+                    </label>
+                    <label class="sp-radio-label">
+                        <input type="radio" name="side_discount" value="50" onchange="spSetMinDiscount(50)">
+                        <span class="sp-radio-custom"></span>
+                        <span class="sp-cb-text">50% or more</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Filter Group: Customer Rating -->
+            <div class="sp-filter-box">
+                <h4 class="sp-filter-title">Customer Rating</h4>
+                <div class="sp-filter-options-list">
+                    <label class="sp-radio-label">
+                        <input type="radio" name="side_rating" value="0" checked onchange="spSetMinRating(0)">
+                        <span class="sp-radio-custom"></span>
+                        <span class="sp-cb-text">All Ratings</span>
+                    </label>
+                    <label class="sp-radio-label">
+                        <input type="radio" name="side_rating" value="4.5" onchange="spSetMinRating(4.5)">
+                        <span class="sp-radio-custom"></span>
+                        <span class="sp-cb-text">4.5★ & Above</span>
+                    </label>
+                    <label class="sp-radio-label">
+                        <input type="radio" name="side_rating" value="4.0" onchange="spSetMinRating(4.0)">
+                        <span class="sp-radio-custom"></span>
+                        <span class="sp-cb-text">4.0★ & Above</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- In-Stock Toggle -->
+            <div class="sp-filter-box sp-toggle-box">
+                <label class="sp-switch-label">
+                    <span class="sp-switch-text">In Stock Only</span>
+                    <input type="checkbox" id="spInStockToggle" onchange="spTriggerFilter()">
+                    <span class="sp-switch-slider"></span>
+                </label>
+            </div>
+        </aside>
+
+        <!-- RIGHT SIDE: PRODUCTS CATALOG WITH BIG IMAGE FRAMES -->
+        <main class="sp-sub-catalog" id="spSubCatalog">
+
+            <div class="sp-catalog-toolbar">
+                <div class="sp-toolbar-left">
+                    <span class="sp-results-count" id="spResultsCount">Showing @products.Count products in @subPage.CategoryName</span>
+                    <div class="sp-active-filter-tags" id="spActiveTags"></div>
+                </div>
+
+                <div class="sp-toolbar-search">
+                    <svg viewBox="0 0 20 20" width="15" height="15" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+                    <input type="text" id="spSearchInput" placeholder="Search in @subPage.CategoryName..." onkeyup="spOnSearchChange(this.value)">
+                </div>
+            </div>
+
+            <!-- PRODUCTS GRID WITH BIG IMAGE FRAMES -->
+            <div class="sp-catalog-grid" id="spCatalogGrid">
+                @foreach (var prod in products)
+                {
+                    var prodHasImg = !string.IsNullOrWhiteSpace(prod.ImageUrl) && !prod.ImageUrl.Contains("placeholder") && !prod.IsUploadingSoon;
+                    var origPrice = prod.OriginalPrice ?? (prod.Price * 1.5m);
+                    var discountPct = origPrice > prod.Price
+                        ? (int)Math.Round(((origPrice - prod.Price) / origPrice) * 100)
+                        : 0;
+                    var brandName = !string.IsNullOrWhiteSpace(prod.Brand) ? prod.Brand : "Campus Pro";
+
+                    <div class="sp-card"
+                         data-id="@prod.Id"
+                         data-name="@prod.Name.ToLowerInvariant()"
+                         data-brand="@brandName.ToLowerInvariant()"
+                         data-price="@prod.Price"
+                         data-discount="@discountPct"
+                         data-rating="@prod.Rating"
+                         data-instock="@(prod.InStock.ToString().ToLower())">
+
+                        <!-- BIG IMAGE FRAME (min-height: 320px, aspect-ratio: 3/4) -->
+                        <div class="sp-card-frame">
+                            @if (!string.IsNullOrWhiteSpace(prod.Badge))
+                            {
+                                <span class="sp-card-badge">@prod.Badge</span>
+                            }
+                            @if (discountPct > 0)
+                            {
+                                <span class="sp-card-discount-pill">-@discountPct% OFF</span>
+                            }
+
+                            @if (prodHasImg)
+                            {
+                                <img src="@prod.ImageUrl" alt="@prod.Name" class="sp-card-img" loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="sp-uploading-frame-large">
+                                    <div class="sp-radar-wrap">
+                                        <div class="sp-radar-ping-ring"></div>
+                                        <span class="sp-frame-emoji">@subPage.IconEmoji</span>
+                                    </div>
+                                    <div class="sp-frame-uploading-tag">
+                                        <span class="sp-pulsing-dot">●</span> UPLOADING SOON
+                                    </div>
+                                    <p class="sp-frame-uploading-sub">Images will be uploaded by admin</p>
+                                </div>
+                            }
+
+                            <div class="sp-frame-quick-actions">
+                                <button type="button" class="sp-btn-quick-cart" onclick="spAddToCart('@prod.Id', '@prod.Name', @prod.Price, this)" title="Add to Cart">
+                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.24-1.2A1 1 0 005.06 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- CARD BODY -->
+                        <div class="sp-card-body">
+                            <span class="sp-card-brand">@brandName</span>
+                            <h3 class="sp-card-title">@prod.Name</h3>
+
+                            <div class="sp-card-rating">
+                                <div class="sp-stars">★★★★★</div>
+                                <span class="sp-rating-score">@prod.Rating.ToString("0.0")</span>
+                                <span class="sp-rating-reviews">(@prod.ReviewsCount)</span>
+                            </div>
+
+                            <div class="sp-card-price-row">
+                                <span class="sp-card-price-current">₹@prod.Price.ToString("N0")</span>
+                                @if (origPrice > prod.Price)
+                                {
+                                    <span class="sp-card-price-orig">₹@origPrice.ToString("N0")</span>
+                                }
+                            </div>
+
+                            @if (prod.Sizes != null && prod.Sizes.Count > 0)
+                            {
+                                <div class="sp-card-sizes">
+                                    @foreach (var size in prod.Sizes.Take(3))
+                                    {
+                                        <span class="sp-card-size-chip">@size</span>
+                                    }
+                                    @if (prod.Sizes.Count > 3)
+                                    {
+                                        <span class="sp-card-size-more">+@(prod.Sizes.Count - 3)</span>
+                                    }
+                                </div>
+                            }
+
+                            <div class="sp-card-cta-wrap">
+                                <button type="button" class="sp-card-btn-add" onclick="spAddToCart('@prod.Id', '@prod.Name', @prod.Price, this)">
+                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.24-1.2A1 1 0 005.06 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+                                    <span>Add to Cart</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- EMPTY RESULTS PLACEHOLDER -->
+            <div class="sp-empty-results" id="spEmptyResults" style="display: none;">
+                <div class="sp-empty-icon">⚽</div>
+                <h3 class="sp-empty-title">No matching sports gear found</h3>
+                <p class="sp-empty-desc">Try resetting your filters or adjusting your price and brand search.</p>
+                <button type="button" class="sp-empty-btn-reset" onclick="spResetAllFilters()">Reset All Filters</button>
+            </div>
+        </main>
+    </div>
+
+</div>
+
+<!-- ========================================================
+     CSS STYLES FOR SPORTS SUBCATEGORY PAGE (BIG FRAMES)
+========================================================= -->
+<style>
+    .sp-subpage-container {
+        width: 100%;
+        max-width: 1360px;
+        margin: 0 auto;
+        padding: 16px 16px 60px 16px;
+        color: #0f172a;
+        font-family: inherit;
+    }
+
+    /* Subcategory Hero Card */
+    .sp-sub-hero-card {
+        position: relative;
+        width: 100%;
+        background: linear-gradient(135deg, #064e3b 0%, #065f46 45%, #047857 75%, #0f172a 100%);
+        border-radius: 20px;
+        overflow: hidden;
+        color: #ffffff;
+        margin-bottom: 20px;
+        box-shadow: 0 16px 36px rgba(6, 78, 59, 0.2);
+    }
+    .sp-sub-hero-glow {
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle, rgba(52, 211, 153, 0.3) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .sp-sub-hero-body {
+        padding: 36px 32px;
+        display: grid;
+        grid-template-columns: 1.25fr 0.75fr;
+        gap: 28px;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
+    @@media (max-width: 860px) {
+        .sp-sub-hero-body { grid-template-columns: 1fr; }
+    }
+
+    .sp-sub-hero-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #a7f3d0;
+        margin-bottom: 12px;
+    }
+    .sp-sub-hero-breadcrumb a {
+        color: #a7f3d0;
+        text-decoration: none;
+    }
+    .sp-sub-hero-breadcrumb a:hover {
+        text-decoration: underline;
+    }
+    .sp-sub-sep {
+        opacity: 0.6;
+    }
+    .sp-sub-crumb-active {
+        color: #ffffff;
+        font-weight: 700;
+    }
+
+    .sp-sub-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(16, 185, 129, 0.25);
+        border: 1px solid rgba(52, 211, 153, 0.4);
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 11.5px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        color: #6ee7b7;
+        margin-bottom: 10px;
+    }
+    .sp-badge-dot {
+        font-size: 8px;
+        color: #34d399;
+    }
+    .sp-sub-hero-title {
+        font-size: 34px;
+        font-weight: 800;
+        line-height: 1.2;
+        margin: 0 0 10px 0;
+        color: #ffffff;
+    }
+    .sp-sub-hero-desc {
+        font-size: 14.5px;
+        line-height: 1.6;
+        color: #cbd5e1;
+        margin: 0 0 16px 0;
+        max-width: 600px;
+    }
+    .sp-sub-hero-chips {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .sp-hero-chip {
+        font-size: 12px;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.12);
+        padding: 4px 12px;
+        border-radius: 6px;
+        color: #ecfdf5;
+    }
+    .sp-sub-admin-link {
+        font-size: 12px;
+        font-weight: 600;
+        color: #fef08a;
+        text-decoration: none;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 4px 12px;
+        border-radius: 6px;
+        margin-left: 4px;
+    }
+    .sp-sub-admin-link:hover {
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Subcategory Hero Media */
+    .sp-sub-hero-media {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .sp-sub-hero-uploading {
+        background: rgba(255, 255, 255, 0.06);
+        border: 2px dashed rgba(52, 211, 153, 0.4);
+        border-radius: 18px;
+        padding: 24px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        max-width: 320px;
+    }
+    .sp-sub-uploading-radar {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+    }
+    .sp-sub-radar-ring {
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(52, 211, 153, 0.4);
+        animation: spRadarPulse 2.5s infinite ease-out;
+    }
+    .sp-sub-emoji {
+        font-size: 38px;
+        z-index: 1;
+    }
+    .sp-sub-uploading-pill {
+        background: #10b981;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        padding: 3px 12px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 6px;
+    }
+    .sp-sub-uploading-text {
+        font-size: 11.5px;
+        color: #94a3b8;
+        margin: 0;
+    }
+
+    /* Quick Filter Pills Bar */
+    .sp-quick-filters-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 8px 14px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+    .sp-filter-pills-left {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .sp-filter-pills-right {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Dropdown Pills */
+    .sp-dropdown-pill {
+        position: relative;
+    }
+    .sp-pill-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 7px 12px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #334155;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .sp-pill-btn:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+    }
+    .sp-pill-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+        min-width: 170px;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .sp-menu-right {
+        left: auto;
+        right: 0;
+    }
+    .sp-dropdown-pill.open .sp-pill-dropdown-menu {
+        display: flex;
+    }
+    .sp-pill-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+        font-size: 12.5px;
+        color: #334155;
+        cursor: pointer;
+        border-radius: 6px;
+    }
+    .sp-pill-option:hover {
+        background: #f1f5f9;
+    }
+
+    /* 2-Column Layout */
+    .sp-sub-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+    @@media (max-width: 900px) {
+        .sp-sub-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Left Sidebar */
+    .sp-sub-sidebar {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .sp-sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .sp-sidebar-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 16px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
+    }
+    .sp-btn-clear-filters {
+        background: none;
+        border: none;
+        color: #059669;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 0;
+    }
+    .sp-btn-clear-filters:hover {
+        text-decoration: underline;
+    }
+
+    .sp-filter-box {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .sp-filter-title {
+        font-size: 13.5px;
+        font-weight: 800;
+        color: #1e293b;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    /* Category Switcher List */
+    .sp-cat-switcher-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        max-height: 240px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+    .sp-cat-switch-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.15s ease;
+    }
+    .sp-cat-switch-item:hover {
+        background: #f1f5f9;
+        color: #059669;
+    }
+    .sp-cat-switch-item.active {
+        background: #ecfdf5;
+        color: #059669;
+        font-weight: 700;
+    }
+    .sp-cat-switch-dot {
+        margin-left: auto;
+        font-size: 8px;
+        color: #059669;
+    }
+
+    /* Filter Checkboxes & Radios */
+    .sp-filter-options-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .sp-checkbox-label, .sp-radio-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #334155;
+        cursor: pointer;
+    }
+    .sp-checkbox-label input, .sp-radio-label input {
+        accent-color: #059669;
+        cursor: pointer;
+    }
+
+    /* Custom Price Inputs */
+    .sp-custom-price-inputs {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 6px;
+    }
+    .sp-custom-price-inputs input {
+        width: 75px;
+        padding: 6px 8px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 12px;
+    }
+    .sp-price-dash {
+        color: #94a3b8;
+    }
+    .sp-btn-price-go {
+        background: #0f172a;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+    .sp-btn-price-go:hover {
+        background: #059669;
+    }
+
+    /* In-Stock Toggle */
+    .sp-toggle-box {
+        padding-top: 10px;
+        border-top: 1px solid #e2e8f0;
+    }
+    .sp-switch-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+    }
+    .sp-switch-text {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1e293b;
+    }
+    .sp-switch-label input {
+        display: none;
+    }
+    .sp-switch-slider {
+        position: relative;
+        width: 40px;
+        height: 22px;
+        background: #cbd5e1;
+        border-radius: 999px;
+        transition: background 0.2s ease;
+    }
+    .sp-switch-slider::before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 18px;
+        height: 18px;
+        background: #ffffff;
+        border-radius: 50%;
+        transition: transform 0.2s ease;
+    }
+    .sp-switch-label input:checked + .sp-switch-slider {
+        background: #059669;
+    }
+    .sp-switch-label input:checked + .sp-switch-slider::before {
+        transform: translateX(18px);
+    }
+
+    /* Right Side Catalog */
+    .sp-sub-catalog {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    /* Toolbar */
+    .sp-catalog-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 10px 16px;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    .sp-toolbar-left {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .sp-results-count {
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
+    }
+    .sp-active-filter-tags {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .sp-active-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #065f46;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 6px;
+    }
+    .sp-tag-close {
+        cursor: pointer;
+        font-weight: 800;
+        margin-left: 2px;
+    }
+
+    .sp-toolbar-search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 6px 12px;
+        min-width: 260px;
+    }
+    .sp-toolbar-search input {
+        border: none;
+        background: transparent;
+        font-size: 13px;
+        outline: none;
+        width: 100%;
+        color: #0f172a;
+    }
+    .sp-toolbar-search svg {
+        color: #94a3b8;
+    }
+
+    /* Catalog Grid with BIG IMAGE FRAMES */
+    .sp-catalog-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    @@media (max-width: 1100px) {
+        .sp-catalog-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @@media (max-width: 600px) {
+        .sp-catalog-grid { grid-template-columns: 1fr; }
+    }
+
+    .sp-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.25s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+    .sp-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(16, 185, 129, 0.15);
+        border-color: #34d399;
+    }
+
+    /* BIG IMAGE FRAME: min-height: 320px, aspect-ratio: 3/4 */
+    .sp-card-frame {
+        position: relative;
+        width: 100%;
+        min-height: 320px;
+        aspect-ratio: 3/4;
+        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f1f5f9 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .sp-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .sp-card-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: #0f172a;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 6px;
+        z-index: 2;
+    }
+    .sp-card-discount-pill {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 4px 8px;
+        border-radius: 6px;
+        z-index: 2;
+    }
+
+    /* Uploading Soon Big Radar Frame */
+    .sp-uploading-frame-large {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 24px 16px;
+        gap: 8px;
+    }
+    .sp-radar-wrap {
+        position: relative;
+        width: 90px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 6px;
+    }
+    .sp-radar-ping-ring {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 2px solid rgba(16, 185, 129, 0.4);
+        animation: spRadarPulse 2.8s infinite ease-out;
+    }
+    .sp-frame-emoji {
+        font-size: 46px;
+        z-index: 1;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    }
+    .sp-frame-uploading-tag {
+        font-size: 11.5px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        color: #065f46;
+        background: #d1fae5;
+        padding: 4px 12px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .sp-frame-uploading-sub {
+        font-size: 11.5px;
+        color: #64748b;
+        margin: 0;
+    }
+
+    .sp-frame-quick-actions {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        opacity: 0;
+        transform: translateY(6px);
+        transition: all 0.2s ease;
+        z-index: 5;
+    }
+    .sp-card:hover .sp-frame-quick-actions {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .sp-btn-quick-cart {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #059669;
+        color: #ffffff;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+        transition: transform 0.2s ease;
+    }
+    .sp-btn-quick-cart:hover {
+        transform: scale(1.1);
+        background: #047857;
+    }
+
+    /* Card Body */
+    .sp-card-body {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .sp-card-brand {
+        font-size: 11px;
+        font-weight: 700;
+        color: #059669;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+    .sp-card-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+        line-height: 1.35;
+    }
+    .sp-card-rating {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+    .sp-rating-score {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .sp-rating-reviews {
+        font-size: 12px;
+        color: #94a3b8;
+    }
+
+    .sp-card-price-row {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .sp-card-price-current {
+        font-size: 19px;
+        font-weight: 800;
+        color: #059669;
+    }
+    .sp-card-price-orig {
+        font-size: 13px;
+        color: #94a3b8;
+        text-decoration: line-through;
+    }
+
+    .sp-card-sizes {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+    .sp-card-size-chip {
+        font-size: 11px;
+        font-weight: 600;
+        background: #f1f5f9;
+        color: #475569;
+        padding: 3px 8px;
+        border-radius: 6px;
+    }
+    .sp-card-size-more {
+        font-size: 11px;
+        color: #94a3b8;
+        padding: 3px 6px;
+    }
+
+    .sp-card-cta-wrap {
+        margin-top: auto;
+    }
+    .sp-card-btn-add {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: #0f172a;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .sp-card-btn-add:hover {
+        background: #10b981;
+    }
+
+    /* Empty Results */
+    .sp-empty-results {
+        background: #ffffff;
+        border: 1px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 48px 24px;
+        text-align: center;
+        margin: 20px 0;
+    }
+    .sp-empty-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+    }
+    .sp-empty-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+    }
+    .sp-empty-desc {
+        font-size: 13.5px;
+        color: #64748b;
+        margin: 0 0 16px 0;
+    }
+    .sp-empty-btn-reset {
+        background: #059669;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+    .sp-empty-btn-reset:hover {
+        background: #047857;
+    }
+</style>
+
+<!-- Client-Side Reactive Filter & Search Engine -->
+<script>
+    (function () {
+        var currentFilters = {
+            search: '',
+            brands: [],
+            minPrice: 0,
+            maxPrice: 999999,
+            minDiscount: 0,
+            minRating: 0,
+            inStockOnly: false,
+            sort: 'popularity'
+        };
+
+        window.spToggleDropdown = function (btn) {
+            var parent = btn.closest('.sp-dropdown-pill');
+            if (!parent) return;
+            var wasOpen = parent.classList.contains('open');
+            document.querySelectorAll('.sp-dropdown-pill.open').forEach(function (p) {
+                p.classList.remove('open');
+            });
+            if (!wasOpen) {
+                parent.classList.add('open');
+            }
+        };
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.sp-dropdown-pill')) {
+                document.querySelectorAll('.sp-dropdown-pill.open').forEach(function (p) {
+                    p.classList.remove('open');
+                });
+            }
+        });
+
+        window.spApplyPillFilter = function (group, val, inputEl) {
+            if (group === 'brand') {
+                currentFilters.brands = val === 'all' ? [] : [val.toLowerCase()];
+                // Sync sidebar checkboxes
+                document.querySelectorAll('.sp-filter-cb[data-filter="brand"]').forEach(function (cb) {
+                    cb.checked = val !== 'all' && cb.value.toLowerCase() === val.toLowerCase();
+                });
+            } else if (group === 'price') {
+                if (val === 'all') {
+                    currentFilters.minPrice = 0; currentFilters.maxPrice = 999999;
+                } else if (val === 'under-1000') {
+                    currentFilters.minPrice = 0; currentFilters.maxPrice = 1000;
+                } else if (val === '1000-2500') {
+                    currentFilters.minPrice = 1000; currentFilters.maxPrice = 2500;
+                } else if (val === '2500-5000') {
+                    currentFilters.minPrice = 2500; currentFilters.maxPrice = 5000;
+                } else if (val === 'above-5000') {
+                    currentFilters.minPrice = 5000; currentFilters.maxPrice = 999999;
+                }
+            } else if (group === 'rating') {
+                currentFilters.minRating = val === 'all' ? 0 : parseFloat(val);
+            }
+            inputEl.closest('.sp-dropdown-pill').classList.remove('open');
+            spExecuteFilter();
+        };
+
+        window.spApplySort = function (val, label) {
+            currentFilters.sort = val;
+            var sortLbl = document.getElementById('spSortLabel');
+            if (sortLbl) sortLbl.textContent = 'Sort by : ' + label;
+            document.querySelectorAll('.sp-dropdown-pill.open').forEach(function (p) { p.classList.remove('open'); });
+            spExecuteFilter();
+        };
+
+        window.spOnSearchChange = function (val) {
+            currentFilters.search = (val || '').trim().toLowerCase();
+            spExecuteFilter();
+        };
+
+        window.spTriggerFilter = function () {
+            // Read brand checkboxes
+            var selectedBrands = [];
+            document.querySelectorAll('.sp-filter-cb[data-filter="brand"]:checked').forEach(function (cb) {
+                selectedBrands.push(cb.value.toLowerCase());
+            });
+            currentFilters.brands = selectedBrands;
+
+            // In-stock toggle
+            var inStockEl = document.getElementById('spInStockToggle');
+            currentFilters.inStockOnly = inStockEl ? inStockEl.checked : false;
+
+            spExecuteFilter();
+        };
+
+        window.spSetPriceRange = function (min, max) {
+            currentFilters.minPrice = min;
+            currentFilters.maxPrice = max;
+            spExecuteFilter();
+        };
+
+        window.spApplyCustomPrice = function () {
+            var minVal = parseFloat(document.getElementById('spMinPriceInput').value || '0');
+            var maxVal = parseFloat(document.getElementById('spMaxPriceInput').value || '999999');
+            if (maxVal <= 0) maxVal = 999999;
+            currentFilters.minPrice = minVal;
+            currentFilters.maxPrice = maxVal;
+            spExecuteFilter();
+        };
+
+        window.spSetMinDiscount = function (pct) {
+            currentFilters.minDiscount = pct;
+            spExecuteFilter();
+        };
+
+        window.spSetMinRating = function (rating) {
+            currentFilters.minRating = rating;
+            spExecuteFilter();
+        };
+
+        window.spResetAllFilters = function () {
+            currentFilters = {
+                search: '',
+                brands: [],
+                minPrice: 0,
+                maxPrice: 999999,
+                minDiscount: 0,
+                minRating: 0,
+                inStockOnly: false,
+                sort: 'popularity'
+            };
+
+            // Reset UI inputs
+            var searchInput = document.getElementById('spSearchInput');
+            if (searchInput) searchInput.value = '';
+
+            document.querySelectorAll('.sp-filter-cb').forEach(function (cb) { cb.checked = false; });
+            document.querySelectorAll('input[name="side_price"][value="all"]').forEach(function (r) { r.checked = true; });
+            document.querySelectorAll('input[name="side_discount"][value="0"]').forEach(function (r) { r.checked = true; });
+            document.querySelectorAll('input[name="side_rating"][value="0"]').forEach(function (r) { r.checked = true; });
+            document.querySelectorAll('input[name="pill_brand"][value="all"]').forEach(function (r) { r.checked = true; });
+            document.querySelectorAll('input[name="pill_price"][value="all"]').forEach(function (r) { r.checked = true; });
+            document.querySelectorAll('input[name="pill_rating"][value="all"]').forEach(function (r) { r.checked = true; });
+
+            var minInp = document.getElementById('spMinPriceInput');
+            var maxInp = document.getElementById('spMaxPriceInput');
+            if (minInp) minInp.value = '';
+            if (maxInp) maxInp.value = '';
+
+            var inStockEl = document.getElementById('spInStockToggle');
+            if (inStockEl) inStockEl.checked = false;
+
+            var sortLbl = document.getElementById('spSortLabel');
+            if (sortLbl) sortLbl.textContent = 'Sort by : Popularity';
+
+            spExecuteFilter();
+        };
+
+        function spExecuteFilter() {
+            var cards = Array.from(document.querySelectorAll('#spCatalogGrid .sp-card'));
+            var visibleCount = 0;
+
+            cards.forEach(function (card) {
+                var name = card.getAttribute('data-name') || '';
+                var brand = card.getAttribute('data-brand') || '';
+                var price = parseFloat(card.getAttribute('data-price') || '0');
+                var discount = parseInt(card.getAttribute('data-discount') || '0', 10);
+                var rating = parseFloat(card.getAttribute('data-rating') || '0');
+                var inStock = card.getAttribute('data-instock') === 'true';
+
+                var matches = true;
+
+                // Search query
+                if (currentFilters.search && !name.includes(currentFilters.search) && !brand.includes(currentFilters.search)) {
+                    matches = false;
+                }
+
+                // Brands
+                if (matches && currentFilters.brands.length > 0 && !currentFilters.brands.includes(brand)) {
+                    matches = false;
+                }
+
+                // Price
+                if (matches && (price < currentFilters.minPrice || price > currentFilters.maxPrice)) {
+                    matches = false;
+                }
+
+                // Discount
+                if (matches && currentFilters.minDiscount > 0 && discount < currentFilters.minDiscount) {
+                    matches = false;
+                }
+
+                // Rating
+                if (matches && currentFilters.minRating > 0 && rating < currentFilters.minRating) {
+                    matches = false;
+                }
+
+                // In stock
+                if (matches && currentFilters.inStockOnly && !inStock) {
+                    matches = false;
+                }
+
+                if (matches) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Sorting
+            if (visibleCount > 0) {
+                var grid = document.getElementById('spCatalogGrid');
+                var visibleCards = cards.filter(function (c) { return c.style.display !== 'none'; });
+                visibleCards.sort(function (a, b) {
+                    var pa = parseFloat(a.getAttribute('data-price') || '0');
+                    var pb = parseFloat(b.getAttribute('data-price') || '0');
+                    var ra = parseFloat(a.getAttribute('data-rating') || '0');
+                    var rb = parseFloat(b.getAttribute('data-rating') || '0');
+
+                    if (currentFilters.sort === 'price-asc') return pa - pb;
+                    if (currentFilters.sort === 'price-desc') return pb - pa;
+                    if (currentFilters.sort === 'rating') return rb - ra;
+                    return 0; // default popularity
+                });
+                visibleCards.forEach(function (c) { grid.appendChild(c); });
+            }
+
+            // Results count label
+            var countLabel = document.getElementById('spResultsCount');
+            if (countLabel) {
+                countLabel.textContent = 'Showing ' + visibleCount + ' products in @subPage.CategoryName';
+            }
+
+            // Empty state toggle
+            var emptyEl = document.getElementById('spEmptyResults');
+            if (emptyEl) {
+                emptyEl.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+        }
+    })();
+</script>
+

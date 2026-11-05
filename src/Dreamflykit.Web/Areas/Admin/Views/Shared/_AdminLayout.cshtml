@@ -463,6 +463,14 @@
                     </svg>
                     <span>🎮 Gaming Hub</span>
                 </a>
+                <a href="/Admin/SportsHub" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "SportsHub" ? "active" : "")" style="color: #10b981;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                        <path d="M2 12h20"></path>
+                    </svg>
+                    <span>⚽ Sports Hub</span>
+                </a>
 
                 <a href="/Admin/CategorySliders" class="dk-admin-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "CategorySliders" ? "active" : "")" style="color: #f97316;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

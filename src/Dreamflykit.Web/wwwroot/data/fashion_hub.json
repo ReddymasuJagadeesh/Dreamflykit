@@ -615,5 +615,3438 @@
         }
       ]
     }
+  },
+  "WomenClothing": {
+    "IsEnabled": true,
+    "FestivalTheme": {
+      "IsEnabled": true,
+      "FestivalName": "Festive Season Edit",
+      "AnnouncementText": "✨ Campus Festive Collection: Travel-ready styles with special student discounts!",
+      "BadgeText": "FESTIVAL SPECIAL",
+      "BannerHighlight": "Up to 50% Off",
+      "BgGradient": "linear-gradient(135deg, #e11d48 0%, #ea580c 100%)"
+    },
+    "HeroBanner": {
+      "IsEnabled": true,
+      "Title": "Women Clothing",
+      "TitleHighlight": "Stylish. Comfortable. Travel-ready.",
+      "Subtitle": "Discover trendy and comfortable outfits perfect for every journey and season.",
+      "Description": "Curated collections with lightweight breathable fabrics designed for international campus life.",
+      "ImageUrl": "/images/fashion-hub/women_clothing_hero.jpg",
+      "IsUploadingSoon": false,
+      "TitleColor": "#063f91",
+      "TitleHighlightColor": "#ea580c",
+      "SubtitleColor": "#334155",
+      "BannerHeight": 440,
+      "Badges": [
+        {
+          "Id": "wb1",
+          "Label": "Trendy Styles",
+          "Icon": "shirt",
+          "IsActive": true
+        },
+        {
+          "Id": "wb2",
+          "Label": "Premium Quality",
+          "Icon": "shield",
+          "IsActive": true
+        },
+        {
+          "Id": "wb3",
+          "Label": "Affordable Prices",
+          "Icon": "tag",
+          "IsActive": true
+        },
+        {
+          "Id": "wb4",
+          "Label": "Loved by 10K+ Students",
+          "Icon": "users",
+          "IsActive": true
+        }
+      ],
+      "RightCard": {
+        "Title": "Comfort",
+        "TitleHighlight": "First",
+        "Features": [
+          {
+            "Id": "wf1",
+            "Title": "Comfort First",
+            "Icon": "feather",
+            "IsActive": true
+          },
+          {
+            "Id": "wf2",
+            "Title": "Easy to Pack",
+            "Icon": "luggage",
+            "IsActive": true
+          },
+          {
+            "Id": "wf3",
+            "Title": "All-Season Wear",
+            "Icon": "sun",
+            "IsActive": true
+          },
+          {
+            "Id": "wf4",
+            "Title": "Perfect for Travel",
+            "Icon": "plane",
+            "IsActive": true
+          }
+        ]
+      }
+    },
+    "CategoriesSection": {
+      "IsEnabled": true,
+      "Title": "Shop by Category",
+      "ViewAllText": "View All Categories →",
+      "ViewAllUrl": "/category/fashion/women-clothing",
+      "Categories": [
+        {
+          "Id": "wc1",
+          "Name": "T-Shirts & Tops",
+          "Slug": "t-shirts-tops",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 1,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc2",
+          "Name": "Shirts & Blouses",
+          "Slug": "shirts-blouses",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 2,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc3",
+          "Name": "Jeans",
+          "Slug": "jeans",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 3,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc4",
+          "Name": "Dresses",
+          "Slug": "dresses",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 4,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc5",
+          "Name": "Leggings",
+          "Slug": "leggings",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 5,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc6",
+          "Name": "Trousers & Pants",
+          "Slug": "trousers-pants",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 6,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc7",
+          "Name": "Thermals",
+          "Slug": "thermals",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 7,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc8",
+          "Name": "Hoodies & Sweatshirts",
+          "Slug": "hoodies-sweatshirts",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 8,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc9",
+          "Name": "Jackets & Coats",
+          "Slug": "jackets-coats",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 9,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc10",
+          "Name": "Nightwear",
+          "Slug": "nightwear",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 10,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc11",
+          "Name": "Innerwear",
+          "Slug": "innerwear",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 11,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc12",
+          "Name": "Activewear",
+          "Slug": "activewear",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 12,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc13",
+          "Name": "Formal Wear",
+          "Slug": "formal-wear",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 13,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wc14",
+          "Name": "Gym Wear & Sportswear",
+          "Slug": "gym-wear-sportswear",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 14,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        }
+      ]
+    },
+    "TopPicksSection": {
+      "IsEnabled": true,
+      "Title": "Top Picks for You",
+      "ViewAllText": "View All Products →",
+      "ViewAllUrl": "/category/fashion/women-clothing",
+      "Products": [
+        {
+          "Id": "wp1",
+          "Name": "Oversized Cotton Graphic T-Shirt",
+          "CategoryName": "Women Clothing",
+          "CategorySlug": "t-shirts-tops",
+          "Price": 599,
+          "OriginalPrice": 1199,
+          "Rating": 4.8,
+          "ReviewsCount": 128,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/women-clothing/t-shirts-tops",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "Colors": [
+            "White",
+            "Black",
+            "Beige"
+          ],
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wp2",
+          "Name": "Floral Tiered Midi Campus Dress",
+          "CategoryName": "Women Clothing",
+          "CategorySlug": "dresses",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.9,
+          "ReviewsCount": 96,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/women-clothing/dresses",
+          "IsUploadingSoon": true,
+          "Badge": "Trending",
+          "Sizes": [
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "Colors": [
+            "Pink",
+            "Navy"
+          ],
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wp3",
+          "Name": "Relaxed Linen Blend Casual Shirt",
+          "CategoryName": "Women Clothing",
+          "CategorySlug": "shirts-blouses",
+          "Price": 849,
+          "OriginalPrice": 1699,
+          "Rating": 4.8,
+          "ReviewsCount": 87,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/women-clothing/shirts-blouses",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L"
+          ],
+          "Colors": [
+            "Beige",
+            "Olive",
+            "White"
+          ],
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wp4",
+          "Name": "High Waist Butter-Soft Leggings",
+          "CategoryName": "Women Clothing",
+          "CategorySlug": "leggings",
+          "Price": 599,
+          "OriginalPrice": 1199,
+          "Rating": 4.7,
+          "ReviewsCount": 76,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/women-clothing/leggings",
+          "IsUploadingSoon": true,
+          "Badge": "Comfort Fit",
+          "Sizes": [
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "Colors": [
+            "Black",
+            "Navy",
+            "Charcoal"
+          ],
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wp5",
+          "Name": "Fleece Oversized College Hoodie",
+          "CategoryName": "Women Clothing",
+          "CategorySlug": "hoodies-sweatshirts",
+          "Price": 999,
+          "OriginalPrice": 1999,
+          "Rating": 4.8,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/women-clothing/hoodies-sweatshirts",
+          "IsUploadingSoon": true,
+          "Badge": "Warm & Cozy",
+          "Sizes": [
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "Colors": [
+            "Heather Grey",
+            "Pink",
+            "Black"
+          ],
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wp6",
+          "Name": "High-Rise Wide Leg Baggy Jeans",
+          "CategoryName": "Women Clothing",
+          "CategorySlug": "jeans",
+          "Price": 1299,
+          "OriginalPrice": 2599,
+          "Rating": 4.9,
+          "ReviewsCount": 84,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/women-clothing/jeans",
+          "IsUploadingSoon": true,
+          "Badge": "Top Rated",
+          "Sizes": [
+            "28",
+            "30",
+            "32",
+            "34"
+          ],
+          "Colors": [
+            "Light Blue",
+            "Deep Blue"
+          ],
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wp7",
+          "Name": "Classic Double-Breasted Trench Coat",
+          "CategoryName": "Women Clothing",
+          "CategorySlug": "jackets-coats",
+          "Price": 2199,
+          "OriginalPrice": 4399,
+          "Rating": 4.9,
+          "ReviewsCount": 65,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/women-clothing/jackets-coats",
+          "IsUploadingSoon": true,
+          "Badge": "Travel Luxe",
+          "Sizes": [
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "Colors": [
+            "Beige",
+            "Black"
+          ],
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "wp8",
+          "Name": "Premium Satin Pajama Notch Set",
+          "CategoryName": "Women Clothing",
+          "CategorySlug": "nightwear",
+          "Price": 999,
+          "OriginalPrice": 1999,
+          "Rating": 4.7,
+          "ReviewsCount": 78,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/women-clothing/nightwear",
+          "IsUploadingSoon": true,
+          "Badge": "Sleep Comfort",
+          "Sizes": [
+            "S",
+            "M",
+            "L",
+            "XL"
+          ],
+          "Colors": [
+            "Pink",
+            "Emerald",
+            "Navy"
+          ],
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    },
+    "TrustBadgesSection": {
+      "IsEnabled": true,
+      "Badges": [
+        {
+          "Id": "wt1",
+          "Title": "Curated for Students",
+          "Subtitle": "Handpicked styles for every student's journey",
+          "Icon": "box",
+          "IsActive": true
+        },
+        {
+          "Id": "wt2",
+          "Title": "Quality You Can Trust",
+          "Subtitle": "100% genuine & premium quality",
+          "Icon": "shield",
+          "IsActive": true
+        },
+        {
+          "Id": "wt3",
+          "Title": "Affordable for Everyone",
+          "Subtitle": "Best value fashion for students",
+          "Icon": "tag",
+          "IsActive": true
+        },
+        {
+          "Id": "wt4",
+          "Title": "Fast & Reliable Delivery",
+          "Subtitle": "On-time delivery worldwide",
+          "Icon": "truck",
+          "IsActive": true
+        },
+        {
+          "Id": "wt5",
+          "Title": "Easy Returns",
+          "Subtitle": "Hassle-free returns within 7 days",
+          "Icon": "return",
+          "IsActive": true
+        },
+        {
+          "Id": "wt6",
+          "Title": "24/7 Customer Support",
+          "Subtitle": "We're always here to help you",
+          "Icon": "headset",
+          "IsActive": true
+        }
+      ]
+    },
+    "BottomBanner": {
+      "IsEnabled": true,
+      "QuizTitle": "Not Sure What You Need?",
+      "QuizSubtitle": "Take our quick quiz and find your perfect kit",
+      "QuizButtonText": "Find My Kit",
+      "QuizButtonUrl": "/find-my-kit",
+      "DestinationsTitle": "Kits for Top Destinations",
+      "DestinationsSubtitle": "USA, UK, Canada, Australia & More",
+      "BulkTitle": "Bulk Orders for Universities",
+      "BulkSubtitle": "Get special discounts for groups",
+      "BulkButtonText": "Contact Us",
+      "BulkButtonUrl": "/contact"
+    },
+    "SubcategoryPages": [
+      {
+        "CategorySlug": "t-shirts-tops",
+        "CategoryName": "T-Shirts & Tops",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "T-Shirts & Tops",
+          "TitleHighlight": "CASUAL ESSENTIALS • 100% COTTON",
+          "Subtitle": "Explore comfortable oversized tees, crop tops, casual henleys, and breathable daily basics tailored for student campus living.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "tt1",
+            "Name": "Oversized Drop-Shoulder Graphic T-Shirt",
+            "CategoryName": "T-Shirts & Tops",
+            "CategorySlug": "t-shirts-tops",
+            "Price": 599,
+            "OriginalPrice": 1199,
+            "Rating": 4.8,
+            "ReviewsCount": 142,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/t-shirts-tops",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "XS",
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "White",
+              "Black",
+              "Beige"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "tt2",
+            "Name": "Ribbed Slim-Fit Cotton Crop Top",
+            "CategoryName": "T-Shirts & Tops",
+            "CategorySlug": "t-shirts-tops",
+            "Price": 449,
+            "OriginalPrice": 899,
+            "Rating": 4.7,
+            "ReviewsCount": 98,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/t-shirts-tops",
+            "IsUploadingSoon": true,
+            "Badge": "Trending",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Pink",
+              "Black",
+              "White"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "tt3",
+            "Name": "Relaxed Crew Neck Breathable Tee",
+            "CategoryName": "T-Shirts & Tops",
+            "CategorySlug": "t-shirts-tops",
+            "Price": 499,
+            "OriginalPrice": 999,
+            "Rating": 4.9,
+            "ReviewsCount": 110,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/t-shirts-tops",
+            "IsUploadingSoon": true,
+            "Badge": "Student Pick",
+            "Sizes": [
+              "XS",
+              "S",
+              "M",
+              "L",
+              "XL",
+              "XXL"
+            ],
+            "Colors": [
+              "Navy",
+              "White",
+              "Olive"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "tt4",
+            "Name": "Striped Boxy Campus T-Shirt",
+            "CategoryName": "T-Shirts & Tops",
+            "CategorySlug": "t-shirts-tops",
+            "Price": 549,
+            "OriginalPrice": 1099,
+            "Rating": 4.6,
+            "ReviewsCount": 85,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/t-shirts-tops",
+            "IsUploadingSoon": true,
+            "Badge": "New Arrival",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Navy",
+              "Beige"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "tt5",
+            "Name": "Long Sleeve Thermal Henley Top",
+            "CategoryName": "T-Shirts & Tops",
+            "CategorySlug": "t-shirts-tops",
+            "Price": 699,
+            "OriginalPrice": 1399,
+            "Rating": 4.8,
+            "ReviewsCount": 67,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/t-shirts-tops",
+            "IsUploadingSoon": true,
+            "Badge": "Warm Layer",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Maroon",
+              "Grey",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "shirts-blouses",
+        "CategoryName": "Shirts & Blouses",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Shirts & Blouses",
+          "TitleHighlight": "ELEGANT & CRISP • ALL-SEASON",
+          "Subtitle": "Smart button-downs, floral blouses, and breezy linen shirts for lectures, presentations, and social meetups.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "sb1",
+            "Name": "Classic Oxford Cotton Button-Down Shirt",
+            "CategoryName": "Shirts & Blouses",
+            "CategorySlug": "shirts-blouses",
+            "Price": 899,
+            "OriginalPrice": 1799,
+            "Rating": 4.9,
+            "ReviewsCount": 115,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/shirts-blouses",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "White",
+              "Light Blue"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "sb2",
+            "Name": "Relaxed Linen Blend Casual Shirt",
+            "CategoryName": "Shirts & Blouses",
+            "CategorySlug": "shirts-blouses",
+            "Price": 999,
+            "OriginalPrice": 1999,
+            "Rating": 4.8,
+            "ReviewsCount": 92,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/shirts-blouses",
+            "IsUploadingSoon": true,
+            "Badge": "Student Pick",
+            "Sizes": [
+              "XS",
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Beige",
+              "Olive",
+              "White"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "sb3",
+            "Name": "Floral Print Chiffon Blouse",
+            "CategoryName": "Shirts & Blouses",
+            "CategorySlug": "shirts-blouses",
+            "Price": 799,
+            "OriginalPrice": 1599,
+            "Rating": 4.7,
+            "ReviewsCount": 74,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/shirts-blouses",
+            "IsUploadingSoon": true,
+            "Badge": "Trending",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Pink",
+              "Navy"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "sb4",
+            "Name": "Satin Finish Formal Presentation Blouse",
+            "CategoryName": "Shirts & Blouses",
+            "CategorySlug": "shirts-blouses",
+            "Price": 1099,
+            "OriginalPrice": 2199,
+            "Rating": 4.9,
+            "ReviewsCount": 88,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/shirts-blouses",
+            "IsUploadingSoon": true,
+            "Badge": "Formal Star",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Black",
+              "Beige"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "jeans",
+        "CategoryName": "Jeans",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Jeans",
+          "TitleHighlight": "DURABLE DENIM • PERFECT FIT",
+          "Subtitle": "From relaxed mom fits to wide-leg street styles and stretch skinnies — premium durable denim built for campus adventures.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "jn1",
+            "Name": "High-Rise Wide Leg Baggy Jeans",
+            "CategoryName": "Jeans",
+            "CategorySlug": "jeans",
+            "Price": 1299,
+            "OriginalPrice": 2599,
+            "Rating": 4.9,
+            "ReviewsCount": 186,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/jeans",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "28",
+              "30",
+              "32",
+              "34"
+            ],
+            "Colors": [
+              "Light Blue",
+              "Deep Blue"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "jn2",
+            "Name": "Vintage 90s Straight Fit Denim",
+            "CategoryName": "Jeans",
+            "CategorySlug": "jeans",
+            "Price": 1399,
+            "OriginalPrice": 2799,
+            "Rating": 4.8,
+            "ReviewsCount": 104,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/jeans",
+            "IsUploadingSoon": true,
+            "Badge": "Retro Style",
+            "Sizes": [
+              "28",
+              "30",
+              "32"
+            ],
+            "Colors": [
+              "Medium Blue",
+              "Charcoal"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "jn3",
+            "Name": "Ankle-Length Super Stretch Skinny Jeans",
+            "CategoryName": "Jeans",
+            "CategorySlug": "jeans",
+            "Price": 1099,
+            "OriginalPrice": 2199,
+            "Rating": 4.7,
+            "ReviewsCount": 129,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/jeans",
+            "IsUploadingSoon": true,
+            "Badge": "Super Stretch",
+            "Sizes": [
+              "26",
+              "28",
+              "30",
+              "32"
+            ],
+            "Colors": [
+              "Dark Navy",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "jn4",
+            "Name": "Relaxed High-Waist Mom Fit Jeans",
+            "CategoryName": "Jeans",
+            "CategorySlug": "jeans",
+            "Price": 1249,
+            "OriginalPrice": 2499,
+            "Rating": 4.9,
+            "ReviewsCount": 94,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/jeans",
+            "IsUploadingSoon": true,
+            "Badge": "Trending",
+            "Sizes": [
+              "28",
+              "30",
+              "32",
+              "34"
+            ],
+            "Colors": [
+              "Ice Blue",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "dresses",
+        "CategoryName": "Dresses",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Dresses",
+          "TitleHighlight": "CHIC & EFFORTLESS • TRAVEL-READY",
+          "Subtitle": "Flowy midis, elegant shirt dresses, and versatile summer frocks designed for international travel and effortless styling.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "dr1",
+            "Name": "Floral Tiered Midi Campus Dress",
+            "CategoryName": "Dresses",
+            "CategorySlug": "dresses",
+            "Price": 1299,
+            "OriginalPrice": 2499,
+            "Rating": 4.9,
+            "ReviewsCount": 162,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/dresses",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Pink",
+              "Navy"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "dr2",
+            "Name": "Ribbed Bodycon Casual Day Dress",
+            "CategoryName": "Dresses",
+            "CategorySlug": "dresses",
+            "Price": 899,
+            "OriginalPrice": 1799,
+            "Rating": 4.7,
+            "ReviewsCount": 95,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/dresses",
+            "IsUploadingSoon": true,
+            "Badge": "Daily Wear",
+            "Sizes": [
+              "XS",
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Black",
+              "Olive",
+              "Maroon"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "dr3",
+            "Name": "A-Line Cotton Summer Sundress",
+            "CategoryName": "Dresses",
+            "CategorySlug": "dresses",
+            "Price": 1099,
+            "OriginalPrice": 2199,
+            "Rating": 4.8,
+            "ReviewsCount": 88,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/dresses",
+            "IsUploadingSoon": true,
+            "Badge": "Summer Glow",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Beige",
+              "White"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "dr4",
+            "Name": "Elegant Tie-Belt Linen Shirt Dress",
+            "CategoryName": "Dresses",
+            "CategorySlug": "dresses",
+            "Price": 1499,
+            "OriginalPrice": 2999,
+            "Rating": 4.9,
+            "ReviewsCount": 72,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/dresses",
+            "IsUploadingSoon": true,
+            "Badge": "Travel Luxe",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Olive",
+              "Navy"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "leggings",
+        "CategoryName": "Leggings",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Leggings",
+          "TitleHighlight": "BUTTER-SOFT • 4-WAY STRETCH",
+          "Subtitle": "High-waisted compression tights, pocket leggings, and fleece-lined winter options for everyday campus comfort.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "lg1",
+            "Name": "High-Waist Seamless Butter-Soft Leggings",
+            "CategoryName": "Leggings",
+            "CategorySlug": "leggings",
+            "Price": 599,
+            "OriginalPrice": 1199,
+            "Rating": 4.8,
+            "ReviewsCount": 205,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/leggings",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "XS",
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Black",
+              "Charcoal",
+              "Navy"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "lg2",
+            "Name": "Dual-Pocket Ankle-Length Yoga Leggings",
+            "CategoryName": "Leggings",
+            "CategorySlug": "leggings",
+            "Price": 699,
+            "OriginalPrice": 1399,
+            "Rating": 4.9,
+            "ReviewsCount": 140,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/leggings",
+            "IsUploadingSoon": true,
+            "Badge": "With Pockets",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Olive",
+              "Maroon",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "lg3",
+            "Name": "Fleece-Lined Winter Thermal Leggings",
+            "CategoryName": "Leggings",
+            "CategorySlug": "leggings",
+            "Price": 799,
+            "OriginalPrice": 1599,
+            "Rating": 4.9,
+            "ReviewsCount": 178,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/leggings",
+            "IsUploadingSoon": true,
+            "Badge": "Winter Warm",
+            "Sizes": [
+              "Free Size",
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Black",
+              "Dark Grey"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "lg4",
+            "Name": "4-Way Stretch High Compression Tights",
+            "CategoryName": "Leggings",
+            "CategorySlug": "leggings",
+            "Price": 849,
+            "OriginalPrice": 1699,
+            "Rating": 4.7,
+            "ReviewsCount": 89,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/leggings",
+            "IsUploadingSoon": true,
+            "Badge": "Active Flex",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Black",
+              "Navy"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "trousers-pants",
+        "CategoryName": "Trousers & Pants",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Trousers & Pants",
+          "TitleHighlight": "STRUCTURED & RELAXED • VERSATILE",
+          "Subtitle": "Tailored pleated trousers, flowy palazzos, and street-smart utility cargos made for presentation days and weekend hangouts.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "tp1",
+            "Name": "High-Waist Pleated Formal Trousers",
+            "CategoryName": "Trousers & Pants",
+            "CategorySlug": "trousers-pants",
+            "Price": 1199,
+            "OriginalPrice": 2399,
+            "Rating": 4.9,
+            "ReviewsCount": 132,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/trousers-pants",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "28",
+              "30",
+              "32",
+              "34"
+            ],
+            "Colors": [
+              "Beige",
+              "Black",
+              "Charcoal"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "tp2",
+            "Name": "Wide-Leg Flowy Linen Palazzos",
+            "CategoryName": "Trousers & Pants",
+            "CategorySlug": "trousers-pants",
+            "Price": 899,
+            "OriginalPrice": 1799,
+            "Rating": 4.8,
+            "ReviewsCount": 98,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/trousers-pants",
+            "IsUploadingSoon": true,
+            "Badge": "Breezy Fit",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "White",
+              "Beige",
+              "Olive"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "tp3",
+            "Name": "Multi-Pocket Utility Street Cargo Pants",
+            "CategoryName": "Trousers & Pants",
+            "CategorySlug": "trousers-pants",
+            "Price": 1299,
+            "OriginalPrice": 2599,
+            "Rating": 4.8,
+            "ReviewsCount": 112,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/trousers-pants",
+            "IsUploadingSoon": true,
+            "Badge": "Street Style",
+            "Sizes": [
+              "28",
+              "30",
+              "32"
+            ],
+            "Colors": [
+              "Olive",
+              "Khaki",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "tp4",
+            "Name": "Straight Fit Ankle Cigarette Pants",
+            "CategoryName": "Trousers & Pants",
+            "CategorySlug": "trousers-pants",
+            "Price": 999,
+            "OriginalPrice": 1999,
+            "Rating": 4.7,
+            "ReviewsCount": 76,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/trousers-pants",
+            "IsUploadingSoon": true,
+            "Badge": "Smart Casual",
+            "Sizes": [
+              "28",
+              "30",
+              "32"
+            ],
+            "Colors": [
+              "Navy",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "thermals",
+        "CategoryName": "Thermals",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Thermals",
+          "TitleHighlight": "SUB-ZERO PROTECTION • MERINO BLEND",
+          "Subtitle": "Stay comfortably warm abroad with ultra-thin, temperature-regulating base layers, thermal tops, and bottom sets.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "th1",
+            "Name": "Women's Ultra-Warm Merino Wool Top",
+            "CategoryName": "Thermals",
+            "CategorySlug": "thermals",
+            "Price": 899,
+            "OriginalPrice": 1799,
+            "Rating": 4.9,
+            "ReviewsCount": 164,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/thermals",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Charcoal",
+              "Off-White"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "th2",
+            "Name": "Seamless Body-Hugging Thermal Bottom",
+            "CategoryName": "Thermals",
+            "CategorySlug": "thermals",
+            "Price": 799,
+            "OriginalPrice": 1599,
+            "Rating": 4.8,
+            "ReviewsCount": 120,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/thermals",
+            "IsUploadingSoon": true,
+            "Badge": "Essential",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Charcoal",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "th3",
+            "Name": "Double-Layer Thermal Suit Set (Top + Bottom)",
+            "CategoryName": "Thermals",
+            "CategorySlug": "thermals",
+            "Price": 1499,
+            "OriginalPrice": 2999,
+            "Rating": 5.0,
+            "ReviewsCount": 210,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/thermals",
+            "IsUploadingSoon": true,
+            "Badge": "Full Set Value",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL",
+              "XXL"
+            ],
+            "Colors": [
+              "Off-White",
+              "Grey"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "th4",
+            "Name": "Lightweight Base Layer Thermal Tee",
+            "CategoryName": "Thermals",
+            "CategorySlug": "thermals",
+            "Price": 649,
+            "OriginalPrice": 1299,
+            "Rating": 4.7,
+            "ReviewsCount": 85,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/thermals",
+            "IsUploadingSoon": true,
+            "Badge": "Ultra Thin",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Beige",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "hoodies-sweatshirts",
+        "CategoryName": "Hoodies & Sweatshirts",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Hoodies & Sweatshirts",
+          "TitleHighlight": "OVERSIZED FLEECE • CAMPUS COZY",
+          "Subtitle": "Soft fleece pullovers, zip-up terry hoodies, and vintage college crewnecks engineered for cold library study sessions.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "hs1",
+            "Name": "Fleece Oversized College Graphic Hoodie",
+            "CategoryName": "Hoodies & Sweatshirts",
+            "CategorySlug": "hoodies-sweatshirts",
+            "Price": 999,
+            "OriginalPrice": 1999,
+            "Rating": 4.9,
+            "ReviewsCount": 230,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/hoodies-sweatshirts",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Heather Grey",
+              "Pink",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "hs2",
+            "Name": "Relaxed Crewneck Campus Sweatshirt",
+            "CategoryName": "Hoodies & Sweatshirts",
+            "CategorySlug": "hoodies-sweatshirts",
+            "Price": 849,
+            "OriginalPrice": 1699,
+            "Rating": 4.8,
+            "ReviewsCount": 145,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/hoodies-sweatshirts",
+            "IsUploadingSoon": true,
+            "Badge": "Student Pick",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Beige",
+              "Navy"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "hs3",
+            "Name": "Cropped Zip-Up Terry Cloth Hoodie",
+            "CategoryName": "Hoodies & Sweatshirts",
+            "CategorySlug": "hoodies-sweatshirts",
+            "Price": 949,
+            "OriginalPrice": 1899,
+            "Rating": 4.7,
+            "ReviewsCount": 88,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/hoodies-sweatshirts",
+            "IsUploadingSoon": true,
+            "Badge": "Trending",
+            "Sizes": [
+              "XS",
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Olive",
+              "Charcoal"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "hs4",
+            "Name": "Heavyweight Kangaroo Pocket Warm Hoodie",
+            "CategoryName": "Hoodies & Sweatshirts",
+            "CategorySlug": "hoodies-sweatshirts",
+            "Price": 1199,
+            "OriginalPrice": 2399,
+            "Rating": 4.9,
+            "ReviewsCount": 175,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/hoodies-sweatshirts",
+            "IsUploadingSoon": true,
+            "Badge": "Ultra Warm",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Olive",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "jackets-coats",
+        "CategoryName": "Jackets & Coats",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Jackets & Coats",
+          "TitleHighlight": "OUTERWEAR SHIELD • WEATHER-PROOF",
+          "Subtitle": "Trench coats, sherpa corduroys, lightweight packable puffers, and rugged denim jackets to conquer any weather abroad.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "jc1",
+            "Name": "Classic Double-Breasted Trench Coat",
+            "CategoryName": "Jackets & Coats",
+            "CategorySlug": "jackets-coats",
+            "Price": 2199,
+            "OriginalPrice": 4399,
+            "Rating": 4.9,
+            "ReviewsCount": 158,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/jackets-coats",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Beige",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "jc2",
+            "Name": "Sherpa-Lined Warm Corduroy Jacket",
+            "CategoryName": "Jackets & Coats",
+            "CategorySlug": "jackets-coats",
+            "Price": 1799,
+            "OriginalPrice": 3599,
+            "Rating": 4.8,
+            "ReviewsCount": 114,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/jackets-coats",
+            "IsUploadingSoon": true,
+            "Badge": "Winter Trend",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Beige",
+              "Olive"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "jc3",
+            "Name": "Lightweight Packable Down Puffer Jacket",
+            "CategoryName": "Jackets & Coats",
+            "CategorySlug": "jackets-coats",
+            "Price": 1899,
+            "OriginalPrice": 3799,
+            "Rating": 4.9,
+            "ReviewsCount": 192,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/jackets-coats",
+            "IsUploadingSoon": true,
+            "Badge": "Travel Essential",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Black",
+              "Maroon"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "jc4",
+            "Name": "Vintage Wash Trucker Denim Jacket",
+            "CategoryName": "Jackets & Coats",
+            "CategorySlug": "jackets-coats",
+            "Price": 1599,
+            "OriginalPrice": 3199,
+            "Rating": 4.7,
+            "ReviewsCount": 86,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/jackets-coats",
+            "IsUploadingSoon": true,
+            "Badge": "Timeless",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Light Blue",
+              "Deep Blue"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "nightwear",
+        "CategoryName": "Nightwear",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Nightwear",
+          "TitleHighlight": "REST & RECHARGE • SILKY SOFT",
+          "Subtitle": "Satin lounge sets, cozy flannel pajamas, and breathable sleep tees for restorative sleep after busy university days.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "nw1",
+            "Name": "Premium Satin Pajama Notch Collar Set",
+            "CategoryName": "Nightwear",
+            "CategorySlug": "nightwear",
+            "Price": 999,
+            "OriginalPrice": 1999,
+            "Rating": 4.9,
+            "ReviewsCount": 138,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/nightwear",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Pink",
+              "Navy",
+              "Beige"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "nw2",
+            "Name": "100% Breathable Cotton Sleep Tee & Shorts",
+            "CategoryName": "Nightwear",
+            "CategorySlug": "nightwear",
+            "Price": 649,
+            "OriginalPrice": 1299,
+            "Rating": 4.8,
+            "ReviewsCount": 104,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/nightwear",
+            "IsUploadingSoon": true,
+            "Badge": "Daily Comfort",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Pink",
+              "White"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "nw3",
+            "Name": "Cozy Flannel Plaid Winter Sleepwear Set",
+            "CategoryName": "Nightwear",
+            "CategorySlug": "nightwear",
+            "Price": 1099,
+            "OriginalPrice": 2199,
+            "Rating": 4.8,
+            "ReviewsCount": 92,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/nightwear",
+            "IsUploadingSoon": true,
+            "Badge": "Flannel Warmth",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Red",
+              "Navy"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "nw4",
+            "Name": "Rayon Soft Floral Nightdress / Loungewear",
+            "CategoryName": "Nightwear",
+            "CategorySlug": "nightwear",
+            "Price": 699,
+            "OriginalPrice": 1399,
+            "Rating": 4.7,
+            "ReviewsCount": 68,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/nightwear",
+            "IsUploadingSoon": true,
+            "Badge": "Ultra Soft",
+            "Sizes": [
+              "Free Size",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Olive",
+              "Pink"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "innerwear",
+        "CategoryName": "Innerwear",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Innerwear",
+          "TitleHighlight": "EVERYDAY FOUNDATION • SEAMLESS",
+          "Subtitle": "Seamless T-shirt bras, breathable cotton multipacks, and wire-free lounge bralettes designed for all-day campus comfort.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "in1",
+            "Name": "Seamless T-Shirt Bra (Everyday Comfort)",
+            "CategoryName": "Innerwear",
+            "CategorySlug": "innerwear",
+            "Price": 499,
+            "OriginalPrice": 999,
+            "Rating": 4.8,
+            "ReviewsCount": 192,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/innerwear",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "32B",
+              "34B",
+              "36B",
+              "38C"
+            ],
+            "Colors": [
+              "Beige",
+              "Black",
+              "White"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "in2",
+            "Name": "Cotton Stretch Bikini Panties (Pack of 3)",
+            "CategoryName": "Innerwear",
+            "CategorySlug": "innerwear",
+            "Price": 449,
+            "OriginalPrice": 899,
+            "Rating": 4.9,
+            "ReviewsCount": 220,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/innerwear",
+            "IsUploadingSoon": true,
+            "Badge": "Multipack Value",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Pink",
+              "Beige",
+              "White"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "in3",
+            "Name": "Wire-Free Ribbed Lounge Bralette",
+            "CategoryName": "Innerwear",
+            "CategorySlug": "innerwear",
+            "Price": 399,
+            "OriginalPrice": 799,
+            "Rating": 4.7,
+            "ReviewsCount": 114,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/innerwear",
+            "IsUploadingSoon": true,
+            "Badge": "Zero Wire",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Beige",
+              "Black",
+              "Grey"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "in4",
+            "Name": "High-Rise Cotton Boy-Shorts (Pack of 2)",
+            "CategoryName": "Innerwear",
+            "CategorySlug": "innerwear",
+            "Price": 429,
+            "OriginalPrice": 859,
+            "Rating": 4.8,
+            "ReviewsCount": 96,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/innerwear",
+            "IsUploadingSoon": true,
+            "Badge": "Full Cover",
+            "Sizes": [
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Black",
+              "Grey"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "activewear",
+        "CategoryName": "Activewear",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Activewear",
+          "TitleHighlight": "HIGH IMPACT • QUICK-DRY PERFORMANCE",
+          "Subtitle": "Racerback sports bras, active tees, biker shorts, and running jackets built to support your daily campus fitness routine.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "aw1",
+            "Name": "Seamless High-Impact Racerback Sports Bra",
+            "CategoryName": "Activewear",
+            "CategorySlug": "activewear",
+            "Price": 699,
+            "OriginalPrice": 1399,
+            "Rating": 4.9,
+            "ReviewsCount": 168,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/activewear",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Black",
+              "Pink",
+              "Navy"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "aw2",
+            "Name": "Quick-Dry Breathable Active Training Tee",
+            "CategoryName": "Activewear",
+            "CategorySlug": "activewear",
+            "Price": 549,
+            "OriginalPrice": 1099,
+            "Rating": 4.8,
+            "ReviewsCount": 124,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/activewear",
+            "IsUploadingSoon": true,
+            "Badge": "Quick Dry",
+            "Sizes": [
+              "XS",
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "White",
+              "Olive",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "aw3",
+            "Name": "Active High-Waist Biker Shorts with Pocket",
+            "CategoryName": "Activewear",
+            "CategorySlug": "activewear",
+            "Price": 599,
+            "OriginalPrice": 1199,
+            "Rating": 4.7,
+            "ReviewsCount": 142,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/activewear",
+            "IsUploadingSoon": true,
+            "Badge": "Trending",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Black",
+              "Maroon"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "aw4",
+            "Name": "Full-Zip Lightweight Running Track Jacket",
+            "CategoryName": "Activewear",
+            "CategorySlug": "activewear",
+            "Price": 1199,
+            "OriginalPrice": 2399,
+            "Rating": 4.8,
+            "ReviewsCount": 89,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/activewear",
+            "IsUploadingSoon": true,
+            "Badge": "Performance",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Charcoal",
+              "Pink"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "formal-wear",
+        "CategoryName": "Formal Wear",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Formal Wear",
+          "TitleHighlight": "PROFESSIONAL EXCELLENCE • TAILORED",
+          "Subtitle": "Tailored office blazers, pencil skirts, crisp poplin shirts, and sharp trousers tailored for interviews, internships, and conferences.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "fw1",
+            "Name": "Single-Breasted Tailored Office Blazer",
+            "CategoryName": "Formal Wear",
+            "CategorySlug": "formal-wear",
+            "Price": 1899,
+            "OriginalPrice": 3799,
+            "Rating": 4.9,
+            "ReviewsCount": 148,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/formal-wear",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Black",
+              "Navy",
+              "Beige"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "fw2",
+            "Name": "Straight Formal Pantsuit Trousers",
+            "CategoryName": "Formal Wear",
+            "CategorySlug": "formal-wear",
+            "Price": 1199,
+            "OriginalPrice": 2399,
+            "Rating": 4.8,
+            "ReviewsCount": 112,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/formal-wear",
+            "IsUploadingSoon": true,
+            "Badge": "Sharp Cut",
+            "Sizes": [
+              "28",
+              "30",
+              "32",
+              "34"
+            ],
+            "Colors": [
+              "Black",
+              "Navy"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "fw3",
+            "Name": "Collared Crisp Poplin Presentation Shirt",
+            "CategoryName": "Formal Wear",
+            "CategorySlug": "formal-wear",
+            "Price": 949,
+            "OriginalPrice": 1899,
+            "Rating": 4.9,
+            "ReviewsCount": 95,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/formal-wear",
+            "IsUploadingSoon": true,
+            "Badge": "Crisp Finish",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "White",
+              "Light Blue"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "fw4",
+            "Name": "Formal Pencil Skirt with Back Vent",
+            "CategoryName": "Formal Wear",
+            "CategorySlug": "formal-wear",
+            "Price": 899,
+            "OriginalPrice": 1799,
+            "Rating": 4.7,
+            "ReviewsCount": 68,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/formal-wear",
+            "IsUploadingSoon": true,
+            "Badge": "Classic",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Charcoal",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      },
+      {
+        "CategorySlug": "gym-wear-sportswear",
+        "CategoryName": "Gym Wear & Sportswear",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Gym Wear & Sportswear",
+          "TitleHighlight": "WORKOUT READY • MAXIMUM FLEX",
+          "Subtitle": "2-piece matching ribbed workout sets, moisture-wicking muscle tanks, phone-pocket gym tights, and athletic joggers.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#e11d48",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "gw1",
+            "Name": "Matching 2-Piece Ribbed Workout Gym Set",
+            "CategoryName": "Gym Wear & Sportswear",
+            "CategorySlug": "gym-wear-sportswear",
+            "Price": 1399,
+            "OriginalPrice": 2799,
+            "Rating": 5.0,
+            "ReviewsCount": 182,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/gym-wear-sportswear",
+            "IsUploadingSoon": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "Colors": [
+              "Beige",
+              "Olive",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "gw2",
+            "Name": "Moisture-Wicking Athletic Muscle Tank Top",
+            "CategoryName": "Gym Wear & Sportswear",
+            "CategorySlug": "gym-wear-sportswear",
+            "Price": 499,
+            "OriginalPrice": 999,
+            "Rating": 4.8,
+            "ReviewsCount": 110,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/gym-wear-sportswear",
+            "IsUploadingSoon": true,
+            "Badge": "Ultra Light",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "White",
+              "Grey",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "gw3",
+            "Name": "Gym Compression Leggings with Phone Pocket",
+            "CategoryName": "Gym Wear & Sportswear",
+            "CategorySlug": "gym-wear-sportswear",
+            "Price": 799,
+            "OriginalPrice": 1599,
+            "Rating": 4.9,
+            "ReviewsCount": 156,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/gym-wear-sportswear",
+            "IsUploadingSoon": true,
+            "Badge": "Top Pick",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Black",
+              "Navy"
+            ],
+            "InStock": true,
+            "IsActive": true
+          },
+          {
+            "Id": "gw4",
+            "Name": "Drawstring Soft Fleece Athletic Joggers",
+            "CategoryName": "Gym Wear & Sportswear",
+            "CategorySlug": "gym-wear-sportswear",
+            "Price": 899,
+            "OriginalPrice": 1799,
+            "Rating": 4.7,
+            "ReviewsCount": 120,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/women-clothing/gym-wear-sportswear",
+            "IsUploadingSoon": true,
+            "Badge": "All-Day Cozy",
+            "Sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "Colors": [
+              "Olive",
+              "Grey",
+              "Black"
+            ],
+            "InStock": true,
+            "IsActive": true
+          }
+        ]
+      }
+    ]
+  },
+  "MenFootwear": {
+    "IsEnabled": true,
+    "FestivalTheme": {
+      "IsEnabled": true,
+      "FestivalName": "Campus Walk & Performance Edit",
+      "AnnouncementText": "👟 Step Up Your Journey: Premium campus footwear with shock absorption & special student discounts!",
+      "BadgeText": "FOOTWEAR SPECIAL",
+      "BannerHighlight": "Up to 50% Off",
+      "BgGradient": "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)"
+    },
+    "HeroBanner": {
+      "IsEnabled": true,
+      "Title": "Men's Footwear",
+      "TitleHighlight": "Step into Comfort & Performance",
+      "Subtitle": "Engineered for international students — all-day campus walking, workouts, and formal presentations.",
+      "Description": "Lightweight memory-foam cushioning, high-abrasion rubber soles, and breathable weather-ready designs.",
+      "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+      "IsUploadingSoon": true,
+      "TitleColor": "#0369a1",
+      "TitleHighlightColor": "#ea580c",
+      "SubtitleColor": "#334155",
+      "BannerHeight": 440,
+      "Badges": [
+        {
+          "Id": "mfb1",
+          "Label": "Shock Absorption",
+          "Icon": "shield"
+        },
+        {
+          "Id": "mfb2",
+          "Label": "All-Weather Grip",
+          "Icon": "compass"
+        },
+        {
+          "Id": "mfb3",
+          "Label": "Lightweight & Breathable",
+          "Icon": "feather"
+        },
+        {
+          "Id": "mfb4",
+          "Label": "Loved by 15K+ Students",
+          "Icon": "users"
+        }
+      ],
+      "RightCard": {
+        "Title": "Walk Far.",
+        "TitleHighlight": "Stay Agile.",
+        "Features": [
+          {
+            "Id": "mff1",
+            "Title": "Shock Absorption",
+            "Icon": "shield"
+          },
+          {
+            "Id": "mff2",
+            "Title": "All-Weather Grip",
+            "Icon": "compass"
+          },
+          {
+            "Id": "mff3",
+            "Title": "Breathable Mesh",
+            "Icon": "wind"
+          },
+          {
+            "Id": "mff4",
+            "Title": "All-Day Comfort",
+            "Icon": "feather"
+          }
+        ]
+      }
+    },
+    "CategoriesSection": {
+      "IsEnabled": true,
+      "Title": "Shop by Category",
+      "ViewAllText": "View All Categories →",
+      "ViewAllUrl": "/category/fashion/men-footwear",
+      "Categories": [
+        {
+          "Id": "mfc1",
+          "Name": "Casual Shoes",
+          "Slug": "casual-shoes",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 1,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mfc2",
+          "Name": "Sports Shoes",
+          "Slug": "sports-shoes",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 2,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mfc3",
+          "Name": "Formal Shoes",
+          "Slug": "formal-shoes",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 3,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mfc4",
+          "Name": "Sneakers",
+          "Slug": "sneakers",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 4,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mfc5",
+          "Name": "Sandals & Floaters",
+          "Slug": "sandals-floaters",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 5,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mfc6",
+          "Name": "Flip Flops",
+          "Slug": "flip-flops",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 6,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        },
+        {
+          "Id": "mfc7",
+          "Name": "Socks",
+          "Slug": "socks",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "DisplayOrder": 7,
+          "IsUploadingSoon": true,
+          "IsActive": true
+        }
+      ]
+    },
+    "TopPicksSection": {
+      "IsEnabled": true,
+      "Title": "Top Picks for You",
+      "ViewAllText": "View All Products →",
+      "ViewAllUrl": "/category/fashion/men-footwear",
+      "Products": [
+        {
+          "Id": "mfp1",
+          "Name": "Urban Street Low-Top Leather Sneakers",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "sneakers",
+          "Price": 1499.0,
+          "OriginalPrice": 2999.0,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/sneakers",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "UK 7",
+            "UK 8",
+            "UK 9",
+            "UK 10",
+            "UK 11"
+          ],
+          "Colors": [
+            "White",
+            "Black",
+            "Grey"
+          ]
+        },
+        {
+          "Id": "mfp2",
+          "Name": "Air-Cushion Campus Running Sports Shoes",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "sports-shoes",
+          "Price": 1799.0,
+          "OriginalPrice": 3499.0,
+          "Rating": 4.8,
+          "ReviewsCount": 185,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/sports-shoes",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Trending",
+          "Sizes": [
+            "UK 6",
+            "UK 7",
+            "UK 8",
+            "UK 9",
+            "UK 10",
+            "UK 11",
+            "UK 12"
+          ],
+          "Colors": [
+            "Black",
+            "Navy",
+            "Neon"
+          ]
+        },
+        {
+          "Id": "mfp3",
+          "Name": "Classic Handcrafted Leather Oxford Formal Shoes",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "formal-shoes",
+          "Price": 2199.0,
+          "OriginalPrice": 4299.0,
+          "Rating": 4.9,
+          "ReviewsCount": 142,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/formal-shoes",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Formal Star",
+          "Sizes": [
+            "UK 7",
+            "UK 8",
+            "UK 9",
+            "UK 10",
+            "UK 11"
+          ],
+          "Colors": [
+            "Black",
+            "Dark Tan"
+          ]
+        },
+        {
+          "Id": "mfp4",
+          "Name": "Memory Foam Slip-On Casual Canvas Loafers",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "casual-shoes",
+          "Price": 999.0,
+          "OriginalPrice": 1999.0,
+          "Rating": 4.7,
+          "ReviewsCount": 164,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/casual-shoes",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Campus Pick",
+          "Sizes": [
+            "UK 6",
+            "UK 7",
+            "UK 8",
+            "UK 9",
+            "UK 10"
+          ],
+          "Colors": [
+            "Navy",
+            "Charcoal",
+            "Beige"
+          ]
+        },
+        {
+          "Id": "mfp5",
+          "Name": "All-Terrain Adventure Grip Floaters",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "sandals-floaters",
+          "Price": 899.0,
+          "OriginalPrice": 1799.0,
+          "Rating": 4.8,
+          "ReviewsCount": 118,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/sandals-floaters",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Rugged Grip",
+          "Sizes": [
+            "UK 7",
+            "UK 8",
+            "UK 9",
+            "UK 10"
+          ],
+          "Colors": [
+            "Olive",
+            "Black"
+          ]
+        },
+        {
+          "Id": "mfp6",
+          "Name": "Anti-Skid Ultra-Light Comfort Flip Flops",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "flip-flops",
+          "Price": 449.0,
+          "OriginalPrice": 899.0,
+          "Rating": 4.6,
+          "ReviewsCount": 95,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/flip-flops",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Waterproof",
+          "Sizes": [
+            "UK 6",
+            "UK 7",
+            "UK 8",
+            "UK 9",
+            "UK 10"
+          ],
+          "Colors": [
+            "Black",
+            "Blue"
+          ]
+        },
+        {
+          "Id": "mfp7",
+          "Name": "5-Pack Anti-Odor Breathable Cotton Ankle Socks",
+          "CategoryName": "Men Footwear",
+          "CategorySlug": "socks",
+          "Price": 399.0,
+          "OriginalPrice": 799.0,
+          "Rating": 4.9,
+          "ReviewsCount": 230,
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/fashion/men-footwear/socks",
+          "IsUploadingSoon": true,
+          "IsActive": true,
+          "Badge": "Value Pack",
+          "Sizes": [
+            "Free Size"
+          ],
+          "Colors": [
+            "Black",
+            "White",
+            "Grey"
+          ]
+        }
+      ]
+    },
+    "TrustBadgesSection": {
+      "IsEnabled": true,
+      "Badges": [
+        {
+          "Id": "mft1",
+          "Title": "Curated for Students",
+          "Subtitle": "All-day comfort designed for campus walking",
+          "Icon": "box"
+        },
+        {
+          "Id": "mft2",
+          "Title": "100% Genuine Quality",
+          "Subtitle": "Durable materials & high-traction soles",
+          "Icon": "shield"
+        },
+        {
+          "Id": "mft3",
+          "Title": "Affordable Value",
+          "Subtitle": "Unmatched student price guarantee",
+          "Icon": "tag"
+        },
+        {
+          "Id": "mft4",
+          "Title": "Fast Campus Delivery",
+          "Subtitle": "Delivered right to your doorstep",
+          "Icon": "truck"
+        },
+        {
+          "Id": "mft5",
+          "Title": "7-Day Easy Returns",
+          "Subtitle": "Hassle-free size replacement",
+          "Icon": "return"
+        },
+        {
+          "Id": "mft6",
+          "Title": "24/7 Student Support",
+          "Subtitle": "Dedicated assistance whenever needed",
+          "Icon": "headset"
+        }
+      ]
+    },
+    "BottomBanner": {
+      "IsEnabled": true,
+      "QuizTitle": "Not Sure Which Size or Style?",
+      "QuizSubtitle": "Take our 30-second shoe finder quiz to find your ideal fit",
+      "QuizButtonText": "Find My Shoe Size",
+      "QuizButtonUrl": "/find-my-kit",
+      "DestinationsTitle": "Weather-Ready Footwear for Top Destinations",
+      "DestinationsSubtitle": "USA, UK, Canada, Australia & Europe",
+      "BulkTitle": "Group Orders for Student Clubs",
+      "BulkSubtitle": "Special bulk pricing for university sports teams",
+      "BulkButtonText": "Contact Us",
+      "BulkButtonUrl": "/contact"
+    },
+    "SubcategoryPages": [
+      {
+        "CategorySlug": "casual-shoes",
+        "CategoryName": "Casual Shoes",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Casual Shoes",
+          "TitleHighlight": "EVERYDAY COMFORT • MEMORY FOAM",
+          "Subtitle": "Breathable canvas slip-ons, lightweight knit loafers, and casual boat shoes built for lectures and campus strolls.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "cs1",
+            "Name": "Memory Foam Slip-On Canvas Loafers",
+            "CategoryName": "Casual Shoes",
+            "CategorySlug": "casual-shoes",
+            "Price": 999.0,
+            "OriginalPrice": 1999.0,
+            "Rating": 4.8,
+            "ReviewsCount": 145,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/casual-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Navy",
+              "Charcoal",
+              "Beige"
+            ]
+          },
+          {
+            "Id": "cs2",
+            "Name": "Breathable Knit Flexible Walking Shoes",
+            "CategoryName": "Casual Shoes",
+            "CategorySlug": "casual-shoes",
+            "Price": 1199.0,
+            "OriginalPrice": 2399.0,
+            "Rating": 4.7,
+            "ReviewsCount": 98,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/casual-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Trending",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Black",
+              "Grey"
+            ]
+          },
+          {
+            "Id": "cs3",
+            "Name": "Casual Suede Handcrafted Driving Loafers",
+            "CategoryName": "Casual Shoes",
+            "CategorySlug": "casual-shoes",
+            "Price": 1499.0,
+            "OriginalPrice": 2999.0,
+            "Rating": 4.9,
+            "ReviewsCount": 112,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/casual-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Premium Suede",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Tan",
+              "Brown",
+              "Navy"
+            ]
+          },
+          {
+            "Id": "cs4",
+            "Name": "Classic Deck Boat Shoes with Anti-Slip Sole",
+            "CategoryName": "Casual Shoes",
+            "CategorySlug": "casual-shoes",
+            "Price": 1299.0,
+            "OriginalPrice": 2599.0,
+            "Rating": 4.6,
+            "ReviewsCount": 80,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/casual-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "All-Day Grip",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Brown",
+              "Navy"
+            ]
+          }
+        ]
+      },
+      {
+        "CategorySlug": "sports-shoes",
+        "CategoryName": "Sports Shoes",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Sports Shoes",
+          "TitleHighlight": "HIGH PERFORMANCE • SHOCK ABSORPTION",
+          "Subtitle": "Air-cushioned running trainers, gym trainers, and durable turf shoes built for maximum speed and shock protection.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "ss1",
+            "Name": "Air-Cushion Campus Running Sports Shoes",
+            "CategoryName": "Sports Shoes",
+            "CategorySlug": "sports-shoes",
+            "Price": 1799.0,
+            "OriginalPrice": 3499.0,
+            "Rating": 4.9,
+            "ReviewsCount": 220,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sports-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11",
+              "UK 12"
+            ],
+            "Colors": [
+              "Black",
+              "Navy",
+              "Neon"
+            ]
+          },
+          {
+            "Id": "ss2",
+            "Name": "Ultra-Lightweight Gym Mesh Training Trainers",
+            "CategoryName": "Sports Shoes",
+            "CategorySlug": "sports-shoes",
+            "Price": 1399.0,
+            "OriginalPrice": 2799.0,
+            "Rating": 4.8,
+            "ReviewsCount": 135,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sports-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Workout Pro",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Grey",
+              "Black",
+              "Red"
+            ]
+          },
+          {
+            "Id": "ss3",
+            "Name": "High-Traction All-Weather Marathon Runners",
+            "CategoryName": "Sports Shoes",
+            "CategorySlug": "sports-shoes",
+            "Price": 2199.0,
+            "OriginalPrice": 4399.0,
+            "Rating": 5.0,
+            "ReviewsCount": 94,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sports-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Pro Runner",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Blue",
+              "Black"
+            ]
+          },
+          {
+            "Id": "ss4",
+            "Name": "Cross-Training Court & Badminton Shoes",
+            "CategoryName": "Sports Shoes",
+            "CategorySlug": "sports-shoes",
+            "Price": 1599.0,
+            "OriginalPrice": 3199.0,
+            "Rating": 4.7,
+            "ReviewsCount": 88,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sports-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Indoor Court",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "White",
+              "Neon Orange"
+            ]
+          }
+        ]
+      },
+      {
+        "CategorySlug": "formal-shoes",
+        "CategoryName": "Formal Shoes",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Formal Shoes",
+          "TitleHighlight": "TIMELESS ELEGANCE • GENUINE LEATHER",
+          "Subtitle": "Sharp Oxford brogues, polished patent Derbys, and slip-on monk straps engineered for presentations, interviews, and formal banquets.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "fs1",
+            "Name": "Classic Handcrafted Leather Oxford Formal Shoes",
+            "CategoryName": "Formal Shoes",
+            "CategorySlug": "formal-shoes",
+            "Price": 2199.0,
+            "OriginalPrice": 4299.0,
+            "Rating": 4.9,
+            "ReviewsCount": 168,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/formal-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Black",
+              "Dark Tan"
+            ]
+          },
+          {
+            "Id": "fs2",
+            "Name": "Glossy Patent Derby Formal Lace-Up Shoes",
+            "CategoryName": "Formal Shoes",
+            "CategorySlug": "formal-shoes",
+            "Price": 1899.0,
+            "OriginalPrice": 3799.0,
+            "Rating": 4.8,
+            "ReviewsCount": 114,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/formal-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Sharp Look",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Black"
+            ]
+          },
+          {
+            "Id": "fs3",
+            "Name": "Double Monk Strap Italian Style Leather Shoes",
+            "CategoryName": "Formal Shoes",
+            "CategorySlug": "formal-shoes",
+            "Price": 2499.0,
+            "OriginalPrice": 4999.0,
+            "Rating": 4.9,
+            "ReviewsCount": 92,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/formal-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Italian Style",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Burgundy",
+              "Cognac Brown"
+            ]
+          },
+          {
+            "Id": "fs4",
+            "Name": "Cushioned Slip-On Formal Penny Loafers",
+            "CategoryName": "Formal Shoes",
+            "CategorySlug": "formal-shoes",
+            "Price": 1699.0,
+            "OriginalPrice": 3399.0,
+            "Rating": 4.7,
+            "ReviewsCount": 85,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/formal-shoes",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Comfort Sole",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Black",
+              "Dark Brown"
+            ]
+          }
+        ]
+      },
+      {
+        "CategorySlug": "sneakers",
+        "CategoryName": "Sneakers",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Sneakers",
+          "TitleHighlight": "STREET CULTURE • ICONIC VIBE",
+          "Subtitle": "Retro low-tops, chunky platform kicks, and minimalist court sneakers tailored for your unique everyday campus aesthetic.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "sn1",
+            "Name": "Urban Street Low-Top Leather Sneakers",
+            "CategoryName": "Sneakers",
+            "CategorySlug": "sneakers",
+            "Price": 1499.0,
+            "OriginalPrice": 2999.0,
+            "Rating": 4.9,
+            "ReviewsCount": 245,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sneakers",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "White",
+              "Black",
+              "Grey"
+            ]
+          },
+          {
+            "Id": "sn2",
+            "Name": "Chunky Retro 90s Platform Streetwear Sneakers",
+            "CategoryName": "Sneakers",
+            "CategorySlug": "sneakers",
+            "Price": 1899.0,
+            "OriginalPrice": 3799.0,
+            "Rating": 4.8,
+            "ReviewsCount": 175,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sneakers",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Trending",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "White",
+              "Multi-Color"
+            ]
+          },
+          {
+            "Id": "sn3",
+            "Name": "High-Top Canvas Streetwear Skate Sneakers",
+            "CategoryName": "Sneakers",
+            "CategorySlug": "sneakers",
+            "Price": 1299.0,
+            "OriginalPrice": 2599.0,
+            "Rating": 4.7,
+            "ReviewsCount": 130,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sneakers",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Skate Classic",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Black",
+              "Red",
+              "Navy"
+            ]
+          },
+          {
+            "Id": "sn4",
+            "Name": "Minimalist Court All-White Daily Sneakers",
+            "CategoryName": "Sneakers",
+            "CategorySlug": "sneakers",
+            "Price": 1599.0,
+            "OriginalPrice": 3199.0,
+            "Rating": 4.9,
+            "ReviewsCount": 190,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sneakers",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Campus Clean",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11",
+              "UK 12"
+            ],
+            "Colors": [
+              "All-White"
+            ]
+          }
+        ]
+      },
+      {
+        "CategorySlug": "sandals-floaters",
+        "CategoryName": "Sandals & Floaters",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Sandals & Floaters",
+          "TitleHighlight": "ALL-TERRAIN GRIP • WEATHERPROOF",
+          "Subtitle": "Multi-strap ergonomic sandals, water-resistant hiking floaters, and cushioned comfort slides for tropical days and casual trips.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "sf1",
+            "Name": "All-Terrain Adventure Grip Floaters",
+            "CategoryName": "Sandals & Floaters",
+            "CategorySlug": "sandals-floaters",
+            "Price": 899.0,
+            "OriginalPrice": 1799.0,
+            "Rating": 4.8,
+            "ReviewsCount": 152,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sandals-floaters",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Olive",
+              "Black"
+            ]
+          },
+          {
+            "Id": "sf2",
+            "Name": "Ergonomic Dual-Strap Adjustable Sandals",
+            "CategoryName": "Sandals & Floaters",
+            "CategorySlug": "sandals-floaters",
+            "Price": 999.0,
+            "OriginalPrice": 1999.0,
+            "Rating": 4.7,
+            "ReviewsCount": 108,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sandals-floaters",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Ergonomic",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Brown",
+              "Tan"
+            ]
+          },
+          {
+            "Id": "sf3",
+            "Name": "Water-Resistant Quick-Dry Trail Floaters",
+            "CategoryName": "Sandals & Floaters",
+            "CategorySlug": "sandals-floaters",
+            "Price": 1199.0,
+            "OriginalPrice": 2399.0,
+            "Rating": 4.9,
+            "ReviewsCount": 96,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sandals-floaters",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Waterproof",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Black",
+              "Navy"
+            ]
+          },
+          {
+            "Id": "sf4",
+            "Name": "Soft-Footbed Comfort Casual Slides",
+            "CategoryName": "Sandals & Floaters",
+            "CategorySlug": "sandals-floaters",
+            "Price": 749.0,
+            "OriginalPrice": 1499.0,
+            "Rating": 4.6,
+            "ReviewsCount": 74,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/sandals-floaters",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Soft Bed",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Charcoal",
+              "Navy"
+            ]
+          }
+        ]
+      },
+      {
+        "CategorySlug": "flip-flops",
+        "CategoryName": "Flip Flops",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Flip Flops",
+          "TitleHighlight": "FEATHER-LIGHT EVA • ANTI-SKID",
+          "Subtitle": "Soft EVA foam flip flops, beach thongs, and dormitory shower slippers engineered with anti-slip textured footbeds.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "ff1",
+            "Name": "Anti-Skid Ultra-Light Comfort Flip Flops",
+            "CategoryName": "Flip Flops",
+            "CategorySlug": "flip-flops",
+            "Price": 449.0,
+            "OriginalPrice": 899.0,
+            "Rating": 4.7,
+            "ReviewsCount": 186,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/flip-flops",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Black",
+              "Blue"
+            ]
+          },
+          {
+            "Id": "ff2",
+            "Name": "Lightweight EVA Foam Campus Chappals",
+            "CategoryName": "Flip Flops",
+            "CategorySlug": "flip-flops",
+            "Price": 349.0,
+            "OriginalPrice": 699.0,
+            "Rating": 4.6,
+            "ReviewsCount": 120,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/flip-flops",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Super Light",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Grey",
+              "Black"
+            ]
+          },
+          {
+            "Id": "ff3",
+            "Name": "Dormitory Shower Anti-Slip Waterproof Slides",
+            "CategoryName": "Flip Flops",
+            "CategorySlug": "flip-flops",
+            "Price": 499.0,
+            "OriginalPrice": 999.0,
+            "Rating": 4.8,
+            "ReviewsCount": 142,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/flip-flops",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Dorm Essential",
+            "Sizes": [
+              "UK 6",
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10",
+              "UK 11"
+            ],
+            "Colors": [
+              "Navy",
+              "White"
+            ]
+          },
+          {
+            "Id": "ff4",
+            "Name": "Cushioned Wave-Grip Beach Thong Slippers",
+            "CategoryName": "Flip Flops",
+            "CategorySlug": "flip-flops",
+            "Price": 399.0,
+            "OriginalPrice": 799.0,
+            "Rating": 4.5,
+            "ReviewsCount": 92,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/flip-flops",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Beach Ready",
+            "Sizes": [
+              "UK 7",
+              "UK 8",
+              "UK 9",
+              "UK 10"
+            ],
+            "Colors": [
+              "Orange",
+              "Black"
+            ]
+          }
+        ]
+      },
+      {
+        "CategorySlug": "socks",
+        "CategoryName": "Socks",
+        "HeroBanner": {
+          "IsEnabled": true,
+          "Title": "Socks",
+          "TitleHighlight": "ANTI-ODOR BAMBOO • REINFORCED HEEL",
+          "Subtitle": "Multipack breathable cotton ankle socks, winter merino thermal crew socks, and sports compression athletic socks.",
+          "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+          "IsUploadingSoon": true,
+          "ThemeColor": "#0284c7",
+          "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE"
+        },
+        "Products": [
+          {
+            "Id": "sk1",
+            "Name": "5-Pack Anti-Odor Breathable Cotton Ankle Socks",
+            "CategoryName": "Socks",
+            "CategorySlug": "socks",
+            "Price": 399.0,
+            "OriginalPrice": 799.0,
+            "Rating": 4.9,
+            "ReviewsCount": 280,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/socks",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Best Seller",
+            "Sizes": [
+              "Free Size"
+            ],
+            "Colors": [
+              "Black",
+              "White",
+              "Grey"
+            ]
+          },
+          {
+            "Id": "sk2",
+            "Name": "3-Pack Winter Merino Thermal Crew Warm Socks",
+            "CategoryName": "Socks",
+            "CategorySlug": "socks",
+            "Price": 599.0,
+            "OriginalPrice": 1199.0,
+            "Rating": 4.9,
+            "ReviewsCount": 195,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/socks",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Winter Warm",
+            "Sizes": [
+              "Free Size"
+            ],
+            "Colors": [
+              "Charcoal",
+              "Navy"
+            ]
+          },
+          {
+            "Id": "sk3",
+            "Name": "4-Pack Athletic Arch Compression Sports Socks",
+            "CategoryName": "Socks",
+            "CategorySlug": "socks",
+            "Price": 499.0,
+            "OriginalPrice": 999.0,
+            "Rating": 4.8,
+            "ReviewsCount": 140,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/socks",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Compression",
+            "Sizes": [
+              "Free Size"
+            ],
+            "Colors": [
+              "White",
+              "Black"
+            ]
+          },
+          {
+            "Id": "sk4",
+            "Name": "5-Pack Formal Antibacterial Bamboo Dress Socks",
+            "CategoryName": "Socks",
+            "CategorySlug": "socks",
+            "Price": 549.0,
+            "OriginalPrice": 1099.0,
+            "Rating": 4.8,
+            "ReviewsCount": 112,
+            "ImageUrl": "/images/fashion-hub/uploading-soon-placeholder.svg",
+            "ProductUrl": "/category/fashion/men-footwear/socks",
+            "IsUploadingSoon": true,
+            "IsActive": true,
+            "Badge": "Formal Pack",
+            "Sizes": [
+              "Free Size"
+            ],
+            "Colors": [
+              "Black",
+              "Navy",
+              "Dark Grey"
+            ]
+          }
+        ]
+      }
+    ]
   }
 }
