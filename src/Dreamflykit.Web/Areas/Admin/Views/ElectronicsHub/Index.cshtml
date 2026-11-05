@@ -649,6 +649,7 @@
      ADMIN SCRIPTS & AJAX
 ============================================================ -->
 <script>
+    const initialSubPagesMap = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(subPages.ToDictionary(p => p.CategorySlug, p => p)));
     function switchElecTab(tabName, btn) {
         document.querySelectorAll('.dk-hub-tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.dk-hub-tab-pane').forEach(p => p.style.display = 'none');
@@ -1119,6 +1120,7 @@
                 });
             });
 
+            const existingPage = (typeof initialSubPagesMap !== 'undefined' && initialSubPagesMap[slug]) || {};
             payload.SubcategoryPages.push({
                 Id: pageId,
                 CategorySlug: slug,
@@ -1131,7 +1133,7 @@
                     Subtitle: heroSub,
                     ImageUrl: heroImg,
                     IsUploadingSoon: heroSoon,
-                    BannerHeight: 380,
+                    BannerHeight: 400,
                     TitleColor: '#063f91',
                     TitleHighlightColor: '#0284c7',
                     SubtitleColor: '#334155'
@@ -1142,7 +1144,8 @@
                     Subtitle: brandsSub,
                     Brands: brandsList
                 },
-                CuratedProducts: []
+                EquipmentTypes: existingPage.EquipmentTypes || [],
+                CuratedProducts: existingPage.CuratedProducts || []
             });
         });
 
