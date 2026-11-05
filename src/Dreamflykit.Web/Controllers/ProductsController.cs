@@ -577,28 +577,17 @@ public sealed class ProductsController : Controller
             var elecHubConfig = await _electronicsHubService.GetConfigAsync(cancellationToken);
 
             var subPage = elecHubConfig.SubcategoryPages?.FirstOrDefault(p =>
-
                 string.Equals(p.CategorySlug, currentSubcategorySlug, StringComparison.OrdinalIgnoreCase) ||
-
                 (currentSubcategorySlug.Contains("laptop") && p.CategorySlug.Contains("laptop")) ||
-
-                (currentSubcategorySlug.Contains("headphone") && p.CategorySlug.Contains("headphone")) ||
-
-                (currentSubcategorySlug.Contains("adapter") && p.CategorySlug.Contains("adapter")) ||
-
+                ((currentSubcategorySlug.Contains("earphone") || currentSubcategorySlug.Contains("headphone") || currentSubcategorySlug.Contains("audio")) && (p.CategorySlug.Contains("earphone") || p.CategorySlug.Contains("headphone"))) ||
+                (currentSubcategorySlug.Contains("groom") && p.CategorySlug.Contains("groom")) ||
+                ((currentSubcategorySlug.Contains("case") || currentSubcategorySlug.Contains("cover")) && p.CategorySlug.Contains("case")) ||
+                ((currentSubcategorySlug.Contains("storage") || currentSubcategorySlug.Contains("ssd")) && p.CategorySlug.Contains("storage")) ||
+                ((currentSubcategorySlug.Contains("charger") || currentSubcategorySlug.Contains("cable") || currentSubcategorySlug.Contains("adapter")) && (p.CategorySlug.Contains("charger") || p.CategorySlug.Contains("cable"))) ||
                 (currentSubcategorySlug.Contains("power") && p.CategorySlug.Contains("power")) ||
-
-                (currentSubcategorySlug.Contains("sim") && p.CategorySlug.Contains("sim")) ||
-
-                (currentSubcategorySlug.Contains("storage") && p.CategorySlug.Contains("storage")) ||
-
                 (currentSubcategorySlug.Contains("watch") && p.CategorySlug.Contains("watch")) ||
-
-                (currentSubcategorySlug.Contains("cable") && p.CategorySlug.Contains("cable")) ||
-
-                (currentSubcategorySlug.Contains("monitor") && p.CategorySlug.Contains("monitor")) ||
-
-                (currentSubcategorySlug.Contains("calculator") && p.CategorySlug.Contains("calculator")));
+                ((currentSubcategorySlug.Contains("accessory") || currentSubcategorySlug.Contains("accessories") || currentSubcategorySlug.Contains("mouse") || currentSubcategorySlug.Contains("keyboard")) && p.CategorySlug.Contains("access")) ||
+                (currentSubcategorySlug.Contains("speaker") && p.CategorySlug.Contains("speaker")));
 
 
 

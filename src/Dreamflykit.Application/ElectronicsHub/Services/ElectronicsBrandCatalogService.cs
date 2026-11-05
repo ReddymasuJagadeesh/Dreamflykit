@@ -21,15 +21,15 @@ public static class ElectronicsBrandCatalogService
         var subPage = allPages.FirstOrDefault(p =>
             string.Equals(p.CategorySlug, cleanSub, StringComparison.OrdinalIgnoreCase) ||
             (cleanSub.Contains("laptop") && p.CategorySlug.Contains("laptop")) ||
-            (cleanSub.Contains("headphone") && p.CategorySlug.Contains("headphone")) ||
-            (cleanSub.Contains("adapter") && p.CategorySlug.Contains("adapter")) ||
+            ((cleanSub.Contains("headphone") || cleanSub.Contains("earphone") || cleanSub.Contains("audio")) && (p.CategorySlug.Contains("earphone") || p.CategorySlug.Contains("headphone"))) ||
+            (cleanSub.Contains("groom") && p.CategorySlug.Contains("groom")) ||
+            ((cleanSub.Contains("case") || cleanSub.Contains("cover")) && p.CategorySlug.Contains("case")) ||
+            ((cleanSub.Contains("storage") || cleanSub.Contains("ssd")) && p.CategorySlug.Contains("storage")) ||
+            ((cleanSub.Contains("charger") || cleanSub.Contains("cable") || cleanSub.Contains("adapter")) && (p.CategorySlug.Contains("charger") || p.CategorySlug.Contains("cable"))) ||
             (cleanSub.Contains("power") && p.CategorySlug.Contains("power")) ||
-            (cleanSub.Contains("sim") && p.CategorySlug.Contains("sim")) ||
-            (cleanSub.Contains("storage") && p.CategorySlug.Contains("storage")) ||
             (cleanSub.Contains("watch") && p.CategorySlug.Contains("watch")) ||
-            (cleanSub.Contains("cable") && p.CategorySlug.Contains("cable")) ||
-            (cleanSub.Contains("monitor") && p.CategorySlug.Contains("monitor")) ||
-            (cleanSub.Contains("calculator") && p.CategorySlug.Contains("calculator")))
+            ((cleanSub.Contains("accessory") || cleanSub.Contains("accessories") || cleanSub.Contains("mouse") || cleanSub.Contains("keyboard")) && p.CategorySlug.Contains("access")) ||
+            (cleanSub.Contains("speaker") && p.CategorySlug.Contains("speaker")))
             ?? allPages.First();
 
         var brands = subPage.ShopByBrands?.Brands ?? new List<ElectronicsBrandItemDto>();

@@ -633,7 +633,7 @@
     }
     else if (Model.IsMenFootwear || Model.ViewMode == "men-footwear")
     {
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+        <div style="width: 100%; margin-bottom: 24px;">
             <partial name="_FashionMenFootwearHub" model="@(Model.FashionHub?.MenFootwear ?? Dreamflykit.Application.FashionHub.Models.FashionMenFootwearDto.CreateDefault())" />
         </div>
     }
@@ -653,7 +653,7 @@
 
     {
 
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+        <div style="width: 100%; margin-bottom: 24px;">
 
             <partial name="_FashionWomenClothingHub" model="@(Model.FashionHub?.WomenClothing ?? Dreamflykit.Application.FashionHub.Models.FashionWomenClothingDto.CreateDefault())" />
 
@@ -665,7 +665,7 @@
 
     {
 
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+        <div style="width: 100%; margin-bottom: 24px;">
 
             <partial name="_FashionHoodiesHub" model="@(Model.FashionHub?.Hoodies ?? Dreamflykit.Application.FashionHub.Models.FashionHoodiesHubDto.CreateDefault())" />
 
@@ -677,7 +677,7 @@
 
     {
 
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+        <div style="width: 100%; margin-bottom: 24px;">
 
             <partial name="_FashionSweatshirtsHub" model="@(Model.FashionHub?.Sweatshirts ?? Dreamflykit.Application.FashionHub.Models.FashionSweatshirtsHubDto.CreateDefault())" />
 
@@ -701,7 +701,7 @@
 
     {
 
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+        <div style="width: 100%; margin-bottom: 24px;">
 
             <partial name="_FashionCategoryHub" model="Model.FashionHub" />
 
@@ -715,7 +715,7 @@
 
     {
 
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+        <div style="width: 100%; margin-bottom: 24px;">
 
             <partial name="_HealthCareCategoryHub" model="Model.HealthHub" />
 
@@ -729,7 +729,7 @@
 
     {
 
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+        <div style="width: 100%; margin-bottom: 24px;">
 
             <partial name="_MobilesCategoryHub" model="Model.MobilesHub" />
 
@@ -749,7 +749,7 @@
 
             {
 
-                <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+                <div style="width: 100%; margin-bottom: 24px;">
 
                     <partial name="_AppliancesBrandHub" model="Model" />
 
@@ -783,7 +783,7 @@
 
     {
 
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+        <div style="width: 100%; margin-bottom: 24px;">
 
             <partial name="_BeautyCategoryHub" model="Model.BeautyHub" />
 
@@ -865,7 +865,7 @@
 
     {
 
-        <div class="dk-shell" style="padding-top: 4px; margin-bottom: 24px;">
+        <div style="width: 100%; margin-bottom: 24px;">
 
             @if (Model.IsElectronicsBrandHub)
 
