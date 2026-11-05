@@ -313,6 +313,9 @@ public static class InfrastructureServiceCollectionExtensions
         // Gaming Hub Service (Consoles, VR, Retro Arcades & Accessories)
         services.AddScoped<Dreamflykit.Application.GamingHub.Interfaces.IGamingHubService, Dreamflykit.Infrastructure.GamingHub.GamingHubService>();
 
+        // Sports Hub Service (12 Sports Categories, Subcategory Hubs & Products)
+        services.AddScoped<Dreamflykit.Application.SportsHub.Interfaces.ISportsHubService, Dreamflykit.Infrastructure.SportsHub.SportsHubService>();
+
         // 3-Section Synchronized Category Sliders (All Categories)
         services.AddScoped<Dreamflykit.Application.CategoryShowcase.Interfaces.ICategoryThreeSectionSliderService, Dreamflykit.Infrastructure.CategoryShowcase.CategoryThreeSectionSliderService>();
 

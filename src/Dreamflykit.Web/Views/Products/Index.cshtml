@@ -518,6 +518,15 @@
 
             }
 
+            else if (Model.IsSportsHub)
+            {
+                <a href="/category/sports-hub" class="dk-breadcrumb-item">Sports Hub</a>
+                @if (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName) || !string.IsNullOrWhiteSpace(Model.CurrentSubcategorySlug))
+                {
+                    <span class="dk-breadcrumb-separator">›</span>
+                    <span class="dk-breadcrumb-current">@(Model.CurrentSubcategoryName ?? Model.CurrentSubcategorySlug)</span>
+                }
+            }
             else if (Model.IsGamingHub)
 
             {
@@ -902,6 +911,20 @@
 
 
 
+    @if (Model.IsSportsHub && Model.SportsHub != null)
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            @if (Model.IsSportsSubcategory || Model.ViewMode == "sports-sub")
+            {
+                <partial name="_SportsSubcategoryHub" model="Model" />
+            }
+            else
+            {
+                <partial name="_SportsCategoryHub" model="Model" />
+            }
+        </div>
+    }
+
     @if (Model.IsGamingHub && Model.GamingHub != null)
 
     {
@@ -970,7 +993,7 @@
 
                                Model.IsStoryBooksHub ||
 
-                               Model.IsGamingHub;
+                               Model.IsGamingHub || Model.IsSportsHub || Model.ViewMode == "sports-sub";
 
     }
 

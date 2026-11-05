@@ -197,6 +197,8 @@ public sealed class ProductListViewModel
     public bool IsWomenSubcategory { get; init; }
     public Dreamflykit.Application.FashionHub.Models.FashionMenFootwearSubcategoryPageDto? MenFootwearSubcategoryPage { get; init; }
     public bool IsMenFootwearSubcategory { get; init; }
+    public Dreamflykit.Application.SportsHub.Models.SportsHubDto? SportsHub { get; init; }
+    public Dreamflykit.Application.SportsHub.Models.SportsSubcategoryPageDto? SportsSubcategoryPage { get; init; }
 
 
 
@@ -229,6 +231,14 @@ public sealed class ProductListViewModel
     public bool IsGamingSubcategory =>
 
         IsGamingHub && !string.IsNullOrWhiteSpace(CurrentSubcategorySlug);
+
+    public bool IsSportsHub =>
+        string.Equals(CategorySlug, "sports-hub", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "sports_hub", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "sports", StringComparison.OrdinalIgnoreCase);
+
+    public bool IsSportsSubcategory =>
+        IsSportsHub && !string.IsNullOrWhiteSpace(CurrentSubcategorySlug);
 
 
 

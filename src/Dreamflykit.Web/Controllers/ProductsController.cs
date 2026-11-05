@@ -51,6 +51,7 @@ public sealed class ProductsController : Controller
     private readonly Dreamflykit.Application.StoryBooksHub.Interfaces.IStoryBooksHubService? _storyBooksHubService;
 
     private readonly Dreamflykit.Application.GamingHub.Interfaces.IGamingHubService? _gamingHubService;
+    private readonly Dreamflykit.Application.SportsHub.Interfaces.ISportsHubService? _sportsHubService;
 
 
 
@@ -82,7 +83,8 @@ public sealed class ProductsController : Controller
 
         Dreamflykit.Application.StoryBooksHub.Interfaces.IStoryBooksHubService? storyBooksHubService = null,
 
-        Dreamflykit.Application.GamingHub.Interfaces.IGamingHubService? gamingHubService = null)
+        Dreamflykit.Application.GamingHub.Interfaces.IGamingHubService? gamingHubService = null,
+        Dreamflykit.Application.SportsHub.Interfaces.ISportsHubService? sportsHubService = null)
 
     {
 
@@ -113,6 +115,7 @@ public sealed class ProductsController : Controller
         _storyBooksHubService = storyBooksHubService;
 
         _gamingHubService = gamingHubService;
+        _sportsHubService = sportsHubService;
 
     }
 
@@ -332,6 +335,27 @@ public sealed class ProductsController : Controller
 
 
 
+        var isSportsCategory = string.Equals(effectiveCategory, "sports-hub", StringComparison.OrdinalIgnoreCase) ||
+                               string.Equals(effectiveCategory, "sports_hub", StringComparison.OrdinalIgnoreCase) ||
+                               string.Equals(effectiveCategory, "sports", StringComparison.OrdinalIgnoreCase);
+
+        var sportsSubcategorySlugs = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "cricket", "football", "badminton", "gym-fitness", "basketball-volleyball",
+            "tennis-table-tennis", "sports-footwear", "athletic-wear", "swimming",
+            "sports-bags", "yoga-recovery", "outdoor-trekking"
+        };
+
+        if (!isSportsCategory && !string.IsNullOrWhiteSpace(effectiveCategory) && sportsSubcategorySlugs.Contains(effectiveCategory))
+        {
+            if (string.IsNullOrWhiteSpace(currentSubcategorySlug))
+            {
+                currentSubcategorySlug = effectiveCategory;
+            }
+            effectiveCategory = "sports-hub";
+            isSportsCategory = true;
+        }
+
         var isGamingCategory = string.Equals(effectiveCategory, "gaming-hub", StringComparison.OrdinalIgnoreCase) ||
 
                                string.Equals(effectiveCategory, "gaming_hub", StringComparison.OrdinalIgnoreCase) ||
@@ -475,6 +499,22 @@ public sealed class ProductsController : Controller
         }
 
 
+
+        Dreamflykit.Application.SportsHub.Models.SportsHubDto? sportsHubConfig = null;
+        Dreamflykit.Application.SportsHub.Models.SportsSubcategoryPageDto? sportsSubPage = null;
+
+        if (isSportsCategory && _sportsHubService != null)
+        {
+            sportsHubConfig = await _sportsHubService.GetConfigAsync(cancellationToken);
+            if (!string.IsNullOrWhiteSpace(currentSubcategorySlug))
+            {
+                sportsSubPage = await _sportsHubService.GetSubcategoryPageAsync(currentSubcategorySlug, cancellationToken);
+                if (sportsSubPage != null && string.IsNullOrWhiteSpace(currentSubcategoryName))
+                {
+                    currentSubcategoryName = sportsSubPage.CategoryName;
+                }
+            }
+        }
 
         Dreamflykit.Application.GamingHub.Models.GamingHubDto? gamingHubConfig = null;
 
@@ -1197,7 +1237,11 @@ public sealed class ProductsController : Controller
 
         string determinedViewMode;
 
-        if (isGamingCategory)
+        if (isSportsCategory)
+        {
+            determinedViewMode = !string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "sports-sub" : "hub";
+        }
+        else if (isGamingCategory)
 
         {
 
@@ -1285,9 +1329,13 @@ public sealed class ProductsController : Controller
 
             CategoryId = categoryId,
 
-            CategorySlug = isLuggageCategory ? "luggage-bags" : (isGamingCategory ? "gaming-hub" : (result.CurrentCategorySlug ?? effectiveCategory)),
+            CategorySlug = isSportsCategory ? "sports-hub" : (isLuggageCategory ? "luggage-bags" : (isGamingCategory ? "gaming-hub" : (result.CurrentCategorySlug ?? effectiveCategory))),
 
-            CategoryName = isGamingCategory
+            CategoryName = isSportsCategory
+
+                           ? (!string.IsNullOrWhiteSpace(currentSubcategoryName) ? currentSubcategoryName : "Sports Hub")
+
+                           : (isGamingCategory
 
                            ? (!string.IsNullOrWhiteSpace(currentSubcategoryName) ? currentSubcategoryName : "Gaming Hub")
 
@@ -1309,7 +1357,7 @@ public sealed class ProductsController : Controller
 
                            (isLuggageCategory ? "Luggage & Bags" :
 
-                           (result.CurrentCategoryName ?? catDetails?.Name)))))))))),
+                           (result.CurrentCategoryName ?? catDetails?.Name))))))))))),
 
             CategoryImageUrl = catDetails?.ImageUrl,
 
@@ -1423,6 +1471,8 @@ public sealed class ProductsController : Controller
 
                         : null,
 
+            SportsHub = sportsHubConfig,
+            SportsSubcategoryPage = sportsSubPage,
             GamingHub = gamingHubConfig,
 
             GamingSubcategoryPage = gamingSubPage,

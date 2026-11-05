@@ -1,0 +1,1825 @@
+{
+  "FestivalTheme": {
+    "IsEnabled": true,
+    "FestivalName": "Inter-College Tournament & Fitness Season",
+    "AnnouncementText": "🏆 Campus Sports League Special: Pro-grade sports equipment & verified team kits with student discounts!",
+    "BadgeText": "SPORTS SPECIAL",
+    "BannerHighlight": "Up to 50% Off",
+    "BgGradient": "linear-gradient(135deg, #059669 0%, #0d9488 50%, #0284c7 100%)"
+  },
+  "HeroBanner": {
+    "IsEnabled": true,
+    "AutoPlay": true,
+    "SlideIntervalSeconds": 5,
+    "BannerHeight": 440,
+    "Slides": [
+      {
+        "Id": "sp-slide-1",
+        "BadgeText": "TOURNAMENT READY • UP TO 45% OFF",
+        "Title": "Gear Up to Win,",
+        "TitleHighlight": "Pro Sports & Campus Kits.",
+        "Subtitle": "Engineered for international students & university athletes — high-performance bats, match balls, tournament rackets, and fitness equipment.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "TargetUrl": "/category/sports-hub/cricket",
+        "ButtonText": "Explore Cricket Gear",
+        "DisplayOrder": 1,
+        "IsActive": true
+      },
+      {
+        "Id": "sp-slide-2",
+        "BadgeText": "FIFA & BWF COMPLIANT",
+        "Title": "Speed, Power & Precision,",
+        "TitleHighlight": "Badminton & Football Essentials.",
+        "Subtitle": "Lightweight carbon-graphite rackets, thermal-bonded footballs, and high-traction turf cleats for peak athletic performance.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "TargetUrl": "/category/sports-hub/badminton",
+        "ButtonText": "Shop Badminton Rackets",
+        "DisplayOrder": 2,
+        "IsActive": true
+      },
+      {
+        "Id": "sp-slide-3",
+        "BadgeText": "DORM & CAMPUS FITNESS",
+        "Title": "Strength & Conditioning,",
+        "TitleHighlight": "Anytime, Anywhere Training.",
+        "Subtitle": "Heavy-duty resistance bands, adjustable dumb-bells, pull-up bars, and gym apparel designed for active student living.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "TargetUrl": "/category/sports-hub/gym-fitness",
+        "ButtonText": "Browse Fitness Gear",
+        "DisplayOrder": 3,
+        "IsActive": true
+      }
+    ]
+  },
+  "ShopByCategory": {
+    "IsEnabled": true,
+    "Title": "Shop by Category",
+    "Subtitle": "Explore verified university tournament sports gear, workout equipment, and athletic apparel",
+    "Items": [
+      {
+        "Slug": "cricket",
+        "Name": "Cricket",
+        "IconEmoji": "🏏",
+        "Subtitle": "Bats, Balls, Pads & Full Match Kits",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 1,
+        "IsActive": true
+      },
+      {
+        "Slug": "football",
+        "Name": "Football",
+        "IconEmoji": "⚽",
+        "Subtitle": "FIFA Certified Balls, Cleats & Shin Guards",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 2,
+        "IsActive": true
+      },
+      {
+        "Slug": "badminton",
+        "Name": "Badminton",
+        "IconEmoji": "🏸",
+        "Subtitle": "Carbon Rackets, Shuttlecocks & Grips",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 3,
+        "IsActive": true
+      },
+      {
+        "Slug": "gym-fitness",
+        "Name": "Gym & Fitness",
+        "IconEmoji": "🏋️",
+        "Subtitle": "Resistance Bands, Dumbbells & Mats",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 4,
+        "IsActive": true
+      },
+      {
+        "Slug": "basketball-volleyball",
+        "Name": "Basketball & Volleyball",
+        "IconEmoji": "🏀",
+        "Subtitle": "Match Balls, Nets & Training Sets",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 5,
+        "IsActive": true
+      },
+      {
+        "Slug": "tennis-table-tennis",
+        "Name": "Tennis & Table Tennis",
+        "IconEmoji": "🎾",
+        "Subtitle": "Tournament Rackets, Paddles & Balls",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 6,
+        "IsActive": true
+      },
+      {
+        "Slug": "sports-footwear",
+        "Name": "Sports Footwear",
+        "IconEmoji": "👟",
+        "Subtitle": "Cleats, Running Shoes & Court Shoes",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 7,
+        "IsActive": true
+      },
+      {
+        "Slug": "athletic-wear",
+        "Name": "Athletic Wear",
+        "IconEmoji": "🎽",
+        "Subtitle": "Quick-Dry Jerseys, Shorts & Compression",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 8,
+        "IsActive": true
+      },
+      {
+        "Slug": "swimming",
+        "Name": "Swimming",
+        "IconEmoji": "🏊",
+        "Subtitle": "Goggles, Caps, Earplugs & Towels",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 9,
+        "IsActive": true
+      },
+      {
+        "Slug": "sports-bags",
+        "Name": "Sports & Kit Bags",
+        "IconEmoji": "🎒",
+        "Subtitle": "Waterproof Duffels, Bat Bags & Backpacks",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 10,
+        "IsActive": true
+      },
+      {
+        "Slug": "yoga-recovery",
+        "Name": "Yoga & Recovery",
+        "IconEmoji": "🧘",
+        "Subtitle": "Foam Rollers, Yoga Mats & Massage Balls",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 11,
+        "IsActive": true
+      },
+      {
+        "Slug": "outdoor-trekking",
+        "Name": "Outdoor & Trekking",
+        "IconEmoji": "🏕️",
+        "Subtitle": "Trekking Poles, Hydration Packs & Headlamps",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "DisplayOrder": 12,
+        "IsActive": true
+      }
+    ]
+  },
+  "SubcategoryPages": [
+    {
+      "CategorySlug": "cricket",
+      "CategoryName": "Cricket",
+      "IconEmoji": "🏏",
+      "FilterTags": [
+        "Category",
+        "Equipment Type",
+        "Brand",
+        "Price Range"
+      ],
+      "HeroBanner": {
+        "IsEnabled": true,
+        "Title": "Cricket",
+        "TitleHighlight": "100% GENUINE • TOURNAMENT SPEC",
+        "Subtitle": "Explore professional Cricket equipment, tournament kits, and athletic accessories curated for university students.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "ThemeColor": "#059669",
+        "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE",
+        "BannerHeight": 280
+      },
+      "Products": [
+        {
+          "Id": "cricket-p1",
+          "Name": "Championship Match Grade Cricket Equipment",
+          "CategoryName": "Cricket",
+          "CategorySlug": "cricket",
+          "Price": 1999,
+          "OriginalPrice": 3999,
+          "Rating": 4.9,
+          "ReviewsCount": 180,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/cricket",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "Standard",
+            "Pro Spec"
+          ],
+          "Colors": [
+            "Tournament White",
+            "Black/Gold"
+          ],
+          "Brand": "Campus Pro",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "cricket-p2",
+          "Name": "University Tournament Cricket Practice Kit",
+          "CategoryName": "Cricket",
+          "CategorySlug": "cricket",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.8,
+          "ReviewsCount": 145,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/cricket",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Navy",
+            "Emerald Green"
+          ],
+          "Brand": "Cosco",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "cricket-p3",
+          "Name": "High-Durability Pro Cricket Gear",
+          "CategoryName": "Cricket",
+          "CategorySlug": "cricket",
+          "Price": 2599,
+          "OriginalPrice": 4999,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/cricket",
+          "IsUploadingSoon": true,
+          "Badge": "Tournament Spec",
+          "Sizes": [
+            "Full Size",
+            "Club Edition"
+          ],
+          "Colors": [
+            "Stealth Black"
+          ],
+          "Brand": "Decathlon",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "cricket-p4",
+          "Name": "Quick-Response Lightweight Cricket Accessories",
+          "CategoryName": "Cricket",
+          "CategorySlug": "cricket",
+          "Price": 699,
+          "OriginalPrice": 1399,
+          "Rating": 4.7,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/cricket",
+          "IsUploadingSoon": true,
+          "Badge": "Essential",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Assorted Colors"
+          ],
+          "Brand": "Puma",
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    },
+    {
+      "CategorySlug": "football",
+      "CategoryName": "Football",
+      "IconEmoji": "⚽",
+      "FilterTags": [
+        "Category",
+        "Equipment Type",
+        "Brand",
+        "Price Range"
+      ],
+      "HeroBanner": {
+        "IsEnabled": true,
+        "Title": "Football",
+        "TitleHighlight": "100% GENUINE • TOURNAMENT SPEC",
+        "Subtitle": "Explore professional Football equipment, tournament kits, and athletic accessories curated for university students.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "ThemeColor": "#059669",
+        "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE",
+        "BannerHeight": 280
+      },
+      "Products": [
+        {
+          "Id": "football-p1",
+          "Name": "Championship Match Grade Football Equipment",
+          "CategoryName": "Football",
+          "CategorySlug": "football",
+          "Price": 1999,
+          "OriginalPrice": 3999,
+          "Rating": 4.9,
+          "ReviewsCount": 180,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/football",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "Standard",
+            "Pro Spec"
+          ],
+          "Colors": [
+            "Tournament White",
+            "Black/Gold"
+          ],
+          "Brand": "Nivia",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "football-p2",
+          "Name": "University Tournament Football Practice Kit",
+          "CategoryName": "Football",
+          "CategorySlug": "football",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.8,
+          "ReviewsCount": 145,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/football",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Navy",
+            "Emerald Green"
+          ],
+          "Brand": "Cosco",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "football-p3",
+          "Name": "High-Durability Pro Football Gear",
+          "CategoryName": "Football",
+          "CategorySlug": "football",
+          "Price": 2599,
+          "OriginalPrice": 4999,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/football",
+          "IsUploadingSoon": true,
+          "Badge": "Tournament Spec",
+          "Sizes": [
+            "Full Size",
+            "Club Edition"
+          ],
+          "Colors": [
+            "Stealth Black"
+          ],
+          "Brand": "Decathlon",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "football-p4",
+          "Name": "Quick-Response Lightweight Football Accessories",
+          "CategoryName": "Football",
+          "CategorySlug": "football",
+          "Price": 699,
+          "OriginalPrice": 1399,
+          "Rating": 4.7,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/football",
+          "IsUploadingSoon": true,
+          "Badge": "Essential",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Assorted Colors"
+          ],
+          "Brand": "Puma",
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    },
+    {
+      "CategorySlug": "badminton",
+      "CategoryName": "Badminton",
+      "IconEmoji": "🏸",
+      "FilterTags": [
+        "Category",
+        "Equipment Type",
+        "Brand",
+        "Price Range"
+      ],
+      "HeroBanner": {
+        "IsEnabled": true,
+        "Title": "Badminton",
+        "TitleHighlight": "100% GENUINE • TOURNAMENT SPEC",
+        "Subtitle": "Explore professional Badminton equipment, tournament kits, and athletic accessories curated for university students.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "ThemeColor": "#059669",
+        "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE",
+        "BannerHeight": 280
+      },
+      "Products": [
+        {
+          "Id": "badminton-p1",
+          "Name": "Championship Match Grade Badminton Equipment",
+          "CategoryName": "Badminton",
+          "CategorySlug": "badminton",
+          "Price": 1999,
+          "OriginalPrice": 3999,
+          "Rating": 4.9,
+          "ReviewsCount": 180,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/badminton",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "Standard",
+            "Pro Spec"
+          ],
+          "Colors": [
+            "Tournament White",
+            "Black/Gold"
+          ],
+          "Brand": "Yonex",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "badminton-p2",
+          "Name": "University Tournament Badminton Practice Kit",
+          "CategoryName": "Badminton",
+          "CategorySlug": "badminton",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.8,
+          "ReviewsCount": 145,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/badminton",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Navy",
+            "Emerald Green"
+          ],
+          "Brand": "Cosco",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "badminton-p3",
+          "Name": "High-Durability Pro Badminton Gear",
+          "CategoryName": "Badminton",
+          "CategorySlug": "badminton",
+          "Price": 2599,
+          "OriginalPrice": 4999,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/badminton",
+          "IsUploadingSoon": true,
+          "Badge": "Tournament Spec",
+          "Sizes": [
+            "Full Size",
+            "Club Edition"
+          ],
+          "Colors": [
+            "Stealth Black"
+          ],
+          "Brand": "Decathlon",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "badminton-p4",
+          "Name": "Quick-Response Lightweight Badminton Accessories",
+          "CategoryName": "Badminton",
+          "CategorySlug": "badminton",
+          "Price": 699,
+          "OriginalPrice": 1399,
+          "Rating": 4.7,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/badminton",
+          "IsUploadingSoon": true,
+          "Badge": "Essential",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Assorted Colors"
+          ],
+          "Brand": "Puma",
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    },
+    {
+      "CategorySlug": "gym-fitness",
+      "CategoryName": "Gym & Fitness",
+      "IconEmoji": "🏋️",
+      "FilterTags": [
+        "Category",
+        "Equipment Type",
+        "Brand",
+        "Price Range"
+      ],
+      "HeroBanner": {
+        "IsEnabled": true,
+        "Title": "Gym & Fitness",
+        "TitleHighlight": "100% GENUINE • TOURNAMENT SPEC",
+        "Subtitle": "Explore professional Gym & Fitness equipment, tournament kits, and athletic accessories curated for university students.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "ThemeColor": "#059669",
+        "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE",
+        "BannerHeight": 280
+      },
+      "Products": [
+        {
+          "Id": "gym-fitness-p1",
+          "Name": "Championship Match Grade Gym & Fitness Equipment",
+          "CategoryName": "Gym & Fitness",
+          "CategorySlug": "gym-fitness",
+          "Price": 1999,
+          "OriginalPrice": 3999,
+          "Rating": 4.9,
+          "ReviewsCount": 180,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/gym-fitness",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "Standard",
+            "Pro Spec"
+          ],
+          "Colors": [
+            "Tournament White",
+            "Black/Gold"
+          ],
+          "Brand": "Campus Pro",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "gym-fitness-p2",
+          "Name": "University Tournament Gym & Fitness Practice Kit",
+          "CategoryName": "Gym & Fitness",
+          "CategorySlug": "gym-fitness",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.8,
+          "ReviewsCount": 145,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/gym-fitness",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Navy",
+            "Emerald Green"
+          ],
+          "Brand": "Cosco",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "gym-fitness-p3",
+          "Name": "High-Durability Pro Gym & Fitness Gear",
+          "CategoryName": "Gym & Fitness",
+          "CategorySlug": "gym-fitness",
+          "Price": 2599,
+          "OriginalPrice": 4999,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/gym-fitness",
+          "IsUploadingSoon": true,
+          "Badge": "Tournament Spec",
+          "Sizes": [
+            "Full Size",
+            "Club Edition"
+          ],
+          "Colors": [
+            "Stealth Black"
+          ],
+          "Brand": "Decathlon",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "gym-fitness-p4",
+          "Name": "Quick-Response Lightweight Gym & Fitness Accessories",
+          "CategoryName": "Gym & Fitness",
+          "CategorySlug": "gym-fitness",
+          "Price": 699,
+          "OriginalPrice": 1399,
+          "Rating": 4.7,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/gym-fitness",
+          "IsUploadingSoon": true,
+          "Badge": "Essential",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Assorted Colors"
+          ],
+          "Brand": "Puma",
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    },
+    {
+      "CategorySlug": "basketball-volleyball",
+      "CategoryName": "Basketball & Volleyball",
+      "IconEmoji": "🏀",
+      "FilterTags": [
+        "Category",
+        "Equipment Type",
+        "Brand",
+        "Price Range"
+      ],
+      "HeroBanner": {
+        "IsEnabled": true,
+        "Title": "Basketball & Volleyball",
+        "TitleHighlight": "100% GENUINE • TOURNAMENT SPEC",
+        "Subtitle": "Explore professional Basketball & Volleyball equipment, tournament kits, and athletic accessories curated for university students.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "ThemeColor": "#059669",
+        "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE",
+        "BannerHeight": 280
+      },
+      "Products": [
+        {
+          "Id": "basketball-volleyball-p1",
+          "Name": "Championship Match Grade Basketball & Volleyball Equipment",
+          "CategoryName": "Basketball & Volleyball",
+          "CategorySlug": "basketball-volleyball",
+          "Price": 1999,
+          "OriginalPrice": 3999,
+          "Rating": 4.9,
+          "ReviewsCount": 180,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/basketball-volleyball",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "Standard",
+            "Pro Spec"
+          ],
+          "Colors": [
+            "Tournament White",
+            "Black/Gold"
+          ],
+          "Brand": "Nivia",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "basketball-volleyball-p2",
+          "Name": "University Tournament Basketball & Volleyball Practice Kit",
+          "CategoryName": "Basketball & Volleyball",
+          "CategorySlug": "basketball-volleyball",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.8,
+          "ReviewsCount": 145,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/basketball-volleyball",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Navy",
+            "Emerald Green"
+          ],
+          "Brand": "Cosco",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "basketball-volleyball-p3",
+          "Name": "High-Durability Pro Basketball & Volleyball Gear",
+          "CategoryName": "Basketball & Volleyball",
+          "CategorySlug": "basketball-volleyball",
+          "Price": 2599,
+          "OriginalPrice": 4999,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/basketball-volleyball",
+          "IsUploadingSoon": true,
+          "Badge": "Tournament Spec",
+          "Sizes": [
+            "Full Size",
+            "Club Edition"
+          ],
+          "Colors": [
+            "Stealth Black"
+          ],
+          "Brand": "Wilson",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "basketball-volleyball-p4",
+          "Name": "Quick-Response Lightweight Basketball & Volleyball Accessories",
+          "CategoryName": "Basketball & Volleyball",
+          "CategorySlug": "basketball-volleyball",
+          "Price": 699,
+          "OriginalPrice": 1399,
+          "Rating": 4.7,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/basketball-volleyball",
+          "IsUploadingSoon": true,
+          "Badge": "Essential",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Assorted Colors"
+          ],
+          "Brand": "Puma",
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    },
+    {
+      "CategorySlug": "tennis-table-tennis",
+      "CategoryName": "Tennis & Table Tennis",
+      "IconEmoji": "🎾",
+      "FilterTags": [
+        "Category",
+        "Equipment Type",
+        "Brand",
+        "Price Range"
+      ],
+      "HeroBanner": {
+        "IsEnabled": true,
+        "Title": "Tennis & Table Tennis",
+        "TitleHighlight": "100% GENUINE • TOURNAMENT SPEC",
+        "Subtitle": "Explore professional Tennis & Table Tennis equipment, tournament kits, and athletic accessories curated for university students.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "ThemeColor": "#059669",
+        "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE",
+        "BannerHeight": 280
+      },
+      "Products": [
+        {
+          "Id": "tennis-table-tennis-p1",
+          "Name": "Championship Match Grade Tennis & Table Tennis Equipment",
+          "CategoryName": "Tennis & Table Tennis",
+          "CategorySlug": "tennis-table-tennis",
+          "Price": 1999,
+          "OriginalPrice": 3999,
+          "Rating": 4.9,
+          "ReviewsCount": 180,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/tennis-table-tennis",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "Standard",
+            "Pro Spec"
+          ],
+          "Colors": [
+            "Tournament White",
+            "Black/Gold"
+          ],
+          "Brand": "Yonex",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "tennis-table-tennis-p2",
+          "Name": "University Tournament Tennis & Table Tennis Practice Kit",
+          "CategoryName": "Tennis & Table Tennis",
+          "CategorySlug": "tennis-table-tennis",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.8,
+          "ReviewsCount": 145,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/tennis-table-tennis",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Navy",
+            "Emerald Green"
+          ],
+          "Brand": "Cosco",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "tennis-table-tennis-p3",
+          "Name": "High-Durability Pro Tennis & Table Tennis Gear",
+          "CategoryName": "Tennis & Table Tennis",
+          "CategorySlug": "tennis-table-tennis",
+          "Price": 2599,
+          "OriginalPrice": 4999,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/tennis-table-tennis",
+          "IsUploadingSoon": true,
+          "Badge": "Tournament Spec",
+          "Sizes": [
+            "Full Size",
+            "Club Edition"
+          ],
+          "Colors": [
+            "Stealth Black"
+          ],
+          "Brand": "Wilson",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "tennis-table-tennis-p4",
+          "Name": "Quick-Response Lightweight Tennis & Table Tennis Accessories",
+          "CategoryName": "Tennis & Table Tennis",
+          "CategorySlug": "tennis-table-tennis",
+          "Price": 699,
+          "OriginalPrice": 1399,
+          "Rating": 4.7,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/tennis-table-tennis",
+          "IsUploadingSoon": true,
+          "Badge": "Essential",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Assorted Colors"
+          ],
+          "Brand": "Puma",
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    },
+    {
+      "CategorySlug": "sports-footwear",
+      "CategoryName": "Sports Footwear",
+      "IconEmoji": "👟",
+      "FilterTags": [
+        "Category",
+        "Equipment Type",
+        "Brand",
+        "Price Range"
+      ],
+      "HeroBanner": {
+        "IsEnabled": true,
+        "Title": "Sports Footwear",
+        "TitleHighlight": "100% GENUINE • TOURNAMENT SPEC",
+        "Subtitle": "Explore professional Sports Footwear equipment, tournament kits, and athletic accessories curated for university students.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "ThemeColor": "#059669",
+        "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE",
+        "BannerHeight": 280
+      },
+      "Products": [
+        {
+          "Id": "sports-footwear-p1",
+          "Name": "Championship Match Grade Sports Footwear Equipment",
+          "CategoryName": "Sports Footwear",
+          "CategorySlug": "sports-footwear",
+          "Price": 1999,
+          "OriginalPrice": 3999,
+          "Rating": 4.9,
+          "ReviewsCount": 180,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/sports-footwear",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "Standard",
+            "Pro Spec"
+          ],
+          "Colors": [
+            "Tournament White",
+            "Black/Gold"
+          ],
+          "Brand": "Nike",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "sports-footwear-p2",
+          "Name": "University Tournament Sports Footwear Practice Kit",
+          "CategoryName": "Sports Footwear",
+          "CategorySlug": "sports-footwear",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.8,
+          "ReviewsCount": 145,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/sports-footwear",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Navy",
+            "Emerald Green"
+          ],
+          "Brand": "Cosco",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "sports-footwear-p3",
+          "Name": "High-Durability Pro Sports Footwear Gear",
+          "CategoryName": "Sports Footwear",
+          "CategorySlug": "sports-footwear",
+          "Price": 2599,
+          "OriginalPrice": 4999,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/sports-footwear",
+          "IsUploadingSoon": true,
+          "Badge": "Tournament Spec",
+          "Sizes": [
+            "Full Size",
+            "Club Edition"
+          ],
+          "Colors": [
+            "Stealth Black"
+          ],
+          "Brand": "Decathlon",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "sports-footwear-p4",
+          "Name": "Quick-Response Lightweight Sports Footwear Accessories",
+          "CategoryName": "Sports Footwear",
+          "CategorySlug": "sports-footwear",
+          "Price": 699,
+          "OriginalPrice": 1399,
+          "Rating": 4.7,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/sports-footwear",
+          "IsUploadingSoon": true,
+          "Badge": "Essential",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Assorted Colors"
+          ],
+          "Brand": "Puma",
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    },
+    {
+      "CategorySlug": "athletic-wear",
+      "CategoryName": "Athletic Wear",
+      "IconEmoji": "🎽",
+      "FilterTags": [
+        "Category",
+        "Equipment Type",
+        "Brand",
+        "Price Range"
+      ],
+      "HeroBanner": {
+        "IsEnabled": true,
+        "Title": "Athletic Wear",
+        "TitleHighlight": "100% GENUINE • TOURNAMENT SPEC",
+        "Subtitle": "Explore professional Athletic Wear equipment, tournament kits, and athletic accessories curated for university students.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "ThemeColor": "#059669",
+        "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE",
+        "BannerHeight": 280
+      },
+      "Products": [
+        {
+          "Id": "athletic-wear-p1",
+          "Name": "Championship Match Grade Athletic Wear Equipment",
+          "CategoryName": "Athletic Wear",
+          "CategorySlug": "athletic-wear",
+          "Price": 1999,
+          "OriginalPrice": 3999,
+          "Rating": 4.9,
+          "ReviewsCount": 180,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/athletic-wear",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "Standard",
+            "Pro Spec"
+          ],
+          "Colors": [
+            "Tournament White",
+            "Black/Gold"
+          ],
+          "Brand": "Nike",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "athletic-wear-p2",
+          "Name": "University Tournament Athletic Wear Practice Kit",
+          "CategoryName": "Athletic Wear",
+          "CategorySlug": "athletic-wear",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.8,
+          "ReviewsCount": 145,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/athletic-wear",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Navy",
+            "Emerald Green"
+          ],
+          "Brand": "Cosco",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "athletic-wear-p3",
+          "Name": "High-Durability Pro Athletic Wear Gear",
+          "CategoryName": "Athletic Wear",
+          "CategorySlug": "athletic-wear",
+          "Price": 2599,
+          "OriginalPrice": 4999,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/athletic-wear",
+          "IsUploadingSoon": true,
+          "Badge": "Tournament Spec",
+          "Sizes": [
+            "Full Size",
+            "Club Edition"
+          ],
+          "Colors": [
+            "Stealth Black"
+          ],
+          "Brand": "Decathlon",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "athletic-wear-p4",
+          "Name": "Quick-Response Lightweight Athletic Wear Accessories",
+          "CategoryName": "Athletic Wear",
+          "CategorySlug": "athletic-wear",
+          "Price": 699,
+          "OriginalPrice": 1399,
+          "Rating": 4.7,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/athletic-wear",
+          "IsUploadingSoon": true,
+          "Badge": "Essential",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Assorted Colors"
+          ],
+          "Brand": "Puma",
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    },
+    {
+      "CategorySlug": "swimming",
+      "CategoryName": "Swimming",
+      "IconEmoji": "🏊",
+      "FilterTags": [
+        "Category",
+        "Equipment Type",
+        "Brand",
+        "Price Range"
+      ],
+      "HeroBanner": {
+        "IsEnabled": true,
+        "Title": "Swimming",
+        "TitleHighlight": "100% GENUINE • TOURNAMENT SPEC",
+        "Subtitle": "Explore professional Swimming equipment, tournament kits, and athletic accessories curated for university students.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "ThemeColor": "#059669",
+        "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE",
+        "BannerHeight": 280
+      },
+      "Products": [
+        {
+          "Id": "swimming-p1",
+          "Name": "Championship Match Grade Swimming Equipment",
+          "CategoryName": "Swimming",
+          "CategorySlug": "swimming",
+          "Price": 1999,
+          "OriginalPrice": 3999,
+          "Rating": 4.9,
+          "ReviewsCount": 180,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/swimming",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "Standard",
+            "Pro Spec"
+          ],
+          "Colors": [
+            "Tournament White",
+            "Black/Gold"
+          ],
+          "Brand": "Campus Pro",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "swimming-p2",
+          "Name": "University Tournament Swimming Practice Kit",
+          "CategoryName": "Swimming",
+          "CategorySlug": "swimming",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.8,
+          "ReviewsCount": 145,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/swimming",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Navy",
+            "Emerald Green"
+          ],
+          "Brand": "Cosco",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "swimming-p3",
+          "Name": "High-Durability Pro Swimming Gear",
+          "CategoryName": "Swimming",
+          "CategorySlug": "swimming",
+          "Price": 2599,
+          "OriginalPrice": 4999,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/swimming",
+          "IsUploadingSoon": true,
+          "Badge": "Tournament Spec",
+          "Sizes": [
+            "Full Size",
+            "Club Edition"
+          ],
+          "Colors": [
+            "Stealth Black"
+          ],
+          "Brand": "Decathlon",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "swimming-p4",
+          "Name": "Quick-Response Lightweight Swimming Accessories",
+          "CategoryName": "Swimming",
+          "CategorySlug": "swimming",
+          "Price": 699,
+          "OriginalPrice": 1399,
+          "Rating": 4.7,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/swimming",
+          "IsUploadingSoon": true,
+          "Badge": "Essential",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Assorted Colors"
+          ],
+          "Brand": "Puma",
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    },
+    {
+      "CategorySlug": "sports-bags",
+      "CategoryName": "Sports & Kit Bags",
+      "IconEmoji": "🎒",
+      "FilterTags": [
+        "Category",
+        "Equipment Type",
+        "Brand",
+        "Price Range"
+      ],
+      "HeroBanner": {
+        "IsEnabled": true,
+        "Title": "Sports & Kit Bags",
+        "TitleHighlight": "100% GENUINE • TOURNAMENT SPEC",
+        "Subtitle": "Explore professional Sports & Kit Bags equipment, tournament kits, and athletic accessories curated for university students.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "ThemeColor": "#059669",
+        "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE",
+        "BannerHeight": 280
+      },
+      "Products": [
+        {
+          "Id": "sports-bags-p1",
+          "Name": "Championship Match Grade Sports & Kit Bags Equipment",
+          "CategoryName": "Sports & Kit Bags",
+          "CategorySlug": "sports-bags",
+          "Price": 1999,
+          "OriginalPrice": 3999,
+          "Rating": 4.9,
+          "ReviewsCount": 180,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/sports-bags",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "Standard",
+            "Pro Spec"
+          ],
+          "Colors": [
+            "Tournament White",
+            "Black/Gold"
+          ],
+          "Brand": "Campus Pro",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "sports-bags-p2",
+          "Name": "University Tournament Sports & Kit Bags Practice Kit",
+          "CategoryName": "Sports & Kit Bags",
+          "CategorySlug": "sports-bags",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.8,
+          "ReviewsCount": 145,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/sports-bags",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Navy",
+            "Emerald Green"
+          ],
+          "Brand": "Cosco",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "sports-bags-p3",
+          "Name": "High-Durability Pro Sports & Kit Bags Gear",
+          "CategoryName": "Sports & Kit Bags",
+          "CategorySlug": "sports-bags",
+          "Price": 2599,
+          "OriginalPrice": 4999,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/sports-bags",
+          "IsUploadingSoon": true,
+          "Badge": "Tournament Spec",
+          "Sizes": [
+            "Full Size",
+            "Club Edition"
+          ],
+          "Colors": [
+            "Stealth Black"
+          ],
+          "Brand": "Decathlon",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "sports-bags-p4",
+          "Name": "Quick-Response Lightweight Sports & Kit Bags Accessories",
+          "CategoryName": "Sports & Kit Bags",
+          "CategorySlug": "sports-bags",
+          "Price": 699,
+          "OriginalPrice": 1399,
+          "Rating": 4.7,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/sports-bags",
+          "IsUploadingSoon": true,
+          "Badge": "Essential",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Assorted Colors"
+          ],
+          "Brand": "Puma",
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    },
+    {
+      "CategorySlug": "yoga-recovery",
+      "CategoryName": "Yoga & Recovery",
+      "IconEmoji": "🧘",
+      "FilterTags": [
+        "Category",
+        "Equipment Type",
+        "Brand",
+        "Price Range"
+      ],
+      "HeroBanner": {
+        "IsEnabled": true,
+        "Title": "Yoga & Recovery",
+        "TitleHighlight": "100% GENUINE • TOURNAMENT SPEC",
+        "Subtitle": "Explore professional Yoga & Recovery equipment, tournament kits, and athletic accessories curated for university students.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "ThemeColor": "#059669",
+        "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE",
+        "BannerHeight": 280
+      },
+      "Products": [
+        {
+          "Id": "yoga-recovery-p1",
+          "Name": "Championship Match Grade Yoga & Recovery Equipment",
+          "CategoryName": "Yoga & Recovery",
+          "CategorySlug": "yoga-recovery",
+          "Price": 1999,
+          "OriginalPrice": 3999,
+          "Rating": 4.9,
+          "ReviewsCount": 180,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/yoga-recovery",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "Standard",
+            "Pro Spec"
+          ],
+          "Colors": [
+            "Tournament White",
+            "Black/Gold"
+          ],
+          "Brand": "Campus Pro",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "yoga-recovery-p2",
+          "Name": "University Tournament Yoga & Recovery Practice Kit",
+          "CategoryName": "Yoga & Recovery",
+          "CategorySlug": "yoga-recovery",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.8,
+          "ReviewsCount": 145,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/yoga-recovery",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Navy",
+            "Emerald Green"
+          ],
+          "Brand": "Cosco",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "yoga-recovery-p3",
+          "Name": "High-Durability Pro Yoga & Recovery Gear",
+          "CategoryName": "Yoga & Recovery",
+          "CategorySlug": "yoga-recovery",
+          "Price": 2599,
+          "OriginalPrice": 4999,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/yoga-recovery",
+          "IsUploadingSoon": true,
+          "Badge": "Tournament Spec",
+          "Sizes": [
+            "Full Size",
+            "Club Edition"
+          ],
+          "Colors": [
+            "Stealth Black"
+          ],
+          "Brand": "Decathlon",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "yoga-recovery-p4",
+          "Name": "Quick-Response Lightweight Yoga & Recovery Accessories",
+          "CategoryName": "Yoga & Recovery",
+          "CategorySlug": "yoga-recovery",
+          "Price": 699,
+          "OriginalPrice": 1399,
+          "Rating": 4.7,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/yoga-recovery",
+          "IsUploadingSoon": true,
+          "Badge": "Essential",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Assorted Colors"
+          ],
+          "Brand": "Puma",
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    },
+    {
+      "CategorySlug": "outdoor-trekking",
+      "CategoryName": "Outdoor & Trekking",
+      "IconEmoji": "🏕️",
+      "FilterTags": [
+        "Category",
+        "Equipment Type",
+        "Brand",
+        "Price Range"
+      ],
+      "HeroBanner": {
+        "IsEnabled": true,
+        "Title": "Outdoor & Trekking",
+        "TitleHighlight": "100% GENUINE • TOURNAMENT SPEC",
+        "Subtitle": "Explore professional Outdoor & Trekking equipment, tournament kits, and athletic accessories curated for university students.",
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "ThemeColor": "#059669",
+        "BadgeText": "STUDENT ESSENTIALS • 100% GENUINE",
+        "BannerHeight": 280
+      },
+      "Products": [
+        {
+          "Id": "outdoor-trekking-p1",
+          "Name": "Championship Match Grade Outdoor & Trekking Equipment",
+          "CategoryName": "Outdoor & Trekking",
+          "CategorySlug": "outdoor-trekking",
+          "Price": 1999,
+          "OriginalPrice": 3999,
+          "Rating": 4.9,
+          "ReviewsCount": 180,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/outdoor-trekking",
+          "IsUploadingSoon": true,
+          "Badge": "Best Seller",
+          "Sizes": [
+            "Standard",
+            "Pro Spec"
+          ],
+          "Colors": [
+            "Tournament White",
+            "Black/Gold"
+          ],
+          "Brand": "Campus Pro",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "outdoor-trekking-p2",
+          "Name": "University Tournament Outdoor & Trekking Practice Kit",
+          "CategoryName": "Outdoor & Trekking",
+          "CategorySlug": "outdoor-trekking",
+          "Price": 1299,
+          "OriginalPrice": 2499,
+          "Rating": 4.8,
+          "ReviewsCount": 145,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/outdoor-trekking",
+          "IsUploadingSoon": true,
+          "Badge": "Student Pick",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Navy",
+            "Emerald Green"
+          ],
+          "Brand": "Cosco",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "outdoor-trekking-p3",
+          "Name": "High-Durability Pro Outdoor & Trekking Gear",
+          "CategoryName": "Outdoor & Trekking",
+          "CategorySlug": "outdoor-trekking",
+          "Price": 2599,
+          "OriginalPrice": 4999,
+          "Rating": 4.9,
+          "ReviewsCount": 210,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/outdoor-trekking",
+          "IsUploadingSoon": true,
+          "Badge": "Tournament Spec",
+          "Sizes": [
+            "Full Size",
+            "Club Edition"
+          ],
+          "Colors": [
+            "Stealth Black"
+          ],
+          "Brand": "Decathlon",
+          "InStock": true,
+          "IsActive": true
+        },
+        {
+          "Id": "outdoor-trekking-p4",
+          "Name": "Quick-Response Lightweight Outdoor & Trekking Accessories",
+          "CategoryName": "Outdoor & Trekking",
+          "CategorySlug": "outdoor-trekking",
+          "Price": 699,
+          "OriginalPrice": 1399,
+          "Rating": 4.7,
+          "ReviewsCount": 98,
+          "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+          "ProductUrl": "/category/sports-hub/outdoor-trekking",
+          "IsUploadingSoon": true,
+          "Badge": "Essential",
+          "Sizes": [
+            "Standard"
+          ],
+          "Colors": [
+            "Assorted Colors"
+          ],
+          "Brand": "Puma",
+          "InStock": true,
+          "IsActive": true
+        }
+      ]
+    }
+  ],
+  "TopPicks": {
+    "IsEnabled": true,
+    "Title": "Top Picks in Sports Hub",
+    "Subtitle": "Most popular athletic equipment loved by over 20,000 international student athletes",
+    "Products": [
+      {
+        "Id": "spp1",
+        "Name": "Pro Grade English Willow Cricket Bat",
+        "CategoryName": "Cricket",
+        "CategorySlug": "cricket",
+        "Price": 2999,
+        "OriginalPrice": 5999,
+        "Rating": 4.9,
+        "ReviewsCount": 280,
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "Badge": "Best Seller",
+        "Sizes": [
+          "Size 6",
+          "Full Size SH"
+        ],
+        "Colors": [
+          "Natural Wood"
+        ],
+        "Brand": "SS Ton",
+        "InStock": true,
+        "IsActive": true
+      },
+      {
+        "Id": "spp2",
+        "Name": "High-Modulus Carbon Fiber Badminton Racket",
+        "CategoryName": "Badminton",
+        "CategorySlug": "badminton",
+        "Price": 1899,
+        "OriginalPrice": 3799,
+        "Rating": 4.9,
+        "ReviewsCount": 310,
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "Badge": "Student Pick",
+        "Sizes": [
+          "3U / G4",
+          "4U / G5"
+        ],
+        "Colors": [
+          "Matte Black",
+          "Cobalt Blue"
+        ],
+        "Brand": "Yonex",
+        "InStock": true,
+        "IsActive": true
+      },
+      {
+        "Id": "spp3",
+        "Name": "FIFA Certified Match Football (Size 5)",
+        "CategoryName": "Football",
+        "CategorySlug": "football",
+        "Price": 1299,
+        "OriginalPrice": 2499,
+        "Rating": 4.8,
+        "ReviewsCount": 195,
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "Badge": "Tournament Spec",
+        "Sizes": [
+          "Size 5"
+        ],
+        "Colors": [
+          "White/Blue",
+          "Hi-Vis Yellow"
+        ],
+        "Brand": "Nivia",
+        "InStock": true,
+        "IsActive": true
+      },
+      {
+        "Id": "spp4",
+        "Name": "11-Piece Heavy-Duty Workout Resistance Bands Set",
+        "CategoryName": "Gym & Fitness",
+        "CategorySlug": "gym-fitness",
+        "Price": 899,
+        "OriginalPrice": 1799,
+        "Rating": 4.8,
+        "ReviewsCount": 420,
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "Badge": "Dorm Essential",
+        "Sizes": [
+          "Standard"
+        ],
+        "Colors": [
+          "Multi-Color"
+        ],
+        "Brand": "Decathlon",
+        "InStock": true,
+        "IsActive": true
+      },
+      {
+        "Id": "spp5",
+        "Name": "All-Weather High-Traction Multi-Ground Cleats",
+        "CategoryName": "Sports Footwear",
+        "CategorySlug": "sports-footwear",
+        "Price": 2199,
+        "OriginalPrice": 4399,
+        "Rating": 4.7,
+        "ReviewsCount": 160,
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "Badge": "Pro Grip",
+        "Sizes": [
+          "UK 7",
+          "UK 8",
+          "UK 9",
+          "UK 10",
+          "UK 11"
+        ],
+        "Colors": [
+          "Neon/Black",
+          "White/Gold"
+        ],
+        "Brand": "Nivia",
+        "InStock": true,
+        "IsActive": true
+      },
+      {
+        "Id": "spp6",
+        "Name": "Quick-Dry Moisture-Wicking Athletic Team Jersey",
+        "CategoryName": "Athletic Wear",
+        "CategorySlug": "athletic-wear",
+        "Price": 599,
+        "OriginalPrice": 1199,
+        "Rating": 4.9,
+        "ReviewsCount": 210,
+        "ImageUrl": "/images/sports-hub/uploading-soon-placeholder.svg",
+        "IsUploadingSoon": true,
+        "Badge": "Breathable",
+        "Sizes": [
+          "S",
+          "M",
+          "L",
+          "XL",
+          "XXL"
+        ],
+        "Colors": [
+          "Navy",
+          "Black",
+          "Royal Blue"
+        ],
+        "Brand": "Nike",
+        "InStock": true,
+        "IsActive": true
+      }
+    ]
+  },
+  "TrustBadges": {
+    "IsEnabled": true,
+    "Badges": [
+      {
+        "Id": "tb1",
+        "Title": "100% Tournament Spec",
+        "Subtitle": "Verified standards",
+        "Description": "Certified by international collegiate athletic federations",
+        "Icon": "shield",
+        "IconEmoji": "🛡️"
+      },
+      {
+        "Id": "tb2",
+        "Title": "Express Campus Delivery",
+        "Subtitle": "Direct to dorms",
+        "Description": "Dispatched within 24 hours with international tracking",
+        "Icon": "truck",
+        "IconEmoji": "🚚"
+      },
+      {
+        "Id": "tb3",
+        "Title": "Free Size Replacement",
+        "Subtitle": "Hassle-free exchange",
+        "Description": "Wrong shoe or jersey fit? Free 7-day pickup & replacement",
+        "Icon": "refresh",
+        "IconEmoji": "🔄"
+      },
+      {
+        "Id": "tb4",
+        "Title": "Student League Discount",
+        "Subtitle": "Special verified rates",
+        "Description": "Exclusive pricing for verified university students and clubs",
+        "Icon": "tag",
+        "IconEmoji": "🏷️"
+      }
+    ]
+  },
+  "BottomBanner": {
+    "IsEnabled": true,
+    "Title": "Join the Campus Sports League",
+    "Subtitle": "Equip your university team with verified match kits, custom jersey numbers, and student bundle pricing.",
+    "ButtonText": "Claim Team Discount",
+    "TargetUrl": "/category/sports-hub/cricket"
+  },
+  "ThreeSectionSliderSlug": "sports-hub"
+}

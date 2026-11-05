@@ -1,0 +1,1271 @@
+@model Dreamflykit.Application.SportsHub.Models.SportsHubDto
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Sports Hub Management";
+    var hub = Model ?? Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefault();
+    var festival = hub.FestivalTheme ?? new();
+    var hero = hub.HeroBanner ?? new();
+    var shopCategory = hub.ShopByCategory ?? new();
+    var subPages = hub.SubcategoryPages ?? new();
+    var topPicks = hub.TopPicks ?? new();
+    var bottomBanner = hub.BottomBanner ?? new();
+}
+
+@Html.AntiForgeryToken()
+
+<div class="sp-admin-container">
+
+    <!-- TOP HEADER & CONTROLS -->
+    <div class="sp-admin-header">
+        <div>
+            <div class="sp-admin-title-row">
+                <span class="sp-badge-tag">SPORTS HUB ADMIN</span>
+                <span class="sp-badge-status">● Live</span>
+            </div>
+            <h1 class="sp-admin-heading">Sports Hub & Athletic Category Controls</h1>
+            <p class="sp-admin-subheading">Manage campaign announcement, full-width hero slider, 12 sports categories, landing pages & product grids.</p>
+        </div>
+        <div class="sp-admin-actions">
+            <a href="/category/sports-hub" target="_blank" class="sp-btn-secondary">
+                <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+                <span>Preview Hub</span>
+            </a>
+            <button type="button" class="sp-btn-primary" id="btnSaveConfig" onclick="saveSportsConfig()">
+                <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>Save All Changes</span>
+            </button>
+            <form asp-area="Admin" asp-controller="SportsHub" asp-action="ResetDefaults" method="post" style="display:inline;" onsubmit="return confirm('Reset Sports Hub to default settings? Any unsaved edits will be lost.');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="sp-btn-danger" title="Reset all to defaults">↻ Reset</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TABS NAVIGATION -->
+    <div class="sp-tabs-nav">
+        <button type="button" class="sp-tab-btn active" onclick="switchTab('tabCampaign', this)">
+            <span>🏆 Campaign / Festival Banner</span>
+        </button>
+        <button type="button" class="sp-tab-btn" onclick="switchTab('tabHero', this)">
+            <span>⚽ Full-Width Hero Slider</span>
+        </button>
+        <button type="button" class="sp-tab-btn" onclick="switchTab('tabCategories', this)">
+            <span>🛍️ Shop by Category (12 Items)</span>
+        </button>
+        <button type="button" class="sp-tab-btn" onclick="switchTab('tabSubpages', this)">
+            <span>📄 Subcategory Landing Pages</span>
+        </button>
+        <button type="button" class="sp-tab-btn" onclick="switchTab('tabTopPicks', this)">
+            <span>⚡ Top Picks & Bottom Banner</span>
+        </button>
+    </div>
+
+    <form id="sportsHubForm">
+        <!-- ========================================================
+             TAB 1: CAMPAIGN / FESTIVAL BANNER
+        ========================================================= -->
+        <div id="tabCampaign" class="sp-tab-panel active">
+            <div class="sp-card">
+                <div class="sp-card-header">
+                    <h2 class="sp-card-title">Campaign & Festival Announcement Ribbon</h2>
+                    <label class="sp-switch">
+                        <input type="checkbox" id="festIsEnabled" @(festival.IsEnabled ? "checked" : "") />
+                        <span class="sp-slider round"></span>
+                        <span class="sp-switch-label">Enable Ribbon</span>
+                    </label>
+                </div>
+                <div class="sp-grid-2">
+                    <div class="sp-field">
+                        <label>Festival / Campaign Title</label>
+                        <input type="text" id="festName" class="sp-input" value="@festival.FestivalName" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Badge Text</label>
+                        <input type="text" id="festBadge" class="sp-input" value="@festival.BadgeText" />
+                    </div>
+                </div>
+                <div class="sp-grid-2">
+                    <div class="sp-field">
+                        <label>Announcement Text</label>
+                        <input type="text" id="festAnnouncement" class="sp-input" value="@festival.AnnouncementText" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Highlight Tag</label>
+                        <input type="text" id="festHighlight" class="sp-input" value="@festival.BannerHighlight" />
+                    </div>
+                </div>
+                <div class="sp-field">
+                    <label>Background Gradient CSS</label>
+                    <input type="text" id="festGradient" class="sp-input" value="@festival.BgGradient" />
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB 2: HERO BANNER SLIDES
+        ========================================================= -->
+        <div id="tabHero" class="sp-tab-panel">
+            <div class="sp-card">
+                <div class="sp-card-header">
+                    <h2 class="sp-card-title">Full-Width Hero Slider Settings</h2>
+                    <label class="sp-switch">
+                        <input type="checkbox" id="heroIsEnabled" @(hero.IsEnabled ? "checked" : "") />
+                        <span class="sp-slider round"></span>
+                        <span class="sp-switch-label">Enable Hero Banner</span>
+                    </label>
+                </div>
+                <div class="sp-grid-3">
+                    <div class="sp-field">
+                        <label>Auto-Play Slides</label>
+                        <select id="heroAutoPlay" class="sp-input">
+                            <option value="true" selected="@(hero.AutoPlay ? "selected" : null)">Enabled (Automatic Rotation)</option>
+                            <option value="false" selected="@(!hero.AutoPlay ? "selected" : null)">Disabled</option>
+                        </select>
+                    </div>
+                    <div class="sp-field">
+                        <label>Slide Interval (Seconds)</label>
+                        <input type="number" id="heroInterval" class="sp-input" value="@hero.SlideIntervalSeconds" min="2" max="15" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Banner Min Height (px)</label>
+                        <input type="number" id="heroHeight" class="sp-input" value="@hero.BannerHeight" min="300" max="700" />
+                    </div>
+                </div>
+
+                <div class="sp-sub-header">
+                    <h3>Hero Slides</h3>
+                    <button type="button" class="sp-btn-sm" onclick="addHeroSlide()">+ Add New Slide</button>
+                </div>
+
+                <div id="heroSlidesList" class="sp-slides-list">
+                    @for (int i = 0; i < hero.Slides.Count; i++)
+                    {
+                        var slide = hero.Slides[i];
+                        <div class="sp-slide-card" data-slide-card>
+                            <div class="sp-slide-top">
+                                <span class="sp-slide-num">Slide #<span class="slide-order-num">@(i + 1)</span></span>
+                                <div class="sp-slide-toggles">
+                                    <label class="sp-switch sp-switch-sm">
+                                        <input type="checkbox" class="slide-isactive" @(slide.IsActive ? "checked" : "") />
+                                        <span class="sp-slider round"></span>
+                                        <span class="sp-switch-label">Active</span>
+                                    </label>
+                                    <label class="sp-switch sp-switch-sm">
+                                        <input type="checkbox" class="slide-uploading" @(slide.IsUploadingSoon ? "checked" : "") />
+                                        <span class="sp-slider round"></span>
+                                        <span class="sp-switch-label">Uploading Soon</span>
+                                    </label>
+                                    <button type="button" class="sp-btn-icon-danger" onclick="removeHeroSlide(this)" title="Delete Slide">✕</button>
+                                </div>
+                            </div>
+
+                            <input type="hidden" class="slide-id" value="@slide.Id" />
+                            <div class="sp-grid-2">
+                                <div class="sp-field">
+                                    <label>Badge Text</label>
+                                    <input type="text" class="sp-input slide-badge" value="@slide.BadgeText" />
+                                </div>
+                                <div class="sp-field">
+                                    <label>Title</label>
+                                    <input type="text" class="sp-input slide-title" value="@slide.Title" />
+                                </div>
+                            </div>
+                            <div class="sp-grid-2">
+                                <div class="sp-field">
+                                    <label>Title Highlight (Gradient)</label>
+                                    <input type="text" class="sp-input slide-highlight" value="@slide.TitleHighlight" />
+                                </div>
+                                <div class="sp-field">
+                                    <label>Subtitle / Description</label>
+                                    <input type="text" class="sp-input slide-subtitle" value="@slide.Subtitle" />
+                                </div>
+                            </div>
+                            <div class="sp-grid-3">
+                                <div class="sp-field">
+                                    <label>Target URL</label>
+                                    <input type="text" class="sp-input slide-url" value="@slide.TargetUrl" />
+                                </div>
+                                <div class="sp-field">
+                                    <label>Button Text</label>
+                                    <input type="text" class="sp-input slide-btn-text" value="@slide.ButtonText" />
+                                </div>
+                                <div class="sp-field">
+                                    <label>Display Order</label>
+                                    <input type="number" class="sp-input slide-order" value="@slide.DisplayOrder" min="1" />
+                                </div>
+                            </div>
+
+                            <div class="sp-image-uploader-field">
+                                <label>Slide Image URL</label>
+                                <div class="sp-upload-row">
+                                    <input type="text" class="sp-input slide-img-url" value="@slide.ImageUrl" placeholder="/images/sports-hub/..." />
+                                    <input type="file" class="sp-file-input" accept="image/*" onchange="uploadSlideImage(this)" style="display:none;" />
+                                    <button type="button" class="sp-btn-upload" onclick="triggerFileInput(this)">
+                                        <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                                        <span>Upload File</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB 3: SHOP BY CATEGORY (12 ITEMS)
+        ========================================================= -->
+        <div id="tabCategories" class="sp-tab-panel">
+            <div class="sp-card">
+                <div class="sp-card-header">
+                    <h2 class="sp-card-title">Shop by Category Section (12 Athletic Categories)</h2>
+                    <label class="sp-switch">
+                        <input type="checkbox" id="catSectionEnabled" @(shopCategory.IsEnabled ? "checked" : "") />
+                        <span class="sp-slider round"></span>
+                        <span class="sp-switch-label">Enable Section</span>
+                    </label>
+                </div>
+                <div class="sp-grid-2">
+                    <div class="sp-field">
+                        <label>Section Title</label>
+                        <input type="text" id="catSectionTitle" class="sp-input" value="@shopCategory.Title" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Section Subtitle</label>
+                        <input type="text" id="catSectionSub" class="sp-input" value="@shopCategory.Subtitle" />
+                    </div>
+                </div>
+
+                <div class="sp-sub-header">
+                    <h3>Sports Categories</h3>
+                </div>
+
+                <div class="sp-categories-admin-grid">
+                    @for (int i = 0; i < shopCategory.Items.Count; i++)
+                    {
+                        var item = shopCategory.Items[i];
+                        <div class="sp-admin-cat-card" data-cat-card>
+                            <input type="hidden" class="cat-slug" value="@item.Slug" />
+                            <div class="sp-cat-top-bar">
+                                <span class="sp-cat-badge">#@(i + 1) @item.Name</span>
+                                <label class="sp-switch sp-switch-sm">
+                                    <input type="checkbox" class="cat-isactive" @(item.IsActive ? "checked" : "") />
+                                    <span class="sp-slider round"></span>
+                                    <span class="sp-switch-label">Active</span>
+                                </label>
+                            </div>
+
+                            <div class="sp-grid-2">
+                                <div class="sp-field">
+                                    <label>Display Name</label>
+                                    <input type="text" class="sp-input cat-name" value="@item.Name" />
+                                </div>
+                                <div class="sp-field">
+                                    <label>Icon Emoji</label>
+                                    <input type="text" class="sp-input cat-emoji" value="@item.IconEmoji" />
+                                </div>
+                            </div>
+
+                            <div class="sp-grid-2">
+                                <div class="sp-field">
+                                    <label>Subtitle / Tagline</label>
+                                    <input type="text" class="sp-input cat-sub" value="@item.Subtitle" />
+                                </div>
+                                <div class="sp-field">
+                                    <label>Display Order</label>
+                                    <input type="number" class="sp-input cat-order" value="@item.DisplayOrder" min="1" />
+                                </div>
+                            </div>
+
+                            <div class="sp-field">
+                                <label>Image URL</label>
+                                <div class="sp-upload-row">
+                                    <input type="text" class="sp-input cat-img" value="@item.ImageUrl" />
+                                    <input type="file" class="sp-file-input" accept="image/*" onchange="uploadCatImage(this)" style="display:none;" />
+                                    <button type="button" class="sp-btn-upload-sm" onclick="triggerFileInput(this)">Upload</button>
+                                </div>
+                            </div>
+
+                            <label class="sp-switch sp-switch-sm" style="margin-top: 6px;">
+                                <input type="checkbox" class="cat-uploading" @(item.IsUploadingSoon ? "checked" : "") />
+                                <span class="sp-slider round"></span>
+                                <span class="sp-switch-label">Show "Uploading Soon" radar tag</span>
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB 4: SUBCATEGORY LANDING PAGES & PRODUCTS
+        ========================================================= -->
+        <div id="tabSubpages" class="sp-tab-panel">
+            <div class="sp-card">
+                <div class="sp-card-header">
+                    <h2 class="sp-card-title">Subcategory Landing Pages & Big Image Frames</h2>
+                    <div class="sp-subpage-selector-wrap">
+                        <label>Select Category to Edit:</label>
+                        <select id="subpageSelector" class="sp-input" onchange="onSelectSubpage(this.value)">
+                            @foreach (var pgItem in subPages)
+                            {
+                                <option value="@pgItem.CategorySlug">@pgItem.CategoryName (@pgItem.CategorySlug)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div id="subpagesContainer">
+                    @for (int p = 0; p < subPages.Count; p++)
+                    {
+                        var pgItem = subPages[p];
+                        var pHero = pgItem.HeroBanner ?? new();
+                        <div class="sp-subpage-editor @(p == 0 ? "active" : "")" id="subpage_@pgItem.CategorySlug" data-subpage-slug="@pgItem.CategorySlug">
+                            <input type="hidden" class="page-slug" value="@pgItem.CategorySlug" />
+                            <input type="hidden" class="page-name" value="@pgItem.CategoryName" />
+
+                            <div class="sp-subpage-hero-box">
+                                <h3 class="sp-sub-title">Hero Banner for @pgItem.CategoryName</h3>
+                                <div class="sp-grid-2">
+                                    <div class="sp-field">
+                                        <label>Banner Highlight Badge</label>
+                                        <input type="text" class="sp-input page-hero-badge" value="@pHero.TitleHighlight" />
+                                    </div>
+                                    <div class="sp-field">
+                                        <label>Banner Title</label>
+                                        <input type="text" class="sp-input page-hero-title" value="@pHero.Title" />
+                                    </div>
+                                </div>
+                                <div class="sp-field">
+                                    <label>Banner Subtitle / Description</label>
+                                    <input type="text" class="sp-input page-hero-sub" value="@pHero.Subtitle" />
+                                </div>
+                                <div class="sp-field">
+                                    <label>Banner Image URL</label>
+                                    <div class="sp-upload-row">
+                                        <input type="text" class="sp-input page-hero-img" value="@pHero.ImageUrl" />
+                                        <input type="file" class="sp-file-input" accept="image/*" onchange="uploadPageHeroImage(this)" style="display:none;" />
+                                        <button type="button" class="sp-btn-upload" onclick="triggerFileInput(this)">Upload Banner</button>
+                                    </div>
+                                </div>
+                                <label class="sp-switch sp-switch-sm" style="margin-top: 8px;">
+                                    <input type="checkbox" class="page-hero-uploading" @(pHero.IsUploadingSoon ? "checked" : "") />
+                                    <span class="sp-slider round"></span>
+                                    <span class="sp-switch-label">Show "Uploading Soon" radar animation</span>
+                                </label>
+                            </div>
+
+                            <div class="sp-subpage-products-box">
+                                <div class="sp-sub-header">
+                                    <h3>Products in @pgItem.CategoryName (@pgItem.Products.Count Items)</h3>
+                                    <button type="button" class="sp-btn-sm" onclick="addProductToSubpage('@pgItem.CategorySlug')">+ Add Product</button>
+                                </div>
+
+                                <div class="sp-products-admin-list" data-products-list>
+                                    @for (int prodIdx = 0; prodIdx < pgItem.Products.Count; prodIdx++)
+                                    {
+                                        var prod = pgItem.Products[prodIdx];
+                                        <div class="sp-admin-prod-card" data-prod-card>
+                                            <input type="hidden" class="prod-id" value="@prod.Id" />
+                                            <div class="sp-prod-card-top">
+                                                <span class="sp-prod-num">Item #@(prodIdx + 1)</span>
+                                                <div class="sp-slide-toggles">
+                                                    <label class="sp-switch sp-switch-sm">
+                                                        <input type="checkbox" class="prod-instock" @(prod.InStock ? "checked" : "") />
+                                                        <span class="sp-slider round"></span>
+                                                        <span class="sp-switch-label">In Stock</span>
+                                                    </label>
+                                                    <label class="sp-switch sp-switch-sm">
+                                                        <input type="checkbox" class="prod-uploading" @(prod.IsUploadingSoon ? "checked" : "") />
+                                                        <span class="sp-slider round"></span>
+                                                        <span class="sp-switch-label">Uploading Soon</span>
+                                                    </label>
+                                                    <button type="button" class="sp-btn-icon-danger" onclick="removeProduct(this)" title="Delete Product">✕</button>
+                                                </div>
+                                            </div>
+
+                                            <div class="sp-grid-2">
+                                                <div class="sp-field">
+                                                    <label>Product Name</label>
+                                                    <input type="text" class="sp-input prod-name" value="@prod.Name" />
+                                                </div>
+                                                <div class="sp-field">
+                                                    <label>Brand</label>
+                                                    <input type="text" class="sp-input prod-brand" value="@prod.Brand" />
+                                                </div>
+                                            </div>
+
+                                            <div class="sp-grid-3">
+                                                <div class="sp-field">
+                                                    <label>Price (₹)</label>
+                                                    <input type="number" class="sp-input prod-price" value="@prod.Price" min="0" />
+                                                </div>
+                                                <div class="sp-field">
+                                                    <label>Original Price (₹)</label>
+                                                    <input type="number" class="sp-input prod-orig-price" value="@(prod.OriginalPrice ?? prod.Price)" min="0" />
+                                                </div>
+                                                <div class="sp-field">
+                                                    <label>Badge</label>
+                                                    <input type="text" class="sp-input prod-badge" value="@prod.Badge" placeholder="Best Seller / Pro Grade" />
+                                                </div>
+                                            </div>
+
+                                            <div class="sp-grid-2">
+                                                <div class="sp-field">
+                                                    <label>Rating (e.g. 4.8)</label>
+                                                    <input type="number" step="0.1" class="sp-input prod-rating" value="@prod.Rating" min="1" max="5" />
+                                                </div>
+                                                <div class="sp-field">
+                                                    <label>Reviews Count</label>
+                                                    <input type="number" class="sp-input prod-reviews" value="@prod.ReviewsCount" min="0" />
+                                                </div>
+                                            </div>
+
+                                            <div class="sp-field">
+                                                <label>Sizes (Comma separated)</label>
+                                                <input type="text" class="sp-input prod-sizes" value="@(string.Join(", ", prod.Sizes ?? new List<string>()))" placeholder="Full Size SH, Size 6" />
+                                            </div>
+
+                                            <div class="sp-field">
+                                                <label>Product Image URL (Big Frame)</label>
+                                                <div class="sp-upload-row">
+                                                    <input type="text" class="sp-input prod-img" value="@prod.ImageUrl" />
+                                                    <input type="file" class="sp-file-input" accept="image/*" onchange="uploadProdImage(this)" style="display:none;" />
+                                                    <button type="button" class="sp-btn-upload-sm" onclick="triggerFileInput(this)">Upload Image</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================
+             TAB 5: TOP PICKS & BOTTOM BANNER
+        ========================================================= -->
+        <div id="tabTopPicks" class="sp-tab-panel">
+            <div class="sp-card">
+                <div class="sp-card-header">
+                    <h2 class="sp-card-title">Top Picks Section (Home Showcase)</h2>
+                    <label class="sp-switch">
+                        <input type="checkbox" id="topPicksEnabled" @(topPicks.IsEnabled ? "checked" : "") />
+                        <span class="sp-slider round"></span>
+                        <span class="sp-switch-label">Enable Section</span>
+                    </label>
+                </div>
+                <div class="sp-grid-2">
+                    <div class="sp-field">
+                        <label>Section Title</label>
+                        <input type="text" id="topPicksTitle" class="sp-input" value="@topPicks.Title" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Section Subtitle</label>
+                        <input type="text" id="topPicksSub" class="sp-input" value="@topPicks.Subtitle" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="sp-card" style="margin-top: 20px;">
+                <div class="sp-card-header">
+                    <h2 class="sp-card-title">Bottom Campus Banner</h2>
+                    <label class="sp-switch">
+                        <input type="checkbox" id="bottomBannerEnabled" @(bottomBanner.IsEnabled ? "checked" : "") />
+                        <span class="sp-slider round"></span>
+                        <span class="sp-switch-label">Enable Banner</span>
+                    </label>
+                </div>
+                <div class="sp-grid-2">
+                    <div class="sp-field">
+                        <label>Banner Title</label>
+                        <input type="text" id="bottomTitle" class="sp-input" value="@bottomBanner.Title" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Banner Subtitle</label>
+                        <input type="text" id="bottomSub" class="sp-input" value="@bottomBanner.Subtitle" />
+                    </div>
+                </div>
+                <div class="sp-grid-2">
+                    <div class="sp-field">
+                        <label>Button Text</label>
+                        <input type="text" id="bottomBtnText" class="sp-input" value="@bottomBanner.ButtonText" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Target URL</label>
+                        <input type="text" id="bottomTargetUrl" class="sp-input" value="@bottomBanner.TargetUrl" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- ========================================================
+     ADMIN CSS STYLING
+========================================================= -->
+<style>
+    .sp-admin-container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 24px 20px 80px 20px;
+        font-family: inherit;
+        color: #0f172a;
+    }
+    .sp-admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .sp-admin-title-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+    }
+    .sp-badge-tag {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        background: #064e3b;
+        color: #6ee7b7;
+        padding: 3px 10px;
+        border-radius: 6px;
+    }
+    .sp-badge-status {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #10b981;
+    }
+    .sp-admin-heading {
+        font-size: 24px;
+        font-weight: 800;
+        margin: 0 0 4px 0;
+    }
+    .sp-admin-subheading {
+        font-size: 13.5px;
+        color: #64748b;
+        margin: 0;
+    }
+    .sp-admin-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .sp-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #059669;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 13.5px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+    .sp-btn-primary:hover {
+        background: #047857;
+    }
+    .sp-btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f1f5f9;
+        color: #334155;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        border: 1px solid #cbd5e1;
+    }
+    .sp-btn-danger {
+        background: #ef4444;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    /* Tabs Nav */
+    .sp-tabs-nav {
+        display: flex;
+        gap: 8px;
+        border-bottom: 2px solid #e2e8f0;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+    .sp-tab-btn {
+        background: none;
+        border: none;
+        padding: 12px 18px;
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #64748b;
+        cursor: pointer;
+        position: relative;
+        transition: color 0.2s ease;
+    }
+    .sp-tab-btn:hover {
+        color: #059669;
+    }
+    .sp-tab-btn.active {
+        color: #059669;
+    }
+    .sp-tab-btn.active::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #059669;
+    }
+    .sp-tab-panel {
+        display: none;
+    }
+    .sp-tab-panel.active {
+        display: block;
+    }
+
+    /* Cards */
+    .sp-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+    .sp-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    .sp-card-title {
+        font-size: 18px;
+        font-weight: 800;
+        margin: 0;
+    }
+    .sp-sub-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 24px 0 16px 0;
+        padding-top: 20px;
+        border-top: 1px solid #f1f5f9;
+    }
+    .sp-sub-header h3 {
+        font-size: 16px;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    /* Grids & Inputs */
+    .sp-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+    .sp-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+    @@media (max-width: 768px) {
+        .sp-grid-2, .sp-grid-3 { grid-template-columns: 1fr; }
+    }
+    .sp-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+    .sp-field label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+    .sp-input {
+        padding: 9px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 13.5px;
+        color: #0f172a;
+        outline: none;
+        background: #f8fafc;
+        transition: border-color 0.2s ease;
+    }
+    .sp-input:focus {
+        border-color: #059669;
+        background: #ffffff;
+    }
+
+    /* Switches */
+    .sp-switch {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        user-select: none;
+    }
+    .sp-switch input { display: none; }
+    .sp-slider {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        background: #cbd5e1;
+        border-radius: 999px;
+        transition: background 0.2s ease;
+    }
+    .sp-slider::before {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        background: #fff;
+        border-radius: 50%;
+        transition: transform 0.2s ease;
+    }
+    .sp-switch input:checked + .sp-slider {
+        background: #059669;
+    }
+    .sp-switch input:checked + .sp-slider::before {
+        transform: translateX(20px);
+    }
+    .sp-switch-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
+    }
+    .sp-switch-sm .sp-slider { width: 34px; height: 18px; }
+    .sp-switch-sm .sp-slider::before { width: 14px; height: 14px; top: 2px; left: 2px; }
+    .sp-switch-sm input:checked + .sp-slider::before { transform: translateX(16px); }
+    .sp-switch-sm .sp-switch-label { font-size: 11.5px; }
+
+    /* Upload Row */
+    .sp-upload-row {
+        display: flex;
+        gap: 8px;
+    }
+    .sp-upload-row input { flex: 1; }
+    .sp-btn-upload, .sp-btn-upload-sm {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #0f172a;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 12.5px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .sp-btn-upload-sm { padding: 6px 12px; font-size: 11.5px; }
+    .sp-btn-sm {
+        background: #059669;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    /* Slides & Cat Cards */
+    .sp-slide-card, .sp-admin-cat-card, .sp-admin-prod-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    .sp-slide-top, .sp-cat-top-bar, .sp-prod-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .sp-slide-num, .sp-cat-badge, .sp-prod-num {
+        font-size: 12px;
+        font-weight: 800;
+        color: #059669;
+        text-transform: uppercase;
+    }
+    .sp-slide-toggles {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .sp-btn-icon-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: none;
+        border-radius: 6px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-weight: 800;
+    }
+    .sp-categories-admin-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+    @@media (max-width: 992px) {
+        .sp-categories-admin-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Subpage Editor */
+    .sp-subpage-editor { display: none; }
+    .sp-subpage-editor.active { display: block; }
+    .sp-subpage-hero-box {
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 24px;
+    }
+</style>
+
+<!-- ========================================================
+     ADMIN JAVASCRIPT LOGIC
+========================================================= -->
+<script>
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.sp-tab-panel').forEach(function (p) { p.classList.remove('active'); });
+        document.querySelectorAll('.sp-tab-btn').forEach(function (b) { b.classList.remove('active'); });
+        var target = document.getElementById(tabId);
+        if (target) target.classList.add('active');
+        btn.classList.add('active');
+    }
+
+    function onSelectSubpage(slug) {
+        document.querySelectorAll('.sp-subpage-editor').forEach(function (el) { el.classList.remove('active'); });
+        var target = document.getElementById('subpage_' + slug);
+        if (target) target.classList.add('active');
+    }
+
+    function triggerFileInput(btn) {
+        var row = btn.closest('.sp-upload-row');
+        if (row) {
+            var fileInp = row.querySelector('.sp-file-input');
+            if (fileInp) fileInp.click();
+        }
+    }
+
+    function uploadFileGeneric(fileInput, onSuccess) {
+        var file = fileInput.files[0];
+        if (!file) return;
+
+        var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+        var fd = new FormData();
+        fd.append('file', file);
+        fd.append('__RequestVerificationToken', token);
+
+        fetch('/Admin/SportsHub/UploadImage', {
+            method: 'POST',
+            body: fd
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (data.success && data.url) {
+                onSuccess(data.url);
+                alert('Image uploaded successfully!');
+            } else {
+                alert('Upload error: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(function (err) {
+            alert('Upload failed: ' + err.message);
+        });
+    }
+
+    function uploadSlideImage(input) {
+        uploadFileGeneric(input, function (url) {
+            var card = input.closest('[data-slide-card]');
+            var urlInput = card.querySelector('.slide-img-url');
+            if (urlInput) urlInput.value = url;
+            var uploadingCb = card.querySelector('.slide-uploading');
+            if (uploadingCb) uploadingCb.checked = false;
+        });
+    }
+
+    function uploadCatImage(input) {
+        uploadFileGeneric(input, function (url) {
+            var card = input.closest('[data-cat-card]');
+            var urlInput = card.querySelector('.cat-img');
+            if (urlInput) urlInput.value = url;
+            var uploadingCb = card.querySelector('.cat-uploading');
+            if (uploadingCb) uploadingCb.checked = false;
+        });
+    }
+
+    function uploadPageHeroImage(input) {
+        uploadFileGeneric(input, function (url) {
+            var box = input.closest('.sp-subpage-hero-box');
+            var urlInput = box.querySelector('.page-hero-img');
+            if (urlInput) urlInput.value = url;
+            var uploadingCb = box.querySelector('.page-hero-uploading');
+            if (uploadingCb) uploadingCb.checked = false;
+        });
+    }
+
+    function uploadProdImage(input) {
+        uploadFileGeneric(input, function (url) {
+            var card = input.closest('[data-prod-card]');
+            var urlInput = card.querySelector('.prod-img');
+            if (urlInput) urlInput.value = url;
+            var uploadingCb = card.querySelector('.prod-uploading');
+            if (uploadingCb) uploadingCb.checked = false;
+        });
+    }
+
+    function addHeroSlide() {
+        var list = document.getElementById('heroSlidesList');
+        var count = list.querySelectorAll('[data-slide-card]').length + 1;
+        var slideHtml = `
+            <div class="sp-slide-card" data-slide-card>
+                <div class="sp-slide-top">
+                    <span class="sp-slide-num">Slide #<span class="slide-order-num">${count}</span></span>
+                    <div class="sp-slide-toggles">
+                        <label class="sp-switch sp-switch-sm">
+                            <input type="checkbox" class="slide-isactive" checked />
+                            <span class="sp-slider round"></span>
+                            <span class="sp-switch-label">Active</span>
+                        </label>
+                        <label class="sp-switch sp-switch-sm">
+                            <input type="checkbox" class="slide-uploading" checked />
+                            <span class="sp-slider round"></span>
+                            <span class="sp-switch-label">Uploading Soon</span>
+                        </label>
+                        <button type="button" class="sp-btn-icon-danger" onclick="removeHeroSlide(this)">✕</button>
+                    </div>
+                </div>
+                <input type="hidden" class="slide-id" value="sp-slide-${Date.now()}" />
+                <div class="sp-grid-2">
+                    <div class="sp-field">
+                        <label>Badge Text</label>
+                        <input type="text" class="sp-input slide-badge" value="TOURNAMENT SPECIAL" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Title</label>
+                        <input type="text" class="sp-input slide-title" value="New Sports Equipment" />
+                    </div>
+                </div>
+                <div class="sp-grid-2">
+                    <div class="sp-field">
+                        <label>Title Highlight</label>
+                        <input type="text" class="sp-input slide-highlight" value="Match Grade Gear" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Subtitle / Description</label>
+                        <input type="text" class="sp-input slide-subtitle" value="Engineered for university tournaments and student athletes." />
+                    </div>
+                </div>
+                <div class="sp-grid-3">
+                    <div class="sp-field">
+                        <label>Target URL</label>
+                        <input type="text" class="sp-input slide-url" value="/category/sports-hub/cricket" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Button Text</label>
+                        <input type="text" class="sp-input slide-btn-text" value="Shop Now" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Display Order</label>
+                        <input type="number" class="sp-input slide-order" value="${count}" min="1" />
+                    </div>
+                </div>
+                <div class="sp-image-uploader-field">
+                    <label>Slide Image URL</label>
+                    <div class="sp-upload-row">
+                        <input type="text" class="sp-input slide-img-url" value="/images/sports-hub/uploading-soon-placeholder.svg" />
+                        <input type="file" class="sp-file-input" accept="image/*" onchange="uploadSlideImage(this)" style="display:none;" />
+                        <button type="button" class="sp-btn-upload" onclick="triggerFileInput(this)">Upload File</button>
+                    </div>
+                </div>
+            </div>`;
+        list.insertAdjacentHTML('beforeend', slideHtml);
+    }
+
+    function removeHeroSlide(btn) {
+        var card = btn.closest('[data-slide-card]');
+        if (card) card.remove();
+    }
+
+    function addProductToSubpage(slug) {
+        var pageEl = document.getElementById('subpage_' + slug);
+        if (!pageEl) return;
+        var list = pageEl.querySelector('[data-products-list]');
+        var count = list.querySelectorAll('[data-prod-card]').length + 1;
+        var catName = pageEl.querySelector('.page-name').value;
+
+        var prodHtml = `
+            <div class="sp-admin-prod-card" data-prod-card>
+                <input type="hidden" class="prod-id" value="sp-prod-${Date.now()}" />
+                <div class="sp-prod-card-top">
+                    <span class="sp-prod-num">Item #${count}</span>
+                    <div class="sp-slide-toggles">
+                        <label class="sp-switch sp-switch-sm">
+                            <input type="checkbox" class="prod-instock" checked />
+                            <span class="sp-slider round"></span>
+                            <span class="sp-switch-label">In Stock</span>
+                        </label>
+                        <label class="sp-switch sp-switch-sm">
+                            <input type="checkbox" class="prod-uploading" checked />
+                            <span class="sp-slider round"></span>
+                            <span class="sp-switch-label">Uploading Soon</span>
+                        </label>
+                        <button type="button" class="sp-btn-icon-danger" onclick="removeProduct(this)">✕</button>
+                    </div>
+                </div>
+                <div class="sp-grid-2">
+                    <div class="sp-field">
+                        <label>Product Name</label>
+                        <input type="text" class="sp-input prod-name" value="Pro ${catName} Gear" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Brand</label>
+                        <input type="text" class="sp-input prod-brand" value="Campus Pro" />
+                    </div>
+                </div>
+                <div class="sp-grid-3">
+                    <div class="sp-field">
+                        <label>Price (₹)</label>
+                        <input type="number" class="sp-input prod-price" value="1499" min="0" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Original Price (₹)</label>
+                        <input type="number" class="sp-input prod-orig-price" value="2499" min="0" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Badge</label>
+                        <input type="text" class="sp-input prod-badge" value="Top Rated" />
+                    </div>
+                </div>
+                <div class="sp-grid-2">
+                    <div class="sp-field">
+                        <label>Rating</label>
+                        <input type="number" step="0.1" class="sp-input prod-rating" value="4.8" min="1" max="5" />
+                    </div>
+                    <div class="sp-field">
+                        <label>Reviews Count</label>
+                        <input type="number" class="sp-input prod-reviews" value="120" min="0" />
+                    </div>
+                </div>
+                <div class="sp-field">
+                    <label>Sizes (Comma separated)</label>
+                    <input type="text" class="sp-input prod-sizes" value="Standard" />
+                </div>
+                <div class="sp-field">
+                    <label>Product Image URL (Big Frame)</label>
+                    <div class="sp-upload-row">
+                        <input type="text" class="sp-input prod-img" value="/images/sports-hub/uploading-soon-placeholder.svg" />
+                        <input type="file" class="sp-file-input" accept="image/*" onchange="uploadProdImage(this)" style="display:none;" />
+                        <button type="button" class="sp-btn-upload-sm" onclick="triggerFileInput(this)">Upload Image</button>
+                    </div>
+                </div>
+            </div>`;
+        list.insertAdjacentHTML('beforeend', prodHtml);
+    }
+
+    function removeProduct(btn) {
+        var card = btn.closest('[data-prod-card]');
+        if (card) card.remove();
+    }
+
+    function saveSportsConfig() {
+        var btn = document.getElementById('btnSaveConfig');
+        btn.disabled = true;
+        btn.innerHTML = '<span>Saving...</span>';
+
+        // 1. Festival Theme
+        var festival = {
+            IsEnabled: document.getElementById('festIsEnabled').checked,
+            FestivalName: document.getElementById('festName').value,
+            AnnouncementText: document.getElementById('festAnnouncement').value,
+            BadgeText: document.getElementById('festBadge').value,
+            BannerHighlight: document.getElementById('festHighlight').value,
+            BgGradient: document.getElementById('festGradient').value
+        };
+
+        // 2. Hero Banner
+        var slides = [];
+        document.querySelectorAll('#heroSlidesList [data-slide-card]').forEach(function (card, idx) {
+            slides.push({
+                Id: card.querySelector('.slide-id').value || ('slide_' + idx),
+                BadgeText: card.querySelector('.slide-badge').value,
+                Title: card.querySelector('.slide-title').value,
+                TitleHighlight: card.querySelector('.slide-highlight').value,
+                Subtitle: card.querySelector('.slide-subtitle').value,
+                ImageUrl: card.querySelector('.slide-img-url').value,
+                IsUploadingSoon: card.querySelector('.slide-uploading').checked,
+                TargetUrl: card.querySelector('.slide-url').value,
+                ButtonText: card.querySelector('.slide-btn-text').value,
+                DisplayOrder: parseInt(card.querySelector('.slide-order').value || (idx + 1), 10),
+                IsActive: card.querySelector('.slide-isactive').checked
+            });
+        });
+
+        var hero = {
+            IsEnabled: document.getElementById('heroIsEnabled').checked,
+            AutoPlay: document.getElementById('heroAutoPlay').value === 'true',
+            SlideIntervalSeconds: parseInt(document.getElementById('heroInterval').value || '5', 10),
+            BannerHeight: parseInt(document.getElementById('heroHeight').value || '440', 10),
+            Slides: slides
+        };
+
+        // 3. Shop by Category
+        var catItems = [];
+        document.querySelectorAll('.sp-categories-admin-grid [data-cat-card]').forEach(function (card, idx) {
+            catItems.push({
+                Slug: card.querySelector('.cat-slug').value,
+                Name: card.querySelector('.cat-name').value,
+                IconEmoji: card.querySelector('.cat-emoji').value,
+                Subtitle: card.querySelector('.cat-sub').value,
+                ImageUrl: card.querySelector('.cat-img').value,
+                IsUploadingSoon: card.querySelector('.cat-uploading').checked,
+                DisplayOrder: parseInt(card.querySelector('.cat-order').value || (idx + 1), 10),
+                IsActive: card.querySelector('.cat-isactive').checked
+            });
+        });
+
+        var shopByCategory = {
+            IsEnabled: document.getElementById('catSectionEnabled').checked,
+            Title: document.getElementById('catSectionTitle').value,
+            Subtitle: document.getElementById('catSectionSub').value,
+            Items: catItems
+        };
+
+        // 4. Subcategory Pages & Products
+        var subcategoryPages = [];
+        document.querySelectorAll('.sp-subpage-editor').forEach(function (pageEl) {
+            var slug = pageEl.getAttribute('data-subpage-slug');
+            var name = pageEl.querySelector('.page-name').value;
+            var pHero = {
+                IsEnabled: true,
+                Title: pageEl.querySelector('.page-hero-title').value,
+                TitleHighlight: pageEl.querySelector('.page-hero-badge').value,
+                Subtitle: pageEl.querySelector('.page-hero-sub').value,
+                ImageUrl: pageEl.querySelector('.page-hero-img').value,
+                IsUploadingSoon: pageEl.querySelector('.page-hero-uploading').checked,
+                BannerHeight: 280
+            };
+
+            var pageProducts = [];
+            pageEl.querySelectorAll('[data-prod-card]').forEach(function (pCard) {
+                var sizesRaw = pCard.querySelector('.prod-sizes').value || '';
+                var sizesList = sizesRaw.split(',').map(function (s) { return s.trim(); }).filter(function (s) { return s.length > 0; });
+
+                pageProducts.push({
+                    Id: pCard.querySelector('.prod-id').value,
+                    Name: pCard.querySelector('.prod-name').value,
+                    Brand: pCard.querySelector('.prod-brand').value,
+                    CategoryName: name,
+                    CategorySlug: slug,
+                    Price: parseFloat(pCard.querySelector('.prod-price').value || '0'),
+                    OriginalPrice: parseFloat(pCard.querySelector('.prod-orig-price').value || '0'),
+                    Badge: pCard.querySelector('.prod-badge').value,
+                    Rating: parseFloat(pCard.querySelector('.prod-rating').value || '4.8'),
+                    ReviewsCount: parseInt(pCard.querySelector('.prod-reviews').value || '100', 10),
+                    Sizes: sizesList,
+                    ImageUrl: pCard.querySelector('.prod-img').value,
+                    IsUploadingSoon: pCard.querySelector('.prod-uploading').checked,
+                    InStock: pCard.querySelector('.prod-instock').checked,
+                    IsActive: true
+                });
+            });
+
+            subcategoryPages.push({
+                CategorySlug: slug,
+                CategoryName: name,
+                HeroBanner: pHero,
+                Products: pageProducts
+            });
+        });
+
+        // 5. Top Picks & Bottom Banner
+        var topPicks = {
+            IsEnabled: document.getElementById('topPicksEnabled').checked,
+            Title: document.getElementById('topPicksTitle').value,
+            Subtitle: document.getElementById('topPicksSub').value
+        };
+
+        var bottomBanner = {
+            IsEnabled: document.getElementById('bottomBannerEnabled').checked,
+            Title: document.getElementById('bottomTitle').value,
+            Subtitle: document.getElementById('bottomSub').value,
+            ButtonText: document.getElementById('bottomBtnText').value,
+            TargetUrl: document.getElementById('bottomTargetUrl').value
+        };
+
+        var payload = {
+            FestivalTheme: festival,
+            HeroBanner: hero,
+            ShopByCategory: shopByCategory,
+            SubcategoryPages: subcategoryPages,
+            TopPicks: topPicks,
+            BottomBanner: bottomBanner,
+            ThreeSectionSliderSlug: "sports-hub"
+        };
+
+        var token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+        fetch('/Admin/SportsHub/Save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'RequestVerificationToken': token
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (data.success) {
+                alert('Sports Hub configuration saved successfully!');
+            } else {
+                alert('Save failed: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(function (err) {
+            alert('Save error: ' + err.message);
+        })
+        .finally(function () {
+            btn.disabled = false;
+            btn.innerHTML = '<svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> <span>Save All Changes</span>';
+        });
+    }
+</script>
