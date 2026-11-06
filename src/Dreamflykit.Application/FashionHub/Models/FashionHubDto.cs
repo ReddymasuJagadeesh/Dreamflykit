@@ -562,6 +562,12 @@ public sealed class FashionProductItemDto
 
     public bool InStock { get; set; } = true;
 
+    public string? Fit { get; set; }
+
+    public string? Style { get; set; }
+
+    public string? Fabric { get; set; }
+
 }
 
 
@@ -700,6 +706,43 @@ public sealed class FashionBottomBannerDto
 
 // -------------------------------------------------------------
 
+
+public sealed class FashionMenClothingSubcategoryPageDto
+{
+    public string CategorySlug { get; set; } = string.Empty;
+    public string CategoryName { get; set; } = string.Empty;
+    public string Emoji { get; set; } = "👕";
+    public FashionMenClothingSubcategoryHeroDto HeroBanner { get; set; } = new();
+    public FashionShopByStyleSectionDto ShopByStyleSection { get; set; } = new();
+    public List<string> StyleTypes { get; set; } = new();
+    public List<FashionProductItemDto> Products { get; set; } = new();
+}
+
+public sealed class FashionMenClothingSubcategoryHeroDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public string Title { get; set; } = string.Empty;
+    public string TitleHighlight { get; set; } = "STUDENT ESSENTIALS • 100% GENUINE";
+    public string Subtitle { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = "/images/fashion-hub/uploading-soon-placeholder.svg";
+    public bool IsUploadingSoon { get; set; } = true;
+    public int BannerHeight { get; set; } = 400;
+    public string ThemeColor { get; set; } = "#0284c7";
+    public string BadgeText { get; set; } = "CAMPUS FASHION";
+    public List<string> Badges { get; set; } = new();
+}
+
+public sealed class FashionShopByStyleSectionDto
+{
+    public bool IsEnabled { get; set; } = true;
+    public string Title { get; set; } = "Shop by Category";
+    public string Subtitle { get; set; } = "Select your occasion and style — Casual, Formal, Party Wear, Streetwear & more.";
+    public List<FashionStyleItemDto> Styles { get; set; } = new();
+}
+
+
+
+
 public sealed class FashionMenClothingDto
 
 {
@@ -715,6 +758,11 @@ public sealed class FashionMenClothingDto
     public FashionTrustBadgesSectionDto TrustBadgesSection { get; set; } = new();
 
     public FashionBottomBannerDto BottomBanner { get; set; } = new();
+
+    public FashionFestivalThemeDto FestivalTheme { get; set; } = new();
+
+    public List<FashionMenClothingSubcategoryPageDto> SubcategoryPages { get; set; } = new();
+
 
 
 
@@ -938,9 +986,1804 @@ public sealed class FashionMenClothingDto
 
             }
 
+,
+            SubcategoryPages = CreateDefaultSubcategoryPages()
         };
 
     }
+
+    public static List<FashionMenClothingSubcategoryPageDto> CreateDefaultSubcategoryPages()
+    {
+        return new List<FashionMenClothingSubcategoryPageDto>
+        {
+            new()
+            {
+                CategorySlug = "ethnic-wear",
+                CategoryName = "Ethnic Wear",
+                Emoji = "🥻",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Ethnic Wear",
+                    TitleHighlight = "TRADITIONAL CHARM • FESTIVE READY",
+                    Subtitle = "Authentic kurtas, elegant Nehru jackets, and festive Indo-Western sets crafted for university cultural fests, celebrations, and formal ceremonies abroad.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "100% Breathable Cotton", "Festive Approved", "Wrinkle Resistant", "Lightweight Fabric" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated ethnic wear styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "ethnic-wear_s1", Name = "Casual Kurtas", Slug = "casual-kurtas", Emoji = "👘", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "ethnic-wear_s2", Name = "Formal Nehru Jackets", Slug = "formal-nehru-jackets", Emoji = "🦺", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "ethnic-wear_s3", Name = "Party Indo-Western", Slug = "party-indo-western", Emoji = "✨", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "ethnic-wear_s4", Name = "Festive Sherwanis", Slug = "festive-sherwanis", Emoji = "👑", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "ethnic-wear_s5", Name = "Cotton Kurta Sets", Slug = "cotton-kurta-sets", Emoji = "👔", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "ethnic-wear_s6", Name = "Festive Dupattas & Stoles", Slug = "festive-dupattas", Emoji = "🧣", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "ethnic-wear_p1",
+                        Name = "Pure Cotton Mandarin Collar Long Kurta",
+                        CategoryName = "Ethnic Wear",
+                        CategorySlug = "ethnic-wear",
+                        Price = 1199,
+                        OriginalPrice = 2499,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/ethnic-wear",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "S", "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "White", "Navy", "Maroon", "Mustard" }
+                    },
+                    new()
+                    {
+                        Id = "ethnic-wear_p2",
+                        Name = "Jacquard Silk Blend Tailored Nehru Jacket",
+                        CategoryName = "Ethnic Wear",
+                        CategorySlug = "ethnic-wear",
+                        Price = 1899,
+                        OriginalPrice = 3999,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/ethnic-wear",
+                        IsUploadingSoon = true,
+                        Badge = "FESTIVE READY",
+                        Sizes = new List<string> { "38", "40", "42", "44" },
+                        Colors = new List<string> { "Black", "Royal Blue", "Gold", "Maroon" }
+                    },
+                    new()
+                    {
+                        Id = "ethnic-wear_p3",
+                        Name = "Modern Asymmetric Hem Indo-Western Kurta",
+                        CategoryName = "Ethnic Wear",
+                        CategorySlug = "ethnic-wear",
+                        Price = 1699,
+                        OriginalPrice = 3499,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/ethnic-wear",
+                        IsUploadingSoon = true,
+                        Badge = "TRENDING",
+                        Sizes = new List<string> { "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Olive", "Charcoal", "Wine" }
+                    },
+                    new()
+                    {
+                        Id = "ethnic-wear_p4",
+                        Name = "Classic Chikankari Embroidered Festive Kurta",
+                        CategoryName = "Ethnic Wear",
+                        CategorySlug = "ethnic-wear",
+                        Price = 2299,
+                        OriginalPrice = 4599,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/ethnic-wear",
+                        IsUploadingSoon = true,
+                        Badge = "HERITAGE",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Ivory", "Powder Blue", "Peach" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "thermals",
+                CategoryName = "Thermals",
+                Emoji = "❄️",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Thermals",
+                    TitleHighlight = "SUB-ZERO HEAT RETENTION • MERINO WOOL",
+                    Subtitle = "Ultra-warm, moisture-wicking baselayers and merino fleece thermals designed for extreme winter study destinations in the USA, UK, Canada & Europe.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "Merino Wool Infused", "Sub-Zero Rated (-15°C)", "Anti-Odor Technology", "Ultra-Lightweight" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated thermals styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "thermals_s1", Name = "Casual Daily Baselayers", Slug = "casual-baselayers", Emoji = "👕", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "thermals_s2", Name = "Heavy Winter Thermal Sets", Slug = "heavy-winter-sets", Emoji = "❄️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "thermals_s3", Name = "Merino Wool Baselayers", Slug = "merino-wool", Emoji = "🐑", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "thermals_s4", Name = "Thermal Tops", Slug = "thermal-tops", Emoji = "👔", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "thermals_s5", Name = "Thermal Bottoms / Spats", Slug = "thermal-bottoms", Emoji = "👖", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "thermals_s6", Name = "Extreme Arctic Cold Suits", Slug = "extreme-arctic", Emoji = "🏔️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "thermals_p1",
+                        Name = "Merino Wool Sub-Zero Warmth Thermal Set (Top + Bottom)",
+                        CategoryName = "Thermals",
+                        CategorySlug = "thermals",
+                        Price = 1899,
+                        OriginalPrice = 3999,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/thermals",
+                        IsUploadingSoon = true,
+                        Badge = "ARCTIC RATED",
+                        Sizes = new List<string> { "S", "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Charcoal", "Black", "Off-White" }
+                    },
+                    new()
+                    {
+                        Id = "thermals_p2",
+                        Name = "Ultra-Light Microfleece Long Sleeve Baselayer Top",
+                        CategoryName = "Thermals",
+                        CategorySlug = "thermals",
+                        Price = 999,
+                        OriginalPrice = 1999,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/thermals",
+                        IsUploadingSoon = true,
+                        Badge = "CAMPUS VALUE",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Black", "Navy", "Grey" }
+                    },
+                    new()
+                    {
+                        Id = "thermals_p3",
+                        Name = "Stretch Comfort Thermal Long Johns Leggings",
+                        CategoryName = "Thermals",
+                        CategorySlug = "thermals",
+                        Price = 899,
+                        OriginalPrice = 1799,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/thermals",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Dark Grey", "Black" }
+                    },
+                    new()
+                    {
+                        Id = "thermals_p4",
+                        Name = "Heavyweight Dual-Layer Thermal Fleece Body Warmer",
+                        CategoryName = "Thermals",
+                        CategorySlug = "thermals",
+                        Price = 1399,
+                        OriginalPrice = 2799,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/thermals",
+                        IsUploadingSoon = true,
+                        Badge = "TRAVEL MUST-HAVE",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Navy", "Charcoal" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "t-shirts",
+                CategoryName = "T-Shirts",
+                Emoji = "👕",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's T-Shirts",
+                    TitleHighlight = "100% COMBED COTTON • ALL-DAY COMFORT",
+                    Subtitle = "Premium crew necks, breathable pique polos, and oversized streetwear tees designed for campus lectures, study groups, and weekend hangs.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "220 GSM Bio-Washed", "Pre-Shrunk Cotton", "Shape Retention", "Color Fast Guarantee" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated t-shirts styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "t-shirts_s1", Name = "Casual Crew Necks", Slug = "casual-crew-necks", Emoji = "👕", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "t-shirts_s2", Name = "Formal Smart Polos", Slug = "formal-smart-polos", Emoji = "👔", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "t-shirts_s3", Name = "Party Graphic Tees", Slug = "party-graphic-tees", Emoji = "🎨", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "t-shirts_s4", Name = "Oversized Streetwear", Slug = "oversized-streetwear", Emoji = "🛹", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "t-shirts_s5", Name = "Gym & Workout Tees", Slug = "gym-workout-tees", Emoji = "🏃", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "t-shirts_s6", Name = "Vintage Henley Tees", Slug = "vintage-henley-tees", Emoji = "🔘", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "t-shirts_p1",
+                        Name = "Heavyweight 240 GSM Oversized Streetwear Tee",
+                        CategoryName = "T-Shirts",
+                        CategorySlug = "t-shirts",
+                        Price = 799,
+                        OriginalPrice = 1599,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/t-shirts",
+                        IsUploadingSoon = true,
+                        Badge = "CAMPUS FAV",
+                        Sizes = new List<string> { "S", "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Onyx Black", "Sage Green", "Off-White", "Mocha" }
+                    },
+                    new()
+                    {
+                        Id = "t-shirts_p2",
+                        Name = "Classic Cotton Pique Slim Fit Polo Shirt",
+                        CategoryName = "T-Shirts",
+                        CategorySlug = "t-shirts",
+                        Price = 999,
+                        OriginalPrice = 1999,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/t-shirts",
+                        IsUploadingSoon = true,
+                        Badge = "SMART CASUAL",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Navy", "Burgundy", "White", "Forest Green" }
+                    },
+                    new()
+                    {
+                        Id = "t-shirts_p3",
+                        Name = "Everyday Essential Bio-Washed Crew Neck T-Shirt (Pack of 3)",
+                        CategoryName = "T-Shirts",
+                        CategorySlug = "t-shirts",
+                        Price = 1299,
+                        OriginalPrice = 2599,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/t-shirts",
+                        IsUploadingSoon = true,
+                        Badge = "VALUE PACK",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Black/White/Grey", "Navy/Olive/Charcoal" }
+                    },
+                    new()
+                    {
+                        Id = "t-shirts_p4",
+                        Name = "Vintage 3-Button Waffle Knit Long Sleeve Henley",
+                        CategoryName = "T-Shirts",
+                        CategorySlug = "t-shirts",
+                        Price = 899,
+                        OriginalPrice = 1799,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/t-shirts",
+                        IsUploadingSoon = true,
+                        Badge = "TRENDING",
+                        Sizes = new List<string> { "M", "L", "XL" },
+                        Colors = new List<string> { "Navy", "Olive", "Heather Grey" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "shirts",
+                CategoryName = "Shirts",
+                Emoji = "👔",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Shirts",
+                    TitleHighlight = "PREMIUM OXFORD & LINEN • WRINKLE-RESISTANT",
+                    Subtitle = "From crisp formal button-downs for university presentations to relaxed casual linens and party printed shirts.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "100% Cotton Oxford", "Easy Iron Finish", "Button-Down Collar", "Reinforced Seams" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated shirts styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "shirts_s1", Name = "Casual Shirts", Slug = "casual-shirts", Emoji = "👕", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "shirts_s2", Name = "Formal Dress Shirts", Slug = "formal-dress-shirts", Emoji = "👔", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "shirts_s3", Name = "Party Wear & Printed", Slug = "party-wear-printed", Emoji = "✨", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "shirts_s4", Name = "Denim & Chambray", Slug = "denim-chambray", Emoji = "👖", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "shirts_s5", Name = "Linen Summer Shirts", Slug = "linen-summer-shirts", Emoji = "🌿", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "shirts_s6", Name = "Oxford Button-Downs", Slug = "oxford-button-downs", Emoji = "🎓", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "shirts_p1",
+                        Name = "Classic Oxford Cotton Button-Down Shirt",
+                        CategoryName = "Shirts",
+                        CategorySlug = "shirts",
+                        Price = 1299,
+                        OriginalPrice = 2599,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/shirts",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "38", "39", "40", "42", "44" },
+                        Colors = new List<string> { "Sky Blue", "Classic White", "Pale Pink", "Navy" }
+                    },
+                    new()
+                    {
+                        Id = "shirts_p2",
+                        Name = "Non-Iron Luxury Formal Dress Shirt",
+                        CategoryName = "Shirts",
+                        CategorySlug = "shirts",
+                        Price = 1499,
+                        OriginalPrice = 2999,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/shirts",
+                        IsUploadingSoon = true,
+                        Badge = "INTERVIEW READY",
+                        Sizes = new List<string> { "38", "39", "40", "42", "44" },
+                        Colors = new List<string> { "Crisp White", "Light Blue", "Charcoal" }
+                    },
+                    new()
+                    {
+                        Id = "shirts_p3",
+                        Name = "Pure Breathable Linen Casual Resort Shirt",
+                        CategoryName = "Shirts",
+                        CategorySlug = "shirts",
+                        Price = 1699,
+                        OriginalPrice = 3499,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/shirts",
+                        IsUploadingSoon = true,
+                        Badge = "SUMMER VIBES",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Natural Beige", "Olive", "White", "Teal" }
+                    },
+                    new()
+                    {
+                        Id = "shirts_p4",
+                        Name = "Washed Indigo Denim Casual Shirt with Snap Buttons",
+                        CategoryName = "Shirts",
+                        CategorySlug = "shirts",
+                        Price = 1399,
+                        OriginalPrice = 2799,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/shirts",
+                        IsUploadingSoon = true,
+                        Badge = "RUGGED STYLE",
+                        Sizes = new List<string> { "S", "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Light Wash", "Mid Indigo", "Dark Stone" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "jackets-coats",
+                CategoryName = "Jackets & Coats",
+                Emoji = "🧥",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Jackets & Coats",
+                    TitleHighlight = "ALL-WEATHER PROTECTION • WINDPROOF & INSULATED",
+                    Subtitle = "Heavy duty puffers, classic wool blazers, rugged denim jackets, and travel-ready windbreakers built for changing global climates.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "Water-Resistant Shell", "Thermal Insulation", "Internal Gadget Pockets", "YKK Zippers" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated jackets & coats styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "jackets-coats_s1", Name = "Casual Denim & Windbreakers", Slug = "casual-denim-windbreakers", Emoji = "🧥", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "jackets-coats_s2", Name = "Formal Blazers & Overcoats", Slug = "formal-blazers-overcoats", Emoji = "👔", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "jackets-coats_s3", Name = "Party Leather & Suede", Slug = "party-leather-suede", Emoji = "✨", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "jackets-coats_s4", Name = "Puffer Winter Coats", Slug = "puffer-winter-coats", Emoji = "❄️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "jackets-coats_s5", Name = "Bomber & Varsity Jackets", Slug = "bomber-varsity-jackets", Emoji = "🏈", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "jackets-coats_s6", Name = "Fleece & Travel Layers", Slug = "fleece-travel-layers", Emoji = "🎒", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "jackets-coats_p1",
+                        Name = "Ultra-Light Packable Down Puffer Winter Jacket",
+                        CategoryName = "Jackets & Coats",
+                        CategorySlug = "jackets-coats",
+                        Price = 2499,
+                        OriginalPrice = 4999,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/jackets-coats",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "S", "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Matte Black", "Navy", "Dark Olive", "Burgundy" }
+                    },
+                    new()
+                    {
+                        Id = "jackets-coats_p2",
+                        Name = "Classic Wool Blend Structured Overcoat",
+                        CategoryName = "Jackets & Coats",
+                        CategorySlug = "jackets-coats",
+                        Price = 3999,
+                        OriginalPrice = 7999,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/jackets-coats",
+                        IsUploadingSoon = true,
+                        Badge = "CAMPUS ICON",
+                        Sizes = new List<string> { "38", "40", "42", "44" },
+                        Colors = new List<string> { "Camel", "Charcoal Grey", "Black" }
+                    },
+                    new()
+                    {
+                        Id = "jackets-coats_p3",
+                        Name = "Rugged Sherpa-Lined Heavy Trucker Denim Jacket",
+                        CategoryName = "Jackets & Coats",
+                        CategorySlug = "jackets-coats",
+                        Price = 2799,
+                        OriginalPrice = 5499,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/jackets-coats",
+                        IsUploadingSoon = true,
+                        Badge = "VINTAGE WARMTH",
+                        Sizes = new List<string> { "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Vintage Blue", "Washed Black" }
+                    },
+                    new()
+                    {
+                        Id = "jackets-coats_p4",
+                        Name = "All-Weather Waterproof Commuter Windbreaker",
+                        CategoryName = "Jackets & Coats",
+                        CategorySlug = "jackets-coats",
+                        Price = 1899,
+                        OriginalPrice = 3799,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/jackets-coats",
+                        IsUploadingSoon = true,
+                        Badge = "COMMUTE PRO",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Black", "Electric Blue", "Olive" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "hoodies",
+                CategoryName = "Hoodies",
+                Emoji = "🧥",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Hoodies",
+                    TitleHighlight = "CAMPUS COMFORT • HEAVYWEIGHT FLEECE",
+                    Subtitle = "Ultra-soft brushed fleece hoodies with double-lined hoods and spacious kangaroo pockets for cozy library marathons and frosty morning walks.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "360 GSM Heavyweight Terry", "Double-Lined Hood", "Preshrunk Organic Cotton", "Spacious Kangaroo Pocket" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated hoodies styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "hoodies_s1", Name = "Casual Pullover Hoodies", Slug = "casual-pullover-hoodies", Emoji = "🧥", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "hoodies_s2", Name = "Full-Zip Casual Hoodies", Slug = "full-zip-hoodies", Emoji = "🤐", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "hoodies_s3", Name = "Streetwear Oversized", Slug = "streetwear-oversized", Emoji = "🛹", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "hoodies_s4", Name = "Heavyweight Terry Fleece", Slug = "heavyweight-terry", Emoji = "🧶", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "hoodies_s5", Name = "Gym Performance Hoodies", Slug = "gym-performance-hoodies", Emoji = "🏃", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "hoodies_s6", Name = "Minimalist Drop-Shoulder", Slug = "minimalist-drop-shoulder", Emoji = "✨", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "hoodies_p1",
+                        Name = "Premium 380 GSM Heavyweight Boxy Pullover Hoodie",
+                        CategoryName = "Hoodies",
+                        CategorySlug = "hoodies",
+                        Price = 1499,
+                        OriginalPrice = 2999,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/hoodies",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "S", "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Charcoal", "Mocha Brown", "Off-White", "Pitch Black" }
+                    },
+                    new()
+                    {
+                        Id = "hoodies_p2",
+                        Name = "Full-Zip Thermal Lined Travel Campus Hoodie",
+                        CategoryName = "Hoodies",
+                        CategorySlug = "hoodies",
+                        Price = 1699,
+                        OriginalPrice = 3299,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/hoodies",
+                        IsUploadingSoon = true,
+                        Badge = "TRAVEL READY",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Navy", "Heather Grey", "Black" }
+                    },
+                    new()
+                    {
+                        Id = "hoodies_p3",
+                        Name = "Vintage Washed Minimalist Raglan Sleeve Hoodie",
+                        CategoryName = "Hoodies",
+                        CategorySlug = "hoodies",
+                        Price = 1399,
+                        OriginalPrice = 2799,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/hoodies",
+                        IsUploadingSoon = true,
+                        Badge = "TRENDING",
+                        Sizes = new List<string> { "M", "L", "XL" },
+                        Colors = new List<string> { "Washed Olive", "Washed Maroon", "Washed Grey" }
+                    },
+                    new()
+                    {
+                        Id = "hoodies_p4",
+                        Name = "Athletic Training Moisture-Wicking Performance Hoodie",
+                        CategoryName = "Hoodies",
+                        CategorySlug = "hoodies",
+                        Price = 1299,
+                        OriginalPrice = 2499,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/hoodies",
+                        IsUploadingSoon = true,
+                        Badge = "WORKOUT ESSENTIAL",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Black/Reflective", "Gunmetal" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "sweatshirts",
+                CategoryName = "Sweatshirts",
+                Emoji = "🧶",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Sweatshirts",
+                    TitleHighlight = "BREATHABLE FLEECE • CLASSIC CREWNECKS",
+                    Subtitle = "Timeless crewneck pullovers, collegiate graphics, and drop-shoulder silhouettes made from sustainable cotton blends.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "100% Combed Cotton Terry", "Anti-Pilling Finish", "Ribbed Crew Collar", "All-Season Breathability" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated sweatshirts styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "sweatshirts_s1", Name = "Casual Crewneck Sweaters", Slug = "casual-crewneck-sweaters", Emoji = "🧶", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "sweatshirts_s2", Name = "Minimalist Solid Pullovers", Slug = "minimalist-solid-pullovers", Emoji = "✨", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "sweatshirts_s3", Name = "Party Graphic Sweatshirts", Slug = "party-graphic-sweatshirts", Emoji = "🎨", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "sweatshirts_s4", Name = "Varsity Collegiate Sweaters", Slug = "varsity-collegiate", Emoji = "🎓", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "sweatshirts_s5", Name = "Heavy French Terry", Slug = "heavy-french-terry", Emoji = "🧥", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "sweatshirts_s6", Name = "Travel Warmth Sweaters", Slug = "travel-warmth-sweaters", Emoji = "🎒", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "sweatshirts_p1",
+                        Name = "Collegiate Heavy Terry Crewneck Sweatshirt",
+                        CategoryName = "Sweatshirts",
+                        CategorySlug = "sweatshirts",
+                        Price = 1199,
+                        OriginalPrice = 2399,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/sweatshirts",
+                        IsUploadingSoon = true,
+                        Badge = "CAMPUS FAV",
+                        Sizes = new List<string> { "S", "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Navy", "Forest Green", "Heather Grey", "Burgundy" }
+                    },
+                    new()
+                    {
+                        Id = "sweatshirts_p2",
+                        Name = "Essential Minimalist Drop-Shoulder Crew Pullover",
+                        CategoryName = "Sweatshirts",
+                        CategorySlug = "sweatshirts",
+                        Price = 999,
+                        OriginalPrice = 1999,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/sweatshirts",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Sand Beige", "Onyx Black", "Sage Green" }
+                    },
+                    new()
+                    {
+                        Id = "sweatshirts_p3",
+                        Name = "Varsity Stripe Contrast Neck Fleece Sweatshirt",
+                        CategoryName = "Sweatshirts",
+                        CategorySlug = "sweatshirts",
+                        Price = 1299,
+                        OriginalPrice = 2599,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/sweatshirts",
+                        IsUploadingSoon = true,
+                        Badge = "RETRO STYLE",
+                        Sizes = new List<string> { "M", "L", "XL" },
+                        Colors = new List<string> { "Navy/White", "Maroon/Gold", "Black/Grey" }
+                    },
+                    new()
+                    {
+                        Id = "sweatshirts_p4",
+                        Name = "Raglan Sleeve Active Breathable Sweatshirt",
+                        CategoryName = "Sweatshirts",
+                        CategorySlug = "sweatshirts",
+                        Price = 1099,
+                        OriginalPrice = 2199,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/sweatshirts",
+                        IsUploadingSoon = true,
+                        Badge = "EVERYDAY COMFORT",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Dark Grey", "Charcoal", "Olive" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "jeans",
+                CategoryName = "Jeans",
+                Emoji = "👖",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Jeans",
+                    TitleHighlight = "DURABLE STRETCH DENIM • SHAPE RETENTION",
+                    Subtitle = "Engineered with 4-way stretch denim and reinforced stitching for maximum mobility across campus.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "Power Stretch Denim", "Reinforced Rivets", "Fade-Resistant Wash", "YKK Heavy Zipper" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated jeans styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "jeans_s1", Name = "Casual Slim Fit", Slug = "casual-slim-fit", Emoji = "👖", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "jeans_s2", Name = "Regular Straight Leg", Slug = "regular-straight-leg", Emoji = "👖", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "jeans_s3", Name = "Party Distressed & Ripped", Slug = "party-distressed", Emoji = "✨", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "jeans_s4", Name = "Relaxed Baggy Fit", Slug = "relaxed-baggy", Emoji = "🛹", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "jeans_s5", Name = "Tapered Ankle Fit", Slug = "tapered-ankle", Emoji = "👟", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "jeans_s6", Name = "Dark Wash Smart Denims", Slug = "dark-wash-smart", Emoji = "👔", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "jeans_p1",
+                        Name = "Motion-Flex 4-Way Stretch Slim Tapered Jeans",
+                        CategoryName = "Jeans",
+                        CategorySlug = "jeans",
+                        Price = 1499,
+                        OriginalPrice = 2999,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/jeans",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "30", "32", "34", "36", "38" },
+                        Colors = new List<string> { "Dark Indigo", "Vintage Blue", "Jet Black" }
+                    },
+                    new()
+                    {
+                        Id = "jeans_p2",
+                        Name = "Classic Regular Fit Heavyweight Denim Jeans",
+                        CategoryName = "Jeans",
+                        CategorySlug = "jeans",
+                        Price = 1399,
+                        OriginalPrice = 2799,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/jeans",
+                        IsUploadingSoon = true,
+                        Badge = "EVERYDAY DURABLE",
+                        Sizes = new List<string> { "30", "32", "34", "36", "38" },
+                        Colors = new List<string> { "Mid Blue", "Stone Wash", "Raw Indigo" }
+                    },
+                    new()
+                    {
+                        Id = "jeans_p3",
+                        Name = "Modern Relaxed Baggy Skate Denim Jeans",
+                        CategoryName = "Jeans",
+                        CategorySlug = "jeans",
+                        Price = 1699,
+                        OriginalPrice = 3499,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/jeans",
+                        IsUploadingSoon = true,
+                        Badge = "STREETWEAR",
+                        Sizes = new List<string> { "30", "32", "34", "36" },
+                        Colors = new List<string> { "Light Blue Acid", "Washed Black" }
+                    },
+                    new()
+                    {
+                        Id = "jeans_p4",
+                        Name = "Clean Dark Wash Smart Casual Presentation Jeans",
+                        CategoryName = "Jeans",
+                        CategorySlug = "jeans",
+                        Price = 1599,
+                        OriginalPrice = 3199,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/jeans",
+                        IsUploadingSoon = true,
+                        Badge = "OFFICE READY",
+                        Sizes = new List<string> { "30", "32", "34", "36", "38" },
+                        Colors = new List<string> { "Inky Black", "Deep Blue Navy" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "trousers",
+                CategoryName = "Trousers",
+                Emoji = "👖",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Trousers",
+                    TitleHighlight = "SMART CASUAL & OFFICE CHINOS • WRINKLE-FREE",
+                    Subtitle = "Tailored stretch chinos, lightweight linen trousers, and pleated smart slacks designed for presentations, networking events, and casual Fridays.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "Wrinkle-Resistant Twill", "Hidden Stretch Waistband", "Tailored Ankle Crop", "Breathable Cotton Blend" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated trousers styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "trousers_s1", Name = "Casual Stretch Chinos", Slug = "casual-stretch-chinos", Emoji = "👖", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "trousers_s2", Name = "Formal Office Trousers", Slug = "formal-office-trousers", Emoji = "👔", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "trousers_s3", Name = "Linen Vacation Trousers", Slug = "linen-vacation-trousers", Emoji = "🌿", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "trousers_s4", Name = "Pleated Dress Pants", Slug = "pleated-dress-pants", Emoji = "🎩", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "trousers_s5", Name = "Slim Fit Smart Trousers", Slug = "slim-smart-trousers", Emoji = "✨", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "trousers_s6", Name = "Flat-Front Commuter Pants", Slug = "flat-front-commuter", Emoji = "🎒", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "trousers_p1",
+                        Name = "Everyday Comfort Stretch Cotton Chino Trousers",
+                        CategoryName = "Trousers",
+                        CategorySlug = "trousers",
+                        Price = 1299,
+                        OriginalPrice = 2599,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/trousers",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "30", "32", "34", "36", "38" },
+                        Colors = new List<string> { "Khaki", "Navy Blue", "Olive Green", "Charcoal" }
+                    },
+                    new()
+                    {
+                        Id = "trousers_p2",
+                        Name = "Formal Slim Fit Poly-Viscose Formal Trousers",
+                        CategoryName = "Trousers",
+                        CategorySlug = "trousers",
+                        Price = 1399,
+                        OriginalPrice = 2799,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/trousers",
+                        IsUploadingSoon = true,
+                        Badge = "INTERVIEW ESSENTIAL",
+                        Sizes = new List<string> { "30", "32", "34", "36", "38" },
+                        Colors = new List<string> { "Charcoal Grey", "Jet Black", "Navy" }
+                    },
+                    new()
+                    {
+                        Id = "trousers_p3",
+                        Name = "Pleated Wide-Leg Vintage Smart Casual Trousers",
+                        CategoryName = "Trousers",
+                        CategorySlug = "trousers",
+                        Price = 1699,
+                        OriginalPrice = 3399,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/trousers",
+                        IsUploadingSoon = true,
+                        Badge = "TRENDING",
+                        Sizes = new List<string> { "30", "32", "34", "36" },
+                        Colors = new List<string> { "Taupe", "Espresso Brown", "Slate Grey" }
+                    },
+                    new()
+                    {
+                        Id = "trousers_p4",
+                        Name = "Breathable Cotton Linen Relaxed Drawstring Trousers",
+                        CategoryName = "Trousers",
+                        CategorySlug = "trousers",
+                        Price = 1499,
+                        OriginalPrice = 2999,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/trousers",
+                        IsUploadingSoon = true,
+                        Badge = "SUMMER TRAVEL",
+                        Sizes = new List<string> { "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Beige", "White", "Navy" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "pants",
+                CategoryName = "Pants",
+                Emoji = "👖",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Pants",
+                    TitleHighlight = "MULTIPLE POCKETS • RUGGED CAMPUS UTILITY",
+                    Subtitle = "Heavy-duty cargo pants, relaxed utility joggers, and technical track pants equipped with deep secure pockets for your passport and gadgets.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "Ripstop Cotton Twill", "6-8 Secure Pockets", "Gusseted Crotch", "Elastic Cuffed Ankle" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated pants styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "pants_s1", Name = "Casual Cargo Pants", Slug = "casual-cargo-pants", Emoji = "👖", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "pants_s2", Name = "Streetwear Joggers", Slug = "streetwear-joggers", Emoji = "🛹", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "pants_s3", Name = "Formal Work Slacks", Slug = "formal-work-slacks", Emoji = "👔", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "pants_s4", Name = "Active Track Pants", Slug = "active-track-pants", Emoji = "🏃", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "pants_s5", Name = "Techwear Multi-Pocket", Slug = "techwear-multi-pocket", Emoji = "⚙️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "pants_s6", Name = "Relaxed Utility Trousers", Slug = "relaxed-utility", Emoji = "🎒", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "pants_p1",
+                        Name = "Military Spec 8-Pocket Heavy Duty Cargo Pants",
+                        CategoryName = "Pants",
+                        CategorySlug = "pants",
+                        Price = 1599,
+                        OriginalPrice = 3199,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/pants",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "30", "32", "34", "36", "38" },
+                        Colors = new List<string> { "Army Green", "Desert Sand", "Tactical Black" }
+                    },
+                    new()
+                    {
+                        Id = "pants_p2",
+                        Name = "Heavyweight French Terry Slim Fit Jogger Pants",
+                        CategoryName = "Pants",
+                        CategorySlug = "pants",
+                        Price = 1199,
+                        OriginalPrice = 2399,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/pants",
+                        IsUploadingSoon = true,
+                        Badge = "CAMPUS COMFORT",
+                        Sizes = new List<string> { "S", "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Black", "Heather Grey", "Olive" }
+                    },
+                    new()
+                    {
+                        Id = "pants_p3",
+                        Name = "Tactical Water-Resistant Multi-Pocket Techwear Pants",
+                        CategoryName = "Pants",
+                        CategorySlug = "pants",
+                        Price = 1799,
+                        OriginalPrice = 3599,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/pants",
+                        IsUploadingSoon = true,
+                        Badge = "TRAVEL TECH",
+                        Sizes = new List<string> { "30", "32", "34", "36" },
+                        Colors = new List<string> { "Stealth Black", "Gunmetal Grey" }
+                    },
+                    new()
+                    {
+                        Id = "pants_p4",
+                        Name = "Cotton Stretch Relaxed Commuter Drawstring Pants",
+                        CategoryName = "Pants",
+                        CategorySlug = "pants",
+                        Price = 1299,
+                        OriginalPrice = 2599,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/pants",
+                        IsUploadingSoon = true,
+                        Badge = "EVERYDAY EASE",
+                        Sizes = new List<string> { "M", "L", "XL" },
+                        Colors = new List<string> { "Navy", "Charcoal", "Khaki" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "innerwear",
+                CategoryName = "Innerwear",
+                Emoji = "🩲",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Innerwear",
+                    TitleHighlight = "100% ORGANIC COTTON • ANTI-CHAFE & ODOR-FREE",
+                    Subtitle = "Ultra-breathable modal trunks, pure cotton boxers, and seamless athletic briefs designed with anti-roll waistbands for zero irritation.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "Micro-Modal Ultra Soft", "Anti-Bacterial Coating", "Non-Roll Microfiber Waistband", "No-Chafe Flatlock Seams" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated innerwear styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "innerwear_s1", Name = "100% Cotton Boxers", Slug = "cotton-boxers", Emoji = "🩳", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "innerwear_s2", Name = "Stretch Trunks", Slug = "stretch-trunks", Emoji = "🩲", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "innerwear_s3", Name = "Active Moisture Briefs", Slug = "active-briefs", Emoji = "🏃", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "innerwear_s4", Name = "Undershirts & Vests", Slug = "undershirts-vests", Emoji = "👕", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "innerwear_s5", Name = "Seamless Microfiber", Slug = "seamless-microfiber", Emoji = "✨", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "innerwear_s6", Name = "Multipack Basics", Slug = "multipack-basics", Emoji = "📦", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "innerwear_p1",
+                        Name = "Micro-Modal Anti-Roll Comfort Trunks (Pack of 3)",
+                        CategoryName = "Innerwear",
+                        CategorySlug = "innerwear",
+                        Price = 899,
+                        OriginalPrice = 1799,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/innerwear",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "S", "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Black/Navy/Grey", "Charcoal/Burgundy/Blue" }
+                    },
+                    new()
+                    {
+                        Id = "innerwear_p2",
+                        Name = "100% Pure Woven Cotton Button-Fly Boxers (Pack of 2)",
+                        CategoryName = "Innerwear",
+                        CategorySlug = "innerwear",
+                        Price = 699,
+                        OriginalPrice = 1399,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/innerwear",
+                        IsUploadingSoon = true,
+                        Badge = "EVERYDAY VALUE",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Classic Plaid", "Stripe Assorted" }
+                    },
+                    new()
+                    {
+                        Id = "innerwear_p3",
+                        Name = "Seamless Active Performance Athletic Briefs (Pack of 3)",
+                        CategoryName = "Innerwear",
+                        CategorySlug = "innerwear",
+                        Price = 799,
+                        OriginalPrice = 1599,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/innerwear",
+                        IsUploadingSoon = true,
+                        Badge = "WORKOUT READY",
+                        Sizes = new List<string> { "M", "L", "XL" },
+                        Colors = new List<string> { "All Black", "Navy/Grey/Black" }
+                    },
+                    new()
+                    {
+                        Id = "innerwear_p4",
+                        Name = "100% Ribbed Combed Cotton Sleeveless Undershirt Vests (Pack of 3)",
+                        CategoryName = "Innerwear",
+                        CategorySlug = "innerwear",
+                        Price = 599,
+                        OriginalPrice = 1199,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/innerwear",
+                        IsUploadingSoon = true,
+                        Badge = "STUDENT ESSENTIAL",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Pure White", "Black/Grey/White" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "sleepwear",
+                CategoryName = "Sleepwear",
+                Emoji = "🛋️",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Sleepwear",
+                    TitleHighlight = "BREATHABLE MODAL • DORM ROOM COMFORT",
+                    Subtitle = "Featherlight pajama sets, relaxed flannel lounge pants, and ultra-soft night tees designed for deep restorative sleep after long study sessions.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "100% Brushed Cotton", "Breathable Modal Blend", "Deep Pockets & Drawcord", "Tag-Free Neckband" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated sleepwear styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "sleepwear_s1", Name = "Casual Lounge Pants", Slug = "casual-lounge-pants", Emoji = "👖", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "sleepwear_s2", Name = "Plaid Flannel Pajamas", Slug = "plaid-flannel-pajamas", Emoji = "🛋️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "sleepwear_s3", Name = "Sleepwear Sets (Top + Bottom)", Slug = "sleepwear-sets", Emoji = "👕", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "sleepwear_s4", Name = "Relaxed Night Shorts", Slug = "relaxed-night-shorts", Emoji = "🩳", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "sleepwear_s5", Name = "Modal Sleep Tees", Slug = "modal-sleep-tees", Emoji = "✨", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "sleepwear_s6", Name = "Cozy Dorm Robes", Slug = "dorm-robes", Emoji = "🧖", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "sleepwear_p1",
+                        Name = "Ultra-Cozy Plaid Brushed Cotton Flannel Pajama Pants",
+                        CategoryName = "Sleepwear",
+                        CategorySlug = "sleepwear",
+                        Price = 899,
+                        OriginalPrice = 1799,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/sleepwear",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "S", "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Red Plaid", "Navy Check", "Green Tartan" }
+                    },
+                    new()
+                    {
+                        Id = "sleepwear_p2",
+                        Name = "Modal Cotton Breathable Short Sleeve Sleepwear Set",
+                        CategoryName = "Sleepwear",
+                        CategorySlug = "sleepwear",
+                        Price = 1299,
+                        OriginalPrice = 2599,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/sleepwear",
+                        IsUploadingSoon = true,
+                        Badge = "TOP RATED",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Navy/Charcoal", "Slate Blue/Grey" }
+                    },
+                    new()
+                    {
+                        Id = "sleepwear_p3",
+                        Name = "Relaxed Knit Cotton Sleep Lounge Shorts (Pack of 2)",
+                        CategoryName = "Sleepwear",
+                        CategorySlug = "sleepwear",
+                        Price = 749,
+                        OriginalPrice = 1499,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/sleepwear",
+                        IsUploadingSoon = true,
+                        Badge = "VALUE PACK",
+                        Sizes = new List<string> { "M", "L", "XL", "XXL" },
+                        Colors = new List<string> { "Grey/Black", "Navy/Olive" }
+                    },
+                    new()
+                    {
+                        Id = "sleepwear_p4",
+                        Name = "Plush Fleece Dorm Lounging Robe with Belt",
+                        CategoryName = "Sleepwear",
+                        CategorySlug = "sleepwear",
+                        Price = 1499,
+                        OriginalPrice = 2999,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/sleepwear",
+                        IsUploadingSoon = true,
+                        Badge = "WINTER COZY",
+                        Sizes = new List<string> { "Free Size / M-XL" },
+                        Colors = new List<string> { "Navy Blue", "Dark Charcoal" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "shorts",
+                CategoryName = "Shorts",
+                Emoji = "🩳",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Shorts",
+                    TitleHighlight = "LIGHTWEIGHT & QUICK-DRY • MAXIMUM MOBILITY",
+                    Subtitle = "Versatile chino shorts, moisture-wicking gym shorts, and utility cargo shorts built for summer semesters, gym workouts, and weekend trips.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "Stretch Cotton Twill", "Water-Repellent Coating", "7-Inch Inseam Modern Cut", "Reinforced Pockets" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated shorts styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "shorts_s1", Name = "Casual Chino Shorts", Slug = "casual-chino-shorts", Emoji = "🩳", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "shorts_s2", Name = "Gym Workout Shorts", Slug = "gym-workout-shorts", Emoji = "🏃", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "shorts_s3", Name = "Utility Cargo Shorts", Slug = "utility-cargo-shorts", Emoji = "🎒", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "shorts_s4", Name = "Denim Summer Shorts", Slug = "denim-summer-shorts", Emoji = "👖", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "shorts_s5", Name = "Sweatshorts Loungewear", Slug = "sweatshorts", Emoji = "🛋️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "shorts_s6", Name = "Quick-Dry Boardshorts", Slug = "quick-dry-boardshorts", Emoji = "🏖️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "shorts_p1",
+                        Name = "Everyday 7-Inch Inseam Stretch Chino Shorts",
+                        CategoryName = "Shorts",
+                        CategorySlug = "shorts",
+                        Price = 899,
+                        OriginalPrice = 1799,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/shorts",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "30", "32", "34", "36", "38" },
+                        Colors = new List<string> { "Navy", "Khaki Tan", "Olive", "Light Grey" }
+                    },
+                    new()
+                    {
+                        Id = "shorts_p2",
+                        Name = "Dual-Layer 2-in-1 Athletic Gym Running Shorts",
+                        CategoryName = "Shorts",
+                        CategorySlug = "shorts",
+                        Price = 999,
+                        OriginalPrice = 1999,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/shorts",
+                        IsUploadingSoon = true,
+                        Badge = "WORKOUT FAV",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Matte Black", "Charcoal", "Army Green" }
+                    },
+                    new()
+                    {
+                        Id = "shorts_p3",
+                        Name = "Ripstop Multi-Pocket Utility Cargo Shorts",
+                        CategoryName = "Shorts",
+                        CategorySlug = "shorts",
+                        Price = 1099,
+                        OriginalPrice = 2199,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/shorts",
+                        IsUploadingSoon = true,
+                        Badge = "TRAVEL ESSENTIAL",
+                        Sizes = new List<string> { "30", "32", "34", "36" },
+                        Colors = new List<string> { "Khaki", "Dark Olive", "Black" }
+                    },
+                    new()
+                    {
+                        Id = "shorts_p4",
+                        Name = "Ultra-Soft Heavy French Terry Lounge Sweatshorts",
+                        CategoryName = "Shorts",
+                        CategorySlug = "shorts",
+                        Price = 799,
+                        OriginalPrice = 1599,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/shorts",
+                        IsUploadingSoon = true,
+                        Badge = "DORM LOUNGE",
+                        Sizes = new List<string> { "S", "M", "L", "XL" },
+                        Colors = new List<string> { "Heather Grey", "Black", "Sand" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "socks",
+                CategoryName = "Socks",
+                Emoji = "🧦",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Socks",
+                    TitleHighlight = "ARCH SUPPORT & CUSHIONED SOLE • ANTI-ODOR",
+                    Subtitle = "Reinforced heel-and-toe cotton crew socks, invisible loafer socks, and merino wool winter socks engineered to keep your feet dry and comfortable.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "Cushioned Terry Sole", "Arch Compression Band", "Silver Ion Anti-Odor", "Seamless Toe Closure" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated socks styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "socks_s1", Name = "Casual Ankle Socks", Slug = "casual-ankle-socks", Emoji = "🧦", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "socks_s2", Name = "Formal Crew Dress Socks", Slug = "formal-crew-dress-socks", Emoji = "👔", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "socks_s3", Name = "Athletic Cushion Socks", Slug = "athletic-cushion-socks", Emoji = "🏃", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "socks_s4", Name = "Winter Merino Wool Socks", Slug = "winter-merino-wool-socks", Emoji = "❄️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "socks_s5", Name = "Invisible Loafer Socks", Slug = "invisible-loafer-socks", Emoji = "👟", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "socks_s6", Name = "Compression Travel Socks", Slug = "compression-travel-socks", Emoji = "✈️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "socks_p1",
+                        Name = "Cushioned Athletic Ankle Socks (Pack of 5)",
+                        CategoryName = "Socks",
+                        CategorySlug = "socks",
+                        Price = 599,
+                        OriginalPrice = 1199,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/socks",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "Free Size (UK 6-11)" },
+                        Colors = new List<string> { "All Black", "All White", "Assorted Grey/Black/White" }
+                    },
+                    new()
+                    {
+                        Id = "socks_p2",
+                        Name = "Fine Mercerized Cotton Formal Crew Socks (Pack of 3)",
+                        CategoryName = "Socks",
+                        CategorySlug = "socks",
+                        Price = 499,
+                        OriginalPrice = 999,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/socks",
+                        IsUploadingSoon = true,
+                        Badge = "FORMAL ESSENTIAL",
+                        Sizes = new List<string> { "Free Size (UK 7-11)" },
+                        Colors = new List<string> { "Navy/Charcoal/Black" }
+                    },
+                    new()
+                    {
+                        Id = "socks_p3",
+                        Name = "Sub-Zero Thermal Merino Wool Winter Socks (Pack of 2)",
+                        CategoryName = "Socks",
+                        CategorySlug = "socks",
+                        Price = 799,
+                        OriginalPrice = 1599,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/socks",
+                        IsUploadingSoon = true,
+                        Badge = "WINTER MUST-HAVE",
+                        Sizes = new List<string> { "Free Size (UK 7-11)" },
+                        Colors = new List<string> { "Charcoal/Navy", "Black/Brown" }
+                    },
+                    new()
+                    {
+                        Id = "socks_p4",
+                        Name = "Non-Slip Silicone Grip Invisible Loafer Socks (Pack of 4)",
+                        CategoryName = "Socks",
+                        CategorySlug = "socks",
+                        Price = 449,
+                        OriginalPrice = 899,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/socks",
+                        IsUploadingSoon = true,
+                        Badge = "NO-SHOW FIT",
+                        Sizes = new List<string> { "Free Size (UK 6-10)" },
+                        Colors = new List<string> { "Black/Grey/Beige/White" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "caps",
+                CategoryName = "Caps",
+                Emoji = "🧢",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Caps",
+                    TitleHighlight = "UV SUN PROTECTION • ADJUSTABLE STRAPBACK",
+                    Subtitle = "Structured baseball caps, retro snapbacks, breathable running caps, and winter beanies designed to shield you from sun, wind, and cold.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "100% Cotton Twill", "UPF 50+ Sun Protection", "Metal Clasp Adjustable Strap", "Moisture-Wicking Sweatband" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated caps styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "caps_s1", Name = "Casual Baseball Caps", Slug = "casual-baseball-caps", Emoji = "🧢", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "caps_s2", Name = "Streetwear Snapbacks", Slug = "streetwear-snapbacks", Emoji = "🛹", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "caps_s3", Name = "Winter Knit Beanies", Slug = "winter-knit-beanies", Emoji = "❄️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "caps_s4", Name = "Outdoor Bucket Hats", Slug = "outdoor-bucket-hats", Emoji = "🌿", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "caps_s5", Name = "Athletic Running Caps", Slug = "athletic-running-caps", Emoji = "🏃", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "caps_s6", Name = "Trucker Mesh Caps", Slug = "trucker-mesh-caps", Emoji = "🚚", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "caps_p1",
+                        Name = "Classic 6-Panel Washed Cotton Dad Cap",
+                        CategoryName = "Caps",
+                        CategorySlug = "caps",
+                        Price = 599,
+                        OriginalPrice = 1199,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/caps",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "One Size (Adjustable)" },
+                        Colors = new List<string> { "Washed Black", "Vintage Navy", "Olive Green", "Beige" }
+                    },
+                    new()
+                    {
+                        Id = "caps_p2",
+                        Name = "Chunky Ribbed Knit Winter Thermal Beanie",
+                        CategoryName = "Caps",
+                        CategorySlug = "caps",
+                        Price = 499,
+                        OriginalPrice = 999,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/caps",
+                        IsUploadingSoon = true,
+                        Badge = "WINTER ESSENTIAL",
+                        Sizes = new List<string> { "One Size (Universal Fit)" },
+                        Colors = new List<string> { "Charcoal", "Black", "Burgundy", "Mustard" }
+                    },
+                    new()
+                    {
+                        Id = "caps_p3",
+                        Name = "Lightweight Laser-Perforated Athletic Running Cap",
+                        CategoryName = "Caps",
+                        CategorySlug = "caps",
+                        Price = 699,
+                        OriginalPrice = 1399,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/caps",
+                        IsUploadingSoon = true,
+                        Badge = "WORKOUT FAV",
+                        Sizes = new List<string> { "One Size (Adjustable Strap)" },
+                        Colors = new List<string> { "Matte Black", "White", "Navy" }
+                    },
+                    new()
+                    {
+                        Id = "caps_p4",
+                        Name = "Reversible 100% Cotton Outdoor Bucket Hat",
+                        CategoryName = "Caps",
+                        CategorySlug = "caps",
+                        Price = 649,
+                        OriginalPrice = 1299,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/caps",
+                        IsUploadingSoon = true,
+                        Badge = "TRENDING",
+                        Sizes = new List<string> { "M/L", "L/XL" },
+                        Colors = new List<string> { "Black/Beige", "Navy/Olive" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "towels",
+                CategoryName = "Towels",
+                Emoji = "🧖",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Towels",
+                    TitleHighlight = "HIGH ABSORBENCY • QUICK-DRY MICROFIBER",
+                    Subtitle = "Ultra-compact microfiber travel towels, plush 600 GSM bath sheets, and anti-microbial gym towels designed for easy dorm packing and quick drying.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "Fast Dry in 30 Mins", "Ultra Compact Packing", "Anti-Bacterial Silver Treated", "Super Soft Zero Twist" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated towels styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "towels_s1", Name = "Quick-Dry Travel Towels", Slug = "quick-dry-travel-towels", Emoji = "🎒", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "towels_s2", Name = "Luxury Plush Bath Sheets", Slug = "luxury-plush-bath-sheets", Emoji = "🧖", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "towels_s3", Name = "Compact Gym Workout Towels", Slug = "compact-gym-towels", Emoji = "🏃", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "towels_s4", Name = "Anti-Bacterial Campus Towels", Slug = "anti-bacterial-towels", Emoji = "🛡️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "towels_s5", Name = "Hand & Face Towels Pack", Slug = "hand-face-towels", Emoji = "🧼", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "towels_s6", Name = "Beach & Pool Extra Large", Slug = "beach-pool-towels", Emoji = "🏖️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "towels_p1",
+                        Name = "Ultra-Compact Fast-Drying Microfiber Travel Towel (XL 150x80cm)",
+                        CategoryName = "Towels",
+                        CategorySlug = "towels",
+                        Price = 699,
+                        OriginalPrice = 1399,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/towels",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "XL (150x80 cm)" },
+                        Colors = new List<string> { "Navy Blue", "Teal", "Charcoal Grey", "Olive" }
+                    },
+                    new()
+                    {
+                        Id = "towels_p2",
+                        Name = "100% Turkish Combed Cotton 600 GSM Plush Bath Towel",
+                        CategoryName = "Towels",
+                        CategorySlug = "towels",
+                        Price = 899,
+                        OriginalPrice = 1799,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/towels",
+                        IsUploadingSoon = true,
+                        Badge = "DORM LUXURY",
+                        Sizes = new List<string> { "Large (140x70 cm)" },
+                        Colors = new List<string> { "Classic White", "Charcoal", "Ocean Blue", "Sand" }
+                    },
+                    new()
+                    {
+                        Id = "towels_p3",
+                        Name = "Magnetic Grip Anti-Microbial Gym Workout Towel",
+                        CategoryName = "Towels",
+                        CategorySlug = "towels",
+                        Price = 499,
+                        OriginalPrice = 999,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/towels",
+                        IsUploadingSoon = true,
+                        Badge = "GYM ESSENTIAL",
+                        Sizes = new List<string> { "Gym Size (90x40 cm)" },
+                        Colors = new List<string> { "Black", "Gunmetal Grey" }
+                    },
+                    new()
+                    {
+                        Id = "towels_p4",
+                        Name = "100% Cotton Waffle Weave Quick-Drying Hand Towels (Pack of 3)",
+                        CategoryName = "Towels",
+                        CategorySlug = "towels",
+                        Price = 549,
+                        OriginalPrice = 1099,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/towels",
+                        IsUploadingSoon = true,
+                        Badge = "VALUE PACK",
+                        Sizes = new List<string> { "Hand Size (60x40 cm)" },
+                        Colors = new List<string> { "White/Grey/Charcoal" }
+                    }
+                }
+            },
+            new()
+            {
+                CategorySlug = "belts",
+                CategoryName = "Belts",
+                Emoji = "🥋",
+                HeroBanner = new FashionMenClothingSubcategoryHeroDto
+                {
+                    Title = "Men's Belts",
+                    TitleHighlight = "100% GENUINE LEATHER • DURABLE ALLOY BUCKLE",
+                    Subtitle = "Classic formal leather dress belts, reversible dual-tone belts, and rugged casual canvas webbing belts built to last your entire degree.",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    BannerHeight = 400,
+                    ThemeColor = "#0284c7",
+                    BadgeText = "CAMPUS FASHION",
+                    Badges = new List<string> { "100% Full-Grain Leather", "Scratch-Resistant Zinc Buckle", "Reversible Dual-Color", "5 Custom Sizing Holes" }
+                },
+                ShopByStyleSection = new FashionShopByStyleSectionDto
+                {
+                    IsEnabled = true,
+                    Title = "Shop by Category",
+                    Subtitle = "Curated belts styles for everyday campus, formal meetings, and weekend outings.",
+                    Styles = new List<FashionStyleItemDto>
+                    {
+                        new() { Id = "belts_s1", Name = "Formal Leather Belts", Slug = "formal-leather-belts", Emoji = "👔", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 1, IsActive = true },
+                        new() { Id = "belts_s2", Name = "Casual Canvas Webbing", Slug = "casual-canvas-webbing", Emoji = "👖", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 2, IsActive = true },
+                        new() { Id = "belts_s3", Name = "Party Reversible Belts", Slug = "party-reversible-belts", Emoji = "✨", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 3, IsActive = true },
+                        new() { Id = "belts_s4", Name = "Automatic Ratchet Belts", Slug = "automatic-ratchet-belts", Emoji = "⚙️", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 4, IsActive = true },
+                        new() { Id = "belts_s5", Name = "Braided Stretch Belts", Slug = "braided-stretch-belts", Emoji = "👟", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 5, IsActive = true },
+                        new() { Id = "belts_s6", Name = "Heavy-Duty Tactical Belts", Slug = "heavy-duty-tactical", Emoji = "🎒", ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg", IsUploadingSoon = true, DisplayOrder = 6, IsActive = true }
+                    }
+                },
+                StyleTypes = new List<string> { "Casual Wear", "Formal Wear", "Party Wear", "Streetwear", "Gym & Active", "Lounge & Sleep" },
+                Products = new List<FashionProductItemDto>
+                {
+                    new()
+                    {
+                        Id = "belts_p1",
+                        Name = "100% Full-Grain Leather Reversible Dual-Color Belt (Black / Brown)",
+                        CategoryName = "Belts",
+                        CategorySlug = "belts",
+                        Price = 899,
+                        OriginalPrice = 1799,
+                        Rating = 4.8m,
+                        ReviewsCount = 145,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/belts",
+                        IsUploadingSoon = true,
+                        Badge = "BESTSELLER",
+                        Sizes = new List<string> { "30-34", "36-40", "42-46" },
+                        Colors = new List<string> { "Black/Brown" }
+                    },
+                    new()
+                    {
+                        Id = "belts_p2",
+                        Name = "Automatic Click-Ratchet Exact Fit Leather Belt",
+                        CategoryName = "Belts",
+                        CategorySlug = "belts",
+                        Price = 999,
+                        OriginalPrice = 1999,
+                        Rating = 4.8m,
+                        ReviewsCount = 170,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/belts",
+                        IsUploadingSoon = true,
+                        Badge = "MICRO-ADJUSTABLE",
+                        Sizes = new List<string> { "Custom Cut to Fit (28-44)" },
+                        Colors = new List<string> { "Matte Black", "Cognac Brown" }
+                    },
+                    new()
+                    {
+                        Id = "belts_p3",
+                        Name = "Heavy-Duty Military Nylon Canvas Webbing Belt",
+                        CategoryName = "Belts",
+                        CategorySlug = "belts",
+                        Price = 499,
+                        OriginalPrice = 999,
+                        Rating = 4.8m,
+                        ReviewsCount = 195,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/belts",
+                        IsUploadingSoon = true,
+                        Badge = "CASUAL VALUE",
+                        Sizes = new List<string> { "Free Size (Up to 44 Inches)" },
+                        Colors = new List<string> { "Tactical Black", "Army Green", "Khaki Tan" }
+                    },
+                    new()
+                    {
+                        Id = "belts_p4",
+                        Name = "Braided Elastic Stretch Woven Belt with Leather Trim",
+                        CategoryName = "Belts",
+                        CategorySlug = "belts",
+                        Price = 649,
+                        OriginalPrice = 1299,
+                        Rating = 4.8m,
+                        ReviewsCount = 220,
+                        ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                        ProductUrl = "/category/fashion/men-clothing/belts",
+                        IsUploadingSoon = true,
+                        Badge = "COMFORT STRETCH",
+                        Sizes = new List<string> { "M (30-34)", "L (36-40)" },
+                        Colors = new List<string> { "Navy/Tan", "Black/Grey", "All Black" }
+                    }
+                }
+            }
+        };
+    }
+
 
 }
 
@@ -2645,6 +4488,8 @@ public sealed class FashionStyleItemDto
     public string Name { get; set; } = string.Empty;
 
     public string Slug { get; set; } = string.Empty;
+    public string? Subtitle { get; set; }
+    public string Emoji { get; set; } = "👔";
 
     public string? ImageUrl { get; set; }
 

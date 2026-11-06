@@ -1544,82 +1544,6 @@
         </div>
     </div>
 
-    <!-- 5.6 EXPLORE OUR MOST POPULAR PROGRAMS -->
-    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;">
-            <div>
-                <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">
-                    5.6 Explore Our Most Popular Programs (Image 4)
-                </h3>
-            </div>
-            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="addConsultancyPopularProgram()">
-                + Add Popular Program
-            </button>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px; margin-bottom: 14px;">
-            <div>
-                <label class="dk-sh-form-label">Section Title</label>
-                <input type="text" id="consult_popular_title" class="dk-admin-form-input" value="@consult.PopularTitle" placeholder="Explore our most popular programs" />
-            </div>
-            <div>
-                <label class="dk-sh-form-label">Section Subtitle</label>
-                <input type="text" id="consult_popular_sub" class="dk-admin-form-input" value="@consult.PopularSubtitle" placeholder="Curated programs for career growth..." />
-            </div>
-        </div>
-
-        <div id="consult_popular_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px;">
-            @for (int pi = 0; pi < consultPopular.Count; pi++)
-            {
-                var pop = consultPopular[pi];
-                <div class="consult-pop-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-size: 11px; font-weight: 800; color: #e52d27;">Popular Program #@(pi + 1)</span>
-                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="this.closest('.consult-pop-card').remove()">✕ Remove</button>
-                    </div>
-                    <div style="margin-bottom: 6px;">
-                        <label class="dk-sh-form-label" style="font-size: 10px;">Institution</label>
-                        <input type="text" class="dk-admin-form-input cp-inst" value="@pop.Institution" style="font-size: 12px; padding: 4px 6px;" />
-                    </div>
-                    <div style="margin-bottom: 6px;">
-                        <label class="dk-sh-form-label" style="font-size: 10px;">Program Title</label>
-                        <input type="text" class="dk-admin-form-input cp-title" value="@pop.Title" style="font-size: 12px; padding: 4px 6px;" />
-                    </div>
-                    <div style="margin-bottom: 8px;">
-                        <label class="dk-sh-form-label" style="font-size: 10px;">Campus Photo</label>
-                        <div style="display: flex; gap: 6px; align-items: center;">
-                            <div style="width: 44px; height: 32px; border-radius: 4px; overflow: hidden; background: #0f172a; border: 1px solid #cbd5e1; flex-shrink: 0;">
-                                <img id="prev_cp_@pi" src="@pop.ImageUrl" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/campus-paris-school.jpg';" />
-                            </div>
-                            <input type="text" id="inp_cp_@pi" class="dk-admin-form-input cp-img" value="@pop.ImageUrl" style="font-size: 11px; padding: 4px 6px; flex: 1;" oninput="updateLivePreview('inp_cp_@pi', 'prev_cp_@pi')" />
-                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 8px;" onclick="triggerHubUpload('inp_cp_@pi', 'prev_cp_@pi')">📷 Upload</button>
-                        </div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
-                        <div>
-                            <label class="dk-sh-form-label" style="font-size: 10px;">Highlight Badge</label>
-                            <input type="text" class="dk-admin-form-input cp-tag" value="@pop.BadgeTag" placeholder="IIT Alumni Centre" style="font-size: 11px; padding: 3px 6px;" />
-                        </div>
-                        <div>
-                            <label class="dk-sh-form-label" style="font-size: 10px;">Duration / Date</label>
-                            <input type="text" class="dk-admin-form-input cp-duration" value="@pop.Duration" placeholder="12 Months" style="font-size: 11px; padding: 3px 6px;" />
-                        </div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                        <div>
-                            <label class="dk-sh-form-label" style="font-size: 10px;">Button 1</label>
-                            <input type="text" class="dk-admin-form-input cp-btn1" value="@pop.Button1Text" style="font-size: 11px; padding: 3px 6px;" />
-                        </div>
-                        <div>
-                            <label class="dk-sh-form-label" style="font-size: 10px;">Button 2</label>
-                            <input type="text" class="dk-admin-form-input cp-btn2" value="@pop.Button2Text" style="font-size: 11px; padding: 3px 6px;" />
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-
     <!-- 5.7 STUDY ABROAD DESTINATIONS & STATS (Image 5) -->
     <div style="background: #fafaf9; border: 1px solid #e7e5e4; border-radius: 12px; padding: 18px; margin-bottom: 12px;">
         <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0 0 12px 0;">
@@ -1946,6 +1870,83 @@
                 </div>
             }
         </div>
+
+
+    <!-- 5.12 EXPLORE OUR MOST POPULAR PROGRAMS (Image 4) -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">
+                    5.12 Explore Our Most Popular Programs (Image 4)
+                </h3>
+            </div>
+            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="addConsultancyPopularProgram()">
+                + Add Popular Program
+            </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px; margin-bottom: 14px;">
+            <div>
+                <label class="dk-sh-form-label">Section Title</label>
+                <input type="text" id="consult_popular_title" class="dk-admin-form-input" value="@consult.PopularTitle" placeholder="Explore our most popular programs" />
+            </div>
+            <div>
+                <label class="dk-sh-form-label">Section Subtitle</label>
+                <input type="text" id="consult_popular_sub" class="dk-admin-form-input" value="@consult.PopularSubtitle" placeholder="Curated programs for career growth..." />
+            </div>
+        </div>
+
+        <div id="consult_popular_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px;">
+            @for (int pi = 0; pi < consultPopular.Count; pi++)
+            {
+                var pop = consultPopular[pi];
+                <div class="consult-pop-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 11px; font-weight: 800; color: #e52d27;">Popular Program #@(pi + 1)</span>
+                        <button type="button" class="dk-btn" style="background: #fee2e2; color: #b91c1c; font-size: 10px; padding: 2px 6px;" onclick="this.closest('.consult-pop-card').remove()">✕ Remove</button>
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Institution</label>
+                        <input type="text" class="dk-admin-form-input cp-inst" value="@pop.Institution" style="font-size: 12px; padding: 4px 6px;" />
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Program Title</label>
+                        <input type="text" class="dk-admin-form-input cp-title" value="@pop.Title" style="font-size: 12px; padding: 4px 6px;" />
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <label class="dk-sh-form-label" style="font-size: 10px;">Campus Photo</label>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <div style="width: 44px; height: 32px; border-radius: 4px; overflow: hidden; background: #0f172a; border: 1px solid #cbd5e1; flex-shrink: 0;">
+                                <img id="prev_cp_@pi" src="@pop.ImageUrl" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/study-hub/campus-paris-school.jpg';" />
+                            </div>
+                            <input type="text" id="inp_cp_@pi" class="dk-admin-form-input cp-img" value="@pop.ImageUrl" style="font-size: 11px; padding: 4px 6px; flex: 1;" oninput="updateLivePreview('inp_cp_@pi', 'prev_cp_@pi')" />
+                            <button type="button" class="dk-btn dk-btn-primary" style="font-size: 10px; padding: 4px 8px;" onclick="triggerHubUpload('inp_cp_@pi', 'prev_cp_@pi')">📷 Upload</button>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px;">Highlight Badge</label>
+                            <input type="text" class="dk-admin-form-input cp-tag" value="@pop.BadgeTag" placeholder="IIT Alumni Centre" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px;">Duration / Date</label>
+                            <input type="text" class="dk-admin-form-input cp-duration" value="@pop.Duration" placeholder="12 Months" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px;">Button 1</label>
+                            <input type="text" class="dk-admin-form-input cp-btn1" value="@pop.Button1Text" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                        <div>
+                            <label class="dk-sh-form-label" style="font-size: 10px;">Button 2</label>
+                            <input type="text" class="dk-admin-form-input cp-btn2" value="@pop.Button2Text" style="font-size: 11px; padding: 3px 6px;" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
     </div>
                 </div>
             </div>

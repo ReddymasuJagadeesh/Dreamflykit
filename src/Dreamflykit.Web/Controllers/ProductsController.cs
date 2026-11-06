@@ -1164,7 +1164,102 @@ public sealed class ProductsController : Controller
 
 
 
-        var isMenClothingCategory = !isWomenSubcategory && !isEthnicWearCategory && !isThermalsCategory &&
+                var menClothingSubcategorySlugs = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "ethnic-wear", "thermals", "t-shirts", "shirts", "jackets-coats",
+            "hoodies", "sweatshirts", "jeans", "trousers", "pants",
+            "innerwear", "sleepwear", "shorts", "socks", "caps", "towels", "belts"
+        };
+
+        string NormalizeMenClothingSubSlug(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return "shirts";
+            s = s.Trim().ToLowerInvariant().Replace('_', '-');
+            return s switch
+            {
+                "ethnic" or "ethnicwear" or "ethnic-wears" => "ethnic-wear",
+                "thermal" or "thermal-wear" => "thermals",
+                "tshirt" or "tshirts" or "t-shirt" or "tees" or "tee" or "polos" or "t-shirts-polos" => "t-shirts",
+                "shirt" or "formal-shirts" or "casual-shirts" => "shirts",
+                "jackets" or "jacket" or "coat" or "coats" or "jackets-and-coats" or "jackets_coats" => "jackets-coats",
+                "hoodie" or "mens-hoodies" => "hoodies",
+                "sweatshirt" or "mens-sweatshirts" => "sweatshirts",
+                "jean" or "denim" or "denims" => "jeans",
+                "trouser" or "chinos" or "trousers-chinos" => "trousers",
+                "pant" or "cargos" or "joggers" => "pants",
+                "inner-wear" or "briefs" or "boxers" or "innerwear-sleepwear" => "innerwear",
+                "sleep-wear" or "pajamas" or "nightwear" => "sleepwear",
+                "short" or "boxer-shorts" => "shorts",
+                "sock" or "cotton-socks" => "socks",
+                "cap" or "hats" or "beanies" => "caps",
+                "towel" or "bath-towels" => "towels",
+                "belt" or "leather-belts" => "belts",
+                _ => s
+            };
+        }
+
+        string? effectiveMenClothingSubSlug = null;
+        if (string.Equals(effectiveCategory, "fashion", StringComparison.OrdinalIgnoreCase) &&
+            (string.Equals(currentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+             string.Equals(currentSubcategorySlug, "mens-clothing", StringComparison.OrdinalIgnoreCase) ||
+             string.Equals(currentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase)) &&
+            !string.IsNullOrWhiteSpace(brandSlug))
+        {
+            effectiveMenClothingSubSlug = NormalizeMenClothingSubSlug(brandSlug);
+        }
+        else if ((string.Equals(effectiveCategory, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+                  string.Equals(effectiveCategory, "mens-clothing", StringComparison.OrdinalIgnoreCase) ||
+                  string.Equals(effectiveCategory, "men_clothing", StringComparison.OrdinalIgnoreCase)) &&
+                 !string.IsNullOrWhiteSpace(currentSubcategorySlug))
+        {
+            effectiveMenClothingSubSlug = NormalizeMenClothingSubSlug(currentSubcategorySlug);
+        }
+        else if (string.Equals(effectiveCategory, "fashion", StringComparison.OrdinalIgnoreCase) &&
+                 (string.Equals(currentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+                  string.Equals(currentSubcategorySlug, "mens-clothing", StringComparison.OrdinalIgnoreCase) ||
+                  string.Equals(currentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase)) &&
+                 !string.IsNullOrWhiteSpace(Request.Query["subcategory"]))
+        {
+            effectiveMenClothingSubSlug = NormalizeMenClothingSubSlug(Request.Query["subcategory"]!);
+        }
+        else if (string.Equals(effectiveCategory, "fashion", StringComparison.OrdinalIgnoreCase) &&
+                 (string.Equals(currentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+                  string.Equals(currentSubcategorySlug, "mens-clothing", StringComparison.OrdinalIgnoreCase) ||
+                  string.Equals(currentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase)) &&
+                 !string.IsNullOrWhiteSpace(sub))
+        {
+            effectiveMenClothingSubSlug = NormalizeMenClothingSubSlug(sub);
+        }
+
+        var isMenClothingSubcategory = !string.IsNullOrWhiteSpace(effectiveMenClothingSubSlug);
+        Dreamflykit.Application.FashionHub.Models.FashionMenClothingSubcategoryPageDto? menClothingSubPage = null;
+        if (isMenClothingSubcategory)
+        {
+            var fConfig = await _fashionHubService.GetConfigAsync(cancellationToken);
+            var allPages = fConfig?.MenClothing?.SubcategoryPages;
+            if (allPages != null && allPages.Count > 0)
+            {
+                menClothingSubPage = allPages.FirstOrDefault(p =>
+                    string.Equals(p.CategorySlug, effectiveMenClothingSubSlug, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (menClothingSubPage == null)
+            {
+                var defaultPages = Dreamflykit.Application.FashionHub.Models.FashionMenClothingDto.CreateDefaultSubcategoryPages();
+                menClothingSubPage = defaultPages.FirstOrDefault(p =>
+                    string.Equals(p.CategorySlug, effectiveMenClothingSubSlug, StringComparison.OrdinalIgnoreCase))
+                    ?? defaultPages.FirstOrDefault();
+            }
+
+            if (menClothingSubPage != null)
+            {
+                currentSubcategoryName = menClothingSubPage.CategoryName;
+                currentSubcategorySlug = menClothingSubPage.CategorySlug;
+            }
+        }
+
+        
+        var isMenClothingCategory = !isMenClothingSubcategory && !isWomenSubcategory && !isEthnicWearCategory && !isThermalsCategory &&
 
                                     (string.Equals(effectiveCategory, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
 
@@ -1220,7 +1315,7 @@ public sealed class ProductsController : Controller
 
 
 
-        var isAnyFashionTemplate = isFashionCategory || isWomenSubcategory || isMenFootwearSubcategory || isMenFootwearCategory || isMenClothingCategory || isWomenClothingCategory || isHoodiesCategory || isSweatshirtsCategory || isEthnicWearCategory || isThermalsCategory;
+        var isAnyFashionTemplate = isFashionCategory || isWomenSubcategory || isMenFootwearSubcategory || isMenFootwearCategory || isMenClothingSubcategory || isMenClothingCategory || isWomenClothingCategory || isHoodiesCategory || isSweatshirtsCategory || isEthnicWearCategory || isThermalsCategory;
 
 
 
@@ -1265,6 +1360,7 @@ public sealed class ProductsController : Controller
         else if (isWomenSubcategory) determinedViewMode = "women-sub";
         else if (isMenFootwearSubcategory) determinedViewMode = "men-footwear-sub";
         else if (isMenFootwearCategory) determinedViewMode = "men-footwear";
+        else if (isMenClothingSubcategory) determinedViewMode = "men-clothing-sub";
 
         else if (isEthnicWearCategory) determinedViewMode = "ethnic-wear";
 
@@ -1469,6 +1565,10 @@ public sealed class ProductsController : Controller
             WomenSubcategoryPage = womenSubPage,
 
             IsWomenSubcategory = isWomenSubcategory,
+            MenFootwearSubcategoryPage = menFootwearSubPage,
+            IsMenFootwearSubcategory = isMenFootwearSubcategory,
+            MenClothingSubcategoryPage = menClothingSubPage,
+            IsMenClothingSubcategory = isMenClothingSubcategory,
 
             CurrentAppliancesBrandSlug = currentAppliancesBrandSlug,
 

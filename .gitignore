@@ -365,3 +365,5 @@ FodyWeavers.xsd
 # App_Data Media Cache
 **/App_Data/MediaCache/*
 !**/App_Data/MediaCache/.gitkeep
+# Temporary scratch scripts
+scratch/

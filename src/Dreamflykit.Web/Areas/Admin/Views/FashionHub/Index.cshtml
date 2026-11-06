@@ -31,6 +31,9 @@
     var menCat = men.CategoriesSection ?? new();
 
     var menPicks = men.TopPicksSection ?? new();
+    var menSubPages = (men.SubcategoryPages != null && men.SubcategoryPages.Count >= 17)
+        ? men.SubcategoryPages
+        : Dreamflykit.Application.FashionHub.Models.FashionMenClothingDto.CreateDefaultSubcategoryPages();
 
 
 
@@ -2212,11 +2215,236 @@
 
 
 
-        </div>
+        
+            <!-- ========================================================
+                 SECTION 4: MEN CLOTHING SUBCATEGORY LANDING PAGES (ALL 17 CATEGORIES)
+            ========================================================= -->
+            <div class="dk-card" style="margin-bottom: 24px; border-left: 4px solid #3b82f6;">
+                <div class="dk-card-header" style="background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);">
+                    <div>
+                        <h2 class="dk-card-title" style="color: #1e3a8a; display: flex; align-items: center; gap: 8px;">
+                            👔 4. Men Clothing Subcategory Landing Pages Manager (All 17 Categories)
+                        </h2>
+                        <p class="dk-card-desc">
+                            Full admin control for all 17 subcategory landing pages (Hero banners with "Uploading Soon" radar animations, dedicated "Shop by Category / Style" sections like Casual, Formal, Party Wear, and Curated Products).
+                        </p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label for="selectMenClothingSubcategory" style="font-weight: 700; font-size: 13px; color: #1e3a8a;">Select Subcategory:</label>
+                        <select id="selectMenClothingSubcategory" class="dk-input" style="width: 250px; font-weight: 700; border: 2px solid #3b82f6;" onchange="switchMenClothingSubAdmin(this.value)">
+                            @if (menSubPages != null)
+                            {
+                                @foreach (var sp in menSubPages)
+                                {
+                                    <option value="@sp.CategorySlug">@sp.CategoryName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
 
+                <div id="menClothingSubcategoryEditorsContainer">
+                    @if (menSubPages != null)
+                    {
+                        var isFirst = true;
+                        @foreach (var sp in menSubPages)
+                        {
+                            var sHero = sp.HeroBanner ?? new();
+                            var sStyleSec = sp.ShopByStyleSection ?? new();
+                            var sStyles = sStyleSec.Styles ?? new();
+                            var sProds = sp.Products ?? new();
 
+                            <div class="men-clothing-subpage-editor" id="men-clothing-sub-editor-@sp.CategorySlug" style="display: @(isFirst ? "block" : "none"); padding: 20px;" data-slug="@sp.CategorySlug">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1.5px solid #e2e8f0;">
+                                    <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                                        Landing Page: <span style="color: #1d4ed8;">@sp.CategoryName</span>
+                                        <span class="dk-badge" style="background: #eff6ff; color: #1d4ed8; font-size: 12px; padding: 2px 8px; border-radius: 4px;">/@sp.CategorySlug</span>
+                                    </h3>
+                                    <a href="/category/fashion/men-clothing/@sp.CategorySlug" target="_blank" class="dk-btn-sm" style="background: #eff6ff; color: #1d4ed8; text-decoration: none; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; border: 1px solid #bfdbfe;">
+                                        👁 View Live Landing Page ↗
+                                    </a>
+                                </div>
 
-        <!-- ========================================================
+                                <!-- Sub Hero Banner Settings -->
+                                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+                                    <h4 style="margin: 0 0 14px 0; font-size: 15px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                                        <span>🖼</span> Hero Banner Settings for @sp.CategoryName
+                                    </h4>
+                                    <div class="dk-form-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;">
+                                        <div>
+                                            <label class="dk-label">Hero Title</label>
+                                            <input type="text" class="dk-input men-sub-hero-title" value="@sHero.Title" />
+                                        </div>
+                                        <div>
+                                            <label class="dk-label">Hero Title Highlight / Badge</label>
+                                            <input type="text" class="dk-input men-sub-hero-highlight" value="@sHero.TitleHighlight" />
+                                        </div>
+                                        <div>
+                                            <label class="dk-label">Banner Image URL</label>
+                                            <input type="text" class="dk-input men-sub-hero-img" value="@sHero.ImageUrl" placeholder="/images/fashion-hub/uploading-soon-placeholder.svg" />
+                                        </div>
+                                        <div>
+                                            <label class="dk-label">Hero Height (px)</label>
+                                            <input type="number" class="dk-input men-sub-hero-height" value="@(sHero.BannerHeight > 0 ? sHero.BannerHeight : 420)" />
+                                        </div>
+                                        <div style="grid-column: 1 / -1;">
+                                            <label class="dk-label">Hero Subtitle / Description</label>
+                                            <input type="text" class="dk-input men-sub-hero-sub" value="@sHero.Subtitle" />
+                                        </div>
+                                        <div>
+                                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; font-size: 13px; color: #1e3a8a;">
+                                                <input type="checkbox" class="men-sub-hero-soon" @(sHero.IsUploadingSoon ? "checked" : "") style="width: 17px; height: 17px; accent-color: #2563eb;" />
+                                                <span>Show "Uploading Soon" radar animation (until real image uploaded)</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Shop by Category / Style Section Settings -->
+                                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 22px;">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                        <div>
+                                            <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                                                <span>👔</span> "Shop by Category / Style" Section (Casual, Formal, Party Wear, etc.)
+                                            </h4>
+                                            <p style="margin: 4px 0 0 0; font-size: 12px; color: #64748b;">
+                                                Categories displayed directly beneath the Hero Banner with large image frames and "Uploading Soon" badges.
+                                            </p>
+                                        </div>
+                                        <button type="button" class="dk-btn-sm" style="background: #2563eb; color: #fff; font-weight: 700; border-radius: 6px; padding: 6px 12px;" onclick="addMenSubStyleRow('@sp.CategorySlug')">
+                                            + Add Style Item
+                                        </button>
+                                    </div>
+                                    <div class="dk-form-grid" style="grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                                        <div>
+                                            <label class="dk-label">Section Title</label>
+                                            <input type="text" class="dk-input men-sub-style-title" value="@sStyleSec.Title" />
+                                        </div>
+                                        <div>
+                                            <label class="dk-label">Section Subtitle</label>
+                                            <input type="text" class="dk-input men-sub-style-sub" value="@sStyleSec.Subtitle" />
+                                        </div>
+                                    </div>
+                                    <div style="overflow-x: auto;">
+                                        <table class="dk-table" id="men-sub-styles-table-@sp.CategorySlug" style="width: 100%; font-size: 13px;">
+                                            <thead>
+                                                <tr style="background: #f1f5f9; text-align: left;">
+                                                    <th style="padding: 8px 10px;">Style Name</th>
+                                                    <th style="padding: 8px 10px;">Subtitle</th>
+                                                    <th style="padding: 8px 10px; width: 60px;">Emoji</th>
+                                                    <th style="padding: 8px 10px;">Image URL</th>
+                                                    <th style="padding: 8px 10px; width: 70px;">Order</th>
+                                                    <th style="padding: 8px 10px; text-align: center;">Uploading Soon</th>
+                                                    <th style="padding: 8px 10px; width: 50px; text-align: center;">Del</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var st in sStyles)
+                                                {
+                                                    <tr class="men-sub-style-row" data-id="@st.Id" style="border-bottom: 1px solid #f1f5f9;">
+                                                        <td style="padding: 6px 10px;">
+                                                            <input type="text" class="dk-input style-name" value="@st.Name" style="padding: 4px 8px;" />
+                                                        </td>
+                                                        <td style="padding: 6px 10px;">
+                                                            <input type="text" class="dk-input style-sub" value="@st.Subtitle" style="padding: 4px 8px;" />
+                                                        </td>
+                                                        <td style="padding: 6px 10px; width: 60px;">
+                                                            <input type="text" class="dk-input style-emoji" value="@st.Emoji" style="padding: 4px 6px; text-align: center;" />
+                                                        </td>
+                                                        <td style="padding: 6px 10px;">
+                                                            <input type="text" class="dk-input style-img" value="@st.ImageUrl" style="padding: 4px 8px;" />
+                                                        </td>
+                                                        <td style="padding: 6px 10px; width: 70px;">
+                                                            <input type="number" class="dk-input style-order" value="@st.DisplayOrder" style="padding: 4px 6px; text-align: center;" />
+                                                        </td>
+                                                        <td style="padding: 6px 10px; text-align: center;">
+                                                            <input type="checkbox" class="style-soon" @(st.IsUploadingSoon ? "checked" : "") />
+                                                        </td>
+                                                        <td style="padding: 6px 10px; text-align: center;">
+                                                            <button type="button" class="dk-btn-del" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px;">🗑</button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Curated Products Table -->
+                                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px;">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                                        <div>
+                                            <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                                                <span>🛍</span> Curated Products for @sp.CategoryName (@sProds.Count Products)
+                                            </h4>
+                                            <p style="margin: 4px 0 0 0; font-size: 12px; color: #64748b;">
+                                                Products shown on the right side of the subcategory landing page with big image frames (aspect-ratio 3/4).
+                                            </p>
+                                        </div>
+                                        <button type="button" class="dk-btn-sm" style="background: #10b981; color: #fff; font-weight: 700; border-radius: 6px; padding: 6px 12px;" onclick="addMenSubProductRow('@sp.CategorySlug')">
+                                            + Add Product
+                                        </button>
+                                    </div>
+                                    <div style="overflow-x: auto;">
+                                        <table class="dk-table" id="men-sub-prods-table-@sp.CategorySlug" style="width: 100%; font-size: 13px;">
+                                            <thead>
+                                                <tr style="background: #f1f5f9; text-align: left;">
+                                                    <th style="padding: 8px 10px;">Product Name</th>
+                                                    <th style="padding: 8px 10px; width: 110px;">Price (₹)</th>
+                                                    <th style="padding: 8px 10px; width: 110px;">MRP (₹)</th>
+                                                    <th style="padding: 8px 10px; width: 120px;">Badge</th>
+                                                    <th style="padding: 8px 10px; width: 100px;">Fit</th>
+                                                    <th style="padding: 8px 10px; width: 100px;">Style</th>
+                                                    <th style="padding: 8px 10px;">Image URL</th>
+                                                    <th style="padding: 8px 10px; text-align: center;">Uploading Soon</th>
+                                                    <th style="padding: 8px 10px; width: 50px; text-align: center;">Del</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var p in sProds)
+                                                {
+                                                    <tr class="men-sub-prod-row" data-id="@p.Id" style="border-bottom: 1px solid #f1f5f9;">
+                                                        <td style="padding: 6px 10px;">
+                                                            <input type="text" class="dk-input prod-name" value="@p.Name" style="padding: 4px 8px;" />
+                                                        </td>
+                                                        <td style="padding: 6px 10px; width: 110px;">
+                                                            <input type="number" class="dk-input prod-price" value="@p.Price" style="padding: 4px 6px;" />
+                                                        </td>
+                                                        <td style="padding: 6px 10px; width: 110px;">
+                                                            <input type="number" class="dk-input prod-mrp" value="@(p.OriginalPrice ?? p.Price * 2)" style="padding: 4px 6px;" />
+                                                        </td>
+                                                        <td style="padding: 6px 10px; width: 120px;">
+                                                            <input type="text" class="dk-input prod-badge" value="@p.Badge" style="padding: 4px 6px;" />
+                                                        </td>
+                                                        <td style="padding: 6px 10px; width: 100px;">
+                                                            <input type="text" class="dk-input prod-fit" value="@p.Fit" style="padding: 4px 6px;" />
+                                                        </td>
+                                                        <td style="padding: 6px 10px; width: 100px;">
+                                                            <input type="text" class="dk-input prod-style" value="@p.Style" style="padding: 4px 6px;" />
+                                                        </td>
+                                                        <td style="padding: 6px 10px;">
+                                                            <input type="text" class="dk-input prod-img" value="@p.ImageUrl" style="padding: 4px 8px;" />
+                                                        </td>
+                                                        <td style="padding: 6px 10px; text-align: center;">
+                                                            <input type="checkbox" class="prod-soon" @(p.IsUploadingSoon ? "checked" : "") />
+                                                        </td>
+                                                        <td style="padding: 6px 10px; text-align: center;">
+                                                            <button type="button" class="dk-btn-del" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px;">🗑</button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            isFirst = false;
+                        }
+                    }
+                </div>
+            </div>
+
+        </div>        <!-- ========================================================
 
              TAB: WOMEN CLOTHING TEMPLATE (SCREENSHOT 2)
 
@@ -8488,6 +8716,14 @@ async function saveFashionHub() {
                 products: menProducts
 
             },
+            festivalTheme: {
+                isEnabled: true,
+                festivalName: "Student Fashion Essentials",
+                badgeText: "STUDENT ESSENTIALS • 100% GENUINE",
+                bannerHighlight: "Up to 50% Off",
+                announcementText: "👔 Men's Clothing: Tailored for international students with lightweight, breathable fabrics."
+            },
+            subcategoryPages: collectMenClothingSubcategoryPages(),
 
             trustBadgesSection: {
 
@@ -9217,6 +9453,185 @@ function collectMenFootwearData() {
             bulkButtonUrl: "/contact"
         }
     };
+}
+
+
+
+function switchMenClothingSubAdmin(slug) {
+    document.querySelectorAll('.men-clothing-subpage-editor').forEach(function(el) {
+        el.style.display = 'none';
+    });
+    var target = document.getElementById('men-clothing-sub-editor-' + slug);
+    if (target) {
+        target.style.display = 'block';
+    }
+}
+
+function addMenSubStyleRow(slug) {
+    var table = document.querySelector('#men-sub-styles-table-' + slug + ' tbody');
+    if (!table) return;
+    var tr = document.createElement('tr');
+    tr.className = 'men-sub-style-row';
+    tr.setAttribute('data-id', 'style_' + Date.now());
+    tr.style.borderBottom = '1px solid #f1f5f9';
+    tr.innerHTML = `
+        <td style="padding: 6px 10px;">
+            <input type="text" class="dk-input style-name" value="New Style" style="padding: 4px 8px;" />
+        </td>
+        <td style="padding: 6px 10px;">
+            <input type="text" class="dk-input style-sub" value="Trendy Fit" style="padding: 4px 8px;" />
+        </td>
+        <td style="padding: 6px 10px; width: 60px;">
+            <input type="text" class="dk-input style-emoji" value="👔" style="padding: 4px 6px; text-align: center;" />
+        </td>
+        <td style="padding: 6px 10px;">
+            <input type="text" class="dk-input style-img" value="/images/fashion-hub/uploading-soon-placeholder.svg" style="padding: 4px 8px;" />
+        </td>
+        <td style="padding: 6px 10px; width: 70px;">
+            <input type="number" class="dk-input style-order" value="1" style="padding: 4px 6px; text-align: center;" />
+        </td>
+        <td style="padding: 6px 10px; text-align: center;">
+            <input type="checkbox" class="style-soon" checked />
+        </td>
+        <td style="padding: 6px 10px; text-align: center;">
+            <button type="button" class="dk-btn-del" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px;">🗑</button>
+        </td>
+    `;
+    table.appendChild(tr);
+}
+
+function addMenSubProductRow(slug) {
+    var table = document.querySelector('#men-sub-prods-table-' + slug + ' tbody');
+    if (!table) return;
+    var tr = document.createElement('tr');
+    tr.className = 'men-sub-prod-row';
+    tr.setAttribute('data-id', 'men_prod_' + Date.now());
+    tr.style.borderBottom = '1px solid #f1f5f9';
+    tr.innerHTML = `
+        <td style="padding: 6px 10px;">
+            <input type="text" class="dk-input prod-name" value="New Clothing Item" style="padding: 4px 8px;" />
+        </td>
+        <td style="padding: 6px 10px; width: 110px;">
+            <input type="number" class="dk-input prod-price" value="999" style="padding: 4px 6px;" />
+        </td>
+        <td style="padding: 6px 10px; width: 110px;">
+            <input type="number" class="dk-input prod-mrp" value="1999" style="padding: 4px 6px;" />
+        </td>
+        <td style="padding: 6px 10px; width: 120px;">
+            <input type="text" class="dk-input prod-badge" value="Best Seller" style="padding: 4px 6px;" />
+        </td>
+        <td style="padding: 6px 10px; width: 100px;">
+            <input type="text" class="dk-input prod-fit" value="Regular Fit" style="padding: 4px 6px;" />
+        </td>
+        <td style="padding: 6px 10px; width: 100px;">
+            <input type="text" class="dk-input prod-style" value="Casual" style="padding: 4px 6px;" />
+        </td>
+        <td style="padding: 6px 10px;">
+            <input type="text" class="dk-input prod-img" value="/images/fashion-hub/uploading-soon-placeholder.svg" style="padding: 4px 8px;" />
+        </td>
+        <td style="padding: 6px 10px; text-align: center;">
+            <input type="checkbox" class="prod-soon" checked />
+        </td>
+        <td style="padding: 6px 10px; text-align: center;">
+            <button type="button" class="dk-btn-del" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px;">🗑</button>
+        </td>
+    `;
+    table.appendChild(tr);
+}
+
+function collectMenClothingSubcategoryPages() {
+    var subcategoryPages = [];
+    document.querySelectorAll('.men-clothing-subpage-editor').forEach(function(editor) {
+        var slug = editor.getAttribute('data-slug');
+        var catName = editor.querySelector('h3 span')?.textContent || slug;
+        var sHeroTitle = editor.querySelector('.men-sub-hero-title')?.value || catName;
+        var sHeroHighlight = editor.querySelector('.men-sub-hero-highlight')?.value || 'STUDENT ESSENTIALS • 100% GENUINE';
+        var sHeroImg = editor.querySelector('.men-sub-hero-img')?.value || '/images/fashion-hub/uploading-soon-placeholder.svg';
+        var sHeroSub = editor.querySelector('.men-sub-hero-sub')?.value || '';
+        var sHeroSoon = editor.querySelector('.men-sub-hero-soon')?.checked ?? true;
+        var sHeroHeight = parseInt(editor.querySelector('.men-sub-hero-height')?.value || '420', 10);
+
+        var sStyleTitle = editor.querySelector('.men-sub-style-title')?.value || 'Shop by Category';
+        var sStyleSub = editor.querySelector('.men-sub-style-sub')?.value || 'Explore by style and occasion';
+
+        var styles = [];
+        editor.querySelectorAll('.men-sub-style-row').forEach(function(sRow) {
+            var stId = sRow.getAttribute('data-id') || 'st_' + Date.now();
+            var stName = sRow.querySelector('.style-name')?.value || '';
+            var stSub = sRow.querySelector('.style-sub')?.value || '';
+            var stEmoji = sRow.querySelector('.style-emoji')?.value || '👔';
+            var stImg = sRow.querySelector('.style-img')?.value || '/images/fashion-hub/uploading-soon-placeholder.svg';
+            var stOrder = parseInt(sRow.querySelector('.style-order')?.value || '1', 10);
+            var stSoon = sRow.querySelector('.style-soon')?.checked ?? true;
+
+            styles.push({
+                id: stId,
+                name: stName,
+                slug: stName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+                subtitle: stSub,
+                emoji: stEmoji,
+                imageUrl: stImg,
+                displayOrder: stOrder,
+                isUploadingSoon: stSoon,
+                isActive: true
+            });
+        });
+
+        var prods = [];
+        editor.querySelectorAll('.men-sub-prod-row').forEach(function(pRow) {
+            var pId = pRow.getAttribute('data-id') || 'mp_' + Date.now();
+            var pName = pRow.querySelector('.prod-name')?.value || '';
+            var pPrice = parseFloat(pRow.querySelector('.prod-price')?.value) || 999;
+            var pMrp = parseFloat(pRow.querySelector('.prod-mrp')?.value) || (pPrice * 2);
+            var pBadge = pRow.querySelector('.prod-badge')?.value || 'Best Seller';
+            var pFit = pRow.querySelector('.prod-fit')?.value || 'Regular Fit';
+            var pStyle = pRow.querySelector('.prod-style')?.value || 'Casual';
+            var pImg = pRow.querySelector('.prod-img')?.value || '/images/fashion-hub/uploading-soon-placeholder.svg';
+            var pSoon = pRow.querySelector('.prod-soon')?.checked ?? true;
+
+            prods.push({
+                id: pId,
+                name: pName,
+                categoryName: catName,
+                categorySlug: slug,
+                price: pPrice,
+                originalPrice: pMrp,
+                badge: pBadge,
+                fit: pFit,
+                style: pStyle,
+                imageUrl: pImg,
+                productUrl: '/category/fashion/men-clothing/' + slug,
+                isUploadingSoon: pSoon,
+                isActive: true,
+                rating: 4.8,
+                reviewsCount: 120,
+                inStock: true
+            });
+        });
+
+        subcategoryPages.push({
+            categorySlug: slug,
+            categoryName: catName,
+            heroBanner: {
+                isEnabled: true,
+                title: sHeroTitle,
+                titleHighlight: sHeroHighlight,
+                subtitle: sHeroSub,
+                imageUrl: sHeroImg,
+                isUploadingSoon: sHeroSoon,
+                bannerHeight: sHeroHeight
+            },
+            shopByStyleSection: {
+                isEnabled: true,
+                title: sStyleTitle,
+                subtitle: sStyleSub,
+                styles: styles
+            },
+            products: prods
+        });
+    });
+
+    return subcategoryPages;
 }
 
 </script>

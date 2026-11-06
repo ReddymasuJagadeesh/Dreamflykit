@@ -87,6 +87,10 @@ public sealed class FashionHubService : IFashionHubService
                         {
                             dto.MenClothing = def.MenClothing;
                         }
+                        else if (dto.MenClothing.SubcategoryPages == null || dto.MenClothing.SubcategoryPages.Count < 17)
+                        {
+                            dto.MenClothing.SubcategoryPages = def.MenClothing.SubcategoryPages;
+                        }
                         dto.WomenClothing ??= def.WomenClothing;
                         if (dto.MenFootwear == null || dto.MenFootwear.CategoriesSection == null || dto.MenFootwear.CategoriesSection.Categories.Count < 7)
                         {

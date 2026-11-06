@@ -219,16 +219,9 @@
                 <div class="dk-men-categories-grid">
                     @foreach (var cat in catSection.Categories.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder))
                     {
-                        var catUrl = cat.Slug switch
-                        {
-                            "ethnic-wear" or "ethnic" => "/category/fashion/ethnic-wear",
-                            "thermals" or "thermal" => "/category/fashion/thermals",
-                            "hoodies" or "hoodies-sweatshirts" or "mens-hoodies" => "/category/fashion/hoodies",
-                            "sweatshirts" or "mens-sweatshirts" => "/category/fashion/sweatshirts",
-                            _ => !string.IsNullOrWhiteSpace(cat.Slug) 
-                                ? $"/category/fashion/men-clothing?subcategory={cat.Slug}" 
-                                : "/category/fashion/men-clothing"
-                        };
+                        var catUrl = !string.IsNullOrWhiteSpace(cat.Slug) 
+                            ? $"/category/fashion/men-clothing/{cat.Slug}" 
+                            : "/category/fashion/men-clothing";
                         var hasImg = !string.IsNullOrWhiteSpace(cat.ImageUrl) && !cat.IsUploadingSoon && !cat.ImageUrl.Contains("uploading-soon");
 
                         <a href="@catUrl" class="dk-men-cat-card" title="@cat.Name">

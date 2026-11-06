@@ -197,6 +197,10 @@ public sealed class ProductListViewModel
     public bool IsWomenSubcategory { get; init; }
     public Dreamflykit.Application.FashionHub.Models.FashionMenFootwearSubcategoryPageDto? MenFootwearSubcategoryPage { get; init; }
     public bool IsMenFootwearSubcategory { get; init; }
+    public bool IsMenClothingSubcategory { get; init; }
+    public Dreamflykit.Application.FashionHub.Models.FashionMenClothingSubcategoryPageDto? MenClothingSubcategoryPage { get; init; }
+    public bool IsMenClothingSubcategoryHub =>
+        IsMenClothingSubcategory || string.Equals(ViewMode, "men-clothing-sub", StringComparison.OrdinalIgnoreCase);
     public Dreamflykit.Application.SportsHub.Models.SportsHubDto? SportsHub { get; init; }
     public Dreamflykit.Application.SportsHub.Models.SportsSubcategoryPageDto? SportsSubcategoryPage { get; init; }
 
@@ -251,18 +255,13 @@ public sealed class ProductListViewModel
 
 
     public bool IsMenClothing =>
-
-        string.Equals(ViewMode, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
-
-        string.Equals(CategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
-
-        string.Equals(CategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase) ||
-
-        (string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
-
-         (string.Equals(CurrentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
-
-          string.Equals(CurrentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase)));
+        !IsMenClothingSubcategory && !string.Equals(ViewMode, "men-clothing-sub", StringComparison.OrdinalIgnoreCase) &&
+        (string.Equals(ViewMode, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+         string.Equals(CategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+         string.Equals(CategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase) ||
+         (string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
+          (string.Equals(CurrentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+           string.Equals(CurrentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase))));
 
 
 
@@ -380,7 +379,7 @@ public sealed class ProductListViewModel
 
         string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
 
-        !IsMenClothing && !IsWomenClothing && !IsMenFootwear && !IsHoodiesHub && !IsSweatshirtsHub && !IsEthnicWearHub && !IsThermalsHub;
+        !IsMenClothing && !IsMenClothingSubcategory && !IsWomenClothing && !IsMenFootwear && !IsHoodiesHub && !IsSweatshirtsHub && !IsEthnicWearHub && !IsThermalsHub;
 
 
 
