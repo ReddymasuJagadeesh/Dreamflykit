@@ -234,7 +234,10 @@ public sealed class Order : AuditableEntity
             throw new DomainException("Payment ID cannot be empty.");
 
         PaymentId = paymentId.Trim();
-        Confirm(); // Transition to Confirmed on payment success
+        if (Status == OrderStatus.Pending)
+        {
+            Confirm(); // Transition to Confirmed on initial payment success
+        }
     }
 
     // ----------------------------------------------------------

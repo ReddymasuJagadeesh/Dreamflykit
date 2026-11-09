@@ -1,132 +1,48 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
+using Dreamflykit.Application.Catalog.Interfaces;
 using Dreamflykit.Application.FoodHub.Interfaces;
 using Dreamflykit.Application.FoodHub.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace Dreamflykit.Infrastructure.FoodHub;
 
 public sealed class FoodHubService : IFoodHubService
 {
-    private const string CacheKey = "food_category_hub_cache";
-    private readonly IMemoryCache _cache;
-    private readonly IWebHostEnvironment _env;
+    private const string HubSlug = "food";
+    private const string HubTitle = "Food Hub";
+    private const string FallbackFileName = "food_hub.json";
+
+    private readonly ICategoryHubRepository _hubRepository;
     private readonly ILogger<FoodHubService> _logger;
-    private readonly string _filePath;
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        WriteIndented = true
-    };
-
+    [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
     public FoodHubService(
-        IMemoryCache cache,
-        IWebHostEnvironment env,
+        ICategoryHubRepository hubRepository,
         ILogger<FoodHubService> logger)
     {
-        _cache = cache;
-        _env = env;
-        _logger = logger;
+        _hubRepository = hubRepository ?? throw new ArgumentNullException(nameof(hubRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
-        var rootPath = !string.IsNullOrWhiteSpace(env.WebRootPath)
-            ? env.WebRootPath
-            : Path.Combine(AppContext.BaseDirectory, "wwwroot");
-
-        var dataDir = Path.Combine(rootPath, "data");
-        if (!Directory.Exists(dataDir))
-        {
-            try
-            {
-                Directory.CreateDirectory(dataDir);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Could not create data directory: {DataDir}", dataDir);
-            }
-        }
-
-        _filePath = Path.Combine(dataDir, "food_hub.json");
+    public FoodHubService(
+        Microsoft.Extensions.Caching.Memory.IMemoryCache cache,
+        Microsoft.AspNetCore.Hosting.IWebHostEnvironment env,
+        ILogger<FoodHubService> logger)
+        : this(new Dreamflykit.Infrastructure.Catalog.CategoryHubRepository(null, cache, env), logger)
+    {
     }
 
     public async Task<FoodHubDto> GetConfigAsync(CancellationToken cancellationToken = default)
     {
-        if (_cache.TryGetValue(CacheKey, out FoodHubDto? cached) && cached != null)
+        var dto = await _hubRepository.GetPayloadAsync<FoodHubDto>(HubSlug, FallbackFileName, cancellationToken);
+        if (dto != null)
         {
-            return cached;
+            EnsureDefaults(dto);
+            return dto;
         }
 
-        if (File.Exists(_filePath))
-        {
-            try
-            {
-                var json = await File.ReadAllTextAsync(_filePath, cancellationToken);
-                if (!string.IsNullOrWhiteSpace(json))
-                {
-                    var dto = JsonSerializer.Deserialize<FoodHubDto>(json, JsonOptions);
-                    if (dto != null)
-                    {
-                        var def = FoodHubDto.CreateDefault();
-                        dto.ThemeSettings ??= def.ThemeSettings;
-                        dto.TopNoticeBar ??= def.TopNoticeBar;
-                        dto.HeroBanner ??= def.HeroBanner;
-                        if (dto.HeroBanner.TrustBadges == null || dto.HeroBanner.TrustBadges.Count == 0)
-                        {
-                            dto.HeroBanner.TrustBadges = def.HeroBanner.TrustBadges;
-                        }
-                        if (dto.HeroBanner.Slides == null || dto.HeroBanner.Slides.Count == 0)
-                        {
-                            dto.HeroBanner.Slides = def.HeroBanner.Slides;
-                        }
-
-                        dto.ShopByCategories ??= def.ShopByCategories;
-                        if (dto.ShopByCategories.Cards == null || dto.ShopByCategories.Cards.Count == 0)
-                        {
-                            dto.ShopByCategories.Cards = def.ShopByCategories.Cards;
-                        }
-
-                        dto.PromoCards ??= def.PromoCards;
-                        if (dto.PromoCards.Cards == null || dto.PromoCards.Cards.Count == 0)
-                        {
-                            dto.PromoCards.Cards = def.PromoCards.Cards;
-                        }
-
-                        dto.BestSellers ??= def.BestSellers;
-                        if (dto.BestSellers.Items == null || dto.BestSellers.Items.Count == 0)
-                        {
-                            dto.BestSellers.Items = def.BestSellers.Items;
-                        }
-
-                        dto.BottomTrustBar ??= def.BottomTrustBar;
-                        dto.StayUpdated ??= def.StayUpdated;
-
-                        _cache.Set(CacheKey, dto, TimeSpan.FromMinutes(10));
-                        return dto;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to load Food Hub JSON from file: {Path}", _filePath);
-            }
-        }
-
-        var fallback = FoodHubDto.CreateDefault();
-        try
-        {
-            var fallbackJson = JsonSerializer.Serialize(fallback, JsonOptions);
-            await File.WriteAllTextAsync(_filePath, fallbackJson, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to save initial default Food Hub config to {Path}", _filePath);
-        }
-
-        _cache.Set(CacheKey, fallback, TimeSpan.FromMinutes(10));
-        return fallback;
+        var defaultDto = FoodHubDto.CreateDefault();
+        await _hubRepository.SavePayloadAsync(HubSlug, HubTitle, FallbackFileName, defaultDto, cancellationToken);
+        return defaultDto;
     }
 
     public async Task UpdateConfigAsync(
@@ -135,19 +51,44 @@ public sealed class FoodHubService : IFoodHubService
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(dto);
+        await _hubRepository.SavePayloadAsync(HubSlug, HubTitle, FallbackFileName, dto, cancellationToken);
+        _logger.LogInformation("Food Hub configuration successfully updated in PostgreSQL by {User}", updatedBy ?? "System");
+    }
 
-        try
+    private static void EnsureDefaults(FoodHubDto dto)
+    {
+        var def = FoodHubDto.CreateDefault();
+        dto.ThemeSettings ??= def.ThemeSettings;
+        dto.TopNoticeBar ??= def.TopNoticeBar;
+        dto.HeroBanner ??= def.HeroBanner;
+        if (dto.HeroBanner.TrustBadges == null || dto.HeroBanner.TrustBadges.Count == 0)
         {
-            var json = JsonSerializer.Serialize(dto, JsonOptions);
-            await File.WriteAllTextAsync(_filePath, json, cancellationToken);
-            _cache.Set(CacheKey, dto, TimeSpan.FromMinutes(10));
-            _logger.LogInformation("Food Hub configuration successfully updated by {User}", updatedBy ?? "System");
+            dto.HeroBanner.TrustBadges = def.HeroBanner.TrustBadges;
         }
-        catch (Exception ex)
+        if (dto.HeroBanner.Slides == null || dto.HeroBanner.Slides.Count == 0)
         {
-            _logger.LogError(ex, "Failed to write Food Hub JSON file: {Path}", _filePath);
-            throw;
+            dto.HeroBanner.Slides = def.HeroBanner.Slides;
         }
+
+        dto.ShopByCategories ??= def.ShopByCategories;
+        if (dto.ShopByCategories.Cards == null || dto.ShopByCategories.Cards.Count == 0)
+        {
+            dto.ShopByCategories.Cards = def.ShopByCategories.Cards;
+        }
+
+        dto.PromoCards ??= def.PromoCards;
+        if (dto.PromoCards.Cards == null || dto.PromoCards.Cards.Count == 0)
+        {
+            dto.PromoCards.Cards = def.PromoCards.Cards;
+        }
+
+        dto.BestSellers ??= def.BestSellers;
+        if (dto.BestSellers.Items == null || dto.BestSellers.Items.Count == 0)
+        {
+            dto.BestSellers.Items = def.BestSellers.Items;
+        }
+
+        dto.BottomTrustBar ??= def.BottomTrustBar;
+        dto.StayUpdated ??= def.StayUpdated;
     }
 }
-

@@ -272,6 +272,7 @@ public static class InfrastructureServiceCollectionExtensions
 
         // Theme & Typography Management
         services.AddMemoryCache();
+        services.AddScoped<Dreamflykit.Application.Catalog.Interfaces.ICategoryHubRepository, Dreamflykit.Infrastructure.Catalog.CategoryHubRepository>();
         services.AddScoped<Dreamflykit.Application.Theme.IThemeSettingService, Dreamflykit.Infrastructure.Theme.ThemeSettingService>();
 
         // Header & Logo Branding Management

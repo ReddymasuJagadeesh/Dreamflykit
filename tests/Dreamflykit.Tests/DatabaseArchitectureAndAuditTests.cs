@@ -126,5 +126,94 @@ public sealed class DatabaseArchitectureAndAuditTests
         var ciConstraints = cartItemEntity.GetCheckConstraints().Select(c => c.Name).ToList();
         Assert.Contains("CK_CartItems_Quantity_Positive", ciConstraints);
         Assert.Contains("CK_CartItems_UnitPrice_NonNegative", ciConstraints);
+
+        // Verify User Foreign Key Enforcements
+        var orderEntity = designModel.FindEntityType(typeof(Dreamflykit.Domain.Orders.Order));
+        Assert.NotNull(orderEntity);
+        var orderUserFk = orderEntity.GetForeignKeys().FirstOrDefault(fk => fk.PrincipalEntityType.ClrType == typeof(Dreamflykit.Infrastructure.Identity.ApplicationUser));
+        Assert.NotNull(orderUserFk);
+        Assert.Equal(DeleteBehavior.Restrict, orderUserFk.DeleteBehavior);
+
+        var cartEntity = designModel.FindEntityType(typeof(Dreamflykit.Domain.Cart.Cart));
+        Assert.NotNull(cartEntity);
+        var cartUserFk = cartEntity.GetForeignKeys().FirstOrDefault(fk => fk.PrincipalEntityType.ClrType == typeof(Dreamflykit.Infrastructure.Identity.ApplicationUser));
+        Assert.NotNull(cartUserFk);
+        Assert.Equal(DeleteBehavior.Cascade, cartUserFk.DeleteBehavior);
+
+        var addressEntity = designModel.FindEntityType(typeof(Dreamflykit.Domain.Addressing.CustomerAddress));
+        Assert.NotNull(addressEntity);
+        var addrUserFk = addressEntity.GetForeignKeys().FirstOrDefault(fk => fk.PrincipalEntityType.ClrType == typeof(Dreamflykit.Infrastructure.Identity.ApplicationUser));
+        Assert.NotNull(addrUserFk);
+        Assert.Equal(DeleteBehavior.Cascade, addrUserFk.DeleteBehavior);
+
+        var wishlistEntity = designModel.FindEntityType(typeof(Dreamflykit.Domain.Wishlist.Wishlist));
+        Assert.NotNull(wishlistEntity);
+        var wishUserFk = wishlistEntity.GetForeignKeys().FirstOrDefault(fk => fk.PrincipalEntityType.ClrType == typeof(Dreamflykit.Infrastructure.Identity.ApplicationUser));
+        Assert.NotNull(wishUserFk);
+        Assert.Equal(DeleteBehavior.Cascade, wishUserFk.DeleteBehavior);
+    }
+
+    [Fact]
+    public void CategoryHubConfiguration_WithValidParameters_InitializesCorrectly()
+    {
+        var hub = new Dreamflykit.Domain.Catalog.CategoryHubConfiguration(
+            hubSlug: "FASHION",
+            title: "Fashion Store",
+            subtitle: "Style & Comfort",
+            heroBadge: "Trending",
+            heroBannerUrl: "/images/banner.jpg",
+            heroActionText: "Shop Now",
+            heroActionUrl: "/fashion/all",
+            configPayloadJson: "{\"test\": 123}",
+            isActive: true);
+
+        Assert.Equal("fashion", hub.HubSlug);
+        Assert.Equal("Fashion Store", hub.Title);
+        Assert.Equal("Style & Comfort", hub.Subtitle);
+        Assert.Equal("Trending", hub.HeroBadge);
+        Assert.Equal("/images/banner.jpg", hub.HeroBannerUrl);
+        Assert.Equal("Shop Now", hub.HeroActionText);
+        Assert.Equal("/fashion/all", hub.HeroActionUrl);
+        Assert.Equal("{\"test\": 123}", hub.ConfigPayloadJson);
+        Assert.True(hub.IsActive);
+    }
+
+    [Theory]
+    [InlineData("", "Title")]
+    [InlineData("   ", "Title")]
+    [InlineData("slug", "")]
+    [InlineData("slug", "   ")]
+    public void CategoryHubConfiguration_WithInvalidSlugOrTitle_ThrowsDomainException(string slug, string title)
+    {
+        Assert.Throws<DomainException>(() => new Dreamflykit.Domain.Catalog.CategoryHubConfiguration(
+            hubSlug: slug,
+            title: title,
+            subtitle: null,
+            heroBadge: null,
+            heroBannerUrl: null,
+            heroActionText: null,
+            heroActionUrl: null,
+            configPayloadJson: "{}"));
+    }
+
+    [Fact]
+    public void DbContext_ModelBuilder_ConfiguresCategoryHubConfigurationJsonbAndUniqueIndex()
+    {
+        using var dbContext = CreateTestDbContext();
+        var designModel = Microsoft.EntityFrameworkCore.Infrastructure.AccessorExtensions.GetService<Microsoft.EntityFrameworkCore.Metadata.IDesignTimeModel>(dbContext).Model;
+
+        var hubEntity = designModel.FindEntityType(typeof(Dreamflykit.Domain.Catalog.CategoryHubConfiguration));
+        Assert.NotNull(hubEntity);
+        Assert.Equal("CategoryHubConfigurations", hubEntity.GetTableName());
+
+        // Check unique index on HubSlug
+        var slugIndex = hubEntity.GetIndexes().FirstOrDefault(i => i.Properties.Any(p => p.Name == "HubSlug"));
+        Assert.NotNull(slugIndex);
+        Assert.True(slugIndex.IsUnique);
+
+        // Check ConfigPayloadJson column type is jsonb
+        var payloadProp = hubEntity.FindProperty("ConfigPayloadJson");
+        Assert.NotNull(payloadProp);
+        Assert.Equal("jsonb", payloadProp.GetColumnType());
     }
 }

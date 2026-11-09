@@ -1242,4 +1242,76 @@ public static class DatabaseSeeder
             await context.SaveChangesAsync(cancellationToken);
         }
     }
+
+    public static async Task SeedCategoryHubsFromFilesAsync(
+        DreamflykitDbContext context,
+        string? webRootPath,
+        CancellationToken cancellationToken = default)
+    {
+        var root = !string.IsNullOrWhiteSpace(webRootPath)
+            ? webRootPath
+            : Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+        var dataDir = Path.Combine(root, "data");
+
+        if (!Directory.Exists(dataDir)) return;
+
+        var hubMappings = new (string FileName, string HubSlug, string Title)[]
+        {
+            ("fashion_hub.json", "fashion", "Fashion Hub"),
+            ("mobiles_hub.json", "mobiles", "Mobiles Hub"),
+            ("electronics_hub.json", "electronics", "Electronics Hub"),
+            ("beauty_hub.json", "beauty", "Beauty Hub"),
+            ("health_hub.json", "health-care", "Health Care Hub"),
+            ("food_hub.json", "food", "Food Hub"),
+            ("travel_hub.json", "travel-gear", "Travel Gear Hub"),
+            ("luggage_hub.json", "luggage", "Luggage Hub"),
+            ("gaming_hub.json", "gaming-hub", "Gaming Hub"),
+            ("sports_hub.json", "sports-hub", "Sports Hub"),
+            ("country_kits_hub.json", "country-kits", "Country Kits Hub"),
+            ("category_three_section_sliders.json", "category-three-section-sliders", "Category Three Section Sliders")
+        };
+
+        var existingSlugs = await context.CategoryHubConfigurations
+            .Select(c => c.HubSlug)
+            .ToListAsync(cancellationToken);
+        var existingSet = new HashSet<string>(existingSlugs, StringComparer.OrdinalIgnoreCase);
+
+        var addedAny = false;
+        foreach (var (fileName, slug, title) in hubMappings)
+        {
+            if (existingSet.Contains(slug)) continue;
+
+            var filePath = Path.Combine(dataDir, fileName);
+            if (!File.Exists(filePath)) continue;
+
+            try
+            {
+                var json = await File.ReadAllTextAsync(filePath, cancellationToken);
+                if (string.IsNullOrWhiteSpace(json)) continue;
+
+                var config = new CategoryHubConfiguration(
+                    hubSlug: slug,
+                    title: title,
+                    subtitle: null,
+                    heroBadge: null,
+                    heroBannerUrl: null,
+                    heroActionText: null,
+                    heroActionUrl: null,
+                    configPayloadJson: json,
+                    isActive: true);
+
+                context.CategoryHubConfigurations.Add(config);
+                addedAny = true;
+            }
+            catch
+            {
+                // Continue with other hubs
+            }
+        }
+
+        if (addedAny)
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+    }
 }

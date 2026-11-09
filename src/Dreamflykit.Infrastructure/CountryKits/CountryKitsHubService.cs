@@ -43,39 +43,44 @@ public sealed class CountryKitsHubService : ICountryKitsHubService
         await Semaphore.WaitAsync(ct);
         try
         {
-            if (_cache.TryGetValue(CacheKey, out cached) && cached != null)
-            {
-                return cached;
-            }
-
-            CountryKitsHubDto? data = null;
-
-            if (File.Exists(_filePath))
-            {
-                try
-                {
-                    var json = await File.ReadAllTextAsync(_filePath, ct);
-                    data = JsonSerializer.Deserialize<CountryKitsHubDto>(json, JsonOptions);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to deserialize CountryKitsHub from file {Path}", _filePath);
-                }
-            }
-
-            if (data == null || data.Countries == null || data.Countries.Count == 0)
-            {
-                data = CountryKitsHubDto.CreateDefault();
-                await SaveToFileAsync(data, ct);
-            }
-
-            _cache.Set(CacheKey, data, TimeSpan.FromMinutes(30));
-            return data;
+            return await LoadProfilesInternalAsync(ct);
         }
         finally
         {
             Semaphore.Release();
         }
+    }
+
+    private async Task<CountryKitsHubDto> LoadProfilesInternalAsync(CancellationToken ct)
+    {
+        if (_cache.TryGetValue(CacheKey, out CountryKitsHubDto? cached) && cached != null)
+        {
+            return cached;
+        }
+
+        CountryKitsHubDto? data = null;
+
+        if (File.Exists(_filePath))
+        {
+            try
+            {
+                var json = await File.ReadAllTextAsync(_filePath, ct);
+                data = JsonSerializer.Deserialize<CountryKitsHubDto>(json, JsonOptions);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to deserialize CountryKitsHub from file {Path}", _filePath);
+            }
+        }
+
+        if (data == null || data.Countries == null || data.Countries.Count == 0)
+        {
+            data = CountryKitsHubDto.CreateDefault();
+            await SaveToFileAsync(data, ct);
+        }
+
+        _cache.Set(CacheKey, data, TimeSpan.FromMinutes(30));
+        return data;
     }
 
     public async Task<CountryKitProfileDto> GetCountryProfileAsync(string countrySlug, CancellationToken ct = default)
@@ -91,7 +96,7 @@ public sealed class CountryKitsHubService : ICountryKitsHubService
         await Semaphore.WaitAsync(ct);
         try
         {
-            var all = await GetAllProfilesAsync(ct);
+            var all = await LoadProfilesInternalAsync(ct);
             var slug = CountryKitsHubDto.NormalizeSlug(profile.CountrySlug);
 
             profile.CountrySlug = slug;
@@ -123,7 +128,7 @@ public sealed class CountryKitsHubService : ICountryKitsHubService
         await Semaphore.WaitAsync(ct);
         try
         {
-            var all = await GetAllProfilesAsync(ct);
+            var all = await LoadProfilesInternalAsync(ct);
             var slug = CountryKitsHubDto.NormalizeSlug(countrySlug);
 
             if (all.Countries.Remove(slug))
@@ -167,7 +172,7 @@ public sealed class CountryKitsHubService : ICountryKitsHubService
             }
             else
             {
-                var all = await GetAllProfilesAsync(ct);
+                var all = await LoadProfilesInternalAsync(ct);
                 var slug = CountryKitsHubDto.NormalizeSlug(countrySlug);
 
                 if (defaults.Countries.TryGetValue(slug, out var defaultProfile))

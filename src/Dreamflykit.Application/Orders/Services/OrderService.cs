@@ -97,22 +97,42 @@ public sealed class OrderService : IOrderService
         var itemsToReserve = cart.Items.Select(ci => (ci.ProductVariantId, ci.Quantity)).ToList();
         await _inventoryService.ReserveStockAsync(itemsToReserve, orderNumber, cancellationToken);
 
-        // 7. Create Order aggregate
-        var order = new Order(
-            command.UserId,
-            orderNumber,
-            shippingSnapshot,
-            billingSnapshot,
-            orderItems);
+        try
+        {
+            // 7. Create Order aggregate
+            var order = new Order(
+                command.UserId,
+                orderNumber,
+                shippingSnapshot,
+                billingSnapshot,
+                orderItems);
 
-        // 8. Persist order
-        await _orderRepository.AddAsync(order, cancellationToken);
+            // 8. Persist order
+            await _orderRepository.AddAsync(order, cancellationToken);
 
-        // 9. Clear user's cart
-        cart.Clear();
-        await _cartRepository.SaveAsync(cart, cancellationToken);
+            // 9. Clear user's cart
+            cart.Clear();
+            await _cartRepository.SaveAsync(cart, cancellationToken);
 
-        return order.OrderNumber;
+            return order.OrderNumber;
+        }
+        catch (Exception)
+        {
+            // Compensating action: release reserved inventory if persistence fails
+            try
+            {
+                await _inventoryService.ReleaseReservedStockAsync(
+                    itemsToReserve,
+                    orderNumber,
+                    "Order placement aborted due to persistence failure",
+                    cancellationToken);
+            }
+            catch
+            {
+                // Suppress secondary compensation exception so original exception propagates cleanly
+            }
+            throw;
+        }
     }
 
     public async Task<OrderDetails?> GetOrderAsync(
@@ -282,6 +302,12 @@ public sealed class OrderService : IOrderService
         var order = await _orderRepository.GetByOrderNumberAsync(orderNumber, cancellationToken);
         if (order is null)
             throw new DomainException($"Order {orderNumber} not found.");
+
+        // Idempotency: If order is already confirmed or beyond pending with recorded payment, safely exit
+        if (order.Status != OrderStatus.Pending && !string.IsNullOrWhiteSpace(order.PaymentId))
+        {
+            return;
+        }
 
         order.RecordPaymentSuccess(paymentId);
         await _orderRepository.UpdateAsync(order, cancellationToken);

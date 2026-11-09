@@ -90,6 +90,93 @@ namespace Dreamflykit.Infrastructure.Migrations
                     b.ToTable("CustomerAddresses", "public");
                 });
 
+            modelBuilder.Entity("Dreamflykit.Domain.Audit.AuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ActorType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("AffectedColumns")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<bool>("IsSuccess")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("NewValues")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime>("OccurredAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("OldValues")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecordId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("TableName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("TraceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OccurredAtUtc");
+
+                    b.HasIndex("Action", "OccurredAtUtc");
+
+                    b.HasIndex("EntityName", "RecordId");
+
+                    b.HasIndex("UserId", "OccurredAtUtc");
+
+                    b.ToTable("AuditLogs", "public");
+                });
+
             modelBuilder.Entity("Dreamflykit.Domain.Cart.Cart", b =>
                 {
                     b.Property<Guid>("Id")
@@ -168,7 +255,12 @@ namespace Dreamflykit.Infrastructure.Migrations
                     b.HasIndex("CartId", "ProductVariantId")
                         .IsUnique();
 
-                    b.ToTable("CartItems", "public");
+                    b.ToTable("CartItems", "public", t =>
+                        {
+                            t.HasCheckConstraint("CK_CartItems_Quantity_Positive", "\"Quantity\" > 0");
+
+                            t.HasCheckConstraint("CK_CartItems_UnitPrice_NonNegative", "\"UnitPrice\" >= 0");
+                        });
                 });
 
             modelBuilder.Entity("Dreamflykit.Domain.Catalog.Category", b =>
@@ -212,6 +304,65 @@ namespace Dreamflykit.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Categories", "public");
+                });
+
+            modelBuilder.Entity("Dreamflykit.Domain.Catalog.CategoryHubConfiguration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConfigPayloadJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("HeroActionText")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("HeroActionUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("HeroBadge")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("HeroBannerUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("HubSlug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Subtitle")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HubSlug")
+                        .IsUnique();
+
+                    b.HasIndex("IsActive");
+
+                    b.ToTable("CategoryHubConfigurations", "public");
                 });
 
             modelBuilder.Entity("Dreamflykit.Domain.Catalog.Product", b =>
@@ -466,7 +617,14 @@ namespace Dreamflykit.Infrastructure.Migrations
 
                     b.HasIndex("ProductId", "IsActive");
 
-                    b.ToTable("ProductVariants", "public");
+                    b.ToTable("ProductVariants", "public", t =>
+                        {
+                            t.HasCheckConstraint("CK_ProductVariants_Mrp_NonNegative", "\"Mrp\" >= 0");
+
+                            t.HasCheckConstraint("CK_ProductVariants_SellingPrice_Lte_Mrp", "\"SellingPrice\" <= \"Mrp\"");
+
+                            t.HasCheckConstraint("CK_ProductVariants_SellingPrice_NonNegative", "\"SellingPrice\" >= 0");
+                        });
                 });
 
             modelBuilder.Entity("Dreamflykit.Domain.Catalog.SellerCategoryAssignment", b =>
@@ -682,7 +840,12 @@ namespace Dreamflykit.Infrastructure.Migrations
                     b.HasIndex("WarehouseId", "ProductVariantId")
                         .IsUnique();
 
-                    b.ToTable("InventoryItems", "public");
+                    b.ToTable("InventoryItems", "public", t =>
+                        {
+                            t.HasCheckConstraint("CK_InventoryItems_AvailableQuantity_NonNegative", "\"AvailableQuantity\" >= 0");
+
+                            t.HasCheckConstraint("CK_InventoryItems_ReservedQuantity_NonNegative", "\"ReservedQuantity\" >= 0");
+                        });
                 });
 
             modelBuilder.Entity("Dreamflykit.Domain.Inventory.StockMovement", b =>
@@ -1375,7 +1538,14 @@ namespace Dreamflykit.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems", "public");
+                    b.ToTable("OrderItems", "public", t =>
+                        {
+                            t.HasCheckConstraint("CK_OrderItems_Mrp_NonNegative", "\"Mrp\" >= 0");
+
+                            t.HasCheckConstraint("CK_OrderItems_Quantity_Positive", "\"Quantity\" > 0");
+
+                            t.HasCheckConstraint("CK_OrderItems_UnitPrice_NonNegative", "\"UnitPrice\" >= 0");
+                        });
                 });
 
             modelBuilder.Entity("Dreamflykit.Domain.Wishlist.Wishlist", b =>
@@ -1679,6 +1849,32 @@ namespace Dreamflykit.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", "public");
                 });
 
+            modelBuilder.Entity("Dreamflykit.Domain.Addressing.CustomerAddress", b =>
+                {
+                    b.HasOne("Dreamflykit.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Dreamflykit.Domain.Audit.AuditLog", b =>
+                {
+                    b.HasOne("Dreamflykit.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("Dreamflykit.Domain.Cart.Cart", b =>
+                {
+                    b.HasOne("Dreamflykit.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Dreamflykit.Domain.Cart.CartItem", b =>
                 {
                     b.HasOne("Dreamflykit.Domain.Cart.Cart", null)
@@ -1709,6 +1905,11 @@ namespace Dreamflykit.Infrastructure.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Dreamflykit.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Dreamflykit.Domain.Catalog.Subcategory", null)
                         .WithMany()
@@ -1861,8 +2062,32 @@ namespace Dreamflykit.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
                 });
 
+            modelBuilder.Entity("Dreamflykit.Domain.Media.MediaAuditLog", b =>
+                {
+                    b.HasOne("Dreamflykit.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Dreamflykit.Domain.Media.MediaPermission", b =>
+                {
+                    b.HasOne("Dreamflykit.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Dreamflykit.Domain.Orders.Order", b =>
                 {
+                    b.HasOne("Dreamflykit.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.OwnsOne("Dreamflykit.Domain.Orders.OrderAddress", "BillingAddress", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
@@ -1995,6 +2220,15 @@ namespace Dreamflykit.Infrastructure.Migrations
                     b.HasOne("Dreamflykit.Domain.Orders.Order", null)
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Dreamflykit.Domain.Wishlist.Wishlist", b =>
+                {
+                    b.HasOne("Dreamflykit.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

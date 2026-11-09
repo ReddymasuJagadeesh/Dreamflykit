@@ -408,9 +408,9 @@ public class CountryKitsHubTests
 
         var jsonResult = Assert.IsType<JsonResult>(addResult);
 
-        dynamic data = jsonResult.Value!;
-
-        Assert.True((bool)data.success);
+        var prop = jsonResult.Value!.GetType().GetProperty("success");
+        Assert.NotNull(prop);
+        Assert.True((bool)prop.GetValue(jsonResult.Value)!);
 
 
 

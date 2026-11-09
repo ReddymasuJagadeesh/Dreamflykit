@@ -92,6 +92,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // ------------------------------------------------------------
+// Web Presentation Coordinators
+// ------------------------------------------------------------
+
+builder.Services.AddScoped<Dreamflykit.Web.Services.ICategoryHubCoordinator, Dreamflykit.Web.Services.CategoryHubCoordinator>();
+
+// ------------------------------------------------------------
 // MVC
 // ------------------------------------------------------------
 
@@ -119,6 +125,7 @@ using (var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
     await DatabaseSeeder.SeedRolesAndSuperAdminAsync(userManager, roleManager);
     await DatabaseSeeder.SeedMediaAndSectionsIfEmptyAsync(dbContext, userManager);
+    await DatabaseSeeder.SeedCategoryHubsFromFilesAsync(dbContext, app.Environment.WebRootPath);
 }
 
 // ------------------------------------------------------------

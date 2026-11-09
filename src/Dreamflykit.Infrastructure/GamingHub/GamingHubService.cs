@@ -1,124 +1,64 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
+using Dreamflykit.Application.Catalog.Interfaces;
 using Dreamflykit.Application.GamingHub.Interfaces;
 using Dreamflykit.Application.GamingHub.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace Dreamflykit.Infrastructure.GamingHub;
 
 public sealed class GamingHubService : IGamingHubService
 {
-    private const string CacheKey = "gaming_hub_config_cache";
-    private readonly IMemoryCache _cache;
-    private readonly IWebHostEnvironment _env;
+    private const string HubSlug = "gaming-hub";
+    private const string HubTitle = "Gaming Hub";
+    private const string FallbackFileName = "gaming_hub.json";
+
+    private readonly ICategoryHubRepository _hubRepository;
     private readonly ILogger<GamingHubService> _logger;
-    private readonly string _filePath;
-    private static readonly SemaphoreSlim Semaphore = new(1, 1);
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        WriteIndented = true
-    };
-
+    [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
     public GamingHubService(
-        IMemoryCache cache,
-        IWebHostEnvironment env,
+        ICategoryHubRepository hubRepository,
         ILogger<GamingHubService> logger)
     {
-        _cache = cache;
-        _env = env;
-        _logger = logger;
+        _hubRepository = hubRepository ?? throw new ArgumentNullException(nameof(hubRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
-        var rootPath = !string.IsNullOrWhiteSpace(env.WebRootPath)
-            ? env.WebRootPath
-            : Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-
-        _filePath = Path.Combine(rootPath, "data", "gaming_hub.json");
+    public GamingHubService(
+        Microsoft.Extensions.Caching.Memory.IMemoryCache cache,
+        Microsoft.AspNetCore.Hosting.IWebHostEnvironment env,
+        ILogger<GamingHubService> logger)
+        : this(new Dreamflykit.Infrastructure.Catalog.CategoryHubRepository(null, cache, env), logger)
+    {
     }
 
     public async Task<GamingHubDto> GetConfigAsync(CancellationToken ct = default)
     {
-        if (_cache.TryGetValue(CacheKey, out GamingHubDto? cached) && cached != null)
+        var dto = await _hubRepository.GetPayloadAsync<GamingHubDto>(HubSlug, FallbackFileName, ct);
+        if (dto != null)
         {
-            return cached;
-        }
-
-        await Semaphore.WaitAsync(ct);
-        try
-        {
-            if (_cache.TryGetValue(CacheKey, out cached) && cached != null)
-            {
-                return cached;
-            }
-
-            GamingHubDto? dto = null;
-            if (File.Exists(_filePath))
-            {
-                try
-                {
-                    var json = await File.ReadAllTextAsync(_filePath, ct);
-                    dto = JsonSerializer.Deserialize<GamingHubDto>(json, JsonOptions);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to read GamingHub configuration from {Path}", _filePath);
-                }
-            }
-
-            if (dto == null)
-            {
-                dto = GamingHubDto.CreateDefault();
-                await SaveToFileAsync(dto, ct);
-            }
-
-            // Ensure categories and subpages are populated
-            if (dto.ShopByCategory == null || dto.ShopByCategory.Items == null || dto.ShopByCategory.Items.Count == 0)
-            {
-                dto.ShopByCategory = new GamingShopByCategorySectionDto
-                {
-                    IsEnabled = true,
-                    Title = "Shop by Category",
-                    Subtitle = "Consoles, VR, Racing Wheels, Arcade, Handheld PCs & Gaming Ecosystem",
-                    Items = GamingHubDto.CreateDefaultCategoryItems()
-                };
-            }
-
-            if (dto.SubcategoryPages == null || dto.SubcategoryPages.Count == 0)
-            {
-                dto.SubcategoryPages = GamingHubDto.CreateDefaultSubcategoryPages();
-            }
-
-            _cache.Set(CacheKey, dto, TimeSpan.FromMinutes(20));
+            EnsureDefaults(dto);
             return dto;
         }
-        finally
-        {
-            Semaphore.Release();
-        }
+
+        var defaultDto = GamingHubDto.CreateDefault();
+        await _hubRepository.SavePayloadAsync(HubSlug, HubTitle, FallbackFileName, defaultDto, ct);
+        return defaultDto;
     }
 
     public async Task<bool> UpdateConfigAsync(GamingHubDto model, string? userId, CancellationToken ct = default)
     {
         if (model == null) return false;
 
-        await Semaphore.WaitAsync(ct);
         try
         {
-            var success = await SaveToFileAsync(model, ct);
-            if (success)
-            {
-                _cache.Set(CacheKey, model, TimeSpan.FromMinutes(20));
-                _logger.LogInformation("GamingHub configuration updated successfully by user {UserId}", userId);
-            }
-            return success;
+            await _hubRepository.SavePayloadAsync(HubSlug, HubTitle, FallbackFileName, model, ct);
+            _logger.LogInformation("GamingHub configuration updated successfully in PostgreSQL by user {UserId}", userId);
+            return true;
         }
-        finally
+        catch (Exception ex)
         {
-            Semaphore.Release();
+            _logger.LogError(ex, "Failed to persist GamingHub configuration to PostgreSQL");
+            return false;
         }
     }
 
@@ -134,7 +74,6 @@ public sealed class GamingHubService : IGamingHubService
 
         if (page == null)
         {
-            // Find category item name if present
             var item = config.ShopByCategory?.Items?.FirstOrDefault(i =>
                 string.Equals(i.Slug, normSlug, StringComparison.OrdinalIgnoreCase));
 
@@ -162,25 +101,22 @@ public sealed class GamingHubService : IGamingHubService
         return page;
     }
 
-    private async Task<bool> SaveToFileAsync(GamingHubDto dto, CancellationToken ct)
+    private static void EnsureDefaults(GamingHubDto dto)
     {
-        try
+        if (dto.ShopByCategory == null || dto.ShopByCategory.Items == null || dto.ShopByCategory.Items.Count == 0)
         {
-            var dir = Path.GetDirectoryName(_filePath);
-            if (!string.IsNullOrWhiteSpace(dir) && !Directory.Exists(dir))
+            dto.ShopByCategory = new GamingShopByCategorySectionDto
             {
-                Directory.CreateDirectory(dir);
-            }
-
-            var json = JsonSerializer.Serialize(dto, JsonOptions);
-            await File.WriteAllTextAsync(_filePath, json, ct);
-            return true;
+                IsEnabled = true,
+                Title = "Shop by Category",
+                Subtitle = "Consoles, VR, Racing Wheels, Arcade, Handheld PCs & Gaming Ecosystem",
+                Items = GamingHubDto.CreateDefaultCategoryItems()
+            };
         }
-        catch (Exception ex)
+
+        if (dto.SubcategoryPages == null || dto.SubcategoryPages.Count == 0)
         {
-            _logger.LogError(ex, "Failed to persist GamingHub configuration to {Path}", _filePath);
-            return false;
+            dto.SubcategoryPages = GamingHubDto.CreateDefaultSubcategoryPages();
         }
     }
 }
-
