@@ -14,7 +14,8 @@ services:
       - .env
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
-      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
+      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection:-Host=db;Port=5432;Database=dreamflykit;Username=dreamfly_user;Password=replace_with_strong_password_in_production}
+      - ConnectionStrings__Redis=${ConnectionStrings__Redis:-redis:6379,abortConnect=false}
       - Media__CdnBaseUrl=${Media__CdnBaseUrl}
       - Media__BucketName=${Media__BucketName}
       - Media__AwsRegion=${Media__AwsRegion}
@@ -23,10 +24,23 @@ services:
       - AwsS3__AccessKeyId=${AwsS3__AccessKeyId}
       - AwsS3__SecretAccessKey=${AwsS3__SecretAccessKey}
       - AwsS3__SessionToken=${AwsS3__SessionToken}
+      - EmailSettings__SmtpHost=${EmailSettings__SmtpHost}
+      - EmailSettings__SmtpPort=${EmailSettings__SmtpPort:-587}
+      - EmailSettings__Username=${EmailSettings__Username}
+      - EmailSettings__Password=${EmailSettings__Password}
+      - EmailSettings__EnableSsl=${EmailSettings__EnableSsl:-true}
+      - EmailSettings__FromEmail=${EmailSettings__FromEmail:-noreply@dreamflykit.com}
+      - EmailSettings__FromName=${EmailSettings__FromName:-Dreamflykit}
+      - Cashfree__AppId=${Cashfree__AppId}
+      - Cashfree__SecretKey=${Cashfree__SecretKey}
+      - Cashfree__Environment=${Cashfree__Environment:-PRODUCTION}
     volumes:
       - media_cache:/app/App_Data/MediaCache
+      - uploads_data:/app/wwwroot/uploads
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     security_opt:
       - no-new-privileges:true
@@ -65,14 +79,42 @@ services:
     networks:
       - dreamflykit-net
 
+  # ============================================================================
+  # Redis 7 Distributed Caching Service
+  # ============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: dreamflykit-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - dreamflykit-net
+
 # ==============================================================================
 # Persistent Storage Volumes & Networks
 # ==============================================================================
 volumes:
   postgres_data:
     name: dreamflykit_pgdata
+  redis_data:
+    name: dreamflykit_redisdata
   media_cache:
     name: dreamflykit_media_cache
+  uploads_data:
+    name: dreamflykit_uploads_data
 
 networks:
   dreamflykit-net:

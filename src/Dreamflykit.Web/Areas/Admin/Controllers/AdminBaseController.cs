@@ -1,3 +1,4 @@
+using Dreamflykit.Web.Areas.Admin.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -5,6 +6,7 @@ namespace Dreamflykit.Web.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "SuperAdmin,Admin")]
+[ServiceFilter(typeof(AdminMfaFilter))]
 public abstract class AdminBaseController : Controller
 {
     protected Guid CurrentUserId

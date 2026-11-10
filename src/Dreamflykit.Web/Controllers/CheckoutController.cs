@@ -12,6 +12,7 @@ using Dreamflykit.Web.Models.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Dreamflykit.Web.Controllers;
 
@@ -66,6 +67,7 @@ public sealed class CheckoutController : Controller
 
     [HttpPost("place-order")]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("checkout-policy")]
     public async Task<IActionResult> PlaceOrder(
         [FromForm] CheckoutViewModel model,
         CancellationToken cancellationToken)
@@ -174,6 +176,7 @@ public sealed class CheckoutController : Controller
 
     [HttpPost("VerifyPayment")]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("checkout-policy")]
     public async Task<IActionResult> VerifyPayment(
         [FromForm] string orderNumber,
         [FromForm] string? paymentMethod,

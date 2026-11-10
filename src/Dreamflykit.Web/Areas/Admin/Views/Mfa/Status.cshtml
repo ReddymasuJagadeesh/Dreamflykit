@@ -1,0 +1,44 @@
+@model Dreamflykit.Web.Areas.Admin.Models.MfaStatusViewModel
+@{
+    ViewData["Title"] = "MFA Security Status";
+}
+
+<div class="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white shadow rounded-xl p-8 border border-gray-100">
+        <div class="flex items-center space-x-3 mb-6">
+            <div class="w-12 h-12 rounded-full @(Model.Is2faEnabled ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600") flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">MFA Security Status</h1>
+                <p class="text-sm text-gray-500">Administrator Two-Factor Authentication</p>
+            </div>
+        </div>
+
+        <div class="space-y-4 mb-6">
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <span class="text-sm font-medium text-gray-700">TOTP Authenticator Protection:</span>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold @(Model.Is2faEnabled ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")">
+                    @(Model.Is2faEnabled ? "Enabled & Active" : "Disabled")
+                </span>
+            </div>
+
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <span class="text-sm font-medium text-gray-700">Emergency Recovery Codes Remaining:</span>
+                <span class="text-sm font-mono font-bold text-gray-900">@Model.RecoveryCodesLeft</span>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4 pt-4 border-t border-gray-100">
+            <a asp-action="Setup" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Reconfigure Authenticator App
+            </a>
+            <a href="/Admin/Dashboard" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+

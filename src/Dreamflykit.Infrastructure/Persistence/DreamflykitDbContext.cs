@@ -38,6 +38,8 @@ public sealed class DreamflykitDbContext
 
     public DbSet<ProductVariant> ProductVariants =>Set<ProductVariant>();
 
+    public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
+
     public DbSet<ProductMedia> ProductMedia =>
     Set<ProductMedia>();
 
@@ -380,6 +382,63 @@ public sealed class DreamflykitDbContext
                 .WithMany()
                 .HasForeignKey(x => x.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ------------------------------------------------------------
+        // Product Review
+        // ------------------------------------------------------------
+
+        builder.Entity<ProductReview>(entity =>
+        {
+            entity.ToTable("ProductReviews", t =>
+            {
+                t.HasCheckConstraint("CK_ProductReviews_Rating_Range", "\"Rating\" >= 1 AND \"Rating\" <= 5");
+            });
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.ProductId)
+                .IsRequired();
+
+            entity.Property(x => x.UserId)
+                .IsRequired();
+
+            entity.Property(x => x.CustomerName)
+                .HasMaxLength(150)
+                .IsRequired();
+
+            entity.Property(x => x.Rating)
+                .IsRequired();
+
+            entity.Property(x => x.Title)
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.Property(x => x.Comment)
+                .HasMaxLength(4000)
+                .IsRequired();
+
+            entity.Property(x => x.IsVerifiedPurchase)
+                .IsRequired();
+
+            entity.Property(x => x.IsApproved)
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAtUtc)
+                .IsRequired();
+
+            entity.HasOne<Product>()
+                .WithMany()
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(x => new { x.ProductId, x.IsApproved });
+            entity.HasIndex(x => x.UserId);
         });
 
         // --------------------------------------------------------

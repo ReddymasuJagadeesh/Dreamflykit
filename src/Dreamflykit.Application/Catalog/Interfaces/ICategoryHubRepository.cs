@@ -15,5 +15,7 @@ public interface ICategoryHubRepository
     Task SavePayloadAsync<T>(string hubSlug, string title, string fallbackFileName, T payload, CancellationToken ct = default) where T : class;
 
     Task<List<CategoryHubConfiguration>> GetAllActiveAsync(CancellationToken ct = default);
+
+    Task InvalidateHubCacheAsync(string hubSlug, CancellationToken ct = default);
 }
 

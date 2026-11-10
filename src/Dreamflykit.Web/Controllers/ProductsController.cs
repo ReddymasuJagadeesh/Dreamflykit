@@ -24,14 +24,17 @@ public sealed class ProductsController : Controller
 {
     private readonly IProductService _productService;
     private readonly ICategoryHubCoordinator _categoryHubCoordinator;
+    private readonly IProductReviewService? _productReviewService;
 
     [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
     public ProductsController(
         IProductService productService,
-        ICategoryHubCoordinator categoryHubCoordinator)
+        ICategoryHubCoordinator categoryHubCoordinator,
+        IProductReviewService? productReviewService = null)
     {
         _productService = productService ?? throw new ArgumentNullException(nameof(productService));
         _categoryHubCoordinator = categoryHubCoordinator ?? throw new ArgumentNullException(nameof(categoryHubCoordinator));
+        _productReviewService = productReviewService;
     }
 
     [Obsolete("Use ProductsController(IProductService, ICategoryHubCoordinator)")]
@@ -229,10 +232,21 @@ public sealed class ProductsController : Controller
             similarItems.AddRange(fallbackItems);
         }
 
+        ProductRatingSummaryDto ratingSummary = new();
+        IReadOnlyList<ProductReviewDto> reviews = Array.Empty<ProductReviewDto>();
+
+        if (_productReviewService != null)
+        {
+            ratingSummary = await _productReviewService.GetRatingSummaryAsync(product.ProductId, cancellationToken);
+            reviews = await _productReviewService.GetApprovedReviewsAsync(product.ProductId, take: 10, cancellationToken);
+        }
+
         var model = new ProductDetailsViewModel
         {
             ProductId = product.ProductId,
             SimilarProducts = similarItems,
+            RatingSummary = ratingSummary,
+            Reviews = reviews,
             Name = product.Name,
             Slug = product.Slug,
             Description = product.Description,

@@ -1,11 +1,13 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using Dreamflykit.Application.Caching.Interfaces;
 using Dreamflykit.Application.Catalog.Interfaces;
 using Dreamflykit.Domain.Catalog;
 using Dreamflykit.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Dreamflykit.Infrastructure.Catalog;
@@ -14,6 +16,7 @@ public sealed class CategoryHubRepository : ICategoryHubRepository
 {
     private readonly DreamflykitDbContext? _context;
     private readonly IMemoryCache _cache;
+    private readonly ICacheService? _cacheService;
     private readonly IWebHostEnvironment _env;
     private readonly ILogger<CategoryHubRepository> _logger;
 
@@ -28,7 +31,7 @@ public sealed class CategoryHubRepository : ICategoryHubRepository
         DreamflykitDbContext? context,
         IMemoryCache cache,
         IWebHostEnvironment env)
-        : this(context, cache, env, Microsoft.Extensions.Logging.Abstractions.NullLogger<CategoryHubRepository>.Instance)
+        : this(context, cache, env, Microsoft.Extensions.Logging.Abstractions.NullLogger<CategoryHubRepository>.Instance, null)
     {
     }
 
@@ -37,11 +40,23 @@ public sealed class CategoryHubRepository : ICategoryHubRepository
         IMemoryCache cache,
         IWebHostEnvironment env,
         ILogger<CategoryHubRepository>? logger)
+        : this(context, cache, env, logger, null)
+    {
+    }
+
+    [ActivatorUtilitiesConstructor]
+    public CategoryHubRepository(
+        DreamflykitDbContext? context,
+        IMemoryCache cache,
+        IWebHostEnvironment env,
+        ILogger<CategoryHubRepository>? logger,
+        ICacheService? cacheService = null)
     {
         _context = context;
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _env = env ?? throw new ArgumentNullException(nameof(env));
         _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<CategoryHubRepository>.Instance;
+        _cacheService = cacheService;
     }
 
     public async Task<CategoryHubConfiguration?> GetBySlugAsync(string hubSlug, CancellationToken ct = default)
@@ -61,7 +76,15 @@ public sealed class CategoryHubRepository : ICategoryHubRepository
         var normalizedSlug = hubSlug.Trim().ToLowerInvariant();
         var cacheKey = $"category_hub_payload_{normalizedSlug}";
 
-        if (_cache.TryGetValue(cacheKey, out T? cached) && cached != null)
+        if (_cacheService != null)
+        {
+            var distributed = await _cacheService.GetAsync<T>(cacheKey, ct);
+            if (distributed != null)
+            {
+                return distributed;
+            }
+        }
+        else if (_cache.TryGetValue(cacheKey, out T? cached) && cached != null)
         {
             return cached;
         }
@@ -80,7 +103,14 @@ public sealed class CategoryHubRepository : ICategoryHubRepository
                     var parsed = JsonSerializer.Deserialize<T>(config.ConfigPayloadJson, JsonOptions);
                     if (parsed != null)
                     {
-                        _cache.Set(cacheKey, parsed, TimeSpan.FromMinutes(30));
+                        if (_cacheService != null)
+                        {
+                            await _cacheService.SetAsync(cacheKey, parsed, TimeSpan.FromMinutes(30), ct);
+                        }
+                        else
+                        {
+                            _cache.Set(cacheKey, parsed, TimeSpan.FromMinutes(30));
+                        }
                         return parsed;
                     }
                 }
@@ -110,7 +140,14 @@ public sealed class CategoryHubRepository : ICategoryHubRepository
                         await AutoSeedToDatabaseAsync(normalizedSlug, hubSlug, fileJson, ct);
                     }
 
-                    _cache.Set(cacheKey, parsedFromFile, TimeSpan.FromMinutes(30));
+                    if (_cacheService != null)
+                    {
+                        await _cacheService.SetAsync(cacheKey, parsedFromFile, TimeSpan.FromMinutes(30), ct);
+                    }
+                    else
+                    {
+                        _cache.Set(cacheKey, parsedFromFile, TimeSpan.FromMinutes(30));
+                    }
                     return parsedFromFile;
                 }
             }
@@ -166,9 +203,16 @@ public sealed class CategoryHubRepository : ICategoryHubRepository
             await _context.SaveChangesAsync(ct);
         }
 
-        // Update cache
+        // Update cache across both local memory and distributed cache
         var cacheKey = $"category_hub_payload_{normalizedSlug}";
-        _cache.Set(cacheKey, payload, TimeSpan.FromMinutes(30));
+        if (_cacheService != null)
+        {
+            await _cacheService.SetAsync(cacheKey, payload, TimeSpan.FromMinutes(30), ct);
+        }
+        else
+        {
+            _cache.Set(cacheKey, payload, TimeSpan.FromMinutes(30));
+        }
 
         // Mirror to fallback file for backward compatibility
         try
@@ -186,6 +230,23 @@ public sealed class CategoryHubRepository : ICategoryHubRepository
         {
             _logger.LogWarning(ex, "Failed to mirror hub '{Slug}' to flat file {File}", normalizedSlug, fallbackFileName);
         }
+    }
+
+    public async Task InvalidateHubCacheAsync(string hubSlug, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(hubSlug)) return;
+
+        var normalizedSlug = hubSlug.Trim().ToLowerInvariant();
+        var cacheKey = $"category_hub_payload_{normalizedSlug}";
+
+        _cache.Remove(cacheKey);
+
+        if (_cacheService != null)
+        {
+            await _cacheService.RemoveAsync(cacheKey, ct);
+        }
+
+        _logger.LogInformation("Invalidated cache for category hub '{Slug}'", normalizedSlug);
     }
 
     public async Task<List<CategoryHubConfiguration>> GetAllActiveAsync(CancellationToken ct = default)

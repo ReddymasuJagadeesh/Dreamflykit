@@ -1,5 +1,8 @@
+using Dreamflykit.Application.Email.Interfaces;
+using Dreamflykit.Infrastructure.Email;
 using Dreamflykit.Application.Addressing.Interfaces;
 using Dreamflykit.Application.Addressing.Services;
+using Dreamflykit.Application.Caching.Interfaces;
 using Dreamflykit.Application.Cart.Interfaces;
 using Dreamflykit.Application.Cart.Services;
 using Dreamflykit.Application.Catalog.Interfaces;
@@ -15,6 +18,7 @@ using Dreamflykit.Application.Payments.Interfaces;
 using Dreamflykit.Application.Wishlist.Interfaces;
 using Dreamflykit.Application.Wishlist.Services;
 using Dreamflykit.Infrastructure.Addressing;
+using Dreamflykit.Infrastructure.Caching;
 using Dreamflykit.Infrastructure.Cart;
 using Dreamflykit.Infrastructure.Categories;
 using Dreamflykit.Infrastructure.Geography;
@@ -32,6 +36,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace Dreamflykit.Infrastructure.DependencyInjection;
 
@@ -51,6 +56,10 @@ public static class InfrastructureServiceCollectionExtensions
         RegisterIdentity(services);
 
         RegisterApplicationServices(services, configuration);
+
+        RegisterCaching(services, configuration);
+
+        RegisterEmail(services, configuration);
 
         return services;
     }
@@ -179,6 +188,10 @@ public static class InfrastructureServiceCollectionExtensions
             IProductService,
             ProductService>();
 
+        services.AddScoped<
+            IProductReviewService,
+            ProductReviewService>();
+
 
         // Categories
 
@@ -270,8 +283,8 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<IHeaderAdService, HeaderAdService>();
         services.AddHostedService<MediaCleanupBackgroundService>();
 
-        // Theme & Typography Management
-        services.AddMemoryCache();
+        // Multi-tier distributed & memory caching (Redis L2 + Memory L1)
+        RegisterCaching(services, configuration);
         services.AddScoped<Dreamflykit.Application.Catalog.Interfaces.ICategoryHubRepository, Dreamflykit.Infrastructure.Catalog.CategoryHubRepository>();
         services.AddScoped<Dreamflykit.Application.Theme.IThemeSettingService, Dreamflykit.Infrastructure.Theme.ThemeSettingService>();
 
@@ -279,43 +292,56 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<Dreamflykit.Application.Logo.ILogoSettingService, Dreamflykit.Infrastructure.Logo.LogoSettingService>();
 
         // Study Essentials Hub Service
-        services.AddScoped<Dreamflykit.Application.StudyHub.Interfaces.IStudyHubService, Dreamflykit.Infrastructure.StudyHub.StudyHubService>();
+        services.AddScoped<Dreamflykit.Application.StudyHub.Interfaces.IStudyHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.StudyHub.StudyHubService>(sp));
 
         // Fashion Category Hub Service
-        services.AddScoped<Dreamflykit.Application.FashionHub.Interfaces.IFashionHubService, Dreamflykit.Infrastructure.FashionHub.FashionHubService>();
+        services.AddScoped<Dreamflykit.Application.FashionHub.Interfaces.IFashionHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.FashionHub.FashionHubService>(sp));
 
         // Health Care Category Hub Service
-        services.AddScoped<Dreamflykit.Application.HealthHub.Interfaces.IHealthHubService, Dreamflykit.Infrastructure.HealthHub.HealthHubService>();
+        services.AddScoped<Dreamflykit.Application.HealthHub.Interfaces.IHealthHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.HealthHub.HealthHubService>(sp));
 
         // Mobiles Category Hub Service (Flipkart Template & 3D Visualization)
-        services.AddScoped<Dreamflykit.Application.MobilesHub.Interfaces.IMobilesHubService, Dreamflykit.Infrastructure.MobilesHub.MobilesHubService>();
+        services.AddScoped<Dreamflykit.Application.MobilesHub.Interfaces.IMobilesHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.MobilesHub.MobilesHubService>(sp));
 
         // Appliances Category Hub Service (Flipkart TV & Appliances Store Template)
-        services.AddScoped<Dreamflykit.Application.AppliancesHub.Interfaces.IAppliancesHubService, Dreamflykit.Infrastructure.AppliancesHub.AppliancesHubService>();
+        services.AddScoped<Dreamflykit.Application.AppliancesHub.Interfaces.IAppliancesHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.AppliancesHub.AppliancesHubService>(sp));
 
         // Beauty Category Hub Service (Flipkart Beauty & Personal Care Store Template)
-        services.AddScoped<Dreamflykit.Application.BeautyHub.Interfaces.IBeautyHubService, Dreamflykit.Infrastructure.BeautyHub.BeautyHubService>();
+        services.AddScoped<Dreamflykit.Application.BeautyHub.Interfaces.IBeautyHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.BeautyHub.BeautyHubService>(sp));
 
         // Food & Grocery Category Hub Service (FreshBasket Template)
-        services.AddScoped<Dreamflykit.Application.FoodHub.Interfaces.IFoodHubService, Dreamflykit.Infrastructure.FoodHub.FoodHubService>();
+        services.AddScoped<Dreamflykit.Application.FoodHub.Interfaces.IFoodHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.FoodHub.FoodHubService>(sp));
 
         // Travel Gear Category Hub Service (Dreamflykit Travel Template)
-        services.AddScoped<Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService, Dreamflykit.Infrastructure.TravelHub.TravelHubService>();
+        services.AddScoped<Dreamflykit.Application.TravelHub.Interfaces.ITravelHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.TravelHub.TravelHubService>(sp));
 
         // Luggage & Bags Category Hub Service
-        services.AddScoped<Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService, Dreamflykit.Infrastructure.LuggageHub.LuggageHubService>();
+        services.AddScoped<Dreamflykit.Application.LuggageHub.Interfaces.ILuggageHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.LuggageHub.LuggageHubService>(sp));
 
         // Electronics Category Hub Service
-        services.AddScoped<Dreamflykit.Application.ElectronicsHub.Interfaces.IElectronicsHubService, Dreamflykit.Infrastructure.ElectronicsHub.ElectronicsHubService>();
+        services.AddScoped<Dreamflykit.Application.ElectronicsHub.Interfaces.IElectronicsHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.ElectronicsHub.ElectronicsHubService>(sp));
 
         // Story Books Category Hub Service (BooksFlix Netflix Theme)
-        services.AddScoped<Dreamflykit.Application.StoryBooksHub.Interfaces.IStoryBooksHubService, Dreamflykit.Infrastructure.StoryBooksHub.StoryBooksHubService>();
+        services.AddScoped<Dreamflykit.Application.StoryBooksHub.Interfaces.IStoryBooksHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.StoryBooksHub.StoryBooksHubService>(sp));
 
         // Gaming Hub Service (Consoles, VR, Retro Arcades & Accessories)
-        services.AddScoped<Dreamflykit.Application.GamingHub.Interfaces.IGamingHubService, Dreamflykit.Infrastructure.GamingHub.GamingHubService>();
+        services.AddScoped<Dreamflykit.Application.GamingHub.Interfaces.IGamingHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.GamingHub.GamingHubService>(sp));
 
         // Sports Hub Service (12 Sports Categories, Subcategory Hubs & Products)
-        services.AddScoped<Dreamflykit.Application.SportsHub.Interfaces.ISportsHubService, Dreamflykit.Infrastructure.SportsHub.SportsHubService>();
+        services.AddScoped<Dreamflykit.Application.SportsHub.Interfaces.ISportsHubService>(sp =>
+            ActivatorUtilities.CreateInstance<Dreamflykit.Infrastructure.SportsHub.SportsHubService>(sp));
 
         // 3-Section Synchronized Category Sliders (All Categories)
         services.AddScoped<Dreamflykit.Application.CategoryShowcase.Interfaces.ICategoryThreeSectionSliderService, Dreamflykit.Infrastructure.CategoryShowcase.CategoryThreeSectionSliderService>();
@@ -325,5 +351,58 @@ public static class InfrastructureServiceCollectionExtensions
 
         // Central Enterprise Audit Logging
         services.AddScoped<Dreamflykit.Application.Audit.Interfaces.IAuditLogService, Dreamflykit.Infrastructure.Audit.AuditLogService>();
+
+        // Shipping & Fulfillment Provider
+        services.AddScoped<Dreamflykit.Application.Shipping.Interfaces.IShippingService, Dreamflykit.Infrastructure.Shipping.DefaultShippingService>();
+    }
+
+    private static void RegisterCaching(
+        IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddMemoryCache();
+
+        var redisConnection = configuration.GetConnectionString("Redis");
+        if (!string.IsNullOrWhiteSpace(redisConnection))
+        {
+            try
+            {
+                var configOptions = ConfigurationOptions.Parse(redisConnection);
+                configOptions.AbortOnConnectFail = false;
+                configOptions.ConnectTimeout = 3000;
+                configOptions.SyncTimeout = 3000;
+
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.ConfigurationOptions = configOptions;
+                    options.InstanceName = "Dreamflykit:";
+                });
+
+                services.AddSingleton<IConnectionMultiplexer>(sp =>
+                {
+                    return ConnectionMultiplexer.Connect(configOptions);
+                });
+            }
+            catch (Exception)
+            {
+                services.AddDistributedMemoryCache();
+            }
+        }
+        else
+        {
+            services.AddDistributedMemoryCache();
+        }
+
+        services.AddSingleton<ICacheService, CacheService>();
+    }
+
+    private static void RegisterEmail(
+        IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.Configure<EmailSettings>(
+            configuration.GetSection(EmailSettings.SectionName));
+
+        services.AddScoped<IEmailService, SmtpEmailSender>();
     }
 }

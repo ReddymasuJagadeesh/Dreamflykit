@@ -1,8 +1,10 @@
 using System.Text.Json;
+using Dreamflykit.Application.Caching.Interfaces;
 using Dreamflykit.Application.CountryKits.Interfaces;
 using Dreamflykit.Application.CountryKits.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Dreamflykit.Infrastructure.CountryKits;
@@ -12,6 +14,7 @@ public sealed class CountryKitsHubService : ICountryKitsHubService
     private const string CacheKey = "CountryKitsHub_Data";
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     private readonly IMemoryCache _cache;
+    private readonly ICacheService? _cacheService;
     private readonly IWebHostEnvironment _env;
     private readonly ILogger<CountryKitsHubService> _logger;
     private readonly string _filePath;
@@ -26,15 +29,46 @@ public sealed class CountryKitsHubService : ICountryKitsHubService
         IMemoryCache cache,
         IWebHostEnvironment env,
         ILogger<CountryKitsHubService> logger)
+        : this(cache, env, logger, null)
     {
-        _cache = cache;
-        _env = env;
-        _logger = logger;
+    }
+
+    [ActivatorUtilitiesConstructor]
+    public CountryKitsHubService(
+        IMemoryCache cache,
+        IWebHostEnvironment env,
+        ILogger<CountryKitsHubService> logger,
+        ICacheService? cacheService = null)
+    {
+        _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+        _cacheService = cacheService;
+        _env = env ?? throw new ArgumentNullException(nameof(env));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _filePath = Path.Combine(_env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"), "data", "country_kits_hub.json");
     }
 
     public async Task<CountryKitsHubDto> GetAllProfilesAsync(CancellationToken ct = default)
     {
+        if (_cacheService != null)
+        {
+            return await _cacheService.GetOrCreateAsync(
+                CacheKey,
+                async ctInner =>
+                {
+                    await Semaphore.WaitAsync(ctInner);
+                    try
+                    {
+                        return await LoadProfilesInternalAsync(ctInner);
+                    }
+                    finally
+                    {
+                        Semaphore.Release();
+                    }
+                },
+                TimeSpan.FromHours(2),
+                ct);
+        }
+
         if (_cache.TryGetValue(CacheKey, out CountryKitsHubDto? cached) && cached != null)
         {
             return cached;
@@ -106,6 +140,10 @@ public sealed class CountryKitsHubService : ICountryKitsHubService
             if (success)
             {
                 _cache.Set(CacheKey, all, TimeSpan.FromMinutes(30));
+                if (_cacheService != null)
+                {
+                    await _cacheService.SetAsync(CacheKey, all, TimeSpan.FromHours(2), ct);
+                }
                 _logger.LogInformation("Saved Country Kits profile for '{Slug}'", slug);
             }
             return success;
@@ -137,6 +175,10 @@ public sealed class CountryKitsHubService : ICountryKitsHubService
                 if (success)
                 {
                     _cache.Set(CacheKey, all, TimeSpan.FromMinutes(30));
+                    if (_cacheService != null)
+                    {
+                        await _cacheService.SetAsync(CacheKey, all, TimeSpan.FromHours(2), ct);
+                    }
                     _logger.LogInformation("Deleted Country Kits profile for '{Slug}'", slug);
                 }
                 return success;
@@ -167,6 +209,10 @@ public sealed class CountryKitsHubService : ICountryKitsHubService
                 if (success)
                 {
                     _cache.Set(CacheKey, defaults, TimeSpan.FromMinutes(30));
+                    if (_cacheService != null)
+                    {
+                        await _cacheService.SetAsync(CacheKey, defaults, TimeSpan.FromHours(2), ct);
+                    }
                 }
                 return success;
             }
@@ -188,6 +234,10 @@ public sealed class CountryKitsHubService : ICountryKitsHubService
                 if (success)
                 {
                     _cache.Set(CacheKey, all, TimeSpan.FromMinutes(30));
+                    if (_cacheService != null)
+                    {
+                        await _cacheService.SetAsync(CacheKey, all, TimeSpan.FromHours(2), ct);
+                    }
                 }
                 return success;
             }
