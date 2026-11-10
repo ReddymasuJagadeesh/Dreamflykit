@@ -1,140 +1,92 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using Dreamflykit.Application.AppliancesHub.Interfaces;
 using Dreamflykit.Application.AppliancesHub.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Caching.Memory;
+using Dreamflykit.Application.Catalog.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Dreamflykit.Infrastructure.AppliancesHub;
 
 public sealed class AppliancesHubService : IAppliancesHubService
 {
-    private const string CacheKey = "appliances_category_hub_cache";
-    private readonly IMemoryCache _cache;
-    private readonly IWebHostEnvironment _env;
+    private const string HubSlug = "appliances";
+    private const string HubTitle = "Appliances Hub";
+    private const string FallbackFileName = "appliances_hub.json";
+
+    private readonly ICategoryHubRepository _hubRepository;
     private readonly ILogger<AppliancesHubService> _logger;
-    private readonly string _filePath;
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        WriteIndented = true
-    };
-
+    [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
     public AppliancesHubService(
-        IMemoryCache cache,
-        IWebHostEnvironment env,
+        ICategoryHubRepository hubRepository,
         ILogger<AppliancesHubService> logger)
     {
-        _cache = cache;
-        _env = env;
-        _logger = logger;
+        _hubRepository = hubRepository ?? throw new ArgumentNullException(nameof(hubRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
-        var rootPath = !string.IsNullOrWhiteSpace(env.WebRootPath)
-            ? env.WebRootPath
-            : Path.Combine(AppContext.BaseDirectory, "wwwroot");
-
-        var dataDir = Path.Combine(rootPath, "data");
-        if (!Directory.Exists(dataDir))
-        {
-            try
-            {
-                Directory.CreateDirectory(dataDir);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Could not create directory: {DataDir}", dataDir);
-            }
-        }
-
-        _filePath = Path.Combine(dataDir, "appliances_hub.json");
+    public AppliancesHubService(
+        Microsoft.Extensions.Caching.Memory.IMemoryCache cache,
+        Microsoft.AspNetCore.Hosting.IWebHostEnvironment env,
+        ILogger<AppliancesHubService> logger)
+        : this(new Dreamflykit.Infrastructure.Catalog.CategoryHubRepository(null, cache, env), logger)
+    {
     }
 
     public async Task<AppliancesHubDto> GetConfigAsync(CancellationToken cancellationToken = default)
     {
-        if (_cache.TryGetValue(CacheKey, out AppliancesHubDto? cached) && cached != null)
+        var dto = await _hubRepository.GetPayloadAsync<AppliancesHubDto>(HubSlug, FallbackFileName, cancellationToken);
+        if (dto != null)
         {
-            return cached;
-        }
-
-        if (File.Exists(_filePath))
-        {
-            try
-            {
-                var json = await File.ReadAllTextAsync(_filePath, cancellationToken);
-                if (!string.IsNullOrWhiteSpace(json))
-                {
-                    var dto = JsonSerializer.Deserialize<AppliancesHubDto>(json, JsonOptions);
-                    if (dto != null)
-                    {
-                        var def = AppliancesHubDto.CreateDefault();
-                        dto.ThemeSettings ??= def.ThemeSettings;
-                        dto.HeroBanner ??= def.HeroBanner;
-                        if (dto.HeroBanner.Slides == null || dto.HeroBanner.Slides.Count == 0)
-                        {
-                            dto.HeroBanner.Slides = def.HeroBanner.Slides;
-                        }
-                        dto.BankOffer ??= def.BankOffer;
-                        dto.SubCategories ??= def.SubCategories;
-                        if (dto.SubCategories.Items == null || dto.SubCategories.Items.Count == 0)
-                        {
-                            dto.SubCategories.Items = def.SubCategories.Items;
-                        }
-                        dto.BrandSpotlight ??= def.BrandSpotlight;
-                        dto.CreditPromos ??= def.CreditPromos;
-                        dto.LimitedTimeDeals ??= def.LimitedTimeDeals;
-                        if (dto.LimitedTimeDeals.Slots == null || dto.LimitedTimeDeals.Slots.Count == 0)
-                        {
-                            dto.LimitedTimeDeals.Slots = def.LimitedTimeDeals.Slots;
-                        }
-                        dto.GoldenHighlights ??= def.GoldenHighlights;
-                        if (dto.GoldenHighlights.Items == null || dto.GoldenHighlights.Items.Count == 0)
-                        {
-                            dto.GoldenHighlights.Items = def.GoldenHighlights.Items;
-                        }
-                        dto.HomeAppliancesDeals ??= def.HomeAppliancesDeals;
-                        dto.KitchenAppliancesDeals ??= def.KitchenAppliancesDeals;
-                        dto.NoCostEmiSection ??= def.NoCostEmiSection;
-                        dto.EverydayLivingSection ??= def.EverydayLivingSection;
-                        dto.SubcategoryPages ??= def.SubcategoryPages;
-                        if (dto.SubcategoryPages == null || dto.SubcategoryPages.Count == 0)
-                        {
-                            dto.SubcategoryPages = def.SubcategoryPages;
-                        }
-
-                        _cache.Set(CacheKey, dto, TimeSpan.FromHours(4));
-                        return dto;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed reading appliances hub config from {FilePath}", _filePath);
-            }
+            EnsureDefaults(dto);
+            return dto;
         }
 
         var defaultDto = AppliancesHubDto.CreateDefault();
-        _cache.Set(CacheKey, defaultDto, TimeSpan.FromHours(4));
+        await _hubRepository.SavePayloadAsync(HubSlug, HubTitle, FallbackFileName, defaultDto, cancellationToken);
         return defaultDto;
     }
 
     public async Task UpdateConfigAsync(AppliancesHubDto dto, Guid? updatedBy, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(dto);
+        await _hubRepository.SavePayloadAsync(HubSlug, HubTitle, FallbackFileName, dto, cancellationToken);
+        _logger.LogInformation("Appliances Hub configuration updated in PostgreSQL by {UserId}", updatedBy);
+    }
 
-        try
+    private static void EnsureDefaults(AppliancesHubDto dto)
+    {
+        var def = AppliancesHubDto.CreateDefault();
+        dto.ThemeSettings ??= def.ThemeSettings;
+        dto.HeroBanner ??= def.HeroBanner;
+        if (dto.HeroBanner.Slides == null || dto.HeroBanner.Slides.Count == 0)
         {
-            var json = JsonSerializer.Serialize(dto, JsonOptions);
-            await File.WriteAllTextAsync(_filePath, json, cancellationToken);
-            _cache.Set(CacheKey, dto, TimeSpan.FromHours(4));
-            _logger.LogInformation("Appliances Hub configuration updated by {UserId}", updatedBy);
+            dto.HeroBanner.Slides = def.HeroBanner.Slides;
         }
-        catch (Exception ex)
+        dto.BankOffer ??= def.BankOffer;
+        dto.SubCategories ??= def.SubCategories;
+        if (dto.SubCategories.Items == null || dto.SubCategories.Items.Count == 0)
         {
-            _logger.LogError(ex, "Failed writing appliances hub config to {FilePath}", _filePath);
-            throw;
+            dto.SubCategories.Items = def.SubCategories.Items;
+        }
+        dto.BrandSpotlight ??= def.BrandSpotlight;
+        dto.CreditPromos ??= def.CreditPromos;
+        dto.LimitedTimeDeals ??= def.LimitedTimeDeals;
+        if (dto.LimitedTimeDeals.Slots == null || dto.LimitedTimeDeals.Slots.Count == 0)
+        {
+            dto.LimitedTimeDeals.Slots = def.LimitedTimeDeals.Slots;
+        }
+        dto.GoldenHighlights ??= def.GoldenHighlights;
+        if (dto.GoldenHighlights.Items == null || dto.GoldenHighlights.Items.Count == 0)
+        {
+            dto.GoldenHighlights.Items = def.GoldenHighlights.Items;
+        }
+        dto.HomeAppliancesDeals ??= def.HomeAppliancesDeals;
+        dto.KitchenAppliancesDeals ??= def.KitchenAppliancesDeals;
+        dto.NoCostEmiSection ??= def.NoCostEmiSection;
+        dto.EverydayLivingSection ??= def.EverydayLivingSection;
+        dto.SubcategoryPages ??= def.SubcategoryPages;
+        if (dto.SubcategoryPages == null || dto.SubcategoryPages.Count == 0)
+        {
+            dto.SubcategoryPages = def.SubcategoryPages;
         }
     }
 }

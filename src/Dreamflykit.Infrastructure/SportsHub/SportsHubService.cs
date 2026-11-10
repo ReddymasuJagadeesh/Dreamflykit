@@ -1,124 +1,64 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
+using Dreamflykit.Application.Catalog.Interfaces;
 using Dreamflykit.Application.SportsHub.Interfaces;
 using Dreamflykit.Application.SportsHub.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace Dreamflykit.Infrastructure.SportsHub;
 
 public sealed class SportsHubService : ISportsHubService
 {
-    private const string CacheKey = "sports_hub_config_cache";
-    private readonly IMemoryCache _cache;
-    private readonly IWebHostEnvironment _env;
+    private const string HubSlug = "sports-hub";
+    private const string HubTitle = "Sports Hub";
+    private const string FallbackFileName = "sports_hub.json";
+
+    private readonly ICategoryHubRepository _hubRepository;
     private readonly ILogger<SportsHubService> _logger;
-    private readonly string _filePath;
-    private static readonly SemaphoreSlim Semaphore = new(1, 1);
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        WriteIndented = true
-    };
-
+    [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
     public SportsHubService(
-        IMemoryCache cache,
-        IWebHostEnvironment env,
+        ICategoryHubRepository hubRepository,
         ILogger<SportsHubService> logger)
     {
-        _cache = cache;
-        _env = env;
-        _logger = logger;
+        _hubRepository = hubRepository ?? throw new ArgumentNullException(nameof(hubRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
-        var rootPath = !string.IsNullOrWhiteSpace(env.WebRootPath)
-            ? env.WebRootPath
-            : Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-
-        _filePath = Path.Combine(rootPath, "data", "sports_hub.json");
+    public SportsHubService(
+        Microsoft.Extensions.Caching.Memory.IMemoryCache cache,
+        Microsoft.AspNetCore.Hosting.IWebHostEnvironment env,
+        ILogger<SportsHubService> logger)
+        : this(new Dreamflykit.Infrastructure.Catalog.CategoryHubRepository(null, cache, env), logger)
+    {
     }
 
     public async Task<SportsHubDto> GetConfigAsync(CancellationToken ct = default)
     {
-        if (_cache.TryGetValue(CacheKey, out SportsHubDto? cached) && cached != null)
+        var dto = await _hubRepository.GetPayloadAsync<SportsHubDto>(HubSlug, FallbackFileName, ct);
+        if (dto != null)
         {
-            return cached;
-        }
-
-        await Semaphore.WaitAsync(ct);
-        try
-        {
-            if (_cache.TryGetValue(CacheKey, out cached) && cached != null)
-            {
-                return cached;
-            }
-
-            SportsHubDto? dto = null;
-            if (File.Exists(_filePath))
-            {
-                try
-                {
-                    var json = await File.ReadAllTextAsync(_filePath, ct);
-                    dto = JsonSerializer.Deserialize<SportsHubDto>(json, JsonOptions);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to read SportsHub configuration from {Path}", _filePath);
-                }
-            }
-
-            if (dto == null)
-            {
-                dto = SportsHubDto.CreateDefault();
-                await SaveToFileAsync(dto, ct);
-            }
-
-            // Ensure categories and subpages are populated
-            if (dto.ShopByCategory == null || dto.ShopByCategory.Items == null || dto.ShopByCategory.Items.Count == 0)
-            {
-                dto.ShopByCategory = new SportsShopByCategorySectionDto
-                {
-                    IsEnabled = true,
-                    Title = "Shop by Category",
-                    Subtitle = "Explore verified university tournament sports gear, workout equipment, and athletic apparel",
-                    Items = SportsHubDto.CreateDefaultCategoryItems()
-                };
-            }
-
-            if (dto.SubcategoryPages == null || dto.SubcategoryPages.Count == 0)
-            {
-                dto.SubcategoryPages = SportsHubDto.CreateDefaultSubcategoryPages();
-            }
-
-            _cache.Set(CacheKey, dto, TimeSpan.FromMinutes(20));
+            EnsureDefaults(dto);
             return dto;
         }
-        finally
-        {
-            Semaphore.Release();
-        }
+
+        var defaultDto = SportsHubDto.CreateDefault();
+        await _hubRepository.SavePayloadAsync(HubSlug, HubTitle, FallbackFileName, defaultDto, ct);
+        return defaultDto;
     }
 
     public async Task<bool> UpdateConfigAsync(SportsHubDto model, string? userId, CancellationToken ct = default)
     {
         if (model == null) return false;
 
-        await Semaphore.WaitAsync(ct);
         try
         {
-            var success = await SaveToFileAsync(model, ct);
-            if (success)
-            {
-                _cache.Set(CacheKey, model, TimeSpan.FromMinutes(20));
-                _logger.LogInformation("SportsHub configuration updated successfully by user {UserId}", userId);
-            }
-            return success;
+            await _hubRepository.SavePayloadAsync(HubSlug, HubTitle, FallbackFileName, model, ct);
+            _logger.LogInformation("SportsHub configuration updated successfully in PostgreSQL by user {UserId}", userId);
+            return true;
         }
-        finally
+        catch (Exception ex)
         {
-            Semaphore.Release();
+            _logger.LogError(ex, "Failed to persist SportsHub configuration to PostgreSQL");
+            return false;
         }
     }
 
@@ -134,7 +74,6 @@ public sealed class SportsHubService : ISportsHubService
 
         if (page == null)
         {
-            // Find category item name if present
             var item = config.ShopByCategory?.Items?.FirstOrDefault(i =>
                 string.Equals(i.Slug, normSlug, StringComparison.OrdinalIgnoreCase));
 
@@ -164,39 +103,27 @@ public sealed class SportsHubService : ISportsHubService
 
     public async Task ResetToDefaultAsync(CancellationToken ct = default)
     {
-        await Semaphore.WaitAsync(ct);
-        try
-        {
-            var def = SportsHubDto.CreateDefault();
-            await SaveToFileAsync(def, ct);
-            _cache.Set(CacheKey, def, TimeSpan.FromMinutes(20));
-            _logger.LogInformation("SportsHub configuration was reset to defaults.");
-        }
-        finally
-        {
-            Semaphore.Release();
-        }
+        var def = SportsHubDto.CreateDefault();
+        await _hubRepository.SavePayloadAsync(HubSlug, HubTitle, FallbackFileName, def, ct);
+        _logger.LogInformation("SportsHub configuration was reset to defaults in PostgreSQL.");
     }
 
-    private async Task<bool> SaveToFileAsync(SportsHubDto dto, CancellationToken ct)
+    private static void EnsureDefaults(SportsHubDto dto)
     {
-        try
+        if (dto.ShopByCategory == null || dto.ShopByCategory.Items == null || dto.ShopByCategory.Items.Count == 0)
         {
-            var dir = Path.GetDirectoryName(_filePath);
-            if (!string.IsNullOrWhiteSpace(dir) && !Directory.Exists(dir))
+            dto.ShopByCategory = new SportsShopByCategorySectionDto
             {
-                Directory.CreateDirectory(dir);
-            }
-
-            var json = JsonSerializer.Serialize(dto, JsonOptions);
-            await File.WriteAllTextAsync(_filePath, json, ct);
-            return true;
+                IsEnabled = true,
+                Title = "Shop by Category",
+                Subtitle = "Explore verified university tournament sports gear, workout equipment, and athletic apparel",
+                Items = SportsHubDto.CreateDefaultCategoryItems()
+            };
         }
-        catch (Exception ex)
+
+        if (dto.SubcategoryPages == null || dto.SubcategoryPages.Count == 0)
         {
-            _logger.LogError(ex, "Failed to persist SportsHub configuration to {Path}", _filePath);
-            return false;
+            dto.SubcategoryPages = SportsHubDto.CreateDefaultSubcategoryPages();
         }
     }
 }
-

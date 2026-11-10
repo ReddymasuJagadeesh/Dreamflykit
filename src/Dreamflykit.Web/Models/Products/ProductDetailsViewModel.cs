@@ -37,6 +37,11 @@ public sealed class ProductDetailsViewModel
 
     public IReadOnlyList<ProductListItem> SimilarProducts { get; init; }
         = Array.Empty<ProductListItem>();
+
+    public ProductRatingSummaryDto RatingSummary { get; init; } = new();
+
+    public IReadOnlyList<ProductReviewDto> Reviews { get; init; }
+        = Array.Empty<ProductReviewDto>();
 }
 
 public sealed class ProductVariantViewModel

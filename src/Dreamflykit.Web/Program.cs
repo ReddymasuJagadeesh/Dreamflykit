@@ -1,8 +1,10 @@
+using System.Threading.RateLimiting;
 using Dreamflykit.Infrastructure.DependencyInjection;
 using Dreamflykit.Infrastructure.Identity;
 using Dreamflykit.Infrastructure.Persistence;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args); 
@@ -92,6 +94,48 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // ------------------------------------------------------------
+// Web Presentation Coordinators & Security Filters
+// ------------------------------------------------------------
+
+builder.Services.AddScoped<Dreamflykit.Web.Services.ICategoryHubCoordinator, Dreamflykit.Web.Services.CategoryHubCoordinator>();
+builder.Services.AddScoped<Dreamflykit.Web.Areas.Admin.Filters.AdminMfaFilter>();
+
+// ------------------------------------------------------------
+// Rate Limiting (OWASP ASVS 3.2.1 / 3.2.2)
+// ------------------------------------------------------------
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.Headers.Append("Retry-After", "60");
+        context.HttpContext.Response.ContentType = "text/plain";
+        await context.HttpContext.Response.WriteAsync("Too many requests. Please slow down and try again later.", cancellationToken: token);
+    };
+
+    options.AddPolicy("auth-policy", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown_auth",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+
+    options.AddPolicy("checkout-policy", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.User.Identity?.Name ?? httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown_checkout",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromSeconds(30),
+                QueueLimit = 0
+            }));
+});
+
+// ------------------------------------------------------------
 // MVC
 // ------------------------------------------------------------
 
@@ -119,6 +163,7 @@ using (var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
     await DatabaseSeeder.SeedRolesAndSuperAdminAsync(userManager, roleManager);
     await DatabaseSeeder.SeedMediaAndSectionsIfEmptyAsync(dbContext, userManager);
+    await DatabaseSeeder.SeedCategoryHubsFromFilesAsync(dbContext, app.Environment.WebRootPath);
 }
 
 // ------------------------------------------------------------
@@ -133,6 +178,18 @@ app.Use(async (context, next) =>
     context.Response.Headers.Append("X-Frame-Options", "SAMEORIGIN");
     context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
     context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+    context.Response.Headers.Append("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
+    context.Response.Headers.Append("Content-Security-Policy", 
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://sdk.cashfree.com; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
+        "font-src 'self' data: https://fonts.gstatic.com; " +
+        "img-src 'self' data: https: blob:; " +
+        "connect-src 'self' https://sandbox.cashfree.com https://api.cashfree.com; " +
+        "frame-src 'self' https://sdk.cashfree.com; " +
+        "base-uri 'self'; " +
+        "form-action 'self' https://sandbox.cashfree.com https://api.cashfree.com;");
+
     await next();
 });
 
@@ -171,6 +228,8 @@ app.Use(async (context, next) =>
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseRateLimiter();
 
 app.UseAuthentication();
 

@@ -80,7 +80,10 @@
                     </div>
 
                     <div class="dk-form-group">
-                        <label asp-for="Password" class="dk-label">Password</label>
+                        <div class="flex items-center justify-between mb-1">
+                            <label asp-for="Password" class="dk-label mb-0">Password</label>
+                            <a asp-action="ForgotPassword" asp-controller="Account" class="text-xs text-blue-600 hover:text-blue-700 font-medium hover:underline">Forgot password?</a>
+                        </div>
                         <input asp-for="Password"
                                type="password"
                                class="dk-input"

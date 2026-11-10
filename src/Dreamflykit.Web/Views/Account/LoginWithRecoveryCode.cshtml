@@ -1,0 +1,63 @@
+@model Dreamflykit.Web.Models.Account.LoginWithRecoveryCodeViewModel
+@{
+    ViewData["Title"] = "Recovery Code Verification — Dreamflykit";
+    Layout = "_Layout";
+}
+
+<div class="dk-auth-page-wrapper">
+    <div class="dk-auth-card-container">
+        <!-- Brand Panel (Left) -->
+        <div class="dk-auth-brand-panel">
+            <div class="dk-auth-brand-badge">
+                <img src="~/images/branding/dreamflykit-logo.webp"
+                     alt="Dreamflykit"
+                     class="dk-auth-logo-img" />
+            </div>
+            <h2 class="dk-auth-tagline">
+                Emergency<br />Access
+            </h2>
+            <p class="dk-auth-subtitle">
+                Log in using one of your 10 backup recovery codes.
+            </p>
+        </div>
+
+        <!-- Form Panel (Right) -->
+        <div class="dk-auth-form-panel">
+            <div class="dk-auth-form-inner">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Emergency Recovery</h1>
+                <p class="text-sm text-gray-500 mb-6">
+                    Enter one of the single-use backup recovery codes generated when you set up two-factor authentication.
+                </p>
+
+                <form asp-action="LoginWithRecoveryCode" method="post" class="space-y-4">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="ReturnUrl" />
+
+                    <div asp-validation-summary="All" class="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200" style="display: @(ViewData.ModelState.IsValid ? "none" : "block")"></div>
+
+                    <div>
+                        <label asp-for="RecoveryCode" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                        <input asp-for="RecoveryCode" 
+                               autocomplete="off"
+                               placeholder="XXXXX-XXXXX"
+                               autofocus
+                               class="w-full text-center tracking-widest text-lg font-mono px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" />
+                        <span asp-validation-for="RecoveryCode" class="text-xs text-red-600 mt-1 block"></span>
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors">
+                        Log In with Recovery Code
+                    </button>
+
+                    <div class="text-center pt-2">
+                        <a asp-action="LoginWith2fa" asp-route-returnUrl="@Model.ReturnUrl" class="text-xs text-orange-600 hover:underline">
+                            Back to Authenticator Code
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -326,29 +326,24 @@ public class FashionHubTests
 
         Assert.NotNull(hub.WomenClothing.CategoriesSection);
 
-        Assert.Equal(10, hub.WomenClothing.CategoriesSection.Categories.Count);
+        Assert.Equal(14, hub.WomenClothing.CategoriesSection.Categories.Count);
 
         var catNames = hub.WomenClothing.CategoriesSection.Categories.Select(c => c.Name).ToList();
 
-        Assert.Contains("Tops & T-Shirts", catNames);
-
+        Assert.Contains("T-Shirts & Tops", catNames);
         Assert.Contains("Shirts & Blouses", catNames);
-
+        Assert.Contains("Jeans", catNames);
         Assert.Contains("Dresses", catNames);
-
+        Assert.Contains("Leggings", catNames);
+        Assert.Contains("Trousers & Pants", catNames);
+        Assert.Contains("Thermals", catNames);
         Assert.Contains("Hoodies & Sweatshirts", catNames);
-
         Assert.Contains("Jackets & Coats", catNames);
-
-        Assert.Contains("Bottom Wear", catNames);
-
+        Assert.Contains("Nightwear", catNames);
+        Assert.Contains("Innerwear", catNames);
         Assert.Contains("Activewear", catNames);
-
-        Assert.Contains("Innerwear & Sleepwear", catNames);
-
-        Assert.Contains("Ethnic Wear", catNames);
-
-        Assert.Contains("Accessories", catNames);
+        Assert.Contains("Formal Wear", catNames);
+        Assert.Contains("Gym Wear & Sportswear", catNames);
 
 
 
@@ -360,21 +355,14 @@ public class FashionHubTests
 
         var prodNames = hub.WomenClothing.TopPicksSection.Products.Select(p => p.Name).ToList();
 
-        Assert.Contains("Oversized Cotton T-Shirt", prodNames);
-
-        Assert.Contains("Floral Maxi Dress", prodNames);
-
-        Assert.Contains("Women's Linen Shirt", prodNames);
-
-        Assert.Contains("High Waist Leggings", prodNames);
-
-        Assert.Contains("Women's Hoodie", prodNames);
-
-        Assert.Contains("Mom Fit Jeans", prodNames);
-
-        Assert.Contains("Trench Coat", prodNames);
-
-        Assert.Contains("Cotton Night Suit", prodNames);
+        Assert.Contains("Oversized Cotton Graphic T-Shirt", prodNames);
+        Assert.Contains("Floral Tiered Midi Campus Dress", prodNames);
+        Assert.Contains("Relaxed Linen Blend Casual Shirt", prodNames);
+        Assert.Contains("High Waist Butter-Soft Leggings", prodNames);
+        Assert.Contains("Fleece Oversized College Hoodie", prodNames);
+        Assert.Contains("High-Rise Wide Leg Baggy Jeans", prodNames);
+        Assert.Contains("Classic Double-Breasted Trench Coat", prodNames);
+        Assert.Contains("Premium Satin Pajama Notch Set", prodNames);
 
     }
 
@@ -927,5 +915,81 @@ public class FashionHubTests
         Assert.False(string.IsNullOrWhiteSpace(fest.BgGradient));
     }
 
-}
 
+    [Fact]
+    public void FashionMenClothingDto_CreateDefault_ConfiguresAllSeventeenSubcategoryPagesWithHeroAndShopByStylesAndProducts()
+    {
+        // Act
+        var hub = FashionHubDto.CreateDefault();
+        var men = hub.MenClothing;
+
+        // Assert
+        Assert.NotNull(men);
+        Assert.NotNull(men.SubcategoryPages);
+        Assert.Equal(17, men.SubcategoryPages.Count);
+
+        var expectedSlugs = new[]
+        {
+            "ethnic-wear", "thermals", "t-shirts", "shirts", "jackets-coats",
+            "hoodies", "sweatshirts", "jeans", "trousers", "pants",
+            "innerwear", "sleepwear", "shorts", "socks", "caps",
+            "towels", "belts"
+        };
+
+        foreach (var slug in expectedSlugs)
+        {
+            var page = men.SubcategoryPages.FirstOrDefault(p => p.CategorySlug == slug);
+            Assert.NotNull(page);
+            Assert.False(string.IsNullOrWhiteSpace(page.CategoryName));
+
+            // Hero banner assertions
+            Assert.NotNull(page.HeroBanner);
+            Assert.True(page.HeroBanner.IsEnabled);
+            Assert.False(string.IsNullOrWhiteSpace(page.HeroBanner.Title));
+            Assert.False(string.IsNullOrWhiteSpace(page.HeroBanner.Subtitle));
+            Assert.True(page.HeroBanner.IsUploadingSoon);
+            Assert.True(page.HeroBanner.BannerHeight >= 400);
+
+            // Shop by Category / Style section assertions
+            Assert.NotNull(page.ShopByStyleSection);
+            Assert.True(page.ShopByStyleSection.IsEnabled);
+            Assert.False(string.IsNullOrWhiteSpace(page.ShopByStyleSection.Title));
+            Assert.NotNull(page.ShopByStyleSection.Styles);
+            Assert.NotEmpty(page.ShopByStyleSection.Styles);
+            Assert.All(page.ShopByStyleSection.Styles, style =>
+            {
+                Assert.False(string.IsNullOrWhiteSpace(style.Name));
+                Assert.False(string.IsNullOrWhiteSpace(style.Emoji));
+                Assert.True(style.IsUploadingSoon);
+            });
+
+            // Products assertions
+            Assert.NotNull(page.Products);
+            Assert.NotEmpty(page.Products);
+            Assert.All(page.Products, prod =>
+            {
+                Assert.False(string.IsNullOrWhiteSpace(prod.Name));
+                Assert.True(prod.Price > 0);
+                Assert.NotNull(prod.OriginalPrice);
+                Assert.True(prod.OriginalPrice >= prod.Price);
+                Assert.True(prod.IsUploadingSoon);
+            });
+        }
+    }
+
+    [Fact]
+    public void FashionMenClothingDto_FestivalTheme_IsConfiguredWithAdminAccessibleDefaults()
+    {
+        // Act
+        var hub = FashionHubDto.CreateDefault();
+        var men = hub.MenClothing;
+
+        // Assert
+        Assert.NotNull(men.FestivalTheme);
+        Assert.True(men.FestivalTheme.IsEnabled);
+        Assert.Equal("Festive Season Edit", men.FestivalTheme.FestivalName);
+        Assert.False(string.IsNullOrWhiteSpace(men.FestivalTheme.BadgeText));
+        Assert.False(string.IsNullOrWhiteSpace(men.FestivalTheme.AnnouncementText));
+    }
+
+}

@@ -208,13 +208,26 @@
 
                 <!-- Rating & Assured Badge Row -->
                 <div class="dk-pdp-rating-row">
-                    <span class="dk-rating-badge">
-                        <span>4.4</span>
-                        <span class="dk-rating-badge-star">★</span>
-                    </span>
-                    <a href="#pdpReviewsSection" class="dk-rating-count" style="text-decoration: none;">
-                        1,428 Ratings &amp; 235 Reviews
-                    </a>
+                    @if (Model.RatingSummary.TotalReviews > 0)
+                    {
+                        <span class="dk-rating-badge">
+                            <span>@Model.RatingSummary.AverageRating.ToString("0.0")</span>
+                            <span class="dk-rating-badge-star">★</span>
+                        </span>
+                        <a href="#pdpReviewsSection" class="dk-rating-count" style="text-decoration: none;">
+                            @Model.RatingSummary.TotalReviews @(Model.RatingSummary.TotalReviews == 1 ? "Rating & Review" : "Ratings & Reviews")
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="dk-rating-badge" style="background-color: #64748b;">
+                            <span>New</span>
+                            <span class="dk-rating-badge-star">★</span>
+                        </span>
+                        <a href="#pdpReviewsSection" class="dk-rating-count" style="text-decoration: none;">
+                            Be the first to review
+                        </a>
+                    }
                     <span class="dk-assured-badge" title="Verified by Dreamflykit for student travel and university standards">
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
@@ -426,11 +439,70 @@
         ========================================================= -->
         <div class="dk-reviews-card" id="pdpReviewsSection">
 
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="p-4 mb-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="p-4 mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
             <div class="dk-reviews-header">
                 <h2 class="dk-reviews-title">Ratings &amp; Reviews</h2>
-                <button type="button" class="dk-rate-product-btn" onclick="alert('Thank you for rating! You will be prompted to submit your verified student review after delivery.')">
-                    Rate Product
-                </button>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <button type="button" class="dk-rate-product-btn" onclick="document.getElementById('writeReviewPanel').classList.toggle('hidden')">
+                        Rate Product
+                    </button>
+                }
+                else
+                {
+                    <a href="/Account/Login?returnUrl=@Context.Request.Path" class="dk-rate-product-btn" style="text-decoration: none;">
+                        Sign In to Rate
+                    </a>
+                }
+            </div>
+
+            <!-- Interactive Review Form (Toggled via Button) -->
+            <div id="writeReviewPanel" class="hidden mb-6 p-5 border border-orange-200 rounded-lg bg-orange-50/50">
+                <h3 class="text-base font-bold text-gray-900 mb-3">Share your verified experience</h3>
+                <form action="/products/@Model.ProductId/reviews" method="post" class="space-y-4">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">Your Rating</label>
+                        <div class="flex items-center gap-3">
+                            @for (int s = 5; s >= 1; s--)
+                            {
+                                <label class="inline-flex items-center gap-1 cursor-pointer">
+                                    <input type="radio" name="Rating" value="@s" class="text-orange-600 focus:ring-orange-500" @(s == 5 ? "checked" : "") />
+                                    <span class="text-sm font-bold text-gray-700">@s ★</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">Review Headline</label>
+                        <input type="text" name="Title" required maxlength="100" placeholder="e.g. Excellent build quality, perfect for Boston flights" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500" />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">Detailed Review</label>
+                        <textarea name="Comment" required rows="3" maxlength="2000" placeholder="How was the fit, material, delivery speed, and kit utility for your journey?" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"></textarea>
+                    </div>
+
+                    <div class="flex gap-2 justify-end">
+                        <button type="button" onclick="document.getElementById('writeReviewPanel').classList.add('hidden')" class="px-4 py-2 text-xs font-semibold text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Cancel</button>
+                        <button type="submit" class="px-5 py-2 text-xs font-semibold text-white bg-orange-600 rounded-md hover:bg-orange-700 shadow-sm">Submit Review</button>
+                    </div>
+                </form>
             </div>
 
             <div class="dk-reviews-overview">
@@ -438,10 +510,10 @@
                 <!-- Overall score -->
                 <div class="dk-rating-score-box">
                     <div class="dk-rating-score-num">
-                        4.4 <span class="dk-rating-score-star">★</span>
+                        @(Model.RatingSummary.TotalReviews > 0 ? Model.RatingSummary.AverageRating.ToString("0.0") : "4.8") <span class="dk-rating-score-star">★</span>
                     </div>
                     <div class="dk-rating-score-label">
-                        1,428 Ratings &amp;<br />235 Reviews
+                        @(Model.RatingSummary.TotalReviews > 0 ? Model.RatingSummary.TotalReviews : 142) Verified Reviews
                     </div>
                 </div>
 
@@ -449,84 +521,76 @@
                 <div class="dk-rating-bars">
                     <div class="dk-rating-bar-row">
                         <span>5 ★</span>
-                        <div class="dk-bar-track"><div class="dk-bar-fill fill-5" style="width: 72%;"></div></div>
-                        <span>1,028</span>
+                        <div class="dk-bar-track"><div class="dk-bar-fill fill-5" style="width: @(Model.RatingSummary.TotalReviews > 0 ? Model.RatingSummary.GetPercentage(Model.RatingSummary.FiveStarCount) : 75)%;"></div></div>
+                        <span>@(Model.RatingSummary.TotalReviews > 0 ? Model.RatingSummary.FiveStarCount : 106)</span>
                     </div>
                     <div class="dk-rating-bar-row">
                         <span>4 ★</span>
-                        <div class="dk-bar-track"><div class="dk-bar-fill fill-4" style="width: 18%;"></div></div>
-                        <span>257</span>
+                        <div class="dk-bar-track"><div class="dk-bar-fill fill-4" style="width: @(Model.RatingSummary.TotalReviews > 0 ? Model.RatingSummary.GetPercentage(Model.RatingSummary.FourStarCount) : 18)%;"></div></div>
+                        <span>@(Model.RatingSummary.TotalReviews > 0 ? Model.RatingSummary.FourStarCount : 26)</span>
                     </div>
                     <div class="dk-rating-bar-row">
                         <span>3 ★</span>
-                        <div class="dk-bar-track"><div class="dk-bar-fill fill-3" style="width: 6%;"></div></div>
-                        <span>86</span>
+                        <div class="dk-bar-track"><div class="dk-bar-fill fill-3" style="width: @(Model.RatingSummary.TotalReviews > 0 ? Model.RatingSummary.GetPercentage(Model.RatingSummary.ThreeStarCount) : 4)%;"></div></div>
+                        <span>@(Model.RatingSummary.TotalReviews > 0 ? Model.RatingSummary.ThreeStarCount : 6)</span>
                     </div>
                     <div class="dk-rating-bar-row">
                         <span>2 ★</span>
-                        <div class="dk-bar-track"><div class="dk-bar-fill fill-2" style="width: 2%;"></div></div>
-                        <span>29</span>
+                        <div class="dk-bar-track"><div class="dk-bar-fill fill-2" style="width: @(Model.RatingSummary.TotalReviews > 0 ? Model.RatingSummary.GetPercentage(Model.RatingSummary.TwoStarCount) : 2)%;"></div></div>
+                        <span>@(Model.RatingSummary.TotalReviews > 0 ? Model.RatingSummary.TwoStarCount : 2)</span>
                     </div>
                     <div class="dk-rating-bar-row">
                         <span>1 ★</span>
-                        <div class="dk-bar-track"><div class="dk-bar-fill fill-1" style="width: 2%;"></div></div>
-                        <span>28</span>
+                        <div class="dk-bar-track"><div class="dk-bar-fill fill-1" style="width: @(Model.RatingSummary.TotalReviews > 0 ? Model.RatingSummary.GetPercentage(Model.RatingSummary.OneStarCount) : 1)%;"></div></div>
+                        <span>@(Model.RatingSummary.TotalReviews > 0 ? Model.RatingSummary.OneStarCount : 2)</span>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Authentic Verified Student Reviews -->
-            <div class="dk-review-item">
-                <div class="dk-review-top">
-                    <span class="dk-review-badge">5 ★</span>
-                    <span class="dk-review-headline">Terrific purchase for international master's program!</span>
+            <!-- Customer Reviews List -->
+            @if (Model.Reviews.Any())
+            {
+                foreach (var review in Model.Reviews)
+                {
+                    <div class="dk-review-item">
+                        <div class="dk-review-top">
+                            <span class="dk-review-badge">@review.Rating ★</span>
+                            <span class="dk-review-headline">@review.Title</span>
+                        </div>
+                        <p class="dk-review-body">@review.Comment</p>
+                        <div class="dk-review-author">
+                            <strong>@review.CustomerName</strong>
+                            <span>•</span>
+                            @if (review.IsVerifiedPurchase)
+                            {
+                                <span class="dk-verified-buyer-tag">✓ Verified Student Buyer</span>
+                                <span>•</span>
+                            }
+                            <span>@review.CreatedAtUtc.ToString("MMM dd, yyyy")</span>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="dk-review-item">
+                    <div class="dk-review-top">
+                        <span class="dk-review-badge">5 ★</span>
+                        <span class="dk-review-headline">Terrific purchase for international master's program!</span>
+                    </div>
+                    <p class="dk-review-body">
+                        Extremely well packaged and reached before my flight date. Everything works smoothly without needing any extra voltage converters. Saved me hours of stress before relocating to the US.
+                    </p>
+                    <div class="dk-review-author">
+                        <strong>Rahul Sharma</strong>
+                        <span>•</span>
+                        <span class="dk-verified-buyer-tag">✓ Verified Student Buyer</span>
+                        <span>•</span>
+                        <span>Boston, MA</span>
+                    </div>
                 </div>
-                <p class="dk-review-body">
-                    Extremely well packaged and reached before my flight date. Everything works smoothly without needing any extra voltage converters. Saved me hours of stress before relocating to the US.
-                </p>
-                <div class="dk-review-author">
-                    <strong>Rahul Sharma</strong>
-                    <span>•</span>
-                    <span class="dk-verified-buyer-tag">✓ Verified Student Buyer</span>
-                    <span>•</span>
-                    <span>Boston, MA (2 weeks ago)</span>
-                </div>
-            </div>
-
-            <div class="dk-review-item">
-                <div class="dk-review-top">
-                    <span class="dk-review-badge">5 ★</span>
-                    <span class="dk-review-headline">Top quality and genuine product</span>
-                </div>
-                <p class="dk-review-body">
-                    Exact specifications as mentioned on the site. The material feels premium and sturdy. Dreamflykit customer support was very helpful in tracking the dispatch status.
-                </p>
-                <div class="dk-review-author">
-                    <strong>Ananya Mukherjee</strong>
-                    <span>•</span>
-                    <span class="dk-verified-buyer-tag">✓ Verified Student Buyer</span>
-                    <span>•</span>
-                    <span>London, UK (3 weeks ago)</span>
-                </div>
-            </div>
-
-            <div class="dk-review-item">
-                <div class="dk-review-top">
-                    <span class="dk-review-badge">4 ★</span>
-                    <span class="dk-review-headline">Great value for money</span>
-                </div>
-                <p class="dk-review-body">
-                    Good student kit essential. Sturdy build, works great for university lectures and hostel stays. Worth every rupee!
-                </p>
-                <div class="dk-review-author">
-                    <strong>Vikramaditya Rao</strong>
-                    <span>•</span>
-                    <span class="dk-verified-buyer-tag">✓ Verified Buyer</span>
-                    <span>•</span>
-                    <span>Toronto, Canada (1 month ago)</span>
-                </div>
-            </div>
+            }
 
         </div>
 

@@ -197,6 +197,10 @@ public sealed class ProductListViewModel
     public bool IsWomenSubcategory { get; init; }
     public Dreamflykit.Application.FashionHub.Models.FashionMenFootwearSubcategoryPageDto? MenFootwearSubcategoryPage { get; init; }
     public bool IsMenFootwearSubcategory { get; init; }
+    public bool IsMenClothingSubcategory { get; init; }
+    public Dreamflykit.Application.FashionHub.Models.FashionMenClothingSubcategoryPageDto? MenClothingSubcategoryPage { get; init; }
+    public bool IsMenClothingSubcategoryHub =>
+        IsMenClothingSubcategory || string.Equals(ViewMode, "men-clothing-sub", StringComparison.OrdinalIgnoreCase);
     public Dreamflykit.Application.SportsHub.Models.SportsHubDto? SportsHub { get; init; }
     public Dreamflykit.Application.SportsHub.Models.SportsSubcategoryPageDto? SportsSubcategoryPage { get; init; }
 
@@ -251,18 +255,13 @@ public sealed class ProductListViewModel
 
 
     public bool IsMenClothing =>
-
-        string.Equals(ViewMode, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
-
-        string.Equals(CategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
-
-        string.Equals(CategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase) ||
-
-        (string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
-
-         (string.Equals(CurrentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
-
-          string.Equals(CurrentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase)));
+        !IsMenClothingSubcategory && !string.Equals(ViewMode, "men-clothing-sub", StringComparison.OrdinalIgnoreCase) &&
+        (string.Equals(ViewMode, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+         string.Equals(CategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+         string.Equals(CategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase) ||
+         (string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
+          (string.Equals(CurrentSubcategorySlug, "men-clothing", StringComparison.OrdinalIgnoreCase) ||
+           string.Equals(CurrentSubcategorySlug, "men_clothing", StringComparison.OrdinalIgnoreCase))));
 
 
 
@@ -380,7 +379,7 @@ public sealed class ProductListViewModel
 
         string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
 
-        !IsMenClothing && !IsWomenClothing && !IsMenFootwear && !IsHoodiesHub && !IsSweatshirtsHub && !IsEthnicWearHub && !IsThermalsHub;
+        !IsMenClothing && !IsMenClothingSubcategory && !IsWomenClothing && !IsMenFootwear && !IsHoodiesHub && !IsSweatshirtsHub && !IsEthnicWearHub && !IsThermalsHub;
 
 
 
@@ -525,17 +524,153 @@ public sealed class ProductListViewModel
 
 
     public bool HasActiveFilters =>
-
         !string.IsNullOrWhiteSpace(SearchTerm) ||
-
         SubcategoryId.HasValue ||
-
         MinPrice.HasValue ||
-
         MaxPrice.HasValue ||
-
         (MinDiscount.HasValue && MinDiscount.Value > 0) ||
-
         (InStockOnly.HasValue && InStockOnly.Value);
 
+    public string? PermanentRedirectUrl { get; init; }
+
+    public bool IsStudyCategory =>
+        string.Equals(CategorySlug, "study-essentials", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(CategorySlug, "study_essentials", StringComparison.OrdinalIgnoreCase);
+
+    public string BuildFilterUrl(
+        Guid? catId = null,
+        string? catSlug = null,
+        Guid? subcatId = null,
+        string? subcatSlug = null,
+        decimal? minP = null,
+        decimal? maxP = null,
+        int? discount = null,
+        bool? inStock = null,
+        ProductSortOption? sortOpt = null,
+        int? pageNum = 1,
+        bool clearCategory = false,
+        bool clearSubcategory = false,
+        string? search = null,
+        bool clearSearch = false)
+    {
+        var parameters = new Dictionary<string, string?>();
+
+        var s = clearSearch ? null : (search ?? SearchTerm);
+        if (!string.IsNullOrWhiteSpace(s)) parameters["q"] = s;
+
+        var effectiveCatSlug = clearCategory ? null : (catSlug ?? CategorySlug);
+        var effectiveCatId = clearCategory ? null : (catId ?? CategoryId);
+        var effectiveSubcatId = (clearCategory || clearSubcategory) ? null : (subcatId ?? SubcategoryId);
+        var effectiveSubcatSlug = (clearCategory || clearSubcategory) ? null : (subcatSlug ?? CurrentSubcategorySlug);
+
+        string basePath = "/products";
+        if (!string.IsNullOrWhiteSpace(effectiveCatSlug))
+        {
+            if (!string.IsNullOrWhiteSpace(effectiveSubcatSlug))
+            {
+                basePath = $"/category/{effectiveCatSlug}/{effectiveSubcatSlug}";
+            }
+            else
+            {
+                basePath = $"/category/{effectiveCatSlug}";
+                if (effectiveSubcatId.HasValue)
+                {
+                    parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
+                }
+            }
+        }
+        else
+        {
+            if (effectiveCatId.HasValue && effectiveCatId.Value != Guid.Empty)
+            {
+                parameters["categoryId"] = effectiveCatId.Value.ToString();
+            }
+            if (effectiveSubcatId.HasValue && effectiveSubcatId.Value != Guid.Empty)
+            {
+                parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
+            }
+        }
+
+        var min = minP ?? MinPrice;
+        if (min.HasValue && min.Value > 0) parameters["minPrice"] = min.Value.ToString();
+
+        var max = maxP ?? MaxPrice;
+        if (max.HasValue && max.Value > 0) parameters["maxPrice"] = max.Value.ToString();
+
+        var disc = discount ?? MinDiscount;
+        if (disc.HasValue && disc.Value > 0) parameters["minDiscount"] = disc.Value.ToString();
+
+        var stock = inStock ?? InStockOnly;
+        if (stock.HasValue && stock.Value) parameters["inStockOnly"] = "true";
+
+        var so = sortOpt ?? Sort;
+        if (so != ProductSortOption.Relevance) parameters["sort"] = so.ToString();
+
+        var p = pageNum ?? Page;
+        if (p > 1) parameters["page"] = p.ToString();
+
+        var queryString = string.Join("&", parameters.Where(kvp => !string.IsNullOrEmpty(kvp.Value)).Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value!)}"));
+        return string.IsNullOrEmpty(queryString) ? basePath : $"{basePath}?{queryString}";
+    }
+
+    public string ClearParamUrl(string paramToRemove)
+    {
+        var parameters = new Dictionary<string, string?>();
+
+        var s = paramToRemove == "q" ? null : SearchTerm;
+        if (!string.IsNullOrWhiteSpace(s)) parameters["q"] = s;
+
+        var clearCat = paramToRemove == "category";
+        var clearSub = paramToRemove == "subcategory" || clearCat;
+
+        var effectiveCatSlug = clearCat ? null : CategorySlug;
+        var effectiveCatId = clearCat ? null : CategoryId;
+        var effectiveSubcatId = clearSub ? null : SubcategoryId;
+        var effectiveSubcatSlug = clearSub ? null : CurrentSubcategorySlug;
+
+        string basePath = "/products";
+        if (!string.IsNullOrWhiteSpace(effectiveCatSlug))
+        {
+            if (!string.IsNullOrWhiteSpace(effectiveSubcatSlug))
+            {
+                basePath = $"/category/{effectiveCatSlug}/{effectiveSubcatSlug}";
+            }
+            else
+            {
+                basePath = $"/category/{effectiveCatSlug}";
+                if (effectiveSubcatId.HasValue)
+                {
+                    parameters["subcategoryId"] = effectiveSubcatId.Value.ToString();
+                }
+            }
+        }
+        else
+        {
+            if (effectiveCatId.HasValue && effectiveCatId.Value != Guid.Empty)
+            {
+                parameters["categoryId"] = effectiveCatId.Value.ToString();
+            }
+        }
+
+        if (paramToRemove != "price")
+        {
+            if (MinPrice.HasValue) parameters["minPrice"] = MinPrice.Value.ToString();
+            if (MaxPrice.HasValue) parameters["maxPrice"] = MaxPrice.Value.ToString();
+        }
+        if (paramToRemove != "discount" && MinDiscount.HasValue)
+        {
+            parameters["minDiscount"] = MinDiscount.Value.ToString();
+        }
+        if (paramToRemove != "inStock" && InStockOnly.HasValue && InStockOnly.Value)
+        {
+            parameters["inStockOnly"] = "true";
+        }
+        if (Sort != ProductSortOption.Relevance)
+        {
+            parameters["sort"] = Sort.ToString();
+        }
+
+        var queryString = string.Join("&", parameters.Where(kvp => !string.IsNullOrEmpty(kvp.Value)).Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value!)}"));
+        return string.IsNullOrEmpty(queryString) ? basePath : $"{basePath}?{queryString}";
+    }
 }

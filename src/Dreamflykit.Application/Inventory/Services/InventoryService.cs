@@ -33,9 +33,8 @@ public sealed class InventoryService : IInventoryService
             var invItem = inventoryItems.FirstOrDefault(i => i.ProductVariantId == variantId);
             if (invItem is null)
             {
-                // Auto-provision initial stock for seeded catalog items (100 units)
-                invItem = new InventoryItem(warehouse.Id, variantId, availableQuantity: 100, reservedQuantity: 0);
-                inventoryItems.Add(invItem);
+                throw new DomainException(
+                    $"Inventory record not found for product variant '{variantId}'. Item is unprovisioned and cannot be ordered.");
             }
 
             if (invItem.AvailableQuantity < quantity)

@@ -1,144 +1,80 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
+using Dreamflykit.Application.Catalog.Interfaces;
 using Dreamflykit.Application.MobilesHub.Interfaces;
 using Dreamflykit.Application.MobilesHub.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace Dreamflykit.Infrastructure.MobilesHub;
 
 public sealed class MobilesHubService : IMobilesHubService
 {
-    private const string CacheKey = "mobiles_category_hub_cache";
-    private readonly IMemoryCache _cache;
-    private readonly IWebHostEnvironment _env;
+    private const string HubSlug = "mobiles";
+    private const string HubTitle = "Mobiles Hub";
+    private const string FallbackFileName = "mobiles_hub.json";
+
+    private readonly ICategoryHubRepository _hubRepository;
     private readonly ILogger<MobilesHubService> _logger;
-    private readonly string _filePath;
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        WriteIndented = true
-    };
-
+    [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
     public MobilesHubService(
-        IMemoryCache cache,
-        IWebHostEnvironment env,
+        ICategoryHubRepository hubRepository,
         ILogger<MobilesHubService> logger)
     {
-        _cache = cache;
-        _env = env;
-        _logger = logger;
+        _hubRepository = hubRepository ?? throw new ArgumentNullException(nameof(hubRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
-        var rootPath = !string.IsNullOrWhiteSpace(env.WebRootPath)
-            ? env.WebRootPath
-            : Path.Combine(AppContext.BaseDirectory, "wwwroot");
-
-        var dataDir = Path.Combine(rootPath, "data");
-        if (!Directory.Exists(dataDir))
-        {
-            try
-            {
-                Directory.CreateDirectory(dataDir);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Could not create directory: {DataDir}", dataDir);
-            }
-        }
-
-        _filePath = Path.Combine(dataDir, "mobiles_hub.json");
+    public MobilesHubService(
+        Microsoft.Extensions.Caching.Memory.IMemoryCache cache,
+        Microsoft.AspNetCore.Hosting.IWebHostEnvironment env,
+        ILogger<MobilesHubService> logger)
+        : this(new Dreamflykit.Infrastructure.Catalog.CategoryHubRepository(null, cache, env), logger)
+    {
     }
 
     public async Task<MobilesHubDto> GetConfigAsync(CancellationToken cancellationToken = default)
     {
-        if (_cache.TryGetValue(CacheKey, out MobilesHubDto? cached) && cached != null)
+        var dto = await _hubRepository.GetPayloadAsync<MobilesHubDto>(HubSlug, FallbackFileName, cancellationToken);
+        if (dto != null)
         {
-            return cached;
-        }
-
-        if (File.Exists(_filePath))
-        {
-            try
-            {
-                var json = await File.ReadAllTextAsync(_filePath, cancellationToken);
-                if (!string.IsNullOrWhiteSpace(json))
-                {
-                    var dto = JsonSerializer.Deserialize<MobilesHubDto>(json, JsonOptions);
-                    if (dto != null)
-                    {
-                        var def = MobilesHubDto.CreateDefault();
-                        dto.HeroBanner ??= def.HeroBanner;
-                        if (dto.HeroBanner.Slides == null || dto.HeroBanner.Slides.Count == 0)
-                        {
-                            dto.HeroBanner.Slides = def.HeroBanner.Slides;
-                        }
-                        dto.BrandsSection ??= def.BrandsSection;
-                        dto.HighlightBanner ??= def.HighlightBanner;
-                        if (dto.HighlightBanner.Sections == null || dto.HighlightBanner.Sections.Count == 0)
-                        {
-                            dto.HighlightBanner.Sections = def.HighlightBanner.Sections;
-                        }
-                        dto.TopDealsSection ??= def.TopDealsSection;
-                        dto.ConfusedSection ??= def.ConfusedSection;
-                        dto.PromoBanner ??= def.PromoBanner;
-                        dto.UnmissableDealsSection ??= def.UnmissableDealsSection;
-
-                        _cache.Set(CacheKey, dto, TimeSpan.FromHours(4));
-                        return dto;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed reading mobiles hub config from {FilePath}", _filePath);
-            }
+            EnsureDefaults(dto);
+            return dto;
         }
 
         var defaultDto = MobilesHubDto.CreateDefault();
-        try
-        {
-            var defaultJson = JsonSerializer.Serialize(defaultDto, JsonOptions);
-            await File.WriteAllTextAsync(_filePath, defaultJson, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Could not write initial mobiles hub json to {FilePath}", _filePath);
-        }
-
-        _cache.Set(CacheKey, defaultDto, TimeSpan.FromHours(4));
+        await _hubRepository.SavePayloadAsync(HubSlug, HubTitle, FallbackFileName, defaultDto, cancellationToken);
         return defaultDto;
     }
 
-    public async Task UpdateConfigAsync(MobilesHubDto dto, Guid? updatedBy, CancellationToken cancellationToken = default)
+    public async Task UpdateConfigAsync(MobilesHubDto config, Guid? updatedBy, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(dto);
-
-        try
-        {
-            var json = JsonSerializer.Serialize(dto, JsonOptions);
-            var dir = Path.GetDirectoryName(_filePath);
-            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-            await File.WriteAllTextAsync(_filePath, json, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to write Mobiles Hub config to {FilePath}", _filePath);
-            throw new InvalidOperationException("Failed to persist Mobiles Hub configuration: " + ex.Message, ex);
-        }
-
-        _cache.Set(CacheKey, dto, TimeSpan.FromHours(4));
-        _logger.LogInformation("Mobiles Hub configuration updated successfully by {UserId}", updatedBy);
+        ArgumentNullException.ThrowIfNull(config);
+        await _hubRepository.SavePayloadAsync(HubSlug, HubTitle, FallbackFileName, config, cancellationToken);
+        _logger.LogInformation("Mobiles Hub configuration updated successfully in PostgreSQL by {UserId}", updatedBy);
     }
 
     public async Task ResetToDefaultAsync(CancellationToken cancellationToken = default)
     {
         var defaultDto = MobilesHubDto.CreateDefault();
         await UpdateConfigAsync(defaultDto, Guid.Empty, cancellationToken);
+    }
+
+    private static void EnsureDefaults(MobilesHubDto dto)
+    {
+        var def = MobilesHubDto.CreateDefault();
+        dto.HeroBanner ??= def.HeroBanner;
+        if (dto.HeroBanner.Slides == null || dto.HeroBanner.Slides.Count == 0)
+        {
+            dto.HeroBanner.Slides = def.HeroBanner.Slides;
+        }
+        dto.BrandsSection ??= def.BrandsSection;
+        dto.HighlightBanner ??= def.HighlightBanner;
+        if (dto.HighlightBanner.Sections == null || dto.HighlightBanner.Sections.Count == 0)
+        {
+            dto.HighlightBanner.Sections = def.HighlightBanner.Sections;
+        }
+        dto.TopDealsSection ??= def.TopDealsSection;
+        dto.ConfusedSection ??= def.ConfusedSection;
+        dto.PromoBanner ??= def.PromoBanner;
+        dto.UnmissableDealsSection ??= def.UnmissableDealsSection;
     }
 }

@@ -38,6 +38,8 @@ public sealed class DreamflykitDbContext
 
     public DbSet<ProductVariant> ProductVariants =>Set<ProductVariant>();
 
+    public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
+
     public DbSet<ProductMedia> ProductMedia =>
     Set<ProductMedia>();
 
@@ -85,6 +87,7 @@ public sealed class DreamflykitDbContext
     public DbSet<Dreamflykit.Domain.Common.SystemThemeSetting> SystemThemeSettings => Set<Dreamflykit.Domain.Common.SystemThemeSetting>();
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<CategoryHubConfiguration> CategoryHubConfigurations => Set<CategoryHubConfiguration>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -273,6 +276,12 @@ public sealed class DreamflykitDbContext
             entity.Property(x => x.SellerId)
                 .IsRequired(false);
 
+            entity.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(x => x.SellerId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
+
             entity.Property(x => x.ApprovalStatus)
                 .HasConversion<int>()
                 .IsRequired()
@@ -373,6 +382,63 @@ public sealed class DreamflykitDbContext
                 .WithMany()
                 .HasForeignKey(x => x.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // ------------------------------------------------------------
+        // Product Review
+        // ------------------------------------------------------------
+
+        builder.Entity<ProductReview>(entity =>
+        {
+            entity.ToTable("ProductReviews", t =>
+            {
+                t.HasCheckConstraint("CK_ProductReviews_Rating_Range", "\"Rating\" >= 1 AND \"Rating\" <= 5");
+            });
+
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.ProductId)
+                .IsRequired();
+
+            entity.Property(x => x.UserId)
+                .IsRequired();
+
+            entity.Property(x => x.CustomerName)
+                .HasMaxLength(150)
+                .IsRequired();
+
+            entity.Property(x => x.Rating)
+                .IsRequired();
+
+            entity.Property(x => x.Title)
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.Property(x => x.Comment)
+                .HasMaxLength(4000)
+                .IsRequired();
+
+            entity.Property(x => x.IsVerifiedPurchase)
+                .IsRequired();
+
+            entity.Property(x => x.IsApproved)
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAtUtc)
+                .IsRequired();
+
+            entity.HasOne<Product>()
+                .WithMany()
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(x => new { x.ProductId, x.IsApproved });
+            entity.HasIndex(x => x.UserId);
         });
 
         // --------------------------------------------------------
@@ -784,6 +850,11 @@ public sealed class DreamflykitDbContext
             entity.Property(x => x.UserId)
                 .IsRequired();
 
+            entity.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             entity.Property(x => x.CreatedAtUtc)
                 .IsRequired();
 
@@ -868,6 +939,11 @@ public sealed class DreamflykitDbContext
             entity.Property(x => x.UserId)
                 .IsRequired();
 
+            entity.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             entity.Property(x => x.FullName)
                 .HasMaxLength(150)
                 .IsRequired();
@@ -923,6 +999,11 @@ public sealed class DreamflykitDbContext
 
             entity.Property(x => x.UserId)
                 .IsRequired();
+
+            entity.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             entity.Property(x => x.OrderNumber)
                 .HasMaxLength(50)
@@ -1048,6 +1129,11 @@ public sealed class DreamflykitDbContext
             entity.Property(x => x.UserId)
                 .IsRequired();
 
+            entity.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             entity.Property(x => x.CreatedAtUtc)
                 .IsRequired();
 
@@ -1144,6 +1230,10 @@ public sealed class DreamflykitDbContext
             entity.ToTable("MediaPermissions");
             entity.HasKey(x => x.Id);
             entity.Property(x => x.UserId).IsRequired();
+            entity.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.Property(x => x.MediaType).HasConversion<int>().IsRequired();
             entity.Property(x => x.PermissionType).HasConversion<int>().IsRequired();
             entity.Property(x => x.IsGranted).IsRequired();
@@ -1159,6 +1249,10 @@ public sealed class DreamflykitDbContext
             entity.ToTable("MediaAuditLogs");
             entity.HasKey(x => x.Id);
             entity.Property(x => x.UserId).IsRequired();
+            entity.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
             entity.Property(x => x.Action).HasMaxLength(100).IsRequired();
             entity.Property(x => x.ResourceType).HasMaxLength(100).IsRequired();
             entity.Property(x => x.OldValue).HasMaxLength(2000);
@@ -1255,6 +1349,11 @@ public sealed class DreamflykitDbContext
         {
             entity.ToTable("AuditLogs");
             entity.HasKey(x => x.Id);
+            entity.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
             entity.Property(x => x.ActorType).HasMaxLength(50).IsRequired();
             entity.Property(x => x.Action).HasMaxLength(100).IsRequired();
             entity.Property(x => x.EntityName).HasMaxLength(100).IsRequired();
@@ -1274,6 +1373,53 @@ public sealed class DreamflykitDbContext
             entity.HasIndex(x => new { x.EntityName, x.RecordId });
             entity.HasIndex(x => new { x.UserId, x.OccurredAtUtc });
             entity.HasIndex(x => new { x.Action, x.OccurredAtUtc });
+        });
+
+        // ----------------------------------------------------------------
+        // Category Hub Configurations (Unified PostgreSQL Hub Store)
+        // ----------------------------------------------------------------
+        builder.Entity<CategoryHubConfiguration>(entity =>
+        {
+            entity.ToTable("CategoryHubConfigurations");
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.HubSlug)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(x => x.Title)
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.Property(x => x.Subtitle)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.HeroBadge)
+                .HasMaxLength(100);
+
+            entity.Property(x => x.HeroBannerUrl)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.HeroActionText)
+                .HasMaxLength(100);
+
+            entity.Property(x => x.HeroActionUrl)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.ConfigPayloadJson)
+                .HasColumnType("jsonb")
+                .IsRequired();
+
+            entity.Property(x => x.IsActive)
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAtUtc)
+                .IsRequired();
+
+            entity.HasIndex(x => x.HubSlug)
+                .IsUnique();
+
+            entity.HasIndex(x => x.IsActive);
         });
     }
 }

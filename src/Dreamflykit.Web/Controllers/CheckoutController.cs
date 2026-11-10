@@ -12,6 +12,7 @@ using Dreamflykit.Web.Models.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Dreamflykit.Web.Controllers;
 
@@ -66,6 +67,7 @@ public sealed class CheckoutController : Controller
 
     [HttpPost("place-order")]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("checkout-policy")]
     public async Task<IActionResult> PlaceOrder(
         [FromForm] CheckoutViewModel model,
         CancellationToken cancellationToken)
@@ -174,6 +176,7 @@ public sealed class CheckoutController : Controller
 
     [HttpPost("VerifyPayment")]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("checkout-policy")]
     public async Task<IActionResult> VerifyPayment(
         [FromForm] string orderNumber,
         [FromForm] string? paymentMethod,
@@ -225,9 +228,21 @@ public sealed class CheckoutController : Controller
             using var doc = JsonDocument.Parse(rawPayload);
             if (doc.RootElement.TryGetProperty("data", out var data))
             {
-                var orderId = data.GetProperty("order").GetProperty("order_id").GetString();
-                var paymentStatus = data.GetProperty("payment").GetProperty("payment_status").GetString();
-                var paymentId = data.GetProperty("payment").GetProperty("cf_payment_id").GetInt64().ToString();
+                var orderId = data.TryGetProperty("order", out var orderProp) && orderProp.TryGetProperty("order_id", out var orderIdProp)
+                    ? orderIdProp.GetString()
+                    : null;
+
+                var paymentStatus = data.TryGetProperty("payment", out var paymentProp) && paymentProp.TryGetProperty("payment_status", out var statusProp)
+                    ? statusProp.GetString()
+                    : null;
+
+                string paymentId = "";
+                if (data.TryGetProperty("payment", out var pProp) && pProp.TryGetProperty("cf_payment_id", out var cfProp))
+                {
+                    paymentId = cfProp.ValueKind == JsonValueKind.Number
+                        ? cfProp.GetInt64().ToString()
+                        : cfProp.GetString() ?? "";
+                }
 
                 if (string.Equals(paymentStatus, "SUCCESS", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(orderId))
                 {
@@ -238,7 +253,7 @@ public sealed class CheckoutController : Controller
 
             return Ok();
         }
-        catch
+        catch (Exception)
         {
             return BadRequest();
         }
