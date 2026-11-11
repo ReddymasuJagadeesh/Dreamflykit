@@ -286,6 +286,15 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
                     currentSubcategoryName = gamingSubPage.CategoryName;
                 }
             }
+            else if (string.Equals(ctx.View, "categories", StringComparison.OrdinalIgnoreCase))
+            {
+                currentSubcategorySlug = "playstation";
+                gamingSubPage = await _gamingHubService.GetSubcategoryPageAsync(currentSubcategorySlug, cancellationToken);
+                if (gamingSubPage != null && string.IsNullOrWhiteSpace(currentSubcategoryName))
+                {
+                    currentSubcategoryName = gamingSubPage.CategoryName;
+                }
+            }
         }
 
         string? effectiveBrand = !string.IsNullOrWhiteSpace(ctx.BrandSlug)
@@ -424,7 +433,7 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
 
         var effectiveSearch = !string.IsNullOrWhiteSpace(ctx.Q)
             ? ctx.Q.Trim()
-            : (!string.IsNullOrWhiteSpace(ctx.Search) ? ctx.Search.Trim() : (!string.IsNullOrWhiteSpace(effectiveSubcatItem) && !isStudyCategory ? effectiveSubcatItem : null));
+            : (!string.IsNullOrWhiteSpace(ctx.Search) ? ctx.Search.Trim() : (!string.IsNullOrWhiteSpace(effectiveSubcatItem) && !isStudyCategory && !isSportsCategory && !isGamingCategory ? effectiveSubcatItem : null));
 
         var query = new ProductListQuery
         {
@@ -756,7 +765,7 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
         }
         else if (isGamingCategory)
         {
-            determinedViewMode = !string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "gaming-sub" : "hub";
+            determinedViewMode = (!string.IsNullOrWhiteSpace(currentSubcategorySlug) || string.Equals(ctx.View, "categories", StringComparison.OrdinalIgnoreCase)) ? "gaming-sub" : "hub";
         }
         else if (isLuggageCategory)
         {

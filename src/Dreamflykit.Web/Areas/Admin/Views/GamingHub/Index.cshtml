@@ -330,6 +330,19 @@
                             </div>
                         </div>
 
+                        <!-- Subcategories & Gamer Note for this subcategory -->
+                        <div class="gm-subpage-box" style="margin-top: 20px;">
+                            <h3 class="gm-subpage-box-title">Left Sidebar Subcategories &amp; Gamer Note</h3>
+                            <div class="gm-field">
+                                <label>Subcategories (one per line, shown in left filter sidebar):</label>
+                                <textarea class="gm-textarea subpage-subs" rows="5" placeholder="e.g.&#10;PS5 Consoles (Disc &amp; Digital)&#10;DualSense Wireless Controllers&#10;PlayStation Exclusive Games">@(subPageItem.Subcategories != null ? string.Join("\n", subPageItem.Subcategories) : "")</textarea>
+                            </div>
+                            <div class="gm-field">
+                                <label>Important Gamer Note (displayed in left sidebar note card):</label>
+                                <textarea class="gm-textarea subpage-note" rows="2" placeholder="Important warranty, compatibility, or campus advice">@subPageItem.ImportantNote</textarea>
+                            </div>
+                        </div>
+
                         <!-- Products for this subcategory -->
                         <div class="gm-subpage-box" style="margin-top: 24px;">
                             <div class="gm-sub-header">
@@ -358,6 +371,17 @@
                                             <div class="gm-field">
                                                 <label>Brand</label>
                                                 <input type="text" class="gm-input prod-brand" value="@prod.Brand" placeholder="Sony / Microsoft / etc." />
+                                            </div>
+                                        </div>
+
+                                        <div class="gm-grid-2">
+                                            <div class="gm-field">
+                                                <label>Subcategory Tag (Matches Left Filter)</label>
+                                                <input type="text" class="gm-input prod-subtag" value="@prod.SubcategoryTag" placeholder="e.g. DualSense Wireless Controllers & Docks" />
+                                            </div>
+                                            <div class="gm-field">
+                                                <label>Description / Campus Specs</label>
+                                                <input type="text" class="gm-input prod-desc" value="@prod.Description" placeholder="Specs, warranty and gamer features" />
                                             </div>
                                         </div>
 
@@ -986,6 +1010,10 @@
                 <div class="gm-field" style="grid-column: span 2;"><label>Product Title</label><input type="text" class="gm-input prod-title" value="Gaming Product Title" /></div>
                 <div class="gm-field"><label>Brand</label><input type="text" class="gm-input prod-brand" value="Sony" /></div>
             </div>
+            <div class="gm-grid-2">
+                <div class="gm-field"><label>Subcategory Tag (Matches Left Filter)</label><input type="text" class="gm-input prod-subtag" value="" placeholder="e.g. DualSense Wireless Controllers & Docks" /></div>
+                <div class="gm-field"><label>Description / Campus Specs</label><input type="text" class="gm-input prod-desc" value="Verified genuine gaming hardware with campus warranty." /></div>
+            </div>
             <div class="gm-grid-4">
                 <div class="gm-field">
                     <label>Condition Badge</label>
@@ -1047,29 +1075,7 @@
             });
         });
 
-        // 2. Shop by Category
-        var shopCat = {
-            isEnabled: document.getElementById('catSectionEnabled').checked,
-            title: document.getElementById('catSectionTitle').value,
-            subtitle: document.getElementById('catSectionSubtitle').value,
-            items: []
-        };
-
-        document.querySelectorAll('#catItemsTableBody [data-cat-row]').forEach(function(row, idx) {
-            shopCat.items.push({
-                id: 'cat-itm-' + (idx + 1),
-                iconEmoji: row.querySelector('.cat-emoji').value,
-                name: row.querySelector('.cat-name').value,
-                slug: row.querySelector('.cat-slug').value,
-                subtitle: row.querySelector('.cat-subtitle').value,
-                imageUrl: row.querySelector('.cat-img-url').value,
-                isUploadingSoon: row.querySelector('.cat-uploading-soon').checked,
-                displayOrder: parseInt(row.querySelector('.cat-order').value || (idx + 1), 10),
-                isActive: row.querySelector('.cat-active').checked
-            });
-        });
-
-        // 3. Subcategory Pages
+        // 2. Subcategory Pages
         var subPages = [];
         document.querySelectorAll('.gm-subpage-editor').forEach(function(subEl) {
             var slug = subEl.getAttribute('data-subpage-slug');
@@ -1079,12 +1085,21 @@
             var heroImg = subEl.querySelector('.subhero-img-url').value;
             var heroUploading = subEl.querySelector('.subhero-uploading-soon').checked;
 
+            var subSubs = [];
+            var subsText = subEl.querySelector('.subpage-subs');
+            if (subsText && subsText.value) {
+                subSubs = subsText.value.split('\n').map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
+            }
+            var subNote = subEl.querySelector('.subpage-note') ? subEl.querySelector('.subpage-note').value : '';
+
             var prods = [];
             subEl.querySelectorAll('[data-prod-row]').forEach(function(pRow, pIdx) {
                 prods.push({
                     id: slug + '-prod-' + (pIdx + 1),
                     title: pRow.querySelector('.prod-title').value,
                     brand: pRow.querySelector('.prod-brand').value,
+                    subcategoryTag: pRow.querySelector('.prod-subtag') ? pRow.querySelector('.prod-subtag').value : '',
+                    description: pRow.querySelector('.prod-desc') ? pRow.querySelector('.prod-desc').value : '',
                     conditionBadge: pRow.querySelector('.prod-cond').value,
                     priceText: pRow.querySelector('.prod-disc-price').value,
                     originalPriceText: pRow.querySelector('.prod-orig-price').value,
@@ -1100,6 +1115,8 @@
             subPages.push({
                 categorySlug: slug,
                 categoryName: heroTitle,
+                subcategories: subSubs,
+                importantNote: subNote,
                 heroBanner: {
                     title: heroTitle,
                     titleHighlight: heroHighlight,
@@ -1108,6 +1125,32 @@
                     isUploadingSoon: heroUploading
                 },
                 products: prods
+            });
+        });
+
+        // 3. Shop by Category
+        var shopCat = {
+            isEnabled: document.getElementById('catSectionEnabled').checked,
+            title: document.getElementById('catSectionTitle').value,
+            subtitle: document.getElementById('catSectionSubtitle').value,
+            items: []
+        };
+
+        document.querySelectorAll('#catItemsTableBody [data-cat-row]').forEach(function(row, idx) {
+            var catSlug = row.querySelector('.cat-slug').value;
+            var matchingSub = subPages.find(function(sp) { return sp.categorySlug === catSlug; });
+            shopCat.items.push({
+                id: 'cat-itm-' + (idx + 1),
+                iconEmoji: row.querySelector('.cat-emoji').value,
+                name: row.querySelector('.cat-name').value,
+                slug: catSlug,
+                subtitle: row.querySelector('.cat-subtitle').value,
+                imageUrl: row.querySelector('.cat-img-url').value,
+                isUploadingSoon: row.querySelector('.cat-uploading-soon').checked,
+                displayOrder: parseInt(row.querySelector('.cat-order').value || (idx + 1), 10),
+                isActive: row.querySelector('.cat-active').checked,
+                subcategories: matchingSub ? matchingSub.subcategories : [],
+                importantNote: matchingSub ? matchingSub.importantNote : ''
             });
         });
 

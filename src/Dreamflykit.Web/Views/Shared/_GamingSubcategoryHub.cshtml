@@ -1,882 +1,1046 @@
 @model Dreamflykit.Web.Models.Products.ProductListViewModel
 @{
     var hub = Model.GamingHub ?? Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefault();
-    var subPage = Model.GamingSubcategoryPage;
+    var allCategories = hub.ShopByCategory?.Items?.Where(i => i.IsActive).OrderBy(i => i.DisplayOrder).ToList() ?? new();
+    if (allCategories.Count == 0)
+    {
+        allCategories = Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefaultCategoryItems();
+    }
+
     var currentSlug = (Model.CurrentSubcategorySlug ?? "").Trim().ToLowerInvariant();
+    var activeCategory = allCategories.FirstOrDefault(c => string.Equals(c.Slug, currentSlug, StringComparison.OrdinalIgnoreCase))
+                         ?? allCategories.FirstOrDefault(c => string.Equals(c.Slug, "playstation", StringComparison.OrdinalIgnoreCase))
+                         ?? allCategories.FirstOrDefault();
 
-    if (subPage == null)
+    var activeCategorySlug = activeCategory?.Slug ?? "playstation";
+    var activeCategoryName = activeCategory?.Name ?? (!string.IsNullOrWhiteSpace(Model.CategoryName) && !string.Equals(Model.CategoryName, "Gaming Hub", StringComparison.OrdinalIgnoreCase) ? Model.CategoryName : "PlayStation");
+    var activeCategoryEmoji = activeCategory?.IconEmoji ?? "🎮";
+    var activeCategorySubcategories = activeCategory?.Subcategories ?? new List<string>();
+
+    var subPage = Model.GamingSubcategoryPage
+                  ?? hub.SubcategoryPages?.FirstOrDefault(p => string.Equals(p.CategorySlug, activeCategorySlug, StringComparison.OrdinalIgnoreCase))
+                  ?? Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefaultSubcategoryPages().FirstOrDefault(p => string.Equals(p.CategorySlug, activeCategorySlug, StringComparison.OrdinalIgnoreCase))
+                  ?? Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefaultSubcategoryPages().FirstOrDefault();
+
+    if (activeCategorySubcategories.Count == 0 && subPage?.Subcategories != null && subPage.Subcategories.Count > 0)
     {
-        subPage = hub.SubcategoryPages?.FirstOrDefault(p =>
-            string.Equals(p.CategorySlug, currentSlug, StringComparison.OrdinalIgnoreCase));
+        activeCategorySubcategories = subPage.Subcategories;
     }
 
-    if (subPage == null)
-    {
-        var matchedItem = hub.ShopByCategory?.Items?.FirstOrDefault(i =>
-            string.Equals(i.Slug, currentSlug, StringComparison.OrdinalIgnoreCase));
+    var activeCategoryNote = !string.IsNullOrWhiteSpace(activeCategory?.ImportantNote)
+        ? activeCategory.ImportantNote
+        : subPage?.ImportantNote;
 
-        var catName = matchedItem?.Name ?? (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName)
-            ? Model.CurrentSubcategoryName
-            : (string.IsNullOrWhiteSpace(currentSlug) ? "Gaming Consoles" : currentSlug.Replace("-", " ")));
-
-        subPage = new Dreamflykit.Application.GamingHub.Models.GamingSubcategoryPageDto
-        {
-            CategorySlug = currentSlug,
-            CategoryName = catName,
-            HeroBanner = new Dreamflykit.Application.GamingHub.Models.GamingSubcategoryHeroDto
-            {
-                Title = catName,
-                TitleHighlight = "GENUINE PRODUCTS • FAST DELIVERY",
-                Subtitle = $"Explore top-rated {catName} consoles, accessories, bundles & certified authentic gaming gear with fast delivery.",
-                IsUploadingSoon = true
-            },
-            Products = Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefault().SubcategoryPages.FirstOrDefault()?.Products
-                       ?? new List<Dreamflykit.Application.GamingHub.Models.GamingProductItemDto>()
-        };
-    }
-
-    var hero = subPage.HeroBanner ?? new Dreamflykit.Application.GamingHub.Models.GamingSubcategoryHeroDto();
-    var products = subPage.Products ?? new List<Dreamflykit.Application.GamingHub.Models.GamingProductItemDto>();
-    var allCategories = hub.ShopByCategory?.Items?.Where(i => i.IsActive).OrderBy(i => i.DisplayOrder).ToList()
-                        ?? Dreamflykit.Application.GamingHub.Models.GamingHubDto.CreateDefaultCategoryItems();
+    var hero = subPage?.HeroBanner ?? new Dreamflykit.Application.GamingHub.Models.GamingSubcategoryHeroDto();
+    var products = subPage?.Products ?? new List<Dreamflykit.Application.GamingHub.Models.GamingProductItemDto>();
+    var activeSubItem = Model.CurrentSubcatItem ?? "";
 
     var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
 }
 
-<div class="gm-subpage-container dk-shell">
+<div class="dk-study-cat-page-wrapper dk-gaming-explorer-wrapper">
+
+    @if (canManage)
+    {
+        <div class="dk-study-hub-admin-bar">
+            <span class="dk-sh-admin-badge">Admin Controls</span>
+            <span class="dk-sh-admin-hint">Managing Gaming Hub Category: <strong>@activeCategoryName</strong>. Super Admin can replace hero image, products, text &amp; subcategories.</span>
+            <a href="/Admin/GamingHub" class="dk-sh-admin-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Manage Gaming Hub &amp; Categories
+            </a>
+        </div>
+    }
 
     <!-- ========================================================
-         SUBCATEGORY HERO BANNER (MATCHING IMAGE 3)
+         COMMON HERO BANNER (TOP FULL WIDTH)
+         Admin Replaceable Image + Gaming Dark Neon Theme
     ========================================================= -->
-    <section class="gm-sub-hero-card" aria-label="@subPage.CategoryName Banner">
-        <div class="gm-sub-hero-glow"></div>
-        <div class="gm-sub-hero-body">
-            <div class="gm-sub-hero-content">
-                <nav class="gm-sub-hero-breadcrumb" aria-label="Gaming breadcrumb">
-                    <a href="/category/gaming-hub">Gaming Hub</a>
-                    <span class="gm-sub-sep">/</span>
-                    <span class="gm-sub-crumb-active">@subPage.CategoryName</span>
-                </nav>
+    <header class="dk-study-common-hero dk-gaming-hero frame-arch-gold">
+        <div class="dk-hero-inner-grid">
+            <div class="dk-hero-text-col">
+                <div class="dk-hero-pill-badge dk-gaming-pill-badge">
+                    <span class="dk-hero-dot"></span>
+                    @(!string.IsNullOrWhiteSpace(hero.TitleHighlight) ? hero.TitleHighlight : "VERIFIED GAMING GEAR • 100% GENUINE")
+                </div>
 
-                @if (!string.IsNullOrWhiteSpace(hero.TitleHighlight))
-                {
-                    <div class="gm-sub-hero-badge">
-                        <span class="gm-badge-dot">●</span>
-                        <span>@hero.TitleHighlight</span>
-                    </div>
-                }
-
-                <h1 class="gm-sub-hero-title">@subPage.CategoryName</h1>
-                <p class="gm-sub-hero-desc">
+                <h1 class="dk-hero-main-title">
+                    @(!string.IsNullOrWhiteSpace(hero.Title) ? hero.Title : activeCategoryName) Consoles &amp; Battlestation Gear
+                </h1>
+                <p class="dk-hero-main-sub">
                     @(string.IsNullOrWhiteSpace(hero.Subtitle)
-                        ? $"Discover our full range of official {subPage.CategoryName} systems, verified authentic controllers, and exclusive gaming bundles."
+                        ? $"Discover verified genuine {activeCategoryName} systems, pro controllers, low-latency gear and dorm battlestation setups."
                         : hero.Subtitle)
                 </p>
 
-                <div class="gm-sub-hero-chips">
-                    <span class="gm-hero-chip">✓ In Stock Guarantee</span>
-                    <span class="gm-hero-chip">✓ Secure Transit</span>
-                    <span class="gm-hero-chip">✓ 1-Year Warranty</span>
-                    @if (canManage)
-                    {
-                        <a href="/Admin/GamingHub" class="gm-sub-admin-link">⚙ Edit Subcategory in Admin</a>
-                    }
+                <div class="dk-hero-trust-badges">
+                    <div class="dk-hero-trust-item">
+                        <span class="dk-hero-trust-icon">🎮</span>
+                        <span>100% Genuine Gear &bull; <strong>Verified Systems</strong></span>
+                    </div>
+                    <div class="dk-hero-trust-item">
+                        <span class="dk-hero-trust-icon">🚚</span>
+                        <span>Campus Fast Delivery &bull; <strong>Direct to Dorm</strong></span>
+                    </div>
+                    <div class="dk-hero-trust-item">
+                        <span class="dk-hero-trust-icon">🛡️</span>
+                        <span>1-Year Warranty &bull; <strong>7-Day Easy Replacement</strong></span>
+                    </div>
                 </div>
             </div>
 
-            <div class="gm-sub-hero-media">
-                @if (!string.IsNullOrWhiteSpace(hero.ImageUrl) && !hero.ImageUrl.Contains("placeholder") && !hero.IsUploadingSoon)
+            <div class="dk-hero-img-col">
+                @{
+                    var heroImg = !string.IsNullOrWhiteSpace(hero.ImageUrl) ? hero.ImageUrl : "";
+                    var isTestPic = string.IsNullOrWhiteSpace(heroImg) || heroImg.Contains("placeholder") || hero.IsUploadingSoon;
+                }
+
+                @if (isTestPic)
                 {
-                    <div class="gm-sub-banner-img-wrap">
-                        <img src="@hero.ImageUrl" alt="@subPage.CategoryName" class="gm-sub-banner-img" />
+                    <div class="dk-hero-test-pic-box dk-gaming-test-pic-box">
+                        <div class="dk-gaming-radar-pulse">
+                            <span class="dk-radar-ring ring-1"></span>
+                            <span class="dk-radar-ring ring-2"></span>
+                            <span class="dk-hero-cam-icon">@activeCategoryEmoji</span>
+                        </div>
+                        <div class="dk-hero-test-btn">UPLOADING SOON</div>
+                        <div class="dk-hero-test-title">Admin will implement images</div>
+                        <div class="dk-hero-test-sub">Admin panel can upload/replace image anytime</div>
                     </div>
                 }
                 else
                 {
-                    <div class="gm-sub-hero-uploading">
-                        <div class="gm-sub-uploading-radar">
-                            <span class="gm-sub-radar-ring"></span>
-                            <span class="gm-sub-emoji">🎮</span>
-                        </div>
-                        <div class="gm-sub-uploading-pill">
-                            <span class="gm-mini-dot">●</span> Uploading Soon
-                        </div>
-                        <p class="gm-sub-uploading-text">Admin will upload banner image</p>
+                    <div class="dk-hero-custom-img-wrap">
+                        <img src="@heroImg" alt="@activeCategoryName Hero" loading="eager" onerror="this.onerror=null;this.src='/images/gaming-hub/cats/playstation.webp';" />
                     </div>
                 }
             </div>
         </div>
-    </section>
 
-    <!-- ========================================================
-         TOP QUICK FILTER PILLS (MATCHING IMAGE 3)
-    ========================================================= -->
-    <div class="gm-quick-filters-bar">
-        <div class="gm-filter-pills-left">
-            <!-- Condition Dropdown Pill -->
-            <div class="gm-dropdown-pill" data-filter-group="condition">
-                <button type="button" class="gm-pill-btn" onclick="gmToggleDropdown(this)">
-                    <span>Condition</span>
-                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                </button>
-                <div class="gm-pill-dropdown-menu">
-                    <label class="gm-pill-option"><input type="radio" name="pill_condition" value="all" checked onchange="gmApplyPillFilter('condition', 'all', this)"> All Conditions</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_condition" value="Brand New" onchange="gmApplyPillFilter('condition', 'Brand New', this)"> Brand New</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_condition" value="Open Box" onchange="gmApplyPillFilter('condition', 'Open Box', this)"> Open Box</label>
+        <!-- 4 Bottom Trust Highlights Bar inside Hero -->
+        <div class="dk-hero-trust-bar">
+            <div class="dk-htb-item">
+                <span class="dk-htb-icon">⭐</span>
+                <div>
+                    <strong>Pro Performance Tested</strong>
+                    <span>Handpicked for Gamers</span>
                 </div>
             </div>
-
-            <!-- Compatibility Dropdown Pill -->
-            <div class="gm-dropdown-pill" data-filter-group="compatibility">
-                <button type="button" class="gm-pill-btn" onclick="gmToggleDropdown(this)">
-                    <span>Compatibility</span>
-                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                </button>
-                <div class="gm-pill-dropdown-menu">
-                    <label class="gm-pill-option"><input type="radio" name="pill_compat" value="all" checked onchange="gmApplyPillFilter('compat', 'all', this)"> All Systems</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_compat" value="PS5" onchange="gmApplyPillFilter('compat', 'PS5', this)"> PS5</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_compat" value="PS4" onchange="gmApplyPillFilter('compat', 'PS4', this)"> PS4</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_compat" value="PC" onchange="gmApplyPillFilter('compat', 'PC', this)"> PC / Steam</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_compat" value="Universal" onchange="gmApplyPillFilter('compat', 'Universal', this)"> Universal</label>
+            <div class="dk-htb-item">
+                <span class="dk-htb-icon">📦</span>
+                <div>
+                    <strong>Affordable Campus Bundles</strong>
+                    <span>Save More, Play More</span>
                 </div>
             </div>
-
-            <!-- Brand Dropdown Pill -->
-            <div class="gm-dropdown-pill" data-filter-group="brand">
-                <button type="button" class="gm-pill-btn" onclick="gmToggleDropdown(this)">
-                    <span>Brand</span>
-                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                </button>
-                <div class="gm-pill-dropdown-menu">
-                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="all" checked onchange="gmApplyPillFilter('brand', 'all', this)"> All Brands</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="Sony" onchange="gmApplyPillFilter('brand', 'Sony', this)"> Sony PlayStation</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="Microsoft" onchange="gmApplyPillFilter('brand', 'Microsoft', this)"> Microsoft Xbox</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="Nintendo" onchange="gmApplyPillFilter('brand', 'Nintendo', this)"> Nintendo</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="Valve" onchange="gmApplyPillFilter('brand', 'Valve', this)"> Valve Steam Deck</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="Logitech" onchange="gmApplyPillFilter('brand', 'Logitech', this)"> Logitech</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_brand" value="Asus" onchange="gmApplyPillFilter('brand', 'Asus', this)"> Asus ROG</label>
+            <div class="dk-htb-item">
+                <span class="dk-htb-icon">🔒</span>
+                <div>
+                    <strong>Secure Checkout</strong>
+                    <span>Multiple Payment Options</span>
                 </div>
             </div>
-
-            <!-- Storage Dropdown Pill -->
-            <div class="gm-dropdown-pill" data-filter-group="storage">
-                <button type="button" class="gm-pill-btn" onclick="gmToggleDropdown(this)">
-                    <span>Storage</span>
-                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                </button>
-                <div class="gm-pill-dropdown-menu">
-                    <label class="gm-pill-option"><input type="radio" name="pill_storage" value="all" checked onchange="gmApplyPillFilter('storage', 'all', this)"> Any Storage</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_storage" value="512GB" onchange="gmApplyPillFilter('storage', '512GB', this)"> 512GB</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_storage" value="825GB" onchange="gmApplyPillFilter('storage', '825GB', this)"> 825GB</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_storage" value="1TB" onchange="gmApplyPillFilter('storage', '1TB', this)"> 1TB SSD</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_storage" value="2TB" onchange="gmApplyPillFilter('storage', '2TB', this)"> 2TB SSD</label>
+            <div class="dk-htb-item">
+                <span class="dk-htb-icon">🚚</span>
+                <div>
+                    <strong>Campus Fast Delivery</strong>
+                    <span>To Your Doorstep</span>
                 </div>
             </div>
         </div>
+    </header>
 
-        <div class="gm-filter-pills-right">
-            <!-- Sort By Dropdown -->
-            <div class="gm-dropdown-pill gm-sort-pill">
-                <button type="button" class="gm-pill-btn" onclick="gmToggleDropdown(this)">
-                    <span id="gmSortLabel">Sort by : Popularity</span>
-                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                </button>
-                <div class="gm-pill-dropdown-menu gm-menu-right">
-                    <label class="gm-pill-option"><input type="radio" name="pill_sort" value="popularity" checked onchange="gmApplySort('popularity', 'Popularity')"> Popularity</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_sort" value="price-asc" onchange="gmApplySort('price-asc', 'Price: Low to High')"> Price: Low to High</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_sort" value="price-desc" onchange="gmApplySort('price-desc', 'Price: High to Low')"> Price: High to Low</label>
-                    <label class="gm-pill-option"><input type="radio" name="pill_sort" value="rating" onchange="gmApplySort('rating', 'Customer Rating')"> Customer Rating</label>
-                </div>
-            </div>
+    <!-- ========================================================
+         22 GAMING CATEGORIES QUICK NAV PILLS STRIP
+         Exactly like Study Essentials: EXPLORE 22 CATEGORIES
+    ========================================================= -->
+    <div class="dk-study-cat-nav-strip">
+        <div class="dk-study-cat-nav-title">
+            <span>Explore @allCategories.Count Categories:</span>
+        </div>
+        <div class="dk-study-cat-nav-items">
+            @foreach (var c in allCategories)
+            {
+                var isSelected = string.Equals(c.Slug, activeCategorySlug, StringComparison.OrdinalIgnoreCase);
+                <a href="/category/gaming-hub/@c.Slug"
+                   class="dk-cat-nav-pill @(isSelected ? "is-selected" : "")"
+                   title="Browse @c.Name">
+                    <span class="dk-cat-pill-icon">@c.IconEmoji</span>
+                    <span class="dk-cat-pill-name">@c.Name</span>
+                </a>
+            }
         </div>
     </div>
 
     <!-- ========================================================
-         2-COLUMN LAYOUT: FILTERS SIDEBAR + PRODUCTS GRID
+         MAIN 2-COLUMN LAYOUT:
+         LEFT: SUBCATEGORIES FILTER LIST FOR THIS CATEGORY
+         RIGHT: MATCHING PRODUCTS LIST
     ========================================================= -->
-    <div class="gm-sub-layout">
+    <div class="dk-cat-main-layout">
 
-        <!-- LEFT SIDEBAR: FILTERS -->
-        <aside class="gm-sub-sidebar" id="gmSubSidebar">
-
-            <!-- Category Links Facet -->
-            <div class="gm-filter-widget">
-                <h3 class="gm-widget-title">CATEGORIES</h3>
-                <div class="gm-cat-list">
-                    @foreach (var c in allCategories)
+        <!-- LEFT SIDEBAR: SUBCATEGORIES FILTER -->
+        <aside class="dk-cat-sidebar" id="dkGamingSidebar">
+            <div class="dk-cat-sidebar-card">
+                <div class="dk-cat-sidebar-header">
+                    <h2 class="dk-cat-sidebar-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                        Subcategories
+                    </h2>
+                    @if (!string.IsNullOrWhiteSpace(activeSubItem))
                     {
-                        var isActive = string.Equals(c.Slug, currentSlug, StringComparison.OrdinalIgnoreCase);
-                        <a href="/category/gaming-hub/@c.Slug" class="gm-cat-nav-link @(isActive ? "active" : "")">
-                            <span class="gm-cat-nav-name">@c.Name</span>
-                            @if (isActive)
-                            {
-                                <span class="gm-cat-nav-dot">●</span>
-                            }
-                        </a>
+                        <button type="button" class="dk-cat-clear-btn" onclick="filterBySubItem('')" title="Clear subcategory filter">
+                            Clear
+                        </button>
                     }
                 </div>
-            </div>
 
-            <!-- Condition Filter -->
-            <div class="gm-filter-widget">
-                <h3 class="gm-widget-title">CONDITION</h3>
-                <div class="gm-checkbox-list">
-                    <label class="gm-checkbox-item">
-                        <input type="checkbox" class="gm-filter-checkbox" data-facet="condition" value="Brand New" onchange="gmRunFilters()" checked />
-                        <span>Brand New</span>
-                    </label>
-                    <label class="gm-checkbox-item">
-                        <input type="checkbox" class="gm-filter-checkbox" data-facet="condition" value="Open Box" onchange="gmRunFilters()" checked />
-                        <span>Open Box</span>
-                    </label>
+                <div class="dk-cat-sidebar-subhead">
+                    <span>@activeCategoryName.ToUpper()</span>
                 </div>
+
+                <nav class="dk-cat-sub-list" aria-label="@activeCategoryName Subcategories">
+                    <!-- Option to view all products of this category -->
+                    <a href="/category/gaming-hub/@activeCategorySlug"
+                       class="dk-cat-sub-link @(string.IsNullOrWhiteSpace(activeSubItem) ? "is-active" : "")"
+                       data-subitem=""
+                       onclick="event.preventDefault(); filterBySubItem('');">
+                        <span class="dk-sub-radio"></span>
+                        <span class="dk-sub-text">All @activeCategoryName</span>
+                        <span class="dk-sub-badge">All</span>
+                    </a>
+
+                    <!-- Subcategories list for this gaming category -->
+                    @foreach (var sub in activeCategorySubcategories)
+                    {
+                        var isCurrentSub = string.Equals(activeSubItem, sub, StringComparison.OrdinalIgnoreCase);
+                        <a href="/category/gaming-hub/@activeCategorySlug?subcatItem=@Uri.EscapeDataString(sub)"
+                           class="dk-cat-sub-link @(isCurrentSub ? "is-active" : "")"
+                           data-subitem="@sub"
+                           onclick="event.preventDefault(); filterBySubItem(this.dataset.subitem);">
+                            <span class="dk-sub-radio"></span>
+                            <span class="dk-sub-text">@sub</span>
+                        </a>
+                    }
+                </nav>
             </div>
 
-            <!-- Availability Filter -->
-            <div class="gm-filter-widget">
-                <h3 class="gm-widget-title">AVAILABILITY</h3>
-                <div class="gm-checkbox-list">
-                    <label class="gm-checkbox-item">
-                        <input type="checkbox" class="gm-filter-checkbox" data-facet="stock" value="in-stock" onchange="gmRunFilters()" checked />
-                        <span>In Stock</span>
-                    </label>
-                    <label class="gm-checkbox-item">
-                        <input type="checkbox" class="gm-filter-checkbox" data-facet="stock" value="out-of-stock" onchange="gmRunFilters()" />
-                        <span>Out of Stock</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Price Range Filter -->
-            <div class="gm-filter-widget">
-                <h3 class="gm-widget-title">PRICE</h3>
-                <div class="gm-price-inputs">
-                    <div class="gm-price-field">
-                        <span class="gm-currency">₹</span>
-                        <input type="number" id="gmMinPriceInput" placeholder="Min" min="0" value="0" />
+            <!-- IMPORTANT NOTE CARD FOR GAMERS -->
+            @if (!string.IsNullOrWhiteSpace(activeCategoryNote))
+            {
+                <div class="dk-cat-note-card">
+                    <div class="dk-cat-note-head">
+                        <span class="dk-cat-note-icon">💡</span>
+                        <strong>Important Gamer Note:</strong>
                     </div>
-                    <span class="gm-price-sep">to</span>
-                    <div class="gm-price-field">
-                        <span class="gm-currency">₹</span>
-                        <input type="number" id="gmMaxPriceInput" placeholder="Max" min="0" value="100000" />
-                    </div>
-                    <button type="button" class="gm-price-btn" onclick="gmRunFilters()">Go</button>
+                    <p class="dk-cat-note-text">
+                        @activeCategoryNote
+                    </p>
+                </div>
+            }
+
+            <!-- Price Filters Strip in Sidebar -->
+            <div class="dk-cat-sidebar-card" style="margin-top: 14px;">
+                <h3 class="dk-cat-sidebar-title" style="font-size: 13.5px; margin-bottom: 10px;">Price Range</h3>
+                <div class="dk-cat-price-facets">
+                    <a href="javascript:void(0)" onclick="filterByPriceRange(0, 2000)" class="dk-price-facet-chip">Under ₹2,000</a>
+                    <a href="javascript:void(0)" onclick="filterByPriceRange(2000, 10000)" class="dk-price-facet-chip">₹2,000 - ₹10,000</a>
+                    <a href="javascript:void(0)" onclick="filterByPriceRange(10000, 30000)" class="dk-price-facet-chip">₹10,000 - ₹30,000</a>
+                    <a href="javascript:void(0)" onclick="filterByPriceRange(30000, 999999)" class="dk-price-facet-chip">₹30,000 &amp; Above</a>
                 </div>
             </div>
 
-            <!-- Customer Rating Filter -->
-            <div class="gm-filter-widget">
-                <h3 class="gm-widget-title">CUSTOMER RATING</h3>
-                <div class="gm-rating-list">
-                    <label class="gm-rating-item">
-                        <input type="radio" name="rating_filter" value="4" onchange="gmRunFilters()" />
-                        <span class="gm-stars-gold">★★★★☆</span>
-                        <span class="gm-rating-label">& Up</span>
-                    </label>
-                    <label class="gm-rating-item">
-                        <input type="radio" name="rating_filter" value="3" onchange="gmRunFilters()" />
-                        <span class="gm-stars-gold">★★★☆☆</span>
-                        <span class="gm-rating-label">& Up</span>
-                    </label>
-                    <label class="gm-rating-item">
-                        <input type="radio" name="rating_filter" value="0" checked onchange="gmRunFilters()" />
-                        <span>All Ratings</span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="gm-filter-reset-wrap">
-                <button type="button" class="gm-reset-btn" onclick="gmResetAllFilters()">
-                    ↻ Reset All Filters
-                </button>
+            <!-- Need Complete Kit Promo -->
+            <div class="dk-cat-sidebar-promo dk-gaming-sidebar-promo">
+                <div class="dk-sp-tag">Dorm Battlestation</div>
+                <h4 class="dk-sp-title">Student Battlestation Kits</h4>
+                <p class="dk-sp-sub">Curated setups with consoles, low-latency monitors, headsets &amp; student warranty.</p>
+                <a href="/category/gaming-hub" class="dk-sp-btn">Explore Gaming Hub →</a>
             </div>
         </aside>
 
-        <!-- RIGHT COLUMN: PRODUCTS -->
-        <main class="gm-sub-products-area">
-            <div class="gm-results-header">
-                <span class="gm-results-count" id="gmResultsCount">Showing @products.Count results for @subPage.CategoryName</span>
-            </div>
+        <!-- RIGHT CONTENT AREA: PRODUCTS LIST -->
+        <main class="dk-cat-content" id="dkCatContentArea">
+            <div id="dkCatProductsInner">
 
-            <div class="gm-products-grid" id="gmProductsGrid">
-                @if (products.Count == 0)
+                <!-- Top Action Bar (Title, Breadcrumb & Sorting) -->
+                <div class="dk-cat-products-header-card">
+                    <div class="dk-cat-crumb-row">
+                        <a href="/" class="dk-c-crumb">Home</a>
+                        <span class="dk-c-sep">›</span>
+                        <a href="/category/gaming-hub" class="dk-c-crumb">Gaming Hub</a>
+                        <span class="dk-c-sep">›</span>
+                        <span class="dk-c-current">@activeCategoryName</span>
+                    </div>
+
+                    <div class="dk-cat-title-row">
+                        <div>
+                            <h1 class="dk-cat-heading">@activeCategoryName</h1>
+                            <p class="dk-cat-subtext">Verified gaming consoles, pro accessories, low-latency gear and dorm battlestation setups.</p>
+                        </div>
+
+                        <div class="dk-cat-sort-box">
+                            <label for="dkGamingSortSelect" class="dk-sort-label">Sort By:</label>
+                            <select id="dkGamingSortSelect" class="dk-sort-dropdown" onchange="handleGamingSortChange(this.value)">
+                                <option value="featured">Featured / Relevance</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                                <option value="rating">Customer Rating</option>
+                                <option value="discount">Discount</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="dk-cat-meta-bar">
+                        <span class="dk-cat-prod-count" id="dkCatProdCount">@products.Count Products</span>
+
+                        <!-- Active filter chip for selected subcategory -->
+                        <div id="dkCatActiveChipWrap" class="dk-active-filter-chip" style="@(string.IsNullOrWhiteSpace(activeSubItem) ? "display: none;" : "display: inline-flex;")">
+                            <span>Subcategory: <strong id="dkCatActiveChipText">@activeSubItem</strong></span>
+                            <button type="button" class="dk-chip-remove-btn" onclick="filterBySubItem('')" title="Remove filter">✕</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PRODUCTS GRID -->
+                @if (products.Count > 0)
                 {
-                    <div class="gm-no-products">
-                        <div class="gm-empty-icon">🎮</div>
-                        <h3>New Hardware Launching Soon</h3>
-                        <p>We are stocking up verified @subPage.CategoryName equipment. Check back shortly!</p>
-                        <a href="/category/gaming-hub" class="gm-empty-btn">&larr; Return to Gaming Hub</a>
+                    <div class="dk-cat-products-grid">
+                        @foreach (var prod in products)
+                        {
+                            var hasRealImg = !string.IsNullOrWhiteSpace(prod.ImageUrl) && !prod.ImageUrl.Contains("placeholder") && !prod.IsUploadingSoon;
+                            var originalPrice = prod.NumericOriginalPrice > 0 ? prod.NumericOriginalPrice : prod.NumericPrice;
+                            var discountPercent = prod.NumericDiscount > 0 ? prod.NumericDiscount : (originalPrice > prod.NumericPrice && originalPrice > 0 ? Math.Round(((originalPrice - prod.NumericPrice) / originalPrice) * 100, 0) : 0);
+                            var prodUrl = $"/category/gaming-hub/{activeCategorySlug}";
+
+                            <div class="dk-cat-prod-card"
+                                 data-product-id="@prod.Id"
+                                 data-subcat-tags="@(prod.SubcategoryTag ?? "") @prod.Title @(prod.Description ?? "") @prod.Brand"
+                                 data-title="@prod.Title"
+                                 data-desc="@(prod.Description ?? "")"
+                                 data-price="@prod.NumericPrice"
+                                 data-rating="@prod.Rating"
+                                 data-discount="@discountPercent">
+
+                                <div class="dk-cat-prod-img-box">
+                                    @if (hasRealImg)
+                                    {
+                                        <img src="@prod.ImageUrl" alt="@prod.Title" loading="lazy" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'dk-sports-card-uploading dk-gaming-card-uploading\'><span class=\'dk-sc-emoji\'>@activeCategoryEmoji</span><span class=\'dk-sc-badge\'>● Uploading Soon</span><p class=\'dk-sc-hint\'>Admin will implement images</p></div>';" />
+                                    }
+                                    else
+                                    {
+                                        <div class="dk-sports-card-uploading dk-gaming-card-uploading">
+                                            <div class="dk-sc-radar-wrap">
+                                                <span class="dk-sc-ring ring-1"></span>
+                                                <span class="dk-sc-ring ring-2"></span>
+                                                <span class="dk-sc-emoji">@activeCategoryEmoji</span>
+                                            </div>
+                                            <span class="dk-sc-badge">● Uploading Soon</span>
+                                            <p class="dk-sc-hint">Admin will implement images</p>
+                                        </div>
+                                    }
+
+                                    @if (discountPercent > 0)
+                                    {
+                                        <span class="dk-cat-prod-badge">@discountPercent.ToString("0")% OFF</span>
+                                    }
+                                </div>
+
+                                <div class="dk-cat-prod-details">
+                                    <span class="dk-cat-prod-badge-verified dk-gaming-badge-verified">Verified Gaming Gear</span>
+                                    <h3 class="dk-cat-prod-title">
+                                        <a href="@prodUrl" title="@prod.Title">@prod.Title</a>
+                                    </h3>
+                                    <p class="dk-cat-prod-desc">
+                                        @if (!string.IsNullOrWhiteSpace(prod.SubcategoryTag))
+                                        {
+                                            <strong style="color: #2563eb; display: inline;">@prod.SubcategoryTag.</strong>
+                                        }
+                                        @(string.IsNullOrWhiteSpace(prod.Description) ? "Verified authentic hardware engineered for low-latency performance with full student warranty." : prod.Description)
+                                    </p>
+
+                                    <div class="dk-cat-prod-rating-row">
+                                        <span class="dk-cat-stars">★★★★★</span>
+                                        <span class="dk-cat-rating-num">@(!string.IsNullOrWhiteSpace(prod.Rating) ? prod.Rating : "4.9")</span>
+                                        <span class="dk-cat-reviews-count">(Student Gamer Favorite)</span>
+                                    </div>
+
+                                    <div class="dk-cat-prod-price-area">
+                                        <span class="dk-cat-prod-price">@(!string.IsNullOrWhiteSpace(prod.PriceText) ? prod.PriceText : ("₹" + prod.NumericPrice.ToString("N0")))</span>
+                                        @if (originalPrice > prod.NumericPrice && originalPrice > 0)
+                                        {
+                                            <span class="dk-cat-prod-mrp">@(!string.IsNullOrWhiteSpace(prod.OriginalPriceText) ? prod.OriginalPriceText : ("₹" + originalPrice.ToString("N0")))</span>
+                                            <span class="dk-cat-prod-save">Save ₹@((originalPrice - prod.NumericPrice).ToString("N0"))</span>
+                                        }
+                                    </div>
+
+                                    <div class="dk-cat-prod-actions">
+                                        <button type="button" class="dk-cat-btn-buy dk-gaming-btn-buy" onclick="handleGamingAddToCart('@prod.Id', '@prod.Title.Replace("'", "\\'")')">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+                                                <circle cx="9" cy="21" r="1"></circle>
+                                                <circle cx="20" cy="21" r="1"></circle>
+                                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                            </svg>
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Dynamic Empty State when client-side filter yields 0 cards -->
+                    <div id="dkCatSubEmptyState" class="dk-cat-empty-box" style="display: none;">
+                        <div class="dk-cat-empty-icon">🔍</div>
+                        <h3>No products found for this subcategory</h3>
+                        <p>Admin will upload more products for this subcategory soon. Try another subcategory or browse all @activeCategoryName products.</p>
+                        <button type="button" class="dk-cat-btn-reset" onclick="filterBySubItem('')">
+                            Browse All @activeCategoryName
+                        </button>
                     </div>
                 }
                 else
                 {
-                    @foreach (var p in products)
-                    {
-                        var hasImg = !string.IsNullOrWhiteSpace(p.ImageUrl) && !p.ImageUrl.Contains("placeholder") && !p.IsUploadingSoon;
-                        var isStock = !string.IsNullOrWhiteSpace(p.AvailabilityStatus) && p.AvailabilityStatus.Contains("In stock", StringComparison.OrdinalIgnoreCase);
-                        var cleanPrice = (p.PriceText ?? "").Replace("₹", "").Replace(",", "").Trim();
-
-                        <article class="gm-prod-card"
-                                 data-product-id="@p.Id"
-                                 data-brand="@p.Brand"
-                                 data-condition="@p.ConditionBadge"
-                                 data-price="@cleanPrice"
-                                 data-rating="@p.Rating"
-                                 data-stock="@(isStock ? "in-stock" : "out-of-stock")"
-                                 data-title="@p.Title">
-                            
-                            <div class="gm-prod-media">
-                                @if (!string.IsNullOrWhiteSpace(p.ConditionBadge))
-                                {
-                                    <span class="gm-prod-badge-cond">@p.ConditionBadge</span>
-                                }
-                                @if (!string.IsNullOrWhiteSpace(p.DiscountPercent))
-                                {
-                                    <span class="gm-prod-badge-disc">@p.DiscountPercent</span>
-                                }
-                                
-                                @if (hasImg)
-                                {
-                                    <img src="@p.ImageUrl" alt="@p.Title" class="gm-prod-img" loading="lazy" />
-                                }
-                                else
-                                {
-                                    <div class="gm-prod-uploading">
-                                        <div class="gm-prod-uploading-icon">🎮</div>
-                                        <div class="gm-prod-uploading-pill">
-                                            <span class="gm-mini-dot">●</span> Uploading Soon
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-
-                            <div class="gm-prod-info">
-                                <div class="gm-prod-meta-row">
-                                    <span class="gm-prod-brand">@p.Brand</span>
-                                    <span class="gm-prod-stock @(isStock ? "in" : "out")">
-                                        ● @(string.IsNullOrWhiteSpace(p.AvailabilityStatus) ? "In stock" : p.AvailabilityStatus)
-                                    </span>
-                                </div>
-
-                                <h2 class="gm-prod-title" title="@p.Title">@p.Title</h2>
-
-                                <div class="gm-prod-rating-row">
-                                    <span class="gm-stars-gold">★★★★★</span>
-                                    <span class="gm-rating-num">@p.Rating</span>
-                                </div>
-
-                                <div class="gm-prod-price-row">
-                                    <span class="gm-price-current">@p.PriceText</span>
-                                    @if (!string.IsNullOrWhiteSpace(p.OriginalPriceText))
-                                    {
-                                        <span class="gm-price-original">@p.OriginalPriceText</span>
-                                    }
-                                </div>
-
-                                <div class="gm-prod-actions">
-                                    <a href="@(string.IsNullOrWhiteSpace(p.Slug) ? $"/category/gaming-hub/{currentSlug}" : $"/category/gaming-hub/{p.Slug}")" class="gm-prod-options-btn">
-                                        <span>Options</span>
-                                        <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
-                                    </a>
-                                </div>
-                            </div>
-                        </article>
-                    }
+                    <div class="dk-cat-empty-box">
+                        <div class="dk-cat-empty-icon">📦</div>
+                        <h3>Products uploading soon by Admin</h3>
+                        <p>Admin is currently configuring products for @activeCategoryName. Check back shortly!</p>
+                        <a href="/category/gaming-hub" class="dk-cat-btn-reset">Back to Gaming Hub</a>
+                    </div>
                 }
             </div>
         </main>
     </div>
+
 </div>
 
 <!-- ========================================================
-     SUBCATEGORY HUB STYLES (MATCHING IMAGE 3)
+     INLINE STYLING FOR GAMING CATEGORIES EXPLORER
+     (Matching Study Essentials & Sports Hub Design System)
 ========================================================= -->
 <style>
-    .gm-subpage-container {
-        padding-top: 16px;
-        padding-bottom: 56px;
-        color: #0f172a;
+    .dk-gaming-explorer-wrapper {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 4px 0 32px 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
-    /* Sub Hero Banner (Matching Image 3) */
-    .gm-sub-hero-card {
+    /* Admin bar */
+    .dk-study-hub-admin-bar {
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 10px 18px;
+        border-radius: 10px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .dk-sh-admin-badge {
+        background: #ef4444;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 3px 8px;
+        border-radius: 4px;
+    }
+    .dk-sh-admin-hint {
+        font-size: 13px;
+        color: #cbd5e1;
+        flex: 1;
+    }
+    .dk-sh-admin-hint strong {
+        color: #67e8f9;
+    }
+    .dk-sh-admin-btn {
+        background: #2563eb;
+        color: #ffffff;
+        font-size: 12.5px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.2s;
+    }
+    .dk-sh-admin-btn:hover {
+        background: #1d4ed8;
+        color: #ffffff;
+    }
+
+    /* Common Hero Banner */
+    .dk-study-common-hero {
         position: relative;
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        background: linear-gradient(135deg, #0b1120 0%, #0f172a 60%, #1e1b4b 100%);
+        color: #ffffff;
         border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 32px 36px 20px 36px;
+        margin-bottom: 18px;
         overflow: hidden;
-        margin-bottom: 24px;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
     }
-    .gm-sub-hero-glow {
-        position: absolute;
-        top: -60px;
-        right: -60px;
-        width: 320px;
-        height: 320px;
-        background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(99, 102, 241, 0.1) 50%, transparent 70%);
-        border-radius: 50%;
-        pointer-events: none;
-    }
-    .gm-sub-hero-body {
-        position: relative;
-        z-index: 2;
-        padding: 32px 36px;
+    .dk-hero-inner-grid {
         display: grid;
-        grid-template-columns: 1.3fr 0.7fr;
+        grid-template-columns: 1fr 340px;
         gap: 32px;
         align-items: center;
     }
-    .gm-sub-hero-breadcrumb {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        color: #94a3b8;
-        margin-bottom: 12px;
-    }
-    .gm-sub-hero-breadcrumb a {
-        color: #38bdf8;
-        text-decoration: none;
-    }
-    .gm-sub-hero-breadcrumb a:hover {
-        text-decoration: underline;
-    }
-    .gm-sub-sep {
-        color: #64748b;
-    }
-    .gm-sub-crumb-active {
-        color: #cbd5e1;
-        font-weight: 600;
-    }
-    .gm-sub-hero-badge {
+    .dk-hero-pill-badge {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        background: rgba(56, 189, 248, 0.15);
-        border: 1px solid rgba(56, 189, 248, 0.4);
-        color: #7dd3fc;
-        padding: 4px 12px;
-        border-radius: 9999px;
+        gap: 8px;
+        background: rgba(37, 99, 235, 0.2);
+        border: 1px solid rgba(59, 130, 246, 0.4);
+        color: #93c5fd;
         font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-        margin-bottom: 10px;
-    }
-    .gm-badge-dot {
-        font-size: 8px;
-        color: #38bdf8;
-    }
-    .gm-sub-hero-title {
-        font-size: 34px;
         font-weight: 800;
-        color: #ffffff;
-        margin: 0 0 10px 0;
-        line-height: 1.2;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        padding: 5px 12px;
+        border-radius: 20px;
+        margin-bottom: 12px;
     }
-    .gm-sub-hero-desc {
+    .dk-gaming-pill-badge {
+        background: rgba(147, 51, 234, 0.2);
+        border-color: rgba(168, 85, 247, 0.4);
+        color: #d8b4fe;
+    }
+    .dk-hero-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #38bdf8;
+        box-shadow: 0 0 8px #38bdf8;
+    }
+    .dk-hero-main-title {
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1.25;
+        margin: 0 0 10px 0;
+        letter-spacing: -0.5px;
+        color: #ffffff;
+    }
+    .dk-hero-main-sub {
         font-size: 14.5px;
         color: #cbd5e1;
         line-height: 1.5;
-        max-width: 580px;
-        margin: 0 0 20px 0;
+        margin: 0 0 18px 0;
+        max-width: 680px;
     }
-    .gm-sub-hero-chips {
+    .dk-hero-trust-badges {
         display: flex;
-        gap: 12px;
         flex-wrap: wrap;
-        align-items: center;
+        gap: 16px;
     }
-    .gm-hero-chip {
-        font-size: 12px;
-        font-weight: 600;
-        color: #94a3b8;
-        background: rgba(255, 255, 255, 0.06);
-        padding: 4px 10px;
-        border-radius: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .gm-sub-admin-link {
-        font-size: 12px;
-        color: #38bdf8;
-        text-decoration: none;
-        font-weight: 600;
-        margin-left: 6px;
-    }
-    .gm-sub-admin-link:hover {
-        text-decoration: underline;
-    }
-
-    /* Hero Media on Subcategory */
-    .gm-sub-hero-media {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .gm-sub-banner-img-wrap {
-        width: 100%;
-        max-width: 320px;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-    .gm-sub-banner-img {
-        width: 100%;
-        height: auto;
-        display: block;
-    }
-    .gm-sub-hero-uploading {
-        width: 100%;
-        max-width: 280px;
-        padding: 24px 16px;
-        background: rgba(15, 23, 42, 0.6);
-        border: 1.5px dashed rgba(56, 189, 248, 0.4);
-        border-radius: 14px;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .gm-sub-uploading-radar {
-        position: relative;
-        width: 54px;
-        height: 54px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 10px;
-    }
-    .gm-sub-radar-ring {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        border: 1.5px solid rgba(56, 189, 248, 0.4);
-        animation: gmPulse 2.2s infinite ease-out;
-    }
-    .gm-sub-emoji {
-        font-size: 26px;
-        z-index: 2;
-    }
-    .gm-sub-uploading-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 11.5px;
-        font-weight: 700;
-        color: #7dd3fc;
-        background: rgba(56, 189, 248, 0.15);
-        border: 1px solid rgba(56, 189, 248, 0.35);
-        padding: 3px 10px;
-        border-radius: 9999px;
-        margin-bottom: 6px;
-    }
-    .gm-sub-uploading-text {
-        font-size: 11.5px;
-        color: #94a3b8;
-        margin: 0;
-    }
-
-    /* Top Quick Filter Pills Bar */
-    .gm-quick-filters-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 10px 16px;
-        margin-bottom: 24px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        flex-wrap: wrap;
-    }
-    .gm-filter-pills-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-    .gm-filter-pills-right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .gm-dropdown-pill {
-        position: relative;
-    }
-    .gm-pill-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: #f8fafc;
-        border: 1px solid #cbd5e1;
-        color: #334155;
-        font-size: 13px;
-        font-weight: 600;
-        padding: 7px 14px;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    .gm-pill-btn:hover, .gm-pill-btn.active {
-        background: #f1f5f9;
-        border-color: #2563eb;
-        color: #2563eb;
-    }
-    .gm-pill-btn svg {
-        transition: transform 0.2s ease;
-    }
-    .gm-dropdown-pill.open .gm-pill-btn svg {
-        transform: rotate(180deg);
-    }
-    .gm-pill-dropdown-menu {
-        display: none;
-        position: absolute;
-        top: calc(100% + 6px);
-        left: 0;
-        min-width: 190px;
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.15);
-        padding: 8px 0;
-        z-index: 50;
-    }
-    .gm-dropdown-pill.open .gm-pill-dropdown-menu {
-        display: block;
-    }
-    .gm-menu-right {
-        left: auto;
-        right: 0;
-    }
-    .gm-pill-option {
+    .dk-hero-trust-item {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 8px 14px;
-        font-size: 13px;
-        color: #334155;
-        cursor: pointer;
-        transition: background 0.15s ease;
+        font-size: 12.5px;
+        color: #e2e8f0;
     }
-    .gm-pill-option:hover {
-        background: #f8fafc;
-        color: #0f172a;
+    .dk-hero-trust-icon {
+        font-size: 16px;
     }
-    .gm-pill-option input[type="radio"] {
-        accent-color: #2563eb;
+    .dk-hero-trust-item strong {
+        color: #38bdf8;
     }
 
-    /* 2-Column Split Layout */
-    .gm-sub-layout {
+    /* Test pic / Radar glow */
+    .dk-hero-img-col {
+        display: flex;
+        justify-content: center;
+    }
+    .dk-hero-test-pic-box {
+        width: 100%;
+        max-width: 320px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px dashed rgba(255, 255, 255, 0.25);
+        border-radius: 12px;
+        padding: 24px 16px;
+        text-align: center;
+        backdrop-filter: blur(8px);
+    }
+    .dk-gaming-radar-pulse {
+        position: relative;
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 12px auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dk-radar-ring {
+        position: absolute;
+        border-radius: 50%;
+        border: 2px solid rgba(168, 85, 247, 0.4);
+        animation: dkRadarPulse 2.5s infinite ease-out;
+    }
+    .dk-radar-ring.ring-1 { width: 100%; height: 100%; }
+    .dk-radar-ring.ring-2 { width: 140%; height: 140%; animation-delay: 0.8s; }
+    @@keyframes dkRadarPulse {
+        0% { transform: scale(0.6); opacity: 1; }
+        100% { transform: scale(1.4); opacity: 0; }
+    }
+    .dk-hero-cam-icon {
+        font-size: 30px;
+        z-index: 2;
+    }
+    .dk-hero-test-btn {
+        display: inline-block;
+        background: #7c3aed;
+        color: #ffffff;
+        font-size: 10.5px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        padding: 3px 10px;
+        border-radius: 4px;
+        margin-bottom: 6px;
+    }
+    .dk-hero-test-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 4px;
+    }
+    .dk-hero-test-sub {
+        font-size: 11px;
+        color: #94a3b8;
+    }
+    .dk-hero-custom-img-wrap {
+        width: 100%;
+        max-width: 320px;
+        height: 180px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .dk-hero-custom-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Trust highlights bar */
+    .dk-hero-trust-bar {
         display: grid;
-        grid-template-columns: 240px 1fr;
-        gap: 28px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-top: 26px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .dk-htb-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .dk-htb-icon {
+        font-size: 20px;
+    }
+    .dk-htb-item strong {
+        display: block;
+        font-size: 12.5px;
+        color: #ffffff;
+    }
+    .dk-htb-item span {
+        font-size: 11px;
+        color: #94a3b8;
+    }
+
+    /* ========================================================
+       TOP 22 CATEGORIES NAV PILL STRIP
+    ======================================================== */
+    .dk-study-cat-nav-strip {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    .dk-study-cat-nav-title {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: #0284c7;
+        flex-shrink: 0;
+    }
+    .dk-study-cat-nav-items {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
+    .dk-cat-nav-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #334155;
+        font-size: 12.5px;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 20px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+    .dk-cat-nav-pill:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #0f172a;
+    }
+    .dk-cat-nav-pill.is-selected {
+        background: #0284c7;
+        border-color: #0284c7;
+        color: #ffffff;
+        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+    }
+    .dk-cat-pill-icon {
+        font-size: 14px;
+    }
+
+    /* ========================================================
+       2-COLUMN LAYOUT: SIDEBAR + CONTENT
+    ======================================================== */
+    .dk-cat-main-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 24px;
         align-items: start;
     }
 
     /* Left Sidebar */
-    .gm-sub-sidebar {
+    .dk-cat-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .dk-cat-sidebar-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
         border-radius: 12px;
-        padding: 20px 16px;
+        padding: 16px 14px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
-    .gm-filter-widget {
-        border-bottom: 1px solid #f1f5f9;
-        padding-bottom: 18px;
-        margin-bottom: 18px;
-    }
-    .gm-filter-widget:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-        margin-bottom: 0;
-    }
-    .gm-widget-title {
-        font-size: 11.5px;
-        font-weight: 800;
-        letter-spacing: 0.06em;
-        color: #64748b;
-        margin: 0 0 12px 0;
-        text-transform: uppercase;
-    }
-
-    /* Category Navigation List */
-    .gm-cat-list {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        max-height: 280px;
-        overflow-y: auto;
-        padding-right: 4px;
-    }
-    .gm-cat-list::-webkit-scrollbar {
-        width: 4px;
-    }
-    .gm-cat-list::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
-    }
-    .gm-cat-nav-link {
+    .dk-cat-sidebar-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 6px 10px;
-        border-radius: 6px;
-        font-size: 13px;
-        color: #475569;
-        text-decoration: none;
-        transition: all 0.15s ease;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f1f5f9;
     }
-    .gm-cat-nav-link:hover {
-        background: #f8fafc;
-        color: #0f172a;
-    }
-    .gm-cat-nav-link.active {
-        background: #eff6ff;
-        color: #2563eb;
+    .dk-cat-sidebar-title {
+        font-size: 14px;
         font-weight: 700;
-    }
-    .gm-cat-nav-dot {
-        font-size: 8px;
-        color: #2563eb;
-    }
-
-    /* Checkbox & Radio Facets */
-    .gm-checkbox-list, .gm-rating-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-    .gm-checkbox-item, .gm-rating-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        color: #334155;
-        cursor: pointer;
-    }
-    .gm-checkbox-item input, .gm-rating-item input {
-        accent-color: #2563eb;
-    }
-    .gm-stars-gold {
-        color: #f59e0b;
-        letter-spacing: 1px;
-    }
-    .gm-rating-label {
-        color: #64748b;
-        font-size: 12px;
-    }
-
-    /* Price inputs */
-    .gm-price-inputs {
+        color: #0f172a;
+        margin: 0;
         display: flex;
         align-items: center;
         gap: 6px;
     }
-    .gm-price-field {
-        position: relative;
-        flex: 1;
+    .dk-cat-clear-btn {
+        background: none;
+        border: none;
+        color: #ef4444;
+        font-size: 11.5px;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 2px 6px;
+    }
+    .dk-cat-clear-btn:hover { text-decoration: underline; }
+    .dk-cat-sidebar-subhead {
+        font-size: 11px;
+        font-weight: 800;
+        color: #0284c7;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        padding: 0 6px;
+    }
+    .dk-cat-sub-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .dk-cat-sub-link {
         display: flex;
         align-items: center;
-        border: 1px solid #cbd5e1;
-        border-radius: 6px;
-        padding: 4px 6px;
-        background: #ffffff;
-    }
-    .gm-currency {
-        font-size: 12px;
-        color: #94a3b8;
-        font-weight: 600;
-    }
-    .gm-price-field input {
-        width: 100%;
-        border: none;
-        outline: none;
-        font-size: 12px;
-        color: #0f172a;
-        padding-left: 2px;
-    }
-    .gm-price-sep {
-        font-size: 12px;
-        color: #94a3b8;
-    }
-    .gm-price-btn {
-        background: #f1f5f9;
-        border: 1px solid #cbd5e1;
-        color: #334155;
-        font-size: 12px;
-        font-weight: 700;
-        padding: 6px 10px;
-        border-radius: 6px;
-        cursor: pointer;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
         transition: all 0.15s ease;
-    }
-    .gm-price-btn:hover {
-        background: #2563eb;
-        color: #ffffff;
-        border-color: #2563eb;
-    }
-    .gm-filter-reset-wrap {
-        margin-top: 18px;
-        padding-top: 14px;
-        border-top: 1px dashed #e2e8f0;
-    }
-    .gm-reset-btn {
-        width: 100%;
-        background: none;
-        border: 1px dashed #cbd5e1;
-        color: #64748b;
-        font-size: 12px;
-        font-weight: 600;
-        padding: 7px;
-        border-radius: 6px;
         cursor: pointer;
-        transition: all 0.2s ease;
     }
-    .gm-reset-btn:hover {
+    .dk-cat-sub-link:hover {
         background: #f8fafc;
         color: #0f172a;
-        border-color: #94a3b8;
+    }
+    .dk-cat-sub-link.is-active {
+        background: #f0f9ff;
+        color: #0284c7;
+        font-weight: 700;
+    }
+    .dk-sub-radio {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid #cbd5e1;
+        flex-shrink: 0;
+        display: inline-block;
+        transition: all 0.15s;
+    }
+    .dk-cat-sub-link.is-active .dk-sub-radio {
+        border-color: #0284c7;
+        background: #0284c7;
+        box-shadow: inset 0 0 0 3px #ffffff;
+    }
+    .dk-sub-text {
+        flex: 1;
+        line-height: 1.35;
+    }
+    .dk-sub-badge {
+        font-size: 10px;
+        font-weight: 700;
+        background: #0284c7;
+        color: #ffffff;
+        padding: 2px 6px;
+        border-radius: 10px;
     }
 
-    /* Right Column: Products Grid */
-    .gm-sub-products-area {
-        min-width: 0;
+    /* Note Card */
+    .dk-cat-note-card {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-radius: 10px;
+        padding: 12px 14px;
     }
-    .gm-results-header {
-        margin-bottom: 16px;
+    .dk-cat-note-head {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #92400e;
+        margin-bottom: 6px;
     }
-    .gm-results-count {
+    .dk-cat-note-text {
+        font-size: 12px;
+        color: #78350f;
+        line-height: 1.45;
+        margin: 0;
+    }
+
+    /* Facets & Promo */
+    .dk-cat-price-facets {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .dk-price-facet-chip {
+        display: block;
+        padding: 6px 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.15s;
+    }
+    .dk-price-facet-chip:hover {
+        background: #f0fdf4;
+        border-color: #86efac;
+        color: #15803d;
+    }
+    .dk-cat-sidebar-promo {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+        color: #ffffff;
+        border-radius: 12px;
+        padding: 18px 16px;
+    }
+    .dk-sp-tag {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.15);
+        color: #c7d2fe;
+        font-size: 10.5px;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+    }
+    .dk-sp-title {
+        font-size: 14.5px;
+        font-weight: 700;
+        margin: 0 0 6px 0;
+    }
+    .dk-sp-sub {
+        font-size: 12px;
+        color: #e0e7ff;
+        line-height: 1.4;
+        margin: 0 0 12px 0;
+    }
+    .dk-sp-btn {
+        display: inline-block;
+        background: #4f46e5;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+    }
+    .dk-sp-btn:hover { background: #4338ca; }
+
+    /* ========================================================
+       RIGHT CONTENT AREA: HEADER & PRODUCTS GRID
+    ======================================================== */
+    .dk-cat-products-header-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 18px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .dk-cat-crumb-row {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .dk-c-crumb {
+        color: #64748b;
+        text-decoration: none;
+    }
+    .dk-c-crumb:hover { color: #0284c7; }
+    .dk-c-sep { color: #94a3b8; }
+    .dk-c-current {
+        color: #0f172a;
+        font-weight: 600;
+    }
+    .dk-cat-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    .dk-cat-heading {
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 4px 0;
+        letter-spacing: -0.4px;
+    }
+    .dk-cat-subtext {
         font-size: 13.5px;
         color: #64748b;
-        font-weight: 500;
+        margin: 0;
     }
-    .gm-products-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 18px;
+    .dk-cat-sort-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .dk-sort-label {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #475569;
+    }
+    .dk-sort-dropdown {
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 13px;
+        color: #1e293b;
+        background: #ffffff;
+        cursor: pointer;
+    }
+    .dk-cat-meta-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 14px;
+        padding-top: 10px;
+        border-top: 1px solid #f1f5f9;
+    }
+    .dk-cat-prod-count {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .dk-active-filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #e0f2fe;
+        color: #0369a1;
+        font-size: 12px;
+        padding: 3px 10px;
+        border-radius: 14px;
+    }
+    .dk-chip-remove-btn {
+        background: none;
+        border: none;
+        color: #0284c7;
+        font-weight: 800;
+        cursor: pointer;
+        font-size: 11px;
     }
 
-    /* Product Card (Matching Image 3) */
-    .gm-prod-card {
+    /* Products Grid (3 columns matching Image 2 & 4) */
+    .dk-cat-products-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+    .dk-cat-prod-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
         border-radius: 12px;
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        transition: all 0.2s ease;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
-    .gm-prod-card:hover {
-        border-color: #93c5fd;
-        box-shadow: 0 10px 24px -5px rgba(0, 0, 0, 0.08);
-        transform: translateY(-2px);
+    .dk-cat-prod-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+        border-color: #cbd5e1;
     }
-    .gm-prod-media {
+    .dk-cat-prod-img-box {
         position: relative;
         width: 100%;
         height: 190px;
@@ -885,386 +1049,436 @@
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        border-bottom: 1px solid #f1f5f9;
     }
-    .gm-prod-badge-cond {
+    .dk-cat-prod-img-box img {
+        max-width: 85%;
+        max-height: 85%;
+        object-fit: contain;
+    }
+    .dk-cat-prod-badge {
         position: absolute;
-        top: 8px;
-        left: 8px;
-        background: rgba(15, 23, 42, 0.85);
+        top: 10px;
+        left: 10px;
+        background: #ea580c;
         color: #ffffff;
-        font-size: 10px;
-        font-weight: 700;
+        font-size: 11px;
+        font-weight: 800;
         padding: 3px 8px;
         border-radius: 4px;
-        z-index: 2;
+        letter-spacing: 0.3px;
     }
-    .gm-prod-badge-disc {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background: #ef4444;
-        color: #ffffff;
-        font-size: 10.5px;
-        font-weight: 800;
-        padding: 3px 7px;
-        border-radius: 4px;
-        z-index: 2;
-    }
-    .gm-prod-img {
+
+    /* Uploading Soon Radar Card */
+    .dk-sports-card-uploading {
         width: 100%;
         height: 100%;
-        object-fit: cover;
-    }
-    .gm-prod-uploading {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 8px;
+        justify-content: center;
+        background: linear-gradient(135deg, #0b1120 0%, #1e1b4b 100%);
+        color: #ffffff;
+        padding: 16px;
+        text-align: center;
+        box-sizing: border-box;
     }
-    .gm-prod-uploading-icon {
-        font-size: 38px;
-    }
-    .gm-prod-uploading-pill {
-        display: inline-flex;
+    .dk-sc-radar-wrap {
+        position: relative;
+        width: 48px;
+        height: 48px;
+        display: flex;
         align-items: center;
-        gap: 5px;
-        background: #e0f2fe;
-        color: #0369a1;
-        border: 1px solid #bae6fd;
-        font-size: 10.5px;
-        font-weight: 700;
-        padding: 2px 8px;
-        border-radius: 9999px;
+        justify-content: center;
+        margin-bottom: 8px;
     }
-    .gm-prod-info {
-        padding: 14px;
+    .dk-sc-ring {
+        position: absolute;
+        border-radius: 50%;
+        border: 1.5px solid rgba(168, 85, 247, 0.45);
+        animation: dkScRing 2s infinite ease-out;
+    }
+    .dk-sc-ring.ring-1 { width: 100%; height: 100%; }
+    .dk-sc-ring.ring-2 { width: 140%; height: 140%; animation-delay: 0.6s; }
+    @@keyframes dkScRing {
+        0% { transform: scale(0.6); opacity: 1; }
+        100% { transform: scale(1.3); opacity: 0; }
+    }
+    .dk-sc-emoji {
+        font-size: 22px;
+        z-index: 2;
+    }
+    .dk-sc-badge {
+        display: inline-block;
+        background: rgba(34, 197, 94, 0.2);
+        color: #4ade80;
+        font-size: 10.5px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        margin-bottom: 4px;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    .dk-sc-hint {
+        font-size: 11px;
+        color: #94a3b8;
+        margin: 0;
+    }
+
+    /* Product Card Details */
+    .dk-cat-prod-details {
+        padding: 14px 16px;
         display: flex;
         flex-direction: column;
         flex: 1;
     }
-    .gm-prod-meta-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 6px;
-    }
-    .gm-prod-brand {
-        font-size: 11px;
-        font-weight: 700;
-        color: #2563eb;
+    .dk-cat-prod-badge-verified {
+        font-size: 10px;
+        font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        color: #0284c7;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
     }
-    .gm-prod-stock {
-        font-size: 11px;
-        font-weight: 600;
+    .dk-gaming-badge-verified {
+        color: #7c3aed;
     }
-    .gm-prod-stock.in { color: #16a34a; }
-    .gm-prod-stock.out { color: #dc2626; }
-    .gm-prod-title {
-        font-size: 13.5px;
+    .dk-cat-prod-title {
+        font-size: 14px;
         font-weight: 700;
-        color: #0f172a;
-        margin: 0 0 8px 0;
         line-height: 1.35;
+        margin: 0 0 6px 0;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        min-height: 38px;
     }
-    .gm-prod-rating-row {
+    .dk-cat-prod-title a {
+        color: #0f172a;
+        text-decoration: none;
+    }
+    .dk-cat-prod-title a:hover {
+        color: #0284c7;
+    }
+    .dk-cat-prod-desc {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.4;
+        margin: 0 0 10px 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 34px;
+    }
+    .dk-cat-prod-rating-row {
         display: flex;
         align-items: center;
-        gap: 5px;
-        font-size: 11.5px;
-        margin-bottom: 10px;
+        gap: 6px;
+        font-size: 12px;
+        margin-bottom: 12px;
     }
-    .gm-rating-num {
+    .dk-cat-stars {
+        color: #f59e0b;
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+    .dk-cat-rating-num {
         font-weight: 700;
         color: #0f172a;
     }
-    .gm-review-num {
+    .dk-cat-reviews-count {
         color: #64748b;
+        font-size: 11px;
     }
-    .gm-prod-price-row {
+    .dk-cat-prod-price-area {
         display: flex;
         align-items: baseline;
-        gap: 6px;
+        gap: 8px;
         margin-top: auto;
         margin-bottom: 12px;
         flex-wrap: wrap;
     }
-    .gm-price-current {
-        font-size: 17px;
+    .dk-cat-prod-price {
+        font-size: 18px;
         font-weight: 800;
         color: #0f172a;
     }
-    .gm-price-original {
-        font-size: 12px;
+    .dk-cat-prod-mrp {
+        font-size: 12.5px;
         color: #94a3b8;
         text-decoration: line-through;
     }
-    .gm-save-pill {
-        font-size: 10px;
+    .dk-cat-prod-save {
+        font-size: 11.5px;
         font-weight: 700;
         color: #16a34a;
-        background: #dcfce7;
-        padding: 2px 5px;
-        border-radius: 4px;
     }
-    .gm-prod-actions {
-        width: 100%;
-    }
-    .gm-prod-options-btn {
+    .dk-cat-prod-actions {
         display: flex;
+        gap: 8px;
+    }
+    .dk-cat-btn-buy {
+        width: 100%;
+        background: #0284c7;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 6px;
-        width: 100%;
-        background: #f8fafc;
-        border: 1px solid #cbd5e1;
-        color: #0f172a;
-        font-size: 12.5px;
-        font-weight: 700;
-        padding: 8px 14px;
-        border-radius: 6px;
-        text-decoration: none;
-        transition: all 0.15s ease;
+        transition: background 0.2s;
     }
-    .gm-prod-options-btn:hover {
+    .dk-cat-btn-buy:hover {
+        background: #0369a1;
+    }
+    .dk-gaming-btn-buy {
         background: #2563eb;
-        border-color: #2563eb;
-        color: #ffffff;
+    }
+    .dk-gaming-btn-buy:hover {
+        background: #1d4ed8;
     }
 
-    /* Empty state */
-    .gm-no-products {
-        grid-column: 1 / -1;
+    /* Empty Box */
+    .dk-cat-empty-box {
         background: #ffffff;
         border: 1px dashed #cbd5e1;
         border-radius: 12px;
         padding: 48px 24px;
         text-align: center;
     }
-    .gm-empty-icon {
-        font-size: 48px;
+    .dk-cat-empty-icon {
+        font-size: 40px;
         margin-bottom: 12px;
     }
-    .gm-empty-btn {
+    .dk-cat-empty-box h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+    }
+    .dk-cat-empty-box p {
+        font-size: 13.5px;
+        color: #64748b;
+        max-width: 480px;
+        margin: 0 auto 16px auto;
+    }
+    .dk-cat-btn-reset {
         display: inline-block;
-        margin-top: 14px;
-        background: #2563eb;
+        background: #0284c7;
         color: #ffffff;
-        padding: 8px 18px;
+        border: none;
         border-radius: 6px;
+        padding: 8px 18px;
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 700;
+        cursor: pointer;
         text-decoration: none;
+    }
+    .dk-cat-btn-reset:hover {
+        background: #0369a1;
     }
 
     /* Responsive */
-    @@media (max-width: 900px) {
-        .gm-sub-layout {
+    @@media (max-width: 1024px) {
+        .dk-hero-inner-grid {
             grid-template-columns: 1fr;
         }
-        .gm-sub-sidebar {
-            display: none; /* toggleable or collapsed on mobile */
-        }
-        .gm-sub-hero-body {
-            grid-template-columns: 1fr;
-            padding: 24px 20px;
-        }
-        .gm-sub-hero-media {
+        .dk-hero-img-col {
             display: none;
         }
-    }
-    @@media (max-width: 600px) {
-        .gm-products-grid {
+        .dk-cat-main-layout {
+            grid-template-columns: 1fr;
+        }
+        .dk-cat-products-grid {
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
         }
-        .gm-quick-filters-bar {
-            padding: 8px;
+    }
+    @@media (max-width: 640px) {
+        .dk-hero-trust-bar {
+            grid-template-columns: repeat(2, 1fr);
         }
-        .gm-pill-btn {
-            font-size: 11.5px;
-            padding: 5px 10px;
+        .dk-cat-products-grid {
+            grid-template-columns: 1fr;
         }
     }
 </style>
 
-<!-- Client-side Interactive Filter Script -->
+<!-- ========================================================
+     CLIENT-SIDE INTERACTIVE FILTERING & SORTING
+========================================================= -->
 <script>
-    function gmToggleDropdown(btn) {
-        var pill = btn.closest('.gm-dropdown-pill');
-        var wasOpen = pill.classList.contains('open');
-        document.querySelectorAll('.gm-dropdown-pill').forEach(function(p) { p.classList.remove('open'); });
-        if (!wasOpen) {
-            pill.classList.add('open');
-        }
-    }
+    function filterBySubItem(subItem) {
+        const cleanSub = (subItem || "").trim().toLowerCase();
 
-    document.addEventListener('click', function (e) {
-        if (!e.target.closest('.gm-dropdown-pill')) {
-            document.querySelectorAll('.gm-dropdown-pill').forEach(function(p) { p.classList.remove('open'); });
-        }
-    });
-
-    var activePillFilters = {
-        condition: 'all',
-        compat: 'all',
-        brand: 'all',
-        storage: 'all',
-        sort: 'popularity'
-    };
-
-    function gmApplyPillFilter(group, value, elem) {
-        activePillFilters[group] = value;
-        var pill = elem.closest('.gm-dropdown-pill');
-        if (pill) {
-            var btn = pill.querySelector('.gm-pill-btn span');
-            if (btn && value !== 'all') {
-                btn.textContent = value;
-                pill.querySelector('.gm-pill-btn').classList.add('active');
-            } else if (btn) {
-                // Restore group label
-                var grpName = group.charAt(0).toUpperCase() + group.slice(1);
-                if (group === 'compat') grpName = 'Compatibility';
-                btn.textContent = grpName;
-                pill.querySelector('.gm-pill-btn').classList.remove('active');
+        // 1. Update left sidebar active links
+        const links = document.querySelectorAll(".dk-cat-sub-link");
+        links.forEach(l => {
+            const dataSub = (l.dataset.subitem || "").trim().toLowerCase();
+            if ((cleanSub === "" && dataSub === "") || (cleanSub !== "" && dataSub === cleanSub)) {
+                l.classList.add("is-active");
+            } else {
+                l.classList.remove("is-active");
             }
-            pill.classList.remove('open');
-        }
-        gmRunFilters();
-    }
+        });
 
-    function gmApplySort(sortVal, label) {
-        activePillFilters.sort = sortVal;
-        var sortLabel = document.getElementById('gmSortLabel');
-        if (sortLabel) sortLabel.textContent = 'Sort by : ' + label;
-        var pill = document.querySelector('.gm-sort-pill');
-        if (pill) pill.classList.remove('open');
-        gmRunSort();
-    }
+        // 2. Filter right-side product cards
+        const cards = document.querySelectorAll(".dk-cat-prod-card");
+        let visibleCount = 0;
 
-    function gmRunFilters() {
-        var cards = document.querySelectorAll('.gm-prod-card');
-        var visibleCount = 0;
-
-        // Facet checkboxes
-        var condCheckboxes = Array.from(document.querySelectorAll('.gm-filter-checkbox[data-facet="condition"]:checked')).map(function(c) { return c.value; });
-        var stockCheckboxes = Array.from(document.querySelectorAll('.gm-filter-checkbox[data-facet="stock"]:checked')).map(function(c) { return c.value; });
-
-        // Rating radio
-        var ratingRadio = document.querySelector('input[name="rating_filter"]:checked');
-        var minRating = ratingRadio ? parseFloat(ratingRadio.value) : 0;
-
-        // Price range
-        var minPriceInput = document.getElementById('gmMinPriceInput');
-        var maxPriceInput = document.getElementById('gmMaxPriceInput');
-        var minP = minPriceInput ? parseFloat(minPriceInput.value || '0') : 0;
-        var maxP = maxPriceInput ? parseFloat(maxPriceInput.value || '9999999') : 9999999;
-
-        cards.forEach(function (card) {
-            var brand = (card.getAttribute('data-brand') || '').trim();
-            var cond = (card.getAttribute('data-condition') || '').trim();
-            var price = parseFloat(card.getAttribute('data-price') || '0');
-            var rating = parseFloat(card.getAttribute('data-rating') || '0');
-            var stock = (card.getAttribute('data-stock') || '').trim();
-            var title = (card.getAttribute('data-title') || '').toLowerCase();
-
-            var matches = true;
-
-            // Pill filters
-            if (activePillFilters.condition !== 'all' && !cond.toLowerCase().includes(activePillFilters.condition.toLowerCase())) {
-                matches = false;
-            }
-            if (activePillFilters.brand !== 'all' && !brand.toLowerCase().includes(activePillFilters.brand.toLowerCase())) {
-                matches = false;
-            }
-            if (activePillFilters.compat !== 'all' && !title.includes(activePillFilters.compat.toLowerCase())) {
-                matches = false;
-            }
-            if (activePillFilters.storage !== 'all' && !title.includes(activePillFilters.storage.toLowerCase())) {
-                matches = false;
-            }
-
-            // Facet condition
-            if (condCheckboxes.length > 0 && !condCheckboxes.includes(cond)) {
-                matches = false;
-            }
-
-            // Facet stock
-            if (stockCheckboxes.length > 0 && !stockCheckboxes.includes(stock)) {
-                matches = false;
-            }
-
-            // Price
-            if (price < minP || price > maxP) {
-                matches = false;
-            }
-
-            // Rating
-            if (rating < minRating) {
-                matches = false;
-            }
-
-            if (matches) {
-                card.style.display = '';
+        cards.forEach(card => {
+            if (cleanSub === "") {
+                card.style.display = "";
                 visibleCount++;
             } else {
-                card.style.display = 'none';
+                const tags = (card.dataset.subcatTags || "").toLowerCase();
+                const title = (card.dataset.title || "").toLowerCase();
+                const desc = (card.dataset.desc || "").toLowerCase();
+
+                // Token-based matching
+                const tokens = cleanSub.split(/[\s,()\/&+-]+/).filter(t => t.length > 2);
+                let matches = tags.includes(cleanSub) || title.includes(cleanSub) || desc.includes(cleanSub);
+
+                if (!matches && tokens.length > 0) {
+                    matches = tokens.some(tok => tags.includes(tok) || title.includes(tok) || desc.includes(tok));
+                }
+
+                if (matches) {
+                    card.style.display = "";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
             }
         });
 
-        var countElem = document.getElementById('gmResultsCount');
-        if (countElem) {
-            countElem.textContent = 'Showing ' + visibleCount + ' results for @subPage.CategoryName';
+        // 3. Update count and active chip
+        const countEl = document.getElementById("dkCatProdCount");
+        if (countEl) {
+            countEl.textContent = visibleCount + " Products";
+        }
+
+        const chipWrap = document.getElementById("dkCatActiveChipWrap");
+        const chipText = document.getElementById("dkCatActiveChipText");
+        if (chipWrap && chipText) {
+            if (cleanSub !== "") {
+                chipText.textContent = subItem;
+                chipWrap.style.display = "inline-flex";
+            } else {
+                chipWrap.style.display = "none";
+            }
+        }
+
+        // 4. Update empty state visibility
+        const emptyState = document.getElementById("dkCatSubEmptyState");
+        const prodGrid = document.querySelector(".dk-cat-products-grid");
+        if (emptyState && prodGrid) {
+            if (visibleCount === 0) {
+                prodGrid.style.display = "none";
+                emptyState.style.display = "block";
+            } else {
+                prodGrid.style.display = "grid";
+                emptyState.style.display = "none";
+            }
+        }
+
+        // 5. Update browser URL without reload
+        const url = new URL(window.location.href);
+        if (cleanSub !== "") {
+            url.searchParams.set("subcatItem", subItem);
+        } else {
+            url.searchParams.delete("subcatItem");
+        }
+        window.history.pushState(null, '', url.toString());
+    }
+
+    function filterByPriceRange(minPrice, maxPrice) {
+        const cards = document.querySelectorAll(".dk-cat-prod-card");
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const price = parseFloat(card.dataset.price) || 0;
+            if (price >= minPrice && price <= maxPrice) {
+                card.style.display = "";
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        const countEl = document.getElementById("dkCatProdCount");
+        if (countEl) {
+            countEl.textContent = visibleCount + " Products";
         }
     }
 
-    function gmRunSort() {
-        var grid = document.getElementById('gmProductsGrid');
+    function handleGamingSortChange(sortVal) {
+        const grid = document.querySelector(".dk-cat-products-grid");
         if (!grid) return;
-        var cards = Array.from(grid.querySelectorAll('.gm-prod-card'));
 
-        cards.sort(function (a, b) {
-            var pA = parseFloat(a.getAttribute('data-price') || '0');
-            var pB = parseFloat(b.getAttribute('data-price') || '0');
-            var rA = parseFloat(a.getAttribute('data-rating') || '0');
-            var rB = parseFloat(b.getAttribute('data-rating') || '0');
+        const cards = Array.from(grid.querySelectorAll(".dk-cat-prod-card"));
 
-            if (activePillFilters.sort === 'price-asc') return pA - pB;
-            if (activePillFilters.sort === 'price-desc') return pB - pA;
-            if (activePillFilters.sort === 'rating') return rB - rA;
-            return 0; // default order
+        cards.sort((a, b) => {
+            const priceA = parseFloat(a.dataset.price) || 0;
+            const priceB = parseFloat(b.dataset.price) || 0;
+            const ratingA = parseFloat(a.dataset.rating) || 0;
+            const ratingB = parseFloat(b.dataset.rating) || 0;
+            const discA = parseFloat(a.dataset.discount) || 0;
+            const discB = parseFloat(b.dataset.discount) || 0;
+
+            switch (sortVal) {
+                case "price-asc": return priceA - priceB;
+                case "price-desc": return priceB - priceA;
+                case "rating": return ratingB - ratingA;
+                case "discount": return discB - discA;
+                default: return 0;
+            }
         });
 
-        cards.forEach(function (c) { grid.appendChild(c); });
+        cards.forEach(c => grid.appendChild(c));
     }
 
-    function gmResetAllFilters() {
-        document.querySelectorAll('.gm-filter-checkbox').forEach(function(c) { c.checked = true; });
-        var minP = document.getElementById('gmMinPriceInput');
-        var maxP = document.getElementById('gmMaxPriceInput');
-        if (minP) minP.value = 0;
-        if (maxP) maxP.value = 100000;
-        var rAll = document.querySelector('input[name="rating_filter"][value="0"]');
-        if (rAll) rAll.checked = true;
-
-        activePillFilters = {
-            condition: 'all',
-            compat: 'all',
-            brand: 'all',
-            storage: 'all',
-            sort: 'popularity'
-        };
-
-        document.querySelectorAll('.gm-pill-btn').forEach(function(b) { b.classList.remove('active'); });
-        var sortLabel = document.getElementById('gmSortLabel');
-        if (sortLabel) sortLabel.textContent = 'Sort by : Popularity';
-
-        gmRunFilters();
+    function handleGamingAddToCart(productId, productName) {
+        if (window.DreamflykitCart && typeof window.DreamflykitCart.addItem === 'function') {
+            window.DreamflykitCart.addItem(productId, 1);
+        } else {
+            const toast = document.createElement("div");
+            toast.style.position = "fixed";
+            toast.style.bottom = "24px";
+            toast.style.right = "24px";
+            toast.style.background = "#0f172a";
+            toast.style.color = "#ffffff";
+            toast.style.padding = "12px 20px";
+            toast.style.borderRadius = "8px";
+            toast.style.boxShadow = "0 10px 25px rgba(0,0,0,0.2)";
+            toast.style.fontSize = "13px";
+            toast.style.fontWeight = "700";
+            toast.style.zIndex = "99999";
+            toast.style.display = "flex";
+            toast.style.alignItems = "center";
+            toast.style.gap = "8px";
+            toast.innerHTML = '<span>🛒</span><span>' + (productName || "Product") + ' added to Cart!</span>';
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transition = "opacity 0.3s ease";
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
     }
+
+    // Initialize filter if subcatItem is in URL on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const subItem = urlParams.get("subcatItem");
+        if (subItem) {
+            filterBySubItem(subItem);
+        }
+    });
 </script>

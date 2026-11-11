@@ -149,7 +149,7 @@
                     <p class="gm-section-desc">@shopCategory.Subtitle</p>
                 </div>
                 <div class="gm-header-right">
-                    <span class="gm-category-count">@categoryItems.Count Subcategories Available</span>
+                    <a href="/category/gaming-hub/playstation" class="gm-category-count" style="text-decoration:none;" title="Explore All @categoryItems.Count Categories">@categoryItems.Count Subcategories Available &rarr;</a>
                     @if (canManage)
                     {
                         <a href="/Admin/GamingHub" class="gm-admin-chip" title="Edit in Admin Dashboard">
