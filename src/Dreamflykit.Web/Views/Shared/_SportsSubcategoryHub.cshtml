@@ -1,455 +1,420 @@
 @model Dreamflykit.Web.Models.Products.ProductListViewModel
 @{
     var hub = Model.SportsHub ?? Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefault();
-    var subPage = Model.SportsSubcategoryPage;
+    var allCategories = hub.ShopByCategory?.Items?.Where(i => i.IsActive).OrderBy(i => i.DisplayOrder).ToList() ?? new();
+    if (allCategories.Count == 0)
+    {
+        allCategories = Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefaultCategoryItems();
+    }
+
     var currentSlug = (Model.CurrentSubcategorySlug ?? "").Trim().ToLowerInvariant();
+    var activeCategory = allCategories.FirstOrDefault(c => string.Equals(c.Slug, currentSlug, StringComparison.OrdinalIgnoreCase))
+                         ?? allCategories.FirstOrDefault(c => string.Equals(c.Slug, "cricket", StringComparison.OrdinalIgnoreCase))
+                         ?? allCategories.FirstOrDefault();
 
-    if (subPage == null)
+    var activeCategorySlug = activeCategory?.Slug ?? "cricket";
+    var activeCategoryName = activeCategory?.Name ?? (!string.IsNullOrWhiteSpace(Model.CategoryName) && !string.Equals(Model.CategoryName, "Sports Hub", StringComparison.OrdinalIgnoreCase) ? Model.CategoryName : "Cricket");
+    var activeCategoryEmoji = activeCategory?.IconEmoji ?? "🏅";
+    var activeCategorySubcategories = activeCategory?.Subcategories ?? new List<string>();
+
+    var subPage = Model.SportsSubcategoryPage
+                  ?? hub.SubcategoryPages?.FirstOrDefault(p => string.Equals(p.CategorySlug, activeCategorySlug, StringComparison.OrdinalIgnoreCase))
+                  ?? Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefaultSubcategoryPages().FirstOrDefault(p => string.Equals(p.CategorySlug, activeCategorySlug, StringComparison.OrdinalIgnoreCase))
+                  ?? Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefaultSubcategoryPages().FirstOrDefault();
+
+    if (activeCategorySubcategories.Count == 0 && subPage?.Subcategories != null && subPage.Subcategories.Count > 0)
     {
-        subPage = hub.SubcategoryPages?.FirstOrDefault(p =>
-            string.Equals(p.CategorySlug, currentSlug, StringComparison.OrdinalIgnoreCase));
+        activeCategorySubcategories = subPage.Subcategories;
     }
 
-    if (subPage == null)
-    {
-        var matchedItem = hub.ShopByCategory?.Items?.FirstOrDefault(i =>
-            string.Equals(i.Slug, currentSlug, StringComparison.OrdinalIgnoreCase));
+    var activeCategoryNote = !string.IsNullOrWhiteSpace(activeCategory?.ImportantNote)
+        ? activeCategory.ImportantNote
+        : subPage?.ImportantNote;
 
-        var catName = matchedItem?.Name ?? (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName)
-            ? Model.CurrentSubcategoryName
-            : (string.IsNullOrWhiteSpace(currentSlug) ? "Sports Gear" : currentSlug.Replace("-", " ")));
-
-        subPage = new Dreamflykit.Application.SportsHub.Models.SportsSubcategoryPageDto
-        {
-            CategorySlug = currentSlug,
-            CategoryName = catName,
-            IconEmoji = matchedItem?.IconEmoji ?? "🏅",
-            HeroBanner = new Dreamflykit.Application.SportsHub.Models.SportsSubcategoryHeroDto
-            {
-                Title = catName,
-                TitleHighlight = "100% GENUINE • TOURNAMENT SPEC",
-                Subtitle = $"Explore top-rated {catName} match kits, tournament-grade equipment & student athletic supplies with express campus delivery.",
-                IsUploadingSoon = true
-            },
-            Products = Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefaultSubcategoryPages().FirstOrDefault()?.Products
-                       ?? new List<Dreamflykit.Application.SportsHub.Models.SportsProductItemDto>()
-        };
-    }
-
-    var hero = subPage.HeroBanner ?? new Dreamflykit.Application.SportsHub.Models.SportsSubcategoryHeroDto();
-    var products = subPage.Products ?? new List<Dreamflykit.Application.SportsHub.Models.SportsProductItemDto>();
-    var allCategories = hub.ShopByCategory?.Items?.Where(i => i.IsActive).OrderBy(i => i.DisplayOrder).ToList()
-                        ?? Dreamflykit.Application.SportsHub.Models.SportsHubDto.CreateDefaultCategoryItems();
+    var hero = subPage?.HeroBanner ?? new Dreamflykit.Application.SportsHub.Models.SportsSubcategoryHeroDto();
+    var products = subPage?.Products ?? new List<Dreamflykit.Application.SportsHub.Models.SportsProductItemDto>();
+    var activeSubItem = Model.CurrentSubcatItem ?? "";
 
     var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
 }
 
-<div class="sp-subpage-container dk-shell">
+<div class="dk-study-cat-page-wrapper dk-sports-explorer-wrapper">
+
+    @if (canManage)
+    {
+        <div class="dk-study-hub-admin-bar">
+            <span class="dk-sh-admin-badge">Admin Controls</span>
+            <span class="dk-sh-admin-hint">Managing Sports Hub Category: <strong>@activeCategoryName</strong>. Super Admin can replace hero image, products, text &amp; subcategories.</span>
+            <a href="/Admin/SportsHub" class="dk-sh-admin-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Manage Sports Hub &amp; Categories
+            </a>
+        </div>
+    }
 
     <!-- ========================================================
-         SUBCATEGORY HERO BANNER (FULL WIDTH)
+         COMMON HERO BANNER (TOP FULL WIDTH)
+         Admin Replaceable Image + Sports Theme
     ========================================================= -->
-    <section class="sp-sub-hero-card" aria-label="@subPage.CategoryName Banner">
-        <div class="sp-sub-hero-glow"></div>
-        <div class="sp-sub-hero-body">
-            <div class="sp-sub-hero-content">
-                <nav class="sp-sub-hero-breadcrumb" aria-label="Sports breadcrumb">
-                    <a href="/category/sports-hub">Sports Hub</a>
-                    <span class="sp-sub-sep">/</span>
-                    <span class="sp-sub-crumb-active">@subPage.CategoryName</span>
-                </nav>
+    <header class="dk-study-common-hero dk-sports-hero frame-arch-gold">
+        <div class="dk-hero-inner-grid">
+            <div class="dk-hero-text-col">
+                <div class="dk-hero-pill-badge dk-sports-pill-badge">
+                    <span class="dk-hero-dot"></span>
+                    @(!string.IsNullOrWhiteSpace(hero.TitleHighlight) ? hero.TitleHighlight : "VERIFIED TOURNAMENT & FITNESS KITS")
+                </div>
 
-                @if (!string.IsNullOrWhiteSpace(hero.TitleHighlight))
-                {
-                    <div class="sp-sub-hero-badge">
-                        <span class="sp-badge-dot">●</span>
-                        <span>@hero.TitleHighlight</span>
-                    </div>
-                }
-
-                <h1 class="sp-sub-hero-title">@subPage.CategoryName</h1>
-                <p class="sp-sub-hero-desc">
+                <h1 class="dk-hero-main-title">
+                    @(!string.IsNullOrWhiteSpace(hero.Title) ? hero.Title : activeCategoryName) Gear &amp; Tournament Kits
+                </h1>
+                <p class="dk-hero-main-sub">
                     @(string.IsNullOrWhiteSpace(hero.Subtitle)
-                        ? $"Discover verified university match equipment, tournament sets, and high-performance training gear for {subPage.CategoryName}."
+                        ? $"Discover verified university match equipment, tournament sets, and high-performance athletic gear for {activeCategoryName}."
                         : hero.Subtitle)
                 </p>
 
-                <div class="sp-sub-hero-chips">
-                    <span class="sp-hero-chip">✓ Tournament Quality</span>
-                    <span class="sp-hero-chip">✓ Fast Campus Delivery</span>
-                    <span class="sp-hero-chip">✓ Free Size Replacement</span>
-                    @if (canManage)
-                    {
-                        <a href="/Admin/SportsHub" class="sp-sub-admin-link">⚙ Edit in Admin Dashboard</a>
-                    }
+                <div class="dk-hero-trust-badges">
+                    <div class="dk-hero-trust-item">
+                        <span class="dk-hero-trust-icon">🏆</span>
+                        <span>100% Tournament Spec &bull; <strong>Federation Compliant</strong></span>
+                    </div>
+                    <div class="dk-hero-trust-item">
+                        <span class="dk-hero-trust-icon">🚚</span>
+                        <span>Campus Fast Delivery &bull; <strong>Direct to Dorm</strong></span>
+                    </div>
+                    <div class="dk-hero-trust-item">
+                        <span class="dk-hero-trust-icon">🔄</span>
+                        <span>Free Size Replacement &bull; <strong>7-Day Easy Exchange</strong></span>
+                    </div>
                 </div>
             </div>
 
-            <div class="sp-sub-hero-media">
-                @if (!string.IsNullOrWhiteSpace(hero.ImageUrl) && !hero.ImageUrl.Contains("placeholder") && !hero.IsUploadingSoon)
+            <div class="dk-hero-img-col">
+                @{
+                    var heroImg = !string.IsNullOrWhiteSpace(hero.ImageUrl) ? hero.ImageUrl : "";
+                    var isTestPic = string.IsNullOrWhiteSpace(heroImg) || heroImg.Contains("placeholder") || hero.IsUploadingSoon;
+                }
+
+                @if (isTestPic)
                 {
-                    <div class="sp-sub-banner-img-wrap">
-                        <img src="@hero.ImageUrl" alt="@subPage.CategoryName" class="sp-sub-banner-img" />
+                    <div class="dk-hero-test-pic-box dk-sports-test-pic-box">
+                        <div class="dk-sports-radar-pulse">
+                            <span class="dk-radar-ring ring-1"></span>
+                            <span class="dk-radar-ring ring-2"></span>
+                            <span class="dk-hero-cam-icon">@activeCategoryEmoji</span>
+                        </div>
+                        <div class="dk-hero-test-btn">UPLOADING SOON</div>
+                        <div class="dk-hero-test-title">Admin will implement images</div>
+                        <div class="dk-hero-test-sub">Admin panel can upload/replace image anytime</div>
                     </div>
                 }
                 else
                 {
-                    <div class="sp-sub-hero-uploading">
-                        <div class="sp-sub-uploading-radar">
-                            <span class="sp-sub-radar-ring"></span>
-                            <span class="sp-sub-emoji">@subPage.IconEmoji</span>
-                        </div>
-                        <div class="sp-sub-uploading-pill">
-                            <span class="sp-mini-dot">●</span> Uploading Soon
-                        </div>
-                        <p class="sp-sub-uploading-text">Admin will upload banner image</p>
+                    <div class="dk-hero-custom-img-wrap">
+                        <img src="@heroImg" alt="@activeCategoryName Hero" loading="eager" onerror="this.onerror=null;this.src='/images/sports-hub/uploading-soon-placeholder.svg';" />
                     </div>
                 }
             </div>
         </div>
-    </section>
 
-    <!-- ========================================================
-         TOP QUICK FILTER PILLS & SORTING BAR
-    ========================================================= -->
-    <div class="sp-quick-filters-bar">
-        <div class="sp-filter-pills-left">
-            <!-- Brand Dropdown Pill -->
-            <div class="sp-dropdown-pill" data-filter-group="brand">
-                <button type="button" class="sp-pill-btn" onclick="spToggleDropdown(this)">
-                    <span>Brand</span>
-                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                </button>
-                <div class="sp-pill-dropdown-menu">
-                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="all" checked onchange="spApplyPillFilter('brand', 'all', this)"> All Brands</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Yonex" onchange="spApplyPillFilter('brand', 'Yonex', this)"> Yonex</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Nike" onchange="spApplyPillFilter('brand', 'Nike', this)"> Nike</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Adidas" onchange="spApplyPillFilter('brand', 'Adidas', this)"> Adidas</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Nivia" onchange="spApplyPillFilter('brand', 'Nivia', this)"> Nivia</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Cosco" onchange="spApplyPillFilter('brand', 'Cosco', this)"> Cosco</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Puma" onchange="spApplyPillFilter('brand', 'Puma', this)"> Puma</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Wilson" onchange="spApplyPillFilter('brand', 'Wilson', this)"> Wilson</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_brand" value="Decathlon" onchange="spApplyPillFilter('brand', 'Decathlon', this)"> Decathlon</label>
+        <!-- 4 Bottom Trust Highlights Bar inside Hero -->
+        <div class="dk-hero-trust-bar">
+            <div class="dk-htb-item">
+                <span class="dk-htb-icon">⭐</span>
+                <div>
+                    <strong>Pro Durability Tested</strong>
+                    <span>Handpicked for Athletes</span>
                 </div>
             </div>
-
-            <!-- Price Dropdown Pill -->
-            <div class="sp-dropdown-pill" data-filter-group="price">
-                <button type="button" class="sp-pill-btn" onclick="spToggleDropdown(this)">
-                    <span>Price</span>
-                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                </button>
-                <div class="sp-pill-dropdown-menu">
-                    <label class="sp-pill-option"><input type="radio" name="pill_price" value="all" checked onchange="spApplyPillFilter('price', 'all', this)"> Any Price</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_price" value="under-1000" onchange="spApplyPillFilter('price', 'under-1000', this)"> Under ₹1,000</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_price" value="1000-2500" onchange="spApplyPillFilter('price', '1000-2500', this)"> ₹1,000 - ₹2,500</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_price" value="2500-5000" onchange="spApplyPillFilter('price', '2500-5000', this)"> ₹2,500 - ₹5,000</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_price" value="above-5000" onchange="spApplyPillFilter('price', 'above-5000', this)"> ₹5,000 & Above</label>
+            <div class="dk-htb-item">
+                <span class="dk-htb-icon">📦</span>
+                <div>
+                    <strong>Affordable Match Bundles</strong>
+                    <span>Save More, Play More</span>
                 </div>
             </div>
-
-            <!-- Rating Pill -->
-            <div class="sp-dropdown-pill" data-filter-group="rating">
-                <button type="button" class="sp-pill-btn" onclick="spToggleDropdown(this)">
-                    <span>Rating</span>
-                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                </button>
-                <div class="sp-pill-dropdown-menu">
-                    <label class="sp-pill-option"><input type="radio" name="pill_rating" value="all" checked onchange="spApplyPillFilter('rating', 'all', this)"> Any Rating</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_rating" value="4.5" onchange="spApplyPillFilter('rating', '4.5', this)"> 4.5★ & Above</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_rating" value="4.0" onchange="spApplyPillFilter('rating', '4.0', this)"> 4.0★ & Above</label>
+            <div class="dk-htb-item">
+                <span class="dk-htb-icon">🔒</span>
+                <div>
+                    <strong>Secure Checkout</strong>
+                    <span>Multiple Payment Options</span>
+                </div>
+            </div>
+            <div class="dk-htb-item">
+                <span class="dk-htb-icon">🚚</span>
+                <div>
+                    <strong>Campus Fast Delivery</strong>
+                    <span>To Your Doorstep</span>
                 </div>
             </div>
         </div>
+    </header>
 
-        <div class="sp-filter-pills-right">
-            <!-- Sort By Dropdown -->
-            <div class="sp-dropdown-pill sp-sort-pill">
-                <button type="button" class="sp-pill-btn" onclick="spToggleDropdown(this)">
-                    <span id="spSortLabel">Sort by : Popularity</span>
-                    <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-                </button>
-                <div class="sp-pill-dropdown-menu sp-menu-right">
-                    <label class="sp-pill-option"><input type="radio" name="pill_sort" value="popularity" checked onchange="spApplySort('popularity', 'Popularity')"> Popularity</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_sort" value="price-asc" onchange="spApplySort('price-asc', 'Price: Low to High')"> Price: Low to High</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_sort" value="price-desc" onchange="spApplySort('price-desc', 'Price: High to Low')"> Price: High to Low</label>
-                    <label class="sp-pill-option"><input type="radio" name="pill_sort" value="rating" onchange="spApplySort('rating', 'Customer Rating')"> Customer Rating</label>
-                </div>
-            </div>
+    <!-- ========================================================
+         12 SPORTS CATEGORIES QUICK NAV PILLS STRIP
+         Exactly like Study Essentials: EXPLORE 12 CATEGORIES
+    ========================================================= -->
+    <div class="dk-study-cat-nav-strip">
+        <div class="dk-study-cat-nav-title">
+            <span>Explore @allCategories.Count Categories:</span>
+        </div>
+        <div class="dk-study-cat-nav-items">
+            @foreach (var c in allCategories)
+            {
+                var isSelected = string.Equals(c.Slug, activeCategorySlug, StringComparison.OrdinalIgnoreCase);
+                <a href="/category/sports-hub/@c.Slug"
+                   class="dk-cat-nav-pill @(isSelected ? "is-selected" : "")"
+                   title="Browse @c.Name">
+                    <span class="dk-cat-pill-icon">@c.IconEmoji</span>
+                    <span class="dk-cat-pill-name">@c.Name</span>
+                </a>
+            }
         </div>
     </div>
 
     <!-- ========================================================
-         2-COLUMN LAYOUT: FILTERS SIDEBAR + PRODUCTS CATALOG
+         MAIN 2-COLUMN LAYOUT:
+         LEFT: SUBCATEGORIES FILTER LIST FOR THIS CATEGORY
+         RIGHT: MATCHING PRODUCTS LIST
     ========================================================= -->
-    <div class="sp-sub-layout">
+    <div class="dk-cat-main-layout">
 
-        <!-- LEFT SIDEBAR: ADVANCED FILTERS -->
-        <aside class="sp-sub-sidebar" id="spSubSidebar">
-            <div class="sp-sidebar-header">
-                <h3 class="sp-sidebar-title">
-                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/></svg>
-                    <span>Filters</span>
-                </h3>
-                <button type="button" class="sp-btn-clear-filters" onclick="spResetAllFilters()">Clear All</button>
-            </div>
-
-            <!-- Filter Group: Sports Categories Switcher -->
-            <div class="sp-filter-box">
-                <h4 class="sp-filter-title">Sports Categories</h4>
-                <div class="sp-cat-switcher-list">
-                    @foreach (var cat in allCategories)
+        <!-- LEFT SIDEBAR: SUBCATEGORIES FILTER -->
+        <aside class="dk-cat-sidebar" id="dkSportsSidebar">
+            <div class="dk-cat-sidebar-card">
+                <div class="dk-cat-sidebar-header">
+                    <h2 class="dk-cat-sidebar-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                        Subcategories
+                    </h2>
+                    @if (!string.IsNullOrWhiteSpace(activeSubItem))
                     {
-                        var isActiveCat = string.Equals(cat.Slug, currentSlug, StringComparison.OrdinalIgnoreCase);
-                        <a href="/category/sports-hub/@cat.Slug" class="sp-cat-switch-item @(isActiveCat ? "active" : "")">
-                            <span class="sp-cat-switch-emoji">@cat.IconEmoji</span>
-                            <span class="sp-cat-switch-name">@cat.Name</span>
-                            @if (isActiveCat)
-                            {
-                                <span class="sp-cat-switch-dot">●</span>
-                            }
+                        <button type="button" class="dk-cat-clear-btn" onclick="filterBySubItem('')" title="Clear subcategory filter">
+                            Clear
+                        </button>
+                    }
+                </div>
+
+                <div class="dk-cat-sidebar-subhead">
+                    <span>@activeCategoryName</span>
+                </div>
+
+                <nav class="dk-cat-sub-list" aria-label="@activeCategoryName Subcategories">
+                    <!-- Option to view all products of this category -->
+                    <a href="/category/sports-hub/@activeCategorySlug"
+                       class="dk-cat-sub-link @(string.IsNullOrWhiteSpace(activeSubItem) ? "is-active" : "")"
+                       data-subitem=""
+                       onclick="event.preventDefault(); filterBySubItem('');">
+                        <span class="dk-sub-radio"></span>
+                        <span class="dk-sub-text">All @activeCategoryName</span>
+                        <span class="dk-sub-badge">All</span>
+                    </a>
+
+                    <!-- Subcategories list for this sport -->
+                    @foreach (var sub in activeCategorySubcategories)
+                    {
+                        var isCurrentSub = string.Equals(activeSubItem, sub, StringComparison.OrdinalIgnoreCase);
+                        <a href="/category/sports-hub/@activeCategorySlug?subcatItem=@Uri.EscapeDataString(sub)"
+                           class="dk-cat-sub-link @(isCurrentSub ? "is-active" : "")"
+                           data-subitem="@sub"
+                           onclick="event.preventDefault(); filterBySubItem(this.dataset.subitem);">
+                            <span class="dk-sub-radio"></span>
+                            <span class="dk-sub-text">@sub</span>
                         </a>
                     }
+                </nav>
+            </div>
+
+            <!-- IMPORTANT NOTE CARD FOR SPORTS -->
+            @if (!string.IsNullOrWhiteSpace(activeCategoryNote))
+            {
+                <div class="dk-cat-note-card">
+                    <div class="dk-cat-note-head">
+                        <span class="dk-cat-note-icon">💡</span>
+                        <strong>Tournament &amp; Campus Note:</strong>
+                    </div>
+                    <p class="dk-cat-note-text">
+                        @activeCategoryNote
+                    </p>
+                </div>
+            }
+
+            <!-- Price Filters Strip in Sidebar -->
+            <div class="dk-cat-sidebar-card" style="margin-top: 14px;">
+                <h3 class="dk-cat-sidebar-title" style="font-size: 13.5px; margin-bottom: 10px;">Price Range</h3>
+                <div class="dk-cat-price-facets">
+                    <a href="javascript:void(0)" onclick="filterByPriceRange(0, 1000)" class="dk-price-facet-chip">Under ₹1,000</a>
+                    <a href="javascript:void(0)" onclick="filterByPriceRange(1000, 2500)" class="dk-price-facet-chip">₹1,000 - ₹2,500</a>
+                    <a href="javascript:void(0)" onclick="filterByPriceRange(2500, 5000)" class="dk-price-facet-chip">₹2,500 - ₹5,000</a>
+                    <a href="javascript:void(0)" onclick="filterByPriceRange(5000, 999999)" class="dk-price-facet-chip">₹5,000 &amp; Above</a>
                 </div>
             </div>
 
-            <!-- Filter Group: Brand -->
-            <div class="sp-filter-box">
-                <h4 class="sp-filter-title">Brand</h4>
-                <div class="sp-filter-options-list">
-                    @{
-                        var commonBrands = new[] { "Yonex", "Nike", "Adidas", "Nivia", "Cosco", "Puma", "Wilson", "Decathlon" };
-                    }
-                    @foreach (var brand in commonBrands)
-                    {
-                        <label class="sp-checkbox-label">
-                            <input type="checkbox" class="sp-filter-cb" data-filter="brand" value="@brand" onchange="spTriggerFilter()">
-                            <span class="sp-cb-custom"></span>
-                            <span class="sp-cb-text">@brand</span>
-                        </label>
-                    }
-                </div>
-            </div>
-
-            <!-- Filter Group: Price Range -->
-            <div class="sp-filter-box">
-                <h4 class="sp-filter-title">Price Range</h4>
-                <div class="sp-filter-options-list">
-                    <label class="sp-radio-label">
-                        <input type="radio" name="side_price" value="all" checked onchange="spSetPriceRange(0, 999999)">
-                        <span class="sp-radio-custom"></span>
-                        <span class="sp-cb-text">All Prices</span>
-                    </label>
-                    <label class="sp-radio-label">
-                        <input type="radio" name="side_price" value="under-1000" onchange="spSetPriceRange(0, 1000)">
-                        <span class="sp-radio-custom"></span>
-                        <span class="sp-cb-text">Under ₹1,000</span>
-                    </label>
-                    <label class="sp-radio-label">
-                        <input type="radio" name="side_price" value="1000-2500" onchange="spSetPriceRange(1000, 2500)">
-                        <span class="sp-radio-custom"></span>
-                        <span class="sp-cb-text">₹1,000 - ₹2,500</span>
-                    </label>
-                    <label class="sp-radio-label">
-                        <input type="radio" name="side_price" value="2500-5000" onchange="spSetPriceRange(2500, 5000)">
-                        <span class="sp-radio-custom"></span>
-                        <span class="sp-cb-text">₹2,500 - ₹5,000</span>
-                    </label>
-                    <label class="sp-radio-label">
-                        <input type="radio" name="side_price" value="above-5000" onchange="spSetPriceRange(5000, 999999)">
-                        <span class="sp-radio-custom"></span>
-                        <span class="sp-cb-text">₹5,000 & Above</span>
-                    </label>
-                </div>
-
-                <div class="sp-custom-price-inputs">
-                    <input type="number" id="spMinPriceInput" placeholder="Min ₹" min="0">
-                    <span class="sp-price-dash">-</span>
-                    <input type="number" id="spMaxPriceInput" placeholder="Max ₹" min="0">
-                    <button type="button" class="sp-btn-price-go" onclick="spApplyCustomPrice()">Go</button>
-                </div>
-            </div>
-
-            <!-- Filter Group: Minimum Discount -->
-            <div class="sp-filter-box">
-                <h4 class="sp-filter-title">Discount</h4>
-                <div class="sp-filter-options-list">
-                    <label class="sp-radio-label">
-                        <input type="radio" name="side_discount" value="0" checked onchange="spSetMinDiscount(0)">
-                        <span class="sp-radio-custom"></span>
-                        <span class="sp-cb-text">All Items</span>
-                    </label>
-                    <label class="sp-radio-label">
-                        <input type="radio" name="side_discount" value="20" onchange="spSetMinDiscount(20)">
-                        <span class="sp-radio-custom"></span>
-                        <span class="sp-cb-text">20% or more</span>
-                    </label>
-                    <label class="sp-radio-label">
-                        <input type="radio" name="side_discount" value="40" onchange="spSetMinDiscount(40)">
-                        <span class="sp-radio-custom"></span>
-                        <span class="sp-cb-text">40% or more</span>
-                    </label>
-                    <label class="sp-radio-label">
-                        <input type="radio" name="side_discount" value="50" onchange="spSetMinDiscount(50)">
-                        <span class="sp-radio-custom"></span>
-                        <span class="sp-cb-text">50% or more</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Filter Group: Customer Rating -->
-            <div class="sp-filter-box">
-                <h4 class="sp-filter-title">Customer Rating</h4>
-                <div class="sp-filter-options-list">
-                    <label class="sp-radio-label">
-                        <input type="radio" name="side_rating" value="0" checked onchange="spSetMinRating(0)">
-                        <span class="sp-radio-custom"></span>
-                        <span class="sp-cb-text">All Ratings</span>
-                    </label>
-                    <label class="sp-radio-label">
-                        <input type="radio" name="side_rating" value="4.5" onchange="spSetMinRating(4.5)">
-                        <span class="sp-radio-custom"></span>
-                        <span class="sp-cb-text">4.5★ & Above</span>
-                    </label>
-                    <label class="sp-radio-label">
-                        <input type="radio" name="side_rating" value="4.0" onchange="spSetMinRating(4.0)">
-                        <span class="sp-radio-custom"></span>
-                        <span class="sp-cb-text">4.0★ & Above</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- In-Stock Toggle -->
-            <div class="sp-filter-box sp-toggle-box">
-                <label class="sp-switch-label">
-                    <span class="sp-switch-text">In Stock Only</span>
-                    <input type="checkbox" id="spInStockToggle" onchange="spTriggerFilter()">
-                    <span class="sp-switch-slider"></span>
-                </label>
+            <!-- Need Complete Kit Promo -->
+            <div class="dk-cat-sidebar-promo">
+                <div class="dk-sp-tag">Starter Bundle</div>
+                <h4 class="dk-sp-title">Campus Tournament Kits</h4>
+                <p class="dk-sp-sub">Curated packs with verified athletic gear, match balls &amp; campus team discounts.</p>
+                <a href="/category/sports-hub" class="dk-sp-btn">Explore Sports Hub →</a>
             </div>
         </aside>
 
-        <!-- RIGHT SIDE: PRODUCTS CATALOG WITH BIG IMAGE FRAMES -->
-        <main class="sp-sub-catalog" id="spSubCatalog">
+        <!-- RIGHT CONTENT AREA: PRODUCTS LIST -->
+        <main class="dk-cat-content" id="dkCatContentArea">
+            <div id="dkCatProductsInner">
 
-            <div class="sp-catalog-toolbar">
-                <div class="sp-toolbar-left">
-                    <span class="sp-results-count" id="spResultsCount">Showing @products.Count products in @subPage.CategoryName</span>
-                    <div class="sp-active-filter-tags" id="spActiveTags"></div>
-                </div>
+                <!-- Top Action Bar (Title, Breadcrumb & Sorting) -->
+                <div class="dk-cat-products-header-card">
+                    <div class="dk-cat-crumb-row">
+                        <a href="/" class="dk-c-crumb">Home</a>
+                        <span class="dk-c-sep">›</span>
+                        <a href="/category/sports-hub" class="dk-c-crumb">Sports Hub</a>
+                        <span class="dk-c-sep">›</span>
+                        <span class="dk-c-current">@activeCategoryName</span>
+                    </div>
 
-                <div class="sp-toolbar-search">
-                    <svg viewBox="0 0 20 20" width="15" height="15" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
-                    <input type="text" id="spSearchInput" placeholder="Search in @subPage.CategoryName..." onkeyup="spOnSearchChange(this.value)">
-                </div>
-            </div>
-
-            <!-- PRODUCTS GRID WITH BIG IMAGE FRAMES -->
-            <div class="sp-catalog-grid" id="spCatalogGrid">
-                @foreach (var prod in products)
-                {
-                    var prodHasImg = !string.IsNullOrWhiteSpace(prod.ImageUrl) && !prod.ImageUrl.Contains("placeholder") && !prod.IsUploadingSoon;
-                    var origPrice = prod.OriginalPrice ?? (prod.Price * 1.5m);
-                    var discountPct = origPrice > prod.Price
-                        ? (int)Math.Round(((origPrice - prod.Price) / origPrice) * 100)
-                        : 0;
-                    var brandName = !string.IsNullOrWhiteSpace(prod.Brand) ? prod.Brand : "Campus Pro";
-
-                    <div class="sp-card"
-                         data-id="@prod.Id"
-                         data-name="@prod.Name.ToLowerInvariant()"
-                         data-brand="@brandName.ToLowerInvariant()"
-                         data-price="@prod.Price"
-                         data-discount="@discountPct"
-                         data-rating="@prod.Rating"
-                         data-instock="@(prod.InStock.ToString().ToLower())">
-
-                        <!-- BIG IMAGE FRAME (min-height: 320px, aspect-ratio: 3/4) -->
-                        <div class="sp-card-frame">
-                            @if (!string.IsNullOrWhiteSpace(prod.Badge))
-                            {
-                                <span class="sp-card-badge">@prod.Badge</span>
-                            }
-                            @if (discountPct > 0)
-                            {
-                                <span class="sp-card-discount-pill">-@discountPct% OFF</span>
-                            }
-
-                            @if (prodHasImg)
-                            {
-                                <img src="@prod.ImageUrl" alt="@prod.Name" class="sp-card-img" loading="lazy" />
-                            }
-                            else
-                            {
-                                <div class="sp-uploading-frame-large">
-                                    <div class="sp-radar-wrap">
-                                        <div class="sp-radar-ping-ring"></div>
-                                        <span class="sp-frame-emoji">@subPage.IconEmoji</span>
-                                    </div>
-                                    <div class="sp-frame-uploading-tag">
-                                        <span class="sp-pulsing-dot">●</span> UPLOADING SOON
-                                    </div>
-                                    <p class="sp-frame-uploading-sub">Images will be uploaded by admin</p>
-                                </div>
-                            }
-
-                            <div class="sp-frame-quick-actions">
-                                <button type="button" class="sp-btn-quick-cart" onclick="spAddToCart('@prod.Id', '@prod.Name', @prod.Price, this)" title="Add to Cart">
-                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.24-1.2A1 1 0 005.06 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
-                                </button>
-                            </div>
+                    <div class="dk-cat-title-row">
+                        <div>
+                            <h1 class="dk-cat-heading">@activeCategoryName</h1>
+                            <p class="dk-cat-subtext">Verified university tournament sports gear, workout equipment, and athletic apparel.</p>
                         </div>
 
-                        <!-- CARD BODY -->
-                        <div class="sp-card-body">
-                            <span class="sp-card-brand">@brandName</span>
-                            <h3 class="sp-card-title">@prod.Name</h3>
-
-                            <div class="sp-card-rating">
-                                <div class="sp-stars">★★★★★</div>
-                                <span class="sp-rating-score">@prod.Rating.ToString("0.0")</span>
-                                <span class="sp-rating-reviews">(@prod.ReviewsCount)</span>
-                            </div>
-
-                            <div class="sp-card-price-row">
-                                <span class="sp-card-price-current">₹@prod.Price.ToString("N0")</span>
-                                @if (origPrice > prod.Price)
-                                {
-                                    <span class="sp-card-price-orig">₹@origPrice.ToString("N0")</span>
-                                }
-                            </div>
-
-                            @if (prod.Sizes != null && prod.Sizes.Count > 0)
-                            {
-                                <div class="sp-card-sizes">
-                                    @foreach (var size in prod.Sizes.Take(3))
-                                    {
-                                        <span class="sp-card-size-chip">@size</span>
-                                    }
-                                    @if (prod.Sizes.Count > 3)
-                                    {
-                                        <span class="sp-card-size-more">+@(prod.Sizes.Count - 3)</span>
-                                    }
-                                </div>
-                            }
-
-                            <div class="sp-card-cta-wrap">
-                                <button type="button" class="sp-card-btn-add" onclick="spAddToCart('@prod.Id', '@prod.Name', @prod.Price, this)">
-                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.24-1.2A1 1 0 005.06 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
-                                    <span>Add to Cart</span>
-                                </button>
-                            </div>
+                        <div class="dk-cat-sort-box">
+                            <label for="dkSportsSortSelect" class="dk-sort-label">Sort By:</label>
+                            <select id="dkSportsSortSelect" class="dk-sort-dropdown" onchange="handleSportsSortChange(this.value)">
+                                <option value="featured">Featured / Relevance</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                                <option value="rating">Customer Rating</option>
+                                <option value="discount">Discount</option>
+                            </select>
                         </div>
                     </div>
-                }
-            </div>
 
-            <!-- EMPTY RESULTS PLACEHOLDER -->
-            <div class="sp-empty-results" id="spEmptyResults" style="display: none;">
-                <div class="sp-empty-icon">⚽</div>
-                <h3 class="sp-empty-title">No matching sports gear found</h3>
-                <p class="sp-empty-desc">Try resetting your filters or adjusting your price and brand search.</p>
-                <button type="button" class="sp-empty-btn-reset" onclick="spResetAllFilters()">Reset All Filters</button>
+                    <div class="dk-cat-meta-bar">
+                        <span class="dk-cat-prod-count" id="dkCatProdCount">@products.Count Products</span>
+
+                        <!-- Active filter chip for selected subcategory -->
+                        <div id="dkCatActiveChipWrap" class="dk-active-filter-chip" style="@(string.IsNullOrWhiteSpace(activeSubItem) ? "display: none;" : "display: inline-flex;")">
+                            <span>Subcategory: <strong id="dkCatActiveChipText">@activeSubItem</strong></span>
+                            <button type="button" class="dk-chip-remove-btn" onclick="filterBySubItem('')" title="Remove filter">✕</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PRODUCTS GRID -->
+                @if (products.Count > 0)
+                {
+                    <div class="dk-cat-products-grid">
+                        @foreach (var prod in products)
+                        {
+                            var hasRealImg = !string.IsNullOrWhiteSpace(prod.ImageUrl) && !prod.ImageUrl.Contains("placeholder") && !prod.IsUploadingSoon;
+                            var originalPrice = prod.OriginalPrice ?? (prod.Price > 0 ? Math.Round(prod.Price * 1.5m, 0) : prod.Price);
+                            var discountPercent = originalPrice > prod.Price
+                                ? Math.Round(((originalPrice - prod.Price) / originalPrice) * 100, 0)
+                                : 0;
+                            var prodUrl = !string.IsNullOrWhiteSpace(prod.ProductUrl) ? prod.ProductUrl : $"/category/sports-hub/{activeCategorySlug}";
+
+                            <div class="dk-cat-prod-card"
+                                 data-product-id="@prod.Id"
+                                 data-subcat-tags="@(prod.SubcategoryTag ?? "") @prod.Name @(prod.Description ?? "")"
+                                 data-title="@prod.Name"
+                                 data-desc="@(prod.Description ?? "")"
+                                 data-price="@prod.Price"
+                                 data-rating="@prod.Rating"
+                                 data-discount="@discountPercent">
+
+                                <div class="dk-cat-prod-img-box">
+                                    @if (hasRealImg)
+                                    {
+                                        <img src="@prod.ImageUrl" alt="@prod.Name" loading="lazy" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'dk-sports-card-uploading\'><span class=\'dk-sc-emoji\'>@activeCategoryEmoji</span><span class=\'dk-sc-badge\'>● Uploading Soon</span><p class=\'dk-sc-hint\'>Admin will implement images</p></div>';" />
+                                    }
+                                    else
+                                    {
+                                        <div class="dk-sports-card-uploading">
+                                            <div class="dk-sc-radar-wrap">
+                                                <span class="dk-sc-ring ring-1"></span>
+                                                <span class="dk-sc-ring ring-2"></span>
+                                                <span class="dk-sc-emoji">@activeCategoryEmoji</span>
+                                            </div>
+                                            <span class="dk-sc-badge">● Uploading Soon</span>
+                                            <p class="dk-sc-hint">Admin will implement images</p>
+                                        </div>
+                                    }
+
+                                    @if (discountPercent > 0)
+                                    {
+                                        <span class="dk-cat-prod-badge">@discountPercent.ToString("0")% OFF</span>
+                                    }
+                                </div>
+
+                                <div class="dk-cat-prod-details">
+                                    <span class="dk-cat-prod-badge-verified">Verified Tournament Spec</span>
+                                    <h3 class="dk-cat-prod-title">
+                                        <a href="@prodUrl" title="@prod.Name">@prod.Name</a>
+                                    </h3>
+                                    <p class="dk-cat-prod-desc">
+                                        @if (!string.IsNullOrWhiteSpace(prod.SubcategoryTag))
+                                        {
+                                            <strong style="color: #0369a1; display: inline;">@prod.SubcategoryTag.</strong>
+                                        }
+                                        @(string.IsNullOrWhiteSpace(prod.Description) ? "Tournament compliant sports gear crafted for college athletes with premium durability and comfort." : prod.Description)
+                                    </p>
+
+                                    <div class="dk-cat-prod-rating-row">
+                                        <span class="dk-cat-stars">★★★★★</span>
+                                        <span class="dk-cat-rating-num">@(prod.Rating > 0 ? prod.Rating.ToString("0.0") : "4.8")</span>
+                                        <span class="dk-cat-reviews-count">(Student Athlete Favorite)</span>
+                                    </div>
+
+                                    <div class="dk-cat-prod-price-area">
+                                        <span class="dk-cat-prod-price">₹@prod.Price.ToString("N0")</span>
+                                        @if (originalPrice > prod.Price)
+                                        {
+                                            <span class="dk-cat-prod-mrp">₹@originalPrice.ToString("N0")</span>
+                                            <span class="dk-cat-prod-save">Save ₹@((originalPrice - prod.Price).ToString("N0"))</span>
+                                        }
+                                    </div>
+
+                                    <div class="dk-cat-prod-actions">
+                                        <button type="button" class="dk-cat-btn-buy" onclick="handleSportsAddToCart('@prod.Id', '@prod.Name.Replace("'", "\\'")')">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+                                                <circle cx="9" cy="21" r="1"></circle>
+                                                <circle cx="20" cy="21" r="1"></circle>
+                                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                            </svg>
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Dynamic Empty State when client-side filter yields 0 cards -->
+                    <div id="dkCatSubEmptyState" class="dk-cat-empty-box" style="display: none;">
+                        <div class="dk-cat-empty-icon">🔍</div>
+                        <h3>No products found for this subcategory</h3>
+                        <p>Admin will upload more products for this subcategory soon. Try another subcategory or browse all @activeCategoryName products.</p>
+                        <button type="button" class="dk-cat-btn-reset" onclick="filterBySubItem('')">
+                            Browse All @activeCategoryName
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="dk-cat-empty-box">
+                        <div class="dk-cat-empty-icon">📦</div>
+                        <h3>Products uploading soon by Admin</h3>
+                        <p>Admin is currently configuring products for @activeCategoryName. Check back shortly!</p>
+                        <a href="/category/sports-hub" class="dk-cat-btn-reset">Back to Sports Hub</a>
+                    </div>
+                }
             </div>
         </main>
     </div>
@@ -457,1067 +422,1030 @@
 </div>
 
 <!-- ========================================================
-     CSS STYLES FOR SPORTS SUBCATEGORY PAGE (BIG FRAMES)
+     INLINE STYLING FOR SPORTS CATEGORIES VIEW
+     (Matching Study Essentials Design System)
 ========================================================= -->
 <style>
-    .sp-subpage-container {
+    .dk-sports-explorer-wrapper {
         width: 100%;
-        max-width: 1360px;
+        max-width: 100%;
         margin: 0 auto;
-        padding: 16px 16px 60px 16px;
-        color: #0f172a;
-        font-family: inherit;
+        padding: 4px 0 32px 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
-    /* Subcategory Hero Card */
-    .sp-sub-hero-card {
-        position: relative;
-        width: 100%;
-        background: linear-gradient(135deg, #064e3b 0%, #065f46 45%, #047857 75%, #0f172a 100%);
-        border-radius: 20px;
-        overflow: hidden;
-        color: #ffffff;
-        margin-bottom: 20px;
-        box-shadow: 0 16px 36px rgba(6, 78, 59, 0.2);
-    }
-    .sp-sub-hero-glow {
-        position: absolute;
-        top: -40px;
-        right: -40px;
-        width: 250px;
-        height: 250px;
-        background: radial-gradient(circle, rgba(52, 211, 153, 0.3) 0%, transparent 70%);
-        pointer-events: none;
-    }
-    .sp-sub-hero-body {
-        padding: 36px 32px;
-        display: grid;
-        grid-template-columns: 1.25fr 0.75fr;
-        gap: 28px;
-        align-items: center;
-        position: relative;
-        z-index: 1;
-    }
-    @@media (max-width: 860px) {
-        .sp-sub-hero-body { grid-template-columns: 1fr; }
-    }
-
-    .sp-sub-hero-breadcrumb {
+    /* Admin bar */
+    .dk-study-hub-admin-bar {
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 10px 18px;
+        border-radius: 10px;
+        margin-bottom: 14px;
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        color: #a7f3d0;
-        margin-bottom: 12px;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
     }
-    .sp-sub-hero-breadcrumb a {
-        color: #a7f3d0;
-        text-decoration: none;
-    }
-    .sp-sub-hero-breadcrumb a:hover {
-        text-decoration: underline;
-    }
-    .sp-sub-sep {
-        opacity: 0.6;
-    }
-    .sp-sub-crumb-active {
+    .dk-sh-admin-badge {
+        background: #0284c7;
         color: #ffffff;
-        font-weight: 700;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 3px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-
-    .sp-sub-hero-badge {
+    .dk-sh-admin-hint {
+        font-size: 12.5px;
+        color: #cbd5e1;
+        flex: 1;
+    }
+    .dk-sh-admin-btn {
+        background: #2563eb;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 6px;
+        text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 6px;
+        transition: background 0.2s ease;
+    }
+    .dk-sh-admin-btn:hover {
+        background: #1d4ed8;
+    }
+
+    /* Common Hero Banner */
+    .dk-study-common-hero.dk-sports-hero {
+        background: linear-gradient(135deg, #064e3b 0%, #065f46 40%, #047857 100%);
+        border: 2px solid #10b981;
+        border-radius: 14px;
+        padding: 24px 28px 18px 28px;
+        color: #ffffff;
+        margin-bottom: 18px;
+        box-shadow: 0 10px 25px -5px rgba(6, 78, 59, 0.25);
+    }
+    .dk-hero-inner-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 24px;
+        align-items: center;
+    }
+    .dk-hero-pill-badge.dk-sports-pill-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
         background: rgba(16, 185, 129, 0.25);
-        border: 1px solid rgba(52, 211, 153, 0.4);
-        padding: 4px 12px;
-        border-radius: 999px;
-        font-size: 11.5px;
+        border: 1px solid rgba(52, 211, 153, 0.5);
+        color: #a7f3d0;
+        font-size: 11px;
         font-weight: 800;
-        letter-spacing: 0.6px;
-        color: #6ee7b7;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 9999px;
         margin-bottom: 10px;
     }
-    .sp-badge-dot {
-        font-size: 8px;
-        color: #34d399;
+    .dk-hero-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #34d399;
+        box-shadow: 0 0 8px #34d399;
     }
-    .sp-sub-hero-title {
-        font-size: 34px;
-        font-weight: 800;
-        line-height: 1.2;
+    .dk-hero-main-title {
+        font-size: 26px;
+        font-weight: 900;
+        line-height: 1.25;
         margin: 0 0 10px 0;
         color: #ffffff;
     }
-    .sp-sub-hero-desc {
-        font-size: 14.5px;
-        line-height: 1.6;
-        color: #cbd5e1;
+    .dk-hero-main-sub {
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: #d1fae5;
         margin: 0 0 16px 0;
-        max-width: 600px;
     }
-    .sp-sub-hero-chips {
+    .dk-hero-trust-badges {
         display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .dk-hero-trust-item {
+        display: flex;
         align-items: center;
+        gap: 8px;
+        font-size: 12.5px;
+        color: #e2e8f0;
     }
-    .sp-hero-chip {
-        font-size: 12px;
-        font-weight: 600;
-        background: rgba(255, 255, 255, 0.12);
-        padding: 4px 12px;
-        border-radius: 6px;
-        color: #ecfdf5;
-    }
-    .sp-sub-admin-link {
-        font-size: 12px;
-        font-weight: 600;
-        color: #fef08a;
-        text-decoration: none;
-        background: rgba(0, 0, 0, 0.3);
-        padding: 4px 12px;
-        border-radius: 6px;
-        margin-left: 4px;
-    }
-    .sp-sub-admin-link:hover {
-        background: rgba(0, 0, 0, 0.5);
+    .dk-hero-trust-icon {
+        font-size: 14px;
     }
 
-    /* Subcategory Hero Media */
-    .sp-sub-hero-media {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .sp-sub-hero-uploading {
-        background: rgba(255, 255, 255, 0.06);
-        border: 2px dashed rgba(52, 211, 153, 0.4);
-        border-radius: 18px;
+    /* Hero Image / Uploading Radar Box */
+    .dk-sports-test-pic-box {
+        background: rgba(15, 23, 42, 0.55);
+        border: 2px dashed rgba(52, 211, 153, 0.45);
+        border-radius: 12px;
         padding: 24px 20px;
+        text-align: center;
+        color: #f8fafc;
         display: flex;
         flex-direction: column;
         align-items: center;
-        text-align: center;
-        width: 100%;
-        max-width: 320px;
+        justify-content: center;
+        min-height: 190px;
     }
-    .sp-sub-uploading-radar {
+    .dk-sports-radar-pulse {
         position: relative;
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
     }
-    .sp-sub-radar-ring {
+    .dk-radar-ring {
         position: absolute;
-        width: 70px;
-        height: 70px;
+        border: 2px solid rgba(52, 211, 153, 0.5);
         border-radius: 50%;
-        border: 1.5px solid rgba(52, 211, 153, 0.4);
-        animation: spRadarPulse 2.5s infinite ease-out;
+        animation: dkRadarPing 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
     }
-    .sp-sub-emoji {
-        font-size: 38px;
-        z-index: 1;
+    .dk-radar-ring.ring-1 { width: 44px; height: 44px; }
+    .dk-radar-ring.ring-2 { width: 58px; height: 58px; animation-delay: 0.6s; }
+    @@keyframes dkRadarPing {
+        0% { transform: scale(0.85); opacity: 0.9; }
+        80%, 100% { transform: scale(1.3); opacity: 0; }
     }
-    .sp-sub-uploading-pill {
+    .dk-hero-cam-icon {
+        font-size: 28px;
+        z-index: 2;
+    }
+    .dk-hero-test-btn {
         background: #10b981;
         color: #ffffff;
         font-size: 11px;
         font-weight: 800;
         letter-spacing: 0.6px;
-        padding: 3px 12px;
-        border-radius: 999px;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 4px;
         margin-bottom: 6px;
     }
-    .sp-sub-uploading-text {
+    .dk-hero-test-title {
+        font-size: 13.5px;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 3px;
+    }
+    .dk-hero-test-sub {
         font-size: 11.5px;
-        color: #94a3b8;
-        margin: 0;
+        color: #a7f3d0;
+    }
+    .dk-hero-custom-img-wrap img {
+        width: 100%;
+        max-height: 220px;
+        object-fit: cover;
+        border-radius: 10px;
     }
 
-    /* Quick Filter Pills Bar */
-    .sp-quick-filters-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    /* Hero Trust Highlights Bar */
+    .dk-hero-trust-bar {
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
         gap: 12px;
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 8px 14px;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
     }
-    .sp-filter-pills-left {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-    .sp-filter-pills-right {
+    .dk-htb-item {
         display: flex;
         align-items: center;
+        gap: 10px;
+    }
+    .dk-htb-icon {
+        font-size: 18px;
+    }
+    .dk-htb-item strong {
+        display: block;
+        font-size: 12px;
+        color: #ffffff;
+    }
+    .dk-htb-item span {
+        font-size: 11px;
+        color: #d1fae5;
     }
 
-    /* Dropdown Pills */
-    .sp-dropdown-pill {
-        position: relative;
-    }
-    .sp-pill-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: #f8fafc;
-        border: 1px solid #cbd5e1;
-        border-radius: 8px;
-        padding: 7px 12px;
-        font-size: 12.5px;
-        font-weight: 600;
-        color: #334155;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    .sp-pill-btn:hover {
-        background: #f1f5f9;
-        border-color: #94a3b8;
-    }
-    .sp-pill-dropdown-menu {
-        display: none;
-        position: absolute;
-        top: calc(100% + 4px);
-        left: 0;
+    /* ========================================================
+       TOP 12 CATEGORIES QUICK NAV PILLS STRIP
+    ======================================================== */
+    .dk-study-cat-nav-strip {
         background: #ffffff;
         border: 1px solid #e2e8f0;
         border-radius: 10px;
-        padding: 8px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        z-index: 50;
-        min-width: 170px;
-        flex-direction: column;
-        gap: 4px;
-    }
-    .sp-menu-right {
-        left: auto;
-        right: 0;
-    }
-    .sp-dropdown-pill.open .sp-pill-dropdown-menu {
+        padding: 10px 14px;
+        margin-bottom: 18px;
         display: flex;
+        align-items: center;
+        gap: 14px;
+        overflow-x: auto;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        scrollbar-width: thin;
     }
-    .sp-pill-option {
+    .dk-study-cat-nav-title {
+        font-size: 12px;
+        font-weight: 800;
+        color: #0f172a;
+        white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+    }
+    .dk-study-cat-nav-items {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 6px 8px;
-        font-size: 12.5px;
-        color: #334155;
-        cursor: pointer;
-        border-radius: 6px;
+        flex-wrap: nowrap;
     }
-    .sp-pill-option:hover {
-        background: #f1f5f9;
-    }
-
-    /* 2-Column Layout */
-    .sp-sub-layout {
-        display: grid;
-        grid-template-columns: 280px 1fr;
-        gap: 24px;
-        align-items: start;
-    }
-    @@media (max-width: 900px) {
-        .sp-sub-layout { grid-template-columns: 1fr; }
-    }
-
-    /* Left Sidebar */
-    .sp-sub-sidebar {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-    .sp-sidebar-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-bottom: 12px;
-        border-bottom: 1px solid #e2e8f0;
-    }
-    .sp-sidebar-title {
+    .dk-cat-nav-pill {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        font-size: 16px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        color: #334155;
+        font-size: 12.5px;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.18s ease;
+    }
+    .dk-cat-nav-pill:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #0f172a;
+    }
+    .dk-cat-nav-pill.is-selected {
+        background: #0284c7;
+        border-color: #0284c7;
+        color: #ffffff;
+        font-weight: 700;
+        box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
+    }
+    .dk-cat-pill-icon {
+        font-size: 14px;
+    }
+
+    /* ========================================================
+       MAIN 2-COLUMN LAYOUT
+    ======================================================== */
+    .dk-cat-main-layout {
+        display: grid;
+        grid-template-columns: 290px 1fr;
+        gap: 20px;
+        align-items: start;
+    }
+
+    /* LEFT SIDEBAR */
+    .dk-cat-sidebar {
+        position: sticky;
+        top: 14px;
+    }
+    .dk-cat-sidebar-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .dk-cat-sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .dk-cat-sidebar-title {
+        font-size: 14.5px;
         font-weight: 800;
         color: #0f172a;
         margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
-    .sp-btn-clear-filters {
+    .dk-cat-clear-btn {
         background: none;
         border: none;
-        color: #059669;
+        color: #0284c7;
         font-size: 12px;
         font-weight: 700;
         cursor: pointer;
         padding: 0;
     }
-    .sp-btn-clear-filters:hover {
+    .dk-cat-clear-btn:hover {
         text-decoration: underline;
     }
-
-    .sp-filter-box {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    .sp-filter-title {
-        font-size: 13.5px;
+    .dk-cat-sidebar-subhead {
+        font-size: 11.5px;
         font-weight: 800;
-        color: #1e293b;
-        margin: 0;
+        color: #0284c7;
+        letter-spacing: 0.6px;
         text-transform: uppercase;
-        letter-spacing: 0.4px;
+        margin-bottom: 8px;
     }
-
-    /* Category Switcher List */
-    .sp-cat-switcher-list {
+    .dk-cat-sub-list {
         display: flex;
         flex-direction: column;
-        gap: 4px;
-        max-height: 240px;
-        overflow-y: auto;
-        padding-right: 4px;
+        gap: 2px;
     }
-    .sp-cat-switch-item {
+    .dk-cat-sub-link {
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 6px 10px;
-        border-radius: 8px;
+        gap: 10px;
+        padding: 7px 8px;
+        border-radius: 6px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 500;
         text-decoration: none;
-        color: #334155;
-        font-size: 13px;
-        font-weight: 600;
-        transition: all 0.15s ease;
+        transition: background 0.15s ease, color 0.15s ease;
     }
-    .sp-cat-switch-item:hover {
-        background: #f1f5f9;
-        color: #059669;
+    .dk-cat-sub-link:hover {
+        background: #f8fafc;
+        color: #0f172a;
     }
-    .sp-cat-switch-item.active {
-        background: #ecfdf5;
-        color: #059669;
+    .dk-cat-sub-link.is-active {
+        background: #f0f9ff;
+        color: #0369a1;
         font-weight: 700;
     }
-    .sp-cat-switch-dot {
-        margin-left: auto;
-        font-size: 8px;
-        color: #059669;
-    }
-
-    /* Filter Checkboxes & Radios */
-    .sp-filter-options-list {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-    .sp-checkbox-label, .sp-radio-label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        color: #334155;
-        cursor: pointer;
-    }
-    .sp-checkbox-label input, .sp-radio-label input {
-        accent-color: #059669;
-        cursor: pointer;
-    }
-
-    /* Custom Price Inputs */
-    .sp-custom-price-inputs {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-top: 6px;
-    }
-    .sp-custom-price-inputs input {
-        width: 75px;
-        padding: 6px 8px;
-        border: 1px solid #cbd5e1;
-        border-radius: 6px;
-        font-size: 12px;
-    }
-    .sp-price-dash {
-        color: #94a3b8;
-    }
-    .sp-btn-price-go {
-        background: #0f172a;
-        color: #ffffff;
-        border: none;
-        border-radius: 6px;
-        padding: 6px 12px;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: background 0.2s ease;
-    }
-    .sp-btn-price-go:hover {
-        background: #059669;
-    }
-
-    /* In-Stock Toggle */
-    .sp-toggle-box {
-        padding-top: 10px;
-        border-top: 1px solid #e2e8f0;
-    }
-    .sp-switch-label {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        cursor: pointer;
-    }
-    .sp-switch-text {
-        font-size: 13px;
-        font-weight: 700;
-        color: #1e293b;
-    }
-    .sp-switch-label input {
-        display: none;
-    }
-    .sp-switch-slider {
+    .dk-sub-radio {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid #94a3b8;
+        display: inline-block;
+        box-sizing: border-box;
         position: relative;
-        width: 40px;
-        height: 22px;
-        background: #cbd5e1;
-        border-radius: 999px;
-        transition: background 0.2s ease;
+        flex-shrink: 0;
     }
-    .sp-switch-slider::before {
+    .dk-cat-sub-link.is-active .dk-sub-radio {
+        border-color: #0284c7;
+    }
+    .dk-cat-sub-link.is-active .dk-sub-radio::after {
         content: "";
         position: absolute;
         top: 2px;
         left: 2px;
-        width: 18px;
-        height: 18px;
-        background: #ffffff;
+        width: 6px;
+        height: 6px;
         border-radius: 50%;
-        transition: transform 0.2s ease;
+        background: #0284c7;
     }
-    .sp-switch-label input:checked + .sp-switch-slider {
-        background: #059669;
+    .dk-sub-text {
+        flex: 1;
+        line-height: 1.35;
     }
-    .sp-switch-label input:checked + .sp-switch-slider::before {
-        transform: translateX(18px);
+    .dk-sub-badge {
+        font-size: 10px;
+        font-weight: 700;
+        background: #0284c7;
+        color: #ffffff;
+        padding: 1px 6px;
+        border-radius: 9999px;
     }
 
-    /* Right Side Catalog */
-    .sp-sub-catalog {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
+    /* Note Card */
+    .dk-cat-note-card {
+        background: #fffbeb;
+        border: 1px solid #fef3c7;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-top: 14px;
     }
-
-    /* Toolbar */
-    .sp-catalog-toolbar {
+    .dk-cat-note-head {
+        font-size: 12.5px;
+        color: #92400e;
+        margin-bottom: 4px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        gap: 6px;
+    }
+    .dk-cat-note-text {
+        font-size: 12px;
+        color: #78350f;
+        line-height: 1.45;
+        margin: 0;
+    }
+
+    /* Price facets */
+    .dk-cat-price-facets {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .dk-price-facet-chip {
+        font-size: 12.5px;
+        color: #475569;
+        text-decoration: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        background: #f8fafc;
+        transition: all 0.15s ease;
+    }
+    .dk-price-facet-chip:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    /* Promo Card */
+    .dk-cat-sidebar-promo {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        border: 1px solid #bfdbfe;
+        border-radius: 10px;
+        padding: 14px;
+        margin-top: 14px;
+    }
+    .dk-sp-tag {
+        font-size: 10px;
+        font-weight: 800;
+        color: #1d4ed8;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        margin-bottom: 4px;
+    }
+    .dk-sp-title {
+        font-size: 13.5px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 4px 0;
+    }
+    .dk-sp-sub {
+        font-size: 11.5px;
+        color: #64748b;
+        margin: 0 0 10px 0;
+        line-height: 1.4;
+    }
+    .dk-sp-btn {
+        display: inline-block;
+        font-size: 11.5px;
+        font-weight: 800;
+        color: #0284c7;
+        text-decoration: none;
+    }
+    .dk-sp-btn:hover {
+        text-decoration: underline;
+    }
+
+    /* RIGHT CONTENT */
+    .dk-cat-content {
+        min-height: 480px;
+    }
+    .dk-cat-products-header-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 10px 16px;
-        gap: 16px;
-        flex-wrap: wrap;
+        border-radius: 10px;
+        padding: 16px 20px;
+        margin-bottom: 18px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
-    .sp-toolbar-left {
+    .dk-cat-crumb-row {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 8px;
         display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-    .sp-results-count {
-        font-size: 13px;
-        font-weight: 700;
-        color: #334155;
-    }
-    .sp-active-filter-tags {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-    }
-    .sp-active-tag {
-        display: inline-flex;
         align-items: center;
-        gap: 4px;
-        background: #ecfdf5;
-        border: 1px solid #a7f3d0;
-        color: #065f46;
-        font-size: 11px;
+        gap: 6px;
+    }
+    .dk-c-crumb {
+        color: #0284c7;
+        text-decoration: none;
+    }
+    .dk-c-crumb:hover {
+        text-decoration: underline;
+    }
+    .dk-c-sep {
+        color: #94a3b8;
+    }
+    .dk-c-current {
+        color: #334155;
         font-weight: 600;
-        padding: 2px 8px;
-        border-radius: 6px;
     }
-    .sp-tag-close {
-        cursor: pointer;
-        font-weight: 800;
-        margin-left: 2px;
+    .dk-cat-title-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
     }
-
-    .sp-toolbar-search {
+    .dk-cat-heading {
+        font-size: 22px;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0 0 4px 0;
+    }
+    .dk-cat-subtext {
+        font-size: 13px;
+        color: #64748b;
+        margin: 0;
+    }
+    .dk-cat-sort-box {
         display: flex;
         align-items: center;
         gap: 8px;
-        background: #f8fafc;
-        border: 1px solid #cbd5e1;
-        border-radius: 8px;
-        padding: 6px 12px;
-        min-width: 260px;
     }
-    .sp-toolbar-search input {
-        border: none;
-        background: transparent;
-        font-size: 13px;
-        outline: none;
-        width: 100%;
+    .dk-sort-label {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #475569;
+    }
+    .dk-sort-dropdown {
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #1e293b;
+        background: #ffffff;
+        cursor: pointer;
+    }
+    .dk-cat-meta-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid #f1f5f9;
+    }
+    .dk-cat-prod-count {
+        font-size: 12.5px;
+        font-weight: 700;
         color: #0f172a;
     }
-    .sp-toolbar-search svg {
-        color: #94a3b8;
+    .dk-active-filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #e0f2fe;
+        border: 1px solid #bae6fd;
+        color: #0369a1;
+        font-size: 12px;
+        padding: 3px 10px;
+        border-radius: 9999px;
+    }
+    .dk-chip-remove-btn {
+        background: none;
+        border: none;
+        color: #0284c7;
+        font-weight: 800;
+        cursor: pointer;
+        padding: 0 2px;
     }
 
-    /* Catalog Grid with BIG IMAGE FRAMES */
-    .sp-catalog-grid {
+    /* Products Grid (3 Columns) */
+    .dk-cat-products-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+        gap: 16px;
     }
     @@media (max-width: 1100px) {
-        .sp-catalog-grid { grid-template-columns: repeat(2, 1fr); }
+        .dk-cat-products-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
-    @@media (max-width: 600px) {
-        .sp-catalog-grid { grid-template-columns: 1fr; }
+    @@media (max-width: 768px) {
+        .dk-cat-main-layout {
+            grid-template-columns: 1fr;
+        }
+        .dk-cat-products-grid {
+            grid-template-columns: 1fr;
+        }
     }
 
-    .sp-card {
+    /* Product Card */
+    .dk-cat-prod-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 18px;
+        border-radius: 10px;
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        transition: all 0.25s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
-    .sp-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 28px rgba(16, 185, 129, 0.15);
-        border-color: #34d399;
+    .dk-cat-prod-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+        border-color: #cbd5e1;
     }
-
-    /* BIG IMAGE FRAME: min-height: 320px, aspect-ratio: 3/4 */
-    .sp-card-frame {
+    .dk-cat-prod-img-box {
         position: relative;
-        width: 100%;
-        min-height: 320px;
-        aspect-ratio: 3/4;
-        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f1f5f9 100%);
+        background: #f8fafc;
+        height: 200px;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
+        border-bottom: 1px solid #f1f5f9;
     }
-    .sp-card-img {
+    .dk-cat-prod-img-box img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
-    }
-    .sp-card-badge {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        background: #0f172a;
-        color: #ffffff;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 4px 10px;
-        border-radius: 6px;
-        z-index: 2;
-    }
-    .sp-card-discount-pill {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        background: #ef4444;
-        color: #ffffff;
-        font-size: 11px;
-        font-weight: 800;
-        padding: 4px 8px;
-        border-radius: 6px;
-        z-index: 2;
+        object-fit: contain;
+        padding: 10px;
+        box-sizing: border-box;
     }
 
-    /* Uploading Soon Big Radar Frame */
-    .sp-uploading-frame-large {
+    /* Card Uploading Soon Placeholder */
+    .dk-sports-card-uploading {
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         text-align: center;
-        padding: 24px 16px;
-        gap: 8px;
+        padding: 16px;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, #f0fdf4 0%, #f8fafc 100%);
     }
-    .sp-radar-wrap {
+    .dk-sc-radar-wrap {
         position: relative;
-        width: 90px;
-        height: 90px;
+        width: 48px;
+        height: 48px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-bottom: 6px;
     }
-    .sp-radar-ping-ring {
+    .dk-sc-ring {
         position: absolute;
-        width: 80px;
-        height: 80px;
+        border: 1.5px solid rgba(16, 185, 129, 0.45);
         border-radius: 50%;
-        border: 2px solid rgba(16, 185, 129, 0.4);
-        animation: spRadarPulse 2.8s infinite ease-out;
+        animation: dkRadarPing 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
     }
-    .sp-frame-emoji {
-        font-size: 46px;
-        z-index: 1;
-        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    .dk-sc-ring.ring-1 { width: 36px; height: 36px; }
+    .dk-sc-ring.ring-2 { width: 48px; height: 48px; animation-delay: 0.8s; }
+    .dk-sc-emoji {
+        font-size: 24px;
+        z-index: 2;
     }
-    .sp-frame-uploading-tag {
-        font-size: 11.5px;
+    .dk-sc-badge {
+        background: #dcfce7;
+        color: #15803d;
+        font-size: 10.5px;
         font-weight: 800;
-        letter-spacing: 0.8px;
-        color: #065f46;
-        background: #d1fae5;
-        padding: 4px 12px;
-        border-radius: 999px;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+        padding: 2px 8px;
+        border-radius: 9999px;
+        margin-bottom: 4px;
+        letter-spacing: 0.4px;
     }
-    .sp-frame-uploading-sub {
-        font-size: 11.5px;
+    .dk-sc-hint {
+        font-size: 11px;
         color: #64748b;
         margin: 0;
+        font-weight: 500;
     }
 
-    .sp-frame-quick-actions {
+    .dk-cat-prod-badge {
         position: absolute;
-        bottom: 12px;
-        right: 12px;
-        opacity: 0;
-        transform: translateY(6px);
-        transition: all 0.2s ease;
-        z-index: 5;
-    }
-    .sp-card:hover .sp-frame-quick-actions {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    .sp-btn-quick-cart {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: #059669;
+        top: 10px;
+        left: 10px;
+        background: #ea580c;
         color: #ffffff;
-        border: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
-        transition: transform 0.2s ease;
-    }
-    .sp-btn-quick-cart:hover {
-        transform: scale(1.1);
-        background: #047857;
+        font-size: 10.5px;
+        font-weight: 800;
+        padding: 3px 7px;
+        border-radius: 4px;
+        letter-spacing: 0.3px;
+        z-index: 3;
     }
 
-    /* Card Body */
-    .sp-card-body {
-        padding: 16px;
+    /* Product Details */
+    .dk-cat-prod-details {
+        padding: 14px 16px 16px 16px;
         display: flex;
         flex-direction: column;
         flex: 1;
     }
-    .sp-card-brand {
-        font-size: 11px;
-        font-weight: 700;
-        color: #059669;
+    .dk-cat-prod-badge-verified {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 4px;
+        letter-spacing: 0.6px;
+        color: #0284c7;
+        margin-bottom: 6px;
     }
-    .sp-card-title {
-        font-size: 15px;
-        font-weight: 700;
+    .dk-cat-prod-title {
+        font-size: 14.5px;
+        font-weight: 800;
         color: #0f172a;
-        margin: 0 0 8px 0;
+        margin: 0 0 6px 0;
         line-height: 1.35;
+        min-height: 38px;
     }
-    .sp-card-rating {
+    .dk-cat-prod-title a {
+        color: inherit;
+        text-decoration: none;
+    }
+    .dk-cat-prod-title a:hover {
+        color: #0284c7;
+    }
+    .dk-cat-prod-desc {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.45;
+        margin: 0 0 10px 0;
+        flex: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .dk-cat-prod-rating-row {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         margin-bottom: 10px;
     }
-    .sp-rating-score {
-        font-size: 12.5px;
-        font-weight: 700;
+    .dk-cat-stars {
+        color: #f59e0b;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+    .dk-cat-rating-num {
+        font-size: 12px;
+        font-weight: 800;
         color: #0f172a;
     }
-    .sp-rating-reviews {
-        font-size: 12px;
-        color: #94a3b8;
+    .dk-cat-reviews-count {
+        font-size: 11px;
+        color: #64748b;
     }
-
-    .sp-card-price-row {
+    .dk-cat-prod-price-area {
         display: flex;
         align-items: baseline;
         gap: 8px;
         margin-bottom: 12px;
+        flex-wrap: wrap;
     }
-    .sp-card-price-current {
-        font-size: 19px;
-        font-weight: 800;
-        color: #059669;
+    .dk-cat-prod-price {
+        font-size: 18px;
+        font-weight: 900;
+        color: #0f172a;
     }
-    .sp-card-price-orig {
-        font-size: 13px;
+    .dk-cat-prod-mrp {
+        font-size: 12.5px;
         color: #94a3b8;
         text-decoration: line-through;
     }
-
-    .sp-card-sizes {
-        display: flex;
-        gap: 6px;
-        margin-bottom: 16px;
-        flex-wrap: wrap;
-    }
-    .sp-card-size-chip {
+    .dk-cat-prod-save {
         font-size: 11px;
-        font-weight: 600;
-        background: #f1f5f9;
-        color: #475569;
-        padding: 3px 8px;
-        border-radius: 6px;
+        font-weight: 700;
+        color: #16a34a;
     }
-    .sp-card-size-more {
-        font-size: 11px;
-        color: #94a3b8;
-        padding: 3px 6px;
-    }
-
-    .sp-card-cta-wrap {
+    .dk-cat-prod-actions {
         margin-top: auto;
     }
-    .sp-card-btn-add {
+    .dk-cat-btn-buy {
         width: 100%;
+        background: #0284c7;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 9px 12px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        background: #0f172a;
-        color: #ffffff;
-        font-weight: 700;
-        font-size: 13px;
-        padding: 10px 14px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
+        gap: 6px;
+        transition: background 0.18s ease;
     }
-    .sp-card-btn-add:hover {
-        background: #10b981;
+    .dk-cat-btn-buy:hover {
+        background: #0369a1;
     }
 
-    /* Empty Results */
-    .sp-empty-results {
+    /* Empty state */
+    .dk-cat-empty-box {
         background: #ffffff;
         border: 1px dashed #cbd5e1;
-        border-radius: 16px;
-        padding: 48px 24px;
+        border-radius: 12px;
+        padding: 40px 20px;
         text-align: center;
-        margin: 20px 0;
+        margin-top: 10px;
     }
-    .sp-empty-icon {
-        font-size: 48px;
-        margin-bottom: 12px;
+    .dk-cat-empty-icon {
+        font-size: 36px;
+        margin-bottom: 10px;
     }
-    .sp-empty-title {
-        font-size: 18px;
+    .dk-cat-empty-box h3 {
+        font-size: 17px;
         font-weight: 800;
         color: #0f172a;
         margin: 0 0 6px 0;
     }
-    .sp-empty-desc {
-        font-size: 13.5px;
-        color: #64748b;
-        margin: 0 0 16px 0;
-    }
-    .sp-empty-btn-reset {
-        background: #059669;
-        color: #ffffff;
+    .dk-cat-empty-box p {
         font-size: 13px;
-        font-weight: 700;
-        padding: 10px 20px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: background 0.2s ease;
+        color: #64748b;
+        max-width: 440px;
+        margin: 0 auto 16px auto;
     }
-    .sp-empty-btn-reset:hover {
-        background: #047857;
+    .dk-cat-btn-reset {
+        background: #0284c7;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-size: 12.5px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
     }
 </style>
 
-<!-- Client-Side Reactive Filter & Search Engine -->
+<!-- ========================================================
+     CLIENT-SIDE INTERACTIVE FILTERING SCRIPT
+     (Instant Subcategory Filtering without page reload)
+========================================================= -->
 <script>
-    (function () {
-        var currentFilters = {
-            search: '',
-            brands: [],
-            minPrice: 0,
-            maxPrice: 999999,
-            minDiscount: 0,
-            minRating: 0,
-            inStockOnly: false,
-            sort: 'popularity'
-        };
+    function filterBySubItem(subItem) {
+        const cleanSub = (subItem || "").trim().toLowerCase();
 
-        window.spToggleDropdown = function (btn) {
-            var parent = btn.closest('.sp-dropdown-pill');
-            if (!parent) return;
-            var wasOpen = parent.classList.contains('open');
-            document.querySelectorAll('.sp-dropdown-pill.open').forEach(function (p) {
-                p.classList.remove('open');
-            });
-            if (!wasOpen) {
-                parent.classList.add('open');
-            }
-        };
-
-        document.addEventListener('click', function (e) {
-            if (!e.target.closest('.sp-dropdown-pill')) {
-                document.querySelectorAll('.sp-dropdown-pill.open').forEach(function (p) {
-                    p.classList.remove('open');
-                });
+        // 1. Update Left Sidebar active state
+        document.querySelectorAll(".dk-cat-sub-link").forEach(link => {
+            const itemVal = (link.dataset.subitem || "").trim().toLowerCase();
+            if (cleanSub === "") {
+                link.classList.toggle("is-active", itemVal === "");
+            } else {
+                link.classList.toggle("is-active", itemVal === cleanSub);
             }
         });
 
-        window.spApplyPillFilter = function (group, val, inputEl) {
-            if (group === 'brand') {
-                currentFilters.brands = val === 'all' ? [] : [val.toLowerCase()];
-                // Sync sidebar checkboxes
-                document.querySelectorAll('.sp-filter-cb[data-filter="brand"]').forEach(function (cb) {
-                    cb.checked = val !== 'all' && cb.value.toLowerCase() === val.toLowerCase();
-                });
-            } else if (group === 'price') {
-                if (val === 'all') {
-                    currentFilters.minPrice = 0; currentFilters.maxPrice = 999999;
-                } else if (val === 'under-1000') {
-                    currentFilters.minPrice = 0; currentFilters.maxPrice = 1000;
-                } else if (val === '1000-2500') {
-                    currentFilters.minPrice = 1000; currentFilters.maxPrice = 2500;
-                } else if (val === '2500-5000') {
-                    currentFilters.minPrice = 2500; currentFilters.maxPrice = 5000;
-                } else if (val === 'above-5000') {
-                    currentFilters.minPrice = 5000; currentFilters.maxPrice = 999999;
-                }
-            } else if (group === 'rating') {
-                currentFilters.minRating = val === 'all' ? 0 : parseFloat(val);
-            }
-            inputEl.closest('.sp-dropdown-pill').classList.remove('open');
-            spExecuteFilter();
-        };
+        // 2. Filter product cards on the right side
+        const cards = document.querySelectorAll(".dk-cat-prod-card");
+        let visibleCount = 0;
 
-        window.spApplySort = function (val, label) {
-            currentFilters.sort = val;
-            var sortLbl = document.getElementById('spSortLabel');
-            if (sortLbl) sortLbl.textContent = 'Sort by : ' + label;
-            document.querySelectorAll('.sp-dropdown-pill.open').forEach(function (p) { p.classList.remove('open'); });
-            spExecuteFilter();
-        };
+        cards.forEach(card => {
+            if (cleanSub === "") {
+                card.style.display = "";
+                visibleCount++;
+            } else {
+                const tags = (card.dataset.subcatTags || "").toLowerCase();
+                const title = (card.dataset.title || "").toLowerCase();
+                const desc = (card.dataset.desc || "").toLowerCase();
 
-        window.spOnSearchChange = function (val) {
-            currentFilters.search = (val || '').trim().toLowerCase();
-            spExecuteFilter();
-        };
-
-        window.spTriggerFilter = function () {
-            // Read brand checkboxes
-            var selectedBrands = [];
-            document.querySelectorAll('.sp-filter-cb[data-filter="brand"]:checked').forEach(function (cb) {
-                selectedBrands.push(cb.value.toLowerCase());
-            });
-            currentFilters.brands = selectedBrands;
-
-            // In-stock toggle
-            var inStockEl = document.getElementById('spInStockToggle');
-            currentFilters.inStockOnly = inStockEl ? inStockEl.checked : false;
-
-            spExecuteFilter();
-        };
-
-        window.spSetPriceRange = function (min, max) {
-            currentFilters.minPrice = min;
-            currentFilters.maxPrice = max;
-            spExecuteFilter();
-        };
-
-        window.spApplyCustomPrice = function () {
-            var minVal = parseFloat(document.getElementById('spMinPriceInput').value || '0');
-            var maxVal = parseFloat(document.getElementById('spMaxPriceInput').value || '999999');
-            if (maxVal <= 0) maxVal = 999999;
-            currentFilters.minPrice = minVal;
-            currentFilters.maxPrice = maxVal;
-            spExecuteFilter();
-        };
-
-        window.spSetMinDiscount = function (pct) {
-            currentFilters.minDiscount = pct;
-            spExecuteFilter();
-        };
-
-        window.spSetMinRating = function (rating) {
-            currentFilters.minRating = rating;
-            spExecuteFilter();
-        };
-
-        window.spResetAllFilters = function () {
-            currentFilters = {
-                search: '',
-                brands: [],
-                minPrice: 0,
-                maxPrice: 999999,
-                minDiscount: 0,
-                minRating: 0,
-                inStockOnly: false,
-                sort: 'popularity'
-            };
-
-            // Reset UI inputs
-            var searchInput = document.getElementById('spSearchInput');
-            if (searchInput) searchInput.value = '';
-
-            document.querySelectorAll('.sp-filter-cb').forEach(function (cb) { cb.checked = false; });
-            document.querySelectorAll('input[name="side_price"][value="all"]').forEach(function (r) { r.checked = true; });
-            document.querySelectorAll('input[name="side_discount"][value="0"]').forEach(function (r) { r.checked = true; });
-            document.querySelectorAll('input[name="side_rating"][value="0"]').forEach(function (r) { r.checked = true; });
-            document.querySelectorAll('input[name="pill_brand"][value="all"]').forEach(function (r) { r.checked = true; });
-            document.querySelectorAll('input[name="pill_price"][value="all"]').forEach(function (r) { r.checked = true; });
-            document.querySelectorAll('input[name="pill_rating"][value="all"]').forEach(function (r) { r.checked = true; });
-
-            var minInp = document.getElementById('spMinPriceInput');
-            var maxInp = document.getElementById('spMaxPriceInput');
-            if (minInp) minInp.value = '';
-            if (maxInp) maxInp.value = '';
-
-            var inStockEl = document.getElementById('spInStockToggle');
-            if (inStockEl) inStockEl.checked = false;
-
-            var sortLbl = document.getElementById('spSortLabel');
-            if (sortLbl) sortLbl.textContent = 'Sort by : Popularity';
-
-            spExecuteFilter();
-        };
-
-        function spExecuteFilter() {
-            var cards = Array.from(document.querySelectorAll('#spCatalogGrid .sp-card'));
-            var visibleCount = 0;
-
-            cards.forEach(function (card) {
-                var name = card.getAttribute('data-name') || '';
-                var brand = card.getAttribute('data-brand') || '';
-                var price = parseFloat(card.getAttribute('data-price') || '0');
-                var discount = parseInt(card.getAttribute('data-discount') || '0', 10);
-                var rating = parseFloat(card.getAttribute('data-rating') || '0');
-                var inStock = card.getAttribute('data-instock') === 'true';
-
-                var matches = true;
-
-                // Search query
-                if (currentFilters.search && !name.includes(currentFilters.search) && !brand.includes(currentFilters.search)) {
-                    matches = false;
-                }
-
-                // Brands
-                if (matches && currentFilters.brands.length > 0 && !currentFilters.brands.includes(brand)) {
-                    matches = false;
-                }
-
-                // Price
-                if (matches && (price < currentFilters.minPrice || price > currentFilters.maxPrice)) {
-                    matches = false;
-                }
-
-                // Discount
-                if (matches && currentFilters.minDiscount > 0 && discount < currentFilters.minDiscount) {
-                    matches = false;
-                }
-
-                // Rating
-                if (matches && currentFilters.minRating > 0 && rating < currentFilters.minRating) {
-                    matches = false;
-                }
-
-                // In stock
-                if (matches && currentFilters.inStockOnly && !inStock) {
-                    matches = false;
+                // Check match with subItem words
+                const subWords = cleanSub.split(/[\s,]+/);
+                let matches = false;
+                if (tags.includes(cleanSub) || title.includes(cleanSub) || desc.includes(cleanSub)) {
+                    matches = true;
+                } else {
+                    // Check if multiple key words match
+                    const matchCount = subWords.filter(w => w.length > 2 && (tags.includes(w) || title.includes(w) || desc.includes(w))).length;
+                    if (matchCount >= 1) matches = true;
                 }
 
                 if (matches) {
-                    card.style.display = 'flex';
+                    card.style.display = "";
                     visibleCount++;
                 } else {
-                    card.style.display = 'none';
+                    card.style.display = "none";
                 }
-            });
-
-            // Sorting
-            if (visibleCount > 0) {
-                var grid = document.getElementById('spCatalogGrid');
-                var visibleCards = cards.filter(function (c) { return c.style.display !== 'none'; });
-                visibleCards.sort(function (a, b) {
-                    var pa = parseFloat(a.getAttribute('data-price') || '0');
-                    var pb = parseFloat(b.getAttribute('data-price') || '0');
-                    var ra = parseFloat(a.getAttribute('data-rating') || '0');
-                    var rb = parseFloat(b.getAttribute('data-rating') || '0');
-
-                    if (currentFilters.sort === 'price-asc') return pa - pb;
-                    if (currentFilters.sort === 'price-desc') return pb - pa;
-                    if (currentFilters.sort === 'rating') return rb - ra;
-                    return 0; // default popularity
-                });
-                visibleCards.forEach(function (c) { grid.appendChild(c); });
             }
+        });
 
-            // Results count label
-            var countLabel = document.getElementById('spResultsCount');
-            if (countLabel) {
-                countLabel.textContent = 'Showing ' + visibleCount + ' products in @subPage.CategoryName';
-            }
+        // 3. Update count and active chip
+        const countEl = document.getElementById("dkCatProdCount");
+        if (countEl) {
+            countEl.textContent = visibleCount + " Products";
+        }
 
-            // Empty state toggle
-            var emptyEl = document.getElementById('spEmptyResults');
-            if (emptyEl) {
-                emptyEl.style.display = visibleCount === 0 ? 'block' : 'none';
+        const chipWrap = document.getElementById("dkCatActiveChipWrap");
+        const chipText = document.getElementById("dkCatActiveChipText");
+        if (chipWrap && chipText) {
+            if (cleanSub !== "") {
+                chipText.textContent = subItem;
+                chipWrap.style.display = "inline-flex";
+            } else {
+                chipWrap.style.display = "none";
             }
         }
-    })();
-</script>
 
+        // 4. Update empty state visibility
+        const emptyState = document.getElementById("dkCatSubEmptyState");
+        const prodGrid = document.querySelector(".dk-cat-products-grid");
+        if (emptyState && prodGrid) {
+            if (visibleCount === 0) {
+                prodGrid.style.display = "none";
+                emptyState.style.display = "block";
+            } else {
+                prodGrid.style.display = "grid";
+                emptyState.style.display = "none";
+            }
+        }
+
+        // 5. Update browser URL without reload
+        const url = new URL(window.location.href);
+        if (cleanSub !== "") {
+            url.searchParams.set("subcatItem", subItem);
+        } else {
+            url.searchParams.delete("subcatItem");
+        }
+        window.history.pushState(null, '', url.toString());
+    }
+
+    function filterByPriceRange(minPrice, maxPrice) {
+        const cards = document.querySelectorAll(".dk-cat-prod-card");
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const price = parseFloat(card.dataset.price) || 0;
+            if (price >= minPrice && price <= maxPrice) {
+                card.style.display = "";
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        const countEl = document.getElementById("dkCatProdCount");
+        if (countEl) {
+            countEl.textContent = visibleCount + " Products";
+        }
+    }
+
+    function handleSportsSortChange(sortVal) {
+        const grid = document.querySelector(".dk-cat-products-grid");
+        if (!grid) return;
+
+        const cards = Array.from(grid.querySelectorAll(".dk-cat-prod-card"));
+
+        cards.sort((a, b) => {
+            const priceA = parseFloat(a.dataset.price) || 0;
+            const priceB = parseFloat(b.dataset.price) || 0;
+            const ratingA = parseFloat(a.dataset.rating) || 0;
+            const ratingB = parseFloat(b.dataset.rating) || 0;
+            const discA = parseFloat(a.dataset.discount) || 0;
+            const discB = parseFloat(b.dataset.discount) || 0;
+
+            switch (sortVal) {
+                case "price-asc": return priceA - priceB;
+                case "price-desc": return priceB - priceA;
+                case "rating": return ratingB - ratingA;
+                case "discount": return discB - discA;
+                default: return 0;
+            }
+        });
+
+        cards.forEach(c => grid.appendChild(c));
+    }
+
+    function handleSportsAddToCart(productId, productName) {
+        // Dispatch to cart API or show toast
+        if (window.DreamflykitCart && typeof window.DreamflykitCart.addItem === 'function') {
+            window.DreamflykitCart.addItem(productId, 1);
+        } else {
+            // Visual confirmation
+            const toast = document.createElement("div");
+            toast.style.position = "fixed";
+            toast.style.bottom = "24px";
+            toast.style.right = "24px";
+            toast.style.background = "#0f172a";
+            toast.style.color = "#ffffff";
+            toast.style.padding = "12px 20px";
+            toast.style.borderRadius = "8px";
+            toast.style.boxShadow = "0 10px 25px rgba(0,0,0,0.2)";
+            toast.style.fontSize = "13px";
+            toast.style.fontWeight = "700";
+            toast.style.zIndex = "99999";
+            toast.style.display = "flex";
+            toast.style.alignItems = "center";
+            toast.style.gap = "8px";
+            toast.innerHTML = '<span>🛒</span><span>' + (productName || "Product") + ' added to Cart!</span>';
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transition = "opacity 0.3s ease";
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+    }
+
+    // Initialize filter if subcatItem is in URL on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const subItem = urlParams.get("subcatItem");
+        if (subItem) {
+            filterBySubItem(subItem);
+        }
+    });
+</script>

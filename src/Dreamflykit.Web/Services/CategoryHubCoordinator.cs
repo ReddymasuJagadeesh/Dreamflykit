@@ -261,6 +261,15 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
                     currentSubcategoryName = sportsSubPage.CategoryName;
                 }
             }
+            else if (string.Equals(ctx.View, "categories", StringComparison.OrdinalIgnoreCase))
+            {
+                currentSubcategorySlug = "cricket";
+                sportsSubPage = await _sportsHubService.GetSubcategoryPageAsync(currentSubcategorySlug, cancellationToken);
+                if (sportsSubPage != null && string.IsNullOrWhiteSpace(currentSubcategoryName))
+                {
+                    currentSubcategoryName = sportsSubPage.CategoryName;
+                }
+            }
         }
 
         GamingHubDto? gamingHubConfig = null;
@@ -743,7 +752,7 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
         string determinedViewMode;
         if (isSportsCategory)
         {
-            determinedViewMode = !string.IsNullOrWhiteSpace(currentSubcategorySlug) ? "sports-sub" : "hub";
+            determinedViewMode = (!string.IsNullOrWhiteSpace(currentSubcategorySlug) || string.Equals(ctx.View, "categories", StringComparison.OrdinalIgnoreCase)) ? "sports-sub" : "hub";
         }
         else if (isGamingCategory)
         {
