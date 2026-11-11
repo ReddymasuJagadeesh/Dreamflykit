@@ -110,6 +110,9 @@ public sealed class SportsHubService : ISportsHubService
 
     private static void EnsureDefaults(SportsHubDto dto)
     {
+        var defaultCategories = SportsHubDto.CreateDefaultCategoryItems();
+        var defaultPages = SportsHubDto.CreateDefaultSubcategoryPages();
+
         if (dto.ShopByCategory == null || dto.ShopByCategory.Items == null || dto.ShopByCategory.Items.Count == 0)
         {
             dto.ShopByCategory = new SportsShopByCategorySectionDto
@@ -117,13 +120,59 @@ public sealed class SportsHubService : ISportsHubService
                 IsEnabled = true,
                 Title = "Shop by Category",
                 Subtitle = "Explore verified university tournament sports gear, workout equipment, and athletic apparel",
-                Items = SportsHubDto.CreateDefaultCategoryItems()
+                Items = defaultCategories
             };
+        }
+        else
+        {
+            foreach (var item in dto.ShopByCategory.Items)
+            {
+                if (item.Subcategories == null || item.Subcategories.Count == 0)
+                {
+                    var defCat = defaultCategories.FirstOrDefault(d => string.Equals(d.Slug, item.Slug, StringComparison.OrdinalIgnoreCase));
+                    if (defCat != null && defCat.Subcategories.Count > 0)
+                    {
+                        item.Subcategories = new List<string>(defCat.Subcategories);
+                        if (string.IsNullOrWhiteSpace(item.ImportantNote))
+                        {
+                            item.ImportantNote = defCat.ImportantNote;
+                        }
+                    }
+                }
+            }
         }
 
         if (dto.SubcategoryPages == null || dto.SubcategoryPages.Count == 0)
         {
-            dto.SubcategoryPages = SportsHubDto.CreateDefaultSubcategoryPages();
+            dto.SubcategoryPages = defaultPages;
+        }
+        else
+        {
+            foreach (var defPage in defaultPages)
+            {
+                var existingPage = dto.SubcategoryPages.FirstOrDefault(p =>
+                    string.Equals(p.CategorySlug, defPage.CategorySlug, StringComparison.OrdinalIgnoreCase));
+
+                if (existingPage == null)
+                {
+                    dto.SubcategoryPages.Add(defPage);
+                }
+                else
+                {
+                    if (existingPage.Subcategories == null || existingPage.Subcategories.Count == 0)
+                    {
+                        existingPage.Subcategories = new List<string>(defPage.Subcategories);
+                    }
+                    if (string.IsNullOrWhiteSpace(existingPage.ImportantNote))
+                    {
+                        existingPage.ImportantNote = defPage.ImportantNote;
+                    }
+                    if (existingPage.Products == null || existingPage.Products.Count == 0 || existingPage.Products.All(p => string.IsNullOrWhiteSpace(p.SubcategoryTag)))
+                    {
+                        existingPage.Products = new List<SportsProductItemDto>(defPage.Products);
+                    }
+                }
+            }
         }
     }
 }

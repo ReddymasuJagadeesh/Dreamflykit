@@ -278,6 +278,16 @@
                             </div>
 
                             <div class="sp-field">
+                                <label>Subcategories (Comma-separated for Explorer Sidebar)</label>
+                                <textarea class="sp-input cat-subcategories" rows="2" placeholder="e.g. Bats, Match Balls, Pads, Gloves">@string.Join(", ", item.Subcategories ?? new List<string>())</textarea>
+                            </div>
+
+                            <div class="sp-field">
+                                <label>Important Note for Athletes (Optional)</label>
+                                <input type="text" class="sp-input cat-note" value="@item.ImportantNote" placeholder="e.g. Tournament spec regulations note" />
+                            </div>
+
+                            <div class="sp-field">
                                 <label>Image URL</label>
                                 <div class="sp-upload-row">
                                     <input type="text" class="sp-input cat-img" value="@item.ImageUrl" />
@@ -347,6 +357,14 @@
                                         <input type="file" class="sp-file-input" accept="image/*" onchange="uploadPageHeroImage(this)" style="display:none;" />
                                         <button type="button" class="sp-btn-upload" onclick="triggerFileInput(this)">Upload Banner</button>
                                     </div>
+                                </div>
+                                <div class="sp-field">
+                                    <label>Subcategories for Explorer (Comma-separated)</label>
+                                    <textarea class="sp-input page-subcategories" rows="2" placeholder="e.g. Cricket Bats, Match Balls, Pads, Gloves">@string.Join(", ", pgItem.Subcategories ?? new List<string>())</textarea>
+                                </div>
+                                <div class="sp-field">
+                                    <label>Important Athlete / Tournament Note</label>
+                                    <input type="text" class="sp-input page-note" value="@pgItem.ImportantNote" placeholder="e.g. Tournament compliance note" />
                                 </div>
                                 <label class="sp-switch sp-switch-sm" style="margin-top: 8px;">
                                     <input type="checkbox" class="page-hero-uploading" @(pHero.IsUploadingSoon ? "checked" : "") />
@@ -424,6 +442,16 @@
                                             <div class="sp-field">
                                                 <label>Sizes (Comma separated)</label>
                                                 <input type="text" class="sp-input prod-sizes" value="@(string.Join(", ", prod.Sizes ?? new List<string>()))" placeholder="Full Size SH, Size 6" />
+                                            </div>
+
+                                            <div class="sp-field">
+                                                <label>Subcategory Tag (Matches Left Sidebar Filter)</label>
+                                                <input type="text" class="sp-input prod-subcat-tag" value="@prod.SubcategoryTag" placeholder="e.g. Cricket Bats (English & Kashmir Willow)" />
+                                            </div>
+
+                                            <div class="sp-field">
+                                                <label>Product Description &amp; Specifications</label>
+                                                <textarea class="sp-input prod-desc" rows="2" placeholder="Detailed product specifications...">@prod.Description</textarea>
                                             </div>
 
                                             <div class="sp-field">
@@ -1090,6 +1118,14 @@
                     <input type="text" class="sp-input prod-sizes" value="Standard" />
                 </div>
                 <div class="sp-field">
+                    <label>Subcategory Tag (Matches Left Sidebar Filter)</label>
+                    <input type="text" class="sp-input prod-subcat-tag" value="${catName} Gear" placeholder="e.g. Bats, Cleats, Rackets" />
+                </div>
+                <div class="sp-field">
+                    <label>Product Description &amp; Specifications</label>
+                    <textarea class="sp-input prod-desc" rows="2" placeholder="Detailed product specifications...">Tournament spec ${catName} equipment engineered for university student athletes.</textarea>
+                </div>
+                <div class="sp-field">
                     <label>Product Image URL (Big Frame)</label>
                     <div class="sp-upload-row">
                         <input type="text" class="sp-input prod-img" value="/images/sports-hub/uploading-soon-placeholder.svg" />
@@ -1150,6 +1186,9 @@
         // 3. Shop by Category
         var catItems = [];
         document.querySelectorAll('.sp-categories-admin-grid [data-cat-card]').forEach(function (card, idx) {
+            var subcatsRaw = card.querySelector('.cat-subcategories')?.value || '';
+            var subcatsList = subcatsRaw.split(',').map(function (s) { return s.trim(); }).filter(function (s) { return s.length > 0; });
+
             catItems.push({
                 Slug: card.querySelector('.cat-slug').value,
                 Name: card.querySelector('.cat-name').value,
@@ -1158,7 +1197,9 @@
                 ImageUrl: card.querySelector('.cat-img').value,
                 IsUploadingSoon: card.querySelector('.cat-uploading').checked,
                 DisplayOrder: parseInt(card.querySelector('.cat-order').value || (idx + 1), 10),
-                IsActive: card.querySelector('.cat-isactive').checked
+                IsActive: card.querySelector('.cat-isactive').checked,
+                Subcategories: subcatsList,
+                ImportantNote: card.querySelector('.cat-note')?.value || ''
             });
         });
 
@@ -1184,6 +1225,10 @@
                 BannerHeight: 280
             };
 
+            var pageSubcatsRaw = pageEl.querySelector('.page-subcategories')?.value || '';
+            var pageSubcatsList = pageSubcatsRaw.split(',').map(function (s) { return s.trim(); }).filter(function (s) { return s.length > 0; });
+            var pageNote = pageEl.querySelector('.page-note')?.value || '';
+
             var pageProducts = [];
             pageEl.querySelectorAll('[data-prod-card]').forEach(function (pCard) {
                 var sizesRaw = pCard.querySelector('.prod-sizes').value || '';
@@ -1195,6 +1240,8 @@
                     Brand: pCard.querySelector('.prod-brand').value,
                     CategoryName: name,
                     CategorySlug: slug,
+                    SubcategoryTag: pCard.querySelector('.prod-subcat-tag')?.value || '',
+                    Description: pCard.querySelector('.prod-desc')?.value || '',
                     Price: parseFloat(pCard.querySelector('.prod-price').value || '0'),
                     OriginalPrice: parseFloat(pCard.querySelector('.prod-orig-price').value || '0'),
                     Badge: pCard.querySelector('.prod-badge').value,
@@ -1211,6 +1258,8 @@
             subcategoryPages.push({
                 CategorySlug: slug,
                 CategoryName: name,
+                Subcategories: pageSubcatsList,
+                ImportantNote: pageNote,
                 HeroBanner: pHero,
                 Products: pageProducts
             });

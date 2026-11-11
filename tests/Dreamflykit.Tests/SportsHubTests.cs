@@ -59,6 +59,13 @@ public class SportsHubTests
             Assert.Contains(expectedSlug, actualSlugs);
         }
 
+        // Verify each Category Item has populated subcategories
+        Assert.All(dto.ShopByCategory.Items, item =>
+        {
+            Assert.NotEmpty(item.Subcategories);
+            Assert.True(item.Subcategories.Count >= 5);
+        });
+
         // Verify Subcategory Pages (each category has a dedicated landing page)
         Assert.NotNull(dto.SubcategoryPages);
         Assert.Equal(12, dto.SubcategoryPages.Count);
@@ -66,11 +73,15 @@ public class SportsHubTests
         {
             Assert.NotNull(page.HeroBanner);
             Assert.False(string.IsNullOrWhiteSpace(page.CategoryName));
+            Assert.NotEmpty(page.Subcategories);
+            Assert.True(page.Subcategories.Count >= 5);
             Assert.NotEmpty(page.Products);
             Assert.All(page.Products, p =>
             {
                 Assert.True(p.Price > 0);
                 Assert.True(p.IsUploadingSoon);
+                Assert.False(string.IsNullOrWhiteSpace(p.SubcategoryTag));
+                Assert.False(string.IsNullOrWhiteSpace(p.Description));
             });
         });
 
@@ -223,12 +234,70 @@ public class SportsHubTests
             Assert.Equal("sports-sub", model2.ViewMode);
             Assert.NotNull(model2.SportsSubcategoryPage);
             Assert.Equal("Football", model2.SportsSubcategoryPage.CategoryName);
+            // Act 3: Categories Explorer View (e.g. view=categories)
+            var result3 = await controller.Index(category: "sports-hub", view: "categories", cancellationToken: default) as ViewResult;
+            Assert.NotNull(result3);
+            var model3 = result3.Model as ProductListViewModel;
+            Assert.NotNull(model3);
+            Assert.True(model3.IsSportsHub);
+            Assert.Equal("sports-sub", model3.ViewMode);
+            Assert.Equal("cricket", model3.CurrentSubcategorySlug);
+            Assert.NotNull(model3.SportsSubcategoryPage);
+            Assert.NotEmpty(model3.SportsSubcategoryPage.Subcategories);
+            Assert.NotEmpty(model3.SportsSubcategoryPage.Products);
+            Assert.All(model3.SportsSubcategoryPage.Products, p =>
+            {
+                Assert.False(string.IsNullOrWhiteSpace(p.SubcategoryTag));
+                Assert.False(string.IsNullOrWhiteSpace(p.Description));
+                Assert.True(p.IsUploadingSoon);
+            });
         }
         finally
         {
             if (Directory.Exists(tempDir))
             {
                 try { Directory.Delete(tempDir, true); } catch { }
+            }
+        }
+    }
+
+    [Fact]
+    public void SportsHubDto_All12Categories_HaveResearchedSubcategoriesAndProducts()
+    {
+        // Arrange & Act
+        var dto = SportsHubDto.CreateDefault();
+
+        var expectedCategories = new[]
+        {
+            "cricket", "football", "badminton", "gym-fitness", "basketball-volleyball",
+            "tennis-table-tennis", "sports-footwear", "athletic-wear", "swimming",
+            "sports-bags", "yoga-recovery", "outdoor-trekking"
+        };
+
+        // Assert
+        Assert.Equal(12, dto.ShopByCategory.Items.Count);
+        Assert.Equal(12, dto.SubcategoryPages.Count);
+
+        foreach (var slug in expectedCategories)
+        {
+            var catItem = dto.ShopByCategory.Items.FirstOrDefault(c => c.Slug == slug);
+            Assert.NotNull(catItem);
+            Assert.NotEmpty(catItem.Subcategories);
+            Assert.True(catItem.Subcategories.Count >= 5, $"Category {slug} has less than 5 subcategories.");
+
+            var subPage = dto.SubcategoryPages.FirstOrDefault(p => p.CategorySlug == slug);
+            Assert.NotNull(subPage);
+            Assert.NotEmpty(subPage.Subcategories);
+            Assert.NotEmpty(subPage.Products);
+            Assert.True(subPage.Products.Count >= 4, $"Category {slug} has less than 4 products.");
+
+            foreach (var prod in subPage.Products)
+            {
+                Assert.False(string.IsNullOrWhiteSpace(prod.Name));
+                Assert.False(string.IsNullOrWhiteSpace(prod.SubcategoryTag), $"Product '{prod.Name}' in {slug} missing SubcategoryTag");
+                Assert.False(string.IsNullOrWhiteSpace(prod.Description), $"Product '{prod.Name}' in {slug} missing Description");
+                Assert.True(prod.Price > 0);
+                Assert.True(prod.IsUploadingSoon);
             }
         }
     }
