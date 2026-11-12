@@ -6,6 +6,9 @@
     var hero = hub.HeroBanner ?? new Dreamflykit.Application.MobilesHub.Models.MobilesHeroBannerDto();
     var slides = hero.Slides ?? new List<Dreamflykit.Application.MobilesHub.Models.MobilesHeroSlideDto>();
     var brands = hub.BrandsSection?.Brands ?? new List<Dreamflykit.Application.MobilesHub.Models.MobileBrandItemDto>();
+    var brandPages = (hub.BrandPages != null && hub.BrandPages.Count > 0)
+        ? hub.BrandPages
+        : Dreamflykit.Application.MobilesHub.Services.MobileBrandCatalogService.CreateDefaultBrandPages();
     var highlight = hub.HighlightBanner ?? new Dreamflykit.Application.MobilesHub.Models.MobilesHighlightBannerDto();
     var topDeals = hub.TopDealsSection?.Deals ?? new List<Dreamflykit.Application.MobilesHub.Models.MobileDealItemDto>();
     var confused = hub.ConfusedSection ?? new Dreamflykit.Application.MobilesHub.Models.MobilesConfusedSectionDto();
@@ -216,6 +219,221 @@
                     <input type="text" class="brand-product-url" value="@br.ProductUrl" placeholder="Target Link" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
                 </div>
             }
+        </div>
+    </div>
+
+    <!-- SECTION 2B: INDIVIDUAL BRAND STORE SHOWCASES, THEME COLORS & FILTERS (18 BRANDS) -->
+    <div class="dk-admin-card" id="brandPagesManagerSection" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; flex-wrap: wrap; gap: 14px;">
+            <div>
+                <div style="display: inline-flex; align-items: center; gap: 6px; background: #ede9fe; color: #6d28d9; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; margin-bottom: 4px;">
+                    ✨ DEDICATED BRAND STORE PAGES &amp; FILTERS
+                </div>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">2B. Individual Brand Store Hero, Theme Colors &amp; Filter Controls</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Customize hero banner, color theme, left-side brand filters ("More Filters"), and products for each of the 18 popular smartphone brands.</p>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <label style="font-size: 12px; font-weight: 700; color: #475569;">Select Brand:</label>
+                <select id="brandShowcaseSelector" onchange="onSelectBrandShowcase(this.value)" style="padding: 8px 14px; border: 2px solid #6366f1; border-radius: 8px; font-size: 13.5px; font-weight: 800; color: #0f172a; background: #f8fafc; min-width: 220px; cursor: pointer;">
+                    @foreach (var bp in brandPages)
+                    {
+                        <option value="@bp.BrandSlug">@bp.LogoEmoji @bp.BrandName (@bp.BrandSlug)</option>
+                    }
+                </select>
+                <a id="btnPreviewBrandStore" href="/category/mobiles/@(brandPages.FirstOrDefault()?.BrandSlug ?? "apple")" target="_blank" style="background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 8px 14px; font-size: 12.5px; font-weight: 700; border-radius: 8px; text-decoration: none;">
+                    👁️ Preview Brand Page
+                </a>
+            </div>
+        </div>
+
+        @for (int bIdx = 0; bIdx < brandPages.Count; bIdx++)
+        {
+            var bp = brandPages[bIdx];
+            var bHero = bp.HeroBanner ?? new Dreamflykit.Application.MobilesHub.Models.MobileBrandHeroBannerDto();
+            var bFilters = bp.FilterGroups ?? new List<Dreamflykit.Application.MobilesHub.Models.MobileBrandFilterGroupDto>();
+            var bProds = bp.Products ?? new List<Dreamflykit.Application.MobilesHub.Models.MobileBrandProductDto>();
+
+            <div class="brand-page-editor" id="brand_editor_@bp.BrandSlug" data-brand-slug="@bp.BrandSlug" data-brand-name="@bp.BrandName" data-logo-emoji="@bp.LogoEmoji" style="display: @(bIdx == 0 ? "block" : "none");">
+                
+                <!-- Brand Hero & Color Theme Controls -->
+                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px; margin-bottom: 18px;">
+                    <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0 0 14px 0;">Hero Banner &amp; Color Theme for @bp.BrandName</h3>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Hero Badge Text</label>
+                            <input type="text" class="bpage-hero-badge" value="@bHero.BadgeText" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;" />
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Main Hero Title</label>
+                            <input type="text" class="bpage-hero-title" value="@bHero.Title" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px; font-weight: 700;" />
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Title Highlight</label>
+                            <input type="text" class="bpage-hero-highlight" value="@bHero.TitleHighlight" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;" />
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Banner Min Height (px)</label>
+                            <input type="number" class="bpage-hero-height" value="@bHero.BannerHeight" min="220" max="600" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;" />
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Hero Subtitle / Store Pitch</label>
+                        <textarea class="bpage-hero-subtitle" rows="2" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;">@bHero.Subtitle</textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 14px;">
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Hero Banner Image URL (Admin Replaceable)</label>
+                            <div style="display: flex; gap: 6px;">
+                                <input type="text" class="bpage-hero-img" value="@bHero.ImageUrl" placeholder="Upload or paste image URL" style="flex: 1; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
+                                <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #2874f0; color: #fff; border: none; padding: 7px 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; cursor: pointer;">Upload</button>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; padding-top: 18px;">
+                            <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; color: #c2410c; cursor: pointer;">
+                                <input type="checkbox" class="bpage-hero-uploading" @(bHero.IsUploadingSoon ? "checked" : "") />
+                                ⏳ Show "Uploading Soon" Placeholder Card
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Color Theme Pickers -->
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                        <span style="display: block; font-size: 11.5px; font-weight: 800; color: #4f46e5; margin-bottom: 10px; text-transform: uppercase;">🎨 Brand Color Theme Controls</span>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 3px;">Hero Background CSS Gradient</label>
+                                <input type="text" class="bpage-hero-gradient" value="@bHero.ThemeBgGradient" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 3px;">Primary Theme</label>
+                                <input type="color" class="bpage-primary-color" value="@bp.ThemePrimaryColor" style="width: 100%; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 3px;">Accent Color</label>
+                                <input type="color" class="bpage-accent-color" value="@bp.ThemeAccentColor" style="width: 100%; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 3px;">Title Color</label>
+                                <input type="color" class="bpage-hero-titlecolor" value="@bHero.TitleColor" style="width: 100%; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 3px;">Highlight Color</label>
+                                <input type="color" class="bpage-hero-highlightcolor" value="@bHero.TitleHighlightColor" style="width: 100%; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 3px;">Subtitle Color</label>
+                                <input type="color" class="bpage-hero-subcolor" value="@bHero.SubtitleColor" style="width: 100%; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Brand Left Filters Inspector -->
+                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px; margin-bottom: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">Left Sidebar Filters for @bp.BrandName (@bFilters.Count Groups)</h3>
+                        <button type="button" onclick="addBrandFilterGroup('@bp.BrandSlug')" style="background: #0284c7; color: #fff; border: none; padding: 5px 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; cursor: pointer;">+ Add Filter Group</button>
+                    </div>
+                    <div class="bpage-fgroups-list" id="fgroups_@bp.BrandSlug" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px;">
+                        @foreach (var grp in bFilters)
+                        {
+                            <div class="bpage-fgroup-item" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 8px;">
+                                    <input type="text" class="bfg-title" value="@grp.Title" style="font-weight: 700; font-size: 12.5px; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; flex: 1;" placeholder="Group Title" />
+                                    <input type="hidden" class="bfg-key" value="@grp.Key" />
+                                    <label style="font-size: 11px; font-weight: 700; color: #0284c7;">
+                                        <input type="checkbox" class="bfg-ismore" @(grp.IsMoreFilter ? "checked" : "") /> More
+                                    </label>
+                                    <button type="button" onclick="this.closest('.bpage-fgroup-item').remove()" style="background: #fee2e2; color: #dc2626; border: none; padding: 3px 6px; font-size: 11px; border-radius: 4px; cursor: pointer;">✕</button>
+                                </div>
+                                <div class="bfg-opts-list" style="display: flex; flex-direction: column; gap: 4px;">
+                                    @foreach (var opt in grp.Options)
+                                    {
+                                        <div class="bfg-opt-row" style="display: flex; gap: 4px; align-items: center;">
+                                            <input type="text" class="bfg-opt-label" value="@opt.Label" style="flex: 2; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" placeholder="Label" />
+                                            <input type="text" class="bfg-opt-val" value="@opt.Value" style="flex: 1; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" placeholder="tag-key" />
+                                            <input type="number" class="bfg-opt-count" value="@opt.Count" style="width: 44px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                                            <button type="button" onclick="this.closest('.bfg-opt-row').remove()" style="background: none; border: none; color: #ef4444; cursor: pointer; font-weight: 800;">✕</button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Brand Products Manager -->
+                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">Smartphones Catalog for @bp.BrandName (@bProds.Count Models)</h3>
+                        <button type="button" onclick="addBrandProduct('@bp.BrandSlug', '@bp.BrandName')" style="background: #16a34a; color: #fff; border: none; padding: 6px 14px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer;">+ Add @bp.BrandName Phone</button>
+                    </div>
+
+                    <div class="bpage-prods-list" id="bprods_@bp.BrandSlug" style="display: flex; flex-direction: column; gap: 12px;">
+                        @foreach (var pr in bProds)
+                        {
+                            <div class="bpage-prod-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px;">
+                                <input type="hidden" class="bprod-id" value="@pr.Id" />
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <span style="font-weight: 800; font-size: 12.5px; color: #1e293b;">@pr.Name</span>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <label style="font-size: 11.5px; font-weight: 700; color: #c2410c;">
+                                            <input type="checkbox" class="bprod-uploading" @(pr.IsUploadingSoon ? "checked" : "") /> ⏳ Uploading Soon
+                                        </label>
+                                        <button type="button" onclick="this.closest('.bpage-prod-card').remove()" style="background: #fee2e2; color: #dc2626; border: none; padding: 3px 8px; font-size: 11px; border-radius: 4px; cursor: pointer;">Delete</button>
+                                    </div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Model Title</label>
+                                        <input type="text" class="bprod-name" value="@pr.Name" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 700;" />
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Price (₹)</label>
+                                        <input type="number" class="bprod-price" value="@pr.Price" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Orig MRP (₹)</label>
+                                        <input type="number" class="bprod-orig" value="@pr.OriginalPrice" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Rating</label>
+                                        <input type="text" class="bprod-rating" value="@pr.Rating" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Reviews</label>
+                                        <input type="number" class="bprod-reviews" value="@pr.ReviewCount" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                                    </div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1.5fr 1.5fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Key Spec Pills (comma-separated)</label>
+                                        <input type="text" class="bprod-specs" value="@(pr.KeySpecs != null ? string.Join(", ", pr.KeySpecs) : "")" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Left Filter Tags (space-separated)</label>
+                                        <input type="text" class="bprod-tags" value="@(pr.FilterTags != null ? string.Join(" ", pr.FilterTags) : "")" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Product Image (Admin Upload)</label>
+                                        <div style="display: flex; gap: 4px;">
+                                            <input type="text" class="bprod-img" value="@pr.ImageUrl" placeholder="Image URL" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                                            <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #2874f0; color: #fff; border: none; padding: 6px 10px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer;">Upload</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" class="bprod-perk" value="@pr.CampusPerk" />
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        }
     </div>
 
     <!-- SECTION 3: FLAGSHIP SPECIALS (3-SECTION 3D SLIDE SHOWCASE) -->
@@ -796,6 +1014,103 @@
         }
     }
 
+    function onSelectBrandShowcase(slug) {
+        document.querySelectorAll(".brand-page-editor").forEach(el => el.style.display = "none");
+        const target = document.getElementById("brand_editor_" + slug);
+        if (target) {
+            target.style.display = "block";
+        }
+        const btn = document.getElementById("btnPreviewBrandStore");
+        if (btn) {
+            btn.href = "/category/mobiles/" + slug;
+        }
+    }
+
+    function addBrandFilterGroup(slug) {
+        const list = document.getElementById("fgroups_" + slug);
+        if (!list) return;
+        const gKey = "grp_" + Date.now();
+        const html = `
+        <div class="bpage-fgroup-item" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 8px;">
+                <input type="text" class="bfg-title" value="New Filter Group" style="font-weight: 700; font-size: 12.5px; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; flex: 1;" />
+                <input type="hidden" class="bfg-key" value="${gKey}" />
+                <label style="font-size: 11px; font-weight: 700; color: #0284c7;">
+                    <input type="checkbox" class="bfg-ismore" /> More
+                </label>
+                <button type="button" onclick="this.closest('.bpage-fgroup-item').remove()" style="background: #fee2e2; color: #dc2626; border: none; padding: 3px 6px; font-size: 11px; border-radius: 4px; cursor: pointer;">✕</button>
+            </div>
+            <div class="bfg-opts-list" style="display: flex; flex-direction: column; gap: 4px;">
+                <div class="bfg-opt-row" style="display: flex; gap: 4px; align-items: center;">
+                    <input type="text" class="bfg-opt-label" value="Option 1" style="flex: 2; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                    <input type="text" class="bfg-opt-val" value="opt-1" style="flex: 1; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                    <input type="number" class="bfg-opt-count" value="1" style="width: 44px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                    <button type="button" onclick="this.closest('.bfg-opt-row').remove()" style="background: none; border: none; color: #ef4444; cursor: pointer; font-weight: 800;">✕</button>
+                </div>
+            </div>
+        </div>`;
+        list.insertAdjacentHTML("beforeend", html);
+    }
+
+    function addBrandProduct(slug, brandName) {
+        const list = document.getElementById("bprods_" + slug);
+        if (!list) return;
+        const html = `
+        <div class="bpage-prod-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px;">
+            <input type="hidden" class="bprod-id" value="${slug}-prod-${Date.now()}" />
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 800; font-size: 12.5px; color: #1e293b;">New ${brandName} Phone</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label style="font-size: 11.5px; font-weight: 700; color: #c2410c;">
+                        <input type="checkbox" class="bprod-uploading" checked /> ⏳ Uploading Soon
+                    </label>
+                    <button type="button" onclick="this.closest('.bpage-prod-card').remove()" style="background: #fee2e2; color: #dc2626; border: none; padding: 3px 8px; font-size: 11px; border-radius: 4px; cursor: pointer;">Delete</button>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Model Title</label>
+                    <input type="text" class="bprod-name" value="${brandName} Smartphone 5G" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 700;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Price (₹)</label>
+                    <input type="number" class="bprod-price" value="24999" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Orig MRP (₹)</label>
+                    <input type="number" class="bprod-orig" value="29999" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Rating</label>
+                    <input type="text" class="bprod-rating" value="4.8" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Reviews</label>
+                    <input type="number" class="bprod-reviews" value="120" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1.5fr 1.5fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Key Spec Pills (comma-separated)</label>
+                    <input type="text" class="bprod-specs" value="5G, 120Hz, 5000mAh, 50MP" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Left Filter Tags (space-separated)</label>
+                    <input type="text" class="bprod-tags" value="" placeholder="e.g. 128gb amoled 5g" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                </div>
+                <div>
+                    <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b;">Product Image (Admin Upload)</label>
+                    <div style="display: flex; gap: 4px;">
+                        <input type="text" class="bprod-img" value="" placeholder="Image URL" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                        <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #2874f0; color: #fff; border: none; padding: 6px 10px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer;">Upload</button>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" class="bprod-perk" value="Global 5G Dual eSIM • Official Warranty • 0% Student EMI" />
+        </div>`;
+        list.insertAdjacentHTML("beforeend", html);
+    }
+
     async function saveMobilesHub() {
         const payload = {
             DefaultViewMode: document.getElementById("hubDefaultViewMode").value,
@@ -816,6 +1131,7 @@
                 ViewAllUrl: "/products?category=mobiles",
                 Brands: []
             },
+            BrandPages: [],
             HighlightBanner: {
                 IsEnabled: document.getElementById("flagshipIsEnabled")?.checked ?? true,
                 AutoPlay: document.getElementById("flagshipAutoPlay")?.checked ?? true,
@@ -882,6 +1198,81 @@
                 IconUrl: card.querySelector(".brand-icon-url")?.value || "",
                 ProductUrl: card.querySelector(".brand-product-url")?.value || "/products?category=mobiles",
                 DisplayOrder: idx + 1
+            });
+        });
+
+        // Collect Brand Pages & Filters (Section 2B)
+        document.querySelectorAll(".brand-page-editor").forEach(bEl => {
+            const bSlug = bEl.getAttribute("data-brand-slug");
+            const bName = bEl.getAttribute("data-brand-name");
+            const logoEmoji = bEl.getAttribute("data-logo-emoji") || "📱";
+
+            const heroObj = {
+                IsEnabled: true,
+                BadgeText: bEl.querySelector(".bpage-hero-badge")?.value || "OFFICIAL BRAND STORE",
+                Title: bEl.querySelector(".bpage-hero-title")?.value || bName,
+                TitleHighlight: bEl.querySelector(".bpage-hero-highlight")?.value || "",
+                Subtitle: bEl.querySelector(".bpage-hero-subtitle")?.value || "",
+                ImageUrl: bEl.querySelector(".bpage-hero-img")?.value || "",
+                IsUploadingSoon: bEl.querySelector(".bpage-hero-uploading")?.checked ?? true,
+                BannerHeight: parseInt(bEl.querySelector(".bpage-hero-height")?.value, 10) || 320,
+                ThemeBgGradient: bEl.querySelector(".bpage-hero-gradient")?.value || "linear-gradient(135deg, #0b1120 0%, #1e1b4b 55%, #0f172a 100%)",
+                TitleColor: bEl.querySelector(".bpage-hero-titlecolor")?.value || "#ffffff",
+                TitleHighlightColor: bEl.querySelector(".bpage-hero-highlightcolor")?.value || "#38bdf8",
+                SubtitleColor: bEl.querySelector(".bpage-hero-subcolor")?.value || "#cbd5e1",
+                FilterAccentColor: bEl.querySelector(".bpage-primary-color")?.value || "#2563eb"
+            };
+
+            const prods = [];
+            bEl.querySelectorAll(".bpage-prod-card").forEach(pEl => {
+                prods.push({
+                    Id: pEl.querySelector(".bprod-id")?.value || ("prod-" + Date.now()),
+                    Name: pEl.querySelector(".bprod-name")?.value || "",
+                    BrandName: bName,
+                    BrandSlug: bSlug,
+                    Price: parseFloat(pEl.querySelector(".bprod-price")?.value) || 0,
+                    OriginalPrice: parseFloat(pEl.querySelector(".bprod-orig")?.value) || 0,
+                    Rating: parseFloat(pEl.querySelector(".bprod-rating")?.value) || 4.8,
+                    ReviewCount: parseInt(pEl.querySelector(".bprod-reviews")?.value, 10) || 120,
+                    KeySpecs: (pEl.querySelector(".bprod-specs")?.value || "").split(",").map(s => s.trim()).filter(s => s.length > 0),
+                    FilterTags: (pEl.querySelector(".bprod-tags")?.value || "").split(" ").map(s => s.trim().toLowerCase()).filter(s => s.length > 0),
+                    ImageUrl: pEl.querySelector(".bprod-img")?.value || "",
+                    IsUploadingSoon: pEl.querySelector(".bprod-uploading")?.checked ?? true,
+                    CampusPerk: pEl.querySelector(".bprod-perk")?.value || "Global 5G Dual eSIM • Official Warranty",
+                    InStock: true
+                });
+            });
+
+            const filterGroups = [];
+            bEl.querySelectorAll(".bpage-fgroup-item").forEach(gEl => {
+                const gTitle = gEl.querySelector(".bfg-title")?.value || "";
+                const gKey = gEl.querySelector(".bfg-key")?.value || "";
+                const gOptions = [];
+                gEl.querySelectorAll(".bfg-opt-row").forEach(oEl => {
+                    gOptions.push({
+                        Label: oEl.querySelector(".bfg-opt-label")?.value || "",
+                        Value: oEl.querySelector(".bfg-opt-val")?.value || "",
+                        Count: parseInt(oEl.querySelector(".bfg-opt-count")?.value, 10) || 0
+                    });
+                });
+                filterGroups.push({
+                    Title: gTitle,
+                    Key: gKey,
+                    IsMoreFilter: gEl.querySelector(".bfg-ismore")?.checked ?? false,
+                    Options: gOptions
+                });
+            });
+
+            payload.BrandPages.push({
+                BrandSlug: bSlug,
+                BrandName: bName,
+                CategoryTagline: "Official " + bName + " Smartphones",
+                LogoEmoji: logoEmoji,
+                ThemePrimaryColor: bEl.querySelector(".bpage-primary-color")?.value || "#2563eb",
+                ThemeAccentColor: bEl.querySelector(".bpage-accent-color")?.value || "#7c3aed",
+                HeroBanner: heroObj,
+                FilterGroups: filterGroups,
+                Products: prods
             });
         });
 

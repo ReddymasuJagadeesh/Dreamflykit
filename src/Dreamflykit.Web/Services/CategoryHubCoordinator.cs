@@ -303,10 +303,29 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
 
         ElectronicsBrandShowcaseData? elecBrandShowcase = null;
         AppliancesBrandShowcaseData? appBrandShowcase = null;
+        MobilesHubDto? mobilesHubConfig = null;
+        MobileBrandShowcaseData? mobilesBrandShowcase = null;
         string? currentAppliancesBrandSlug = null;
         string? currentAppliancesBrandName = null;
         string? currentBrandSlug = null;
         string? currentBrandName = null;
+
+        if (isMobilesCategory)
+        {
+            mobilesHubConfig = await _mobilesHubService.GetConfigAsync(cancellationToken);
+            var candidateMobBrand = !string.IsNullOrWhiteSpace(effectiveBrand)
+                ? effectiveBrand
+                : (!string.IsNullOrWhiteSpace(currentSubcategorySlug) && !string.Equals(currentSubcategorySlug, "brand", StringComparison.OrdinalIgnoreCase) && !string.Equals(currentSubcategorySlug, "all", StringComparison.OrdinalIgnoreCase)
+                    ? currentSubcategorySlug
+                    : null);
+
+            if (!string.IsNullOrWhiteSpace(candidateMobBrand))
+            {
+                mobilesBrandShowcase = Dreamflykit.Application.MobilesHub.Services.MobileBrandCatalogService.GetBrandShowcase(candidateMobBrand, mobilesHubConfig);
+                currentBrandSlug = mobilesBrandShowcase.BrandSlug;
+                currentBrandName = mobilesBrandShowcase.BrandName;
+            }
+        }
 
         if (isElectronicsCategory && !string.IsNullOrWhiteSpace(currentSubcategorySlug))
         {
@@ -775,7 +794,7 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
         {
             determinedViewMode = ctx.View.Trim().ToLowerInvariant();
         }
-        else if (elecBrandShowcase != null || appBrandShowcase != null)
+        else if (elecBrandShowcase != null || appBrandShowcase != null || mobilesBrandShowcase != null)
         {
             determinedViewMode = "brand";
         }
@@ -789,7 +808,7 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
         else if (isSweatshirtsCategory) determinedViewMode = "sweatshirts";
         else if (isWomenClothingCategory) determinedViewMode = "women-clothing";
         else if (isMenClothingCategory) determinedViewMode = "men-clothing";
-        else if ((isStudyCategory || isFashionCategory || isHealthCategory || isMobilesCategory || isAppliancesCategory || isBeautyCategory || isFoodCategory || isTravelCategory || isElectronicsCategory || isStoryBooksCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug))
+        else if ((isStudyCategory || isFashionCategory || isHealthCategory || (isMobilesCategory && mobilesBrandShowcase == null) || isAppliancesCategory || isBeautyCategory || isFoodCategory || isTravelCategory || isElectronicsCategory || isStoryBooksCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug))
         {
             determinedViewMode = "hub";
         }
@@ -809,7 +828,7 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
             HasNextPage = result.HasNextPage,
             SearchTerm = effectiveSearch,
             CategoryId = categoryId,
-            CategorySlug = isSportsCategory ? "sports-hub" : (isLuggageCategory ? "luggage-bags" : (isGamingCategory ? "gaming-hub" : (result.CurrentCategorySlug ?? effectiveCategory))),
+            CategorySlug = isSportsCategory ? "sports-hub" : (isLuggageCategory ? "luggage-bags" : (isGamingCategory ? "gaming-hub" : (isMobilesCategory ? "mobiles" : (result.CurrentCategorySlug ?? effectiveCategory)))),
             CategoryName = isSportsCategory
                            ? (!string.IsNullOrWhiteSpace(currentSubcategoryName) ? currentSubcategoryName : "Sports Hub")
                            : (isGamingCategory
@@ -856,9 +875,8 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
             HealthHub = isHealthCategory
                         ? await _healthHubService.GetConfigAsync(cancellationToken)
                         : null,
-            MobilesHub = isMobilesCategory
-                        ? await _mobilesHubService.GetConfigAsync(cancellationToken)
-                        : null,
+            MobilesHub = mobilesHubConfig ?? (isMobilesCategory ? await _mobilesHubService.GetConfigAsync(cancellationToken) : null),
+            MobilesBrandShowcase = mobilesBrandShowcase,
             AppliancesHub = isAppliancesCategory
                         ? await _appliancesHubService.GetConfigAsync(cancellationToken)
                         : null,

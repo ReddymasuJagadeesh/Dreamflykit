@@ -475,13 +475,27 @@
 
 
 
-    @if (Model.IsMobilesHub && Model.MobilesHub != null && Model.ViewMode == "hub")
+    @if (Model.IsMobilesHub && Model.MobilesHub != null)
 
     {
 
         <div style="width: 100%; margin-bottom: 24px;">
 
-            <partial name="_MobilesCategoryHub" model="Model.MobilesHub" />
+            @if (Model.IsMobilesBrandHub)
+
+            {
+
+                <partial name="_MobilesBrandHub" model="Model" />
+
+            }
+
+            else if (Model.ViewMode == "hub")
+
+            {
+
+                <partial name="_MobilesCategoryHub" model="Model.MobilesHub" />
+
+            }
 
         </div>
 
@@ -727,7 +741,7 @@
 
                                (Model.IsHealthCareHub && Model.ViewMode == "hub") ||
 
-                               (Model.IsMobilesHub && Model.ViewMode == "hub") ||
+                               (Model.IsMobilesHub && (Model.ViewMode == "hub" || Model.IsMobilesBrandHub)) ||
 
                                (Model.IsAppliancesHub && (Model.ViewMode == "hub" || Model.IsAppliancesSubcategoryHub || Model.IsAppliancesBrandHub)) ||
 

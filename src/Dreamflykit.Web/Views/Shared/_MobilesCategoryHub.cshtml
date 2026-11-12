@@ -223,8 +223,11 @@
                         var filterCat = (brandSlug.Contains("apple") || brandSlug.Contains("google") || brandSlug.Contains("samsung")) ? "flagship" :
                                         (brandSlug.Contains("poco") || brandSlug.Contains("nothing") || brandSlug.Contains("oneplus")) ? "performance" :
                                         (brandSlug.Contains("realme") || brandSlug.Contains("motorola") || brandSlug.Contains("vivo") || brandSlug.Contains("oppo")) ? "camera" : "value";
+                        var brandTargetUrl = !string.IsNullOrWhiteSpace(brand.Slug)
+                            ? $"/category/mobiles/{brand.Slug.Trim().ToLowerInvariant()}"
+                            : (!string.IsNullOrWhiteSpace(brand.ProductUrl) ? brand.ProductUrl : "/category/mobiles");
 
-                        <a href="@brand.ProductUrl" 
+                        <a href="@brandTargetUrl" 
                            class="dk-mob-stage-card" 
                            data-brand-category="@filterCat"
                            title="Explore @brand.Name Smartphones">
@@ -261,8 +264,11 @@
                             var filterCat = (brandSlug.Contains("apple") || brandSlug.Contains("google") || brandSlug.Contains("samsung")) ? "flagship" :
                                             (brandSlug.Contains("poco") || brandSlug.Contains("nothing") || brandSlug.Contains("oneplus")) ? "performance" :
                                             (brandSlug.Contains("realme") || brandSlug.Contains("motorola") || brandSlug.Contains("vivo") || brandSlug.Contains("oppo")) ? "camera" : "value";
+                            var brandTargetUrl = !string.IsNullOrWhiteSpace(brand.Slug)
+                                ? $"/category/mobiles/{brand.Slug.Trim().ToLowerInvariant()}"
+                                : (!string.IsNullOrWhiteSpace(brand.ProductUrl) ? brand.ProductUrl : "/category/mobiles");
 
-                            <a href="@brand.ProductUrl" 
+                            <a href="@brandTargetUrl" 
                                class="dk-mob-stage-card" 
                                data-brand-category="@filterCat"
                                title="Explore @brand.Name Smartphones">

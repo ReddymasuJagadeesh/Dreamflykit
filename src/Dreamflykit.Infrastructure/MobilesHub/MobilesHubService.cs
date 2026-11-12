@@ -67,6 +67,49 @@ public sealed class MobilesHubService : IMobilesHubService
             dto.HeroBanner.Slides = def.HeroBanner.Slides;
         }
         dto.BrandsSection ??= def.BrandsSection;
+        if (dto.BrandsSection.Brands == null || dto.BrandsSection.Brands.Count == 0)
+        {
+            dto.BrandsSection.Brands = def.BrandsSection.Brands;
+        }
+        else
+        {
+            // Upgrade legacy query links to dedicated brand showcase routes
+            foreach (var b in dto.BrandsSection.Brands)
+            {
+                if (!string.IsNullOrWhiteSpace(b.Slug) &&
+                    (string.IsNullOrWhiteSpace(b.ProductUrl) || b.ProductUrl.Contains("?category=mobiles&q=", StringComparison.OrdinalIgnoreCase)))
+                {
+                    b.ProductUrl = $"/category/mobiles/{b.Slug.Trim().ToLowerInvariant()}";
+                }
+            }
+        }
+
+        if (dto.BrandPages == null || dto.BrandPages.Count == 0)
+        {
+            dto.BrandPages = def.BrandPages;
+        }
+        else
+        {
+            // Ensure all 18 default brand showcase pages exist
+            foreach (var defPage in def.BrandPages)
+            {
+                var existing = dto.BrandPages.FirstOrDefault(p =>
+                    string.Equals(p.BrandSlug, defPage.BrandSlug, StringComparison.OrdinalIgnoreCase));
+                if (existing == null)
+                {
+                    dto.BrandPages.Add(defPage);
+                }
+                else
+                {
+                    existing.HeroBanner ??= defPage.HeroBanner;
+                    if (existing.FilterGroups == null || existing.FilterGroups.Count == 0)
+                        existing.FilterGroups = defPage.FilterGroups;
+                    if (existing.Products == null || existing.Products.Count == 0)
+                        existing.Products = defPage.Products;
+                }
+            }
+        }
+
         dto.HighlightBanner ??= def.HighlightBanner;
         if (dto.HighlightBanner.Sections == null || dto.HighlightBanner.Sections.Count == 0)
         {

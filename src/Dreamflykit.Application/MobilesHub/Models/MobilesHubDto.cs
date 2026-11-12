@@ -9,6 +9,7 @@ public sealed class MobilesHubDto
     public MobilesConfusedSectionDto ConfusedSection { get; set; } = new();
     public MobilesPromoBannerDto PromoBanner { get; set; } = new();
     public MobilesUnmissableDealsSectionDto UnmissableDealsSection { get; set; } = new();
+    public List<MobileBrandPageDto> BrandPages { get; set; } = new();
     public string DefaultViewMode { get; set; } = "3D"; // "3D", "2D", "1D"
 
     public static MobilesHubDto CreateDefault()
@@ -16,6 +17,7 @@ public sealed class MobilesHubDto
         return new MobilesHubDto
         {
             DefaultViewMode = "3D",
+            BrandPages = Dreamflykit.Application.MobilesHub.Services.MobileBrandCatalogService.CreateDefaultBrandPages(),
             HeroBanner = new MobilesHeroBannerDto
             {
                 IsEnabled = true,
@@ -80,26 +82,26 @@ public sealed class MobilesHubDto
                 Brands = new List<MobileBrandItemDto>
                 {
                     // Row 1
-                    new() { Id = "brand-1", Name = "iPhone", Slug = "apple", IconUrl = "/images/mobiles-hub/brand-stages/apple-stage.svg", ProductUrl = "/products?category=mobiles&q=iPhone", DisplayOrder = 1 },
-                    new() { Id = "brand-2", Name = "motorola", Slug = "motorola", IconUrl = "/images/mobiles-hub/brand-stages/motorola-stage.svg", ProductUrl = "/products?category=mobiles&q=motorola", DisplayOrder = 2 },
-                    new() { Id = "brand-3", Name = "realme", Slug = "realme", IconUrl = "/images/mobiles-hub/brand-stages/realme-stage.svg", ProductUrl = "/products?category=mobiles&q=realme", DisplayOrder = 3 },
-                    new() { Id = "brand-4", Name = "POCO", Slug = "poco", IconUrl = "/images/mobiles-hub/brand-stages/poco-stage.svg", ProductUrl = "/products?category=mobiles&q=POCO", DisplayOrder = 4 },
-                    new() { Id = "brand-5", Name = "Google", Slug = "google-pixel", IconUrl = "/images/mobiles-hub/brand-stages/google-stage.svg", ProductUrl = "/products?category=mobiles&q=Google", DisplayOrder = 5 },
-                    new() { Id = "brand-6", Name = "HMD", Slug = "hmd", IconUrl = "/images/mobiles-hub/brand-stages/hmd-stage.svg", ProductUrl = "/products?category=mobiles&q=HMD", DisplayOrder = 6 },
-                    new() { Id = "brand-7", Name = "boltt", Slug = "boltt", IconUrl = "/images/mobiles-hub/brand-stages/boltt-stage.svg", ProductUrl = "/products?category=mobiles&q=boltt", DisplayOrder = 7 },
-                    new() { Id = "brand-8", Name = "MIVI", Slug = "mivi", IconUrl = "/images/mobiles-hub/brand-stages/mivi-stage.svg", ProductUrl = "/products?category=mobiles&q=MIVI", DisplayOrder = 8 },
-                    new() { Id = "brand-9", Name = "Tecno", Slug = "tecno", IconUrl = "/images/mobiles-hub/brand-stages/tecno-stage.svg", ProductUrl = "/products?category=mobiles&q=Tecno", DisplayOrder = 9 },
+                    new() { Id = "brand-1", Name = "iPhone", Slug = "apple", IconUrl = "/images/mobiles-hub/brand-stages/apple-stage.svg", ProductUrl = "/category/mobiles/apple", DisplayOrder = 1 },
+                    new() { Id = "brand-2", Name = "motorola", Slug = "motorola", IconUrl = "/images/mobiles-hub/brand-stages/motorola-stage.svg", ProductUrl = "/category/mobiles/motorola", DisplayOrder = 2 },
+                    new() { Id = "brand-3", Name = "realme", Slug = "realme", IconUrl = "/images/mobiles-hub/brand-stages/realme-stage.svg", ProductUrl = "/category/mobiles/realme", DisplayOrder = 3 },
+                    new() { Id = "brand-4", Name = "POCO", Slug = "poco", IconUrl = "/images/mobiles-hub/brand-stages/poco-stage.svg", ProductUrl = "/category/mobiles/poco", DisplayOrder = 4 },
+                    new() { Id = "brand-5", Name = "Google", Slug = "google-pixel", IconUrl = "/images/mobiles-hub/brand-stages/google-stage.svg", ProductUrl = "/category/mobiles/google-pixel", DisplayOrder = 5 },
+                    new() { Id = "brand-6", Name = "HMD", Slug = "hmd", IconUrl = "/images/mobiles-hub/brand-stages/hmd-stage.svg", ProductUrl = "/category/mobiles/hmd", DisplayOrder = 6 },
+                    new() { Id = "brand-7", Name = "boltt", Slug = "boltt", IconUrl = "/images/mobiles-hub/brand-stages/boltt-stage.svg", ProductUrl = "/category/mobiles/boltt", DisplayOrder = 7 },
+                    new() { Id = "brand-8", Name = "MIVI", Slug = "mivi", IconUrl = "/images/mobiles-hub/brand-stages/mivi-stage.svg", ProductUrl = "/category/mobiles/mivi", DisplayOrder = 8 },
+                    new() { Id = "brand-9", Name = "Tecno", Slug = "tecno", IconUrl = "/images/mobiles-hub/brand-stages/tecno-stage.svg", ProductUrl = "/category/mobiles/tecno", DisplayOrder = 9 },
 
                     // Row 2
-                    new() { Id = "brand-10", Name = "Samsung", Slug = "samsung", IconUrl = "/images/mobiles-hub/brand-stages/samsung-stage.svg", ProductUrl = "/products?category=mobiles&q=Samsung", DisplayOrder = 10 },
-                    new() { Id = "brand-11", Name = "vivo", Slug = "vivo", IconUrl = "/images/mobiles-hub/brand-stages/vivo-stage.svg", ProductUrl = "/products?category=mobiles&q=vivo", DisplayOrder = 11 },
-                    new() { Id = "brand-12", Name = "OPPO", Slug = "oppo", IconUrl = "/images/mobiles-hub/brand-stages/oppo-stage.svg", ProductUrl = "/products?category=mobiles&q=OPPO", DisplayOrder = 12 },
-                    new() { Id = "brand-13", Name = "Ai+", Slug = "ai-plus", IconUrl = "/images/mobiles-hub/brand-stages/ai-stage.svg", ProductUrl = "/products?category=mobiles&q=Ai%2B", DisplayOrder = 13 },
-                    new() { Id = "brand-14", Name = "Nothing", Slug = "nothing", IconUrl = "/images/mobiles-hub/brand-stages/nothing-stage.svg", ProductUrl = "/products?category=mobiles&q=Nothing", DisplayOrder = 14 },
-                    new() { Id = "brand-15", Name = "Infinix", Slug = "infinix", IconUrl = "/images/mobiles-hub/brand-stages/infinix-stage.svg", ProductUrl = "/products?category=mobiles&q=Infinix", DisplayOrder = 15 },
-                    new() { Id = "brand-16", Name = "LAVA", Slug = "lava", IconUrl = "/images/mobiles-hub/brand-stages/lava-stage.svg", ProductUrl = "/products?category=mobiles&q=LAVA", DisplayOrder = 16 },
-                    new() { Id = "brand-17", Name = "REDMI", Slug = "redmi", IconUrl = "/images/mobiles-hub/brand-stages/redmi-stage.svg", ProductUrl = "/products?category=mobiles&q=REDMI", DisplayOrder = 17 },
-                    new() { Id = "brand-18", Name = "OnePlus", Slug = "oneplus", IconUrl = "/images/mobiles-hub/brand-stages/oneplus-stage.svg", ProductUrl = "/products?category=mobiles&q=OnePlus", DisplayOrder = 18 }
+                    new() { Id = "brand-10", Name = "Samsung", Slug = "samsung", IconUrl = "/images/mobiles-hub/brand-stages/samsung-stage.svg", ProductUrl = "/category/mobiles/samsung", DisplayOrder = 10 },
+                    new() { Id = "brand-11", Name = "vivo", Slug = "vivo", IconUrl = "/images/mobiles-hub/brand-stages/vivo-stage.svg", ProductUrl = "/category/mobiles/vivo", DisplayOrder = 11 },
+                    new() { Id = "brand-12", Name = "OPPO", Slug = "oppo", IconUrl = "/images/mobiles-hub/brand-stages/oppo-stage.svg", ProductUrl = "/category/mobiles/oppo", DisplayOrder = 12 },
+                    new() { Id = "brand-13", Name = "Ai+", Slug = "ai-plus", IconUrl = "/images/mobiles-hub/brand-stages/ai-stage.svg", ProductUrl = "/category/mobiles/ai-plus", DisplayOrder = 13 },
+                    new() { Id = "brand-14", Name = "Nothing", Slug = "nothing", IconUrl = "/images/mobiles-hub/brand-stages/nothing-stage.svg", ProductUrl = "/category/mobiles/nothing", DisplayOrder = 14 },
+                    new() { Id = "brand-15", Name = "Infinix", Slug = "infinix", IconUrl = "/images/mobiles-hub/brand-stages/infinix-stage.svg", ProductUrl = "/category/mobiles/infinix", DisplayOrder = 15 },
+                    new() { Id = "brand-16", Name = "LAVA", Slug = "lava", IconUrl = "/images/mobiles-hub/brand-stages/lava-stage.svg", ProductUrl = "/category/mobiles/lava", DisplayOrder = 16 },
+                    new() { Id = "brand-17", Name = "REDMI", Slug = "redmi", IconUrl = "/images/mobiles-hub/brand-stages/redmi-stage.svg", ProductUrl = "/category/mobiles/redmi", DisplayOrder = 17 },
+                    new() { Id = "brand-18", Name = "OnePlus", Slug = "oneplus", IconUrl = "/images/mobiles-hub/brand-stages/oneplus-stage.svg", ProductUrl = "/category/mobiles/oneplus", DisplayOrder = 18 }
                 }
             },
             HighlightBanner = new MobilesHighlightBannerDto
