@@ -203,6 +203,7 @@ public sealed class ProductListViewModel
         IsMenClothingSubcategory || string.Equals(ViewMode, "men-clothing-sub", StringComparison.OrdinalIgnoreCase);
     public Dreamflykit.Application.SportsHub.Models.SportsHubDto? SportsHub { get; init; }
     public Dreamflykit.Application.SportsHub.Models.SportsSubcategoryPageDto? SportsSubcategoryPage { get; init; }
+    public Dreamflykit.Application.MobilesHub.Models.MobileBrandShowcaseData? MobilesBrandShowcase { get; init; }
 
 
 
@@ -398,6 +399,10 @@ public sealed class ProductListViewModel
         string.Equals(CategorySlug, "mobiles", StringComparison.OrdinalIgnoreCase) ||
 
         string.Equals(CategorySlug, "mobile", StringComparison.OrdinalIgnoreCase);
+
+    public bool IsMobilesBrandHub =>
+
+        IsMobilesHub && (MobilesBrandShowcase != null || string.Equals(ViewMode, "mobiles-brand", StringComparison.OrdinalIgnoreCase));
 
 
 
