@@ -222,7 +222,7 @@
         </div>
     </div>
 
-    <!-- SECTION 2B: INDIVIDUAL BRAND STORE SHOWCASES, THEME COLORS & FILTERS (18 BRANDS) -->
+    <!-- SECTION 2B: INDIVIDUAL BRAND STORE SHOWCASES, THEME COLORS & FILTERS (ACTIVE BRANDS) -->
     <div class="dk-admin-card" id="brandPagesManagerSection" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; flex-wrap: wrap; gap: 14px;">
             <div>
@@ -230,7 +230,7 @@
                     ✨ DEDICATED BRAND STORE PAGES &amp; FILTERS
                 </div>
                 <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">2B. Individual Brand Store Hero, Theme Colors &amp; Filter Controls</h2>
-                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Customize hero banner, color theme, left-side brand filters ("More Filters"), and products for each of the 18 popular smartphone brands.</p>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Customize hero banner, color theme, left-side brand filters ("More Filters"), and products for each active smartphone brand.</p>
             </div>
 
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
@@ -255,6 +255,18 @@
             var bProds = bp.Products ?? new List<Dreamflykit.Application.MobilesHub.Models.MobileBrandProductDto>();
 
             <div class="brand-page-editor" id="brand_editor_@bp.BrandSlug" data-brand-slug="@bp.BrandSlug" data-brand-name="@bp.BrandName" data-logo-emoji="@bp.LogoEmoji" style="display: @(bIdx == 0 ? "block" : "none");">
+                
+                <!-- Brand Store Header Bar with Delete Option -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #cbd5e1; flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 20px;">@bp.LogoEmoji</span>
+                        <strong style="font-size: 15px; color: #0f172a;">@bp.BrandName Storefront Editor</strong>
+                        <span style="font-size: 11px; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; font-weight: 700;">slug: @bp.BrandSlug</span>
+                    </div>
+                    <button type="button" onclick="deleteBrandStore('@bp.BrandSlug', '@bp.BrandName')" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 5px 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; cursor: pointer;">
+                        🗑️ Delete @bp.BrandName Brand &amp; Store
+                    </button>
+                </div>
                 
                 <!-- Brand Hero & Color Theme Controls -->
                 <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px; margin-bottom: 18px;">
@@ -817,7 +829,219 @@
     }
 
     function removeBrand(btn) {
-        btn.closest(".brand-item-card").remove();
+        const card = btn.closest(".brand-item-card");
+        if (!card) return;
+        const name = card.querySelector(".brand-name")?.value || "this brand";
+        const slug = (card.querySelector(".brand-slug")?.value || "").trim().toLowerCase();
+
+        if (!confirm("Are you sure you want to delete '" + name + "'?\n\nThis will remove the circular pedestal card and its dedicated brand store.")) {
+            return;
+        }
+
+        // 1. Remove from Section 2
+        card.remove();
+
+        // 2. Remove from Section 2B
+        if (slug) {
+            const editor = document.getElementById("brand_editor_" + slug);
+            if (editor) editor.remove();
+
+            const opt = document.querySelector("#brandShowcaseSelector option[value='" + slug + "']");
+            if (opt) opt.remove();
+
+            const selector = document.getElementById("brandShowcaseSelector");
+            if (selector && selector.options.length > 0) {
+                selector.selectedIndex = 0;
+                onSelectBrandShowcase(selector.value);
+            }
+        }
+    }
+
+    function deleteBrandStore(slug, name) {
+        if (!confirm("Are you sure you want to delete '" + name + "' brand and store?\n\nThis will remove the brand from circular pedestals and delete its store page.")) {
+            return;
+        }
+
+        // 1. Remove editor from Section 2B
+        const editor = document.getElementById("brand_editor_" + slug);
+        if (editor) editor.remove();
+
+        const opt = document.querySelector("#brandShowcaseSelector option[value='" + slug + "']");
+        if (opt) opt.remove();
+
+        // 2. Remove card from Section 2
+        document.querySelectorAll("#brandsListContainer .brand-item-card").forEach(c => {
+            const s = (c.querySelector(".brand-slug")?.value || "").trim().toLowerCase();
+            if (s === slug.toLowerCase()) {
+                c.remove();
+            }
+        });
+
+        // 3. Switch selector to first remaining
+        const selector = document.getElementById("brandShowcaseSelector");
+        if (selector && selector.options.length > 0) {
+            selector.selectedIndex = 0;
+            onSelectBrandShowcase(selector.value);
+        }
+    }
+
+    function addNewBrand() {
+        const name = prompt("Enter Brand Name (e.g. Honor, Sony):");
+        if (!name || !name.trim()) return;
+        const cleanName = name.trim();
+        const defaultSlug = cleanName.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+        const slugInput = prompt("Enter Brand URL Slug (lowercase, hyphenated):", defaultSlug);
+        if (!slugInput || !slugInput.trim()) return;
+        const slug = slugInput.trim().toLowerCase();
+
+        // Check if slug already exists
+        const exists = Array.from(document.querySelectorAll("#brandsListContainer .brand-slug")).some(el => el.value.toLowerCase() === slug);
+        if (exists) {
+            alert("A brand with slug '" + slug + "' already exists.");
+            return;
+        }
+
+        const brandsContainer = document.getElementById("brandsListContainer");
+        const bCount = brandsContainer.querySelectorAll(".brand-item-card").length + 1;
+        const brandId = "brand-" + Date.now();
+        const iconUrl = "/images/mobiles-hub/brand-stages/apple-stage.svg";
+        const prodUrl = "/category/mobiles/" + slug;
+
+        // 1. Add card to Section 2
+        const cardHtml = `
+        <div class="brand-item-card" data-index="${bCount}" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <input type="text" class="brand-name" value="${cleanName}" style="font-weight: 800; font-size: 13px; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; width: 65%;" />
+                <button type="button" onclick="removeBrand(this)" style="background: #fee2e2; color: #dc2626; border: none; padding: 3px 6px; font-size: 11px; border-radius: 4px; cursor: pointer;">Delete</button>
+            </div>
+            <input type="hidden" class="brand-id" value="${brandId}" />
+            <input type="hidden" class="brand-slug" value="${slug}" />
+            <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+                <input type="text" class="brand-icon-url" value="${iconUrl}" placeholder="Icon URL" style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+                <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #64748b; color: #ffffff; border: none; padding: 6px 10px; font-size: 11px; border-radius: 4px; cursor: pointer;">Upload</button>
+            </div>
+            <input type="text" class="brand-product-url" value="${prodUrl}" placeholder="Target Link" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;" />
+        </div>`;
+        brandsContainer.insertAdjacentHTML("beforeend", cardHtml);
+
+        // 2. Add option to Section 2B dropdown
+        const selector = document.getElementById("brandShowcaseSelector");
+        if (selector) {
+            const opt = document.createElement("option");
+            opt.value = slug;
+            opt.text = "📱 " + cleanName + " (" + slug + ")";
+            selector.appendChild(opt);
+        }
+
+        // 3. Add brand page editor container to Section 2B
+        const editorsParent = document.getElementById("brandPagesManagerSection");
+        if (editorsParent) {
+            const editorHtml = `
+            <div class="brand-page-editor" id="brand_editor_${slug}" data-brand-slug="${slug}" data-brand-name="${cleanName}" data-logo-emoji="📱" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #cbd5e1;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 18px;">📱</span>
+                        <strong style="font-size: 15px; color: #0f172a;">${cleanName} Storefront Editor</strong>
+                        <span style="font-size: 11px; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; font-weight: 700;">slug: ${slug}</span>
+                    </div>
+                    <button type="button" onclick="deleteBrandStore('${slug}', '${cleanName}')" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 4px 10px; font-size: 11.5px; font-weight: 700; border-radius: 6px; cursor: pointer;">
+                        🗑️ Delete ${cleanName} Brand &amp; Store
+                    </button>
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px; margin-bottom: 18px;">
+                    <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0 0 14px 0;">Hero Banner &amp; Color Theme for ${cleanName}</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Hero Badge Text</label>
+                            <input type="text" class="bpage-hero-badge" value="OFFICIAL BRAND STORE" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;" />
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Main Hero Title</label>
+                            <input type="text" class="bpage-hero-title" value="${cleanName} Flagship Series" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px; font-weight: 700;" />
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Title Highlight</label>
+                            <input type="text" class="bpage-hero-highlight" value="Exclusive Student Offers" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;" />
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Banner Min Height (px)</label>
+                            <input type="number" class="bpage-hero-height" value="320" min="220" max="600" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;" />
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Hero Subtitle</label>
+                        <textarea class="bpage-hero-subtitle" rows="2" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;">Explore official genuine ${cleanName} smartphones with campus delivery and 0% student EMI.</textarea>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 14px;">
+                        <div>
+                            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Hero Banner Image URL</label>
+                            <div style="display: flex; gap: 6px;">
+                                <input type="text" class="bpage-hero-img" value="" placeholder="Upload or paste image URL" style="flex: 1; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
+                                <button type="button" onclick="triggerFileUpload(this, 'image')" style="background: #2874f0; color: #fff; border: none; padding: 7px 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; cursor: pointer;">Upload</button>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; padding-top: 18px;">
+                            <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; color: #c2410c; cursor: pointer;">
+                                <input type="checkbox" class="bpage-hero-uploading" checked />
+                                ⏳ Show "Uploading Soon" Placeholder Card
+                            </label>
+                        </div>
+                    </div>
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                        <span style="display: block; font-size: 11.5px; font-weight: 800; color: #4f46e5; margin-bottom: 10px; text-transform: uppercase;">🎨 Brand Color Theme Controls</span>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 3px;">Hero Background CSS Gradient</label>
+                                <input type="text" class="bpage-hero-gradient" value="linear-gradient(135deg, #0b1120 0%, #1e1b4b 55%, #0f172a 100%)" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 3px;">Primary Theme</label>
+                                <input type="color" class="bpage-primary-color" value="#2563eb" style="width: 100%; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 3px;">Accent Color</label>
+                                <input type="color" class="bpage-accent-color" value="#7c3aed" style="width: 100%; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 3px;">Title Color</label>
+                                <input type="color" class="bpage-hero-titlecolor" value="#ffffff" style="width: 100%; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 3px;">Highlight Color</label>
+                                <input type="color" class="bpage-hero-highlightcolor" value="#38bdf8" style="width: 100%; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 3px;">Subtitle Color</label>
+                                <input type="color" class="bpage-hero-subcolor" value="#cbd5e1" style="width: 100%; height: 32px; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px; margin-bottom: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">Left Sidebar Filters for ${cleanName}</h3>
+                        <button type="button" onclick="addBrandFilterGroup('${slug}')" style="background: #0284c7; color: #fff; border: none; padding: 5px 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; cursor: pointer;">+ Add Filter Group</button>
+                    </div>
+                    <div class="bpage-fgroups-list" id="fgroups_${slug}" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px;">
+                    </div>
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">${cleanName} Products Catalog</h3>
+                        <button type="button" onclick="addBrandProduct('${slug}')" style="background: #16a34a; color: #fff; border: none; padding: 5px 12px; font-size: 11.5px; font-weight: 700; border-radius: 6px; cursor: pointer;">+ Add Product</button>
+                    </div>
+                    <div class="bpage-prods-list" id="prods_${slug}" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px;">
+                    </div>
+                </div>
+            </div>`;
+            editorsParent.insertAdjacentHTML("beforeend", editorHtml);
+        }
+
+        // Switch to the new brand
+        if (selector) {
+            selector.value = slug;
+            onSelectBrandShowcase(slug);
+        }
     }
 
     function removeDeal(btn) {
@@ -1190,20 +1414,28 @@
         });
 
         // Collect Brands
+        const activeBrandSlugs = new Set();
         document.querySelectorAll("#brandsListContainer .brand-item-card").forEach((card, idx) => {
+            const bName = card.querySelector(".brand-name")?.value || "";
+            const bSlug = (card.querySelector(".brand-slug")?.value || "").trim().toLowerCase();
+            if (bSlug) activeBrandSlugs.add(bSlug);
+
             payload.BrandsSection.Brands.push({
                 Id: card.querySelector(".brand-id")?.value || ("brand-" + (idx+1)),
-                Name: card.querySelector(".brand-name")?.value || "",
-                Slug: card.querySelector(".brand-slug")?.value || "brand",
+                Name: bName,
+                Slug: bSlug || "brand",
                 IconUrl: card.querySelector(".brand-icon-url")?.value || "",
-                ProductUrl: card.querySelector(".brand-product-url")?.value || "/products?category=mobiles",
+                ProductUrl: card.querySelector(".brand-product-url")?.value || ("/category/mobiles/" + bSlug),
                 DisplayOrder: idx + 1
             });
         });
 
-        // Collect Brand Pages & Filters (Section 2B)
+        // Collect Brand Pages & Filters (Section 2B) - Only for active brands!
         document.querySelectorAll(".brand-page-editor").forEach(bEl => {
-            const bSlug = bEl.getAttribute("data-brand-slug");
+            const bSlug = (bEl.getAttribute("data-brand-slug") || "").trim().toLowerCase();
+            if (activeBrandSlugs.size > 0 && !activeBrandSlugs.has(bSlug)) {
+                return; // Brand was removed from Section 2, do not save!
+            }
             const bName = bEl.getAttribute("data-brand-name");
             const logoEmoji = bEl.getAttribute("data-logo-emoji") || "📱";
 

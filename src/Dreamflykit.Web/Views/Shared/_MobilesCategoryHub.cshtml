@@ -111,7 +111,7 @@
                                     </a>
                                     <button type="button" 
                                             class="dk-mob-btn-secondary" 
-                                            onclick="open3dModal('AI+ Nova 2 5G', '#4f46e5', '6.7 120Hz AMOLED | 50MP OIS', 'From ₹11,999*')">
+                                            onclick="open3dModal('OnePlus Nord 4 5G', '#4f46e5', '6.74 120Hz AMOLED | Snapdragon 7+ Gen 3', 'From ₹27,999*')">
                                         <span style="font-size: 16px;">🌐</span> View in 3D Model
                                     </button>
                                 </div>
@@ -160,14 +160,9 @@
     ========================================================= -->
     @if (hub.BrandsSection.IsEnabled && brands.Count > 0)
     {
-        var row1Brands = brands.Take(9).ToList();
-        var row2Brands = brands.Skip(9).Take(9).ToList();
-        if (row2Brands.Count == 0 && brands.Count > 6)
-        {
-            var half = (int)Math.Ceiling(brands.Count / 2.0);
-            row1Brands = brands.Take(half).ToList();
-            row2Brands = brands.Skip(half).ToList();
-        }
+        var half = (int)Math.Ceiling(brands.Count / 2.0);
+        var row1Brands = brands.Take(half).ToList();
+        var row2Brands = brands.Skip(half).ToList();
 
         <section class="dk-mob-brands-section" id="popularBrandsSection" aria-label="Top Mobile Brands Showcase">
             
@@ -208,7 +203,7 @@
                     📸 Studio Camera Kings (vivo, OPPO, realme)
                 </button>
                 <button type="button" class="dk-brand-chip" onclick="filterBrandStages('value', this)">
-                    💰 Student Value 5G (Ai+, LAVA, REDMI, Tecno)
+                    💰 Top Value 5G (motorola, REDMI)
                 </button>
             </div>
 

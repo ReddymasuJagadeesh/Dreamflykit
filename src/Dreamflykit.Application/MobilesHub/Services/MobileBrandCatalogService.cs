@@ -29,9 +29,8 @@ public static class MobileBrandCatalogService
     {
         var slugs = new[]
         {
-            "apple", "motorola", "realme", "poco", "google-pixel", "hmd",
-            "boltt", "mivi", "tecno", "samsung", "vivo", "oppo",
-            "ai-plus", "nothing", "infinix", "lava", "redmi", "oneplus"
+            "apple", "motorola", "realme", "poco", "google-pixel",
+            "samsung", "vivo", "oppo", "nothing", "redmi", "oneplus"
         };
 
         return slugs.Select(BuildBrandPage).ToList();

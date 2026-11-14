@@ -81,27 +81,20 @@ public sealed class MobilesHubDto
                 ViewAllUrl = "/products?category=mobiles",
                 Brands = new List<MobileBrandItemDto>
                 {
-                    // Row 1
+                    // Row 1 (6 Brands)
                     new() { Id = "brand-1", Name = "iPhone", Slug = "apple", IconUrl = "/images/mobiles-hub/brand-stages/apple-stage.svg", ProductUrl = "/category/mobiles/apple", DisplayOrder = 1 },
                     new() { Id = "brand-2", Name = "motorola", Slug = "motorola", IconUrl = "/images/mobiles-hub/brand-stages/motorola-stage.svg", ProductUrl = "/category/mobiles/motorola", DisplayOrder = 2 },
                     new() { Id = "brand-3", Name = "realme", Slug = "realme", IconUrl = "/images/mobiles-hub/brand-stages/realme-stage.svg", ProductUrl = "/category/mobiles/realme", DisplayOrder = 3 },
                     new() { Id = "brand-4", Name = "POCO", Slug = "poco", IconUrl = "/images/mobiles-hub/brand-stages/poco-stage.svg", ProductUrl = "/category/mobiles/poco", DisplayOrder = 4 },
                     new() { Id = "brand-5", Name = "Google", Slug = "google-pixel", IconUrl = "/images/mobiles-hub/brand-stages/google-stage.svg", ProductUrl = "/category/mobiles/google-pixel", DisplayOrder = 5 },
-                    new() { Id = "brand-6", Name = "HMD", Slug = "hmd", IconUrl = "/images/mobiles-hub/brand-stages/hmd-stage.svg", ProductUrl = "/category/mobiles/hmd", DisplayOrder = 6 },
-                    new() { Id = "brand-7", Name = "boltt", Slug = "boltt", IconUrl = "/images/mobiles-hub/brand-stages/boltt-stage.svg", ProductUrl = "/category/mobiles/boltt", DisplayOrder = 7 },
-                    new() { Id = "brand-8", Name = "MIVI", Slug = "mivi", IconUrl = "/images/mobiles-hub/brand-stages/mivi-stage.svg", ProductUrl = "/category/mobiles/mivi", DisplayOrder = 8 },
-                    new() { Id = "brand-9", Name = "Tecno", Slug = "tecno", IconUrl = "/images/mobiles-hub/brand-stages/tecno-stage.svg", ProductUrl = "/category/mobiles/tecno", DisplayOrder = 9 },
+                    new() { Id = "brand-6", Name = "Samsung", Slug = "samsung", IconUrl = "/images/mobiles-hub/brand-stages/samsung-stage.svg", ProductUrl = "/category/mobiles/samsung", DisplayOrder = 6 },
 
-                    // Row 2
-                    new() { Id = "brand-10", Name = "Samsung", Slug = "samsung", IconUrl = "/images/mobiles-hub/brand-stages/samsung-stage.svg", ProductUrl = "/category/mobiles/samsung", DisplayOrder = 10 },
-                    new() { Id = "brand-11", Name = "vivo", Slug = "vivo", IconUrl = "/images/mobiles-hub/brand-stages/vivo-stage.svg", ProductUrl = "/category/mobiles/vivo", DisplayOrder = 11 },
-                    new() { Id = "brand-12", Name = "OPPO", Slug = "oppo", IconUrl = "/images/mobiles-hub/brand-stages/oppo-stage.svg", ProductUrl = "/category/mobiles/oppo", DisplayOrder = 12 },
-                    new() { Id = "brand-13", Name = "Ai+", Slug = "ai-plus", IconUrl = "/images/mobiles-hub/brand-stages/ai-stage.svg", ProductUrl = "/category/mobiles/ai-plus", DisplayOrder = 13 },
-                    new() { Id = "brand-14", Name = "Nothing", Slug = "nothing", IconUrl = "/images/mobiles-hub/brand-stages/nothing-stage.svg", ProductUrl = "/category/mobiles/nothing", DisplayOrder = 14 },
-                    new() { Id = "brand-15", Name = "Infinix", Slug = "infinix", IconUrl = "/images/mobiles-hub/brand-stages/infinix-stage.svg", ProductUrl = "/category/mobiles/infinix", DisplayOrder = 15 },
-                    new() { Id = "brand-16", Name = "LAVA", Slug = "lava", IconUrl = "/images/mobiles-hub/brand-stages/lava-stage.svg", ProductUrl = "/category/mobiles/lava", DisplayOrder = 16 },
-                    new() { Id = "brand-17", Name = "REDMI", Slug = "redmi", IconUrl = "/images/mobiles-hub/brand-stages/redmi-stage.svg", ProductUrl = "/category/mobiles/redmi", DisplayOrder = 17 },
-                    new() { Id = "brand-18", Name = "OnePlus", Slug = "oneplus", IconUrl = "/images/mobiles-hub/brand-stages/oneplus-stage.svg", ProductUrl = "/category/mobiles/oneplus", DisplayOrder = 18 }
+                    // Row 2 (5 Brands)
+                    new() { Id = "brand-7", Name = "vivo", Slug = "vivo", IconUrl = "/images/mobiles-hub/brand-stages/vivo-stage.svg", ProductUrl = "/category/mobiles/vivo", DisplayOrder = 7 },
+                    new() { Id = "brand-8", Name = "OPPO", Slug = "oppo", IconUrl = "/images/mobiles-hub/brand-stages/oppo-stage.svg", ProductUrl = "/category/mobiles/oppo", DisplayOrder = 8 },
+                    new() { Id = "brand-9", Name = "Nothing", Slug = "nothing", IconUrl = "/images/mobiles-hub/brand-stages/nothing-stage.svg", ProductUrl = "/category/mobiles/nothing", DisplayOrder = 9 },
+                    new() { Id = "brand-10", Name = "REDMI", Slug = "redmi", IconUrl = "/images/mobiles-hub/brand-stages/redmi-stage.svg", ProductUrl = "/category/mobiles/redmi", DisplayOrder = 10 },
+                    new() { Id = "brand-11", Name = "OnePlus", Slug = "oneplus", IconUrl = "/images/mobiles-hub/brand-stages/oneplus-stage.svg", ProductUrl = "/category/mobiles/oneplus", DisplayOrder = 11 }
                 }
             },
             HighlightBanner = new MobilesHighlightBannerDto
@@ -318,16 +311,16 @@ public sealed class MobilesHubDto
                     new()
                     {
                         Id = "deal-1",
-                        Name = "Ai+ Nova 2 5G",
-                        PriceText = "From â‚¹11,999*",
-                        OriginalPriceText = "â‚¹16,999",
+                        Name = "OnePlus Nord 4 5G",
+                        PriceText = "From ₹27,999*",
+                        OriginalPriceText = "₹32,999",
                         OfferTag = "Incl. All Offers",
                         ImageUrl = "/images/mobiles-hub/phones/nova2.svg",
-                        ProductUrl = "/products?category=mobiles&q=Nova+2",
+                        ProductUrl = "/products?category=mobiles&q=Nord+4",
                         DisplayOrder = 1,
                         ViewMode = "3D",
                         ColorHex = "#6366f1",
-                        Specifications = "6.7\" 120Hz AMOLED | 50MP Sony OIS | 5000mAh 67W"
+                        Specifications = "All-Metal Unibody | Snapdragon 7+ Gen 3 | 100W SUPERVOOC"
                     },
                     new()
                     {
@@ -374,16 +367,16 @@ public sealed class MobilesHubDto
                     new()
                     {
                         Id = "deal-5",
-                        Name = "boltt Ace Pro 5G",
-                        PriceText = "From â‚¹11,999",
-                        OriginalPriceText = "â‚¹17,499",
+                        Name = "Samsung Galaxy A55 5G",
+                        PriceText = "From ₹34,999",
+                        OriginalPriceText = "₹42,999",
                         OfferTag = "Incl. All Offers",
-                        ImageUrl = "/images/mobiles-hub/phones/bolttace.svg",
-                        ProductUrl = "/products?category=mobiles&q=boltt+Ace",
+                        ImageUrl = "/images/mobiles-hub/phones/s25fe.svg",
+                        ProductUrl = "/products?category=mobiles&q=Galaxy+A55",
                         DisplayOrder = 5,
                         ViewMode = "3D",
-                        ColorHex = "#be185d",
-                        Specifications = "Titanium Finish Frame | 108MP Studio Sensor | Stereo Dolby"
+                        ColorHex = "#2563eb",
+                        Specifications = "IP67 Water Resistant | 50MP OIS Camera | Gorilla Glass Victus+"
                     },
                     new()
                     {
@@ -509,28 +502,28 @@ public sealed class MobilesHubDto
                     new()
                     {
                         Id = "emi-4",
-                        Name = "Mivi One 5G Pro",
-                        PriceText = "â‚¹15,999*",
-                        OriginalPriceText = "â‚¹25,000",
-                        EmiText = "Pay Only â‚¹2,666/m",
-                        ImageUrl = "/images/mobiles-hub/phones/mivi-one.svg",
-                        ProductUrl = "/products?category=mobiles&q=Mivi+One",
+                        Name = "POCO F6 5G (Flagship 8s Gen 3)",
+                        PriceText = "₹27,999*",
+                        OriginalPriceText = "₹33,999",
+                        EmiText = "Pay Only ₹3,333/m",
+                        ImageUrl = "/images/mobiles-hub/phones/pocox8.svg",
+                        ProductUrl = "/products?category=mobiles&q=POCO+F6",
                         DisplayOrder = 4,
                         ViewMode = "3D",
-                        ColorHex = "#16a34a"
+                        ColorHex = "#eab308"
                     },
                     new()
                     {
                         Id = "emi-5",
-                        Name = "HMD Vibe 5G Minimal",
-                        PriceText = "â‚¹11,999*",
-                        OriginalPriceText = "â‚¹20,000",
-                        EmiText = "Pay Only â‚¹1,999/m",
-                        ImageUrl = "/images/mobiles-hub/phones/hmd-vibe.svg",
-                        ProductUrl = "/products?category=mobiles&q=HMD+Vibe",
+                        Name = "realme 14 Pro+ 5G (Periscope)",
+                        PriceText = "₹26,999*",
+                        OriginalPriceText = "₹32,999",
+                        EmiText = "Pay Only ₹2,499/m",
+                        ImageUrl = "/images/mobiles-hub/phones/edge70.svg",
+                        ProductUrl = "/products?category=mobiles&q=realme+14+Pro",
                         DisplayOrder = 5,
                         ViewMode = "3D",
-                        ColorHex = "#e2e8f0"
+                        ColorHex = "#10b981"
                     }
                 }
             }

@@ -49,7 +49,7 @@
     ============================================================ -->
     <div class="dk-mb-nav-strip">
         <div class="dk-mb-nav-title">
-            <span>Explore 18 Popular Brands:</span>
+            <span>Explore @(allBrands.Count > 0 ? $"{allBrands.Count} " : "")Popular Brands:</span>
         </div>
         <div class="dk-mb-nav-items">
             @foreach (var b in allBrands)

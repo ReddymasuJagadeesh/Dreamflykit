@@ -60,7 +60,7 @@
         "Name": "iPhone",
         "Slug": "apple",
         "IconUrl": "/images/mobiles-hub/brand-stages/apple-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=iPhone",
+        "ProductUrl": "/category/mobiles/apple",
         "DisplayOrder": 1,
         "IsUploadingSoon": false
       },
@@ -69,7 +69,7 @@
         "Name": "motorola",
         "Slug": "motorola",
         "IconUrl": "/images/mobiles-hub/brand-stages/motorola-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=motorola",
+        "ProductUrl": "/category/mobiles/motorola",
         "DisplayOrder": 2,
         "IsUploadingSoon": false
       },
@@ -78,7 +78,7 @@
         "Name": "realme",
         "Slug": "realme",
         "IconUrl": "/images/mobiles-hub/brand-stages/realme-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=realme",
+        "ProductUrl": "/category/mobiles/realme",
         "DisplayOrder": 3,
         "IsUploadingSoon": false
       },
@@ -87,7 +87,7 @@
         "Name": "POCO",
         "Slug": "poco",
         "IconUrl": "/images/mobiles-hub/brand-stages/poco-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=POCO",
+        "ProductUrl": "/category/mobiles/poco",
         "DisplayOrder": 4,
         "IsUploadingSoon": false
       },
@@ -96,125 +96,62 @@
         "Name": "Google",
         "Slug": "google-pixel",
         "IconUrl": "/images/mobiles-hub/brand-stages/google-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=Google",
+        "ProductUrl": "/category/mobiles/google-pixel",
         "DisplayOrder": 5,
         "IsUploadingSoon": false
       },
       {
         "Id": "brand-6",
-        "Name": "HMD",
-        "Slug": "hmd",
-        "IconUrl": "/images/mobiles-hub/brand-stages/hmd-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=HMD",
+        "Name": "Samsung",
+        "Slug": "samsung",
+        "IconUrl": "/images/mobiles-hub/brand-stages/samsung-stage.svg",
+        "ProductUrl": "/category/mobiles/samsung",
         "DisplayOrder": 6,
         "IsUploadingSoon": false
       },
       {
         "Id": "brand-7",
-        "Name": "boltt",
-        "Slug": "boltt",
-        "IconUrl": "/images/mobiles-hub/brand-stages/boltt-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=boltt",
+        "Name": "vivo",
+        "Slug": "vivo",
+        "IconUrl": "/images/mobiles-hub/brand-stages/vivo-stage.svg",
+        "ProductUrl": "/category/mobiles/vivo",
         "DisplayOrder": 7,
         "IsUploadingSoon": false
       },
       {
         "Id": "brand-8",
-        "Name": "MIVI",
-        "Slug": "mivi",
-        "IconUrl": "/images/mobiles-hub/brand-stages/mivi-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=MIVI",
+        "Name": "OPPO",
+        "Slug": "oppo",
+        "IconUrl": "/images/mobiles-hub/brand-stages/oppo-stage.svg",
+        "ProductUrl": "/category/mobiles/oppo",
         "DisplayOrder": 8,
         "IsUploadingSoon": false
       },
       {
         "Id": "brand-9",
-        "Name": "Tecno",
-        "Slug": "tecno",
-        "IconUrl": "/images/mobiles-hub/brand-stages/tecno-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=Tecno",
+        "Name": "Nothing",
+        "Slug": "nothing",
+        "IconUrl": "/images/mobiles-hub/brand-stages/nothing-stage.svg",
+        "ProductUrl": "/category/mobiles/nothing",
         "DisplayOrder": 9,
         "IsUploadingSoon": false
       },
       {
         "Id": "brand-10",
-        "Name": "Samsung",
-        "Slug": "samsung",
-        "IconUrl": "/images/mobiles-hub/brand-stages/samsung-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=Samsung",
+        "Name": "REDMI",
+        "Slug": "redmi",
+        "IconUrl": "/images/mobiles-hub/brand-stages/redmi-stage.svg",
+        "ProductUrl": "/category/mobiles/redmi",
         "DisplayOrder": 10,
         "IsUploadingSoon": false
       },
       {
         "Id": "brand-11",
-        "Name": "vivo",
-        "Slug": "vivo",
-        "IconUrl": "/images/mobiles-hub/brand-stages/vivo-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=vivo",
-        "DisplayOrder": 11,
-        "IsUploadingSoon": false
-      },
-      {
-        "Id": "brand-12",
-        "Name": "OPPO",
-        "Slug": "oppo",
-        "IconUrl": "/images/mobiles-hub/brand-stages/oppo-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=OPPO",
-        "DisplayOrder": 12,
-        "IsUploadingSoon": false
-      },
-      {
-        "Id": "brand-13",
-        "Name": "Ai+",
-        "Slug": "ai-plus",
-        "IconUrl": "/images/mobiles-hub/brand-stages/ai-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=Ai%2B",
-        "DisplayOrder": 13,
-        "IsUploadingSoon": false
-      },
-      {
-        "Id": "brand-14",
-        "Name": "Nothing",
-        "Slug": "nothing",
-        "IconUrl": "/images/mobiles-hub/brand-stages/nothing-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=Nothing",
-        "DisplayOrder": 14,
-        "IsUploadingSoon": false
-      },
-      {
-        "Id": "brand-15",
-        "Name": "Infinix",
-        "Slug": "infinix",
-        "IconUrl": "/images/mobiles-hub/brand-stages/infinix-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=Infinix",
-        "DisplayOrder": 15,
-        "IsUploadingSoon": false
-      },
-      {
-        "Id": "brand-16",
-        "Name": "LAVA",
-        "Slug": "lava",
-        "IconUrl": "/images/mobiles-hub/brand-stages/lava-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=LAVA",
-        "DisplayOrder": 16,
-        "IsUploadingSoon": false
-      },
-      {
-        "Id": "brand-17",
-        "Name": "REDMI",
-        "Slug": "redmi",
-        "IconUrl": "/images/mobiles-hub/brand-stages/redmi-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=REDMI",
-        "DisplayOrder": 17,
-        "IsUploadingSoon": false
-      },
-      {
-        "Id": "brand-18",
         "Name": "OnePlus",
         "Slug": "oneplus",
         "IconUrl": "/images/mobiles-hub/brand-stages/oneplus-stage.svg",
-        "ProductUrl": "/products?category=mobiles&q=OnePlus",
-        "DisplayOrder": 18,
+        "ProductUrl": "/category/mobiles/oneplus",
+        "DisplayOrder": 11,
         "IsUploadingSoon": false
       }
     ]
@@ -225,6 +162,8 @@
     "Subheading": "Curated Flagship Smartphones with 0% EMI & Star Ratings",
     "SlideIntervalSeconds": 4,
     "AutoPlay": true,
+    "SyncAllSections": true,
+    "ShowDots": false,
     "Sections": [
       {
         "Id": "flagship-sec-1",
@@ -407,9 +346,7 @@
     "ImageUrl": "/images/mobiles-hub/galaxy-s25-banner.svg",
     "TargetUrl": "/products?category=mobiles&q=Galaxy+S25",
     "ButtonText": "Buy Now with 0% EMI →",
-    "IsUploadingSoon": false,
-    "SyncAllSections": true,
-    "ShowDots": false
+    "IsUploadingSoon": false
   },
   "TopDealsSection": {
     "IsEnabled": true,
@@ -420,18 +357,18 @@
     "Deals": [
       {
         "Id": "deal-1",
-        "Name": "Ai+ Nova 2 5G",
-        "PriceText": "From â‚¹11,999*",
-        "OriginalPriceText": "â‚¹16,999",
+        "Name": "OnePlus Nord 4 5G",
+        "PriceText": "From ₹27,999*",
+        "OriginalPriceText": "₹32,999",
         "OfferTag": "Incl. All Offers",
         "ImageUrl": "/images/mobiles-hub/phones/nova2.svg",
-        "ProductUrl": "/products?category=mobiles&q=Nova+2",
+        "ProductUrl": "/products?category=mobiles&q=Nord+4",
         "DisplayOrder": 1,
         "IsUploadingSoon": false,
         "ViewMode": "3D",
         "Model3dUrl": null,
         "ColorHex": "#6366f1",
-        "Specifications": "6.7\" 120Hz AMOLED | 50MP Sony OIS | 5000mAh 67W"
+        "Specifications": "All-Metal Unibody | Snapdragon 7+ Gen 3 | 100W SUPERVOOC"
       },
       {
         "Id": "deal-2",
@@ -480,18 +417,18 @@
       },
       {
         "Id": "deal-5",
-        "Name": "boltt Ace Pro 5G",
-        "PriceText": "From â‚¹11,999",
-        "OriginalPriceText": "â‚¹17,499",
+        "Name": "Samsung Galaxy A55 5G",
+        "PriceText": "From ₹34,999",
+        "OriginalPriceText": "₹42,999",
         "OfferTag": "Incl. All Offers",
-        "ImageUrl": "/images/mobiles-hub/phones/bolttace.svg",
-        "ProductUrl": "/products?category=mobiles&q=boltt+Ace",
+        "ImageUrl": "/images/mobiles-hub/phones/s25fe.svg",
+        "ProductUrl": "/products?category=mobiles&q=Galaxy+A55",
         "DisplayOrder": 5,
         "IsUploadingSoon": false,
         "ViewMode": "3D",
         "Model3dUrl": null,
-        "ColorHex": "#be185d",
-        "Specifications": "Titanium Finish Frame | 108MP Studio Sensor | Stereo Dolby"
+        "ColorHex": "#2563eb",
+        "Specifications": "IP67 Water Resistant | 50MP OIS Camera | Gorilla Glass Victus+"
       },
       {
         "Id": "deal-6",
@@ -620,33 +557,3285 @@
       },
       {
         "Id": "emi-4",
-        "Name": "Mivi One 5G Pro",
-        "PriceText": "â‚¹15,999*",
-        "OriginalPriceText": "â‚¹25,000",
-        "EmiText": "Pay Only â‚¹2,666/m",
-        "ImageUrl": "/images/mobiles-hub/phones/mivi-one.svg",
-        "ProductUrl": "/products?category=mobiles&q=Mivi+One",
+        "Name": "POCO F6 5G (Flagship 8s Gen 3)",
+        "PriceText": "₹27,999*",
+        "OriginalPriceText": "₹33,999",
+        "EmiText": "Pay Only ₹3,333/m",
+        "ImageUrl": "/images/mobiles-hub/phones/pocox8.svg",
+        "ProductUrl": "/products?category=mobiles&q=POCO+F6",
         "DisplayOrder": 4,
         "IsUploadingSoon": false,
         "ViewMode": "3D",
         "Model3dUrl": null,
-        "ColorHex": "#16a34a"
+        "ColorHex": "#eab308"
       },
       {
         "Id": "emi-5",
-        "Name": "HMD Vibe 5G Minimal",
-        "PriceText": "â‚¹11,999*",
-        "OriginalPriceText": "â‚¹20,000",
-        "EmiText": "Pay Only â‚¹1,999/m",
-        "ImageUrl": "/images/mobiles-hub/phones/hmd-vibe.svg",
-        "ProductUrl": "/products?category=mobiles&q=HMD+Vibe",
+        "Name": "realme 14 Pro+ 5G (Periscope)",
+        "PriceText": "₹26,999*",
+        "OriginalPriceText": "₹32,999",
+        "EmiText": "Pay Only ₹2,499/m",
+        "ImageUrl": "/images/mobiles-hub/phones/edge70.svg",
+        "ProductUrl": "/products?category=mobiles&q=realme+14+Pro",
         "DisplayOrder": 5,
         "IsUploadingSoon": false,
         "ViewMode": "3D",
         "Model3dUrl": null,
-        "ColorHex": "#e2e8f0"
+        "ColorHex": "#10b981"
       }
     ]
   },
+  "BrandPages": [
+    {
+      "BrandSlug": "apple",
+      "BrandName": "iPhone",
+      "CategoryTagline": "Apple Silicon Flagships & Student Ecosystem",
+      "LogoEmoji": "\uD83C\uDF4E",
+      "HeroBanner": {
+        "IsEnabled": true,
+        "BadgeText": "OFFICIAL APPLE STORE • APPLE INTELLIGENCE READY",
+        "Title": "iPhone 16 Pro & 16 Series",
+        "TitleHighlight": "Built for Apple Intelligence & Studio Creators.",
+        "Subtitle": "Grade 5 Titanium, A18 Pro 3nm silicon, Camera Control, Global 5G eSIM support & special campus trade-in / 0% EMI.",
+        "ImageUrl": "",
+        "IsUploadingSoon": true,
+        "BannerHeight": 320,
+        "ThemeBgGradient": "linear-gradient(135deg, #090d16 0%, #172554 55%, #1e1b4b 100%)",
+        "TitleColor": "#ffffff",
+        "TitleHighlightColor": "#60a5fa",
+        "SubtitleColor": "#cbd5e1",
+        "FilterAccentColor": "#2563eb"
+      },
+      "FilterGroups": [
+        {
+          "Title": "iPhone Series Lineup",
+          "Key": "series",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "iPhone 16 Pro / Pro Max",
+              "Value": "16-pro",
+              "Count": 2
+            },
+            {
+              "Label": "iPhone 16 / 16 Plus",
+              "Value": "16-std",
+              "Count": 1
+            },
+            {
+              "Label": "iPhone 15 / 15 Pro",
+              "Value": "15-series",
+              "Count": 1
+            },
+            {
+              "Label": "iPhone 14 & 13 Student Value",
+              "Value": "14-13",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Apple Silicon Chipset",
+          "Key": "chipset",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "A18 Pro Chip (3nm)",
+              "Value": "a18-pro",
+              "Count": 2
+            },
+            {
+              "Label": "A18 Bionic Chip",
+              "Value": "a18",
+              "Count": 1
+            },
+            {
+              "Label": "A16 / A15 Bionic",
+              "Value": "a16",
+              "Count": 2
+            }
+          ]
+        },
+        {
+          "Title": "Storage Capacity",
+          "Key": "storage",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "128 GB",
+              "Value": "128gb",
+              "Count": 2
+            },
+            {
+              "Label": "256 GB",
+              "Value": "256gb",
+              "Count": 2
+            },
+            {
+              "Label": "512 GB / 1 TB",
+              "Value": "512gb",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Display & Refresh Rate",
+          "Key": "display",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "120Hz ProMotion LTPO OLED",
+              "Value": "120hz",
+              "Count": 2
+            },
+            {
+              "Label": "Super Retina XDR OLED (60Hz)",
+              "Value": "60hz",
+              "Count": 3
+            }
+          ]
+        },
+        {
+          "Title": "Apple Intelligence & Build",
+          "Key": "features",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "Apple Intelligence Ready",
+              "Value": "apple-ai",
+              "Count": 4
+            },
+            {
+              "Label": "Grade 5 Titanium Frame",
+              "Value": "titanium",
+              "Count": 2
+            },
+            {
+              "Label": "Camera Control + Action Button",
+              "Value": "cam-ctrl",
+              "Count": 3
+            }
+          ]
+        },
+        {
+          "Title": "Condition & Campus Pricing",
+          "Key": "price",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "Under ₹60,000",
+              "Value": "under-60k",
+              "Count": 1
+            },
+            {
+              "Label": "₹60,000 – ₹1,00,000",
+              "Value": "60k-100k",
+              "Count": 2
+            },
+            {
+              "Label": "Above ₹1,00,000",
+              "Value": "above-100k",
+              "Count": 2
+            },
+            {
+              "Label": "0% Student EMI Eligible",
+              "Value": "0-emi",
+              "Count": 5
+            }
+          ]
+        }
+      ],
+      "Products": [
+        {
+          "Id": "app-16pm",
+          "Name": "Apple iPhone 16 Pro Max (256 GB, Desert Titanium)",
+          "Slug": "app-16pm",
+          "BrandName": "iPhone",
+          "BrandSlug": "apple",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 144900,
+          "OriginalPrice": 149900,
+          "DiscountPercent": 3,
+          "Rating": 4.9,
+          "ReviewCount": 642,
+          "KeySpecs": [
+            "A18 Pro",
+            "256 GB",
+            "6.9\" ProMotion",
+            "Titanium"
+          ],
+          "FilterTags": [
+            "16-pro",
+            "a18-pro",
+            "256gb",
+            "120hz",
+            "apple-ai",
+            "titanium",
+            "cam-ctrl",
+            "above-100k",
+            "0-emi"
+          ],
+          "Series": "iPhone 16 Pro",
+          "Chipset": "A18 Pro",
+          "Ram": "8GB",
+          "Storage": "256 GB",
+          "Display": "6.9\" 120Hz ProMotion",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "app-16p",
+          "Name": "Apple iPhone 16 Pro (128 GB, Natural Titanium)",
+          "Slug": "app-16p",
+          "BrandName": "iPhone",
+          "BrandSlug": "apple",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 119900,
+          "OriginalPrice": 124900,
+          "DiscountPercent": 4,
+          "Rating": 4.9,
+          "ReviewCount": 418,
+          "KeySpecs": [
+            "A18 Pro",
+            "128 GB",
+            "6.3\" ProMotion",
+            "4K120 Dolby"
+          ],
+          "FilterTags": [
+            "16-pro",
+            "a18-pro",
+            "128gb",
+            "120hz",
+            "apple-ai",
+            "titanium",
+            "cam-ctrl",
+            "above-100k",
+            "0-emi"
+          ],
+          "Series": "iPhone 16 Pro",
+          "Chipset": "A18 Pro",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.3\" 120Hz ProMotion",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "app-16",
+          "Name": "Apple iPhone 16 (128 GB, Ultramarine)",
+          "Slug": "app-16",
+          "BrandName": "iPhone",
+          "BrandSlug": "apple",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 76900,
+          "OriginalPrice": 79900,
+          "DiscountPercent": 4,
+          "Rating": 4.8,
+          "ReviewCount": 520,
+          "KeySpecs": [
+            "A18 Bionic",
+            "128 GB",
+            "6.1\" OLED",
+            "Camera Control"
+          ],
+          "FilterTags": [
+            "16-std",
+            "a18",
+            "128gb",
+            "60hz",
+            "apple-ai",
+            "cam-ctrl",
+            "60k-100k",
+            "0-emi"
+          ],
+          "Series": "iPhone 16",
+          "Chipset": "A18",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.1\" Super Retina XDR",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "app-15",
+          "Name": "Apple iPhone 15 (256 GB, Blue • USB-C)",
+          "Slug": "app-15",
+          "BrandName": "iPhone",
+          "BrandSlug": "apple",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 69900,
+          "OriginalPrice": 79900,
+          "DiscountPercent": 13,
+          "Rating": 4.8,
+          "ReviewCount": 890,
+          "KeySpecs": [
+            "A16 Bionic",
+            "256 GB",
+            "48MP Main",
+            "Dynamic Island"
+          ],
+          "FilterTags": [
+            "15-series",
+            "a16",
+            "256gb",
+            "60hz",
+            "apple-ai",
+            "60k-100k",
+            "0-emi"
+          ],
+          "Series": "iPhone 15",
+          "Chipset": "A16 Bionic",
+          "Ram": "6GB",
+          "Storage": "256 GB",
+          "Display": "6.1\" Dynamic Island",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "app-14",
+          "Name": "Apple iPhone 14 (512 GB, Starlight • Student Pick)",
+          "Slug": "app-14",
+          "BrandName": "iPhone",
+          "BrandSlug": "apple",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 58900,
+          "OriginalPrice": 79900,
+          "DiscountPercent": 26,
+          "Rating": 4.7,
+          "ReviewCount": 1120,
+          "KeySpecs": [
+            "A15 Bionic",
+            "512 GB",
+            "Crash Detection",
+            "eSIM Global"
+          ],
+          "FilterTags": [
+            "14-13",
+            "a16",
+            "512gb",
+            "60hz",
+            "under-60k",
+            "0-emi"
+          ],
+          "Series": "iPhone 14",
+          "Chipset": "A15 Bionic",
+          "Ram": "6GB",
+          "Storage": "512 GB",
+          "Display": "6.1\" Super Retina XDR",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        }
+      ],
+      "ThemePrimaryColor": "#1d4ed8",
+      "ThemeAccentColor": "#6366f1"
+    },
+    {
+      "BrandSlug": "motorola",
+      "BrandName": "motorola",
+      "CategoryTagline": "Pantone Curated Color, Clean Hello UI & 144Hz pOLED",
+      "LogoEmoji": "\uD83E\uDD8B",
+      "HeroBanner": {
+        "IsEnabled": true,
+        "BadgeText": "MOTOROLA OFFICIAL STORE • PANTONE VALIDATED",
+        "Title": "motorola edge 50, razr & moto g 5G",
+        "TitleHighlight": "Bloat-Free Hello UI. Vegan Leather Design.",
+        "Subtitle": "Clean Android experience with Pantone validated colors, 144Hz curved pOLED displays, IP68 water protection & TurboPower charging.",
+        "ImageUrl": "",
+        "IsUploadingSoon": true,
+        "BannerHeight": 320,
+        "ThemeBgGradient": "linear-gradient(135deg, #091326 0%, #1e3a8a 55%, #0284c7 100%)",
+        "TitleColor": "#ffffff",
+        "TitleHighlightColor": "#7dd3fc",
+        "SubtitleColor": "#e0f2fe",
+        "FilterAccentColor": "#2563eb"
+      },
+      "FilterGroups": [
+        {
+          "Title": "Motorola Family",
+          "Key": "series",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "razr Flip Foldables",
+              "Value": "razr",
+              "Count": 1
+            },
+            {
+              "Label": "edge 50 Ultra / Pro / Fusion",
+              "Value": "edge",
+              "Count": 2
+            },
+            {
+              "Label": "moto g85 / g64 / g45 5G",
+              "Value": "moto-g",
+              "Count": 2
+            }
+          ]
+        },
+        {
+          "Title": "Display & Craftsmanship",
+          "Key": "display",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "144Hz 3D Curved pOLED",
+              "Value": "144hz",
+              "Count": 2
+            },
+            {
+              "Label": "Vegan Leather / Wood Back",
+              "Value": "vegan",
+              "Count": 4
+            },
+            {
+              "Label": "Pantone Validated Camera",
+              "Value": "pantone",
+              "Count": 3
+            }
+          ]
+        },
+        {
+          "Title": "Durability & Clean OS",
+          "Key": "features",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Clean Hello UI (Zero Bloat)",
+              "Value": "clean-os",
+              "Count": 5
+            },
+            {
+              "Label": "IP68 Underwater Protection",
+              "Value": "ip68",
+              "Count": 2
+            },
+            {
+              "Label": "MIL-STD-810H Certified",
+              "Value": "mil-std",
+              "Count": 3
+            }
+          ]
+        },
+        {
+          "Title": "TurboPower & Price",
+          "Key": "price",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "125W / 68W TurboPower Charge",
+              "Value": "turbo",
+              "Count": 3
+            },
+            {
+              "Label": "Under ₹15,000",
+              "Value": "under-15k",
+              "Count": 1
+            },
+            {
+              "Label": "₹15,000 – ₹30,000",
+              "Value": "15k-30k",
+              "Count": 2
+            },
+            {
+              "Label": "Above ₹30,000",
+              "Value": "above-30k",
+              "Count": 2
+            }
+          ]
+        }
+      ],
+      "Products": [
+        {
+          "Id": "moto-razr50u",
+          "Name": "motorola razr 50 ultra (12GB/512GB, Peach Fuzz • Moto AI)",
+          "Slug": "moto-razr50u",
+          "BrandName": "motorola",
+          "BrandSlug": "motorola",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 84999,
+          "OriginalPrice": 99999,
+          "DiscountPercent": 15,
+          "Rating": 4.8,
+          "ReviewCount": 185,
+          "KeySpecs": [
+            "4\" Cover pOLED",
+            "SD 8s Gen 3",
+            "Pantone",
+            "IPX8"
+          ],
+          "FilterTags": [
+            "razr",
+            "144hz",
+            "vegan",
+            "pantone",
+            "clean-os",
+            "ip68",
+            "above-30k"
+          ],
+          "Series": "razr 50 ultra",
+          "Chipset": "Snapdragon 8s Gen 3",
+          "Ram": "12GB",
+          "Storage": "512 GB",
+          "Display": "6.9\" + 4.0\" Dual pOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "moto-edge50pro",
+          "Name": "motorola edge 50 pro 5G (12GB/256GB, Luxe Lavender)",
+          "Slug": "moto-edge50pro",
+          "BrandName": "motorola",
+          "BrandSlug": "motorola",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 29999,
+          "OriginalPrice": 41999,
+          "DiscountPercent": 29,
+          "Rating": 4.7,
+          "ReviewCount": 540,
+          "KeySpecs": [
+            "144Hz 1.5K pOLED",
+            "125W Charge",
+            "50MP f/1.4",
+            "IP68"
+          ],
+          "FilterTags": [
+            "edge",
+            "144hz",
+            "vegan",
+            "pantone",
+            "clean-os",
+            "ip68",
+            "turbo",
+            "15k-30k"
+          ],
+          "Series": "edge 50 pro",
+          "Chipset": "Snapdragon 7 Gen 3",
+          "Ram": "12GB",
+          "Storage": "256 GB",
+          "Display": "6.7\" 144Hz Curved pOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "moto-edge50fus",
+          "Name": "motorola edge 50 fusion 5G (8GB/128GB, Hot Pink)",
+          "Slug": "moto-edge50fus",
+          "BrandName": "motorola",
+          "BrandSlug": "motorola",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 21999,
+          "OriginalPrice": 25999,
+          "DiscountPercent": 15,
+          "Rating": 4.7,
+          "ReviewCount": 680,
+          "KeySpecs": [
+            "SD 7s Gen 2",
+            "144Hz pOLED",
+            "68W Turbo",
+            "Sony LYT-700C"
+          ],
+          "FilterTags": [
+            "edge",
+            "144hz",
+            "vegan",
+            "pantone",
+            "clean-os",
+            "mil-std",
+            "turbo",
+            "15k-30k"
+          ],
+          "Series": "edge 50 fusion",
+          "Chipset": "Snapdragon 7s Gen 2",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.7\" 144Hz pOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "moto-g85",
+          "Name": "moto g85 5G (8GB/128GB, Cobalt Blue)",
+          "Slug": "moto-g85",
+          "BrandName": "motorola",
+          "BrandSlug": "motorola",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 16999,
+          "OriginalPrice": 20999,
+          "DiscountPercent": 19,
+          "Rating": 4.6,
+          "ReviewCount": 920,
+          "KeySpecs": [
+            "Endless Edge pOLED",
+            "50MP Sony LYT-600",
+            "Gorilla Glass 5",
+            "SD 6s Gen 3"
+          ],
+          "FilterTags": [
+            "moto-g",
+            "vegan",
+            "clean-os",
+            "mil-std",
+            "15k-30k"
+          ],
+          "Series": "moto g85",
+          "Chipset": "Snapdragon 6s Gen 3",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.67\" 120Hz Curved pOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "moto-g45",
+          "Name": "moto g45 5G (8GB/128GB, Brilliant Green)",
+          "Slug": "moto-g45",
+          "BrandName": "motorola",
+          "BrandSlug": "motorola",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 11999,
+          "OriginalPrice": 14999,
+          "DiscountPercent": 20,
+          "Rating": 4.5,
+          "ReviewCount": 1150,
+          "KeySpecs": [
+            "SD 6s Gen 3",
+            "Vegan Leather",
+            "5000mAh",
+            "13 5G Bands"
+          ],
+          "FilterTags": [
+            "moto-g",
+            "vegan",
+            "clean-os",
+            "under-15k"
+          ],
+          "Series": "moto g45",
+          "Chipset": "Snapdragon 6s Gen 3",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.5\" 120Hz Punch Hole",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        }
+      ],
+      "ThemePrimaryColor": "#2563eb",
+      "ThemeAccentColor": "#0ea5e9"
+    },
+    {
+      "BrandSlug": "realme",
+      "BrandName": "realme",
+      "CategoryTagline": "GT Performance Flagships & Periscope Portrait Pros",
+      "LogoEmoji": "⚡",
+      "HeroBanner": {
+        "IsEnabled": true,
+        "BadgeText": "REALME OFFICIAL STORE • MAKE IT REAL",
+        "Title": "realme GT 7 Pro & 14 Pro+ Series",
+        "TitleHighlight": "Snapdragon 8 Elite & IP69 Underwater Photography.",
+        "Subtitle": "Industry-leading 6000 nits HyperDisplay, 120W UltraDart charging, Periscope Zoom & MagicGlow portraits.",
+        "ImageUrl": "",
+        "IsUploadingSoon": true,
+        "BannerHeight": 320,
+        "ThemeBgGradient": "linear-gradient(135deg, #1c1917 0%, #713f12 55%, #ca8a04 100%)",
+        "TitleColor": "#ffffff",
+        "TitleHighlightColor": "#fde047",
+        "SubtitleColor": "#fef9c3",
+        "FilterAccentColor": "#d97706"
+      },
+      "FilterGroups": [
+        {
+          "Title": "realme Series",
+          "Key": "series",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "GT Flagship Series (GT 7 Pro / 6T)",
+              "Value": "gt",
+              "Count": 2
+            },
+            {
+              "Label": "Number Pro Series (14 Pro+ / 13 Pro+)",
+              "Value": "num-pro",
+              "Count": 1
+            },
+            {
+              "Label": "Narzo & P Performance Series",
+              "Value": "narzo-p",
+              "Count": 2
+            }
+          ]
+        },
+        {
+          "Title": "Processor & Speed",
+          "Key": "chipset",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Snapdragon 8 Elite / 7+ Gen 3",
+              "Value": "sd-flag",
+              "Count": 2
+            },
+            {
+              "Label": "Snapdragon 7s Gen 2 / Gen 3",
+              "Value": "sd-7s",
+              "Count": 1
+            },
+            {
+              "Label": "Dimensity 7300 Energy Gaming",
+              "Value": "dim-7300",
+              "Count": 2
+            }
+          ]
+        },
+        {
+          "Title": "Camera & Protection",
+          "Key": "features",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Periscope Telephoto (120x Zoom)",
+              "Value": "periscope",
+              "Count": 2
+            },
+            {
+              "Label": "IP69 Dust & Water Resistance",
+              "Value": "ip69",
+              "Count": 2
+            },
+            {
+              "Label": "120W UltraCharge / 6500mAh",
+              "Value": "120w",
+              "Count": 3
+            }
+          ]
+        },
+        {
+          "Title": "RAM & Student Budget",
+          "Key": "price",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "12 GB + 256/512 GB",
+              "Value": "12-256",
+              "Count": 2
+            },
+            {
+              "Label": "Under ₹18,000",
+              "Value": "under-18k",
+              "Count": 2
+            },
+            {
+              "Label": "₹18,000 – ₹35,000",
+              "Value": "18k-35k",
+              "Count": 1
+            },
+            {
+              "Label": "Above ₹35,000",
+              "Value": "above-35k",
+              "Count": 1
+            }
+          ]
+        }
+      ],
+      "Products": [
+        {
+          "Id": "rlm-gt7p",
+          "Name": "realme GT 7 Pro 5G (12GB/256GB, Mars Orange)",
+          "Slug": "rlm-gt7p",
+          "BrandName": "realme",
+          "BrandSlug": "realme",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 54999,
+          "OriginalPrice": 59999,
+          "DiscountPercent": 8,
+          "Rating": 4.9,
+          "ReviewCount": 320,
+          "KeySpecs": [
+            "SD 8 Elite",
+            "IP69 Underwater",
+            "120W Charge",
+            "6500mAh"
+          ],
+          "FilterTags": [
+            "gt",
+            "sd-flag",
+            "periscope",
+            "ip69",
+            "120w",
+            "12-256",
+            "above-35k"
+          ],
+          "Series": "realme GT 7 Pro",
+          "Chipset": "Snapdragon 8 Elite",
+          "Ram": "12GB",
+          "Storage": "256 GB",
+          "Display": "6.78\" Eco² OLED Plus",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "rlm-gt6t",
+          "Name": "realme GT 6T 5G (8GB/256GB, Fluid Silver)",
+          "Slug": "rlm-gt6t",
+          "BrandName": "realme",
+          "BrandSlug": "realme",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 28999,
+          "OriginalPrice": 35999,
+          "DiscountPercent": 19,
+          "Rating": 4.7,
+          "ReviewCount": 610,
+          "KeySpecs": [
+            "6000 nits Display",
+            "SD 7+ Gen 3",
+            "120W Charge",
+            "VC Cooling"
+          ],
+          "FilterTags": [
+            "gt",
+            "sd-flag",
+            "120w",
+            "18k-35k"
+          ],
+          "Series": "realme GT 6T",
+          "Chipset": "Snapdragon 7+ Gen 3",
+          "Ram": "8GB",
+          "Storage": "256 GB",
+          "Display": "6.78\" 6000-nit LTPO",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "rlm-14pp",
+          "Name": "realme 14 Pro+ 5G (12GB/256GB, Pearl White • Color Changing)",
+          "Slug": "rlm-14pp",
+          "BrandName": "realme",
+          "BrandSlug": "realme",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 31999,
+          "OriginalPrice": 35999,
+          "DiscountPercent": 11,
+          "Rating": 4.8,
+          "ReviewCount": 290,
+          "KeySpecs": [
+            "Sony IMX896 Periscope",
+            "MagicGlow",
+            "IP69",
+            "6000mAh"
+          ],
+          "FilterTags": [
+            "num-pro",
+            "sd-7s",
+            "periscope",
+            "ip69",
+            "12-256",
+            "18k-35k"
+          ],
+          "Series": "realme 14 Pro+",
+          "Chipset": "Snapdragon 7s Gen 3",
+          "Ram": "12GB",
+          "Storage": "256 GB",
+          "Display": "6.83\" Quad-Curved AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "rlm-n70t",
+          "Name": "realme NARZO 70 Turbo 5G (8GB/128GB, Turbo Yellow)",
+          "Slug": "rlm-n70t",
+          "BrandName": "realme",
+          "BrandSlug": "realme",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 16499,
+          "OriginalPrice": 19999,
+          "DiscountPercent": 18,
+          "Rating": 4.7,
+          "ReviewCount": 840,
+          "KeySpecs": [
+            "Dimensity 7300E",
+            "Motorsport Design",
+            "120Hz OLED",
+            "Vapor Chamber"
+          ],
+          "FilterTags": [
+            "narzo-p",
+            "dim-7300",
+            "under-18k"
+          ],
+          "Series": "NARZO 70 Turbo",
+          "Chipset": "Dimensity 7300 Energy",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.67\" 120Hz OLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "rlm-p1",
+          "Name": "realme P1 5G (6GB/128GB, Phoenix Red)",
+          "Slug": "rlm-p1",
+          "BrandName": "realme",
+          "BrandSlug": "realme",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 14499,
+          "OriginalPrice": 19999,
+          "DiscountPercent": 28,
+          "Rating": 4.6,
+          "ReviewCount": 1340,
+          "KeySpecs": [
+            "120Hz AMOLED",
+            "Dimensity 7050",
+            "45W SuperVOOC",
+            "Rainwater Touch"
+          ],
+          "FilterTags": [
+            "narzo-p",
+            "dim-7300",
+            "under-18k"
+          ],
+          "Series": "realme P1 5G",
+          "Chipset": "Dimensity 7050",
+          "Ram": "6GB",
+          "Storage": "128 GB",
+          "Display": "6.67\" 120Hz AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        }
+      ],
+      "ThemePrimaryColor": "#eab308",
+      "ThemeAccentColor": "#f59e0b"
+    },
+    {
+      "BrandSlug": "poco",
+      "BrandName": "POCO",
+      "CategoryTagline": "Everything You Need, Nothing You Don't • Esports Champions",
+      "LogoEmoji": "\uD83D\uDD25",
+      "HeroBanner": {
+        "IsEnabled": true,
+        "BadgeText": "POCO ESPORTS ARENA • PURE GAMING SPEED",
+        "Title": "POCO F6, X7 Pro & M-Series 5G",
+        "TitleHighlight": "WildBoost 3.0 & Flagship Gaming AnTuTu Scores.",
+        "Subtitle": "Built for mobile esports with LiquidCool IceLoop systems, 1.5K CrystalRes 120Hz AMOLED & Turbo HyperCharge.",
+        "ImageUrl": "",
+        "IsUploadingSoon": true,
+        "BannerHeight": 320,
+        "ThemeBgGradient": "linear-gradient(135deg, #09090b 0%, #422006 55%, #b45309 100%)",
+        "TitleColor": "#ffffff",
+        "TitleHighlightColor": "#facc15",
+        "SubtitleColor": "#fef3c7",
+        "FilterAccentColor": "#d97706"
+      },
+      "FilterGroups": [
+        {
+          "Title": "POCO Series",
+          "Key": "series",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "F-Series (Flagship Killer)",
+              "Value": "f-series",
+              "Count": 1
+            },
+            {
+              "Label": "X-Series (Esports Power)",
+              "Value": "x-series",
+              "Count": 2
+            },
+            {
+              "Label": "M & C Series (Student Value)",
+              "Value": "m-series",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Gaming Silicon",
+          "Key": "chipset",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Snapdragon 8s Gen 3",
+              "Value": "sd-8s",
+              "Count": 1
+            },
+            {
+              "Label": "Dimensity 8400 / 8300 Ultra",
+              "Value": "dim-8400",
+              "Count": 2
+            },
+            {
+              "Label": "Snapdragon 4 / Dimensity 6000",
+              "Value": "entry-5g",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Esports Cooling & Display",
+          "Key": "features",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "1.5K 120Hz CrystalRes AMOLED",
+              "Value": "1.5k",
+              "Count": 3
+            },
+            {
+              "Label": "90W / 67W HyperCharge + 6000mAh+",
+              "Value": "hypercharge",
+              "Count": 3
+            },
+            {
+              "Label": "LiquidCool Vapor Chamber",
+              "Value": "liquidcool",
+              "Count": 3
+            }
+          ]
+        },
+        {
+          "Title": "RAM & Price",
+          "Key": "price",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "12 GB LPDDR5X RAM",
+              "Value": "12gb",
+              "Count": 2
+            },
+            {
+              "Label": "Under ₹15,000",
+              "Value": "under-15k",
+              "Count": 1
+            },
+            {
+              "Label": "₹15,000 – ₹35,000",
+              "Value": "15k-35k",
+              "Count": 3
+            }
+          ]
+        }
+      ],
+      "Products": [
+        {
+          "Id": "poco-f6",
+          "Name": "POCO F6 5G (12GB/256GB, Black • Snapdragon 8s Gen 3)",
+          "Slug": "poco-f6",
+          "BrandName": "POCO",
+          "BrandSlug": "poco",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 26999,
+          "OriginalPrice": 33999,
+          "DiscountPercent": 21,
+          "Rating": 4.8,
+          "ReviewCount": 720,
+          "KeySpecs": [
+            "SD 8s Gen 3",
+            "90W Turbo",
+            "1.5K 120Hz",
+            "IceLoop Cooling"
+          ],
+          "FilterTags": [
+            "f-series",
+            "sd-8s",
+            "1.5k",
+            "hypercharge",
+            "liquidcool",
+            "12gb",
+            "15k-35k"
+          ],
+          "Series": "POCO F6",
+          "Chipset": "Snapdragon 8s Gen 3",
+          "Ram": "12GB",
+          "Storage": "256 GB",
+          "Display": "6.67\" 1.5K Flow AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "poco-x7p",
+          "Name": "POCO X7 Pro 5G (12GB/256GB, POCO Yellow)",
+          "Slug": "poco-x7p",
+          "BrandName": "POCO",
+          "BrandSlug": "poco",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 27999,
+          "OriginalPrice": 31999,
+          "DiscountPercent": 13,
+          "Rating": 4.8,
+          "ReviewCount": 410,
+          "KeySpecs": [
+            "Dimensity 8400-U",
+            "6550mAh",
+            "90W Charge",
+            "IP68"
+          ],
+          "FilterTags": [
+            "x-series",
+            "dim-8400",
+            "1.5k",
+            "hypercharge",
+            "liquidcool",
+            "12gb",
+            "15k-35k"
+          ],
+          "Series": "POCO X7 Pro",
+          "Chipset": "Dimensity 8400-Ultra",
+          "Ram": "12GB",
+          "Storage": "256 GB",
+          "Display": "6.67\" 1.5K CrystalRes",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "poco-x6p",
+          "Name": "POCO X6 Pro 5G (8GB/256GB, Spectre Black)",
+          "Slug": "poco-x6p",
+          "BrandName": "POCO",
+          "BrandSlug": "poco",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 21999,
+          "OriginalPrice": 28999,
+          "DiscountPercent": 24,
+          "Rating": 4.7,
+          "ReviewCount": 940,
+          "KeySpecs": [
+            "Dimensity 8300-U",
+            "67W Charge",
+            "HyperOS",
+            "WildBoost 2.0"
+          ],
+          "FilterTags": [
+            "x-series",
+            "dim-8400",
+            "1.5k",
+            "hypercharge",
+            "liquidcool",
+            "15k-35k"
+          ],
+          "Series": "POCO X6 Pro",
+          "Chipset": "Dimensity 8300-Ultra",
+          "Ram": "8GB",
+          "Storage": "256 GB",
+          "Display": "6.67\" 1.5K AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "poco-m6p",
+          "Name": "POCO M6 Pro 5G (6GB/128GB, Forest Green)",
+          "Slug": "poco-m6p",
+          "BrandName": "POCO",
+          "BrandSlug": "poco",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 10499,
+          "OriginalPrice": 15999,
+          "DiscountPercent": 34,
+          "Rating": 4.5,
+          "ReviewCount": 1650,
+          "KeySpecs": [
+            "SD 4 Gen 2",
+            "5000mAh",
+            "90Hz FHD+",
+            "Glass Back"
+          ],
+          "FilterTags": [
+            "m-series",
+            "entry-5g",
+            "under-15k"
+          ],
+          "Series": "POCO M6 Pro",
+          "Chipset": "Snapdragon 4 Gen 2",
+          "Ram": "6GB",
+          "Storage": "128 GB",
+          "Display": "6.79\" FHD+ 90Hz",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        }
+      ],
+      "ThemePrimaryColor": "#f59e0b",
+      "ThemeAccentColor": "#111827"
+    },
+    {
+      "BrandSlug": "google-pixel",
+      "BrandName": "Google",
+      "CategoryTagline": "Google Tensor AI & Computational Photography",
+      "LogoEmoji": "\uD83E\uDD16",
+      "HeroBanner": {
+        "IsEnabled": true,
+        "BadgeText": "OFFICIAL GOOGLE PIXEL • GEMINI AI BUILT-IN",
+        "Title": "Google Pixel 9 Pro & 8a Series",
+        "TitleHighlight": "Pure Google AI. Iconic Pixel Camera.",
+        "Subtitle": "Powered by Google Tensor G4, Gemini Nano, Magic Editor, Super Actua Displays & 7 years of OS & Pixel Drops.",
+        "ImageUrl": "",
+        "IsUploadingSoon": true,
+        "BannerHeight": 320,
+        "ThemeBgGradient": "linear-gradient(135deg, #062825 0%, #0f766e 55%, #1d4ed8 100%)",
+        "TitleColor": "#ffffff",
+        "TitleHighlightColor": "#5eead4",
+        "SubtitleColor": "#ccfbf1",
+        "FilterAccentColor": "#0d9488"
+      },
+      "FilterGroups": [
+        {
+          "Title": "Pixel Generation",
+          "Key": "series",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Pixel 9 Pro / 9 Pro XL",
+              "Value": "pixel-9-pro",
+              "Count": 2
+            },
+            {
+              "Label": "Pixel 9 Standard",
+              "Value": "pixel-9",
+              "Count": 1
+            },
+            {
+              "Label": "Pixel 8a Student Favorite",
+              "Value": "pixel-8a",
+              "Count": 1
+            },
+            {
+              "Label": "Pixel 8 / 7 Pro",
+              "Value": "pixel-8",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Tensor Silicon & AI",
+          "Key": "chipset",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Google Tensor G4 + Gemini",
+              "Value": "tensor-g4",
+              "Count": 3
+            },
+            {
+              "Label": "Google Tensor G3",
+              "Value": "tensor-g3",
+              "Count": 2
+            },
+            {
+              "Label": "7 Years Pixel Updates",
+              "Value": "7yr-updates",
+              "Count": 5
+            }
+          ]
+        },
+        {
+          "Title": "Camera & Computational AI",
+          "Key": "camera",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Triple Pro 50MP + 5x Telephoto",
+              "Value": "triple-pro",
+              "Count": 2
+            },
+            {
+              "Label": "Best Take + Add Me + Audio Eraser",
+              "Value": "magic-ai",
+              "Count": 5
+            }
+          ]
+        },
+        {
+          "Title": "Storage & Display",
+          "Key": "storage",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "128 GB",
+              "Value": "128gb",
+              "Count": 2
+            },
+            {
+              "Label": "256 GB / 512 GB",
+              "Value": "256gb",
+              "Count": 3
+            },
+            {
+              "Label": "Super Actua 3000-nit LTPO",
+              "Value": "super-actua",
+              "Count": 2
+            }
+          ]
+        },
+        {
+          "Title": "Budget Range",
+          "Key": "price",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "Under ₹45,000",
+              "Value": "under-45k",
+              "Count": 1
+            },
+            {
+              "Label": "₹45,000 – ₹80,000",
+              "Value": "45k-80k",
+              "Count": 2
+            },
+            {
+              "Label": "Above ₹80,000",
+              "Value": "above-80k",
+              "Count": 2
+            }
+          ]
+        }
+      ],
+      "Products": [
+        {
+          "Id": "pix-9pxl",
+          "Name": "Google Pixel 9 Pro XL 5G (16GB/256GB, Obsidian)",
+          "Slug": "pix-9pxl",
+          "BrandName": "Google",
+          "BrandSlug": "google-pixel",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 114999,
+          "OriginalPrice": 124999,
+          "DiscountPercent": 8,
+          "Rating": 4.9,
+          "ReviewCount": 310,
+          "KeySpecs": [
+            "Tensor G4",
+            "Gemini AI",
+            "50MP+48MP+48MP",
+            "6.8\" Super Actua"
+          ],
+          "FilterTags": [
+            "pixel-9-pro",
+            "tensor-g4",
+            "7yr-updates",
+            "triple-pro",
+            "magic-ai",
+            "256gb",
+            "super-actua",
+            "above-80k"
+          ],
+          "Series": "Pixel 9 Pro XL",
+          "Chipset": "Google Tensor G4",
+          "Ram": "16GB",
+          "Storage": "256 GB",
+          "Display": "6.8\" Super Actua OLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "pix-9p",
+          "Name": "Google Pixel 9 Pro 5G (16GB/256GB, Hazel)",
+          "Slug": "pix-9p",
+          "BrandName": "Google",
+          "BrandSlug": "google-pixel",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 99999,
+          "OriginalPrice": 109999,
+          "DiscountPercent": 9,
+          "Rating": 4.9,
+          "ReviewCount": 275,
+          "KeySpecs": [
+            "Tensor G4",
+            "5x Telephoto",
+            "6.3\" Pro Actua",
+            "Satellite SOS"
+          ],
+          "FilterTags": [
+            "pixel-9-pro",
+            "tensor-g4",
+            "7yr-updates",
+            "triple-pro",
+            "magic-ai",
+            "256gb",
+            "super-actua",
+            "above-80k"
+          ],
+          "Series": "Pixel 9 Pro",
+          "Chipset": "Google Tensor G4",
+          "Ram": "16GB",
+          "Storage": "256 GB",
+          "Display": "6.3\" Super Actua OLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "pix-9",
+          "Name": "Google Pixel 9 5G (12GB/256GB, Peony)",
+          "Slug": "pix-9",
+          "BrandName": "Google",
+          "BrandSlug": "google-pixel",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 74999,
+          "OriginalPrice": 79999,
+          "DiscountPercent": 6,
+          "Rating": 4.8,
+          "ReviewCount": 390,
+          "KeySpecs": [
+            "Tensor G4",
+            "12GB RAM",
+            "Add Me AI",
+            "IP68 Rated"
+          ],
+          "FilterTags": [
+            "pixel-9",
+            "tensor-g4",
+            "7yr-updates",
+            "magic-ai",
+            "256gb",
+            "45k-80k"
+          ],
+          "Series": "Pixel 9",
+          "Chipset": "Google Tensor G4",
+          "Ram": "12GB",
+          "Storage": "256 GB",
+          "Display": "6.3\" Actua Display",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "pix-8a",
+          "Name": "Google Pixel 8a 5G (8GB/128GB, Aloe • Campus Hit)",
+          "Slug": "pix-8a",
+          "BrandName": "Google",
+          "BrandSlug": "google-pixel",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 39999,
+          "OriginalPrice": 52999,
+          "DiscountPercent": 25,
+          "Rating": 4.8,
+          "ReviewCount": 620,
+          "KeySpecs": [
+            "Tensor G3",
+            "64MP OIS",
+            "7 Years OS",
+            "Magic Eraser"
+          ],
+          "FilterTags": [
+            "pixel-8a",
+            "tensor-g3",
+            "7yr-updates",
+            "magic-ai",
+            "128gb",
+            "under-45k"
+          ],
+          "Series": "Pixel 8a",
+          "Chipset": "Google Tensor G3",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.1\" 120Hz Actua",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "pix-8",
+          "Name": "Google Pixel 8 5G (8GB/128GB, Obsidian)",
+          "Slug": "pix-8",
+          "BrandName": "Google",
+          "BrandSlug": "google-pixel",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 52999,
+          "OriginalPrice": 75999,
+          "DiscountPercent": 30,
+          "Rating": 4.7,
+          "ReviewCount": 450,
+          "KeySpecs": [
+            "Tensor G3",
+            "Macro Focus",
+            "Live Translate",
+            "IP68"
+          ],
+          "FilterTags": [
+            "pixel-8",
+            "tensor-g3",
+            "7yr-updates",
+            "magic-ai",
+            "128gb",
+            "45k-80k"
+          ],
+          "Series": "Pixel 8",
+          "Chipset": "Google Tensor G3",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.2\" 120Hz Actua",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        }
+      ],
+      "ThemePrimaryColor": "#0f766e",
+      "ThemeAccentColor": "#2563eb"
+    },
+    {
+      "BrandSlug": "samsung",
+      "BrandName": "Samsung",
+      "CategoryTagline": "Galaxy AI Flagships, Foldables & 5G Powerhouses",
+      "LogoEmoji": "\uD83C\uDF0C",
+      "HeroBanner": {
+        "IsEnabled": true,
+        "BadgeText": "GALAXY AI OFFICIAL STORE • 7 YEARS OS UPGRADES",
+        "Title": "Samsung Galaxy S25 Ultra & Z Series",
+        "TitleHighlight": "Galaxy AI Built-In. 200MP Nightography.",
+        "Subtitle": "Experience Snapdragon 8 Elite performance, built-in S Pen, Titanium craft & Dynamic AMOLED 2X 120Hz displays.",
+        "ImageUrl": "",
+        "IsUploadingSoon": true,
+        "BannerHeight": 320,
+        "ThemeBgGradient": "linear-gradient(135deg, #061229 0%, #0f2857 55%, #0369a1 100%)",
+        "TitleColor": "#ffffff",
+        "TitleHighlightColor": "#38bdf8",
+        "SubtitleColor": "#e0f2fe",
+        "FilterAccentColor": "#0284c7"
+      },
+      "FilterGroups": [
+        {
+          "Title": "Galaxy Series Lineup",
+          "Key": "series",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Galaxy S25 Ultra / S25 Series",
+              "Value": "s25",
+              "Count": 2
+            },
+            {
+              "Label": "Galaxy Z Fold & Z Flip",
+              "Value": "z-fold",
+              "Count": 1
+            },
+            {
+              "Label": "Galaxy A55 / A35 5G",
+              "Value": "a-series",
+              "Count": 1
+            },
+            {
+              "Label": "Galaxy M & F Value 5G",
+              "Value": "m-series",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Processor Platform",
+          "Key": "chipset",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Snapdragon 8 Elite / Gen 3",
+              "Value": "sd-elite",
+              "Count": 3
+            },
+            {
+              "Label": "Exynos 1480 / 1380",
+              "Value": "exynos",
+              "Count": 2
+            }
+          ]
+        },
+        {
+          "Title": "Galaxy AI & Pro Features",
+          "Key": "features",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Galaxy AI + Circle to Search",
+              "Value": "galaxy-ai",
+              "Count": 4
+            },
+            {
+              "Label": "200MP Quad Telephoto + S Pen",
+              "Value": "200mp-spen",
+              "Count": 1
+            },
+            {
+              "Label": "IP68 Water Resistant",
+              "Value": "ip68",
+              "Count": 4
+            }
+          ]
+        },
+        {
+          "Title": "RAM & Storage",
+          "Key": "storage",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "12 GB / 512 GB",
+              "Value": "12-512",
+              "Count": 2
+            },
+            {
+              "Label": "12 GB / 256 GB",
+              "Value": "12-256",
+              "Count": 1
+            },
+            {
+              "Label": "8 GB / 128-256 GB",
+              "Value": "8-256",
+              "Count": 2
+            }
+          ]
+        },
+        {
+          "Title": "Display & Refresh Rate",
+          "Key": "display",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "Dynamic AMOLED 2X 120Hz",
+              "Value": "amoled-120",
+              "Count": 4
+            },
+            {
+              "Label": "Foldable LTPO Infinity",
+              "Value": "foldable",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Battery & Campus Price",
+          "Key": "price",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "Under ₹25,000",
+              "Value": "under-25k",
+              "Count": 1
+            },
+            {
+              "Label": "₹25,000 – ₹60,000",
+              "Value": "25k-60k",
+              "Count": 2
+            },
+            {
+              "Label": "Above ₹60,000",
+              "Value": "above-60k",
+              "Count": 2
+            }
+          ]
+        }
+      ],
+      "Products": [
+        {
+          "Id": "sam-s25u",
+          "Name": "Samsung Galaxy S25 Ultra 5G (12GB/512GB, Titanium Gray)",
+          "Slug": "sam-s25u",
+          "BrandName": "Samsung",
+          "BrandSlug": "samsung",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 129999,
+          "OriginalPrice": 139999,
+          "DiscountPercent": 7,
+          "Rating": 4.9,
+          "ReviewCount": 490,
+          "KeySpecs": [
+            "SD 8 Elite",
+            "200MP",
+            "S Pen",
+            "Galaxy AI"
+          ],
+          "FilterTags": [
+            "s25",
+            "sd-elite",
+            "galaxy-ai",
+            "200mp-spen",
+            "ip68",
+            "12-512",
+            "amoled-120",
+            "above-60k"
+          ],
+          "Series": "Galaxy S25 Ultra",
+          "Chipset": "Snapdragon 8 Elite",
+          "Ram": "12GB",
+          "Storage": "512 GB",
+          "Display": "6.9\" QHD+ AMOLED 2X",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "sam-s25fe",
+          "Name": "Samsung Galaxy S25 FE 5G (8GB/256GB, Graphite)",
+          "Slug": "sam-s25fe",
+          "BrandName": "Samsung",
+          "BrandSlug": "samsung",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 44999,
+          "OriginalPrice": 59999,
+          "DiscountPercent": 25,
+          "Rating": 4.7,
+          "ReviewCount": 380,
+          "KeySpecs": [
+            "Galaxy AI",
+            "Nightography",
+            "IP68",
+            "45W Charge"
+          ],
+          "FilterTags": [
+            "s25",
+            "sd-elite",
+            "galaxy-ai",
+            "ip68",
+            "8-256",
+            "amoled-120",
+            "25k-60k"
+          ],
+          "Series": "Galaxy S25 FE",
+          "Chipset": "Flagship Chipset",
+          "Ram": "8GB",
+          "Storage": "256 GB",
+          "Display": "6.7\" FHD+ 120Hz",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "sam-zflip6",
+          "Name": "Samsung Galaxy Z Flip6 5G (12GB/256GB, Mint)",
+          "Slug": "sam-zflip6",
+          "BrandName": "Samsung",
+          "BrandSlug": "samsung",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 89999,
+          "OriginalPrice": 109999,
+          "DiscountPercent": 18,
+          "Rating": 4.8,
+          "ReviewCount": 210,
+          "KeySpecs": [
+            "SD 8 Gen 3",
+            "FlexCam 50MP",
+            "Galaxy AI",
+            "Foldable"
+          ],
+          "FilterTags": [
+            "z-fold",
+            "sd-elite",
+            "galaxy-ai",
+            "ip68",
+            "12-256",
+            "foldable",
+            "above-60k"
+          ],
+          "Series": "Galaxy Z Flip6",
+          "Chipset": "Snapdragon 8 Gen 3",
+          "Ram": "12GB",
+          "Storage": "256 GB",
+          "Display": "6.7\" Foldable AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "sam-a55",
+          "Name": "Samsung Galaxy A55 5G (8GB/256GB, Awesome Navy)",
+          "Slug": "sam-a55",
+          "BrandName": "Samsung",
+          "BrandSlug": "samsung",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 35999,
+          "OriginalPrice": 42999,
+          "DiscountPercent": 16,
+          "Rating": 4.6,
+          "ReviewCount": 512,
+          "KeySpecs": [
+            "Exynos 1480",
+            "Metal Frame",
+            "IP67/IP68",
+            "50MP OIS"
+          ],
+          "FilterTags": [
+            "a-series",
+            "exynos",
+            "galaxy-ai",
+            "ip68",
+            "8-256",
+            "amoled-120",
+            "25k-60k"
+          ],
+          "Series": "Galaxy A55",
+          "Chipset": "Exynos 1480",
+          "Ram": "8GB",
+          "Storage": "256 GB",
+          "Display": "6.6\" Super AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "sam-m35",
+          "Name": "Samsung Galaxy M35 5G (8GB/128GB, Moonlight Blue)",
+          "Slug": "sam-m35",
+          "BrandName": "Samsung",
+          "BrandSlug": "samsung",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 18999,
+          "OriginalPrice": 24999,
+          "DiscountPercent": 24,
+          "Rating": 4.6,
+          "ReviewCount": 740,
+          "KeySpecs": [
+            "6000mAh Battery",
+            "120Hz sAMOLED",
+            "Knox Vault",
+            "50MP OIS"
+          ],
+          "FilterTags": [
+            "m-series",
+            "exynos",
+            "8-256",
+            "amoled-120",
+            "under-25k"
+          ],
+          "Series": "Galaxy M35",
+          "Chipset": "Exynos 1380",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.6\" 120Hz sAMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        }
+      ],
+      "ThemePrimaryColor": "#1d4ed8",
+      "ThemeAccentColor": "#0284c7"
+    },
+    {
+      "BrandSlug": "vivo",
+      "BrandName": "vivo",
+      "CategoryTagline": "Co-Engineered with ZEISS • Studio Aura Light Portraits",
+      "LogoEmoji": "\uD83D\uDCF8",
+      "HeroBanner": {
+        "IsEnabled": true,
+        "BadgeText": "VIVO X ZEISS • STUDIO PORTRAIT FLAGSHIPS",
+        "Title": "vivo X200 Pro & V40 Series",
+        "TitleHighlight": "200MP ZEISS APO Telephoto & Aura Light Portrait.",
+        "Subtitle": "Capture cinematic studio bokeh with co-engineered ZEISS optics, V3+ Imaging Chip & ultra-slim 5500mAh BlueVolt batteries.",
+        "ImageUrl": "",
+        "IsUploadingSoon": true,
+        "BannerHeight": 320,
+        "ThemeBgGradient": "linear-gradient(135deg, #091532 0%, #1e40af 55%, #0284c7 100%)",
+        "TitleColor": "#ffffff",
+        "TitleHighlightColor": "#93c5fd",
+        "SubtitleColor": "#dbeafe",
+        "FilterAccentColor": "#2563eb"
+      },
+      "FilterGroups": [
+        {
+          "Title": "vivo Series Lineup",
+          "Key": "series",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "X-Series ZEISS Flagships (X200 Pro)",
+              "Value": "x-series",
+              "Count": 1
+            },
+            {
+              "Label": "V-Series Portrait Masters (V40 Pro)",
+              "Value": "v-series",
+              "Count": 2
+            },
+            {
+              "Label": "T-Series Turbo Performance",
+              "Value": "t-series",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Camera & Imaging Tech",
+          "Key": "camera",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "ZEISS Optics + Multifocal Portrait",
+              "Value": "zeiss",
+              "Count": 3
+            },
+            {
+              "Label": "Studio Aura Light Ring",
+              "Value": "aura-light",
+              "Count": 2
+            },
+            {
+              "Label": "V3+ / V2 Dedicated Imaging Chip",
+              "Value": "v-chip",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Battery & Protection",
+          "Key": "features",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "5500mAh+ BlueVolt Slim Battery",
+              "Value": "bluevolt",
+              "Count": 4
+            },
+            {
+              "Label": "IP68 / IP69 Dust & Water Proof",
+              "Value": "ip68",
+              "Count": 3
+            },
+            {
+              "Label": "80W FlashCharge Included",
+              "Value": "80w",
+              "Count": 3
+            }
+          ]
+        },
+        {
+          "Title": "Budget Tier",
+          "Key": "price",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "Under ₹25,000",
+              "Value": "under-25k",
+              "Count": 1
+            },
+            {
+              "Label": "₹25,000 – ₹50,000",
+              "Value": "25k-50k",
+              "Count": 2
+            },
+            {
+              "Label": "Above ₹50,000",
+              "Value": "above-50k",
+              "Count": 1
+            }
+          ]
+        }
+      ],
+      "Products": [
+        {
+          "Id": "vivo-x200p",
+          "Name": "vivo X200 Pro 5G (16GB/512GB, Titanium Grey • ZEISS 200MP)",
+          "Slug": "vivo-x200p",
+          "BrandName": "vivo",
+          "BrandSlug": "vivo",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 94999,
+          "OriginalPrice": 101999,
+          "DiscountPercent": 7,
+          "Rating": 4.9,
+          "ReviewCount": 260,
+          "KeySpecs": [
+            "Dimensity 9400",
+            "200MP ZEISS APO",
+            "6000mAh",
+            "V3+ Chip"
+          ],
+          "FilterTags": [
+            "x-series",
+            "zeiss",
+            "v-chip",
+            "bluevolt",
+            "ip68",
+            "80w",
+            "above-50k"
+          ],
+          "Series": "vivo X200 Pro",
+          "Chipset": "Dimensity 9400",
+          "Ram": "16GB",
+          "Storage": "512 GB",
+          "Display": "6.78\" 8T LTPO AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "vivo-v40p",
+          "Name": "vivo V40 Pro 5G (8GB/256GB, Ganges Blue • ZEISS Optics)",
+          "Slug": "vivo-v40p",
+          "BrandName": "vivo",
+          "BrandSlug": "vivo",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 48999,
+          "OriginalPrice": 54999,
+          "DiscountPercent": 11,
+          "Rating": 4.8,
+          "ReviewCount": 390,
+          "KeySpecs": [
+            "Dimensity 9200+",
+            "50MP ZEISS Trio",
+            "Aura Light",
+            "5500mAh"
+          ],
+          "FilterTags": [
+            "v-series",
+            "zeiss",
+            "aura-light",
+            "bluevolt",
+            "ip68",
+            "80w",
+            "25k-50k"
+          ],
+          "Series": "vivo V40 Pro",
+          "Chipset": "Dimensity 9200+",
+          "Ram": "8GB",
+          "Storage": "256 GB",
+          "Display": "6.78\" 120Hz 3D Curved",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "vivo-v40",
+          "Name": "vivo V40 5G (8GB/128GB, Lotus Purple)",
+          "Slug": "vivo-v40",
+          "BrandName": "vivo",
+          "BrandSlug": "vivo",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 34999,
+          "OriginalPrice": 39999,
+          "DiscountPercent": 13,
+          "Rating": 4.7,
+          "ReviewCount": 510,
+          "KeySpecs": [
+            "SD 7 Gen 3",
+            "50MP ZEISS OIS",
+            "5500mAh Slim",
+            "IP68"
+          ],
+          "FilterTags": [
+            "v-series",
+            "zeiss",
+            "aura-light",
+            "bluevolt",
+            "ip68",
+            "80w",
+            "25k-50k"
+          ],
+          "Series": "vivo V40",
+          "Chipset": "Snapdragon 7 Gen 3",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.78\" 120Hz AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "vivo-t3p",
+          "Name": "vivo T3 Pro 5G (8GB/128GB, Sandstone Orange Vegan Leather)",
+          "Slug": "vivo-t3p",
+          "BrandName": "vivo",
+          "BrandSlug": "vivo",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 22999,
+          "OriginalPrice": 26999,
+          "DiscountPercent": 15,
+          "Rating": 4.7,
+          "ReviewCount": 680,
+          "KeySpecs": [
+            "SD 7 Gen 3",
+            "5500mAh",
+            "4500-nit AMOLED",
+            "Sony IMX882"
+          ],
+          "FilterTags": [
+            "t-series",
+            "bluevolt",
+            "under-25k"
+          ],
+          "Series": "vivo T3 Pro",
+          "Chipset": "Snapdragon 7 Gen 3",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.77\" 120Hz 3D Curved",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        }
+      ],
+      "ThemePrimaryColor": "#2563eb",
+      "ThemeAccentColor": "#38bdf8"
+    },
+    {
+      "BrandSlug": "oppo",
+      "BrandName": "OPPO",
+      "CategoryTagline": "OPPO AI Portrait Experts & 360° Armour Durability",
+      "LogoEmoji": "\uD83C\uDF3F",
+      "HeroBanner": {
+        "IsEnabled": true,
+        "BadgeText": "OPPO OFFICIAL STORE • OPPO AI & ARMOUR BODY",
+        "Title": "OPPO Find X8 Pro, Reno13 & F27 Pro+",
+        "TitleHighlight": "AI Eraser 2.0, Hasselblad Zoom & IP69 Waterproof.",
+        "Subtitle": "Crafted with 360-degree Damage-Proof Armour Body, Splash Touch displays, and ultra-long life 5600mAh batteries.",
+        "ImageUrl": "",
+        "IsUploadingSoon": true,
+        "BannerHeight": 320,
+        "ThemeBgGradient": "linear-gradient(135deg, #042f2e 0%, #065f46 55%, #10b981 100%)",
+        "TitleColor": "#ffffff",
+        "TitleHighlightColor": "#6ee7b7",
+        "SubtitleColor": "#d1fae5",
+        "FilterAccentColor": "#059669"
+      },
+      "FilterGroups": [
+        {
+          "Title": "OPPO Series",
+          "Key": "series",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Find X8 Flagship Series",
+              "Value": "find",
+              "Count": 1
+            },
+            {
+              "Label": "Reno 13 / 12 Portrait Series",
+              "Value": "reno",
+              "Count": 2
+            },
+            {
+              "Label": "F27 Pro+ / K12x Armour Series",
+              "Value": "armour",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "OPPO AI & Durability",
+          "Key": "features",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "AI Eraser 2.0 + AI Studio",
+              "Value": "oppo-ai",
+              "Count": 4
+            },
+            {
+              "Label": "IP69 Waterproof + MIL-STD Armour",
+              "Value": "ip69",
+              "Count": 3
+            },
+            {
+              "Label": "Hasselblad Portrait Master",
+              "Value": "hasselblad",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Charging & Display",
+          "Key": "charging",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "80W / 45W SuperVOOC",
+              "Value": "supervooc",
+              "Count": 4
+            },
+            {
+              "Label": "120Hz Splash Touch AMOLED",
+              "Value": "amoled",
+              "Count": 4
+            }
+          ]
+        },
+        {
+          "Title": "Price Segment",
+          "Key": "price",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "Under ₹25,000",
+              "Value": "under-25k",
+              "Count": 1
+            },
+            {
+              "Label": "₹25,000 – ₹45,000",
+              "Value": "25k-45k",
+              "Count": 2
+            },
+            {
+              "Label": "Above ₹45,000",
+              "Value": "above-45k",
+              "Count": 1
+            }
+          ]
+        }
+      ],
+      "Products": [
+        {
+          "Id": "oppo-fx8p",
+          "Name": "OPPO Find X8 Pro 5G (16GB/512GB, Space Black • Dual Periscope)",
+          "Slug": "oppo-fx8p",
+          "BrandName": "OPPO",
+          "BrandSlug": "oppo",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 94999,
+          "OriginalPrice": 99999,
+          "DiscountPercent": 5,
+          "Rating": 4.9,
+          "ReviewCount": 195,
+          "KeySpecs": [
+            "Dimensity 9400",
+            "Hasselblad Quad 50MP",
+            "5910mAh",
+            "Quick Button"
+          ],
+          "FilterTags": [
+            "find",
+            "oppo-ai",
+            "ip69",
+            "hasselblad",
+            "supervooc",
+            "amoled",
+            "above-45k"
+          ],
+          "Series": "Find X8 Pro",
+          "Chipset": "Dimensity 9400",
+          "Ram": "16GB",
+          "Storage": "512 GB",
+          "Display": "6.78\" Quad-Curved LTPO",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "oppo-r13p",
+          "Name": "OPPO Reno13 Pro 5G (12GB/256GB, Graphite Grey • AI Livephoto)",
+          "Slug": "oppo-r13p",
+          "BrandName": "OPPO",
+          "BrandSlug": "oppo",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 47999,
+          "OriginalPrice": 54999,
+          "DiscountPercent": 13,
+          "Rating": 4.8,
+          "ReviewCount": 280,
+          "KeySpecs": [
+            "Dimensity 8350",
+            "3.5x Telephoto",
+            "IP69 Underwater",
+            "80W"
+          ],
+          "FilterTags": [
+            "reno",
+            "oppo-ai",
+            "ip69",
+            "supervooc",
+            "amoled",
+            "25k-45k"
+          ],
+          "Series": "Reno13 Pro",
+          "Chipset": "Dimensity 8350",
+          "Ram": "12GB",
+          "Storage": "256 GB",
+          "Display": "6.83\" 1.5K 120Hz",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "oppo-r12",
+          "Name": "OPPO Reno12 5G (8GB/256GB, Sunset Peach)",
+          "Slug": "oppo-r12",
+          "BrandName": "OPPO",
+          "BrandSlug": "oppo",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 29999,
+          "OriginalPrice": 36999,
+          "DiscountPercent": 19,
+          "Rating": 4.7,
+          "ReviewCount": 420,
+          "KeySpecs": [
+            "AI Eraser 2.0",
+            "BeaconLink Offline Call",
+            "80W SuperVOOC",
+            "50MP OIS"
+          ],
+          "FilterTags": [
+            "reno",
+            "oppo-ai",
+            "supervooc",
+            "amoled",
+            "25k-45k"
+          ],
+          "Series": "Reno12 5G",
+          "Chipset": "Dimensity 7300-Energy",
+          "Ram": "8GB",
+          "Storage": "256 GB",
+          "Display": "6.7\" 120Hz Curved AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "oppo-f27p",
+          "Name": "OPPO F27 Pro+ 5G (8GB/128GB, Midnight Navy • India's 1st IP69)",
+          "Slug": "oppo-f27p",
+          "BrandName": "OPPO",
+          "BrandSlug": "oppo",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 24999,
+          "OriginalPrice": 32999,
+          "DiscountPercent": 24,
+          "Rating": 4.6,
+          "ReviewCount": 590,
+          "KeySpecs": [
+            "IP69 Waterproof",
+            "360° Armour Body",
+            "67W SuperVOOC",
+            "Vegan Leather"
+          ],
+          "FilterTags": [
+            "armour",
+            "oppo-ai",
+            "ip69",
+            "supervooc",
+            "amoled",
+            "under-25k"
+          ],
+          "Series": "F27 Pro+",
+          "Chipset": "Dimensity 7050",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.7\" 120Hz 3D Curved",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        }
+      ],
+      "ThemePrimaryColor": "#059669",
+      "ThemeAccentColor": "#10b981"
+    },
+    {
+      "BrandSlug": "nothing",
+      "BrandName": "Nothing",
+      "CategoryTagline": "Transparent Design, Iconic Glyph Interface & Pure Nothing OS",
+      "LogoEmoji": "⚪",
+      "HeroBanner": {
+        "IsEnabled": true,
+        "BadgeText": "NOTHING OFFICIAL STORE • PURE & TRANSPARENT",
+        "Title": "Nothing Phone (2), (2a) Plus & CMF",
+        "TitleHighlight": "Bespoke Glyph Interface & Zero-Bloat Nothing OS 3.0.",
+        "Subtitle": "Designed in London with transparent rear glass, interactive Glyph LED lighting, ChatGPT OS integration & symmetrical bezels.",
+        "ImageUrl": "",
+        "IsUploadingSoon": true,
+        "BannerHeight": 320,
+        "ThemeBgGradient": "linear-gradient(135deg, #111827 0%, #1f2937 60%, #374151 100%)",
+        "TitleColor": "#ffffff",
+        "TitleHighlightColor": "#f87171",
+        "SubtitleColor": "#e5e7eb",
+        "FilterAccentColor": "#111827"
+      },
+      "FilterGroups": [
+        {
+          "Title": "Nothing & CMF Models",
+          "Key": "series",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Phone (2) Flagship",
+              "Value": "phone-2",
+              "Count": 1
+            },
+            {
+              "Label": "Phone (2a) Plus / (2a) 5G",
+              "Value": "phone-2a",
+              "Count": 2
+            },
+            {
+              "Label": "CMF Phone 1 (Modular Case)",
+              "Value": "cmf",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Signature Engineering",
+          "Key": "features",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Glyph LED Light Interface",
+              "Value": "glyph",
+              "Count": 3
+            },
+            {
+              "Label": "Nothing OS 3.0 (Zero Bloatware)",
+              "Value": "nothing-os",
+              "Count": 4
+            },
+            {
+              "Label": "Interchangeable Modular Back",
+              "Value": "modular",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Display & Camera",
+          "Key": "display",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "120Hz Flexible AMOLED",
+              "Value": "120hz",
+              "Count": 4
+            },
+            {
+              "Label": "50MP Front + Dual 50MP OIS",
+              "Value": "50mp",
+              "Count": 3
+            }
+          ]
+        },
+        {
+          "Title": "Price Range",
+          "Key": "price",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "Under ₹18,000",
+              "Value": "under-18k",
+              "Count": 1
+            },
+            {
+              "Label": "₹18,000 – ₹30,000",
+              "Value": "18k-30k",
+              "Count": 2
+            },
+            {
+              "Label": "Above ₹30,000",
+              "Value": "above-30k",
+              "Count": 1
+            }
+          ]
+        }
+      ],
+      "Products": [
+        {
+          "Id": "nth-p2",
+          "Name": "Nothing Phone (2) 5G (12GB/256GB, Dark Grey)",
+          "Slug": "nth-p2",
+          "BrandName": "Nothing",
+          "BrandSlug": "nothing",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 36999,
+          "OriginalPrice": 49999,
+          "DiscountPercent": 26,
+          "Rating": 4.8,
+          "ReviewCount": 690,
+          "KeySpecs": [
+            "SD 8+ Gen 1",
+            "LTPO 120Hz",
+            "Glyph Interface",
+            "50MP OIS"
+          ],
+          "FilterTags": [
+            "phone-2",
+            "glyph",
+            "nothing-os",
+            "120hz",
+            "50mp",
+            "above-30k"
+          ],
+          "Series": "Phone (2)",
+          "Chipset": "Snapdragon 8+ Gen 1",
+          "Ram": "12GB",
+          "Storage": "256 GB",
+          "Display": "6.7\" LTPO OLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "nth-p2ap",
+          "Name": "Nothing Phone (2a) Plus 5G (8GB/256GB, Metallic Grey)",
+          "Slug": "nth-p2ap",
+          "BrandName": "Nothing",
+          "BrandSlug": "nothing",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 26999,
+          "OriginalPrice": 29999,
+          "DiscountPercent": 10,
+          "Rating": 4.8,
+          "ReviewCount": 430,
+          "KeySpecs": [
+            "Dimensity 7350 Pro",
+            "50MP Selfie",
+            "Glyph Lights",
+            "50W Fast"
+          ],
+          "FilterTags": [
+            "phone-2a",
+            "glyph",
+            "nothing-os",
+            "120hz",
+            "50mp",
+            "18k-30k"
+          ],
+          "Series": "Phone (2a) Plus",
+          "Chipset": "Dimensity 7350 Pro",
+          "Ram": "8GB",
+          "Storage": "256 GB",
+          "Display": "6.7\" 120Hz AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "nth-p2a",
+          "Name": "Nothing Phone (2a) 5G (8GB/128GB, Milk White)",
+          "Slug": "nth-p2a",
+          "BrandName": "Nothing",
+          "BrandSlug": "nothing",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 22999,
+          "OriginalPrice": 25999,
+          "DiscountPercent": 12,
+          "Rating": 4.7,
+          "ReviewCount": 980,
+          "KeySpecs": [
+            "Dimensity 7200 Pro",
+            "5000mAh",
+            "Dual 50MP OIS",
+            "Glyph"
+          ],
+          "FilterTags": [
+            "phone-2a",
+            "glyph",
+            "nothing-os",
+            "120hz",
+            "50mp",
+            "18k-30k"
+          ],
+          "Series": "Phone (2a)",
+          "Chipset": "Dimensity 7200 Pro",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.7\" Flexible AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "nth-cmf1",
+          "Name": "CMF by Nothing Phone 1 5G (8GB/128GB, Orange • Modular)",
+          "Slug": "nth-cmf1",
+          "BrandName": "Nothing",
+          "BrandSlug": "nothing",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 15999,
+          "OriginalPrice": 19999,
+          "DiscountPercent": 20,
+          "Rating": 4.7,
+          "ReviewCount": 1120,
+          "KeySpecs": [
+            "Dimensity 7300",
+            "Custom Backplates",
+            "Super AMOLED",
+            "50MP Sony"
+          ],
+          "FilterTags": [
+            "cmf",
+            "nothing-os",
+            "modular",
+            "120hz",
+            "under-18k"
+          ],
+          "Series": "CMF Phone 1",
+          "Chipset": "Dimensity 7300 5G",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.67\" Super AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        }
+      ],
+      "ThemePrimaryColor": "#111827",
+      "ThemeAccentColor": "#dc2626"
+    },
+    {
+      "BrandSlug": "redmi",
+      "BrandName": "REDMI",
+      "CategoryTagline": "India's Most Loved Note Series • 200MP Pro+ & HyperCharge",
+      "LogoEmoji": "⚡",
+      "HeroBanner": {
+        "IsEnabled": true,
+        "BadgeText": "REDMI OFFICIAL STORE • HYPEROS POWERED",
+        "Title": "REDMI Note 14 Pro+ & 14 Series 5G",
+        "TitleHighlight": "200MP Flagship Camera, Gorilla Glass Victus 2 & 120W.",
+        "Subtitle": "Flagship IP68 durability, curved 1.5K AMOLED screens with Wet Touch control & HyperOS smooth optimization.",
+        "ImageUrl": "",
+        "IsUploadingSoon": true,
+        "BannerHeight": 320,
+        "ThemeBgGradient": "linear-gradient(135deg, #270712 0%, #881337 55%, #e11d48 100%)",
+        "TitleColor": "#ffffff",
+        "TitleHighlightColor": "#fda4af",
+        "SubtitleColor": "#ffe4e6",
+        "FilterAccentColor": "#e11d48"
+      },
+      "FilterGroups": [
+        {
+          "Title": "REDMI Lineup",
+          "Key": "series",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Note 14 Pro+ / Note 14 Pro 5G",
+              "Value": "note-pro",
+              "Count": 2
+            },
+            {
+              "Label": "Note 14 / 13 5G",
+              "Value": "note-std",
+              "Count": 1
+            },
+            {
+              "Label": "REDMI 13 / A-Series Budget",
+              "Value": "budget",
+              "Count": 1
+            }
+          ]
+        },
+        {
+          "Title": "Camera & Durability",
+          "Key": "features",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "200MP OIS / 50MP Telephoto",
+              "Value": "200mp",
+              "Count": 2
+            },
+            {
+              "Label": "IP68 + Gorilla Glass Victus 2",
+              "Value": "victus",
+              "Count": 2
+            },
+            {
+              "Label": "120W / 45W HyperCharge",
+              "Value": "hyper",
+              "Count": 3
+            }
+          ]
+        },
+        {
+          "Title": "Display & Audio Extras",
+          "Key": "display",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "1.5K 120Hz Curved AMOLED",
+              "Value": "1.5k",
+              "Count": 2
+            },
+            {
+              "Label": "IR Blaster + 3.5mm Jack",
+              "Value": "ir-jack",
+              "Count": 4
+            }
+          ]
+        },
+        {
+          "Title": "Student Budget",
+          "Key": "price",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "Under ₹15,000",
+              "Value": "under-15k",
+              "Count": 1
+            },
+            {
+              "Label": "₹15,000 – ₹25,000",
+              "Value": "15k-25k",
+              "Count": 1
+            },
+            {
+              "Label": "₹25,000 – ₹35,000",
+              "Value": "25k-35k",
+              "Count": 2
+            }
+          ]
+        }
+      ],
+      "Products": [
+        {
+          "Id": "red-n14pp",
+          "Name": "REDMI Note 14 Pro+ 5G (12GB/256GB, Spectre Blue)",
+          "Slug": "red-n14pp",
+          "BrandName": "REDMI",
+          "BrandSlug": "redmi",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 30999,
+          "OriginalPrice": 34999,
+          "DiscountPercent": 11,
+          "Rating": 4.8,
+          "ReviewCount": 490,
+          "KeySpecs": [
+            "SD 7s Gen 3",
+            "6200mAh Si-C",
+            "90W HyperCharge",
+            "IP68 + IP69"
+          ],
+          "FilterTags": [
+            "note-pro",
+            "200mp",
+            "victus",
+            "hyper",
+            "1.5k",
+            "ir-jack",
+            "25k-35k"
+          ],
+          "Series": "Note 14 Pro+",
+          "Chipset": "Snapdragon 7s Gen 3",
+          "Ram": "12GB",
+          "Storage": "256 GB",
+          "Display": "6.67\" 1.5K Curved AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "red-n14p",
+          "Name": "REDMI Note 14 Pro 5G (8GB/128GB, Ivy Green)",
+          "Slug": "red-n14p",
+          "BrandName": "REDMI",
+          "BrandSlug": "redmi",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 25999,
+          "OriginalPrice": 28999,
+          "DiscountPercent": 10,
+          "Rating": 4.7,
+          "ReviewCount": 560,
+          "KeySpecs": [
+            "Dimensity 7300-U",
+            "Victus 2 Glass",
+            "IP68",
+            "Sony LYT-600"
+          ],
+          "FilterTags": [
+            "note-pro",
+            "victus",
+            "hyper",
+            "1.5k",
+            "ir-jack",
+            "25k-35k"
+          ],
+          "Series": "Note 14 Pro",
+          "Chipset": "Dimensity 7300-Ultra",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.67\" 1.5K Curved AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "red-n14",
+          "Name": "REDMI Note 14 5G (8GB/128GB, Mystique White)",
+          "Slug": "red-n14",
+          "BrandName": "REDMI",
+          "BrandSlug": "redmi",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 18999,
+          "OriginalPrice": 21999,
+          "DiscountPercent": 14,
+          "Rating": 4.7,
+          "ReviewCount": 810,
+          "KeySpecs": [
+            "50MP Sony OIS",
+            "5110mAh",
+            "120Hz AMOLED",
+            "3.5mm Jack"
+          ],
+          "FilterTags": [
+            "note-std",
+            "hyper",
+            "ir-jack",
+            "15k-25k"
+          ],
+          "Series": "Note 14 5G",
+          "Chipset": "Dimensity 7025-Ultra",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.67\" 120Hz AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "red-13",
+          "Name": "REDMI 13 5G (6GB/128GB, Hawaiian Blue • Crystal Glass)",
+          "Slug": "red-13",
+          "BrandName": "REDMI",
+          "BrandSlug": "redmi",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 12999,
+          "OriginalPrice": 17999,
+          "DiscountPercent": 28,
+          "Rating": 4.6,
+          "ReviewCount": 1420,
+          "KeySpecs": [
+            "SD 4 Gen 2 AE",
+            "108MP Pro Camera",
+            "5030mAh",
+            "33W Included"
+          ],
+          "FilterTags": [
+            "budget",
+            "200mp",
+            "ir-jack",
+            "under-15k"
+          ],
+          "Series": "REDMI 13 5G",
+          "Chipset": "Snapdragon 4 Gen 2 AE",
+          "Ram": "6GB",
+          "Storage": "128 GB",
+          "Display": "6.79\" 120Hz Gorilla Glass",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        }
+      ],
+      "ThemePrimaryColor": "#e11d48",
+      "ThemeAccentColor": "#f43f5e"
+    },
+    {
+      "BrandSlug": "oneplus",
+      "BrandName": "OnePlus",
+      "CategoryTagline": "Never Settle • Hasselblad Camera & 100W SuperVOOC",
+      "LogoEmoji": "⚡",
+      "HeroBanner": {
+        "IsEnabled": true,
+        "BadgeText": "ONEPLUS OFFICIAL STORE • NEVER SETTLE",
+        "Title": "OnePlus 13 & Nord 5G Lineup",
+        "TitleHighlight": "Snapdragon 8 Elite & 6000mAh Glacier Battery.",
+        "Subtitle": "Equipped with Hasselblad Master Camera, 100W SuperVOOC rapid charging, Aqua Touch 2.0 & OxygenOS 15.",
+        "ImageUrl": "",
+        "IsUploadingSoon": true,
+        "BannerHeight": 320,
+        "ThemeBgGradient": "linear-gradient(135deg, #1a0606 0%, #7f1d1d 55%, #dc2626 100%)",
+        "TitleColor": "#ffffff",
+        "TitleHighlightColor": "#fca5a5",
+        "SubtitleColor": "#fee2e2",
+        "FilterAccentColor": "#dc2626"
+      },
+      "FilterGroups": [
+        {
+          "Title": "OnePlus Series",
+          "Key": "series",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "OnePlus 13 / 13R Flagship",
+              "Value": "op-13",
+              "Count": 2
+            },
+            {
+              "Label": "OnePlus 12 / 12R",
+              "Value": "op-12",
+              "Count": 1
+            },
+            {
+              "Label": "OnePlus Nord 4 / Nord CE4",
+              "Value": "op-nord",
+              "Count": 2
+            }
+          ]
+        },
+        {
+          "Title": "Snapdragon Silicon",
+          "Key": "chipset",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "Snapdragon 8 Elite",
+              "Value": "sd-elite",
+              "Count": 1
+            },
+            {
+              "Label": "Snapdragon 8 Gen 3 / Gen 2",
+              "Value": "sd-8gen",
+              "Count": 2
+            },
+            {
+              "Label": "Snapdragon 7+ Gen 3 / 7 Gen 3",
+              "Value": "sd-7gen",
+              "Count": 2
+            }
+          ]
+        },
+        {
+          "Title": "SuperVOOC & Signature Features",
+          "Key": "features",
+          "IsMoreFilter": false,
+          "Options": [
+            {
+              "Label": "100W SuperVOOC Fast Charge",
+              "Value": "100w",
+              "Count": 4
+            },
+            {
+              "Label": "Hasselblad Camera System",
+              "Value": "hasselblad",
+              "Count": 2
+            },
+            {
+              "Label": "Alert Slider + Aqua Touch",
+              "Value": "alert-slider",
+              "Count": 5
+            }
+          ]
+        },
+        {
+          "Title": "RAM & Storage",
+          "Key": "storage",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "16 GB + 512 GB",
+              "Value": "16-512",
+              "Count": 1
+            },
+            {
+              "Label": "12 GB + 256 GB",
+              "Value": "12-256",
+              "Count": 2
+            },
+            {
+              "Label": "8 GB + 128/256 GB",
+              "Value": "8-256",
+              "Count": 2
+            }
+          ]
+        },
+        {
+          "Title": "Price Bracket",
+          "Key": "price",
+          "IsMoreFilter": true,
+          "Options": [
+            {
+              "Label": "Under ₹25,000",
+              "Value": "under-25k",
+              "Count": 1
+            },
+            {
+              "Label": "₹25,000 – ₹45,000",
+              "Value": "25k-45k",
+              "Count": 2
+            },
+            {
+              "Label": "Above ₹45,000",
+              "Value": "above-45k",
+              "Count": 2
+            }
+          ]
+        }
+      ],
+      "Products": [
+        {
+          "Id": "op-13",
+          "Name": "OnePlus 13 5G (16GB/512GB, Midnight Ocean • Hasselblad)",
+          "Slug": "op-13",
+          "BrandName": "OnePlus",
+          "BrandSlug": "oneplus",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 69999,
+          "OriginalPrice": 76999,
+          "DiscountPercent": 9,
+          "Rating": 4.9,
+          "ReviewCount": 410,
+          "KeySpecs": [
+            "SD 8 Elite",
+            "6000mAh",
+            "100W Charge",
+            "IP68/IP69"
+          ],
+          "FilterTags": [
+            "op-13",
+            "sd-elite",
+            "100w",
+            "hasselblad",
+            "alert-slider",
+            "16-512",
+            "above-45k"
+          ],
+          "Series": "OnePlus 13",
+          "Chipset": "Snapdragon 8 Elite",
+          "Ram": "16GB",
+          "Storage": "512 GB",
+          "Display": "6.82\" 2K ProXDR",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "op-13r",
+          "Name": "OnePlus 13R 5G (12GB/256GB, Astral Trail)",
+          "Slug": "op-13r",
+          "BrandName": "OnePlus",
+          "BrandSlug": "oneplus",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 42999,
+          "OriginalPrice": 46999,
+          "DiscountPercent": 9,
+          "Rating": 4.8,
+          "ReviewCount": 360,
+          "KeySpecs": [
+            "SD 8 Gen 3",
+            "6000mAh",
+            "80W SuperVOOC",
+            "Flat 120Hz"
+          ],
+          "FilterTags": [
+            "op-13",
+            "sd-8gen",
+            "alert-slider",
+            "12-256",
+            "25k-45k"
+          ],
+          "Series": "OnePlus 13R",
+          "Chipset": "Snapdragon 8 Gen 3",
+          "Ram": "12GB",
+          "Storage": "256 GB",
+          "Display": "6.78\" 1.5K LTPO",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "op-12",
+          "Name": "OnePlus 12 5G (12GB/256GB, Flowy Emerald)",
+          "Slug": "op-12",
+          "BrandName": "OnePlus",
+          "BrandSlug": "oneplus",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 58999,
+          "OriginalPrice": 64999,
+          "DiscountPercent": 9,
+          "Rating": 4.9,
+          "ReviewCount": 540,
+          "KeySpecs": [
+            "SD 8 Gen 3",
+            "Hasselblad",
+            "50W Wireless",
+            "100W Wired"
+          ],
+          "FilterTags": [
+            "op-12",
+            "sd-8gen",
+            "100w",
+            "hasselblad",
+            "alert-slider",
+            "12-256",
+            "above-45k"
+          ],
+          "Series": "OnePlus 12",
+          "Chipset": "Snapdragon 8 Gen 3",
+          "Ram": "12GB",
+          "Storage": "256 GB",
+          "Display": "6.82\" QHD+ 120Hz",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "op-nord4",
+          "Name": "OnePlus Nord 4 5G (8GB/256GB, Obsidian Midnight)",
+          "Slug": "op-nord4",
+          "BrandName": "OnePlus",
+          "BrandSlug": "oneplus",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 29999,
+          "OriginalPrice": 32999,
+          "DiscountPercent": 9,
+          "Rating": 4.7,
+          "ReviewCount": 720,
+          "KeySpecs": [
+            "SD 7+ Gen 3",
+            "Metal Unibody",
+            "100W Charge",
+            "4Y OS"
+          ],
+          "FilterTags": [
+            "op-nord",
+            "sd-7gen",
+            "100w",
+            "alert-slider",
+            "8-256",
+            "25k-45k"
+          ],
+          "Series": "OnePlus Nord 4",
+          "Chipset": "Snapdragon 7+ Gen 3",
+          "Ram": "8GB",
+          "Storage": "256 GB",
+          "Display": "6.74\" 120Hz AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        },
+        {
+          "Id": "op-nordce4",
+          "Name": "OnePlus Nord CE4 5G (8GB/128GB, Celadon Marble)",
+          "Slug": "op-nordce4",
+          "BrandName": "OnePlus",
+          "BrandSlug": "oneplus",
+          "ImageUrl": "",
+          "IsUploadingSoon": true,
+          "Price": 22999,
+          "OriginalPrice": 24999,
+          "DiscountPercent": 8,
+          "Rating": 4.7,
+          "ReviewCount": 850,
+          "KeySpecs": [
+            "SD 7 Gen 3",
+            "5500mAh",
+            "100W SuperVOOC",
+            "Sony LYT-600"
+          ],
+          "FilterTags": [
+            "op-nord",
+            "sd-7gen",
+            "100w",
+            "alert-slider",
+            "8-256",
+            "under-25k"
+          ],
+          "Series": "OnePlus Nord CE4",
+          "Chipset": "Snapdragon 7 Gen 3",
+          "Ram": "8GB",
+          "Storage": "128 GB",
+          "Display": "6.7\" FHD+ AMOLED",
+          "BatteryCamera": "",
+          "Condition": "Brand New",
+          "CampusPerk": "Global 5G Dual SIM • Official Warranty • 0% No-Cost Student EMI",
+          "InStock": true
+        }
+      ],
+      "ThemePrimaryColor": "#dc2626",
+      "ThemeAccentColor": "#991b1b"
+    }
+  ],
   "DefaultViewMode": "3D"
 }
