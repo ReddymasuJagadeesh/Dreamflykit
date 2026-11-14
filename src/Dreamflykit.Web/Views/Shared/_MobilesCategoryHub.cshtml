@@ -111,7 +111,7 @@
                                     </a>
                                     <button type="button" 
                                             class="dk-mob-btn-secondary" 
-                                            onclick="open3dModal('AI+ Nova 2 5G', '#4f46e5', '6.7 120Hz AMOLED | 50MP OIS', 'From ₹11,999*')">
+                                            onclick="open3dModal('OnePlus Nord 4 5G', '#4f46e5', '6.74 120Hz AMOLED | Snapdragon 7+ Gen 3', 'From ₹27,999*')">
                                         <span style="font-size: 16px;">🌐</span> View in 3D Model
                                     </button>
                                 </div>
@@ -160,14 +160,9 @@
     ========================================================= -->
     @if (hub.BrandsSection.IsEnabled && brands.Count > 0)
     {
-        var row1Brands = brands.Take(9).ToList();
-        var row2Brands = brands.Skip(9).Take(9).ToList();
-        if (row2Brands.Count == 0 && brands.Count > 6)
-        {
-            var half = (int)Math.Ceiling(brands.Count / 2.0);
-            row1Brands = brands.Take(half).ToList();
-            row2Brands = brands.Skip(half).ToList();
-        }
+        var half = (int)Math.Ceiling(brands.Count / 2.0);
+        var row1Brands = brands.Take(half).ToList();
+        var row2Brands = brands.Skip(half).ToList();
 
         <section class="dk-mob-brands-section" id="popularBrandsSection" aria-label="Top Mobile Brands Showcase">
             
@@ -193,29 +188,35 @@
                 </div>
             </div>
 
-            <!-- Quick Filter Chips for Popular Categories -->
+            <!-- Quick Filter Chips for Popular Categories & Trust Badge (Full Width Layout) -->
             <div class="dk-mob-brand-filter-bar">
-                <button type="button" class="dk-brand-chip active" onclick="filterBrandStages('all', this)">
-                    ✨ All Popular Brands (@brands.Count)
-                </button>
-                <button type="button" class="dk-brand-chip" onclick="filterBrandStages('flagship', this)">
-                    💎 Flagship Elite (Apple, Samsung, Pixel)
-                </button>
-                <button type="button" class="dk-brand-chip" onclick="filterBrandStages('performance', this)">
-                    ⚡ 5G Gaming &amp; Speed (POCO, Nothing, OnePlus)
-                </button>
-                <button type="button" class="dk-brand-chip" onclick="filterBrandStages('camera', this)">
-                    📸 Studio Camera Kings (vivo, OPPO, realme)
-                </button>
-                <button type="button" class="dk-brand-chip" onclick="filterBrandStages('value', this)">
-                    💰 Student Value 5G (Ai+, LAVA, REDMI, Tecno)
-                </button>
+                <div class="dk-mob-filter-chips-wrap">
+                    <button type="button" class="dk-brand-chip active" onclick="filterBrandStages('all', this)">
+                        ✨ All Popular Brands (@brands.Count)
+                    </button>
+                    <button type="button" class="dk-brand-chip" onclick="filterBrandStages('flagship', this)">
+                        💎 Flagship Elite (Apple, Samsung, Pixel)
+                    </button>
+                    <button type="button" class="dk-brand-chip" onclick="filterBrandStages('performance', this)">
+                        ⚡ 5G Gaming &amp; Speed (POCO, Nothing, OnePlus)
+                    </button>
+                    <button type="button" class="dk-brand-chip" onclick="filterBrandStages('camera', this)">
+                        📸 Studio Camera Kings (vivo, OPPO, realme)
+                    </button>
+                    <button type="button" class="dk-brand-chip" onclick="filterBrandStages('value', this)">
+                        💰 Top Value 5G (motorola, REDMI)
+                    </button>
+                </div>
+                <div class="dk-mob-filter-trust-badge">
+                    <span class="dk-mob-ftb-icon">🛡️</span>
+                    <span>100% Genuine Official Units &bull; Campus Fast Delivery</span>
+                </div>
             </div>
 
             <!-- Two-Tier Panoramic Stage Display (Flipkart Dual Row Style - Big Sized Stage Podiums) -->
             <div class="dk-mob-stage-scroller" id="mobBrandsScroller">
                 
-                <!-- Tier 1 Row -->
+                <!-- Tier 1 Row (6 Columns Full Width) -->
                 <div class="dk-mob-stage-row" id="brandTierRow1">
                     @foreach (var brand in row1Brands)
                     {
@@ -254,7 +255,7 @@
                     }
                 </div>
 
-                <!-- Tier 2 Row -->
+                <!-- Tier 2 Row (6 Columns Full Width with 6th Action Card) -->
                 @if (row2Brands.Count > 0)
                 {
                     <div class="dk-mob-stage-row" id="brandTierRow2">
@@ -287,6 +288,35 @@
 
                                 <div class="dk-mob-brand-badge-plate">
                                     <span class="dk-mob-stage-brand-title">@brand.Name</span>
+                                </div>
+                            </a>
+                        }
+
+                        <!-- 6th Slot Action Card: Perfectly fills right-side space and completes the 6x2 grid -->
+                        @if (row2Brands.Count < row1Brands.Count)
+                        {
+                            <a href="@hub.BrandsSection.ViewAllUrl" 
+                               class="dk-mob-stage-card dk-mob-stage-action-card" 
+                               data-brand-category="all"
+                               title="Explore All Official Smartphone Stores &amp; 3D Visualizer">
+                                
+                                <div class="dk-mob-stage-podium-wrap dk-mob-action-podium-wrap">
+                                    <div class="dk-mob-action-content">
+                                        <div class="dk-mob-action-radar-ring">
+                                            <span class="dk-mob-act-dot"></span>
+                                            <span class="dk-mob-act-icon">⚡</span>
+                                        </div>
+                                        <span class="dk-mob-act-badge">OFFICIAL STORE</span>
+                                        <span class="dk-mob-act-title">Explore All Brands</span>
+                                        <span class="dk-mob-act-sub">3D Inspection &bull; 0% EMI</span>
+                                    </div>
+                                    <div class="dk-mob-stage-hover-pill">
+                                        <span>🌐 View All</span>
+                                    </div>
+                                </div>
+
+                                <div class="dk-mob-brand-badge-plate dk-mob-action-plate">
+                                    <span class="dk-mob-stage-brand-title">View All Brands &rarr;</span>
                                 </div>
                             </a>
                         }
@@ -1083,17 +1113,36 @@
     text-decoration: underline;
 }
 
-/* Category Filter Chips */
+/* Category Filter Chips & Trust Badge Bar */
 .dk-mob-brand-filter-bar {
     display: flex;
-    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 20px;
-    overflow-x: auto;
-    padding-bottom: 6px;
-    scrollbar-width: none;
+    flex-wrap: wrap;
 }
-.dk-mob-brand-filter-bar::-webkit-scrollbar {
-    display: none;
+.dk-mob-filter-chips-wrap {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.dk-mob-filter-trust-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #047857;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+.dk-mob-ftb-icon {
+    font-size: 13px;
 }
 .dk-brand-chip {
     background: #f1f5f9;
@@ -1119,36 +1168,19 @@
     box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
 }
 
-/* 3D Stage Scroller & Dual Rows */
+/* 3D Stage Scroller & Dual Rows (Full-Width Responsive 6-Column Grid) */
 .dk-mob-stage-scroller {
     width: 100%;
-    overflow-x: auto;
-    padding: 10px 4px 18px 4px;
-    scrollbar-width: thin;
-    scrollbar-color: #94a3b8 #f1f5f9;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-}
-.dk-mob-stage-scroller::-webkit-scrollbar {
-    height: 6px;
-}
-.dk-mob-stage-scroller::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 4px;
-}
-.dk-mob-stage-scroller::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
-}
-.dk-mob-stage-scroller::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    gap: 18px;
 }
 .dk-mob-stage-row {
-    display: flex;
-    gap: 20px;
-    min-width: max-content;
-    align-items: flex-end;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    width: 100%;
+    align-items: stretch;
 }
 
 /* Stage Card (Creative 3D Stage Floating Physics) */
@@ -1157,7 +1189,7 @@
     flex-direction: column;
     align-items: center;
     text-decoration: none;
-    width: 154px;
+    width: 100%;
     position: relative;
     cursor: pointer;
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
@@ -1171,24 +1203,26 @@
 
 /* Large Stage Podium Wrap */
 .dk-mob-stage-podium-wrap {
-    width: 154px;
-    height: 150px;
+    width: 100%;
+    max-width: 180px;
+    height: 154px;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at center 60%, rgba(241, 245, 249, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+    background: radial-gradient(circle at center 60%, rgba(241, 245, 249, 0.85) 0%, rgba(255, 255, 255, 0) 72%);
     border-radius: 16px;
-    transition: background 0.3s;
+    transition: background 0.3s ease;
 }
 .dk-mob-stage-card:hover .dk-mob-stage-podium-wrap {
-    background: radial-gradient(circle at center 60%, rgba(224, 231, 255, 0.9) 0%, rgba(255, 255, 255, 0) 75%);
+    background: radial-gradient(circle at center 60%, rgba(224, 231, 255, 0.95) 0%, rgba(255, 255, 255, 0) 75%);
 }
 
 /* Phone Image: Large, Creative Stage Cutout */
 .dk-mob-stage-phone-img {
-    width: 146px;
-    height: 142px;
+    width: 100%;
+    max-width: 150px;
+    height: 144px;
     object-fit: contain;
     filter: drop-shadow(0 10px 14px rgba(15, 23, 42, 0.16));
     transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
@@ -1196,6 +1230,100 @@
 .dk-mob-stage-card:hover .dk-mob-stage-phone-img {
     transform: scale(1.08) translateY(-4px);
     filter: drop-shadow(0 16px 22px rgba(37, 99, 235, 0.28));
+}
+
+/* 6th Slot Action Card Styles: Perfectly fills right-side space and completes the grid */
+.dk-mob-action-podium-wrap {
+    background: linear-gradient(135deg, #0b1120 0%, #1e3a8a 55%, #2563eb 100%) !important;
+    border: 1.5px solid rgba(59, 130, 246, 0.45);
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.22);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 14px 10px;
+    text-align: center;
+    box-sizing: border-box;
+}
+.dk-mob-stage-card:hover .dk-mob-action-podium-wrap {
+    background: linear-gradient(135deg, #0284c7 0%, #1d4ed8 55%, #4338ca 100%) !important;
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.38);
+}
+.dk-mob-action-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    width: 100%;
+}
+.dk-mob-action-radar-ring {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 2px;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+}
+.dk-mob-act-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #38bdf8;
+    top: 4px;
+    right: 5px;
+    box-shadow: 0 0 8px #38bdf8;
+    animation: dkActPulse 1.8s infinite;
+}
+@@keyframes dkActPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.4); }
+}
+.dk-mob-act-icon {
+    font-size: 19px;
+}
+.dk-mob-act-badge {
+    background: rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 8px;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.dk-mob-act-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.2;
+    margin-top: 1px;
+    white-space: nowrap;
+}
+.dk-mob-act-sub {
+    font-size: 10.5px;
+    color: #bfdbfe;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.dk-mob-action-plate {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    border-color: #1d4ed8 !important;
+}
+.dk-mob-action-plate .dk-mob-stage-brand-title {
+    color: #ffffff !important;
+    font-weight: 800;
+}
+.dk-mob-stage-card:hover .dk-mob-action-plate {
+    background: #0f172a !important;
+    border-color: #0f172a !important;
 }
 
 /* Hover Quick 3D Pill */
@@ -1225,13 +1353,14 @@
 
 /* Metallic Brand Badge Plate */
 .dk-mob-brand-badge-plate {
-    margin-top: 6px;
-    padding: 4px 12px;
+    margin-top: 8px;
+    padding: 5px 12px;
     border-radius: 8px;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
     text-align: center;
-    width: 85%;
+    width: 100%;
+    max-width: 160px;
     box-sizing: border-box;
     transition: all 0.25s ease;
 }
@@ -1249,6 +1378,32 @@
 }
 .dk-mob-stage-card:hover .dk-mob-stage-brand-title {
     color: #ffffff;
+}
+
+@@media (max-width: 1200px) {
+    .dk-mob-stage-row {
+        grid-template-columns: repeat(6, minmax(130px, 1fr));
+        overflow-x: auto;
+        padding-bottom: 6px;
+    }
+}
+@@media (max-width: 992px) {
+    .dk-mob-stage-row {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+    }
+}
+@@media (max-width: 600px) {
+    .dk-mob-stage-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .dk-mob-stage-podium-wrap {
+        height: 130px;
+    }
+    .dk-mob-stage-phone-img {
+        height: 115px;
+    }
 }
 
 /* ========================================================

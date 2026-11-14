@@ -17,15 +17,19 @@ namespace Dreamflykit.Tests;
 
 public class MobilesBrandTests
 {
-    private static readonly string[] Expected18Brands = new[]
+    private static readonly string[] Expected11Brands = new[]
     {
-        "apple", "motorola", "realme", "poco", "google-pixel", "hmd",
-        "boltt", "mivi", "tecno", "samsung", "vivo", "oppo",
-        "ai-plus", "nothing", "infinix", "lava", "redmi", "oneplus"
+        "apple", "motorola", "realme", "poco", "google-pixel",
+        "samsung", "vivo", "oppo", "nothing", "redmi", "oneplus"
+    };
+
+    private static readonly string[] Removed7Brands = new[]
+    {
+        "hmd", "boltt", "mivi", "tecno", "lava", "infinix", "ai-plus"
     };
 
     [Fact]
-    public void MobilesHubDto_CreateDefault_ContainsAll18PopularBrandsWithResearchedFilters()
+    public void MobilesHubDto_CreateDefault_ContainsAll11PopularBrandsWithResearchedFilters()
     {
         // Act
         var dto = MobilesHubDto.CreateDefault();
@@ -33,18 +37,19 @@ public class MobilesBrandTests
         // Assert
         Assert.NotNull(dto);
         Assert.NotNull(dto.BrandsSection);
-        Assert.Equal(18, dto.BrandsSection.Brands.Count);
+        Assert.Equal(11, dto.BrandsSection.Brands.Count);
 
         foreach (var brand in dto.BrandsSection.Brands)
         {
-            Assert.Contains(brand.Slug, Expected18Brands);
+            Assert.Contains(brand.Slug, Expected11Brands);
+            Assert.DoesNotContain(brand.Slug, Removed7Brands);
             Assert.StartsWith("/category/mobiles/", brand.ProductUrl);
         }
 
         Assert.NotNull(dto.BrandPages);
-        Assert.Equal(18, dto.BrandPages.Count);
+        Assert.Equal(11, dto.BrandPages.Count);
 
-        foreach (var expectedSlug in Expected18Brands)
+        foreach (var expectedSlug in Expected11Brands)
         {
             var page = dto.BrandPages.FirstOrDefault(p => p.BrandSlug == expectedSlug);
             Assert.NotNull(page);
@@ -68,6 +73,25 @@ public class MobilesBrandTests
                 Assert.NotEmpty(p.KeySpecs);
                 Assert.NotEmpty(p.FilterTags);
             });
+        }
+    }
+
+    [Fact]
+    public void MobilesHubJsonFile_ContainsOnly11ActiveBrands_AndZeroRemovedBrands()
+    {
+        var slnRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../.."));
+        var targetFile = Path.Combine(slnRoot, "src", "Dreamflykit.Web", "wwwroot", "data", "mobiles_hub.json");
+        if (File.Exists(targetFile))
+        {
+            var json = File.ReadAllText(targetFile);
+            var parsed = System.Text.Json.JsonSerializer.Deserialize<MobilesHubDto>(json, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            Assert.NotNull(parsed);
+            Assert.Equal(11, parsed.BrandsSection.Brands.Count);
+            foreach (var b in parsed.BrandsSection.Brands)
+            {
+                Assert.Contains(b.Slug, Expected11Brands);
+                Assert.DoesNotContain(b.Slug, Removed7Brands);
+            }
         }
     }
 
@@ -123,7 +147,78 @@ public class MobilesBrandTests
 
         // Assert
         Assert.Equal("/category/mobiles/apple", loaded.BrandsSection.Brands[0].ProductUrl);
-        Assert.Equal(18, loaded.BrandPages.Count);
+        Assert.Equal(11, loaded.BrandPages.Count);
+    }
+
+    [Fact]
+    public async Task MobilesHubService_WhenAdminRemovesBrands_DoesNotResurrectDeletedBrands()
+    {
+        // Arrange: Admin deliberately removed brands, leaving only Apple and Samsung
+        var adminSavedDto = MobilesHubDto.CreateDefault();
+        adminSavedDto.BrandsSection.Brands = new List<MobileBrandItemDto>
+        {
+            new() { Id = "brand-1", Name = "iPhone", Slug = "apple", ProductUrl = "/category/mobiles/apple", DisplayOrder = 1 },
+            new() { Id = "brand-2", Name = "Samsung", Slug = "samsung", ProductUrl = "/category/mobiles/samsung", DisplayOrder = 2 }
+        };
+        adminSavedDto.BrandPages = new List<MobileBrandPageDto>
+        {
+            new() { BrandSlug = "apple", BrandName = "iPhone" },
+            new() { BrandSlug = "samsung", BrandName = "Samsung" }
+        };
+
+        var mockRepo = new Mock<ICategoryHubRepository>();
+        mockRepo.Setup(r => r.GetPayloadAsync<MobilesHubDto>("mobiles", "mobiles_hub.json", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(adminSavedDto);
+
+        var logger = new Mock<ILogger<MobilesHubService>>();
+        var service = new MobilesHubService(mockRepo.Object, logger.Object);
+
+        // Act
+        var loaded = await service.GetConfigAsync();
+
+        // Assert: Admin's deletions must be strictly respected!
+        Assert.Equal(2, loaded.BrandsSection.Brands.Count);
+        Assert.Equal("apple", loaded.BrandsSection.Brands[0].Slug);
+        Assert.Equal("samsung", loaded.BrandsSection.Brands[1].Slug);
+
+        // BrandPages should also only contain the 2 active brands
+        Assert.Equal(2, loaded.BrandPages.Count);
+        Assert.Contains(loaded.BrandPages, p => p.BrandSlug == "apple");
+        Assert.Contains(loaded.BrandPages, p => p.BrandSlug == "samsung");
+    }
+
+    [Fact]
+    public async Task MobilesHubService_PurgesRequested7Brands_WhenFoundInLegacyStorage()
+    {
+        // Arrange: Legacy payload with old 18 brands (including HMD, boltt, MIVI, Tecno, Ai+, Infinix, LAVA)
+        var legacyDto = MobilesHubDto.CreateDefault();
+        legacyDto.BrandsSection.Brands.Add(new MobileBrandItemDto { Id = "b-hmd", Name = "HMD", Slug = "hmd" });
+        legacyDto.BrandsSection.Brands.Add(new MobileBrandItemDto { Id = "b-bolt", Name = "boltt", Slug = "boltt" });
+        legacyDto.BrandsSection.Brands.Add(new MobileBrandItemDto { Id = "b-mivi", Name = "MIVI", Slug = "mivi" });
+        legacyDto.BrandsSection.Brands.Add(new MobileBrandItemDto { Id = "b-tecno", Name = "Tecno", Slug = "tecno" });
+        legacyDto.BrandsSection.Brands.Add(new MobileBrandItemDto { Id = "b-ai", Name = "Ai+", Slug = "ai-plus" });
+        legacyDto.BrandsSection.Brands.Add(new MobileBrandItemDto { Id = "b-inf", Name = "Infinix", Slug = "infinix" });
+        legacyDto.BrandsSection.Brands.Add(new MobileBrandItemDto { Id = "b-lava", Name = "LAVA", Slug = "lava" });
+
+        var mockRepo = new Mock<ICategoryHubRepository>();
+        mockRepo.Setup(r => r.GetPayloadAsync<MobilesHubDto>("mobiles", "mobiles_hub.json", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(legacyDto);
+
+        var logger = new Mock<ILogger<MobilesHubService>>();
+        var service = new MobilesHubService(mockRepo.Object, logger.Object);
+
+        // Act
+        var loaded = await service.GetConfigAsync();
+
+        // Assert: All 7 requested brands must be purged!
+        Assert.Equal(11, loaded.BrandsSection.Brands.Count);
+        foreach (var purgedSlug in Removed7Brands)
+        {
+            Assert.DoesNotContain(loaded.BrandsSection.Brands, b => string.Equals(b.Slug, purgedSlug, StringComparison.OrdinalIgnoreCase));
+            Assert.DoesNotContain(loaded.BrandPages, p => string.Equals(p.BrandSlug, purgedSlug, StringComparison.OrdinalIgnoreCase));
+        }
+
+        mockRepo.Verify(r => r.SavePayloadAsync("mobiles", "Mobiles Hub", "mobiles_hub.json", It.IsAny<MobilesHubDto>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
