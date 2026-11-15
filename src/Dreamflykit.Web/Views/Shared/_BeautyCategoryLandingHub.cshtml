@@ -1,0 +1,523 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.BeautyHub ?? Dreamflykit.Application.BeautyHub.Models.BeautyHubDto.CreateDefault();
+    var allCategories = hub.SubCategories?.Items?.Where(i => i.IsActive).OrderBy(i => i.DisplayOrder).ToList() ?? new();
+    if (allCategories.Count == 0)
+    {
+        allCategories = Dreamflykit.Application.BeautyHub.Models.BeautyHubDto.CreateDefaultCategories();
+    }
+
+    var currentCatSlug = (Model.BeautyCategoryPage?.CategorySlug ?? Model.CurrentSubcategorySlug ?? "makeup").Trim().ToLowerInvariant();
+    var activeCategoryItem = allCategories.FirstOrDefault(c => string.Equals(c.Slug, currentCatSlug, StringComparison.OrdinalIgnoreCase))
+                             ?? allCategories.FirstOrDefault(c => string.Equals(c.Slug, "makeup", StringComparison.OrdinalIgnoreCase))
+                             ?? allCategories.FirstOrDefault();
+
+    var activeCatSlug = activeCategoryItem?.Slug ?? "makeup";
+    var activeCatName = activeCategoryItem?.Title ?? "Makeup";
+    var activeCatEmoji = activeCategoryItem?.Icon ?? "💄";
+
+    var catPage = Model.BeautyCategoryPage
+                  ?? hub.CategoryPages?.FirstOrDefault(p => string.Equals(p.CategorySlug, activeCatSlug, StringComparison.OrdinalIgnoreCase))
+                  ?? Dreamflykit.Application.BeautyHub.Models.BeautyHubDto.CreateDefaultCategoryPages().FirstOrDefault(p => string.Equals(p.CategorySlug, activeCatSlug, StringComparison.OrdinalIgnoreCase))
+                  ?? Dreamflykit.Application.BeautyHub.Models.BeautyHubDto.CreateDefaultCategoryPages().FirstOrDefault();
+
+    var hero = catPage?.HeroBanner ?? new Dreamflykit.Application.BeautyHub.Models.BeautyCategoryHeroDto();
+    var subcategories = catPage?.Subcategories ?? new List<Dreamflykit.Application.BeautyHub.Models.BeautySubcategoryCardDto>();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="dk-beauty-cat-landing-wrapper">
+
+    @if (canManage)
+    {
+        <div class="dk-study-hub-admin-bar dk-beauty-admin-bar">
+            <span class="dk-sh-admin-badge" style="background: #e11d48;">Admin Controls</span>
+            <span class="dk-sh-admin-hint">Managing Beauty Category: <strong>@activeCatName</strong>. Admin can replace hero image, subcategories, products &amp; discounts.</span>
+            <a href="/Admin/BeautyHub" class="dk-sh-admin-btn" style="background: #e11d48; border-color: #be123c;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Manage Beauty Hub
+            </a>
+        </div>
+    }
+
+    <!-- ========================================================
+         1. HERO BANNER FOR THIS BEAUTY CATEGORY (TEXT REMOVED)
+         Full-Width Visual Canvas (Image or Sleek Placeholder)
+    ========================================================= -->
+    @{
+        var heroImg = !string.IsNullOrWhiteSpace(hero.ImageUrl) ? hero.ImageUrl : "";
+        var isTestPic = string.IsNullOrWhiteSpace(heroImg) || heroImg.Contains("placeholder") || hero.IsUploadingSoon;
+        var themeColor = !string.IsNullOrWhiteSpace(hero.ThemeColor) ? hero.ThemeColor : "#be123c";
+    }
+
+    <header class="dk-beauty-full-hero" style="--bpc-theme: @themeColor;">
+        @if (!isTestPic)
+        {
+            <div class="dk-beauty-full-hero-wrap">
+                <img src="@heroImg" alt="@activeCatName Banner" class="dk-beauty-full-hero-img" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="dk-beauty-full-hero-fallback" style="display: none;">
+                    <div class="dk-beauty-full-hero-emblem">
+                        <span class="dk-b-emblem-icon">@activeCatEmoji</span>
+                    </div>
+                    <span class="dk-b-full-hero-pill">UPLOADING SOON</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="dk-beauty-full-hero-fallback">
+                <div class="dk-beauty-full-hero-emblem">
+                    <span class="dk-b-emblem-icon">@activeCatEmoji</span>
+                </div>
+                <span class="dk-b-full-hero-pill">UPLOADING SOON</span>
+            </div>
+        }
+    </header>
+
+    <!-- ========================================================
+         2. 9 BEAUTY CATEGORIES QUICK NAV PILLS STRIP
+         Explore Categories (Explore all 9 Beauty Categories)
+    ========================================================= -->
+    <div class="dk-study-cat-nav-strip dk-beauty-nav-strip">
+        <div class="dk-study-cat-nav-title">
+            <span>Explore @allCategories.Count Categories:</span>
+        </div>
+        <div class="dk-study-cat-nav-items">
+            @foreach (var c in allCategories)
+            {
+                var isSelected = string.Equals(c.Slug, activeCatSlug, StringComparison.OrdinalIgnoreCase);
+                <a href="/category/beauty/@c.Slug"
+                   class="dk-cat-nav-pill @(isSelected ? "is-selected" : "")"
+                   title="Browse @c.Title">
+                    <span class="dk-cat-pill-icon">@c.Icon</span>
+                    <span class="dk-cat-pill-name">@c.Title</span>
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- ========================================================
+         3. SUBCATEGORIES CARDS SECTION (BELOW HERO BANNER)
+         As requested by user: "when we click that catgories show hero banner and below sub categoreis"
+    ========================================================= -->
+    <section class="dk-beauty-subcats-grid-section">
+        <div class="dk-beauty-subcats-header">
+            <div>
+                <span class="dk-beauty-section-subpill">EXPLORE @activeCatName.ToUpperInvariant() SUB-COLLECTIONS</span>
+                <h2 class="dk-beauty-subcats-title">Shop @activeCatName by Subcategory</h2>
+                <p class="dk-beauty-subcats-subtitle">
+                    Select a subcategory below to explore tailored formulas, dynamic filters, and verified beauty products.
+                </p>
+            </div>
+            <div class="dk-beauty-subcats-count-chip">
+                <span>🌸 @subcategories.Count Subcategories Available</span>
+            </div>
+        </div>
+
+        <div class="dk-beauty-subcards-grid">
+            @foreach (var sub in subcategories)
+            {
+                var targetUrl = !string.IsNullOrWhiteSpace(sub.TargetUrl)
+                    ? sub.TargetUrl
+                    : $"/category/beauty/{activeCatSlug}/{sub.SubcategorySlug}";
+
+                var isSoon = sub.IsUploadingSoon || string.IsNullOrWhiteSpace(sub.ImageUrl) || sub.ImageUrl.Contains("placeholder");
+
+                <a href="@targetUrl" class="dk-beauty-subcard-item" title="Shop @sub.SubcategoryName in @activeCatName">
+                    <div class="dk-beauty-subcard-media">
+                        @if (isSoon)
+                        {
+                            <div class="dk-beauty-subcard-soon-box">
+                                <span class="dk-beauty-subcard-icon">@sub.IconEmoji</span>
+                                <span class="dk-beauty-subcard-soon-pill">Uploading Soon</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <img src="@sub.ImageUrl" alt="@sub.SubcategoryName" class="dk-beauty-subcard-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                            <div class="dk-beauty-subcard-soon-box" style="display: none;">
+                                <span class="dk-beauty-subcard-icon">@sub.IconEmoji</span>
+                                <span class="dk-beauty-subcard-soon-pill">Uploading Soon</span>
+                            </div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(sub.ItemCountText))
+                        {
+                            <span class="dk-beauty-subcard-count-badge">@sub.ItemCountText</span>
+                        }
+                    </div>
+
+                    <div class="dk-beauty-subcard-body">
+                        <h3 class="dk-beauty-subcard-name">@sub.SubcategoryName</h3>
+                        @if (!string.IsNullOrWhiteSpace(sub.Description))
+                        {
+                            <p class="dk-beauty-subcard-desc">@sub.Description</p>
+                        }
+                        @if (sub.SampleItems != null && sub.SampleItems.Count > 0)
+                        {
+                            <div class="dk-beauty-subcard-tags">
+                                @foreach (var sample in sub.SampleItems.Take(3))
+                                {
+                                    <span class="dk-beauty-sample-tag">@sample</span>
+                                }
+                            </div>
+                        }
+                        <div class="dk-beauty-subcard-cta">
+                            <span>Shop @sub.SubcategoryName</span>
+                            <span class="dk-cta-arrow">&rarr;</span>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </section>
+
+</div>
+
+<style>
+/* Beauty Category Landing Page Styling */
+.dk-beauty-cat-landing-wrapper {
+    width: 100%;
+    margin: 0 auto;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+/* Full Hero Banner - Text Removed, Clean Visual Canvas */
+.dk-beauty-full-hero {
+    width: 100%;
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    background: var(--bpc-theme, linear-gradient(135deg, #700b1a 0%, #a8122a 50%, #c2193b 100%));
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dk-beauty-full-hero-wrap {
+    width: 100%;
+    height: 100%;
+    min-height: 220px;
+    position: relative;
+}
+.dk-beauty-full-hero-img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+}
+.dk-beauty-full-hero-fallback {
+    width: 100%;
+    height: 230px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.16) 0%, rgba(0, 0, 0, 0.28) 100%);
+    position: relative;
+}
+.dk-beauty-full-hero-emblem {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 2px solid rgba(255, 255, 255, 0.38);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+.dk-b-emblem-icon {
+    font-size: 38px;
+}
+.dk-b-full-hero-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 18px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #0f172a;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    border-radius: 9999px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.dk-beauty-admin-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 18px;
+    gap: 12px;
+}
+.dk-beauty-pill-badge {
+    background: rgba(225, 29, 72, 0.1) !important;
+    color: #e11d48 !important;
+    border-color: rgba(225, 29, 72, 0.25) !important;
+}
+.dk-beauty-hero {
+    background: linear-gradient(135deg, #881337 0%, #be123c 45%, #e11d48 85%, #f43f5e 100%) !important;
+    border: 1px solid rgba(225, 29, 72, 0.3) !important;
+    box-shadow: 0 10px 30px rgba(190, 18, 60, 0.18) !important;
+    border-radius: 18px;
+    padding: 28px 32px 0 32px;
+    margin-bottom: 24px;
+    color: #ffffff;
+    overflow: hidden;
+}
+.dk-beauty-test-pic-box {
+    background: radial-gradient(circle at center, rgba(225, 29, 72, 0.25) 0%, rgba(15, 23, 42, 0.45) 70%) !important;
+    border: 1.5px dashed rgba(254, 205, 211, 0.6) !important;
+    border-radius: 16px;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #ffffff;
+}
+.dk-beauty-radar-pulse {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+.dk-b-radar-ring {
+    position: absolute;
+    border: 2px solid rgba(251, 113, 133, 0.6);
+    border-radius: 50%;
+    animation: bRadarAnim 2s infinite ease-out;
+}
+.dk-b-radar-ring.ring-1 { width: 44px; height: 44px; animation-delay: 0s; }
+.dk-b-radar-ring.ring-2 { width: 60px; height: 60px; animation-delay: 0.6s; }
+@@keyframes bRadarAnim {
+    0% { transform: scale(0.6); opacity: 1; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* Nav Strip */
+.dk-beauty-nav-strip {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 18px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+.dk-beauty-nav-strip .dk-cat-nav-pill.is-selected {
+    background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
+    color: #ffffff !important;
+    border-color: #be123c !important;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.28) !important;
+}
+
+/* Subcategories Section */
+.dk-beauty-subcats-grid-section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 24px 28px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+    margin-bottom: 24px;
+}
+.dk-beauty-subcats-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.dk-beauty-section-subpill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #e11d48;
+    background: #ffe4e6;
+    padding: 3px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+.dk-beauty-subcats-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.4px;
+}
+.dk-beauty-subcats-subtitle {
+    font-size: 13.5px;
+    color: #64748b;
+    margin: 4px 0 0 0;
+}
+.dk-beauty-subcats-count-chip {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #be123c;
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    padding: 6px 14px;
+    border-radius: 999px;
+}
+
+/* Subcategories Grid */
+.dk-beauty-subcards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+@@media (min-width: 1200px) {
+    .dk-beauty-subcards-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+.dk-beauty-subcard-item {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+}
+.dk-beauty-subcard-item:hover {
+    transform: translateY(-6px);
+    border-color: #e11d48;
+    box-shadow: 0 14px 30px rgba(225, 29, 72, 0.14);
+}
+.dk-beauty-subcard-media {
+    position: relative;
+    width: 100%;
+    height: 140px;
+    background: linear-gradient(135deg, #fff1f2 0%, #fdf2f8 50%, #f1f5f9 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.dk-beauty-subcard-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+.dk-beauty-subcard-item:hover .dk-beauty-subcard-img {
+    transform: scale(1.06);
+}
+.dk-beauty-subcard-soon-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.dk-beauty-subcard-icon {
+    font-size: 42px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
+    transition: transform 0.3s ease;
+}
+.dk-beauty-subcard-item:hover .dk-beauty-subcard-icon {
+    transform: scale(1.18);
+}
+.dk-beauty-subcard-soon-pill {
+    font-size: 10px;
+    font-weight: 800;
+    color: #e11d48;
+    background: #ffe4e6;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid #fecdd3;
+    letter-spacing: 0.3px;
+}
+.dk-beauty-subcard-count-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(15, 23, 42, 0.85);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+}
+.dk-beauty-subcard-body {
+    padding: 16px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: #ffffff;
+}
+.dk-beauty-subcard-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 6px 0;
+    line-height: 1.25;
+}
+.dk-beauty-subcard-item:hover .dk-beauty-subcard-name {
+    color: #e11d48;
+}
+.dk-beauty-subcard-desc {
+    font-size: 12.5px;
+    color: #64748b;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+    flex: 1;
+}
+.dk-beauty-subcard-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+.dk-beauty-sample-tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+.dk-beauty-subcard-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #e11d48;
+    padding-top: 10px;
+    border-top: 1px dashed #f1f5f9;
+}
+.dk-cta-arrow {
+    font-size: 15px;
+    transition: transform 0.2s ease;
+}
+.dk-beauty-subcard-item:hover .dk-cta-arrow {
+    transform: translateX(4px);
+}
+</style>
+

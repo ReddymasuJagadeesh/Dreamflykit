@@ -136,6 +136,22 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
                                string.Equals(effectiveCategory, "beauty-personal-care", StringComparison.OrdinalIgnoreCase) ||
                                string.Equals(effectiveCategory, "bpc", StringComparison.OrdinalIgnoreCase);
 
+        var beautyDirectCategorySlugs = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "makeup", "skin", "skincare", "fragrance", "fragrances", "hair", "haircare", "bath-body", "bath-and-body",
+            "gifts", "gifting", "trending-now", "trending", "new-launches", "new", "minis", "mini"
+        };
+
+        if (!isBeautyCategory && !string.IsNullOrWhiteSpace(effectiveCategory) && beautyDirectCategorySlugs.Contains(effectiveCategory))
+        {
+            if (string.IsNullOrWhiteSpace(currentSubcategorySlug))
+            {
+                currentSubcategorySlug = effectiveCategory;
+            }
+            effectiveCategory = "beauty";
+            isBeautyCategory = true;
+        }
+
         var isFoodCategory = string.Equals(effectiveCategory, "food", StringComparison.OrdinalIgnoreCase) ||
                              string.Equals(effectiveCategory, "foods", StringComparison.OrdinalIgnoreCase) ||
                              string.Equals(effectiveCategory, "groceries", StringComparison.OrdinalIgnoreCase) ||
@@ -297,6 +313,73 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
             }
         }
 
+        var effectiveSubcatItem = !string.IsNullOrWhiteSpace(ctx.SubcatItem)
+            ? ctx.SubcatItem.Trim()
+            : (!string.IsNullOrWhiteSpace(ctx.Item) ? ctx.Item.Trim() : null);
+
+        BeautyHubDto? beautyHubConfig = null;
+        BeautyCategoryPageDto? beautyCatPage = null;
+        BeautySubcategoryPageDto? beautySubPage = null;
+
+        if (isBeautyCategory)
+        {
+            beautyHubConfig = await _beautyHubService.GetConfigAsync(cancellationToken);
+
+            var beautyCategoryCandidate = !string.IsNullOrWhiteSpace(currentSubcategorySlug)
+                ? currentSubcategorySlug.Trim().ToLowerInvariant()
+                : (!string.IsNullOrWhiteSpace(ctx.QueryCategory) && !string.Equals(ctx.QueryCategory, "beauty", StringComparison.OrdinalIgnoreCase)
+                    ? ctx.QueryCategory.Trim().ToLowerInvariant()
+                    : null);
+
+            var effectiveBrandSub = !string.IsNullOrWhiteSpace(ctx.BrandSlug)
+                ? ctx.BrandSlug.Trim().ToLowerInvariant()
+                : (!string.IsNullOrWhiteSpace(ctx.QueryBrand) ? ctx.QueryBrand.Trim().ToLowerInvariant() : null);
+
+            var beautySubCandidate = !string.IsNullOrWhiteSpace(effectiveBrandSub)
+                ? effectiveBrandSub
+                : (!string.IsNullOrWhiteSpace(effectiveSubcatItem)
+                    ? effectiveSubcatItem.Trim().ToLowerInvariant()
+                    : (!string.IsNullOrWhiteSpace(ctx.QuerySubcategory) ? ctx.QuerySubcategory.Trim().ToLowerInvariant() : null));
+
+            if (!string.IsNullOrWhiteSpace(beautyCategoryCandidate))
+            {
+                // Check if beautyCategoryCandidate is one of the 11 categories (e.g. makeup, skin, hair, fragrance)
+                beautyCatPage = await _beautyHubService.GetCategoryPageAsync(beautyCategoryCandidate, cancellationToken);
+                if (beautyCatPage != null)
+                {
+                    currentSubcategoryName = beautyCatPage.CategoryName;
+                    if (!string.IsNullOrWhiteSpace(beautySubCandidate))
+                    {
+                        beautySubPage = await _beautyHubService.GetSubcategoryPageAsync(beautyCatPage.CategorySlug, beautySubCandidate, cancellationToken);
+                        if (beautySubPage != null)
+                        {
+                            currentSubcategoryName = beautySubPage.SubcategoryName;
+                        }
+                    }
+                }
+                else
+                {
+                    // Check if beautyCategoryCandidate was directly a subcategory (e.g. /category/beauty/shampoo or /category/beauty/conditioners)
+                    beautySubPage = await _beautyHubService.GetSubcategoryPageAsync(beautyCategoryCandidate, cancellationToken: cancellationToken);
+                    if (beautySubPage == null)
+                    {
+                        var allPages = beautyHubConfig.CategoryPages ?? BeautyHubDto.CreateDefaultCategoryPages();
+                        var parentCat = allPages.FirstOrDefault(p => p.Subcategories.Any(s => string.Equals(s.SubcategorySlug, beautyCategoryCandidate, StringComparison.OrdinalIgnoreCase)));
+                        if (parentCat != null)
+                        {
+                            beautySubPage = await _beautyHubService.GetSubcategoryPageAsync(parentCat.CategorySlug, beautyCategoryCandidate, cancellationToken);
+                        }
+                    }
+
+                    if (beautySubPage != null)
+                    {
+                        beautyCatPage = await _beautyHubService.GetCategoryPageAsync(beautySubPage.CategorySlug, cancellationToken);
+                        currentSubcategoryName = beautySubPage.SubcategoryName;
+                    }
+                }
+            }
+        }
+
         string? effectiveBrand = !string.IsNullOrWhiteSpace(ctx.BrandSlug)
             ? ctx.BrandSlug.Trim().ToLowerInvariant()
             : (!string.IsNullOrWhiteSpace(ctx.QueryBrand) ? ctx.QueryBrand.Trim().ToLowerInvariant() : null);
@@ -446,13 +529,9 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
             }
         }
 
-        var effectiveSubcatItem = !string.IsNullOrWhiteSpace(ctx.SubcatItem)
-            ? ctx.SubcatItem.Trim()
-            : (!string.IsNullOrWhiteSpace(ctx.Item) ? ctx.Item.Trim() : null);
-
         var effectiveSearch = !string.IsNullOrWhiteSpace(ctx.Q)
             ? ctx.Q.Trim()
-            : (!string.IsNullOrWhiteSpace(ctx.Search) ? ctx.Search.Trim() : (!string.IsNullOrWhiteSpace(effectiveSubcatItem) && !isStudyCategory && !isSportsCategory && !isGamingCategory ? effectiveSubcatItem : null));
+            : (!string.IsNullOrWhiteSpace(ctx.Search) ? ctx.Search.Trim() : (!string.IsNullOrWhiteSpace(effectiveSubcatItem) && !isStudyCategory && !isSportsCategory && !isGamingCategory && !isBeautyCategory ? effectiveSubcatItem : null));
 
         var query = new ProductListQuery
         {
@@ -808,6 +887,8 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
         else if (isSweatshirtsCategory) determinedViewMode = "sweatshirts";
         else if (isWomenClothingCategory) determinedViewMode = "women-clothing";
         else if (isMenClothingCategory) determinedViewMode = "men-clothing";
+        else if (beautySubPage != null) determinedViewMode = "beauty-sub";
+        else if (beautyCatPage != null) determinedViewMode = "beauty-cat";
         else if ((isStudyCategory || isFashionCategory || isHealthCategory || (isMobilesCategory && mobilesBrandShowcase == null) || isAppliancesCategory || isBeautyCategory || isFoodCategory || isTravelCategory || isElectronicsCategory || isStoryBooksCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug))
         {
             determinedViewMode = "hub";
@@ -833,6 +914,9 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
                            ? (!string.IsNullOrWhiteSpace(currentSubcategoryName) ? currentSubcategoryName : "Sports Hub")
                            : (isGamingCategory
                            ? (!string.IsNullOrWhiteSpace(currentSubcategoryName) ? currentSubcategoryName : "Gaming Hub")
+                           : (beautySubPage != null ? beautySubPage.SubcategoryName
+                           : (beautyCatPage != null ? beautyCatPage.CategoryName
+                           : (isBeautyCategory ? "Beauty Hub"
                            : ((isStudyCategory && !string.IsNullOrWhiteSpace(currentSubcategoryName))
                            ? currentSubcategoryName
                            : (isEthnicWearCategory ? "Ethnic Wear" :
@@ -842,7 +926,7 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
                            (isMenFootwearCategory ? "Men Footwear" : (isWomenClothingCategory ? "Women Clothing" :
                            (isMenClothingCategory ? "Men Clothing" :
                            (isLuggageCategory ? "Luggage & Bags" :
-                           (result.CurrentCategoryName ?? catDetails?.Name))))))))))),
+                           (result.CurrentCategoryName ?? catDetails?.Name)))))))))))))),
             CategoryImageUrl = catDetails?.ImageUrl,
             CategoryDescription = !string.IsNullOrWhiteSpace(catDetails?.Name)
                 ? $"Explore premium {catDetails.Name} student essentials, verified university supplies, and travel-ready gear curated for international students."
@@ -880,9 +964,9 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
             AppliancesHub = isAppliancesCategory
                         ? await _appliancesHubService.GetConfigAsync(cancellationToken)
                         : null,
-            BeautyHub = isBeautyCategory
-                        ? await _beautyHubService.GetConfigAsync(cancellationToken)
-                        : null,
+            BeautyHub = beautyHubConfig ?? (isBeautyCategory ? await _beautyHubService.GetConfigAsync(cancellationToken) : null),
+            BeautyCategoryPage = beautyCatPage,
+            BeautySubcategoryPage = beautySubPage,
             FoodHub = isFoodCategory
                         ? await _foodHubService.GetConfigAsync(cancellationToken)
                         : null,

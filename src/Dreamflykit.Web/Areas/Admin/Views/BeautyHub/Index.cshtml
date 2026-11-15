@@ -9,6 +9,13 @@
     var promo = hub.PromoBanners ?? new Dreamflykit.Application.BeautyHub.Models.BeautyPromoBannersDto();
     var promoCards = promo.Cards ?? new List<Dreamflykit.Application.BeautyHub.Models.BeautyPromoCardDto>();
     var subCats = hub.SubCategories?.Items ?? new List<Dreamflykit.Application.BeautyHub.Models.BeautySubCategoryItemDto>();
+    if (subCats.Count == 0) subCats = Dreamflykit.Application.BeautyHub.Models.BeautyHubDto.CreateDefaultCategories();
+
+    var catPages = hub.CategoryPages ?? new List<Dreamflykit.Application.BeautyHub.Models.BeautyCategoryPageDto>();
+    if (catPages.Count == 0) catPages = Dreamflykit.Application.BeautyHub.Models.BeautyHubDto.CreateDefaultCategoryPages();
+
+    var subPages = hub.SubcategoryPages ?? new List<Dreamflykit.Application.BeautyHub.Models.BeautySubcategoryPageDto>();
+    if (subPages.Count == 0) subPages = Dreamflykit.Application.BeautyHub.Models.BeautyHubDto.CreateDefaultSubcategoryPages();
     var spotlight = hub.SpotlightBanner ?? new Dreamflykit.Application.BeautyHub.Models.BeautySpotlightBannerDto();
     var giftsHer = hub.SpecialGiftsForHer ?? new Dreamflykit.Application.BeautyHub.Models.BeautyArchedSectionDto();
     var giftsHim = hub.GrandGiftsForHim ?? new Dreamflykit.Application.BeautyHub.Models.BeautyArchedSectionDto();
@@ -278,35 +285,247 @@
         </div>
     </div>
 
-    <!-- 3. QUICK CATEGORY & SHORTCUT CHIPS (17 Icons) -->
+    <!-- 3. SHOP BY CATEGORY (11 Core Categories) -->
     <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
             <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">3. Quick Category &amp; Deal Shortcuts (17 Icons Grid)</h2>
-                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Flipkart-style round/square shortcuts: Skincare, Top 50 Deals, Men's grooming, Global Luxe, Derma store, etc.</p>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">3. Shop by Category (9 Core Categories)</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Manage the 9 beauty categories from user spec: Makeup, Skin, Fragrance, Hair, Bath &amp; Body, Gifts, Trending Now, New Launches, Minis.</p>
             </div>
-            <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
-                <input type="checkbox" id="subCatsIsEnabled" @(hub.SubCategories?.IsEnabled == true ? "checked" : "") style="width: 16px; height: 16px; accent-color: #e11d48;" />
-                Enabled
-            </label>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button type="button" onclick="addNewCategoryRow()" style="background: #e11d48; color: #fff; border: none; padding: 7px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 700; cursor: pointer;">
+                    + Add Category
+                </button>
+                <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;">
+                    <input type="checkbox" id="subCatsIsEnabled" @(hub.SubCategories?.IsEnabled == true ? "checked" : "") style="width: 16px; height: 16px; accent-color: #e11d48;" />
+                    Enabled
+                </label>
+            </div>
         </div>
 
-        <div id="subCatsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+        <div id="subCatsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
             @for (int i = 0; i < subCats.Count; i++)
             {
                 var sc = subCats[i];
-                <div class="subcat-item-row" data-id="@sc.Id" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
-                    <div style="display: flex; gap: 8px; margin-bottom: 6px; align-items: center;">
-                        <input type="text" class="subcat-icon" value="@sc.Icon" style="width: 44px; text-align: center; font-size: 18px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 6px;" title="Emoji icon or symbol" />
-                        <input type="text" class="subcat-title" value="@sc.Title" style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-weight: 700;" placeholder="Title" />
+                <div class="subcat-item-row" data-id="@sc.Id" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="text" class="subcat-icon" value="@sc.Icon" style="width: 44px; text-align: center; font-size: 20px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 6px;" title="Emoji icon" />
+                        <input type="text" class="subcat-title" value="@sc.Title" style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px; font-weight: 800; color: #0f172a;" placeholder="Category Title (e.g. Makeup)" />
+                        <button type="button" onclick="this.closest('.subcat-item-row').remove()" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" title="Delete this category">
+                            Delete
+                        </button>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
-                        <input type="text" class="subcat-badge" value="@sc.Badge" placeholder="Badge (e.g. Live now)" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
-                        <input type="text" class="subcat-slug" value="@sc.Slug" placeholder="Slug" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                        <div>
+                            <label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">Slug</label>
+                            <input type="text" class="subcat-slug" value="@sc.Slug" placeholder="Slug (e.g. makeup)" style="width: 100%; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
+                        </div>
+                        <div>
+                            <label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">Badge</label>
+                            <input type="text" class="subcat-badge" value="@sc.Badge" placeholder="Badge (e.g. BESTSELLER)" style="width: 100%; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
+                        </div>
                     </div>
+
                     <div>
-                        <input type="text" class="subcat-target" value="@sc.TargetUrl" placeholder="Target URL" style="width: 100%; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
+                        <label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">Description / Items Hint</label>
+                        <input type="text" class="subcat-desc" value="@sc.Description" placeholder="Description" style="width: 100%; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" />
                     </div>
+
+                    <div>
+                        <label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">Image URL or Upload</label>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" class="subcat-img" value="@sc.ImageUrl" placeholder="/images/beauty-hub/..." style="flex: 1; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11.5px;" />
+                            <button type="button" onclick="triggerUpload(this)" style="background: #e11d48; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">
+                                Upload
+                            </button>
+                            <input type="file" style="display: none;" accept="image/*" onchange="uploadFile(this)" />
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; padding-top: 6px; border-top: 1px solid #e2e8f0;">
+                        <label style="font-size: 11.5px; font-weight: 700; color: #d97706; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+                            <input type="checkbox" class="subcat-uploading-soon" @(sc.IsUploadingSoon ? "checked" : "") style="accent-color: #d97706;" />
+                            ⏳ Uploading Soon
+                        </label>
+                        <a href="/category/beauty/@sc.Slug" target="_blank" style="font-size: 11.5px; font-weight: 800; color: #e11d48; text-decoration: none;">
+                            Live Category Page &rarr;
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 3B. CATEGORY LANDING PAGES & SUBCATEGORIES EXPLORER -->
+    <div class="dk-admin-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0;">3B. Category Landing Pages &amp; Subcategories Management</h2>
+                <p style="font-size: 13px; color: #64748b; margin: 3px 0 0 0;">Manage the Hero Banners, Subcategory Cards, and Product Catalogs for every beauty category.</p>
+            </div>
+            <div>
+                <select id="adminCatPageSelector" onchange="switchAdminCategoryView(this.value)" style="padding: 7px 14px; border: 1.5px solid #e11d48; border-radius: 8px; font-size: 13px; font-weight: 800; color: #be123c; background: #fff1f2; cursor: pointer;">
+                    @foreach (var cp in catPages)
+                    {
+                        <option value="@cp.CategorySlug">@cp.IconEmoji @cp.CategoryName Landing Page</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div id="categoryPagesManager">
+            @for (int pIdx = 0; pIdx < catPages.Count; pIdx++)
+            {
+                var cp = catPages[pIdx];
+                var cHero = cp.HeroBanner ?? new Dreamflykit.Application.BeautyHub.Models.BeautyCategoryHeroDto();
+                var cSubs = cp.Subcategories ?? new List<Dreamflykit.Application.BeautyHub.Models.BeautySubcategoryCardDto>();
+                var matchingSubPage = subPages.FirstOrDefault(sp => string.Equals(sp.CategorySlug, cp.CategorySlug, StringComparison.OrdinalIgnoreCase)) ?? subPages.FirstOrDefault();
+                var cProducts = matchingSubPage?.Products ?? new List<Dreamflykit.Application.BeautyHub.Models.BeautyProductItemDto>();
+
+                <div class="admin-cat-page-block" data-category-slug="@cp.CategorySlug" style="@(pIdx == 0 ? "display: block;" : "display: none;")">
+                    
+                    <!-- Category Hero Banner Editor -->
+                    <div style="background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #ffe4e6; padding-bottom: 8px;">
+                            <h3 style="font-size: 15px; font-weight: 800; color: #be123c; margin: 0;">
+                                @cp.IconEmoji @cp.CategoryName — Hero Banner Configuration
+                            </h3>
+                            <label style="font-size: 12px; font-weight: 700; color: #d97706; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+                                <input type="checkbox" class="catpage-hero-soon" @(cHero.IsUploadingSoon ? "checked" : "") style="accent-color: #d97706;" />
+                                ⏳ Mark Hero "Uploading Soon"
+                            </label>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 10px;">
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700; color: #881337; display: block; margin-bottom: 3px;">Badge Pill Text</label>
+                                <input type="text" class="catpage-hero-badge" value="@cHero.BadgeText" style="width: 100%; padding: 6px 10px; border: 1px solid #f43f5e; border-radius: 6px; font-size: 12.5px;" placeholder="VERIFIED BEAUTY &amp; CARE" />
+                            </div>
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700; color: #881337; display: block; margin-bottom: 3px;">Main Title</label>
+                                <input type="text" class="catpage-hero-title" value="@cHero.Title" style="width: 100%; padding: 6px 10px; border: 1px solid #f43f5e; border-radius: 6px; font-size: 12.5px; font-weight: 700;" placeholder="Title" />
+                            </div>
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700; color: #881337; display: block; margin-bottom: 3px;">Highlight Subhead</label>
+                                <input type="text" class="catpage-hero-highlight" value="@cHero.TitleHighlight" style="width: 100%; padding: 6px 10px; border: 1px solid #f43f5e; border-radius: 6px; font-size: 12.5px;" placeholder="UP TO 60% OFF • 100% AUTHENTIC" />
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; align-items: center;">
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700; color: #881337; display: block; margin-bottom: 3px;">Subtitle</label>
+                                <input type="text" class="catpage-hero-sub" value="@cHero.Subtitle" style="width: 100%; padding: 6px 10px; border: 1px solid #f43f5e; border-radius: 6px; font-size: 12.5px;" placeholder="Subtitle description" />
+                            </div>
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700; color: #881337; display: block; margin-bottom: 3px;">Hero Image URL or Upload</label>
+                                <div style="display: flex; gap: 6px;">
+                                    <input type="text" class="catpage-hero-img" value="@cHero.ImageUrl" style="flex: 1; padding: 6px 10px; border: 1px solid #f43f5e; border-radius: 6px; font-size: 12px;" />
+                                    <button type="button" onclick="triggerUpload(this)" style="background: #e11d48; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;">
+                                        Upload
+                                    </button>
+                                    <input type="file" style="display: none;" accept="image/*" onchange="uploadFile(this)" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subcategories List for this Category -->
+                    <div style="margin-bottom: 22px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h4 style="font-size: 14.5px; font-weight: 800; color: #0f172a; margin: 0;">
+                                Subcategory Cards in @cp.CategoryName (@cSubs.Count Subcategories)
+                            </h4>
+                            <button type="button" onclick="addNewSubcatCard(this)" style="background: #0284c7; color: #fff; border: none; padding: 5px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;">
+                                + Add Subcategory Card
+                            </button>
+                        </div>
+
+                        <div class="cat-subcards-admin-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px;">
+                            @foreach (var sub in cSubs)
+                            {
+                                <div class="subcard-admin-item" data-subslug="@sub.SubcategorySlug" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+                                    <div style="display: flex; gap: 6px; align-items: center;">
+                                        <input type="text" class="subcard-icon" value="@sub.IconEmoji" style="width: 36px; text-align: center; font-size: 16px; padding: 3px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                                        <input type="text" class="subcard-name" value="@sub.SubcategoryName" style="flex: 1; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12.5px; font-weight: 700;" placeholder="Subcategory Name" />
+                                        <button type="button" onclick="this.closest('.subcard-admin-item').remove()" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 3px 6px; border-radius: 4px; font-size: 10.5px; font-weight: 700; cursor: pointer;">
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                                        <input type="text" class="subcard-slug" value="@sub.SubcategorySlug" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;" placeholder="Slug (e.g. lips)" />
+                                        <input type="text" class="subcard-count" value="@sub.ItemCountText" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;" placeholder="Item count text" />
+                                    </div>
+                                    <input type="text" class="subcard-desc" value="@sub.Description" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;" placeholder="Tagline description" />
+                                    <div style="display: flex; gap: 4px;">
+                                        <input type="text" class="subcard-img" value="@sub.ImageUrl" style="flex: 1; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;" placeholder="Image URL" />
+                                        <button type="button" onclick="triggerUpload(this)" style="background: #475569; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer;">
+                                            Upload
+                                        </button>
+                                        <input type="file" style="display: none;" accept="image/*" onchange="uploadFile(this)" />
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <label style="font-size: 11px; font-weight: 700; color: #d97706; display: inline-flex; align-items: center; gap: 3px; cursor: pointer;">
+                                            <input type="checkbox" class="subcard-soon" @(sub.IsUploadingSoon ? "checked" : "") style="accent-color: #d97706;" />
+                                            ⏳ Uploading Soon
+                                        </label>
+                                        <a href="/category/beauty/@cp.CategorySlug/@sub.SubcategorySlug" target="_blank" style="font-size: 11px; font-weight: 800; color: #e11d48; text-decoration: none;">
+                                            Subcategory View &rarr;
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Products Catalog Management for this Category -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h4 style="font-size: 14.5px; font-weight: 800; color: #0f172a; margin: 0;">
+                                Products in @cp.CategoryName (@cProducts.Count Products)
+                            </h4>
+                            <button type="button" onclick="addNewProductItem(this)" style="background: #059669; color: #fff; border: none; padding: 5px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;">
+                                + Add Product
+                            </button>
+                        </div>
+
+                        <div class="cat-products-admin-list" style="display: flex; flex-direction: column; gap: 8px;">
+                            @foreach (var prod in cProducts)
+                            {
+                                <div class="admin-prod-item-row" data-id="@prod.Id" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr auto; gap: 8px; align-items: center;">
+                                    <div>
+                                        <input type="text" class="prod-name" value="@prod.Name" style="width: 100%; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 700;" placeholder="Product Name" />
+                                        <input type="text" class="prod-tag" value="@prod.SubcategoryTag" style="width: 100%; padding: 2px 6px; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 10.5px; margin-top: 2px; color: #64748b;" placeholder="Subcategory Tag (Matches left filter)" />
+                                    </div>
+                                    <div>
+                                        <input type="text" class="prod-brand" value="@prod.Brand" style="width: 100%; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" placeholder="Brand" />
+                                    </div>
+                                    <div>
+                                        <input type="number" class="prod-price" value="@prod.Price" style="width: 100%; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" placeholder="Price (₹)" />
+                                    </div>
+                                    <div>
+                                        <input type="number" class="prod-original-price" value="@prod.OriginalPrice" style="width: 100%; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" placeholder="MRP (₹)" />
+                                    </div>
+                                    <div>
+                                        <input type="text" class="prod-badge" value="@prod.Badge" style="width: 100%; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;" placeholder="Badge" />
+                                    </div>
+                                    <div style="display: flex; gap: 4px;">
+                                        <input type="text" class="prod-img" value="@prod.ImageUrl" style="flex: 1; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 10.5px;" placeholder="Image URL" />
+                                        <button type="button" onclick="triggerUpload(this)" style="background: #475569; color: #fff; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; cursor: pointer;">
+                                            Upload
+                                        </button>
+                                        <input type="file" style="display: none;" accept="image/*" onchange="uploadFile(this)" />
+                                    </div>
+                                    <div>
+                                        <button type="button" onclick="this.closest('.admin-prod-item-row').remove()" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer;">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
                 </div>
             }
         </div>
@@ -700,6 +919,92 @@ function addHeroSlide() {
     list.appendChild(row);
 }
 
+function switchAdminCategoryView(catSlug) {
+    document.querySelectorAll('#categoryPagesManager .admin-cat-page-block').forEach(b => {
+        b.style.display = b.getAttribute('data-category-slug') === catSlug ? 'block' : 'none';
+    });
+}
+
+function addNewCategoryRow() {
+    var list = document.getElementById('subCatsList');
+    var row = document.createElement('div');
+    row.className = 'subcat-item-row';
+    row.setAttribute('data-id', 'bcat-' + Date.now());
+    row.style.cssText = 'background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px;';
+    row.innerHTML = `
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="text" class="subcat-icon" value="✨" style="width: 44px; text-align: center; font-size: 20px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+            <input type="text" class="subcat-title" value="New Category" style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13.5px; font-weight: 800; color: #0f172a;" />
+            <button type="button" onclick="this.closest('.subcat-item-row').remove()" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">Delete</button>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+            <div><label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">Slug</label><input type="text" class="subcat-slug" value="new-cat" style="width: 100%; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" /></div>
+            <div><label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">Badge</label><input type="text" class="subcat-badge" value="NEW" style="width: 100%; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" /></div>
+        </div>
+        <div><label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">Description</label><input type="text" class="subcat-desc" value="Category description" style="width: 100%; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;" /></div>
+        <div><label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 2px;">Image URL</label><div style="display: flex; gap: 6px;"><input type="text" class="subcat-img" value="" placeholder="/images/..." style="flex: 1; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11.5px;" /><button type="button" onclick="triggerUpload(this)" style="background: #e11d48; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">Upload</button><input type="file" style="display: none;" accept="image/*" onchange="uploadFile(this)" /></div></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; padding-top: 6px; border-top: 1px solid #e2e8f0;">
+            <label style="font-size: 11.5px; font-weight: 700; color: #d97706; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;"><input type="checkbox" class="subcat-uploading-soon" checked style="accent-color: #d97706;" /> ⏳ Uploading Soon</label>
+        </div>
+    `;
+    list.appendChild(row);
+}
+
+function addNewSubcatCard(btn) {
+    var block = btn.closest('.admin-cat-page-block');
+    var grid = block.querySelector('.cat-subcards-admin-grid');
+    var item = document.createElement('div');
+    item.className = 'subcard-admin-item';
+    item.style.cssText = 'background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px;';
+    item.innerHTML = `
+        <div style="display: flex; gap: 6px; align-items: center;">
+            <input type="text" class="subcard-icon" value="💄" style="width: 36px; text-align: center; font-size: 16px; padding: 3px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+            <input type="text" class="subcard-name" value="New Subcategory" style="flex: 1; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12.5px; font-weight: 700;" placeholder="Subcategory Name" />
+            <button type="button" onclick="this.closest('.subcard-admin-item').remove()" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 3px 6px; border-radius: 4px; font-size: 10.5px; font-weight: 700; cursor: pointer;">&times;</button>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+            <input type="text" class="subcard-slug" value="new-subcat" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;" placeholder="Slug" />
+            <input type="text" class="subcard-count" value="10+ Products" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;" placeholder="Item count text" />
+        </div>
+        <input type="text" class="subcard-desc" value="Subcategory description" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;" />
+        <div style="display: flex; gap: 4px;">
+            <input type="text" class="subcard-img" value="" style="flex: 1; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;" placeholder="Image URL" />
+            <button type="button" onclick="triggerUpload(this)" style="background: #475569; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer;">Upload</button>
+            <input type="file" style="display: none;" accept="image/*" onchange="uploadFile(this)" />
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label style="font-size: 11px; font-weight: 700; color: #d97706; display: inline-flex; align-items: center; gap: 3px; cursor: pointer;"><input type="checkbox" class="subcard-soon" checked style="accent-color: #d97706;" /> ⏳ Uploading Soon</label>
+        </div>
+    `;
+    grid.appendChild(item);
+}
+
+function addNewProductItem(btn) {
+    var block = btn.closest('.admin-cat-page-block');
+    var list = block.querySelector('.cat-products-admin-list');
+    var row = document.createElement('div');
+    row.className = 'admin-prod-item-row';
+    row.setAttribute('data-id', 'prod-' + Date.now());
+    row.style.cssText = 'background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr auto; gap: 8px; align-items: center;';
+    row.innerHTML = `
+        <div>
+            <input type="text" class="prod-name" value="New Beauty Product" style="width: 100%; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 700;" placeholder="Product Name" />
+            <input type="text" class="prod-tag" value="General" style="width: 100%; padding: 2px 6px; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 10.5px; margin-top: 2px; color: #64748b;" placeholder="Subcategory Tag" />
+        </div>
+        <div><input type="text" class="prod-brand" value="Brand Name" style="width: 100%; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" placeholder="Brand" /></div>
+        <div><input type="number" class="prod-price" value="499" style="width: 100%; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" placeholder="Price (₹)" /></div>
+        <div><input type="number" class="prod-original-price" value="699" style="width: 100%; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11.5px;" placeholder="MRP (₹)" /></div>
+        <div><input type="text" class="prod-badge" value="Verified" style="width: 100%; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;" placeholder="Badge" /></div>
+        <div style="display: flex; gap: 4px;">
+            <input type="text" class="prod-img" value="" style="flex: 1; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 10.5px;" placeholder="Image URL" />
+            <button type="button" onclick="triggerUpload(this)" style="background: #475569; color: #fff; border: none; padding: 3px 6px; border-radius: 4px; font-size: 10px; cursor: pointer;">Upload</button>
+            <input type="file" style="display: none;" accept="image/*" onchange="uploadFile(this)" />
+        </div>
+        <div><button type="button" onclick="this.closest('.admin-prod-item-row').remove()" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer;">Delete</button></div>
+    `;
+    list.appendChild(row);
+}
+
 async function saveAllBeautyConfig() {
     const payload = {
         themeSettings: {
@@ -829,15 +1134,108 @@ async function saveAllBeautyConfig() {
         });
     });
 
-    // Collect Subcategories
-    document.querySelectorAll('#subCatsList .subcat-item-row').forEach(row => {
+    // Collect Subcategories / 11 Categories
+    payload.subCategories.items = [];
+    document.querySelectorAll('#subCatsList .subcat-item-row').forEach((row, idx) => {
+        var slug = row.querySelector('.subcat-slug')?.value || '';
         payload.subCategories.items.push({
-            id: row.getAttribute('data-id'),
+            id: row.getAttribute('data-id') || ('bcat-' + (idx + 1)),
             icon: row.querySelector('.subcat-icon')?.value || '✨',
             title: row.querySelector('.subcat-title')?.value || '',
             badge: row.querySelector('.subcat-badge')?.value || null,
-            slug: row.querySelector('.subcat-slug')?.value || '',
-            targetUrl: row.querySelector('.subcat-target')?.value || '#beauty-products-catalog'
+            slug: slug,
+            targetUrl: '/category/beauty/' + slug,
+            description: row.querySelector('.subcat-desc')?.value || '',
+            imageUrl: row.querySelector('.subcat-img')?.value || '',
+            isUploadingSoon: row.querySelector('.subcat-uploading-soon')?.checked || false,
+            displayOrder: idx + 1,
+            isActive: true
+        });
+    });
+
+    // Collect Category Pages & Subcategory Pages
+    payload.categoryPages = [];
+    payload.subcategoryPages = [];
+
+    document.querySelectorAll('#categoryPagesManager .admin-cat-page-block').forEach(catBlock => {
+        var catSlug = catBlock.getAttribute('data-category-slug');
+        var catName = catBlock.querySelector('.catpage-hero-title')?.value || catSlug;
+        var heroBadge = catBlock.querySelector('.catpage-hero-badge')?.value || 'VERIFIED BEAUTY & CARE';
+        var heroTitle = catBlock.querySelector('.catpage-hero-title')?.value || '';
+        var heroHighlight = catBlock.querySelector('.catpage-hero-highlight')?.value || '';
+        var heroSub = catBlock.querySelector('.catpage-hero-sub')?.value || '';
+        var heroImg = catBlock.querySelector('.catpage-hero-img')?.value || '';
+        var heroSoon = catBlock.querySelector('.catpage-hero-soon')?.checked || false;
+
+        var subcards = [];
+        catBlock.querySelectorAll('.subcard-admin-item').forEach((subItem, sIdx) => {
+            var sSlug = subItem.querySelector('.subcard-slug')?.value || '';
+            subcards.push({
+                subcategorySlug: sSlug,
+                subcategoryName: subItem.querySelector('.subcard-name')?.value || '',
+                iconEmoji: subItem.querySelector('.subcard-icon')?.value || '💄',
+                description: subItem.querySelector('.subcard-desc')?.value || '',
+                itemCountText: subItem.querySelector('.subcard-count')?.value || '15+ Products',
+                imageUrl: subItem.querySelector('.subcard-img')?.value || '',
+                isUploadingSoon: subItem.querySelector('.subcard-soon')?.checked || false,
+                targetUrl: '/category/beauty/' + catSlug + '/' + sSlug,
+                displayOrder: sIdx + 1,
+                isActive: true
+            });
+        });
+
+        payload.categoryPages.push({
+            categorySlug: catSlug,
+            categoryName: catName,
+            iconEmoji: '💄',
+            heroBanner: {
+                isEnabled: true,
+                badgeText: heroBadge,
+                title: heroTitle,
+                titleHighlight: heroHighlight,
+                subtitle: heroSub,
+                imageUrl: heroImg,
+                isUploadingSoon: heroSoon,
+                themeColor: '#e11d48'
+            },
+            subcategories: subcards
+        });
+
+        // Collect Products for subcategory page
+        var pageProducts = [];
+        catBlock.querySelectorAll('.admin-prod-item-row').forEach(pRow => {
+            pageProducts.push({
+                id: pRow.getAttribute('data-id') || ('prod-' + Math.random().toString(36).substr(2, 9)),
+                name: pRow.querySelector('.prod-name')?.value || '',
+                brand: pRow.querySelector('.prod-brand')?.value || '',
+                price: parseFloat(pRow.querySelector('.prod-price')?.value || '0'),
+                originalPrice: parseFloat(pRow.querySelector('.prod-original-price')?.value || '0'),
+                badge: pRow.querySelector('.prod-badge')?.value || null,
+                imageUrl: pRow.querySelector('.prod-img')?.value || '',
+                subcategoryTag: pRow.querySelector('.prod-tag')?.value || '',
+                categorySlug: catSlug,
+                subcategorySlug: subcards.length > 0 ? subcards[0].subcategorySlug : 'general',
+                isUploadingSoon: true
+            });
+        });
+
+        payload.subcategoryPages.push({
+            categorySlug: catSlug,
+            categoryName: catName,
+            subcategorySlug: subcards.length > 0 ? subcards[0].subcategorySlug : 'general',
+            subcategoryName: subcards.length > 0 ? subcards[0].subcategoryName : 'General',
+            iconEmoji: subcards.length > 0 ? subcards[0].iconEmoji : '💄',
+            heroBanner: {
+                isEnabled: true,
+                badgeText: heroBadge,
+                title: heroTitle,
+                titleHighlight: heroHighlight,
+                subtitle: heroSub,
+                imageUrl: heroImg,
+                isUploadingSoon: heroSoon
+            },
+            subcategoryItems: subcards.map(s => s.subcategoryName),
+            products: pageProducts
         });
     });
 
