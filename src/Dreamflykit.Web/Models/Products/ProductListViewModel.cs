@@ -177,6 +177,8 @@ public sealed class ProductListViewModel
     public Dreamflykit.Application.AppliancesHub.Models.AppliancesHubDto? AppliancesHub { get; init; }
 
     public Dreamflykit.Application.BeautyHub.Models.BeautyHubDto? BeautyHub { get; init; }
+    public Dreamflykit.Application.BeautyHub.Models.BeautyCategoryPageDto? BeautyCategoryPage { get; init; }
+    public Dreamflykit.Application.BeautyHub.Models.BeautySubcategoryPageDto? BeautySubcategoryPage { get; init; }
 
     public Dreamflykit.Application.FoodHub.Models.FoodHubDto? FoodHub { get; init; }
 
@@ -481,6 +483,12 @@ public sealed class ProductListViewModel
         string.Equals(CategorySlug, "beauty-personal-care", StringComparison.OrdinalIgnoreCase) ||
 
         string.Equals(CategorySlug, "bpc", StringComparison.OrdinalIgnoreCase);
+
+    public bool IsBeautyCategoryLanding =>
+        IsBeautyHub && BeautyCategoryPage != null && BeautySubcategoryPage == null;
+
+    public bool IsBeautySubcategory =>
+        IsBeautyHub && BeautySubcategoryPage != null;
 
 
 

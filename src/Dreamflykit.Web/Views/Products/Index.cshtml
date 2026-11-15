@@ -277,6 +277,24 @@
                     <span class="dk-breadcrumb-current">@(Model.CurrentSubcategoryName ?? Model.CurrentSubcategorySlug)</span>
                 }
             }
+            else if (Model.IsBeautyHub)
+            {
+                <a href="/category/beauty" class="dk-breadcrumb-item">Beauty</a>
+                @if (Model.BeautyCategoryPage != null)
+                {
+                    <span class="dk-breadcrumb-separator">›</span>
+                    if (Model.BeautySubcategoryPage != null)
+                    {
+                        <a href="/category/beauty/@Model.BeautyCategoryPage.CategorySlug" class="dk-breadcrumb-item">@Model.BeautyCategoryPage.CategoryName</a>
+                        <span class="dk-breadcrumb-separator">›</span>
+                        <span class="dk-breadcrumb-current">@Model.BeautySubcategoryPage.SubcategoryName</span>
+                    }
+                    else
+                    {
+                        <span class="dk-breadcrumb-current">@Model.BeautyCategoryPage.CategoryName</span>
+                    }
+                }
+            }
             else if (Model.IsGamingHub)
 
             {
@@ -549,7 +567,18 @@
 
         <div style="width: 100%; margin-bottom: 24px;">
 
-            <partial name="_BeautyCategoryHub" model="Model.BeautyHub" />
+            @if (Model.IsBeautySubcategory || Model.ViewMode == "beauty-sub")
+            {
+                <partial name="_BeautySubcategoryHub" model="Model" />
+            }
+            else if (Model.IsBeautyCategoryLanding || Model.ViewMode == "beauty-cat")
+            {
+                <partial name="_BeautyCategoryLandingHub" model="Model" />
+            }
+            else
+            {
+                <partial name="_BeautyCategoryHub" model="Model.BeautyHub" />
+            }
 
         </div>
 
