@@ -203,6 +203,15 @@ public sealed class ProductListViewModel
     public Dreamflykit.Application.FashionHub.Models.FashionMenClothingSubcategoryPageDto? MenClothingSubcategoryPage { get; init; }
     public bool IsMenClothingSubcategoryHub =>
         IsMenClothingSubcategory || string.Equals(ViewMode, "men-clothing-sub", StringComparison.OrdinalIgnoreCase);
+    public Dreamflykit.Application.FashionHub.Models.FashionItemHubDto? FashionItemHub { get; init; }
+    public Dreamflykit.Application.FashionHub.Models.FashionSubcategoryPageDto? FashionItemSubcategoryPage { get; init; }
+    public bool IsFashionItemCategory { get; init; }
+    public bool IsFashionItemSubcategory { get; init; }
+    public string? CurrentFashionCategorySlug { get; init; }
+    public bool IsFashionItemCategoryHub =>
+        IsFashionItemCategory || string.Equals(ViewMode, "fashion-item-hub", StringComparison.OrdinalIgnoreCase);
+    public bool IsFashionItemSubcategoryHub =>
+        IsFashionItemSubcategory || string.Equals(ViewMode, "fashion-item-sub", StringComparison.OrdinalIgnoreCase);
     public Dreamflykit.Application.SportsHub.Models.SportsHubDto? SportsHub { get; init; }
     public Dreamflykit.Application.SportsHub.Models.SportsSubcategoryPageDto? SportsSubcategoryPage { get; init; }
     public Dreamflykit.Application.MobilesHub.Models.MobileBrandShowcaseData? MobilesBrandShowcase { get; init; }
@@ -382,7 +391,7 @@ public sealed class ProductListViewModel
 
         string.Equals(CategorySlug, "fashion", StringComparison.OrdinalIgnoreCase) &&
 
-        !IsMenClothing && !IsMenClothingSubcategory && !IsWomenClothing && !IsMenFootwear && !IsHoodiesHub && !IsSweatshirtsHub && !IsEthnicWearHub && !IsThermalsHub;
+        !IsMenClothing && !IsMenClothingSubcategory && !IsWomenClothing && !IsMenFootwear && !IsMenFootwearSubcategory && !IsHoodiesHub && !IsSweatshirtsHub && !IsEthnicWearHub && !IsThermalsHub && !IsFashionItemCategory && !IsFashionItemSubcategory && !IsFashionItemCategoryHub && !IsFashionItemSubcategoryHub;
 
 
 

@@ -1,0 +1,1707 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.FashionItemHub 
+              ?? Model.FashionHub?.GetItemHubBySlug(Model.CurrentFashionCategorySlug ?? Model.CategorySlug)
+              ?? Dreamflykit.Application.FashionHub.Models.FashionItemHubDto.CreateDefaultWomenFootwear();
+
+    var currentSlug = (Model.CurrentSubcategorySlug ?? "").Trim().ToLowerInvariant().Replace('_', '-');
+    var subPage = Model.FashionItemSubcategoryPage;
+
+    if (subPage == null && hub.SubcategoryPages != null && hub.SubcategoryPages.Count > 0)
+    {
+        subPage = hub.SubcategoryPages.FirstOrDefault(p =>
+            string.Equals(p.CategorySlug, currentSlug, StringComparison.OrdinalIgnoreCase));
+    }
+
+    if (subPage == null)
+    {
+        var matchedCat = hub.CategoriesSection?.Categories?.FirstOrDefault(c =>
+            string.Equals(c.Slug, currentSlug, StringComparison.OrdinalIgnoreCase));
+
+        var catName = matchedCat?.Name ?? (!string.IsNullOrWhiteSpace(Model.CurrentSubcategoryName)
+            ? Model.CurrentSubcategoryName
+            : (string.IsNullOrWhiteSpace(currentSlug) ? hub.CategoryName : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(currentSlug.Replace("-", " "))));
+
+        subPage = new Dreamflykit.Application.FashionHub.Models.FashionSubcategoryPageDto
+        {
+            CategorySlug = currentSlug,
+            CategoryName = catName,
+            HeroBanner = new Dreamflykit.Application.FashionHub.Models.FashionSubcategoryHeroDto
+            {
+                Title = catName,
+                TitleHighlight = "STUDENT ESSENTIALS • 100% GENUINE",
+                Subtitle = $"Discover our premium curated collection of {catName} engineered for student campus life and international journeys.",
+                ThemeColor = "#ea580c",
+                IsUploadingSoon = true
+            },
+            Products = hub.TopPicksSection?.Products ?? new List<Dreamflykit.Application.FashionHub.Models.FashionProductItemDto>()
+        };
+    }
+
+    var hero = subPage.HeroBanner ?? new Dreamflykit.Application.FashionHub.Models.FashionSubcategoryHeroDto();
+    var products = (subPage.Products != null && subPage.Products.Count > 0)
+        ? subPage.Products.Where(p => p.IsActive).ToList()
+        : new List<Dreamflykit.Application.FashionHub.Models.FashionProductItemDto>();
+
+    var allCategories = hub.CategoriesSection?.Categories?.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder).ToList()
+        ?? new List<Dreamflykit.Application.FashionHub.Models.FashionCategoryItemDto>();
+
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+    var parentSlug = hub.CategorySlug.ToLowerInvariant();
+}
+
+<div class="dk-subpage-container dk-shell" id="itemSubpageRoot" data-parent-category="@parentSlug" data-subcategory="@subPage.CategorySlug">
+
+    @* Festival Ribbon (if enabled by parent hub) *@
+    @if (hub.FestivalTheme != null && hub.FestivalTheme.IsEnabled && !string.IsNullOrWhiteSpace(hub.FestivalTheme.AnnouncementText))
+    {
+        <div class="dk-sub-fest-ribbon" style="background: @(!string.IsNullOrWhiteSpace(hub.FestivalTheme.BgGradient) ? hub.FestivalTheme.BgGradient : "linear-gradient(135deg, #ea580c 0%, #c2410c 100%)");">
+            <span class="dk-sub-fest-badge">@(!string.IsNullOrWhiteSpace(hub.FestivalTheme.BadgeText) ? hub.FestivalTheme.BadgeText : "SPECIAL OFFER")</span>
+            <span class="dk-sub-fest-text">@hub.FestivalTheme.AnnouncementText</span>
+            @if (!string.IsNullOrWhiteSpace(hub.FestivalTheme.BannerHighlight))
+            {
+                <span class="dk-sub-fest-highlight">@hub.FestivalTheme.BannerHighlight</span>
+            }
+        </div>
+    }
+
+    <!-- ========================================================
+         1. HERO BANNER (FULL WIDTH)
+    ========================================================= -->
+    <section class="dk-sub-hero-card" aria-label="@subPage.CategoryName Hero Banner">
+        <div class="dk-sub-hero-glow"></div>
+        <div class="dk-sub-hero-body">
+            <div class="dk-sub-hero-content">
+                <nav class="dk-sub-breadcrumb" aria-label="Breadcrumb">
+                    <a href="/category/fashion">Fashion</a>
+                    <span class="dk-sub-sep">/</span>
+                    <a href="/category/fashion/@parentSlug">@hub.CategoryName</a>
+                    <span class="dk-sub-sep">/</span>
+                    <span class="dk-sub-crumb-active">@subPage.CategoryName</span>
+                </nav>
+
+                <div class="dk-sub-hero-badge">
+                    <span class="dk-badge-dot">●</span>
+                    <span>@(!string.IsNullOrWhiteSpace(hero.TitleHighlight) ? hero.TitleHighlight : "STUDENT ESSENTIALS • 100% GENUINE")</span>
+                </div>
+
+                <h1 class="dk-sub-hero-title">@subPage.CategoryName</h1>
+                
+                <p class="dk-sub-hero-desc">
+                    @(string.IsNullOrWhiteSpace(hero.Subtitle)
+                        ? $"Discover our premium curated collection of {subPage.CategoryName} engineered with high quality materials, durability, and travel-ready features for students."
+                        : hero.Subtitle)
+                </p>
+
+                <div class="dk-sub-hero-chips">
+                    <span class="dk-hero-chip">✓ Materials Inspected</span>
+                    <span class="dk-hero-chip">✓ Campus Delivery Ready</span>
+                    <span class="dk-hero-chip">✓ 100% Genuine Guarantee</span>
+                    @if (canManage)
+                    {
+                        <a href="/Admin/FashionHub#tab-@parentSlug" class="dk-sub-admin-link">⚙ Edit in Admin Dashboard</a>
+                    }
+                </div>
+            </div>
+
+            <div class="dk-sub-hero-media">
+                @if (!string.IsNullOrWhiteSpace(hero.ImageUrl) && !hero.ImageUrl.Contains("placeholder") && !hero.ImageUrl.Contains("uploading-soon") && !hero.IsUploadingSoon)
+                {
+                    <div class="dk-sub-banner-img-wrap">
+                        <img src="@hero.ImageUrl" alt="@subPage.CategoryName" class="dk-sub-banner-img" />
+                    </div>
+                }
+                else
+                {
+                    <div class="dk-sub-hero-uploading">
+                        <div class="dk-sub-uploading-radar">
+                            <span class="dk-sub-radar-ring"></span>
+                            <span class="dk-sub-emoji">@GetSubcategoryIcon(subPage.CategorySlug)</span>
+                        </div>
+                        <div class="dk-sub-uploading-pill">
+                            <span class="dk-mini-dot">●</span> Uploading Soon
+                        </div>
+                        <p class="dk-sub-uploading-text">Admin will upload banner image</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================
+         2. MAIN TWO-COLUMN LAYOUT (LEFT FILTERS, RIGHT PRODUCTS)
+    ========================================================= -->
+    <div class="dk-sub-layout">
+        
+        <!-- LEFT FILTER SIDEBAR -->
+        <aside class="dk-sub-sidebar" id="dkSubSidebar" aria-label="Filters">
+            <div class="dk-filter-card">
+                <div class="dk-filter-header">
+                    <h3 class="dk-filter-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                        Filters
+                    </h3>
+                    <button type="button" class="dk-btn-clear-filters" id="btnSubClearAllFilters" onclick="resetItemFilters()">
+                        Reset All
+                    </button>
+                </div>
+
+                <!-- 1. Categories Quick Switcher -->
+                <div class="dk-filter-section">
+                    <h4 class="dk-filter-heading">@hub.CategoryName Categories (@allCategories.Count)</h4>
+                    <div class="dk-cat-quick-list">
+                        @foreach (var cat in allCategories)
+                        {
+                            var isCurrent = string.Equals(cat.Slug, subPage.CategorySlug, StringComparison.OrdinalIgnoreCase);
+                            <a href="/category/fashion/@parentSlug/@cat.Slug" 
+                               class="dk-cat-quick-item @(isCurrent ? "active" : "")" 
+                               title="@cat.Name">
+                                <span class="dk-cat-quick-emoji">@GetSubcategoryIcon(cat.Slug)</span>
+                                <span class="dk-cat-quick-name">@cat.Name</span>
+                                @if (isCurrent)
+                                {
+                                    <span class="dk-cat-current-dot">●</span>
+                                }
+                            </a>
+                        }
+                    </div>
+                </div>
+
+                <!-- 2. Specialized Category-Specific Filter -->
+                @if (parentSlug.Contains("women-footwear"))
+                {
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Shoe Size (UK)</h4>
+                        <div class="dk-sizes-chips-grid">
+                            @foreach (var size in new[] { "UK 3", "UK 4", "UK 5", "UK 6", "UK 7", "UK 8" })
+                            {
+                                <label class="dk-size-chip-label">
+                                    <input type="checkbox" class="dk-size-checkbox" value="@size" onchange="filterItemProducts()" />
+                                    <span class="dk-size-chip-box">@size</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Heel Type / Height</h4>
+                        <div class="dk-radios-list">
+                            @foreach (var heel in new[] { "Flat (Zero Heel)", "Kitten Heel (1-2\")", "Block Heel (2-3\")", "Stiletto (3\"+)", "Wedges & Platforms" })
+                            {
+                                <label class="dk-radio-item">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@heel" onchange="filterItemProducts()" />
+                                    <span>@heel</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (parentSlug.Contains("watch"))
+                {
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Dial Shape</h4>
+                        <div class="dk-sizes-chips-grid">
+                            @foreach (var shape in new[] { "Round", "Square", "Rectangular", "Tonneau" })
+                            {
+                                <label class="dk-size-chip-label">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@shape" onchange="filterItemProducts()" />
+                                    <span class="dk-size-chip-box">@shape</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Strap Material</h4>
+                        <div class="dk-radios-list">
+                            @foreach (var strap in new[] { "Genuine Leather", "Stainless Steel", "Mesh Bracelet", "Silicone Sport", "Ceramic" })
+                            {
+                                <label class="dk-radio-item">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@strap" onchange="filterItemProducts()" />
+                                    <span>@strap</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Movement / Tech</h4>
+                        <div class="dk-radios-list">
+                            @foreach (var mov in new[] { "Analog Quartz", "Chronograph", "Automatic Mechanical", "Smartwatch / AMOLED" })
+                            {
+                                <label class="dk-radio-item">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@mov" onchange="filterItemProducts()" />
+                                    <span>@mov</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (parentSlug.Contains("sunglass"))
+                {
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Frame Shape</h4>
+                        <div class="dk-sizes-chips-grid">
+                            @foreach (var frame in new[] { "Aviator", "Wayfarer", "Round", "Clubmaster", "Cat Eye", "Sports Wrap" })
+                            {
+                                <label class="dk-size-chip-label">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@frame" onchange="filterItemProducts()" />
+                                    <span class="dk-size-chip-box">@frame</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Lens Feature</h4>
+                        <div class="dk-radios-list">
+                            @foreach (var lens in new[] { "Polarized Anti-Glare", "100% UV400 Protection", "Gradient Tint", "Mirrored Flash", "Blue Light Blocking" })
+                            {
+                                <label class="dk-radio-item">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@lens" onchange="filterItemProducts()" />
+                                    <span>@lens</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (parentSlug.Contains("cap") || parentSlug.Contains("hat"))
+                {
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Headwear Style</h4>
+                        <div class="dk-sizes-chips-grid">
+                            @foreach (var cap in new[] { "Baseball", "Snapback", "Beanie", "Bucket", "Visor", "Sun Hat" })
+                            {
+                                <label class="dk-size-chip-label">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@cap" onchange="filterItemProducts()" />
+                                    <span class="dk-size-chip-box">@cap</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Material / Closure</h4>
+                        <div class="dk-radios-list">
+                            @foreach (var mat in new[] { "100% Washed Cotton", "Thermal Ribbed Knit", "Breathable Mesh", "Adjustable Strapback", "Snapback Closure" })
+                            {
+                                <label class="dk-radio-item">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@mat" onchange="filterItemProducts()" />
+                                    <span>@mat</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (parentSlug.Contains("belt") || parentSlug.Contains("wallet"))
+                {
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Accessory Type</h4>
+                        <div class="dk-sizes-chips-grid">
+                            @foreach (var acc in new[] { "Formal Belts", "Casual Belts", "RFID Wallets", "Bi-Fold", "Cardholders", "Passport Wallets" })
+                            {
+                                <label class="dk-size-chip-label">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@acc" onchange="filterItemProducts()" />
+                                    <span class="dk-size-chip-box">@acc</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Leather & Hardware</h4>
+                        <div class="dk-radios-list">
+                            @foreach (var fea in new[] { "100% Full Grain Leather", "RFID-Blocking Shield", "Automatic Ratchet Click", "Reversible Dual-Tone", "Slim Front Pocket" })
+                            {
+                                <label class="dk-radio-item">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@fea" onchange="filterItemProducts()" />
+                                    <span>@fea</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (parentSlug.Contains("sock"))
+                {
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Sock Length</h4>
+                        <div class="dk-sizes-chips-grid">
+                            @foreach (var len in new[] { "No-Show", "Ankle", "Crew", "Knee High" })
+                            {
+                                <label class="dk-size-chip-label">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@len" onchange="filterItemProducts()" />
+                                    <span class="dk-size-chip-box">@len</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Fabric & Features</h4>
+                        <div class="dk-radios-list">
+                            @foreach (var fab in new[] { "Anti-Odor Bamboo", "Combed Cotton", "Thermal Merino Wool", "Graduated Compression", "Multi-Pack Value" })
+                            {
+                                <label class="dk-radio-item">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@fab" onchange="filterItemProducts()" />
+                                    <span>@fab</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (parentSlug.Contains("accessor"))
+                {
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Accessory Category</h4>
+                        <div class="dk-sizes-chips-grid">
+                            @foreach (var itm in new[] { "Bags", "Ties", "Cufflinks", "Scarves", "Keychains", "Umbrellas" })
+                            {
+                                <label class="dk-size-chip-label">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@itm" onchange="filterItemProducts()" />
+                                    <span class="dk-size-chip-box">@itm</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                    <div class="dk-filter-section">
+                        <h4 class="dk-filter-heading">Material & Use</h4>
+                        <div class="dk-radios-list">
+                            @foreach (var use in new[] { "Water-Resistant Fabric", "100% Silk / Jacquard", "Stainless Steel", "Cashmere Touch", "Windproof Storm Tech" })
+                            {
+                                <label class="dk-radio-item">
+                                    <input type="checkbox" class="dk-attr-checkbox" value="@use" onchange="filterItemProducts()" />
+                                    <span>@use</span>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- 3. Color Filter -->
+                <div class="dk-filter-section">
+                    <h4 class="dk-filter-heading">Color</h4>
+                    <div class="dk-colors-grid">
+                        @foreach (var (cName, cHex) in new[] { 
+                            ("Black", "#0f172a"), ("White", "#ffffff"), ("Brown", "#78350f"), 
+                            ("Navy", "#1e3a8a"), ("Grey", "#64748b"), ("Tan", "#d97706"), 
+                            ("Beige", "#fef3c7"), ("Red", "#dc2626"), ("Blue", "#2563eb"), 
+                            ("Gold", "#ca8a04"), ("Silver", "#94a3b8"), ("Olive", "#4d7c0f"), ("Pink", "#f472b6") })
+                        {
+                            <label class="dk-color-swatch-item" title="@cName">
+                                <input type="checkbox" class="dk-color-checkbox" value="@cName" onchange="filterItemProducts()" />
+                                <span class="dk-color-circle" style="background-color: @cHex; @(cName == "White" ? "border: 1.5px solid #cbd5e1;" : "")"></span>
+                                <span class="dk-color-name">@cName</span>
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                <!-- 4. Price Range Filter -->
+                <div class="dk-filter-section">
+                    <h4 class="dk-filter-heading">Price Range</h4>
+                    <div class="dk-radios-list">
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemPriceRange" value="all" checked onchange="filterItemProducts()" />
+                            <span>All Prices</span>
+                        </label>
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemPriceRange" value="0-499" onchange="filterItemProducts()" />
+                            <span>Under ₹499</span>
+                        </label>
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemPriceRange" value="500-999" onchange="filterItemProducts()" />
+                            <span>₹500 - ₹999</span>
+                        </label>
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemPriceRange" value="1000-1999" onchange="filterItemProducts()" />
+                            <span>₹1,000 - ₹1,999</span>
+                        </label>
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemPriceRange" value="2000-3499" onchange="filterItemProducts()" />
+                            <span>₹2,000 - ₹3,499</span>
+                        </label>
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemPriceRange" value="3500-99999" onchange="filterItemProducts()" />
+                            <span>₹3,500 &amp; Above</span>
+                        </label>
+                    </div>
+                    <div class="dk-price-custom-row">
+                        <input type="number" id="itemMinPrice" placeholder="Min ₹" class="dk-price-input" onchange="filterItemProducts()" />
+                        <span class="dk-price-sep">-</span>
+                        <input type="number" id="itemMaxPrice" placeholder="Max ₹" class="dk-price-input" onchange="filterItemProducts()" />
+                        <button type="button" class="dk-btn-price-go" onclick="filterItemProducts()">Go</button>
+                    </div>
+                </div>
+
+                <!-- 5. Discount Filter -->
+                <div class="dk-filter-section">
+                    <h4 class="dk-filter-heading">Discount</h4>
+                    <div class="dk-radios-list">
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemDiscount" value="0" checked onchange="filterItemProducts()" />
+                            <span>All Discounts</span>
+                        </label>
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemDiscount" value="10" onchange="filterItemProducts()" />
+                            <span>10% and above</span>
+                        </label>
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemDiscount" value="20" onchange="filterItemProducts()" />
+                            <span>20% and above</span>
+                        </label>
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemDiscount" value="30" onchange="filterItemProducts()" />
+                            <span>30% and above</span>
+                        </label>
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemDiscount" value="50" onchange="filterItemProducts()" />
+                            <span>50% and above</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 6. Customer Rating -->
+                <div class="dk-filter-section">
+                    <h4 class="dk-filter-heading">Customer Rating</h4>
+                    <div class="dk-radios-list">
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemRating" value="0" checked onchange="filterItemProducts()" />
+                            <span>All Ratings</span>
+                        </label>
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemRating" value="4.5" onchange="filterItemProducts()" />
+                            <span>★ 4.5 &amp; above</span>
+                        </label>
+                        <label class="dk-radio-item">
+                            <input type="radio" name="itemRating" value="4.0" onchange="filterItemProducts()" />
+                            <span>★ 4.0 &amp; above</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 7. Availability -->
+                <div class="dk-filter-section" style="border-bottom: none;">
+                    <label class="dk-switch-row">
+                        <span class="dk-switch-text">In Stock Only</span>
+                        <input type="checkbox" id="itemInStockOnly" checked onchange="filterItemProducts()" />
+                        <span class="dk-slider-toggle"></span>
+                    </label>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- RIGHT PRODUCTS CATALOG GRID -->
+        <main class="dk-sub-main" id="dkSubMain">
+            <!-- Top Toolbar -->
+            <div class="dk-sub-toolbar">
+                <div class="dk-toolbar-left">
+                    <span class="dk-results-count" id="itemResultsCount">
+                        Showing @products.Count products in <strong>@subPage.CategoryName</strong>
+                    </span>
+                    <div class="dk-active-chips" id="itemActiveChips"></div>
+                </div>
+
+                <div class="dk-toolbar-right">
+                    <div class="dk-sort-wrap">
+                        <label for="itemSortSelect" class="dk-sort-label">Sort By:</label>
+                        <select id="itemSortSelect" class="dk-sort-select" onchange="filterItemProducts()">
+                            <option value="relevance">Relevance</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="rating">Customer Rating</option>
+                            <option value="discount">Highest Discount</option>
+                            <option value="newest">Newest First</option>
+                        </select>
+                    </div>
+
+                    <div class="dk-view-toggle">
+                        <button type="button" class="dk-view-btn active" id="btnViewGrid" title="Grid View" onclick="setItemLayout('grid', this)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                            </svg>
+                        </button>
+                        <button type="button" class="dk-view-btn" id="btnViewList" title="List View" onclick="setItemLayout('list', this)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="3" y="4" width="18" height="3"></rect>
+                                <rect x="3" y="10" width="18" height="3"></rect>
+                                <rect x="3" y="16" width="18" height="3"></rect>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="dk-sub-products-grid" id="itemProductsGrid">
+                @if (products.Count > 0)
+                {
+                    foreach (var prod in products)
+                    {
+                        var discountPct = 0;
+                        if (prod.OriginalPrice.HasValue && prod.OriginalPrice.Value > prod.Price)
+                        {
+                            discountPct = (int)Math.Round((1m - (prod.Price / prod.OriginalPrice.Value)) * 100m);
+                        }
+
+                        var sizesCsv = prod.Sizes != null ? string.Join(",", prod.Sizes) : "";
+                        var colorsCsv = prod.Colors != null ? string.Join(",", prod.Colors) : "";
+                        var prodUrl = !string.IsNullOrWhiteSpace(prod.ProductUrl) ? prod.ProductUrl : $"/category/fashion/{parentSlug}/{subPage.CategorySlug}";
+
+                        <div class="dk-sub-prod-card" 
+                             data-id="@prod.Id"
+                             data-name="@prod.Name"
+                             data-price="@prod.Price"
+                             data-original-price="@(prod.OriginalPrice ?? prod.Price)"
+                             data-discount="@discountPct"
+                             data-rating="@prod.Rating"
+                             data-reviews="@prod.ReviewsCount"
+                             data-sizes="@sizesCsv"
+                             data-colors="@colorsCsv"
+                             data-instock="@(prod.InStock ? "true" : "false")"
+                             data-category="@prod.CategorySlug">
+
+                            <!-- Image Container -->
+                            <div class="dk-sub-prod-img-box">
+                                <button type="button" class="dk-sub-wish-btn" title="Add to Wishlist" onclick="toggleSubWishlist(this, event)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                    </svg>
+                                </button>
+
+                                @if (!string.IsNullOrWhiteSpace(prod.Badge))
+                                {
+                                    <span class="dk-sub-badge">@prod.Badge</span>
+                                }
+                                @if (discountPct > 0)
+                                {
+                                    <span class="dk-sub-discount-tag">@discountPct% OFF</span>
+                                }
+
+                                @if (prod.IsUploadingSoon || string.IsNullOrWhiteSpace(prod.ImageUrl) || prod.ImageUrl.Contains("placeholder") || prod.ImageUrl.Contains("uploading-soon"))
+                                {
+                                    <div class="dk-sub-prod-placeholder">
+                                        <span class="dk-sub-prod-radar"></span>
+                                        <span class="dk-sub-prod-placeholder-emoji">@GetSubcategoryIcon(subPage.CategorySlug)</span>
+                                        <span class="dk-sub-prod-soon-tag">Uploading Soon</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <img src="@prod.ImageUrl" 
+                                         alt="@prod.Name" 
+                                         loading="lazy" 
+                                         class="dk-sub-prod-img" 
+                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                    <div class="dk-sub-prod-placeholder" style="display: none;">
+                                        <span class="dk-sub-prod-radar"></span>
+                                        <span class="dk-sub-prod-placeholder-emoji">@GetSubcategoryIcon(subPage.CategorySlug)</span>
+                                        <span class="dk-sub-prod-soon-tag">Uploading Soon</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="dk-sub-prod-body">
+                                <a href="@prodUrl" class="dk-sub-prod-title" title="@prod.Name">
+                                    @prod.Name
+                                </a>
+
+                                <div class="dk-sub-prod-meta">
+                                    <div class="dk-sub-prod-rating">
+                                        <span class="dk-star">★</span>
+                                        <span class="dk-rating-num">@prod.Rating.ToString("0.0")</span>
+                                        <span class="dk-reviews-num">(@prod.ReviewsCount)</span>
+                                    </div>
+                                    <span class="dk-stock-indicator in-stock">● In Stock</span>
+                                </div>
+
+                                <div class="dk-sub-prod-pricing">
+                                    <span class="dk-sub-current-price">₹@prod.Price.ToString("N0")</span>
+                                    @if (prod.OriginalPrice.HasValue && prod.OriginalPrice.Value > prod.Price)
+                                    {
+                                        <span class="dk-sub-mrp">₹@prod.OriginalPrice.Value.ToString("N0")</span>
+                                        <span class="dk-sub-save-tag">Save ₹@((prod.OriginalPrice.Value - prod.Price).ToString("N0"))</span>
+                                    }
+                                </div>
+
+                                @if (prod.Sizes != null && prod.Sizes.Count > 0)
+                                {
+                                    <div class="dk-sub-prod-sizes">
+                                        @foreach (var sz in prod.Sizes.Take(4))
+                                        {
+                                            <span class="dk-sub-size-chip">@sz</span>
+                                        }
+                                        @if (prod.Sizes.Count > 4)
+                                        {
+                                            <span class="dk-sub-size-chip">+@(prod.Sizes.Count - 4)</span>
+                                        }
+                                    </div>
+                                }
+
+                                @if (prod.Colors != null && prod.Colors.Count > 0)
+                                {
+                                    <div class="dk-sub-prod-colors">
+                                        @foreach (var c in prod.Colors.Take(4))
+                                        {
+                                            <span class="dk-sub-color-pill" title="@c">@c</span>
+                                        }
+                                    </div>
+                                }
+
+                                <div class="dk-sub-prod-actions">
+                                    <button type="button" class="dk-sub-add-cart-btn" onclick="quickAddItemToCart('@prod.Id', '@prod.Name', @prod.Price, this)">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="9" cy="21" r="1"></circle>
+                                            <circle cx="20" cy="21" r="1"></circle>
+                                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                        </svg>
+                                        Add to Cart
+                                    </button>
+                                    <a href="@prodUrl" class="dk-sub-details-btn" title="View details">
+                                        View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <!-- Empty State (Shown via JS when filters match 0 products) -->
+            <div class="dk-sub-empty-state" id="itemEmptyState" style="display: none;">
+                <span class="dk-empty-icon">🔍</span>
+                <h3 class="dk-empty-title">No products match your selected filters</h3>
+                <p class="dk-empty-sub">Try expanding your price range, clearing size or color filters, or resetting all filters.</p>
+                <button type="button" class="dk-btn-reset-filters-large" onclick="resetItemFilters()">
+                    Reset All Filters
+                </button>
+            </div>
+        </main>
+
+    </div>
+</div>
+
+@* Subcategory Styling *@
+<style>
+.dk-subpage-container {
+    width: 100%;
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 12px 16px 40px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+/* Festival Announcement Ribbon */
+.dk-sub-fest-ribbon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+.dk-sub-fest-badge {
+    background: rgba(255, 255, 255, 0.22);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+.dk-sub-fest-text { flex: 1; text-align: center; }
+.dk-sub-fest-highlight {
+    background: #ffffff;
+    color: #ea580c;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+/* Hero Banner */
+.dk-sub-hero-card {
+    position: relative;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    padding: 30px 36px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+.dk-sub-hero-glow {
+    position: absolute;
+    top: -50px;
+    right: 15%;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(234, 88, 12, 0.12) 0%, rgba(255, 255, 255, 0) 70%);
+    pointer-events: none;
+}
+.dk-sub-hero-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 36px;
+    position: relative;
+    z-index: 1;
+}
+.dk-sub-hero-content { flex: 1; max-width: 680px; }
+.dk-sub-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: #64748b;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+.dk-sub-breadcrumb a { color: #ea580c; text-decoration: none; }
+.dk-sub-breadcrumb a:hover { text-decoration: underline; }
+.dk-sub-sep { color: #94a3b8; }
+.dk-sub-crumb-active { color: #0f172a; font-weight: 800; }
+.dk-sub-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+}
+.dk-badge-dot { font-size: 0.65rem; color: #ea580c; }
+.dk-sub-hero-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.15;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.5px;
+}
+.dk-sub-hero-desc {
+    font-size: 0.95rem;
+    color: #334155;
+    line-height: 1.55;
+    margin: 0 0 18px 0;
+}
+.dk-sub-hero-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+.dk-hero-chip {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #1e293b;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+.dk-sub-admin-link {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #0284c7;
+    text-decoration: none;
+    margin-left: 6px;
+}
+.dk-sub-admin-link:hover { text-decoration: underline; }
+
+/* Sub Hero Media & Uploading Soon */
+.dk-sub-hero-media {
+    flex: 0 0 280px;
+    display: flex;
+    justify-content: center;
+}
+.dk-sub-hero-uploading {
+    width: 240px;
+    background: linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 2px dashed #cbd5e1;
+    border-radius: 18px;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.dk-sub-uploading-radar {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+.dk-sub-radar-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px solid #ea580c;
+    opacity: 0.6;
+    animation: subRadarWave 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@@keyframes subRadarWave {
+    0% { transform: scale(0.9); opacity: 0.8; }
+    80%, 100% { transform: scale(1.4); opacity: 0; }
+}
+.dk-sub-emoji { font-size: 2.2rem; }
+.dk-sub-uploading-pill {
+    background: #ea580c;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+.dk-mini-dot { font-size: 0.6rem; margin-right: 4px; }
+.dk-sub-uploading-text { font-size: 0.74rem; color: #64748b; margin: 0; }
+
+/* 2-Column Layout */
+.dk-sub-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 28px;
+    align-items: start;
+}
+
+/* Sidebar */
+.dk-sub-sidebar { position: sticky; top: 80px; }
+.dk-filter-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+.dk-filter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    border-bottom: 1.5px solid #f1f5f9;
+    margin-bottom: 16px;
+}
+.dk-filter-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+}
+.dk-btn-clear-filters {
+    background: none;
+    border: none;
+    color: #ea580c;
+    font-size: 0.82rem;
+    font-weight: 800;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+.dk-btn-clear-filters:hover { background: #fff7ed; }
+
+.dk-filter-section {
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.dk-filter-heading {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0 0 10px 0;
+}
+
+/* Quick Category Switcher */
+.dk-cat-quick-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.dk-cat-quick-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #334155;
+    font-size: 0.86rem;
+    font-weight: 600;
+    transition: all 0.16s;
+}
+.dk-cat-quick-item:hover {
+    background: #f8fafc;
+    color: #0f172a;
+}
+.dk-cat-quick-item.active {
+    background: #fff7ed;
+    color: #ea580c;
+    font-weight: 800;
+    border: 1px solid #fed7aa;
+}
+.dk-cat-quick-emoji { font-size: 1.15rem; }
+.dk-cat-quick-name { flex: 1; }
+.dk-cat-current-dot { font-size: 0.7rem; color: #ea580c; }
+
+/* Size Chips Grid */
+.dk-sizes-chips-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+.dk-size-chip-label { cursor: pointer; }
+.dk-size-checkbox { display: none; }
+.dk-size-chip-box {
+    display: block;
+    text-align: center;
+    padding: 6px 4px;
+    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    background: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #334155;
+    transition: all 0.16s;
+}
+.dk-size-checkbox:checked + .dk-size-chip-box {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+}
+
+/* Radios List */
+.dk-radios-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.dk-radio-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.84rem;
+    color: #334155;
+    cursor: pointer;
+    font-weight: 600;
+}
+.dk-radio-item input[type="radio"],
+.dk-radio-item input[type="checkbox"] {
+    accent-color: #ea580c;
+    cursor: pointer;
+}
+
+/* Price Inputs */
+.dk-price-custom-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+}
+.dk-price-input {
+    width: 70px;
+    padding: 6px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.8rem;
+}
+.dk-price-sep { color: #94a3b8; font-weight: 700; }
+.dk-btn-price-go {
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+/* Colors Grid */
+.dk-colors-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+.dk-color-swatch-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #334155;
+    font-weight: 600;
+}
+.dk-color-checkbox { display: none; }
+.dk-color-circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    transition: transform 0.16s;
+}
+.dk-color-checkbox:checked + .dk-color-circle {
+    outline: 2.5px solid #ea580c;
+    outline-offset: 2px;
+    transform: scale(1.1);
+}
+
+/* Switch */
+.dk-switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+.dk-switch-text { font-size: 0.88rem; font-weight: 700; color: #1e293b; }
+.dk-switch-row input { display: none; }
+.dk-slider-toggle {
+    position: relative;
+    width: 38px;
+    height: 22px;
+    background: #cbd5e1;
+    border-radius: 999px;
+    transition: background 0.2s;
+}
+.dk-slider-toggle:before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: #ffffff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+.dk-switch-row input:checked + .dk-slider-toggle { background: #16a34a; }
+.dk-switch-row input:checked + .dk-slider-toggle:before { transform: translateX(16px); }
+
+/* Main Toolbar */
+.dk-sub-toolbar {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+.dk-toolbar-left {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.dk-results-count { font-size: 0.92rem; color: #334155; }
+.dk-active-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.dk-active-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+}
+.dk-chip-remove { cursor: pointer; font-weight: 900; }
+.dk-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.dk-sort-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dk-sort-label { font-size: 0.84rem; font-weight: 700; color: #475569; }
+.dk-sort-select {
+    padding: 6px 12px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #0f172a;
+    background: #ffffff;
+    cursor: pointer;
+}
+.dk-view-toggle {
+    display: flex;
+    gap: 4px;
+    background: #f1f5f9;
+    padding: 3px;
+    border-radius: 8px;
+}
+.dk-view-btn {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.16s;
+}
+.dk-view-btn.active {
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Products Grid */
+.dk-sub-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+.dk-sub-products-grid.list-view {
+    grid-template-columns: 1fr;
+}
+.dk-sub-products-grid.list-view .dk-sub-prod-card {
+    flex-direction: row;
+    gap: 20px;
+}
+.dk-sub-products-grid.list-view .dk-sub-prod-img-box {
+    width: 220px;
+    height: 180px;
+    flex-shrink: 0;
+}
+
+/* Card */
+.dk-sub-prod-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.dk-sub-prod-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.07);
+}
+.dk-sub-prod-img-box {
+    position: relative;
+    width: 100%;
+    height: 190px;
+    background: #f8fafc;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+.dk-sub-prod-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+.dk-sub-prod-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 12px;
+    position: relative;
+}
+.dk-sub-prod-placeholder-emoji { font-size: 2.4rem; }
+.dk-sub-prod-soon-tag {
+    background: #ea580c;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+.dk-sub-wish-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    z-index: 2;
+    transition: all 0.18s;
+}
+.dk-sub-wish-btn:hover, .dk-sub-wish-btn.active {
+    color: #ef4444;
+    border-color: #ef4444;
+    background: #ffffff;
+}
+.dk-sub-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+.dk-sub-discount-tag {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: #16a34a;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.dk-sub-prod-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.dk-sub-prod-title {
+    font-size: 0.96rem;
+    font-weight: 700;
+    color: #0f172a;
+    text-decoration: none;
+    line-height: 1.35;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.5em;
+}
+.dk-sub-prod-title:hover { color: #ea580c; }
+.dk-sub-prod-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+.dk-sub-prod-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+}
+.dk-star { color: #f59e0b; }
+.dk-rating-num { font-weight: 800; color: #1e293b; }
+.dk-reviews-num { color: #64748b; }
+.dk-stock-indicator { font-size: 0.74rem; font-weight: 700; color: #16a34a; }
+.dk-sub-prod-pricing {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+.dk-sub-current-price { font-size: 1.25rem; font-weight: 900; color: #0f172a; }
+.dk-sub-mrp { font-size: 0.86rem; color: #94a3b8; text-decoration: line-through; }
+.dk-sub-save-tag { font-size: 0.74rem; font-weight: 800; color: #16a34a; }
+.dk-sub-prod-sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+.dk-sub-size-chip {
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.dk-sub-prod-colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+.dk-sub-color-pill {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.dk-sub-prod-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+}
+.dk-sub-add-cart-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s;
+}
+.dk-sub-add-cart-btn:hover { background: #ea580c; }
+.dk-sub-details-btn {
+    background: #f1f5f9;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.18s;
+}
+.dk-sub-details-btn:hover { background: #e2e8f0; }
+
+/* Empty State */
+.dk-sub-empty-state {
+    background: #ffffff;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 48px 24px;
+    text-align: center;
+}
+.dk-empty-icon { font-size: 3rem; margin-bottom: 14px; display: inline-block; }
+.dk-empty-title { font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0 0 8px 0; }
+.dk-empty-sub { font-size: 0.92rem; color: #64748b; margin: 0 0 20px 0; }
+.dk-btn-reset-filters-large {
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.18s;
+}
+.dk-btn-reset-filters-large:hover { background: #ea580c; }
+
+/* Responsive */
+@@media (max-width: 992px) {
+    .dk-sub-layout { grid-template-columns: 1fr; }
+    .dk-sub-hero-body { flex-direction: column; align-items: flex-start; }
+    .dk-sub-hero-media { width: 100%; justify-content: flex-start; }
+}
+</style>
+
+@* Client-Side Filtering & Interactivity Engine *@
+<script>
+function filterItemProducts() {
+    var cards = document.querySelectorAll('.dk-sub-prod-card');
+    var activeChipsContainer = document.getElementById('itemActiveChips');
+    var resultsCountEl = document.getElementById('itemResultsCount');
+    var emptyState = document.getElementById('itemEmptyState');
+
+    // 1. Gather Selected Filters
+    var selectedSizes = Array.from(document.querySelectorAll('.dk-size-checkbox:checked')).map(function(c) { return c.value.toLowerCase(); });
+    var selectedAttrs = Array.from(document.querySelectorAll('.dk-attr-checkbox:checked')).map(function(c) { return c.value.toLowerCase(); });
+    var selectedColors = Array.from(document.querySelectorAll('.dk-color-checkbox:checked')).map(function(c) { return c.value.toLowerCase(); });
+
+    var priceRadio = document.querySelector('input[name="itemPriceRange"]:checked')?.value || 'all';
+    var minPriceInput = parseFloat(document.getElementById('itemMinPrice')?.value) || 0;
+    var maxPriceInput = parseFloat(document.getElementById('itemMaxPrice')?.value) || 999999;
+
+    var minDiscount = parseFloat(document.querySelector('input[name="itemDiscount"]:checked')?.value) || 0;
+    var minRating = parseFloat(document.querySelector('input[name="itemRating"]:checked')?.value) || 0;
+    var inStockOnly = document.getElementById('itemInStockOnly')?.checked ?? false;
+
+    // 2. Filter Cards
+    var visibleCount = 0;
+    cards.forEach(function(card) {
+        var cardPrice = parseFloat(card.getAttribute('data-price')) || 0;
+        var cardDiscount = parseFloat(card.getAttribute('data-discount')) || 0;
+        var cardRating = parseFloat(card.getAttribute('data-rating')) || 0;
+        var cardInStock = card.getAttribute('data-instock') === 'true';
+        var cardSizes = (card.getAttribute('data-sizes') || '').toLowerCase();
+        var cardColors = (card.getAttribute('data-colors') || '').toLowerCase();
+        var cardName = (card.getAttribute('data-name') || '').toLowerCase();
+
+        var matches = true;
+
+        // Stock check
+        if (inStockOnly && !cardInStock) matches = false;
+
+        // Rating check
+        if (cardRating < minRating) matches = false;
+
+        // Discount check
+        if (cardDiscount < minDiscount) matches = false;
+
+        // Price range check
+        if (priceRadio !== 'all') {
+            var parts = priceRadio.split('-');
+            var pMin = parseFloat(parts[0]) || 0;
+            var pMax = parseFloat(parts[1]) || 999999;
+            if (cardPrice < pMin || cardPrice > pMax) matches = false;
+        } else if (minPriceInput > 0 || maxPriceInput < 999999) {
+            if (cardPrice < minPriceInput || cardPrice > maxPriceInput) matches = false;
+        }
+
+        // Size check
+        if (selectedSizes.length > 0) {
+            var sizeMatch = selectedSizes.some(function(s) { return cardSizes.includes(s) || cardName.includes(s); });
+            if (!sizeMatch) matches = false;
+        }
+
+        // Attributes check (e.g. frame shape, movement, heel type)
+        if (selectedAttrs.length > 0) {
+            var attrMatch = selectedAttrs.some(function(a) { 
+                return cardName.includes(a) || cardSizes.includes(a) || cardColors.includes(a); 
+            });
+            if (!attrMatch) matches = false;
+        }
+
+        // Color check
+        if (selectedColors.length > 0) {
+            var colorMatch = selectedColors.some(function(c) { return cardColors.includes(c) || cardName.includes(c); });
+            if (!colorMatch) matches = false;
+        }
+
+        if (matches) {
+            card.style.display = '';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    // 3. Sort Cards
+    var sortSelect = document.getElementById('itemSortSelect')?.value || 'relevance';
+    var grid = document.getElementById('itemProductsGrid');
+    if (grid) {
+        var cardArr = Array.from(cards);
+        cardArr.sort(function(a, b) {
+            var priceA = parseFloat(a.getAttribute('data-price')) || 0;
+            var priceB = parseFloat(b.getAttribute('data-price')) || 0;
+            var ratingA = parseFloat(a.getAttribute('data-rating')) || 0;
+            var ratingB = parseFloat(b.getAttribute('data-rating')) || 0;
+            var discA = parseFloat(a.getAttribute('data-discount')) || 0;
+            var discB = parseFloat(b.getAttribute('data-discount')) || 0;
+
+            if (sortSelect === 'price-low') return priceA - priceB;
+            if (sortSelect === 'price-high') return priceB - priceA;
+            if (sortSelect === 'rating') return ratingB - ratingA;
+            if (sortSelect === 'discount') return discB - discA;
+            return 0; // relevance
+        });
+        cardArr.forEach(function(c) { grid.appendChild(c); });
+    }
+
+    // 4. Update Header & Empty State
+    if (resultsCountEl) {
+        resultsCountEl.innerHTML = 'Showing <strong>' + visibleCount + '</strong> products';
+    }
+    if (emptyState) {
+        emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    // 5. Update Active Chips
+    if (activeChipsContainer) {
+        activeChipsContainer.innerHTML = '';
+        selectedSizes.forEach(function(s) {
+            var chip = document.createElement('span');
+            chip.className = 'dk-active-chip';
+            chip.innerHTML = s.toUpperCase() + ' <span class="dk-chip-remove" onclick="removeFilter(\'size\', \'' + s + '\')">&times;</span>';
+            activeChipsContainer.appendChild(chip);
+        });
+        selectedAttrs.forEach(function(a) {
+            var chip = document.createElement('span');
+            chip.className = 'dk-active-chip';
+            chip.innerHTML = a + ' <span class="dk-chip-remove" onclick="removeFilter(\'attr\', \'' + a + '\')">&times;</span>';
+            activeChipsContainer.appendChild(chip);
+        });
+        selectedColors.forEach(function(c) {
+            var chip = document.createElement('span');
+            chip.className = 'dk-active-chip';
+            chip.innerHTML = c + ' <span class="dk-chip-remove" onclick="removeFilter(\'color\', \'' + c + '\')">&times;</span>';
+            activeChipsContainer.appendChild(chip);
+        });
+    }
+}
+
+function removeFilter(type, value) {
+    if (type === 'size') {
+        document.querySelectorAll('.dk-size-checkbox').forEach(function(cb) {
+            if (cb.value.toLowerCase() === value.toLowerCase()) cb.checked = false;
+        });
+    } else if (type === 'attr') {
+        document.querySelectorAll('.dk-attr-checkbox').forEach(function(cb) {
+            if (cb.value.toLowerCase() === value.toLowerCase()) cb.checked = false;
+        });
+    } else if (type === 'color') {
+        document.querySelectorAll('.dk-color-checkbox').forEach(function(cb) {
+            if (cb.value.toLowerCase() === value.toLowerCase()) cb.checked = false;
+        });
+    }
+    filterItemProducts();
+}
+
+function resetItemFilters() {
+    document.querySelectorAll('.dk-size-checkbox').forEach(function(cb) { cb.checked = false; });
+    document.querySelectorAll('.dk-attr-checkbox').forEach(function(cb) { cb.checked = false; });
+    document.querySelectorAll('.dk-color-checkbox').forEach(function(cb) { cb.checked = false; });
+
+    var allPricesRadio = document.querySelector('input[name="itemPriceRange"][value="all"]');
+    if (allPricesRadio) allPricesRadio.checked = true;
+
+    var allDiscountsRadio = document.querySelector('input[name="itemDiscount"][value="0"]');
+    if (allDiscountsRadio) allDiscountsRadio.checked = true;
+
+    var allRatingsRadio = document.querySelector('input[name="itemRating"][value="0"]');
+    if (allRatingsRadio) allRatingsRadio.checked = true;
+
+    var minP = document.getElementById('itemMinPrice');
+    if (minP) minP.value = '';
+    var maxP = document.getElementById('itemMaxPrice');
+    if (maxP) maxP.value = '';
+
+    var stockCb = document.getElementById('itemInStockOnly');
+    if (stockCb) stockCb.checked = true;
+
+    filterItemProducts();
+}
+
+function setItemLayout(mode, btn) {
+    var grid = document.getElementById('itemProductsGrid');
+    if (!grid) return;
+    document.querySelectorAll('.dk-view-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+
+    if (mode === 'list') {
+        grid.classList.add('list-view');
+    } else {
+        grid.classList.remove('list-view');
+    }
+}
+
+function toggleSubWishlist(btn, ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    btn.classList.toggle('active');
+    var isActive = btn.classList.contains('active');
+    btn.style.color = isActive ? '#ef4444' : '#64748b';
+}
+
+function quickAddItemToCart(prodId, prodName, price, btn) {
+    var origText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '✓ Added!';
+    btn.style.background = '#16a34a';
+
+    setTimeout(function() {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+        btn.style.background = '';
+    }, 1500);
+}
+</script>
+
+@functions {
+    public static string GetSubcategoryIcon(string? slug)
+    {
+        if (string.IsNullOrWhiteSpace(slug)) return "✨";
+        var s = slug.ToLowerInvariant();
+        if (s.Contains("flat") || s.Contains("belli")) return "🥿";
+        if (s.Contains("heel") || s.Contains("pump")) return "👠";
+        if (s.Contains("sneaker") || s.Contains("trainer")) return "👟";
+        if (s.Contains("loafer") || s.Contains("slip")) return "👞";
+        if (s.Contains("wedge") || s.Contains("sandal")) return "👡";
+        if (s.Contains("boot")) return "👢";
+        if (s.Contains("flip") || s.Contains("slide")) return "🩴";
+        if (s.Contains("analog") || s.Contains("classic")) return "⌚";
+        if (s.Contains("chrono") || s.Contains("sport")) return "⏱️";
+        if (s.Contains("smart")) return "📱";
+        if (s.Contains("leather")) return "👔";
+        if (s.Contains("steel") || s.Contains("metal")) return "⛓️";
+        if (s.Contains("digital") || s.Contains("retro")) return "📟";
+        if (s.Contains("aviator")) return "🕶️";
+        if (s.Contains("wayfarer")) return "🕶️";
+        if (s.Contains("round")) return "👓";
+        if (s.Contains("clubmaster") || s.Contains("browline")) return "👓";
+        if (s.Contains("cat-eye") || s.Contains("cateye")) return "🕶️";
+        if (s.Contains("wrap") || s.Contains("sport")) return "🥽";
+        if (s.Contains("baseball") || s.Contains("dad")) return "🧢";
+        if (s.Contains("snapback")) return "🧢";
+        if (s.Contains("beanie") || s.Contains("knit")) return "🧶";
+        if (s.Contains("bucket")) return "🪣";
+        if (s.Contains("visor")) return "🧢";
+        if (s.Contains("fedora") || s.Contains("sun-hat")) return "👒";
+        if (s.Contains("belt")) return "🪢";
+        if (s.Contains("wallet") || s.Contains("rfid") || s.Contains("bifold")) return "👛";
+        if (s.Contains("card")) return "💳";
+        if (s.Contains("passport") || s.Contains("travel")) return "🛂";
+        if (s.Contains("ankle")) return "🧦";
+        if (s.Contains("crew")) return "🧦";
+        if (s.Contains("no-show") || s.Contains("liner")) return "🧦";
+        if (s.Contains("thermal") || s.Contains("winter")) return "❄️";
+        if (s.Contains("compression")) return "🏃";
+        if (s.Contains("bag") || s.Contains("backpack")) return "🎒";
+        if (s.Contains("tie") || s.Contains("bowtie")) return "👔";
+        if (s.Contains("cufflink") || s.Contains("brooch")) return "✨";
+        if (s.Contains("scarf") || s.Contains("muffler")) return "🧣";
+        if (s.Contains("keychain") || s.Contains("airtag")) return "🔑";
+        if (s.Contains("umbrella")) return "☂️";
+        return "✨";
+    }
+}
+

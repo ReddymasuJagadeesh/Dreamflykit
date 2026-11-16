@@ -1,0 +1,425 @@
+@model Dreamflykit.Application.FashionHub.Models.FashionItemHubDto
+
+@{
+    var hub = Model ?? new Dreamflykit.Application.FashionHub.Models.FashionItemHubDto();
+    var slug = hub.CategorySlug;
+    var name = hub.CategoryName;
+    var fest = hub.FestivalTheme ?? new();
+    var hero = hub.HeroBanner ?? new();
+    var catSection = hub.CategoriesSection ?? new();
+    var cats = catSection.Categories ?? new();
+    var subPages = hub.SubcategoryPages ?? new();
+    var picksSection = hub.TopPicksSection ?? new();
+    var picks = picksSection.Products ?? new();
+}
+
+<div class="dk-tab-pane" id="tab-@slug" data-item-hub-slug="@slug">
+
+    <!-- Header Alert -->
+    <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; padding: 18px 24px; border-radius: 12px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+        <div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                <span style="background: #ea580c; color: #fff; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;">2-Tier Architecture</span>
+                <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #fff;">@name Hub Management</h2>
+            </div>
+            <p style="margin: 0; font-size: 13px; color: #94a3b8;">
+                Manage Tier-1 landing page hero, subcategories list, and Tier-2 dedicated subcategory landing pages with custom filters and products.
+            </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <a href="/category/fashion/@slug" target="_blank" class="dk-btn-view-live" style="background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.25); font-weight: 700; padding: 8px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                Preview @name
+            </a>
+            <button type="button" class="dk-btn-save-hub" onclick="saveFashionHub()" style="padding: 8px 16px; font-size: 13px;">
+                Save Changes
+            </button>
+        </div>
+    </div>
+
+    <!-- 1. Festival & Seasonal Campaign Settings -->
+    <div class="dk-card" style="margin-bottom: 24px; border-left: 4px solid #ea580c;">
+        <div class="dk-card-header">
+            <div>
+                <h2 class="dk-card-title">🎉 Festival &amp; Seasonal Campaign Banner</h2>
+                <p class="dk-card-subtitle">Manage announcement ribbon displayed at the top of the @name page</p>
+            </div>
+            <label class="dk-switch" style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="@(slug)-fest-enabled" @(fest.IsEnabled ? "checked" : "") />
+                <span class="dk-slider"></span>
+                <span style="font-weight: 700; font-size: 13px;">Enable Campaign Ribbon</span>
+            </label>
+        </div>
+        <div class="dk-form-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+            <div>
+                <label class="dk-label" for="@(slug)-fest-name">Campaign / Season Name</label>
+                <input type="text" id="@(slug)-fest-name" class="dk-input" value="@fest.FestivalName" placeholder="e.g. Student Essentials Edit" />
+            </div>
+            <div>
+                <label class="dk-label" for="@(slug)-fest-badge">Badge Text</label>
+                <input type="text" id="@(slug)-fest-badge" class="dk-input" value="@fest.BadgeText" placeholder="e.g. SPECIAL OFFER" />
+            </div>
+            <div>
+                <label class="dk-label" for="@(slug)-fest-highlight">Offer Highlight</label>
+                <input type="text" id="@(slug)-fest-highlight" class="dk-input" value="@fest.BannerHighlight" placeholder="e.g. Up to 50% Off" />
+            </div>
+            <div style="grid-column: 1 / -1;">
+                <label class="dk-label" for="@(slug)-fest-announcement">Announcement Text</label>
+                <input type="text" id="@(slug)-fest-announcement" class="dk-input" value="@fest.AnnouncementText" placeholder="Announcement displayed in the ribbon" />
+            </div>
+            <div>
+                <label class="dk-label" for="@(slug)-fest-gradient">Background Gradient CSS</label>
+                <input type="text" id="@(slug)-fest-gradient" class="dk-input" value="@fest.BgGradient" placeholder="linear-gradient(135deg, #e11d48 0%, #db2777 100%)" />
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Hero Banner Settings -->
+    <div class="dk-card" style="margin-bottom: 24px;">
+        <div class="dk-card-header">
+            <div>
+                <h2 class="dk-card-title">🖼️ Hero Banner Settings (Tier 1)</h2>
+                <p class="dk-card-subtitle">Full-width high definition hero banner displayed at the top of @name</p>
+            </div>
+            <label class="dk-switch" style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="@(slug)-hero-enabled" @(hero.IsEnabled ? "checked" : "") />
+                <span class="dk-slider"></span>
+                <span style="font-weight: 700; font-size: 13px;">Enable Hero Banner</span>
+            </label>
+        </div>
+        <div class="dk-form-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+            <div>
+                <label class="dk-label" for="@(slug)-hero-title">Hero Title</label>
+                <input type="text" id="@(slug)-hero-title" class="dk-input" value="@hero.Title" />
+            </div>
+            <div>
+                <label class="dk-label" for="@(slug)-hero-highlight">Title Highlight</label>
+                <input type="text" id="@(slug)-hero-highlight" class="dk-input" value="@hero.TitleHighlight" />
+            </div>
+            <div style="grid-column: 1 / -1;">
+                <label class="dk-label" for="@(slug)-hero-subtitle">Hero Subtitle</label>
+                <input type="text" id="@(slug)-hero-subtitle" class="dk-input" value="@hero.Subtitle" />
+            </div>
+            <div style="grid-column: 1 / -1;">
+                <label class="dk-label" for="@(slug)-hero-desc">Description</label>
+                <textarea id="@(slug)-hero-desc" class="dk-input" rows="2">@hero.Description</textarea>
+            </div>
+            <div>
+                <label class="dk-label" for="@(slug)-hero-img">Hero Image URL</label>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="text" id="@(slug)-hero-img" class="dk-input" value="@hero.ImageUrl" placeholder="/images/fashion-hub/uploading-soon-placeholder.svg" oninput="document.getElementById('@(slug)-hero-preview').src = this.value || '/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                    <button type="button" class="dk-btn-upload" onclick="document.getElementById('@(slug)-hero-file').click()" style="padding: 8px 12px; background: #0f172a; color: #fff; border: none; border-radius: 6px; cursor: pointer; white-space: nowrap; font-size: 13px; font-weight: 700;">
+                        📷 Upload
+                    </button>
+                    <input type="file" id="@(slug)-hero-file" accept="image/*" style="display: none;" onchange="uploadItemFieldImage(this, '@(slug)-hero-img', '@(slug)-hero-preview', '@(slug)-hero-soon')" />
+                </div>
+            </div>
+            <div>
+                <label class="dk-label">Image Preview</label>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <img id="@(slug)-hero-preview" src="@(string.IsNullOrWhiteSpace(hero.ImageUrl) ? "/images/fashion-hub/uploading-soon-placeholder.svg" : hero.ImageUrl)" alt="Hero Preview" style="width: 140px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; background: #f8fafc;" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; font-size: 13px; color: #ea580c;">
+                        <input type="checkbox" id="@(slug)-hero-soon" @(hero.IsUploadingSoon ? "checked" : "") />
+                        <span>⏳ "Uploading Soon" Placeholder</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Shop by Category Manager (The Subcategories) -->
+    <div class="dk-card" style="margin-bottom: 24px;">
+        <div class="dk-card-header">
+            <div>
+                <h2 class="dk-card-title">🗂️ Shop by Category Subcategories (@cats.Count Subcategories)</h2>
+                <p class="dk-card-subtitle">Manage names, slugs, images, and uploading soon status for all subcategories shown on @name</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <input type="checkbox" id="@(slug)-cats-enabled" @(catSection.IsEnabled ? "checked" : "") />
+                <label for="@(slug)-cats-enabled" style="font-weight: 700; font-size: 13px;">Enable Section</label>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+            <div style="flex: 1; max-width: 380px;">
+                <label class="dk-label" for="@(slug)-cats-title">Section Title</label>
+                <input type="text" id="@(slug)-cats-title" class="dk-input" value="@(catSection.Title ?? "Shop by Category")" />
+            </div>
+            <button type="button" class="dk-btn-add" onclick="addItemCategoryRow('@slug')" style="padding: 8px 14px; background: #10b981; color: #fff; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px;">
+                + Add Subcategory
+            </button>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="dk-table" id="@(slug)-cats-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; text-align: left;">
+                        <th style="padding: 10px 12px; font-size: 12px; width: 60px;">Order</th>
+                        <th style="padding: 10px 12px; font-size: 12px;">Subcategory Name</th>
+                        <th style="padding: 10px 12px; font-size: 12px;">Slug / Route Key</th>
+                        <th style="padding: 10px 12px; font-size: 12px;">Image URL / Upload</th>
+                        <th style="padding: 10px 12px; font-size: 12px; text-align: center; width: 110px;">Uploading Soon</th>
+                        <th style="padding: 10px 12px; font-size: 12px; text-align: center; width: 70px;">Active</th>
+                        <th style="padding: 10px 12px; font-size: 12px; text-align: center; width: 60px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cat in cats.OrderBy(c => c.DisplayOrder))
+                    {
+                        <tr class="item-cat-row" data-id="@cat.Id" style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 8px 12px;">
+                                <input type="number" class="dk-input item-cat-order" value="@cat.DisplayOrder" style="width: 55px; padding: 4px 6px; text-align: center;" />
+                            </td>
+                            <td style="padding: 8px 12px;">
+                                <input type="text" class="dk-input item-cat-name" value="@cat.Name" style="padding: 4px 8px; font-weight: 600;" />
+                            </td>
+                            <td style="padding: 8px 12px;">
+                                <input type="text" class="dk-input item-cat-slug" value="@cat.Slug" style="padding: 4px 8px; font-family: monospace; font-size: 12px;" />
+                            </td>
+                            <td style="padding: 8px 12px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <img src="@(string.IsNullOrWhiteSpace(cat.ImageUrl) ? "/images/fashion-hub/uploading-soon-placeholder.svg" : cat.ImageUrl)" class="item-cat-preview" style="width: 36px; height: 36px; object-fit: contain; border-radius: 4px; border: 1px solid #e2e8f0; background: #fff;" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                                    <input type="text" class="dk-input item-cat-img" value="@cat.ImageUrl" style="padding: 4px 8px; font-size: 12px;" oninput="this.previousElementSibling.src = this.value || '/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                                    <button type="button" class="dk-btn-upload-row" onclick="this.nextElementSibling.click()" style="padding: 4px 8px; background: #e2e8f0; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;" title="Upload Image">📷</button>
+                                    <input type="file" accept="image/*" style="display: none;" onchange="uploadItemRowImage(this, 'item-cat-img', 'item-cat-preview', 'item-cat-soon')" />
+                                </div>
+                            </td>
+                            <td style="padding: 8px 12px; text-align: center;">
+                                <input type="checkbox" class="item-cat-soon" @(cat.IsUploadingSoon ? "checked" : "") />
+                            </td>
+                            <td style="padding: 8px 12px; text-align: center;">
+                                <input type="checkbox" class="item-cat-active" @(cat.IsActive ? "checked" : "") />
+                            </td>
+                            <td style="padding: 8px 12px; text-align: center;">
+                                <button type="button" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;" title="Delete row">✕</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. Dedicated Subcategory Landing Pages Manager (Hero + Products for each subcategory) -->
+    <div class="dk-card" style="margin-bottom: 24px; border: 2px solid #bae6fd;">
+        <div class="dk-card-header" style="background: #f0f9ff; margin: -20px -20px 20px -20px; padding: 18px 20px; border-bottom: 1px solid #bae6fd;">
+            <div>
+                <h2 class="dk-card-title" style="color: #0369a1;">🎯 Dedicated @name Subcategory Landing Pages (@subPages.Count Pages)</h2>
+                <p class="dk-card-subtitle">Select a subcategory to manage its dedicated full-width hero banner and specialized product catalog</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label for="@(slug)-select-sub" style="font-weight: 700; font-size: 13px; color: #0369a1;">Select Subcategory:</label>
+                <select id="@(slug)-select-sub" class="dk-input" style="width: 240px; font-weight: 700;" onchange="switchItemSubAdmin('@slug', this.value)">
+                    @foreach (var sp in subPages)
+                    {
+                        <option value="@sp.CategorySlug">@sp.CategoryName</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Subcategory Editors Container -->
+        <div id="@(slug)-sub-editors-container">
+            @{
+                var isFirstSub = true;
+            }
+            @foreach (var sp in subPages)
+            {
+                var sHero = sp.HeroBanner ?? new();
+                <div class="item-subpage-editor @(slug)-subpage-editor" id="@(slug)-sub-editor-@sp.CategorySlug" style="display: @(isFirstSub ? "block" : "none");" data-slug="@sp.CategorySlug">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: #0f172a;">
+                                Subcategory: <span class="sub-editor-title-name" style="color: #ea580c;">@sp.CategoryName</span>
+                            </h3>
+                            <span style="font-size: 12px; color: #64748b; font-family: monospace;">Route: /category/fashion/@slug/@sp.CategorySlug</span>
+                        </div>
+                        <a href="/category/fashion/@slug/@sp.CategorySlug" target="_blank" style="padding: 6px 12px; background: #e0f2fe; color: #0369a1; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            Preview This Subcategory
+                        </a>
+                    </div>
+
+                    <!-- Sub Hero Banner Editor -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 12px 0; font-size: 14px; font-weight: 700; color: #334155;">Hero Banner for @sp.CategoryName</h4>
+                        <div class="dk-form-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
+                            <div>
+                                <label class="dk-label">Subcategory Display Name</label>
+                                <input type="text" class="dk-input sub-page-name" value="@sp.CategoryName" oninput="this.closest('.item-subpage-editor').querySelector('.sub-editor-title-name').textContent = this.value" />
+                            </div>
+                            <div>
+                                <label class="dk-label">Hero Title</label>
+                                <input type="text" class="dk-input sub-hero-title" value="@sHero.Title" />
+                            </div>
+                            <div>
+                                <label class="dk-label">Badge Highlight</label>
+                                <input type="text" class="dk-input sub-hero-highlight" value="@sHero.TitleHighlight" />
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <label class="dk-label">Subtitle Description</label>
+                                <input type="text" class="dk-input sub-hero-sub" value="@sHero.Subtitle" />
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <label class="dk-label">Hero Image URL</label>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <img src="@(string.IsNullOrWhiteSpace(sHero.ImageUrl) ? "/images/fashion-hub/uploading-soon-placeholder.svg" : sHero.ImageUrl)" class="sub-hero-preview" style="width: 50px; height: 35px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0; background: #fff;" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                                    <input type="text" class="dk-input sub-hero-img" value="@sHero.ImageUrl" style="flex: 1;" oninput="this.previousElementSibling.src = this.value || '/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                                    <button type="button" class="dk-btn-upload-row" onclick="this.nextElementSibling.click()" style="padding: 6px 12px; background: #0f172a; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700;">📷 Upload</button>
+                                    <input type="file" accept="image/*" style="display: none;" onchange="uploadItemRowImage(this, 'sub-hero-img', 'sub-hero-preview', 'sub-hero-soon')" />
+                                    <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #ea580c; white-space: nowrap; margin-left: 8px;">
+                                        <input type="checkbox" class="sub-hero-soon" @(sHero.IsUploadingSoon ? "checked" : "") />
+                                        <span>⏳ Uploading Soon</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products Table for this Subcategory -->
+                    <div style="margin-top: 14px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                            <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: #0f172a;">Catalog Products (@(sp.Products?.Count ?? 0) Products)</h4>
+                            <button type="button" onclick="addItemSubProductRow('@slug', '@sp.CategorySlug')" style="padding: 6px 12px; background: #ea580c; color: #fff; border: none; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer;">
+                                + Add Product
+                            </button>
+                        </div>
+
+                        <div style="overflow-x: auto;">
+                            <table class="dk-table item-sub-prods-table" id="@(slug)-prods-table-@sp.CategorySlug" style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1; text-align: left;">
+                                        <th style="padding: 8px 10px; font-size: 12px;">Product Name</th>
+                                        <th style="padding: 8px 10px; font-size: 12px; width: 90px;">Price (₹)</th>
+                                        <th style="padding: 8px 10px; font-size: 12px; width: 90px;">MRP (₹)</th>
+                                        <th style="padding: 8px 10px; font-size: 12px; width: 110px;">Badge</th>
+                                        <th style="padding: 8px 10px; font-size: 12px; width: 140px;">Sizes</th>
+                                        <th style="padding: 8px 10px; font-size: 12px;">Image URL / Upload</th>
+                                        <th style="padding: 8px 10px; font-size: 12px; text-align: center; width: 75px;">Soon</th>
+                                        <th style="padding: 8px 10px; font-size: 12px; text-align: center; width: 50px;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (sp.Products != null)
+                                    {
+                                        foreach (var prod in sp.Products)
+                                        {
+                                            <tr class="item-sub-prod-row" data-id="@prod.Id" style="border-bottom: 1px solid #f1f5f9;">
+                                                <td style="padding: 6px 10px;">
+                                                    <input type="text" class="dk-input prod-name" value="@prod.Name" style="padding: 4px 8px; font-weight: 600;" />
+                                                </td>
+                                                <td style="padding: 6px 10px;">
+                                                    <input type="number" class="dk-input prod-price" value="@prod.Price" style="padding: 4px 6px;" />
+                                                </td>
+                                                <td style="padding: 6px 10px;">
+                                                    <input type="number" class="dk-input prod-orig-price" value="@(prod.OriginalPrice ?? prod.Price * 1.5m)" style="padding: 4px 6px;" />
+                                                </td>
+                                                <td style="padding: 6px 10px;">
+                                                    <input type="text" class="dk-input prod-badge" value="@prod.Badge" style="padding: 4px 6px;" />
+                                                </td>
+                                                <td style="padding: 6px 10px;">
+                                                    <input type="text" class="dk-input prod-sizes" value="@(prod.Sizes != null ? string.Join(",", prod.Sizes) : "")" placeholder="Sizes comma-sep" style="padding: 4px 6px; font-size: 12px;" />
+                                                    <input type="hidden" class="prod-colors" value="@(prod.Colors != null ? string.Join(",", prod.Colors) : "")" />
+                                                </td>
+                                                <td style="padding: 6px 10px;">
+                                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                                        <img src="@(string.IsNullOrWhiteSpace(prod.ImageUrl) ? "/images/fashion-hub/uploading-soon-placeholder.svg" : prod.ImageUrl)" class="prod-preview" style="width: 32px; height: 32px; object-fit: contain; border-radius: 4px; border: 1px solid #e2e8f0; background: #fff;" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                                                        <input type="text" class="dk-input prod-img" value="@prod.ImageUrl" style="padding: 4px 6px; font-size: 11px;" oninput="this.previousElementSibling.src = this.value || '/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                                                        <button type="button" class="dk-btn-upload-row" onclick="this.nextElementSibling.click()" style="padding: 4px 6px; background: #e2e8f0; border: none; border-radius: 4px; cursor: pointer; font-size: 11px;">📷</button>
+                                                        <input type="file" accept="image/*" style="display: none;" onchange="uploadItemRowImage(this, 'prod-img', 'prod-preview', 'prod-soon')" />
+                                                    </div>
+                                                </td>
+                                                <td style="padding: 6px 10px; text-align: center;">
+                                                    <input type="checkbox" class="prod-soon" @(prod.IsUploadingSoon ? "checked" : "") />
+                                                </td>
+                                                <td style="padding: 6px 10px; text-align: center;">
+                                                    <button type="button" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;" title="Delete product">✕</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                isFirstSub = false;
+            }
+        </div>
+    </div>
+
+    <!-- 5. Top Picks Carousel Section -->
+    <div class="dk-card" style="margin-bottom: 24px;">
+        <div class="dk-card-header">
+            <div>
+                <h2 class="dk-card-title">⭐ Top Picks for You (@picks.Count Featured Products)</h2>
+                <p class="dk-card-subtitle">Manage top featured products displayed on the main @name landing page</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <input type="checkbox" id="@(slug)-picks-enabled" @(picksSection.IsEnabled ? "checked" : "") />
+                <label for="@(slug)-picks-enabled" style="font-weight: 700; font-size: 13px;">Enable Section</label>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+            <div style="flex: 1; max-width: 380px;">
+                <label class="dk-label" for="@(slug)-picks-title">Section Title</label>
+                <input type="text" id="@(slug)-picks-title" class="dk-input" value="@(picksSection.Title ?? "Top Picks for You")" />
+            </div>
+            <button type="button" class="dk-btn-add" onclick="addItemPickRow('@slug')" style="padding: 8px 14px; background: #6366f1; color: #fff; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px;">
+                + Add Top Pick Product
+            </button>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="dk-table" id="@(slug)-picks-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; text-align: left;">
+                        <th style="padding: 10px 12px; font-size: 12px;">Product Name</th>
+                        <th style="padding: 10px 12px; font-size: 12px; width: 90px;">Price (₹)</th>
+                        <th style="padding: 10px 12px; font-size: 12px; width: 90px;">Original (₹)</th>
+                        <th style="padding: 10px 12px; font-size: 12px; width: 65px;">Rating</th>
+                        <th style="padding: 10px 12px; font-size: 12px;">Image URL / Upload</th>
+                        <th style="padding: 10px 12px; font-size: 12px; text-align: center; width: 80px;">Soon</th>
+                        <th style="padding: 10px 12px; font-size: 12px; text-align: center; width: 60px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in picks)
+                    {
+                        <tr class="item-pick-row" data-id="@p.Id" style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 8px 12px;">
+                                <input type="text" class="dk-input pick-name" value="@p.Name" style="padding: 4px 8px; font-weight: 600;" />
+                            </td>
+                            <td style="padding: 8px 12px;">
+                                <input type="number" class="dk-input pick-price" value="@p.Price" style="padding: 4px 6px;" />
+                            </td>
+                            <td style="padding: 8px 12px;">
+                                <input type="number" class="dk-input pick-orig-price" value="@(p.OriginalPrice ?? p.Price * 1.5m)" style="padding: 4px 6px;" />
+                            </td>
+                            <td style="padding: 8px 12px;">
+                                <input type="number" step="0.1" class="dk-input pick-rating" value="@p.Rating" style="padding: 4px 6px;" />
+                            </td>
+                            <td style="padding: 8px 12px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <img src="@(string.IsNullOrWhiteSpace(p.ImageUrl) ? "/images/fashion-hub/uploading-soon-placeholder.svg" : p.ImageUrl)" class="pick-preview" style="width: 32px; height: 32px; object-fit: contain; border-radius: 4px; border: 1px solid #e2e8f0; background: #fff;" onerror="this.src='/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                                    <input type="text" class="dk-input pick-img" value="@p.ImageUrl" style="padding: 4px 8px; font-size: 12px;" oninput="this.previousElementSibling.src = this.value || '/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                                    <button type="button" class="dk-btn-upload-row" onclick="this.nextElementSibling.click()" style="padding: 4px 8px; background: #e2e8f0; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;" title="Upload Image">📷</button>
+                                    <input type="file" accept="image/*" style="display: none;" onchange="uploadItemRowImage(this, 'pick-img', 'pick-preview', 'pick-soon')" />
+                                </div>
+                            </td>
+                            <td style="padding: 8px 12px; text-align: center;">
+                                <input type="checkbox" class="pick-soon" @(p.IsUploadingSoon ? "checked" : "") />
+                            </td>
+                            <td style="padding: 8px 12px; text-align: center;">
+                                <button type="button" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;" title="Delete row">✕</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+

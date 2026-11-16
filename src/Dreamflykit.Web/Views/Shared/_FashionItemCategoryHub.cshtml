@@ -1,0 +1,1236 @@
+@model Dreamflykit.Web.Models.Products.ProductListViewModel
+@{
+    var hub = Model.FashionItemHub 
+              ?? Model.FashionHub?.GetItemHubBySlug(Model.CurrentFashionCategorySlug ?? Model.CategorySlug)
+              ?? Dreamflykit.Application.FashionHub.Models.FashionItemHubDto.CreateDefaultWomenFootwear();
+
+    var hero = hub.HeroBanner ?? new();
+    var catSection = hub.CategoriesSection ?? new();
+    var picksSection = hub.TopPicksSection ?? new();
+    var trustSection = hub.TrustBadgesSection ?? new();
+    var bottomBanner = hub.BottomBanner ?? new();
+    var canManage = User.IsInRole("SuperAdmin") || User.IsInRole("Admin");
+}
+
+<div class="dk-item-hub-container" id="fashion-item-hub-root" data-category="@hub.CategorySlug">
+
+    @* 1. Festival Announcement Ribbon (if enabled) *@
+    @if (hub.FestivalTheme != null && hub.FestivalTheme.IsEnabled && !string.IsNullOrWhiteSpace(hub.FestivalTheme.AnnouncementText))
+    {
+        <div class="dk-item-fest-ribbon" style="background: @(!string.IsNullOrWhiteSpace(hub.FestivalTheme.BgGradient) ? hub.FestivalTheme.BgGradient : "linear-gradient(135deg, #ea580c 0%, #c2410c 100%)");">
+            <span class="dk-item-fest-badge">@(!string.IsNullOrWhiteSpace(hub.FestivalTheme.BadgeText) ? hub.FestivalTheme.BadgeText : "SPECIAL OFFER")</span>
+            <span class="dk-item-fest-text">@hub.FestivalTheme.AnnouncementText</span>
+            @if (!string.IsNullOrWhiteSpace(hub.FestivalTheme.BannerHighlight))
+            {
+                <span class="dk-item-fest-highlight">@hub.FestivalTheme.BannerHighlight</span>
+            }
+        </div>
+    }
+
+    @* Admin Controls Bar *@
+    @if (canManage)
+    {
+        <div class="dk-item-admin-bar">
+            <div class="dk-item-admin-bar-left">
+                <span class="dk-item-admin-badge">Admin Controls</span>
+                <span class="dk-item-admin-hint">Customize banners, subcategories, filters, and products for @hub.CategoryName in the Admin Panel.</span>
+            </div>
+            <a href="/Admin/FashionHub#tab-@hub.CategorySlug" class="dk-item-admin-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Edit @hub.CategoryName in Admin
+            </a>
+        </div>
+    }
+
+    <!-- ============================================================
+         1. HERO BANNER SECTION (FULL WIDTH)
+    ============================================================ -->
+    @if (hero.IsEnabled)
+    {
+        <section class="dk-item-hero-section" aria-label="@hub.CategoryName Hero Banner">
+            <div class="dk-item-hero-glow"></div>
+            <div class="dk-item-hero-card">
+                
+                <!-- Left: Headline, Subtitle, Badges -->
+                <div class="dk-item-hero-left">
+                    <nav class="dk-item-hero-breadcrumb" aria-label="Breadcrumb">
+                        <a href="/category/fashion">Fashion</a>
+                        <span class="dk-item-sep">/</span>
+                        <span class="dk-item-crumb-active">@hub.CategoryName</span>
+                    </nav>
+
+                    <h1 class="dk-item-hero-heading" style="color: @(!string.IsNullOrWhiteSpace(hero.TitleColor) ? hero.TitleColor : "#0f172a");">
+                        @(string.IsNullOrWhiteSpace(hero.Title) ? hub.CategoryName : hero.Title)
+                    </h1>
+                    @if (!string.IsNullOrWhiteSpace(hero.TitleHighlight))
+                    {
+                        <p class="dk-item-hero-highlight" style="color: @(!string.IsNullOrWhiteSpace(hero.TitleHighlightColor) ? hero.TitleHighlightColor : "#ea580c");">
+                            @hero.TitleHighlight
+                        </p>
+                    }
+                    <p class="dk-item-hero-sub" style="color: @(!string.IsNullOrWhiteSpace(hero.SubtitleColor) ? hero.SubtitleColor : "#334155");">
+                        @(string.IsNullOrWhiteSpace(hero.Subtitle)
+                            ? $"Explore premium {hub.CategoryName} designed with supreme quality, student comfort, and travel durability."
+                            : hero.Subtitle)
+                    </p>
+
+                    <!-- Badges Row -->
+                    @if (hero.Badges != null && hero.Badges.Count > 0)
+                    {
+                        <div class="dk-item-badges-row">
+                            @foreach (var badge in hero.Badges)
+                            {
+                                <span class="dk-item-badge-pill">
+                                    <span class="dk-item-badge-ico">@GetBadgeIcon(badge.Icon)</span>
+                                    <span class="dk-item-badge-txt">@badge.Label</span>
+                                </span>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- Center: Image or Uploading Soon Radar -->
+                <div class="dk-item-hero-center">
+                    @if (hero.IsUploadingSoon || string.IsNullOrWhiteSpace(hero.ImageUrl) || hero.ImageUrl.Contains("placeholder") || hero.ImageUrl.Contains("uploading-soon"))
+                    {
+                        <div class="dk-item-hero-placeholder">
+                            <div class="dk-item-placeholder-radar">
+                                <span class="dk-item-radar-wave"></span>
+                                <span class="dk-item-radar-icon">@GetCategoryIcon(hub.CategorySlug)</span>
+                            </div>
+                            <span class="dk-item-radar-tag">UPLOADING SOON</span>
+                            <span class="dk-item-radar-sub">Curated Student Selection</span>
+                            <span class="dk-item-radar-sub-admin">Admin can upload banner anytime</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <img src="@hero.ImageUrl" 
+                             alt="@hero.Title" 
+                             class="dk-item-hero-img"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                        <div class="dk-item-hero-placeholder" style="display: none;">
+                            <div class="dk-item-placeholder-radar">
+                                <span class="dk-item-radar-wave"></span>
+                                <span class="dk-item-radar-icon">@GetCategoryIcon(hub.CategorySlug)</span>
+                            </div>
+                            <span class="dk-item-radar-tag">UPLOADING SOON</span>
+                            <span class="dk-item-radar-sub">Curated Student Selection</span>
+                        </div>
+                    }
+                    <div class="dk-item-hero-upload-badge">
+                        <span class="dk-item-upload-badge-icon">⏳</span>
+                        <span>HERO BANNER UPLOADING SOON</span>
+                    </div>
+                </div>
+
+                <!-- Right: Feature Callout Card -->
+                @if (hero.RightCard != null)
+                {
+                    <div class="dk-item-hero-right">
+                        <div class="dk-item-callout-card">
+                            <h3 class="dk-item-callout-title">
+                                @hero.RightCard.Title
+                                @if (!string.IsNullOrWhiteSpace(hero.RightCard.TitleHighlight))
+                                {
+                                    <span class="dk-item-callout-hl">@hero.RightCard.TitleHighlight</span>
+                                }
+                            </h3>
+                            <ul class="dk-item-callout-list">
+                                @if (hero.RightCard.Features != null && hero.RightCard.Features.Count > 0)
+                                {
+                                    foreach (var f in hero.RightCard.Features)
+                                    {
+                                        <li class="dk-item-callout-item">
+                                            <span class="dk-item-callout-icon">@GetFeatureIcon(f.Icon)</span>
+                                            <span class="dk-item-callout-text">@f.Title</span>
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li class="dk-item-callout-item">
+                                        <span class="dk-item-callout-icon">🛡️</span>
+                                        <span class="dk-item-callout-text">100% Genuine Quality</span>
+                                    </li>
+                                    <li class="dk-item-callout-item">
+                                        <span class="dk-item-callout-icon">🧭</span>
+                                        <span class="dk-item-callout-text">Campus Delivery Ready</span>
+                                    </li>
+                                    <li class="dk-item-callout-item">
+                                        <span class="dk-item-callout-icon">💨</span>
+                                        <span class="dk-item-callout-text">Student Price Guarantee</span>
+                                    </li>
+                                    <li class="dk-item-callout-item">
+                                        <span class="dk-item-callout-icon">🪶</span>
+                                        <span class="dk-item-callout-text">Travel Durable</span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         2. SHOP BY CATEGORY SECTION
+    ============================================================ -->
+    @if (catSection.IsEnabled && catSection.Categories != null && catSection.Categories.Count > 0)
+    {
+        <section class="dk-item-section" aria-label="Shop @hub.CategoryName by Category">
+            <div class="dk-item-section-header">
+                <div>
+                    <h2 class="dk-item-section-heading">@catSection.Title</h2>
+                    <p class="dk-item-section-sub">Select a subcategory below to explore tailored collections, dynamic filters, and verified student products.</p>
+                </div>
+                <div class="dk-item-section-meta">
+                    <span class="dk-item-count-badge">@catSection.Categories.Count(c => c.IsActive) Subcategories Available</span>
+                </div>
+            </div>
+
+            <div class="dk-item-categories-grid">
+                @foreach (var cat in catSection.Categories.Where(c => c.IsActive).OrderBy(c => c.DisplayOrder))
+                {
+                    var catUrl = $"/category/fashion/{hub.CategorySlug}/{cat.Slug}";
+                    <a href="@catUrl" class="dk-item-cat-card" title="@cat.Name">
+                        <div class="dk-item-cat-img-box">
+                            @if (cat.IsUploadingSoon || string.IsNullOrWhiteSpace(cat.ImageUrl) || cat.ImageUrl.Contains("placeholder") || cat.ImageUrl.Contains("uploading-soon"))
+                            {
+                                <div class="dk-item-cat-placeholder">
+                                    <span class="dk-item-cat-emoji">@GetSubcategoryIcon(cat.Slug)</span>
+                                    <span class="dk-item-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@cat.ImageUrl" 
+                                     alt="@cat.Name" 
+                                     loading="lazy" 
+                                     class="dk-item-cat-img" 
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-item-cat-placeholder" style="display: none;">
+                                    <span class="dk-item-cat-emoji">@GetSubcategoryIcon(cat.Slug)</span>
+                                    <span class="dk-item-soon-badge">Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+                        <span class="dk-item-cat-title">@cat.Name</span>
+                        <span class="dk-item-cat-cta">Explore Collection &rarr;</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         3. TOP PICKS FOR YOU SECTION (CAROUSEL / GRID)
+    ============================================================ -->
+    @if (picksSection.IsEnabled && picksSection.Products != null && picksSection.Products.Count > 0)
+    {
+        <section class="dk-item-section" aria-label="Top Picks for You">
+            <div class="dk-item-section-header">
+                <div>
+                    <h2 class="dk-item-section-heading">@picksSection.Title</h2>
+                    <p class="dk-item-section-sub">Handpicked student favorites with stellar ratings, student discounts, and all-weather durability.</p>
+                </div>
+                <div class="dk-item-section-nav">
+                    <button type="button" class="dk-item-arrow-btn" id="btnItemPrev" aria-label="Previous Products" onclick="slideItemProducts(-1)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <button type="button" class="dk-item-arrow-btn" id="btnItemNext" aria-label="Next Products" onclick="slideItemProducts(1)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="dk-item-picks-scroll" id="itemPicksRow">
+                @foreach (var prod in picksSection.Products.Where(p => p.IsActive))
+                {
+                    var discountPct = 0;
+                    if (prod.OriginalPrice.HasValue && prod.OriginalPrice.Value > prod.Price)
+                    {
+                        discountPct = (int)Math.Round((1m - (prod.Price / prod.OriginalPrice.Value)) * 100m);
+                    }
+                    var itemUrl = !string.IsNullOrWhiteSpace(prod.ProductUrl) 
+                        ? prod.ProductUrl 
+                        : $"/category/fashion/{hub.CategorySlug}/{prod.CategorySlug ?? "all"}";
+
+                    <div class="dk-item-product-card" data-id="@prod.Id">
+                        <div class="dk-item-card-img-box">
+                            <button type="button" class="dk-item-wishlist-btn" title="Add to Wishlist" onclick="toggleItemWishlist(this, event)">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                            </button>
+                            @if (!string.IsNullOrWhiteSpace(prod.Badge))
+                            {
+                                <span class="dk-item-card-badge">@prod.Badge</span>
+                            }
+                            @if (discountPct > 0)
+                            {
+                                <span class="dk-item-discount-tag">@discountPct% OFF</span>
+                            }
+
+                            @if (prod.IsUploadingSoon || string.IsNullOrWhiteSpace(prod.ImageUrl) || prod.ImageUrl.Contains("placeholder") || prod.ImageUrl.Contains("uploading-soon"))
+                            {
+                                <div class="dk-item-card-placeholder">
+                                    <span class="dk-item-card-placeholder-radar"></span>
+                                    <span class="dk-item-card-placeholder-emoji">@GetSubcategoryIcon(prod.CategorySlug)</span>
+                                    <span class="dk-item-card-soon-txt">Uploading Soon</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@prod.ImageUrl" 
+                                     alt="@prod.Name" 
+                                     loading="lazy" 
+                                     class="dk-item-card-img" 
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                <div class="dk-item-card-placeholder" style="display: none;">
+                                    <span class="dk-item-card-placeholder-radar"></span>
+                                    <span class="dk-item-card-placeholder-emoji">@GetSubcategoryIcon(prod.CategorySlug)</span>
+                                    <span class="dk-item-card-soon-txt">Uploading Soon</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="dk-item-card-body">
+                            <a href="@itemUrl" class="dk-item-card-name" title="@prod.Name">
+                                @prod.Name
+                            </a>
+
+                            <div class="dk-item-card-rating">
+                                <span class="dk-item-star">★</span>
+                                <span class="dk-item-rating-val">@prod.Rating.ToString("0.0")</span>
+                                <span class="dk-item-reviews-count">(@prod.ReviewsCount)</span>
+                            </div>
+
+                            <div class="dk-item-card-price-row">
+                                <span class="dk-item-price">₹@prod.Price.ToString("N0")</span>
+                                @if (prod.OriginalPrice.HasValue && prod.OriginalPrice.Value > prod.Price)
+                                {
+                                    <span class="dk-item-mrp">₹@prod.OriginalPrice.Value.ToString("N0")</span>
+                                }
+                            </div>
+
+                            @if (prod.Sizes != null && prod.Sizes.Count > 0)
+                            {
+                                <div class="dk-item-sizes-row">
+                                    @foreach (var s in prod.Sizes.Take(3))
+                                    {
+                                        <span class="dk-item-size-pill">@s</span>
+                                    }
+                                    @if (prod.Sizes.Count > 3)
+                                    {
+                                        <span class="dk-item-size-pill">+@(prod.Sizes.Count - 3)</span>
+                                    }
+                                </div>
+                            }
+
+                            <div class="dk-item-card-action">
+                                <button type="button" class="dk-item-add-btn" onclick="quickAddItemToCart('@prod.Id', '@prod.Name', @prod.Price, this)">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="9" cy="21" r="1"></circle>
+                                        <circle cx="20" cy="21" r="1"></circle>
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                    </svg>
+                                    Quick Add
+                                </button>
+                                <a href="@itemUrl" class="dk-item-view-btn" title="View details">
+                                    View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         4. TRUST PROPOSITIONS SECTION
+    ============================================================ -->
+    @if (trustSection.IsEnabled && trustSection.Badges != null && trustSection.Badges.Count > 0)
+    {
+        <section class="dk-item-trust-section" aria-label="Student Trust Guarantees">
+            <div class="dk-item-trust-grid">
+                @foreach (var b in trustSection.Badges)
+                {
+                    <div class="dk-item-trust-card">
+                        <div class="dk-item-trust-icon-wrap">
+                            @GetTrustIcon(b.Icon)
+                        </div>
+                        <div class="dk-item-trust-info">
+                            <h4 class="dk-item-trust-title">@b.Title</h4>
+                            <p class="dk-item-trust-sub">@b.Subtitle</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- ============================================================
+         5. BOTTOM BANNER / HELPER BANNER
+    ============================================================ -->
+    @if (bottomBanner.IsEnabled)
+    {
+        <section class="dk-item-bottom-section" aria-label="Student Assistance">
+            <div class="dk-item-bottom-grid">
+                <div class="dk-item-bottom-card">
+                    <span class="dk-item-bottom-emoji">🧭</span>
+                    <h3 class="dk-item-bottom-title">@bottomBanner.QuizTitle</h3>
+                    <p class="dk-item-bottom-sub">@bottomBanner.QuizSubtitle</p>
+                    <a href="@bottomBanner.QuizButtonUrl" class="dk-item-bottom-cta">
+                        @bottomBanner.QuizButtonText &rarr;
+                    </a>
+                </div>
+                <div class="dk-item-bottom-card">
+                    <span class="dk-item-bottom-emoji">🌍</span>
+                    <h3 class="dk-item-bottom-title">@bottomBanner.DestinationsTitle</h3>
+                    <p class="dk-item-bottom-sub">@bottomBanner.DestinationsSubtitle</p>
+                    <a href="/category/fashion" class="dk-item-bottom-cta">
+                        Explore Destination Guides &rarr;
+                    </a>
+                </div>
+                <div class="dk-item-bottom-card">
+                    <span class="dk-item-bottom-emoji">👥</span>
+                    <h3 class="dk-item-bottom-title">@bottomBanner.BulkTitle</h3>
+                    <p class="dk-item-bottom-sub">@bottomBanner.BulkSubtitle</p>
+                    <a href="@bottomBanner.BulkButtonUrl" class="dk-item-bottom-cta">
+                        @bottomBanner.BulkButtonText &rarr;
+                    </a>
+                </div>
+            </div>
+        </section>
+    }
+
+</div>
+
+@* Styling & Interactive Scripts *@
+<style>
+.dk-item-hub-container {
+    width: 100%;
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 12px 16px 36px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+/* Festival Ribbon */
+.dk-item-fest-ribbon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+.dk-item-fest-badge {
+    background: rgba(255, 255, 255, 0.22);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+.dk-item-fest-text { flex: 1; text-align: center; }
+.dk-item-fest-highlight {
+    background: #ffffff;
+    color: #ea580c;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+/* Admin Bar */
+.dk-item-admin-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    gap: 12px;
+}
+.dk-item-admin-badge {
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    margin-right: 8px;
+}
+.dk-item-admin-hint { color: #475569; font-size: 0.86rem; }
+.dk-item-admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 0.84rem;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.18s;
+}
+.dk-item-admin-btn:hover { background: #0369a1; color: #ffffff; }
+
+/* Hero Banner */
+.dk-item-hero-section {
+    position: relative;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    padding: 32px 36px;
+    margin-bottom: 32px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+.dk-item-hero-glow {
+    position: absolute;
+    top: -60px;
+    right: 20%;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(234, 88, 12, 0.12) 0%, rgba(255, 255, 255, 0) 70%);
+    pointer-events: none;
+}
+.dk-item-hero-card {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr 1fr;
+    gap: 28px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+.dk-item-hero-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: #64748b;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+.dk-item-hero-breadcrumb a { color: #ea580c; text-decoration: none; }
+.dk-item-hero-breadcrumb a:hover { text-decoration: underline; }
+.dk-item-sep { color: #94a3b8; }
+.dk-item-crumb-active { color: #1e293b; font-weight: 700; }
+.dk-item-hero-heading {
+    font-size: 2.3rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
+}
+.dk-item-hero-highlight {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.dk-item-hero-sub {
+    font-size: 0.96rem;
+    line-height: 1.55;
+    margin: 0 0 20px 0;
+}
+.dk-item-badges-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.dk-item-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #1e293b;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* Center Media & Uploading Radar */
+.dk-item-hero-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.dk-item-hero-img {
+    max-width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+    border-radius: 16px;
+}
+.dk-item-hero-placeholder {
+    width: 100%;
+    min-height: 240px;
+    background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    box-sizing: border-box;
+    border: 2px dashed #cbd5e1;
+    position: relative;
+}
+.dk-item-placeholder-radar {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+.dk-item-radar-wave {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px solid #ea580c;
+    opacity: 0.6;
+    animation: itemRadarPing 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@@keyframes itemRadarPing {
+    0% { transform: scale(0.9); opacity: 0.8; }
+    80%, 100% { transform: scale(1.45); opacity: 0; }
+}
+.dk-item-radar-icon { font-size: 2.2rem; }
+.dk-item-radar-tag {
+    background: #ea580c;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+.dk-item-radar-sub { font-size: 0.85rem; font-weight: 700; color: #1e293b; }
+.dk-item-radar-sub-admin { font-size: 0.72rem; color: #64748b; margin-top: 3px; }
+.dk-item-hero-upload-badge {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+/* Right Feature Callout */
+.dk-item-hero-right {
+    display: flex;
+    justify-content: flex-end;
+}
+.dk-item-callout-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 22px 24px;
+    width: 100%;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+.dk-item-callout-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 16px 0;
+    line-height: 1.3;
+}
+.dk-item-callout-hl { display: block; color: #ea580c; font-size: 0.95rem; }
+.dk-item-callout-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.dk-item-callout-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #334155;
+}
+.dk-item-callout-icon { font-size: 1.15rem; }
+
+/* Sections */
+.dk-item-section {
+    margin-bottom: 40px;
+}
+.dk-item-section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    gap: 16px;
+}
+.dk-item-section-heading {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.3px;
+}
+.dk-item-section-sub {
+    font-size: 0.92rem;
+    color: #64748b;
+    margin: 0;
+}
+.dk-item-count-badge {
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Category Cards Grid */
+.dk-item-categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 18px;
+}
+.dk-item-cat-card {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.02);
+}
+.dk-item-cat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    border-color: #ea580c;
+}
+.dk-item-cat-img-box {
+    width: 100%;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+.dk-item-cat-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1.5px dashed #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.dk-item-cat-emoji { font-size: 2.4rem; }
+.dk-item-soon-badge {
+    background: #ea580c;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+.dk-item-cat-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+}
+.dk-item-cat-title {
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+.dk-item-cat-cta {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #ea580c;
+}
+
+/* Picks Carousel */
+.dk-item-section-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dk-item-arrow-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+.dk-item-arrow-btn:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+}
+.dk-item-picks-scroll {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+.dk-item-picks-scroll::-webkit-scrollbar { height: 6px; }
+.dk-item-picks-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+
+/* Product Card */
+.dk-item-product-card {
+    flex: 0 0 260px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.dk-item-product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.07);
+}
+.dk-item-card-img-box {
+    position: relative;
+    width: 100%;
+    height: 170px;
+    background: #f8fafc;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+.dk-item-card-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+.dk-item-card-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 12px;
+}
+.dk-item-card-placeholder-emoji { font-size: 2.4rem; }
+.dk-item-card-soon-txt {
+    background: #ea580c;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+.dk-item-wishlist-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    z-index: 2;
+    transition: all 0.18s;
+}
+.dk-item-wishlist-btn:hover, .dk-item-wishlist-btn.active {
+    color: #ef4444;
+    border-color: #ef4444;
+    background: #ffffff;
+}
+.dk-item-card-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+.dk-item-discount-tag {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: #16a34a;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.dk-item-card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.dk-item-card-name {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #0f172a;
+    text-decoration: none;
+    line-height: 1.35;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.5em;
+}
+.dk-item-card-name:hover { color: #ea580c; }
+.dk-item-card-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+}
+.dk-item-star { color: #f59e0b; }
+.dk-item-rating-val { font-weight: 800; color: #1e293b; }
+.dk-item-reviews-count { color: #64748b; }
+.dk-item-card-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.dk-item-price { font-size: 1.15rem; font-weight: 800; color: #0f172a; }
+.dk-item-mrp { font-size: 0.85rem; color: #94a3b8; text-decoration: line-through; }
+.dk-item-sizes-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+.dk-item-size-pill {
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.dk-item-card-action {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+}
+.dk-item-add-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s;
+}
+.dk-item-add-btn:hover { background: #ea580c; }
+.dk-item-view-btn {
+    background: #f1f5f9;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.18s;
+}
+.dk-item-view-btn:hover { background: #e2e8f0; }
+
+/* Trust Propositions */
+.dk-item-trust-section {
+    background: #f8fafc;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+.dk-item-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+.dk-item-trust-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.dk-item-trust-icon-wrap {
+    font-size: 1.8rem;
+}
+.dk-item-trust-title {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 2px 0;
+}
+.dk-item-trust-sub {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Bottom Banner */
+.dk-item-bottom-section { margin-bottom: 24px; }
+.dk-item-bottom-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+.dk-item-bottom-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+.dk-item-bottom-emoji { font-size: 2rem; margin-bottom: 12px; }
+.dk-item-bottom-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+}
+.dk-item-bottom-sub {
+    font-size: 0.88rem;
+    color: #64748b;
+    margin: 0 0 16px 0;
+    flex: 1;
+}
+.dk-item-bottom-cta {
+    font-size: 0.86rem;
+    font-weight: 800;
+    color: #ea580c;
+    text-decoration: none;
+}
+.dk-item-bottom-cta:hover { text-decoration: underline; }
+
+/* Responsive */
+@@media (max-width: 992px) {
+    .dk-item-hero-card { grid-template-columns: 1fr; }
+    .dk-item-hero-right { justify-content: flex-start; }
+    .dk-item-bottom-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<script>
+function slideItemProducts(direction) {
+    var container = document.getElementById('itemPicksRow');
+    if (!container) return;
+    var scrollAmount = 300 * direction;
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+}
+
+function toggleItemWishlist(btn, ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    btn.classList.toggle('active');
+    var isActive = btn.classList.contains('active');
+    btn.style.color = isActive ? '#ef4444' : '#64748b';
+}
+
+function quickAddItemToCart(prodId, prodName, price, btn) {
+    var origText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '✓ Added!';
+    btn.style.background = '#16a34a';
+
+    setTimeout(function() {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+        btn.style.background = '';
+    }, 1500);
+}
+</script>
+
+@functions {
+    public static string GetCategoryIcon(string? slug)
+    {
+        if (string.IsNullOrWhiteSpace(slug)) return "✨";
+        var s = slug.ToLowerInvariant();
+        if (s.Contains("women-footwear")) return "👠";
+        if (s.Contains("watch")) return "⌚";
+        if (s.Contains("sunglass")) return "🕶️";
+        if (s.Contains("cap") || s.Contains("hat")) return "🧢";
+        if (s.Contains("belt") || s.Contains("wallet")) return "👛";
+        if (s.Contains("sock")) return "🧦";
+        if (s.Contains("accessor")) return "🎒";
+        return "✨";
+    }
+
+    public static string GetSubcategoryIcon(string? slug)
+    {
+        if (string.IsNullOrWhiteSpace(slug)) return "✨";
+        var s = slug.ToLowerInvariant();
+        if (s.Contains("flat") || s.Contains("belli")) return "🥿";
+        if (s.Contains("heel") || s.Contains("pump")) return "👠";
+        if (s.Contains("sneaker") || s.Contains("trainer")) return "👟";
+        if (s.Contains("loafer") || s.Contains("slip")) return "👞";
+        if (s.Contains("wedge") || s.Contains("sandal")) return "👡";
+        if (s.Contains("boot")) return "👢";
+        if (s.Contains("flip") || s.Contains("slide")) return "🩴";
+        if (s.Contains("analog") || s.Contains("classic")) return "⌚";
+        if (s.Contains("chrono") || s.Contains("sport")) return "⏱️";
+        if (s.Contains("smart")) return "📱";
+        if (s.Contains("leather")) return "👔";
+        if (s.Contains("steel") || s.Contains("metal")) return "⛓️";
+        if (s.Contains("digital") || s.Contains("retro")) return "📟";
+        if (s.Contains("aviator")) return "🕶️";
+        if (s.Contains("wayfarer")) return "🕶️";
+        if (s.Contains("round")) return "👓";
+        if (s.Contains("clubmaster") || s.Contains("browline")) return "👓";
+        if (s.Contains("cat-eye") || s.Contains("cateye")) return "🕶️";
+        if (s.Contains("wrap") || s.Contains("sport")) return "🥽";
+        if (s.Contains("baseball") || s.Contains("dad")) return "🧢";
+        if (s.Contains("snapback")) return "🧢";
+        if (s.Contains("beanie") || s.Contains("knit")) return "🧶";
+        if (s.Contains("bucket")) return "🪣";
+        if (s.Contains("visor")) return "🧢";
+        if (s.Contains("fedora") || s.Contains("sun-hat") || s.Contains("sun-hats")) return "👒";
+        if (s.Contains("belt")) return "🪢";
+        if (s.Contains("wallet") || s.Contains("rfid") || s.Contains("bifold")) return "👛";
+        if (s.Contains("card")) return "💳";
+        if (s.Contains("passport") || s.Contains("travel")) return "🛂";
+        if (s.Contains("ankle")) return "🧦";
+        if (s.Contains("crew")) return "🧦";
+        if (s.Contains("no-show") || s.Contains("liner")) return "🧦";
+        if (s.Contains("thermal") || s.Contains("winter")) return "❄️";
+        if (s.Contains("compression")) return "🏃";
+        if (s.Contains("bag") || s.Contains("backpack")) return "🎒";
+        if (s.Contains("tie") || s.Contains("bowtie")) return "👔";
+        if (s.Contains("cufflink") || s.Contains("brooch")) return "✨";
+        if (s.Contains("scarf") || s.Contains("muffler")) return "🧣";
+        if (s.Contains("keychain") || s.Contains("airtag")) return "🔑";
+        if (s.Contains("umbrella")) return "☂️";
+        return "✨";
+    }
+
+    public static string GetBadgeIcon(string? icon)
+    {
+        if (string.IsNullOrWhiteSpace(icon)) return "✓";
+        return icon.ToLowerInvariant() switch
+        {
+            "shield" => "🛡️",
+            "compass" => "🧭",
+            "feather" => "🪶",
+            "wind" => "💨",
+            "users" => "👥",
+            "box" => "📦",
+            "tag" => "🏷️",
+            "truck" => "🚚",
+            "return" => "🔄",
+            "headset" => "🎧",
+            _ => "✓"
+        };
+    }
+
+    public static string GetFeatureIcon(string? icon)
+    {
+        return GetBadgeIcon(icon);
+    }
+
+    public static string GetTrustIcon(string? icon)
+    {
+        return icon?.ToLowerInvariant() switch
+        {
+            "box" => "📦",
+            "shield" => "🛡️",
+            "tag" => "🏷️",
+            "truck" => "🚚",
+            "return" => "🔄",
+            "headset" => "🎧",
+            _ => "✨"
+        };
+    }
+}
+

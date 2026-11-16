@@ -121,6 +121,24 @@
                 <span class="dk-breadcrumb-current">Women Clothing</span>
 
             }
+            else if (Model.IsFashionItemSubcategoryHub || Model.ViewMode == "fashion-item-sub")
+            {
+                var catName = Model.FashionItemHub?.CategoryName ?? Model.CategoryName ?? "Category";
+                var catSlug = Model.CurrentFashionCategorySlug ?? Model.FashionItemHub?.CategorySlug ?? "women-footwear";
+                var subName = Model.FashionItemSubcategoryPage?.CategoryName ?? Model.CurrentSubcategoryName ?? "Shop by Category";
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <a href="/category/fashion/@catSlug" class="dk-breadcrumb-item">@catName</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">@subName</span>
+            }
+            else if (Model.IsFashionItemCategoryHub || Model.ViewMode == "fashion-item-hub")
+            {
+                var catName = Model.FashionItemHub?.CategoryName ?? Model.CategoryName ?? "Category";
+                <a href="/category/fashion" class="dk-breadcrumb-item">Fashion</a>
+                <span class="dk-breadcrumb-separator">›</span>
+                <span class="dk-breadcrumb-current">@catName</span>
+            }
 
             else if (Model.IsHoodiesHub || Model.ViewMode == "hoodies")
 
@@ -146,12 +164,6 @@
 
             }
 
-            else if (Model.IsMenClothingSubcategory || Model.ViewMode == "men-clothing-sub")
-    {
-        <div style="width: 100%; margin-bottom: 24px;">
-            <partial name="_FashionMenClothingSubcategoryHub" model="Model" />
-        </div>
-    }
     else if (Model.IsMenClothing || Model.ViewMode == "men-clothing")
 
             {
@@ -369,7 +381,25 @@
 
 
 
-    @if (Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear")
+    @if (Model.IsMenClothingSubcategory || Model.ViewMode == "men-clothing-sub")
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_FashionMenClothingSubcategoryHub" model="Model" />
+        </div>
+    }
+    else if (Model.IsFashionItemSubcategoryHub || Model.ViewMode == "fashion-item-sub")
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_FashionItemSubcategoryHub" model="Model" />
+        </div>
+    }
+    else if (Model.IsFashionItemCategoryHub || Model.ViewMode == "fashion-item-hub")
+    {
+        <div style="width: 100%; margin-bottom: 24px;">
+            <partial name="_FashionItemCategoryHub" model="Model" />
+        </div>
+    }
+    else if (Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear")
 
     {
 
@@ -749,7 +779,9 @@
     @{
 
         var isSpecializedHub = (Model.IsFashionHub && Model.ViewMode == "hub") ||
-
+                               Model.IsFashionItemSubcategoryHub || Model.ViewMode == "fashion-item-sub" ||
+                               Model.IsFashionItemCategoryHub || Model.ViewMode == "fashion-item-hub" ||
+                               Model.IsMenClothingSubcategory || Model.ViewMode == "men-clothing-sub" ||
                                Model.IsEthnicWearHub || Model.ViewMode == "ethnic-wear" ||
 
                                Model.IsThermalsHub || Model.ViewMode == "thermals" ||
