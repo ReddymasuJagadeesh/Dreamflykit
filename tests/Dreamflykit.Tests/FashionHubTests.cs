@@ -992,4 +992,132 @@ public class FashionHubTests
         Assert.False(string.IsNullOrWhiteSpace(men.FestivalTheme.AnnouncementText));
     }
 
+    [Fact]
+    public void FashionHubDto_CreateDefault_InitializesAllSevenFashionItemCategories()
+    {
+        var hub = FashionHubDto.CreateDefault();
+
+        Assert.NotNull(hub.WomenFootwear);
+        Assert.Equal("women-footwear", hub.WomenFootwear.CategorySlug);
+        Assert.NotEmpty(hub.WomenFootwear.CategoriesSection.Categories);
+        Assert.NotEmpty(hub.WomenFootwear.SubcategoryPages);
+
+        Assert.NotNull(hub.Watches);
+        Assert.Equal("watches", hub.Watches.CategorySlug);
+        Assert.NotEmpty(hub.Watches.CategoriesSection.Categories);
+        Assert.NotEmpty(hub.Watches.SubcategoryPages);
+
+        Assert.NotNull(hub.Sunglasses);
+        Assert.Equal("sunglasses", hub.Sunglasses.CategorySlug);
+        Assert.NotEmpty(hub.Sunglasses.CategoriesSection.Categories);
+        Assert.NotEmpty(hub.Sunglasses.SubcategoryPages);
+
+        Assert.NotNull(hub.CapsHats);
+        Assert.Equal("caps-hats", hub.CapsHats.CategorySlug);
+        Assert.NotEmpty(hub.CapsHats.CategoriesSection.Categories);
+        Assert.NotEmpty(hub.CapsHats.SubcategoryPages);
+
+        Assert.NotNull(hub.BeltsWallets);
+        Assert.Equal("belts-wallets", hub.BeltsWallets.CategorySlug);
+        Assert.NotEmpty(hub.BeltsWallets.CategoriesSection.Categories);
+        Assert.NotEmpty(hub.BeltsWallets.SubcategoryPages);
+
+        Assert.NotNull(hub.Socks);
+        Assert.Equal("socks", hub.Socks.CategorySlug);
+        Assert.NotEmpty(hub.Socks.CategoriesSection.Categories);
+        Assert.NotEmpty(hub.Socks.SubcategoryPages);
+
+        Assert.NotNull(hub.Accessories);
+        Assert.Equal("accessories", hub.Accessories.CategorySlug);
+        Assert.NotEmpty(hub.Accessories.CategoriesSection.Categories);
+        Assert.NotEmpty(hub.Accessories.SubcategoryPages);
+    }
+
+    [Theory]
+    [InlineData("women-footwear", "Women Footwear")]
+    [InlineData("womens-footwear", "Women Footwear")]
+    [InlineData("watches", "Watches")]
+    [InlineData("watch", "Watches")]
+    [InlineData("sunglasses", "Sunglasses")]
+    [InlineData("glasses", "Sunglasses")]
+    [InlineData("caps-hats", "Caps & Hats")]
+    [InlineData("caps", "Caps & Hats")]
+    [InlineData("belts-wallets", "Belts & Wallets")]
+    [InlineData("wallets", "Belts & Wallets")]
+    [InlineData("socks", "Socks")]
+    [InlineData("accessories", "Accessories")]
+    public void FashionHubDto_GetItemHubBySlug_ResolvesAllCategoriesAndAliases(string slug, string expectedName)
+    {
+        var hub = FashionHubDto.CreateDefault();
+        var itemHub = hub.GetItemHubBySlug(slug);
+
+        Assert.NotNull(itemHub);
+        Assert.Equal(expectedName, itemHub.CategoryName);
+    }
+
+    [Fact]
+    public void FashionItemHubDto_AllSevenCategories_HaveRichSubcategoriesAndProducts()
+    {
+        var factories = new Func<FashionItemHubDto>[]
+        {
+            FashionItemHubDto.CreateDefaultWomenFootwear,
+            FashionItemHubDto.CreateDefaultWatches,
+            FashionItemHubDto.CreateDefaultSunglasses,
+            FashionItemHubDto.CreateDefaultCapsHats,
+            FashionItemHubDto.CreateDefaultBeltsWallets,
+            FashionItemHubDto.CreateDefaultSocks,
+            FashionItemHubDto.CreateDefaultAccessories
+        };
+
+        foreach (var factory in factories)
+        {
+            var itemHub = factory();
+            Assert.NotNull(itemHub);
+            Assert.False(string.IsNullOrWhiteSpace(itemHub.CategorySlug));
+            Assert.False(string.IsNullOrWhiteSpace(itemHub.CategoryName));
+            Assert.True(itemHub.IsEnabled);
+
+            // Hero Banner
+            Assert.NotNull(itemHub.HeroBanner);
+            Assert.True(itemHub.HeroBanner.IsEnabled);
+            Assert.False(string.IsNullOrWhiteSpace(itemHub.HeroBanner.Title));
+            Assert.False(string.IsNullOrWhiteSpace(itemHub.HeroBanner.Subtitle));
+
+            // Categories Section
+            Assert.NotNull(itemHub.CategoriesSection);
+            Assert.NotEmpty(itemHub.CategoriesSection.Categories);
+            Assert.All(itemHub.CategoriesSection.Categories, cat =>
+            {
+                Assert.False(string.IsNullOrWhiteSpace(cat.Name));
+                Assert.False(string.IsNullOrWhiteSpace(cat.Slug));
+                Assert.True(cat.IsUploadingSoon);
+            });
+
+            // Subcategory Pages
+            Assert.NotNull(itemHub.SubcategoryPages);
+            Assert.NotEmpty(itemHub.SubcategoryPages);
+            Assert.All(itemHub.SubcategoryPages, subPage =>
+            {
+                Assert.False(string.IsNullOrWhiteSpace(subPage.CategorySlug));
+                Assert.False(string.IsNullOrWhiteSpace(subPage.CategoryName));
+                Assert.NotNull(subPage.HeroBanner);
+                Assert.False(string.IsNullOrWhiteSpace(subPage.HeroBanner.Title));
+                Assert.NotEmpty(subPage.Products);
+
+                Assert.All(subPage.Products, p =>
+                {
+                    Assert.False(string.IsNullOrWhiteSpace(p.Name));
+                    Assert.True(p.Price > 0);
+                    Assert.NotNull(p.OriginalPrice);
+                    Assert.True(p.OriginalPrice >= p.Price);
+                    Assert.True(p.IsUploadingSoon);
+                });
+            });
+
+            // Top picks
+            Assert.NotNull(itemHub.TopPicksSection);
+            Assert.NotEmpty(itemHub.TopPicksSection.Products);
+        }
+    }
+
 }

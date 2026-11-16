@@ -29,7 +29,30 @@ public sealed class FashionHubDto
 
     public FashionThermalsDto Thermals { get; set; } = FashionThermalsDto.CreateDefault();
 
+    public FashionItemHubDto WomenFootwear { get; set; } = FashionItemHubDto.CreateDefaultWomenFootwear();
+    public FashionItemHubDto Watches { get; set; } = FashionItemHubDto.CreateDefaultWatches();
+    public FashionItemHubDto Sunglasses { get; set; } = FashionItemHubDto.CreateDefaultSunglasses();
+    public FashionItemHubDto CapsHats { get; set; } = FashionItemHubDto.CreateDefaultCapsHats();
+    public FashionItemHubDto BeltsWallets { get; set; } = FashionItemHubDto.CreateDefaultBeltsWallets();
+    public FashionItemHubDto Socks { get; set; } = FashionItemHubDto.CreateDefaultSocks();
+    public FashionItemHubDto Accessories { get; set; } = FashionItemHubDto.CreateDefaultAccessories();
 
+    public FashionItemHubDto? GetItemHubBySlug(string? slug)
+    {
+        if (string.IsNullOrWhiteSpace(slug)) return null;
+        var s = slug.Trim().ToLowerInvariant().Replace('_', '-');
+        return s switch
+        {
+            "women-footwear" or "womens-footwear" or "women_footwear" or "ladies-footwear" => WomenFootwear,
+            "watches" or "watch" or "wrist-watches" or "wristwatches" => Watches,
+            "sunglasses" or "sunglass" or "shades" or "sun-glasses" or "glasses" or "eyewear" => Sunglasses,
+            "caps-hats" or "caps" or "hats" or "headwear" or "caps_hats" => CapsHats,
+            "belts-wallets" or "belts" or "wallets" or "belts_wallets" or "leather-goods" => BeltsWallets,
+            "socks" or "sock" or "hosiery" => Socks,
+            "accessories" or "accessory" or "fashion-accessories" => Accessories,
+            _ => null
+        };
+    }
 
     public static FashionHubDto CreateDefault()
 
@@ -51,6 +74,14 @@ public sealed class FashionHubDto
             EthnicWear = FashionEthnicWearDto.CreateDefault(),
 
             Thermals = FashionThermalsDto.CreateDefault(),
+
+            WomenFootwear = FashionItemHubDto.CreateDefaultWomenFootwear(),
+            Watches = FashionItemHubDto.CreateDefaultWatches(),
+            Sunglasses = FashionItemHubDto.CreateDefaultSunglasses(),
+            CapsHats = FashionItemHubDto.CreateDefaultCapsHats(),
+            BeltsWallets = FashionItemHubDto.CreateDefaultBeltsWallets(),
+            Socks = FashionItemHubDto.CreateDefaultSocks(),
+            Accessories = FashionItemHubDto.CreateDefaultAccessories(),
 
             HeroBanner = new FashionHeroBannerDto
 

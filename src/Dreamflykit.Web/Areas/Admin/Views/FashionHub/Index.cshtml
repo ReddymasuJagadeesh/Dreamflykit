@@ -120,10 +120,36 @@
 
             </a>
 
-            <a href="/category/fashion/ethnic-wear" target="_blank" class="dk-btn-view-live" style="background: #fdf4ff; color: #a21caf; border: 1.5px solid #f0abfc; font-weight: 700;" title="Preview Ethnic Wear template in new tab">
+            <a href="/category/fashion/men-footwear" target="_blank" class="dk-btn-view-live" style="background: #f0f9ff; color: #0284c7; border: 1.5px solid #bae6fd; font-weight: 700;" title="Preview Men Footwear in new tab">
+                👟 Men Footwear
+            </a>
 
-                👑 Ethnic Wear
+            <a href="/category/fashion/women-footwear" target="_blank" class="dk-btn-view-live" style="background: #fff1f2; color: #e11d48; border: 1.5px solid #fecdd3; font-weight: 700;" title="Preview Women Footwear in new tab">
+                👠 Women Footwear
+            </a>
 
+            <a href="/category/fashion/watches" target="_blank" class="dk-btn-view-live" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; font-weight: 700;" title="Preview Watches in new tab">
+                ⌚ Watches
+            </a>
+
+            <a href="/category/fashion/sunglasses" target="_blank" class="dk-btn-view-live" style="background: #f8fafc; color: #0f172a; border: 1.5px solid #cbd5e1; font-weight: 700;" title="Preview Sunglasses in new tab">
+                🕶️ Sunglasses
+            </a>
+
+            <a href="/category/fashion/caps-hats" target="_blank" class="dk-btn-view-live" style="background: #ecfdf5; color: #059669; border: 1.5px solid #a7f3d0; font-weight: 700;" title="Preview Caps & Hats in new tab">
+                🧢 Caps &amp; Hats
+            </a>
+
+            <a href="/category/fashion/belts-wallets" target="_blank" class="dk-btn-view-live" style="background: #fffbeb; color: #d97706; border: 1.5px solid #fde68a; font-weight: 700;" title="Preview Belts & Wallets in new tab">
+                👛 Belts &amp; Wallets
+            </a>
+
+            <a href="/category/fashion/socks" target="_blank" class="dk-btn-view-live" style="background: #fdf4ff; color: #9333ea; border: 1.5px solid #f0abfc; font-weight: 700;" title="Preview Socks in new tab">
+                🧦 Socks
+            </a>
+
+            <a href="/category/fashion/accessories" target="_blank" class="dk-btn-view-live" style="background: #f0fdfa; color: #0d9488; border: 1.5px solid #99f6e4; font-weight: 700;" title="Preview Accessories in new tab">
+                🎒 Accessories
             </a>
 
             <a href="/category/fashion/thermals" target="_blank" class="dk-btn-view-live" style="background: #f0fdf4; color: #15803d; border: 1.5px solid #86efac; font-weight: 700;" title="Preview Thermals template in new tab">
@@ -218,13 +244,48 @@
 
         </button>
 
-        <button type="button" class="dk-tab-btn" data-tab="tab-men-footwear" style="background: #f0f9ff; color: #0284c7; border: 1.5px solid #bae6fd; font-weight: 800;">
-                    👟 Men Footwear (7 Categories)
-                </button>
-                <button type="button" class="dk-tab-btn" data-tab="tab-women-clothing" style="background: #fff1f2; color: #e11d48; border: 1.5px solid #fecdd3; font-weight: 800;">
+        <button type="button" class="dk-tab-btn" data-tab="tab-women-clothing" style="background: #fff1f2; color: #e11d48; border: 1.5px solid #fecdd3; font-weight: 800;">
 
             👗 Women Clothing Template
 
+        </button>
+
+        <button type="button" class="dk-tab-btn" data-tab="tab-men-clothing" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #93c5fd; font-weight: 800;">
+
+            👔 Men Clothing Template
+
+        </button>
+
+        <button type="button" class="dk-tab-btn" data-tab="tab-men-footwear" style="background: #f0f9ff; color: #0284c7; border: 1.5px solid #bae6fd; font-weight: 800;">
+            👟 Men Footwear (7 Categories)
+        </button>
+
+        <button type="button" class="dk-tab-btn" data-tab="tab-women-footwear" style="background: #fff1f2; color: #e11d48; border: 1.5px solid #fecdd3; font-weight: 800;">
+            👠 Women Footwear (@(hub.WomenFootwear?.CategoriesSection?.Categories?.Count ?? 7))
+        </button>
+
+        <button type="button" class="dk-tab-btn" data-tab="tab-watches" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; font-weight: 800;">
+            ⌚ Watches (@(hub.Watches?.CategoriesSection?.Categories?.Count ?? 6))
+        </button>
+
+        <button type="button" class="dk-tab-btn" data-tab="tab-sunglasses" style="background: #f8fafc; color: #0f172a; border: 1.5px solid #cbd5e1; font-weight: 800;">
+            🕶️ Sunglasses (@(hub.Sunglasses?.CategoriesSection?.Categories?.Count ?? 6))
+        </button>
+
+        <button type="button" class="dk-tab-btn" data-tab="tab-caps-hats" style="background: #ecfdf5; color: #059669; border: 1.5px solid #a7f3d0; font-weight: 800;">
+            🧢 Caps &amp; Hats (@(hub.CapsHats?.CategoriesSection?.Categories?.Count ?? 6))
+        </button>
+
+        <button type="button" class="dk-tab-btn" data-tab="tab-belts-wallets" style="background: #fffbeb; color: #d97706; border: 1.5px solid #fde68a; font-weight: 800;">
+            👛 Belts &amp; Wallets (@(hub.BeltsWallets?.CategoriesSection?.Categories?.Count ?? 6))
+        </button>
+
+        <button type="button" class="dk-tab-btn" data-tab="tab-socks" style="background: #fdf4ff; color: #9333ea; border: 1.5px solid #f0abfc; font-weight: 800;">
+            🧦 Socks (@(hub.Socks?.CategoriesSection?.Categories?.Count ?? 5))
+        </button>
+
+        <button type="button" class="dk-tab-btn" data-tab="tab-accessories" style="background: #f0fdfa; color: #0d9488; border: 1.5px solid #99f6e4; font-weight: 800;">
+            🎒 Accessories (@(hub.Accessories?.CategoriesSection?.Categories?.Count ?? 6))
         </button>
 
         <button type="button" class="dk-tab-btn" data-tab="tab-hoodies" style="background: #f8fafc; color: #0f172a; border: 1.5px solid #cbd5e1; font-weight: 800;">
@@ -236,12 +297,6 @@
         <button type="button" class="dk-tab-btn" data-tab="tab-sweatshirts" style="background: #fff7ed; color: #ea580c; border: 1.5px solid #fed7aa; font-weight: 800;">
 
             👕 Sweatshirts Template
-
-        </button>
-
-        <button type="button" class="dk-tab-btn" data-tab="tab-men-clothing" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #93c5fd; font-weight: 800;">
-
-            👔 Men Clothing Template
 
         </button>
 
@@ -5261,7 +5316,16 @@
 
         </div>
 
-
+        <!-- ========================================================
+             7 DEDICATED FASHION ITEM CATEGORIES (2-TIER TABS)
+        ========================================================= -->
+        <partial name="_FashionItemHubTab" model="@(hub.WomenFootwear ?? Dreamflykit.Application.FashionHub.Models.FashionItemHubDto.CreateDefaultWomenFootwear())" />
+        <partial name="_FashionItemHubTab" model="@(hub.Watches ?? Dreamflykit.Application.FashionHub.Models.FashionItemHubDto.CreateDefaultWatches())" />
+        <partial name="_FashionItemHubTab" model="@(hub.Sunglasses ?? Dreamflykit.Application.FashionHub.Models.FashionItemHubDto.CreateDefaultSunglasses())" />
+        <partial name="_FashionItemHubTab" model="@(hub.CapsHats ?? Dreamflykit.Application.FashionHub.Models.FashionItemHubDto.CreateDefaultCapsHats())" />
+        <partial name="_FashionItemHubTab" model="@(hub.BeltsWallets ?? Dreamflykit.Application.FashionHub.Models.FashionItemHubDto.CreateDefaultBeltsWallets())" />
+        <partial name="_FashionItemHubTab" model="@(hub.Socks ?? Dreamflykit.Application.FashionHub.Models.FashionItemHubDto.CreateDefaultSocks())" />
+        <partial name="_FashionItemHubTab" model="@(hub.Accessories ?? Dreamflykit.Application.FashionHub.Models.FashionItemHubDto.CreateDefaultAccessories())" />
 
     </form>
 
@@ -8970,7 +9034,15 @@ async function saveFashionHub() {
 
         ethnicWear: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ethnic, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase })),
 
-        thermals: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(thermals, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }))
+        thermals: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(thermals, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase })),
+
+        womenFootwear: collectFashionItemHubData("women-footwear"),
+        watches: collectFashionItemHubData("watches"),
+        sunglasses: collectFashionItemHubData("sunglasses"),
+        capsHats: collectFashionItemHubData("caps-hats"),
+        beltsWallets: collectFashionItemHubData("belts-wallets"),
+        socks: collectFashionItemHubData("socks"),
+        accessories: collectFashionItemHubData("accessories")
 
     };
 
@@ -9632,6 +9704,401 @@ function collectMenClothingSubcategoryPages() {
     });
 
     return subcategoryPages;
+}
+
+async function uploadItemFieldImage(input, targetInputId, previewImgId, soonCheckboxId) {
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("targetField", targetInputId);
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || "";
+    formData.append("__RequestVerificationToken", token);
+    showAlert("Uploading image...", "info");
+    try {
+        const res = await fetch("/Admin/FashionHub/UploadImage", { method: "POST", body: formData });
+        const data = await res.json();
+        if (data.success && data.url) {
+            if (targetInputId) {
+                const target = document.getElementById(targetInputId);
+                if (target) target.value = data.url;
+            }
+            if (previewImgId) {
+                const img = document.getElementById(previewImgId);
+                if (img) img.src = data.url;
+            }
+            if (soonCheckboxId) {
+                const soon = document.getElementById(soonCheckboxId);
+                if (soon) soon.checked = false;
+            }
+            showAlert("Image uploaded successfully! Don't forget to click Save All Changes.", "success");
+        } else {
+            showAlert("Upload failed: " + (data.message || "Unknown error"), "error");
+        }
+    } catch (err) {
+        showAlert("Network or upload error: " + err.message, "error");
+    }
+}
+
+async function uploadItemRowImage(input, inputClass, imgClass, soonClass) {
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("targetField", inputClass);
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || "";
+    formData.append("__RequestVerificationToken", token);
+    showAlert("Uploading image...", "info");
+    try {
+        const res = await fetch("/Admin/FashionHub/UploadImage", { method: "POST", body: formData });
+        const data = await res.json();
+        if (data.success && data.url) {
+            const row = input.closest("tr") || input.closest(".dk-item-row") || input.parentElement;
+            if (row) {
+                const inp = row.querySelector("." + inputClass);
+                if (inp) inp.value = data.url;
+                const img = row.querySelector("." + imgClass);
+                if (img) img.src = data.url;
+                const soon = row.querySelector("." + soonClass);
+                if (soon) soon.checked = false;
+            }
+            showAlert("Image uploaded successfully! Remember to Save Changes.", "success");
+        } else {
+            showAlert("Upload failed: " + (data.message || "Unknown error"), "error");
+        }
+    } catch (err) {
+        showAlert("Network or upload error: " + err.message, "error");
+    }
+}
+
+function switchItemSubAdmin(categorySlug, subSlug) {
+    document.querySelectorAll("." + categorySlug + "-subpage-editor").forEach(function(el) {
+        el.style.display = "none";
+    });
+    const target = document.getElementById(categorySlug + "-sub-editor-" + subSlug);
+    if (target) {
+        target.style.display = "block";
+    }
+}
+
+function addItemCategoryRow(categorySlug) {
+    const table = document.querySelector("#" + categorySlug + "-cats-table tbody");
+    if (!table) return;
+    const count = table.querySelectorAll(".item-cat-row").length + 1;
+    const tr = document.createElement("tr");
+    tr.className = "item-cat-row";
+    tr.setAttribute("data-id", categorySlug + "_cat_" + Date.now());
+    tr.style.borderBottom = "1px solid #f1f5f9";
+    tr.innerHTML = `
+        <td style="padding: 8px 12px;">
+            <input type="number" class="dk-input item-cat-order" value="${count}" style="width: 55px; padding: 4px 6px; text-align: center;" />
+        </td>
+        <td style="padding: 8px 12px;">
+            <input type="text" class="dk-input item-cat-name" value="New Subcategory" style="padding: 4px 8px; font-weight: 600;" />
+        </td>
+        <td style="padding: 8px 12px;">
+            <input type="text" class="dk-input item-cat-slug" value="new-subcategory" style="padding: 4px 8px; font-family: monospace; font-size: 12px;" />
+        </td>
+        <td style="padding: 8px 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <img src="/images/fashion-hub/uploading-soon-placeholder.svg" class="item-cat-preview" style="width: 36px; height: 36px; object-fit: contain; border-radius: 4px; border: 1px solid #e2e8f0; background: #fff;" />
+                <input type="text" class="dk-input item-cat-img" value="/images/fashion-hub/uploading-soon-placeholder.svg" style="padding: 4px 8px; font-size: 12px;" oninput="this.previousElementSibling.src = this.value || '/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                <button type="button" class="dk-btn-upload-row" onclick="this.nextElementSibling.click()" style="padding: 4px 8px; background: #e2e8f0; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">📷</button>
+                <input type="file" accept="image/*" style="display: none;" onchange="uploadItemRowImage(this, 'item-cat-img', 'item-cat-preview', 'item-cat-soon')" />
+            </div>
+        </td>
+        <td style="padding: 8px 12px; text-align: center;">
+            <input type="checkbox" class="item-cat-soon" checked />
+        </td>
+        <td style="padding: 8px 12px; text-align: center;">
+            <input type="checkbox" class="item-cat-active" checked />
+        </td>
+        <td style="padding: 8px 12px; text-align: center;">
+            <button type="button" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;">✕</button>
+        </td>
+    `;
+    table.appendChild(tr);
+}
+
+function addItemSubProductRow(categorySlug, subSlug) {
+    const table = document.querySelector("#" + categorySlug + "-prods-table-" + subSlug + " tbody");
+    if (!table) return;
+    const tr = document.createElement("tr");
+    tr.className = "item-sub-prod-row";
+    tr.setAttribute("data-id", categorySlug + "_p_" + Date.now());
+    tr.style.borderBottom = "1px solid #f1f5f9";
+    tr.innerHTML = `
+        <td style="padding: 6px 10px;">
+            <input type="text" class="dk-input prod-name" value="New Product" style="padding: 4px 8px; font-weight: 600;" />
+        </td>
+        <td style="padding: 6px 10px;">
+            <input type="number" class="dk-input prod-price" value="999" style="padding: 4px 6px;" />
+        </td>
+        <td style="padding: 6px 10px;">
+            <input type="number" class="dk-input prod-orig-price" value="1999" style="padding: 4px 6px;" />
+        </td>
+        <td style="padding: 6px 10px;">
+            <input type="text" class="dk-input prod-badge" value="Trending" style="padding: 4px 6px;" />
+        </td>
+        <td style="padding: 6px 10px;">
+            <input type="text" class="dk-input prod-sizes" value="S,M,L,XL" placeholder="Sizes comma-sep" style="padding: 4px 6px; font-size: 12px;" />
+            <input type="hidden" class="prod-colors" value="Black,Navy" />
+        </td>
+        <td style="padding: 6px 10px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <img src="/images/fashion-hub/uploading-soon-placeholder.svg" class="prod-preview" style="width: 32px; height: 32px; object-fit: contain; border-radius: 4px; border: 1px solid #e2e8f0; background: #fff;" />
+                <input type="text" class="dk-input prod-img" value="/images/fashion-hub/uploading-soon-placeholder.svg" style="padding: 4px 6px; font-size: 11px;" oninput="this.previousElementSibling.src = this.value || '/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                <button type="button" class="dk-btn-upload-row" onclick="this.nextElementSibling.click()" style="padding: 4px 6px; background: #e2e8f0; border: none; border-radius: 4px; cursor: pointer; font-size: 11px;">📷</button>
+                <input type="file" accept="image/*" style="display: none;" onchange="uploadItemRowImage(this, 'prod-img', 'prod-preview', 'prod-soon')" />
+            </div>
+        </td>
+        <td style="padding: 6px 10px; text-align: center;">
+            <input type="checkbox" class="prod-soon" checked />
+        </td>
+        <td style="padding: 6px 10px; text-align: center;">
+            <button type="button" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;">✕</button>
+        </td>
+    `;
+    table.appendChild(tr);
+}
+
+function addItemPickRow(categorySlug) {
+    const table = document.querySelector("#" + categorySlug + "-picks-table tbody");
+    if (!table) return;
+    const tr = document.createElement("tr");
+    tr.className = "item-pick-row";
+    tr.setAttribute("data-id", categorySlug + "_pick_" + Date.now());
+    tr.style.borderBottom = "1px solid #f1f5f9";
+    tr.innerHTML = `
+        <td style="padding: 8px 12px;">
+            <input type="text" class="dk-input pick-name" value="Featured Product" style="padding: 4px 8px; font-weight: 600;" />
+        </td>
+        <td style="padding: 8px 12px;">
+            <input type="number" class="dk-input pick-price" value="1299" style="padding: 4px 6px;" />
+        </td>
+        <td style="padding: 8px 12px;">
+            <input type="number" class="dk-input pick-orig-price" value="2499" style="padding: 4px 6px;" />
+        </td>
+        <td style="padding: 8px 12px;">
+            <input type="number" step="0.1" class="dk-input pick-rating" value="4.8" style="padding: 4px 6px;" />
+        </td>
+        <td style="padding: 8px 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <img src="/images/fashion-hub/uploading-soon-placeholder.svg" class="pick-preview" style="width: 32px; height: 32px; object-fit: contain; border-radius: 4px; border: 1px solid #e2e8f0; background: #fff;" />
+                <input type="text" class="dk-input pick-img" value="/images/fashion-hub/uploading-soon-placeholder.svg" style="padding: 4px 8px; font-size: 12px;" oninput="this.previousElementSibling.src = this.value || '/images/fashion-hub/uploading-soon-placeholder.svg'" />
+                <button type="button" class="dk-btn-upload-row" onclick="this.nextElementSibling.click()" style="padding: 4px 8px; background: #e2e8f0; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;" title="Upload Image">📷</button>
+                <input type="file" accept="image/*" style="display: none;" onchange="uploadItemRowImage(this, 'pick-img', 'pick-preview', 'pick-soon')" />
+            </div>
+        </td>
+        <td style="padding: 8px 12px; text-align: center;">
+            <input type="checkbox" class="pick-soon" checked />
+        </td>
+        <td style="padding: 8px 12px; text-align: center;">
+            <button type="button" onclick="this.closest('tr').remove()" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer;">✕</button>
+        </td>
+    `;
+    table.appendChild(tr);
+}
+
+function collectFashionItemHubData(slug) {
+    const pane = document.getElementById("tab-" + slug);
+    if (!pane) return null;
+
+    const festEnabled = pane.querySelector("#" + slug + "-fest-enabled")?.checked ?? true;
+    const festName = pane.querySelector("#" + slug + "-fest-name")?.value || "";
+    const festBadge = pane.querySelector("#" + slug + "-fest-badge")?.value || "";
+    const festHighlight = pane.querySelector("#" + slug + "-fest-highlight")?.value || "";
+    const festAnnouncement = pane.querySelector("#" + slug + "-fest-announcement")?.value || "";
+    const festGradient = pane.querySelector("#" + slug + "-fest-gradient")?.value || "";
+
+    const heroEnabled = pane.querySelector("#" + slug + "-hero-enabled")?.checked ?? true;
+    const heroTitle = pane.querySelector("#" + slug + "-hero-title")?.value || "";
+    const heroHighlight = pane.querySelector("#" + slug + "-hero-highlight")?.value || "";
+    const heroSubtitle = pane.querySelector("#" + slug + "-hero-subtitle")?.value || "";
+    const heroDesc = pane.querySelector("#" + slug + "-hero-desc")?.value || "";
+    const heroImg = pane.querySelector("#" + slug + "-hero-img")?.value || "";
+    const heroSoon = pane.querySelector("#" + slug + "-hero-soon")?.checked ?? true;
+
+    // Categories
+    const categories = [];
+    pane.querySelectorAll("#" + slug + "-cats-table tbody .item-cat-row").forEach(function(row) {
+        const id = row.getAttribute("data-id") || (slug + "_cat_" + Date.now());
+        const order = parseInt(row.querySelector(".item-cat-order")?.value || "1", 10);
+        const name = row.querySelector(".item-cat-name")?.value || "";
+        const catSlug = row.querySelector(".item-cat-slug")?.value || "";
+        const img = row.querySelector(".item-cat-img")?.value || "";
+        const soon = row.querySelector(".item-cat-soon")?.checked ?? true;
+        const active = row.querySelector(".item-cat-active")?.checked ?? true;
+        categories.push({
+            id: id,
+            name: name,
+            slug: catSlug,
+            imageUrl: img,
+            displayOrder: order,
+            isUploadingSoon: soon,
+            isActive: active
+        });
+    });
+
+    // Subcategory pages
+    const subcategoryPages = [];
+    pane.querySelectorAll("." + slug + "-subpage-editor").forEach(function(editor) {
+        const subSlug = editor.getAttribute("data-slug");
+        const catName = editor.querySelector(".sub-page-name")?.value || editor.querySelector(".sub-editor-title-name")?.textContent || subSlug;
+        const sHeroTitle = editor.querySelector(".sub-hero-title")?.value || catName;
+        const sHeroHighlight = editor.querySelector(".sub-hero-highlight")?.value || "STUDENT ESSENTIALS • 100% GENUINE";
+        const sHeroSub = editor.querySelector(".sub-hero-sub")?.value || "";
+        const sHeroImg = editor.querySelector(".sub-hero-img")?.value || "";
+        const sHeroSoon = editor.querySelector(".sub-hero-soon")?.checked ?? true;
+
+        const prods = [];
+        editor.querySelectorAll(".item-sub-prod-row").forEach(function(pRow) {
+            const pId = pRow.getAttribute("data-id") || (slug + "_p_" + Date.now());
+            const pName = pRow.querySelector(".prod-name")?.value || "";
+            const pPrice = parseFloat(pRow.querySelector(".prod-price")?.value) || 0;
+            const pMrp = parseFloat(pRow.querySelector(".prod-orig-price")?.value) || (pPrice * 1.5);
+            const pBadge = pRow.querySelector(".prod-badge")?.value || "Best Seller";
+            const pSizesStr = pRow.querySelector(".prod-sizes")?.value || "";
+            const pColorsStr = pRow.querySelector(".prod-colors")?.value || "";
+            const pImg = pRow.querySelector(".prod-img")?.value || "";
+            const pSoon = pRow.querySelector(".prod-soon")?.checked ?? true;
+
+            prods.push({
+                id: pId,
+                name: pName,
+                categoryName: catName,
+                categorySlug: subSlug,
+                price: pPrice,
+                originalPrice: pMrp,
+                badge: pBadge,
+                sizes: pSizesStr ? pSizesStr.split(',').map(s => s.trim()).filter(Boolean) : [],
+                colors: pColorsStr ? pColorsStr.split(',').map(c => c.trim()).filter(Boolean) : [],
+                imageUrl: pImg,
+                productUrl: `/category/fashion/${slug}/${subSlug}`,
+                isUploadingSoon: pSoon,
+                isActive: true,
+                rating: 4.8,
+                reviewsCount: 120
+            });
+        });
+
+        subcategoryPages.push({
+            categorySlug: subSlug,
+            categoryName: catName,
+            heroBanner: {
+                isEnabled: true,
+                title: sHeroTitle,
+                titleHighlight: sHeroHighlight,
+                subtitle: sHeroSub,
+                imageUrl: sHeroImg,
+                isUploadingSoon: sHeroSoon,
+                themeColor: "#ea580c",
+                badgeText: "STUDENT ESSENTIALS • 100% GENUINE"
+            },
+            products: prods
+        });
+    });
+
+    // Top picks
+    const picks = [];
+    pane.querySelectorAll("#" + slug + "-picks-table tbody .item-pick-row").forEach(function(row) {
+        const id = row.getAttribute("data-id") || (slug + "_pick_" + Date.now());
+        const name = row.querySelector(".pick-name")?.value || "";
+        const price = parseFloat(row.querySelector(".pick-price")?.value) || 0;
+        const origPrice = parseFloat(row.querySelector(".pick-orig-price")?.value) || (price * 1.5);
+        const rating = parseFloat(row.querySelector(".pick-rating")?.value) || 4.8;
+        const img = row.querySelector(".pick-img")?.value || "";
+        const soon = row.querySelector(".pick-soon")?.checked ?? true;
+        picks.push({
+            id: id,
+            name: name,
+            categoryName: heroTitle || slug,
+            price: price,
+            originalPrice: origPrice,
+            rating: rating,
+            reviewsCount: 100,
+            imageUrl: img,
+            productUrl: `/category/fashion/${slug}`,
+            isUploadingSoon: soon,
+            isActive: true
+        });
+    });
+
+    return {
+        categorySlug: slug,
+        categoryName: heroTitle || slug,
+        isEnabled: true,
+        festivalTheme: {
+            isEnabled: festEnabled,
+            festivalName: festName,
+            badgeText: festBadge,
+            bannerHighlight: festHighlight,
+            announcementText: festAnnouncement,
+            bgGradient: festGradient
+        },
+        heroBanner: {
+            isEnabled: heroEnabled,
+            title: heroTitle,
+            titleHighlight: heroHighlight,
+            subtitle: heroSubtitle,
+            description: heroDesc,
+            imageUrl: heroImg,
+            isUploadingSoon: heroSoon,
+            titleColor: "#0f172a",
+            titleHighlightColor: "#ea580c",
+            subtitleColor: "#475569",
+            bannerHeight: 440,
+            badges: [
+                { id: slug + "_b1", label: "Student Discount", icon: "shield" },
+                { id: slug + "_b2", label: "Global Standards", icon: "badge" },
+                { id: slug + "_b3", label: "100% Genuine", icon: "check" }
+            ],
+            rightCard: {
+                title: heroTitle,
+                titleHighlight: "Engineered for Students",
+                features: [
+                    { id: slug + "_f1", title: "Premium Quality & Comfort", icon: "star" },
+                    { id: slug + "_f2", title: "Global Warranty & Support", icon: "globe" }
+                ]
+            }
+        },
+        categoriesSection: {
+            isEnabled: pane.querySelector("#" + slug + "-cats-enabled")?.checked ?? true,
+            title: pane.querySelector("#" + slug + "-cats-title")?.value || "Shop by Category",
+            viewAllUrl: `/category/fashion/${slug}`,
+            viewAllText: "View All Categories →",
+            categories: categories
+        },
+        topPicksSection: {
+            isEnabled: pane.querySelector("#" + slug + "-picks-enabled")?.checked ?? true,
+            title: pane.querySelector("#" + slug + "-picks-title")?.value || "Top Picks for You",
+            viewAllUrl: `/category/fashion/${slug}`,
+            viewAllText: "View All Products →",
+            products: picks
+        },
+        trustBadgesSection: {
+            isEnabled: true,
+            badges: [
+                { id: slug + "_t1", title: "Verified Student Quality", subtitle: "Tested for campus life" },
+                { id: slug + "_t2", title: "Campus Fast Delivery", subtitle: "Direct to hostel or home" },
+                { id: slug + "_t3", title: "Easy 7-Day Exchange", subtitle: "Hassle-free student policy" }
+            ]
+        },
+        bottomBanner: {
+            isEnabled: true,
+            quizTitle: "Not Sure What to Choose?",
+            quizSubtitle: "Browse recommendations tailored for international campuses",
+            quizButtonText: "Find My Kit",
+            quizButtonUrl: "/find-my-kit",
+            destinationsTitle: "Student Loved Brands",
+            destinationsSubtitle: "Curated for comfort, style and longevity",
+            bulkTitle: "Student Group Discounts",
+            bulkSubtitle: "Save more when purchasing campus sets together",
+            bulkButtonText: "Contact Us",
+            bulkButtonUrl: "/contact"
+        },
+        subcategoryPages: subcategoryPages
+    };
 }
 
 </script>

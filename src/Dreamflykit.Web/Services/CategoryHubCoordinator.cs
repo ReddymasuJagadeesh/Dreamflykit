@@ -854,7 +854,87 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
                                                            string.Equals(currentSubcategorySlug, "mens-sweatshirts", StringComparison.OrdinalIgnoreCase) ||
                                                            string.Equals(currentSubcategorySlug, "mens-sweatshirt", StringComparison.OrdinalIgnoreCase)));
 
-        var isAnyFashionTemplate = isFashionCategory || isWomenSubcategory || isMenFootwearSubcategory || isMenFootwearCategory || isMenClothingSubcategory || isMenClothingCategory || isWomenClothingCategory || isHoodiesCategory || isSweatshirtsCategory || isEthnicWearCategory || isThermalsCategory;
+        string? candidateFashionCategorySlug = null;
+        if (string.Equals(effectiveCategory, "fashion", StringComparison.OrdinalIgnoreCase))
+        {
+            candidateFashionCategorySlug = NormalizeFashionItemCategorySlug(currentSubcategorySlug);
+        }
+        else
+        {
+            candidateFashionCategorySlug = NormalizeFashionItemCategorySlug(effectiveCategory);
+        }
+
+        var isFashionItemCategory = false;
+        var isFashionItemSubcategory = false;
+        string? fashionItemCategorySlug = null;
+        string? fashionItemSubcategorySlug = null;
+        FashionItemHubDto? fashionItemHub = null;
+        FashionSubcategoryPageDto? fashionItemSubPage = null;
+
+        if (!string.IsNullOrWhiteSpace(candidateFashionCategorySlug))
+        {
+            fashionItemCategorySlug = candidateFashionCategorySlug;
+            var fConfig = await _fashionHubService.GetConfigAsync(cancellationToken) ?? FashionHubDto.CreateDefault();
+            fashionItemHub = fConfig.GetItemHubBySlug(candidateFashionCategorySlug) ?? GetDefaultFashionItemHub(candidateFashionCategorySlug);
+
+            if (string.Equals(effectiveCategory, "fashion", StringComparison.OrdinalIgnoreCase))
+            {
+                if (!string.IsNullOrWhiteSpace(ctx.BrandSlug))
+                {
+                    fashionItemSubcategorySlug = ctx.BrandSlug.Trim().ToLowerInvariant().Replace('_', '-');
+                }
+                else if (!string.IsNullOrWhiteSpace(ctx.QuerySubcategory) && !string.Equals(ctx.QuerySubcategory, candidateFashionCategorySlug, StringComparison.OrdinalIgnoreCase))
+                {
+                    fashionItemSubcategorySlug = ctx.QuerySubcategory.Trim().ToLowerInvariant().Replace('_', '-');
+                }
+                else if (!string.IsNullOrWhiteSpace(ctx.Sub) && !string.Equals(ctx.Sub, candidateFashionCategorySlug, StringComparison.OrdinalIgnoreCase))
+                {
+                    fashionItemSubcategorySlug = ctx.Sub.Trim().ToLowerInvariant().Replace('_', '-');
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(currentSubcategorySlug))
+                {
+                    fashionItemSubcategorySlug = currentSubcategorySlug.Trim().ToLowerInvariant().Replace('_', '-');
+                }
+                else if (!string.IsNullOrWhiteSpace(ctx.BrandSlug))
+                {
+                    fashionItemSubcategorySlug = ctx.BrandSlug.Trim().ToLowerInvariant().Replace('_', '-');
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(fashionItemSubcategorySlug))
+            {
+                isFashionItemSubcategory = true;
+                if (fashionItemHub != null && fashionItemHub.SubcategoryPages != null && fashionItemHub.SubcategoryPages.Count > 0)
+                {
+                    fashionItemSubPage = fashionItemHub.SubcategoryPages.FirstOrDefault(p =>
+                        string.Equals(p.CategorySlug, fashionItemSubcategorySlug, StringComparison.OrdinalIgnoreCase));
+                }
+
+                if (fashionItemSubPage == null)
+                {
+                    var defaultHub = GetDefaultFashionItemHub(candidateFashionCategorySlug);
+                    fashionItemSubPage = defaultHub.SubcategoryPages?.FirstOrDefault(p =>
+                        string.Equals(p.CategorySlug, fashionItemSubcategorySlug, StringComparison.OrdinalIgnoreCase))
+                        ?? defaultHub.SubcategoryPages?.FirstOrDefault();
+                }
+
+                if (fashionItemSubPage != null)
+                {
+                    currentSubcategoryName = fashionItemSubPage.CategoryName;
+                    currentSubcategorySlug = fashionItemSubPage.CategorySlug;
+                }
+            }
+            else
+            {
+                isFashionItemCategory = true;
+                currentSubcategoryName = fashionItemHub?.CategoryName ?? candidateFashionCategorySlug;
+            }
+        }
+
+        var isAnyFashionTemplate = isFashionCategory || isWomenSubcategory || isMenFootwearSubcategory || isMenFootwearCategory || isMenClothingSubcategory || isMenClothingCategory || isWomenClothingCategory || isHoodiesCategory || isSweatshirtsCategory || isEthnicWearCategory || isThermalsCategory || isFashionItemCategory || isFashionItemSubcategory;
 
         string determinedViewMode;
         if (isSportsCategory)
@@ -887,6 +967,8 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
         else if (isSweatshirtsCategory) determinedViewMode = "sweatshirts";
         else if (isWomenClothingCategory) determinedViewMode = "women-clothing";
         else if (isMenClothingCategory) determinedViewMode = "men-clothing";
+        else if (isFashionItemSubcategory) determinedViewMode = "fashion-item-sub";
+        else if (isFashionItemCategory) determinedViewMode = "fashion-item-hub";
         else if (beautySubPage != null) determinedViewMode = "beauty-sub";
         else if (beautyCatPage != null) determinedViewMode = "beauty-cat";
         else if ((isStudyCategory || isFashionCategory || isHealthCategory || (isMobilesCategory && mobilesBrandShowcase == null) || isAppliancesCategory || isBeautyCategory || isFoodCategory || isTravelCategory || isElectronicsCategory || isStoryBooksCategory) && !subcategoryId.HasValue && string.IsNullOrWhiteSpace(currentSubcategorySlug))
@@ -897,6 +979,85 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
         {
             determinedViewMode = "categories";
         }
+
+        string resolvedCategoryName;
+        if (isSportsCategory)
+        {
+            resolvedCategoryName = !string.IsNullOrWhiteSpace(currentSubcategoryName) ? currentSubcategoryName : "Sports Hub";
+        }
+        else if (isGamingCategory)
+        {
+            resolvedCategoryName = !string.IsNullOrWhiteSpace(currentSubcategoryName) ? currentSubcategoryName : "Gaming Hub";
+        }
+        else if (beautySubPage != null)
+        {
+            resolvedCategoryName = beautySubPage.SubcategoryName;
+        }
+        else if (beautyCatPage != null)
+        {
+            resolvedCategoryName = beautyCatPage.CategoryName;
+        }
+        else if (isBeautyCategory)
+        {
+            resolvedCategoryName = "Beauty Hub";
+        }
+        else if (isFashionItemSubcategory && fashionItemSubPage != null)
+        {
+            resolvedCategoryName = fashionItemSubPage.CategoryName;
+        }
+        else if (isFashionItemCategory && fashionItemHub != null)
+        {
+            resolvedCategoryName = fashionItemHub.CategoryName;
+        }
+        else if (isStudyCategory && !string.IsNullOrWhiteSpace(currentSubcategoryName))
+        {
+            resolvedCategoryName = currentSubcategoryName;
+        }
+        else if (isEthnicWearCategory)
+        {
+            resolvedCategoryName = "Ethnic Wear";
+        }
+        else if (isThermalsCategory)
+        {
+            resolvedCategoryName = "Thermals";
+        }
+        else if (isHoodiesCategory)
+        {
+            resolvedCategoryName = "Hoodies";
+        }
+        else if (isSweatshirtsCategory)
+        {
+            resolvedCategoryName = "Sweatshirts";
+        }
+        else if (isMenFootwearCategory)
+        {
+            resolvedCategoryName = "Men Footwear";
+        }
+        else if (isWomenClothingCategory)
+        {
+            resolvedCategoryName = "Women Clothing";
+        }
+        else if (isMenClothingCategory)
+        {
+            resolvedCategoryName = "Men Clothing";
+        }
+        else if (isLuggageCategory)
+        {
+            resolvedCategoryName = "Luggage & Bags";
+        }
+        else
+        {
+            resolvedCategoryName = result.CurrentCategoryName ?? catDetails?.Name ?? effectiveCategory ?? "Products";
+        }
+
+        string? resolvedSubcategoryName = isEthnicWearCategory ? "Ethnic Wear" :
+                                         (isThermalsCategory ? "Thermals" :
+                                         (isHoodiesCategory ? "Hoodies" :
+                                         (isSweatshirtsCategory ? "Sweatshirts" :
+                                         (isWomenClothingCategory ? "Women Clothing" :
+                                         (isMenClothingCategory ? "Men Clothing" :
+                                         (isFashionItemSubcategory && fashionItemSubPage != null ? fashionItemSubPage.CategoryName :
+                                         (isFashionItemCategory && fashionItemHub != null ? fashionItemHub.CategoryName : currentSubcategoryName)))))));
 
         var model = new ProductListViewModel
         {
@@ -910,34 +1071,13 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
             SearchTerm = effectiveSearch,
             CategoryId = categoryId,
             CategorySlug = isSportsCategory ? "sports-hub" : (isLuggageCategory ? "luggage-bags" : (isGamingCategory ? "gaming-hub" : (isMobilesCategory ? "mobiles" : (result.CurrentCategorySlug ?? effectiveCategory)))),
-            CategoryName = isSportsCategory
-                           ? (!string.IsNullOrWhiteSpace(currentSubcategoryName) ? currentSubcategoryName : "Sports Hub")
-                           : (isGamingCategory
-                           ? (!string.IsNullOrWhiteSpace(currentSubcategoryName) ? currentSubcategoryName : "Gaming Hub")
-                           : (beautySubPage != null ? beautySubPage.SubcategoryName
-                           : (beautyCatPage != null ? beautyCatPage.CategoryName
-                           : (isBeautyCategory ? "Beauty Hub"
-                           : ((isStudyCategory && !string.IsNullOrWhiteSpace(currentSubcategoryName))
-                           ? currentSubcategoryName
-                           : (isEthnicWearCategory ? "Ethnic Wear" :
-                           (isThermalsCategory ? "Thermals" :
-                           (isHoodiesCategory ? "Hoodies" :
-                           (isSweatshirtsCategory ? "Sweatshirts" :
-                           (isMenFootwearCategory ? "Men Footwear" : (isWomenClothingCategory ? "Women Clothing" :
-                           (isMenClothingCategory ? "Men Clothing" :
-                           (isLuggageCategory ? "Luggage & Bags" :
-                           (result.CurrentCategoryName ?? catDetails?.Name)))))))))))))),
+            CategoryName = resolvedCategoryName,
             CategoryImageUrl = catDetails?.ImageUrl,
             CategoryDescription = !string.IsNullOrWhiteSpace(catDetails?.Name)
                 ? $"Explore premium {catDetails.Name} student essentials, verified university supplies, and travel-ready gear curated for international students."
                 : null,
             SubcategoryId = subcategoryId,
-            CurrentSubcategoryName = isEthnicWearCategory ? "Ethnic Wear" :
-                                     (isThermalsCategory ? "Thermals" :
-                                     (isHoodiesCategory ? "Hoodies" :
-                                     (isSweatshirtsCategory ? "Sweatshirts" :
-                                     (isWomenClothingCategory ? "Women Clothing" :
-                                     (isMenClothingCategory ? "Men Clothing" : currentSubcategoryName))))),
+            CurrentSubcategoryName = resolvedSubcategoryName,
             CurrentSubcategorySlug = currentSubcategorySlug,
             CurrentSubcatItem = effectiveSubcatItem,
             Subcategories = catDetails?.Subcategories ?? Array.Empty<SubcategoryListItem>(),
@@ -1001,9 +1141,46 @@ public sealed class CategoryHubCoordinator : ICategoryHubCoordinator
             CurrentBrandName = currentBrandName,
             ElectronicsBrandHero = elecBrandShowcase?.HeroBanner,
             ElectronicsBrandFilters = elecBrandShowcase?.FilterGroups,
-            ElectronicsBrandProducts = elecBrandShowcase?.Products
+            ElectronicsBrandProducts = elecBrandShowcase?.Products,
+            FashionItemHub = fashionItemHub,
+            FashionItemSubcategoryPage = fashionItemSubPage,
+            IsFashionItemCategory = isFashionItemCategory,
+            IsFashionItemSubcategory = isFashionItemSubcategory,
+            CurrentFashionCategorySlug = fashionItemCategorySlug
         };
 
         return model;
+    }
+
+    private static string? NormalizeFashionItemCategorySlug(string? slug)
+    {
+        if (string.IsNullOrWhiteSpace(slug)) return null;
+        var s = slug.Trim().ToLowerInvariant().Replace('_', '-');
+        return s switch
+        {
+            "women-footwear" or "womens-footwear" or "women_footwear" or "ladies-footwear" => "women-footwear",
+            "watches" or "watch" or "wrist-watches" or "wristwatches" => "watches",
+            "sunglasses" or "sunglass" or "shades" or "sun-glasses" => "sunglasses",
+            "caps-hats" or "caps" or "hats" or "headwear" or "caps_hats" => "caps-hats",
+            "belts-wallets" or "belts" or "wallets" or "belts_wallets" or "leather-goods" => "belts-wallets",
+            "socks" or "sock" or "hosiery" => "socks",
+            "accessories" or "accessory" or "fashion-accessories" => "accessories",
+            _ => null
+        };
+    }
+
+    private static FashionItemHubDto GetDefaultFashionItemHub(string slug)
+    {
+        return slug switch
+        {
+            "women-footwear" => FashionItemHubDto.CreateDefaultWomenFootwear(),
+            "watches" => FashionItemHubDto.CreateDefaultWatches(),
+            "sunglasses" => FashionItemHubDto.CreateDefaultSunglasses(),
+            "caps-hats" => FashionItemHubDto.CreateDefaultCapsHats(),
+            "belts-wallets" => FashionItemHubDto.CreateDefaultBeltsWallets(),
+            "socks" => FashionItemHubDto.CreateDefaultSocks(),
+            "accessories" => FashionItemHubDto.CreateDefaultAccessories(),
+            _ => FashionItemHubDto.CreateDefaultWomenFootwear()
+        };
     }
 }
