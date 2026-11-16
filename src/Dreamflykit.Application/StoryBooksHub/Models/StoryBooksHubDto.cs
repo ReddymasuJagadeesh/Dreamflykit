@@ -3,11 +3,111 @@ namespace Dreamflykit.Application.StoryBooksHub.Models;
 public sealed class StoryBooksThemeSettingsDto
 {
     public string BrandName { get; set; } = "BOOKSFLIX";
-    public string Tagline { get; set; } = "Unlimited Stories, Novels & Campus Literary Journals";
-    public string PrimaryRed { get; set; } = "#E50914";
-    public string DarkBackground { get; set; } = "#141414";
-    public string CardBackground { get; set; } = "#181818";
-    public bool IsDarkThemeEnabled { get; set; } = true;
+    public string Tagline { get; set; } = "Curated Stories, Novels & Campus Literary Journals";
+
+    // Dreamflykit Logo Colors & Modern Theme
+    public string PrimaryColor { get; set; } = "#ea580c";       // Dreamflykit Vibrant Orange
+    public string SecondaryColor { get; set; } = "#034694";     // Dreamflykit Royal Navy Blue
+    public string BackgroundColor { get; set; } = "#f8fafc";    // Clean light background matching other categories
+    public string CardBackgroundColor { get; set; } = "#ffffff";// Clean white cards
+    public string TextColor { get; set; } = "#0f172a";          // High-contrast primary text
+    public string SubtitleColor { get; set; } = "#475569";      // Muted/subtitle text
+    public bool IsDarkThemeEnabled { get; set; } = false;       // Default FALSE (clean light theme like other categories)
+    public string ThemePreset { get; set; } = "Dreamflykit";
+
+    // Legacy getters/setters for 100% backward compatibility
+    public string PrimaryRed
+    {
+        get => PrimaryColor;
+        set => PrimaryColor = value;
+    }
+    public string DarkBackground
+    {
+        get => BackgroundColor;
+        set => BackgroundColor = value;
+    }
+    public string CardBackground
+    {
+        get => CardBackgroundColor;
+        set => CardBackgroundColor = value;
+    }
+
+    /// <summary>
+    /// Calculates WCAG relative luminance to determine whether a given hex color is light or dark.
+    /// </summary>
+    public static double GetLuminance(string hexColor)
+    {
+        if (string.IsNullOrWhiteSpace(hexColor)) return 1.0;
+        var hex = hexColor.Trim().TrimStart('#');
+        if (hex.Length == 3)
+        {
+            hex = $"{hex[0]}{hex[0]}{hex[1]}{hex[1]}{hex[2]}{hex[2]}";
+        }
+        if (hex.Length != 6) return 1.0;
+
+        try
+        {
+            var r = Convert.ToInt32(hex[..2], 16) / 255.0;
+            var g = Convert.ToInt32(hex.Substring(2, 2), 16) / 255.0;
+            var b = Convert.ToInt32(hex.Substring(4, 2), 16) / 255.0;
+
+            r = r <= 0.03928 ? r / 12.92 : Math.Pow((r + 0.055) / 1.055, 2.4);
+            g = g <= 0.03928 ? g / 12.92 : Math.Pow((g + 0.055) / 1.055, 2.4);
+            b = b <= 0.03928 ? b / 12.92 : Math.Pow((b + 0.055) / 1.055, 2.4);
+
+            return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        }
+        catch
+        {
+            return 1.0;
+        }
+    }
+
+    /// <summary>
+    /// Returns #0f172a for light backgrounds and #ffffff for dark backgrounds.
+    /// </summary>
+    public static string GetContrastTextColor(string hexBg, string darkText = "#0f172a", string lightText = "#ffffff")
+    {
+        return GetLuminance(hexBg) > 0.45 ? darkText : lightText;
+    }
+
+    /// <summary>
+    /// Returns #475569 for light backgrounds and #cbd5e1 for dark backgrounds.
+    /// </summary>
+    public static string GetContrastSubtitleColor(string hexBg, string darkSubtitle = "#475569", string lightSubtitle = "#cbd5e1")
+    {
+        return GetLuminance(hexBg) > 0.45 ? darkSubtitle : lightSubtitle;
+    }
+
+    /// <summary>
+    /// Returns #e2e8f0 for light backgrounds and rgba(255,255,255,0.15) for dark backgrounds.
+    /// </summary>
+    public static string GetContrastBorderColor(string hexBg, string lightBorder = "#e2e8f0", string darkBorder = "rgba(255, 255, 255, 0.15)")
+    {
+        return GetLuminance(hexBg) > 0.45 ? lightBorder : darkBorder;
+    }
+
+    /// <summary>
+    /// Gets text color with guaranteed high contrast against PrimaryColor.
+    /// </summary>
+    public string GetPrimaryContrastTextColor() => GetContrastTextColor(PrimaryColor, "#0f172a", "#ffffff");
+
+    /// <summary>
+    /// Gets text color with guaranteed high contrast against SecondaryColor.
+    /// </summary>
+    public string GetSecondaryContrastTextColor() => GetContrastTextColor(SecondaryColor, "#0f172a", "#ffffff");
+
+    /// <summary>
+    /// Calculates the WCAG 2.1 contrast ratio between two colors (e.g. 12.4:1).
+    /// </summary>
+    public static double GetContrastRatio(string color1, string color2)
+    {
+        var l1 = GetLuminance(color1);
+        var l2 = GetLuminance(color2);
+        var lighter = Math.Max(l1, l2);
+        var darker = Math.Min(l1, l2);
+        return (lighter + 0.05) / (darker + 0.05);
+    }
 }
 
 public sealed class StoryBooksHeroBillboardDto

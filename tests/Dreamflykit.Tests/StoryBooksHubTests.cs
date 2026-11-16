@@ -158,4 +158,38 @@ public class StoryBooksHubTests
         Assert.Equal("hub", model.ViewMode);
         Assert.Equal("Bon Appétit, Your Majesty", model.StoryBooksHub.HeroBillboard.Title);
     }
+
+    [Fact]
+    public void StoryBooksThemeSettingsDto_DreamflykitColors_And_ContrastCalculations()
+    {
+        // Act
+        var theme = new StoryBooksThemeSettingsDto();
+
+        // Assert Dreamflykit brand defaults
+        Assert.Equal("#ea580c", theme.PrimaryColor); // Dreamflykit Vibrant Orange
+        Assert.Equal("#034694", theme.SecondaryColor); // Dreamflykit Royal Navy Blue
+        Assert.Equal("#f8fafc", theme.BackgroundColor); // Clean light background
+        Assert.Equal("#ffffff", theme.CardBackgroundColor); // Clean white cards
+        Assert.False(theme.IsDarkThemeEnabled);
+
+        // Test WCAG luminance calculations
+        var lightLum = StoryBooksThemeSettingsDto.GetLuminance("#ffffff");
+        Assert.True(lightLum > 0.95);
+
+        var darkLum = StoryBooksThemeSettingsDto.GetLuminance("#0f172a");
+        Assert.True(darkLum < 0.1);
+
+        // Test automated contrast text selection
+        Assert.Equal("#0f172a", StoryBooksThemeSettingsDto.GetContrastTextColor("#ffffff"));
+        Assert.Equal("#0f172a", StoryBooksThemeSettingsDto.GetContrastTextColor("#f8fafc"));
+        Assert.Equal("#ffffff", StoryBooksThemeSettingsDto.GetContrastTextColor("#0f172a"));
+        Assert.Equal("#ffffff", StoryBooksThemeSettingsDto.GetContrastTextColor("#141414"));
+
+        // Test button contrast
+        Assert.Equal("#ffffff", theme.GetPrimaryContrastTextColor());
+
+        // Test WCAG contrast ratio helper (light background to dark text > 7:1 for AAA compliance)
+        var ratio = StoryBooksThemeSettingsDto.GetContrastRatio("#f8fafc", "#0f172a");
+        Assert.True(ratio > 7.0, $"Expected AAA contrast ratio > 7.0, but got {ratio}");
+    }
 }

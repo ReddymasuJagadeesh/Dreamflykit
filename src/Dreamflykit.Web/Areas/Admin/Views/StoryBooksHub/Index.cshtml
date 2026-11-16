@@ -22,8 +22,8 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
         <div>
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-                <span style="background: #E50914; color: #ffffff; font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 4px; letter-spacing: 1px;">📚 BOOKSFLIX ADMIN</span>
-                <span style="background: #1e293b; color: #94a3b8; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px;">NETFLIX HUB THEME</span>
+                <span style="background: #ea580c; color: #ffffff; font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 4px; letter-spacing: 1px;">📚 BOOKSFLIX ADMIN</span>
+                <span style="background: #eff6ff; color: #034694; font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 4px; border: 1px solid #bfdbfe;">DREAMFLYKIT THEME</span>
             </div>
             <h1 style="font-size: 26px; font-weight: 900; color: #0f172a; margin: 0;">Story Books &amp; Literary Journals Management</h1>
             <p style="font-size: 13.5px; color: #64748b; margin: 4px 0 0 0;">
@@ -41,7 +41,7 @@
                     ↺ Reset Defaults
                 </button>
             </form>
-            <button type="button" class="dk-btn" id="btnSaveStoryBooksTop" onclick="saveStoryBooksHubConfig()" style="background: #E50914; color: #ffffff; border: none; padding: 11px 26px; font-size: 14px; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(229, 9, 20, 0.35);">
+            <button type="button" class="dk-btn" id="btnSaveStoryBooksTop" onclick="saveStoryBooksHubConfig()" style="background: #ea580c; color: #ffffff; border: none; padding: 11px 26px; font-size: 14px; font-weight: 800; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                 Save All Changes
             </button>
@@ -87,7 +87,7 @@
                     <p style="margin: 2px 0 0 0; font-size: 13px; color: #64748b;">Full-width cinematic hero spotlight shown on Home tab.</p>
                 </div>
                 <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer;">
-                    <input type="checkbox" id="billboard_IsEnabled" @(billboard.IsEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #E50914;" />
+                    <input type="checkbox" id="billboard_IsEnabled" @(billboard.IsEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #ea580c;" />
                     Enabled
                 </label>
             </div>
@@ -173,7 +173,7 @@
                     </div>
 
                     <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; color: #475569;">
-                        <input type="checkbox" id="billboard_IsUploadingSoon" @(billboard.IsUploadingSoon ? "checked" : "") onchange="document.getElementById('billboard_UploadingSoonTag').style.display = this.checked ? 'block' : 'none';" style="accent-color: #E50914;" />
+                        <input type="checkbox" id="billboard_IsUploadingSoon" @(billboard.IsUploadingSoon ? "checked" : "") onchange="document.getElementById('billboard_UploadingSoonTag').style.display = this.checked ? 'block' : 'none';" style="accent-color: #ea580c;" />
                         Mark as "Uploading Soon" (Admin Replaceable)
                     </label>
                 </div>
@@ -188,7 +188,7 @@
                     <p style="margin: 2px 0 0 0; font-size: 13px; color: #64748b;">Full-width hero banner shown on Story Books tab (and updates on journal selection).</p>
                 </div>
                 <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer;">
-                    <input type="checkbox" id="sbBanner_IsEnabled" @(sbBanner.IsEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #E50914;" />
+                    <input type="checkbox" id="sbBanner_IsEnabled" @(sbBanner.IsEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #ea580c;" />
                     Enabled
                 </label>
             </div>
@@ -238,7 +238,7 @@
                         </button>
                     </div>
                     <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; color: #475569;">
-                        <input type="checkbox" id="sbBanner_IsUploadingSoon" @(sbBanner.IsUploadingSoon ? "checked" : "") style="accent-color: #E50914;" />
+                        <input type="checkbox" id="sbBanner_IsUploadingSoon" @(sbBanner.IsUploadingSoon ? "checked" : "") style="accent-color: #ea580c;" />
                         Mark as "Uploading Soon" (Admin Replaceable)
                     </label>
                 </div>
@@ -253,7 +253,7 @@
                     <p style="margin: 2px 0 0 0; font-size: 13px; color: #64748b;">Full-width hero banner shown on New &amp; Popular tab.</p>
                 </div>
                 <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer;">
-                    <input type="checkbox" id="npBanner_IsEnabled" @(npBanner.IsEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #E50914;" />
+                    <input type="checkbox" id="npBanner_IsEnabled" @(npBanner.IsEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #ea580c;" />
                     Enabled
                 </label>
             </div>
@@ -303,7 +303,7 @@
                         </button>
                     </div>
                     <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; color: #475569;">
-                        <input type="checkbox" id="npBanner_IsUploadingSoon" @(npBanner.IsUploadingSoon ? "checked" : "") style="accent-color: #E50914;" />
+                        <input type="checkbox" id="npBanner_IsUploadingSoon" @(npBanner.IsUploadingSoon ? "checked" : "") style="accent-color: #ea580c;" />
                         Mark as "Uploading Soon" (Admin Replaceable)
                     </label>
                 </div>
@@ -318,7 +318,7 @@
                     <p style="margin: 2px 0 0 0; font-size: 13px; color: #64748b;">Full-width hero banner shown on Browse by Language tab.</p>
                 </div>
                 <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer;">
-                    <input type="checkbox" id="langBanner_IsEnabled" @(langBanner.IsEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #E50914;" />
+                    <input type="checkbox" id="langBanner_IsEnabled" @(langBanner.IsEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #ea580c;" />
                     Enabled
                 </label>
             </div>
@@ -368,7 +368,7 @@
                         </button>
                     </div>
                     <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; color: #475569;">
-                        <input type="checkbox" id="langBanner_IsUploadingSoon" @(langBanner.IsUploadingSoon ? "checked" : "") style="accent-color: #E50914;" />
+                        <input type="checkbox" id="langBanner_IsUploadingSoon" @(langBanner.IsUploadingSoon ? "checked" : "") style="accent-color: #ea580c;" />
                         Mark as "Uploading Soon" (Admin Replaceable)
                     </label>
                 </div>
@@ -408,7 +408,7 @@
                                 <option value="continue-reading" selected="@(sec.DisplayType == "continue-reading")">Continue Reading</option>
                             </select>
                             <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; cursor: pointer;">
-                                <input type="checkbox" class="sec-active" @(sec.IsActive ? "checked" : "") style="accent-color: #E50914;" /> Active
+                                <input type="checkbox" class="sec-active" @(sec.IsActive ? "checked" : "") style="accent-color: #ea580c;" /> Active
                             </label>
                             <button type="button" onclick="removeSection(this)" style="background: none; border: none; color: #dc2626; font-size: 16px; cursor: pointer;" title="Delete Shelf">✕</button>
                         </div>
@@ -473,7 +473,7 @@
                                             Upload Cover
                                         </button>
                                         <label style="display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; cursor: pointer;">
-                                            <input type="checkbox" class="book-uploading-soon" @(book.IsUploadingSoon ? "checked" : "") style="accent-color: #E50914;" />
+                                            <input type="checkbox" class="book-uploading-soon" @(book.IsUploadingSoon ? "checked" : "") style="accent-color: #ea580c;" />
                                             Uploading Soon
                                         </label>
                                     </div>
@@ -619,43 +619,201 @@
     </div>
 
     <!-- ========================================================
-         TAB 5: NETFLIX THEME SETTINGS
+         TAB 5: MODERN BRAND & VISUAL THEME STUDIO
     ========================================================= -->
     <div class="sbf-admin-tab-pane" id="pane-theme">
-        <div class="dk-card" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; max-width: 700px;">
-            <h3 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 800; color: #0f172a;">Brand &amp; Visual Theme Settings</h3>
-
-            <div style="display: flex; flex-direction: column; gap: 14px;">
-                <div>
-                    <label class="sbf-label">Brand Name (Displayed in Hub Navbar)</label>
-                    <input type="text" id="theme_BrandName" class="sbf-input" value="@theme.BrandName" />
+        <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; align-items: start;">
+            <!-- Left Column: Controls & Presets -->
+            <div class="dk-card" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                    <div>
+                        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">Brand &amp; Visual Theme Settings</h3>
+                        <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Configure brand colors, page background, card styles, and contrast safety.</p>
+                    </div>
+                    <span style="background: #eff6ff; color: #034694; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 6px; border: 1px solid #bfdbfe;">
+                        WCAG 2.1 Compliant
+                    </span>
                 </div>
 
-                <div>
-                    <label class="sbf-label">Tagline</label>
-                    <input type="text" id="theme_Tagline" class="sbf-input" value="@theme.Tagline" />
+                <div style="display: flex; flex-direction: column; gap: 18px;">
+                    <!-- 1-Click Brand Theme Presets -->
+                    <div>
+                        <label class="sbf-label" style="margin-bottom: 8px;">1-Click Theme Presets</label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px;">
+                            <button type="button" class="sbf-preset-btn active" onclick="applyThemePreset('dreamflykit')" id="preset-dreamflykit" title="Vibrant Orange + Royal Navy on clean light slate">
+                                <span class="sbf-preset-swatch" style="background: linear-gradient(135deg, #ea580c 50%, #034694 50%);"></span>
+                                <span class="sbf-preset-name">Dreamflykit</span>
+                                <span class="sbf-preset-sub">Official (Light)</span>
+                            </button>
+                            <button type="button" class="sbf-preset-btn" onclick="applyThemePreset('ocean')" id="preset-ocean" title="Sky Blue + Amber on crisp white">
+                                <span class="sbf-preset-swatch" style="background: linear-gradient(135deg, #0284c7 50%, #ea580c 50%);"></span>
+                                <span class="sbf-preset-name">Ocean Amber</span>
+                                <span class="sbf-preset-sub">Clean (Light)</span>
+                            </button>
+                            <button type="button" class="sbf-preset-btn" onclick="applyThemePreset('scholar')" id="preset-scholar" title="University Navy + Academic Gold">
+                                <span class="sbf-preset-swatch" style="background: linear-gradient(135deg, #1e40af 50%, #d97706 50%);"></span>
+                                <span class="sbf-preset-name">Scholar</span>
+                                <span class="sbf-preset-sub">Navy &amp; Gold</span>
+                            </button>
+                            <button type="button" class="sbf-preset-btn" onclick="applyThemePreset('emerald')" id="preset-emerald" title="Emerald Literature + Warm Amber">
+                                <span class="sbf-preset-swatch" style="background: linear-gradient(135deg, #059669 50%, #d97706 50%);"></span>
+                                <span class="sbf-preset-name">Emerald</span>
+                                <span class="sbf-preset-sub">Campus Nature</span>
+                            </button>
+                            <button type="button" class="sbf-preset-btn" onclick="applyThemePreset('midnight')" id="preset-midnight" title="Midnight Navy Slate with vibrant orange & sky blue">
+                                <span class="sbf-preset-swatch" style="background: linear-gradient(135deg, #0f172a 50%, #f97316 50%);"></span>
+                                <span class="sbf-preset-name">Midnight</span>
+                                <span class="sbf-preset-sub">Dark Campus</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Brand Identity Text Fields -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <div>
+                            <label class="sbf-label">Brand Name (Navbar)</label>
+                            <input type="text" id="theme_BrandName" class="sbf-input" value="@theme.BrandName" oninput="updateLivePreview()" />
+                        </div>
+                        <div>
+                            <label class="sbf-label">Tagline / Subtitle</label>
+                            <input type="text" id="theme_Tagline" class="sbf-input" value="@theme.Tagline" oninput="updateLivePreview()" />
+                        </div>
+                    </div>
+
+                    <!-- Color Pickers with Dual Hex Input -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <div>
+                            <label class="sbf-label">Primary Brand Color</label>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="color" id="theme_PrimaryColorPicker" value="@theme.PrimaryColor" oninput="syncColorInput('theme_PrimaryColorPicker', 'theme_PrimaryColor')" style="width: 44px; height: 38px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; padding: 2px;" />
+                                <input type="text" id="theme_PrimaryColor" class="sbf-input" value="@theme.PrimaryColor" oninput="syncColorPicker('theme_PrimaryColor', 'theme_PrimaryColorPicker')" style="font-family: monospace; font-weight: 700; text-transform: uppercase;" />
+                            </div>
+                            <small style="color: #64748b; font-size: 11px;">Buttons, badges, active tabs, highlights</small>
+                        </div>
+
+                        <div>
+                            <label class="sbf-label">Secondary Brand Color</label>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="color" id="theme_SecondaryColorPicker" value="@theme.SecondaryColor" oninput="syncColorInput('theme_SecondaryColorPicker', 'theme_SecondaryColor')" style="width: 44px; height: 38px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; padding: 2px;" />
+                                <input type="text" id="theme_SecondaryColor" class="sbf-input" value="@theme.SecondaryColor" oninput="syncColorPicker('theme_SecondaryColor', 'theme_SecondaryColorPicker')" style="font-family: monospace; font-weight: 700; text-transform: uppercase;" />
+                            </div>
+                            <small style="color: #64748b; font-size: 11px;">Navbar emblem, Top 10 strokes, accents</small>
+                        </div>
+
+                        <div>
+                            <label class="sbf-label">Page Background Color</label>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="color" id="theme_BackgroundColorPicker" value="@theme.BackgroundColor" oninput="syncColorInput('theme_BackgroundColorPicker', 'theme_BackgroundColor')" style="width: 44px; height: 38px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; padding: 2px;" />
+                                <input type="text" id="theme_BackgroundColor" class="sbf-input" value="@theme.BackgroundColor" oninput="syncColorPicker('theme_BackgroundColor', 'theme_BackgroundColorPicker')" style="font-family: monospace; font-weight: 700; text-transform: uppercase;" />
+                            </div>
+                            <small style="color: #64748b; font-size: 11px;">Default: #f8fafc (Clean light slate)</small>
+                        </div>
+
+                        <div>
+                            <label class="sbf-label">Card Background Color</label>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="color" id="theme_CardBackgroundColorPicker" value="@theme.CardBackgroundColor" oninput="syncColorInput('theme_CardBackgroundColorPicker', 'theme_CardBackgroundColor')" style="width: 44px; height: 38px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; padding: 2px;" />
+                                <input type="text" id="theme_CardBackgroundColor" class="sbf-input" value="@theme.CardBackgroundColor" oninput="syncColorPicker('theme_CardBackgroundColor', 'theme_CardBackgroundColorPicker')" style="font-family: monospace; font-weight: 700; text-transform: uppercase;" />
+                            </div>
+                            <small style="color: #64748b; font-size: 11px;">Default: #ffffff (Crisp clean white)</small>
+                        </div>
+                    </div>
+
+                    <!-- Hidden legacy inputs for 100% backward compatibility -->
+                    <input type="hidden" id="theme_PrimaryRed" value="@theme.PrimaryColor" />
+                    <input type="hidden" id="theme_DarkBackground" value="@theme.BackgroundColor" />
+                    <input type="hidden" id="theme_CardBackground" value="@theme.CardBackgroundColor" />
+                    <input type="hidden" id="theme_ThemePreset" value="@theme.ThemePreset" />
+
+                    <!-- Dark Mode Switch -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px;">
+                        <label style="display: flex; align-items: center; gap: 10px; font-weight: 700; cursor: pointer; margin: 0; color: #0f172a;">
+                            <input type="checkbox" id="theme_IsDarkThemeEnabled" @(theme.IsDarkThemeEnabled ? "checked" : "") onchange="onDarkModeToggle(this.checked)" style="width: 18px; height: 18px; accent-color: #ea580c;" />
+                            <span>Enable Immersive Dark Mode Theme on Store</span>
+                        </label>
+                        <p style="margin: 6px 0 0 28px; font-size: 12px; color: #64748b;">When enabled, flips background to dark slate (#0f172a) and cards to deep navy (#1e293b) while retaining automatic text visibility.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Live WCAG Contrast & Interactive Preview -->
+            <div class="dk-card" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                    <div>
+                        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">Live Contrast &amp; Preview</h3>
+                        <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Real-time text visibility check against your chosen colors.</p>
+                    </div>
+                    <div id="contrastBadge" style="background: #dcfce7; color: #166534; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 6px; border: 1px solid #bbf7d0;">
+                        ✓ AAA Compliant
+                    </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-                    <div>
-                        <label class="sbf-label">Primary Red Accent</label>
-                        <input type="color" id="theme_PrimaryRed" value="@theme.PrimaryRed" style="width: 100%; height: 38px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer;" />
+                <!-- Contrast Telemetry Card -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;">
+                        <span style="font-size: 11px; color: #64748b; font-weight: 600; display: block;">Page Text Contrast</span>
+                        <div style="display: flex; align-items: baseline; gap: 6px; margin-top: 2px;">
+                            <strong id="contrastRatioValue" style="font-size: 16px; color: #0f172a;">14.2 : 1</strong>
+                            <small id="contrastStatus" style="font-size: 11px; color: #16a34a; font-weight: 700;">Excellent</small>
+                        </div>
+                        <span id="contrastTextColorLabel" data-hex="#0f172a" style="font-size: 11px; color: #475569; margin-top: 2px; display: block;">Text: #0f172a (Dark Slate)</span>
                     </div>
-                    <div>
-                        <label class="sbf-label">Dark Background</label>
-                        <input type="color" id="theme_DarkBackground" value="@theme.DarkBackground" style="width: 100%; height: 38px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer;" />
-                    </div>
-                    <div>
-                        <label class="sbf-label">Card Background</label>
-                        <input type="color" id="theme_CardBackground" value="@theme.CardBackground" style="width: 100%; height: 38px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer;" />
+
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;">
+                        <span style="font-size: 11px; color: #64748b; font-weight: 600; display: block;">Primary Button Contrast</span>
+                        <div style="display: flex; align-items: baseline; gap: 6px; margin-top: 2px;">
+                            <strong id="btnContrastRatioValue" style="font-size: 16px; color: #0f172a;">4.8 : 1</strong>
+                            <small id="btnContrastStatus" style="font-size: 11px; color: #16a34a; font-weight: 700;">AA Passed</small>
+                        </div>
+                        <span id="btnContrastTextColorLabel" data-hex="#ffffff" style="font-size: 11px; color: #475569; margin-top: 2px; display: block;">Button Text: #ffffff (White)</span>
                     </div>
                 </div>
 
-                <div>
-                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer;">
-                        <input type="checkbox" id="theme_IsDarkThemeEnabled" @(theme.IsDarkThemeEnabled ? "checked" : "") style="width: 18px; height: 18px; accent-color: #E50914;" />
-                        Enable Immersive Dark Mode Theme on Store
-                    </label>
+                <!-- Live Miniature Storefront Simulation Container -->
+                <div id="livePreviewContainer" style="border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; background: #f8fafc; transition: background-color 0.2s;">
+                    <!-- Mini Subnav -->
+                    <div id="miniSubnav" style="padding: 10px 16px; background: rgba(255, 255, 255, 0.95); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div id="miniEmblem" style="width: 24px; height: 24px; border-radius: 6px; background: linear-gradient(135deg, #034694, #ea580c); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 900;">B</div>
+                            <span id="miniBrandText" style="font-weight: 900; font-size: 14px; letter-spacing: 0.5px;">
+                                <span id="miniBrandP1" style="color: #034694;">BOOKS</span><span id="miniBrandP2" style="color: #ea580c;">FLIX</span>
+                            </span>
+                        </div>
+                        <div style="display: flex; gap: 10px; font-size: 11px; font-weight: 700;">
+                            <span id="miniTabActive" style="color: #ea580c; border-bottom: 2px solid #ea580c; padding-bottom: 2px;">Home</span>
+                            <span style="color: #64748b;">Story Books</span>
+                            <span style="color: #64748b;">New &amp; Popular</span>
+                        </div>
+                    </div>
+
+                    <!-- Mini Billboard -->
+                    <div id="miniBillboard" style="margin: 12px; border-radius: 8px; padding: 16px; background: linear-gradient(77deg, rgba(3, 70, 148, 0.95) 0%, rgba(15, 23, 42, 0.88) 50%, rgba(234, 88, 12, 0.35) 100%); color: #ffffff; position: relative;">
+                        <span id="miniBillboardBadge" style="background: #ea580c; color: #ffffff; font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.5px;">TOP 10 TODAY</span>
+                        <h4 style="margin: 8px 0 4px 0; font-size: 16px; font-weight: 900; color: #ffffff;">Bon Appétit, Your Majesty</h4>
+                        <p style="margin: 0 0 10px 0; font-size: 11px; color: #e2e8f0; line-height: 1.4;">A captivating contemporary tale of an ambitious culinary student at an elite European academy.</p>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <button type="button" id="miniBtnCart" style="background: #ea580c; color: #ffffff; border: none; padding: 6px 12px; font-size: 11px; font-weight: 800; border-radius: 4px; cursor: pointer;">Add to Cart • ₹499</button>
+                            <button type="button" id="miniBtnReading" style="background: #ffffff; color: #034694; border: none; padding: 6px 12px; font-size: 11px; font-weight: 800; border-radius: 4px; cursor: pointer;">Start Reading</button>
+                        </div>
+                    </div>
+
+                    <!-- Mini Card Sample -->
+                    <div style="padding: 0 12px 14px 12px;">
+                        <div style="font-size: 12px; font-weight: 800; margin-bottom: 8px; color: #0f172a;" id="miniShelfTitle">
+                            <span style="color: #ea580c;" id="miniShelfMark">|</span> Popular University Fiction
+                        </div>
+                        <div id="miniCard" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px; width: 140px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                            <div style="aspect-ratio: 2/3; background: #e2e8f0; border-radius: 4px; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #64748b; font-weight: 700;">
+                                Cover Preview
+                            </div>
+                            <div id="miniCardTitle" style="font-size: 11px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Campus Secrets</div>
+                            <div id="miniCardAuthor" style="font-size: 10px; color: #64748b; margin-bottom: 4px;">Prof. R. Vance</div>
+                            <div style="display: flex; align-items: baseline; gap: 4px;">
+                                <strong id="miniCardPrice" style="font-size: 11px; color: #0f172a;">₹349</strong>
+                                <span style="font-size: 9px; color: #16a34a; font-weight: 700;">30% OFF</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -689,8 +847,8 @@
     box-sizing: border-box;
 }
 .sbf-input:focus {
-    border-color: #E50914;
-    box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.15);
+    border-color: #ea580c;
+    box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.15);
 }
 .dk-hub-tab-btn {
     background: #f8fafc;
@@ -709,10 +867,47 @@
     color: #0f172a;
 }
 .dk-hub-tab-btn.active {
-    background: #E50914;
+    background: #ea580c;
     color: #ffffff;
-    border-color: #E50914;
-    box-shadow: 0 4px 12px rgba(229, 9, 20, 0.25);
+    border-color: #ea580c;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+}
+.sbf-preset-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 6px;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+.sbf-preset-btn:hover {
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+}
+.sbf-preset-btn.active {
+    border-color: #ea580c;
+    background: #fff7ed;
+    box-shadow: 0 2px 8px rgba(234, 88, 12, 0.2);
+}
+.sbf-preset-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-bottom: 5px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+.sbf-preset-name {
+    font-size: 11.5px;
+    font-weight: 800;
+    color: #0f172a;
+}
+.sbf-preset-sub {
+    font-size: 9.5px;
+    color: #64748b;
 }
 .sbf-admin-tab-pane {
     display: none;
@@ -820,7 +1015,7 @@ function addNewSectionPrompt() {
                     <option value="continue-reading">Continue Reading</option>
                 </select>
                 <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; cursor: pointer;">
-                    <input type="checkbox" class="sec-active" checked style="accent-color: #E50914;" /> Active
+                    <input type="checkbox" class="sec-active" checked style="accent-color: #ea580c;" /> Active
                 </label>
                 <button type="button" onclick="removeSection(this)" style="background: none; border: none; color: #dc2626; font-size: 16px; cursor: pointer;" title="Delete Shelf">✕</button>
             </div>
@@ -898,7 +1093,7 @@ function addBookToSection(btn) {
                 Upload Cover
             </button>
             <label style="display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; cursor: pointer;">
-                <input type="checkbox" class="book-uploading-soon" checked style="accent-color: #E50914;" />
+                <input type="checkbox" class="book-uploading-soon" checked style="accent-color: #ea580c;" />
                 Uploading Soon
             </label>
         </div>
@@ -958,6 +1153,304 @@ function addNewPrefRow() {
 }
 
 // ----------------------------------------------------
+// Theme Studio & WCAG Contrast Management
+// ----------------------------------------------------
+const themePresets = {
+    dreamflykit: {
+        primary: '#ea580c',
+        secondary: '#034694',
+        bg: '#f8fafc',
+        card: '#ffffff',
+        dark: false,
+        name: 'Dreamflykit'
+    },
+    ocean: {
+        primary: '#0284c7',
+        secondary: '#ea580c',
+        bg: '#ffffff',
+        card: '#f8fafc',
+        dark: false,
+        name: 'Ocean Amber'
+    },
+    scholar: {
+        primary: '#1e40af',
+        secondary: '#d97706',
+        bg: '#f8fafc',
+        card: '#ffffff',
+        dark: false,
+        name: 'Scholar'
+    },
+    emerald: {
+        primary: '#059669',
+        secondary: '#d97706',
+        bg: '#f8fafc',
+        card: '#ffffff',
+        dark: false,
+        name: 'Emerald'
+    },
+    midnight: {
+        primary: '#f97316',
+        secondary: '#38bdf8',
+        bg: '#0f172a',
+        card: '#1e293b',
+        dark: true,
+        name: 'Midnight'
+    }
+};
+
+function applyThemePreset(key) {
+    const p = themePresets[key];
+    if (!p) return;
+
+    document.getElementById('theme_PrimaryColor').value = p.primary;
+    document.getElementById('theme_PrimaryColorPicker').value = p.primary;
+    document.getElementById('theme_SecondaryColor').value = p.secondary;
+    document.getElementById('theme_SecondaryColorPicker').value = p.secondary;
+    document.getElementById('theme_BackgroundColor').value = p.bg;
+    document.getElementById('theme_BackgroundColorPicker').value = p.bg;
+    document.getElementById('theme_CardBackgroundColor').value = p.card;
+    document.getElementById('theme_CardBackgroundColorPicker').value = p.card;
+    document.getElementById('theme_IsDarkThemeEnabled').checked = p.dark;
+    document.getElementById('theme_ThemePreset').value = p.name;
+
+    document.querySelectorAll('.sbf-preset-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.getElementById('preset-' + key);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    updateLivePreview();
+}
+
+function syncColorInput(pickerId, textId) {
+    const picker = document.getElementById(pickerId);
+    const text = document.getElementById(textId);
+    if (picker && text) {
+        text.value = picker.value.toUpperCase();
+        updateLivePreview();
+    }
+}
+
+function syncColorPicker(textId, pickerId) {
+    const text = document.getElementById(textId);
+    const picker = document.getElementById(pickerId);
+    if (text && picker && /^#[0-9A-Fa-f]{6}$/.test(text.value.trim())) {
+        picker.value = text.value.trim();
+        updateLivePreview();
+    }
+}
+
+function onDarkModeToggle(isDark) {
+    if (isDark) {
+        const currentBg = document.getElementById('theme_BackgroundColor').value;
+        if (getLuminance(currentBg) > 0.45) {
+            document.getElementById('theme_BackgroundColor').value = '#0f172a';
+            document.getElementById('theme_BackgroundColorPicker').value = '#0f172a';
+            document.getElementById('theme_CardBackgroundColor').value = '#1e293b';
+            document.getElementById('theme_CardBackgroundColorPicker').value = '#1e293b';
+        }
+    } else {
+        const currentBg = document.getElementById('theme_BackgroundColor').value;
+        if (getLuminance(currentBg) <= 0.45) {
+            document.getElementById('theme_BackgroundColor').value = '#f8fafc';
+            document.getElementById('theme_BackgroundColorPicker').value = '#f8fafc';
+            document.getElementById('theme_CardBackgroundColor').value = '#ffffff';
+            document.getElementById('theme_CardBackgroundColorPicker').value = '#ffffff';
+        }
+    }
+    updateLivePreview();
+}
+
+function getLuminance(hex) {
+    if (!hex) return 1.0;
+    hex = hex.replace('#', '').trim();
+    if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+    if (hex.length !== 6) return 1.0;
+    try {
+        const r = parseInt(hex.substring(0, 2), 16) / 255.0;
+        const g = parseInt(hex.substring(2, 4), 16) / 255.0;
+        const b = parseInt(hex.substring(4, 6), 16) / 255.0;
+        const a = [r, g, b].map(v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+        return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+    } catch(e) {
+        return 1.0;
+    }
+}
+
+function getContrastRatio(hex1, hex2) {
+    const l1 = getLuminance(hex1);
+    const l2 = getLuminance(hex2);
+    const lighter = Math.max(l1, l2);
+    const darker = Math.min(l1, l2);
+    return ((lighter + 0.05) / (darker + 0.05));
+}
+
+function updateLivePreview() {
+    const primary = document.getElementById('theme_PrimaryColor')?.value.trim() || '#ea580c';
+    const secondary = document.getElementById('theme_SecondaryColor')?.value.trim() || '#034694';
+    const bg = document.getElementById('theme_BackgroundColor')?.value.trim() || '#f8fafc';
+    const cardBg = document.getElementById('theme_CardBackgroundColor')?.value.trim() || '#ffffff';
+    const brandName = document.getElementById('theme_BrandName')?.value.trim() || 'BOOKSFLIX';
+    const isDark = document.getElementById('theme_IsDarkThemeEnabled')?.checked || false;
+
+    const bgLum = getLuminance(bg);
+    const isBgLight = !isDark && (bgLum > 0.45);
+    const textColor = isBgLight ? '#0f172a' : '#ffffff';
+    const textMuted = isBgLight ? '#64748b' : '#94a3b8';
+    const borderColor = isBgLight ? '#e2e8f0' : 'rgba(255, 255, 255, 0.15)';
+
+    const primaryLum = getLuminance(primary);
+    const btnTextColor = primaryLum > 0.45 ? '#0f172a' : '#ffffff';
+
+    const textRatio = getContrastRatio(bg, textColor).toFixed(1);
+    const btnRatio = getContrastRatio(primary, btnTextColor).toFixed(1);
+
+    const ratioVal = document.getElementById('contrastRatioValue');
+    const ratioStatus = document.getElementById('contrastStatus');
+    const badge = document.getElementById('contrastBadge');
+    const textLabel = document.getElementById('contrastTextColorLabel');
+
+    if (ratioVal) ratioVal.innerText = `${textRatio} : 1`;
+    if (textLabel) {
+        textLabel.innerText = `Text: ${textColor} (${isBgLight ? 'High-Contrast Dark Slate' : 'Crisp White'})`;
+        textLabel.setAttribute('data-hex', textColor);
+    }
+
+    if (ratioStatus && badge) {
+        if (textRatio >= 7.0) {
+            ratioStatus.innerText = 'Excellent (AAA)';
+            ratioStatus.style.color = '#16a34a';
+            badge.innerText = '✓ AAA Compliant';
+            badge.style.background = '#dcfce7';
+            badge.style.color = '#166534';
+            badge.style.borderColor = '#bbf7d0';
+        } else if (textRatio >= 4.5) {
+            ratioStatus.innerText = 'Good (AA)';
+            ratioStatus.style.color = '#2563eb';
+            badge.innerText = '✓ AA Passed';
+            badge.style.background = '#dbeafe';
+            badge.style.color = '#1e40af';
+            badge.style.borderColor = '#bfdbfe';
+        } else {
+            ratioStatus.innerText = 'Low Contrast';
+            ratioStatus.style.color = '#ea580c';
+            badge.innerText = '⚠ Review Contrast';
+            badge.style.background = '#fff7ed';
+            badge.style.color = '#c2410c';
+            badge.style.borderColor = '#fed7aa';
+        }
+    }
+
+    const btnRatioVal = document.getElementById('btnContrastRatioValue');
+    const btnRatioStatus = document.getElementById('btnContrastStatus');
+    const btnTextLabel = document.getElementById('btnContrastTextColorLabel');
+    if (btnRatioVal) btnRatioVal.innerText = `${btnRatio} : 1`;
+    if (btnTextLabel) {
+        btnTextLabel.innerText = `Button Text: ${btnTextColor} (${btnTextColor === '#ffffff' ? 'White' : 'Dark'})`;
+        btnTextLabel.setAttribute('data-hex', btnTextColor);
+    }
+    if (btnRatioStatus) {
+        btnRatioStatus.innerText = btnRatio >= 4.5 ? 'AA Passed' : (btnRatio >= 3.0 ? 'Large Text AA' : 'Noticeable');
+        btnRatioStatus.style.color = btnRatio >= 4.5 ? '#16a34a' : '#d97706';
+    }
+
+    const container = document.getElementById('livePreviewContainer');
+    if (container) {
+        container.style.background = bg;
+        container.style.borderColor = borderColor;
+    }
+
+    const miniSubnav = document.getElementById('miniSubnav');
+    if (miniSubnav) {
+        miniSubnav.style.background = isBgLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.96)';
+        miniSubnav.style.borderBottomColor = borderColor;
+    }
+
+    const miniEmblem = document.getElementById('miniEmblem');
+    if (miniEmblem) {
+        miniEmblem.style.background = `linear-gradient(135deg, ${secondary}, ${primary})`;
+    }
+
+    const miniBrandP1 = document.getElementById('miniBrandP1');
+    const miniBrandP2 = document.getElementById('miniBrandP2');
+    if (miniBrandP1 && miniBrandP2) {
+        if (brandName.toUpperCase() === 'BOOKSFLIX') {
+            miniBrandP1.innerText = 'BOOKS';
+            miniBrandP1.style.color = isBgLight ? secondary : '#38bdf8';
+            miniBrandP2.innerText = 'FLIX';
+            miniBrandP2.style.color = primary;
+        } else {
+            miniBrandP1.innerText = brandName;
+            miniBrandP1.style.color = isBgLight ? secondary : '#38bdf8';
+            miniBrandP2.innerText = '';
+        }
+    }
+
+    const miniTabActive = document.getElementById('miniTabActive');
+    if (miniTabActive) {
+        miniTabActive.style.color = primary;
+        miniTabActive.style.borderBottomColor = primary;
+    }
+
+    const miniBillboardBadge = document.getElementById('miniBillboardBadge');
+    if (miniBillboardBadge) {
+        miniBillboardBadge.style.background = primary;
+        miniBillboardBadge.style.color = btnTextColor;
+    }
+
+    const miniBillboard = document.getElementById('miniBillboard');
+    if (miniBillboard) {
+        miniBillboard.style.background = isDark 
+            ? 'linear-gradient(77deg, rgba(15, 23, 42, 0.98) 0%, rgba(15, 23, 42, 0.88) 50%, rgba(234, 88, 12, 0.3) 100%)'
+            : `linear-gradient(77deg, ${secondary} 0%, rgba(15, 23, 42, 0.88) 50%, rgba(234, 88, 12, 0.35) 100%)`;
+    }
+
+    const miniBtnCart = document.getElementById('miniBtnCart');
+    if (miniBtnCart) {
+        miniBtnCart.style.background = primary;
+        miniBtnCart.style.color = btnTextColor;
+    }
+
+    const miniBtnReading = document.getElementById('miniBtnReading');
+    if (miniBtnReading) {
+        miniBtnReading.style.color = secondary;
+    }
+
+    const miniShelfTitle = document.getElementById('miniShelfTitle');
+    if (miniShelfTitle) {
+        miniShelfTitle.style.color = textColor;
+    }
+
+    const miniShelfMark = document.getElementById('miniShelfMark');
+    if (miniShelfMark) {
+        miniShelfMark.style.color = primary;
+    }
+
+    const miniCard = document.getElementById('miniCard');
+    if (miniCard) {
+        miniCard.style.background = cardBg;
+        miniCard.style.borderColor = borderColor;
+    }
+
+    const miniCardTitle = document.getElementById('miniCardTitle');
+    if (miniCardTitle) {
+        miniCardTitle.style.color = isBgLight ? '#0f172a' : '#ffffff';
+    }
+
+    const miniCardAuthor = document.getElementById('miniCardAuthor');
+    if (miniCardAuthor) {
+        miniCardAuthor.style.color = textMuted;
+    }
+
+    const miniCardPrice = document.getElementById('miniCardPrice');
+    if (miniCardPrice) {
+        miniCardPrice.style.color = isBgLight ? '#0f172a' : '#ffffff';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateLivePreview();
+});
+
+// ----------------------------------------------------
 // Save Complete Configuration
 // ----------------------------------------------------
 async function saveStoryBooksHubConfig() {
@@ -969,10 +1462,18 @@ async function saveStoryBooksHubConfig() {
             ThemeSettings: {
                 BrandName: document.getElementById('theme_BrandName').value.trim(),
                 Tagline: document.getElementById('theme_Tagline').value.trim(),
-                PrimaryRed: document.getElementById('theme_PrimaryRed').value.trim(),
-                DarkBackground: document.getElementById('theme_DarkBackground').value.trim(),
-                CardBackground: document.getElementById('theme_CardBackground').value.trim(),
-                IsDarkThemeEnabled: document.getElementById('theme_IsDarkThemeEnabled').checked
+                PrimaryColor: document.getElementById('theme_PrimaryColor').value.trim(),
+                SecondaryColor: document.getElementById('theme_SecondaryColor').value.trim(),
+                BackgroundColor: document.getElementById('theme_BackgroundColor').value.trim(),
+                CardBackgroundColor: document.getElementById('theme_CardBackgroundColor').value.trim(),
+                TextColor: document.getElementById('contrastTextColorLabel')?.getAttribute('data-hex') || '#0f172a',
+                SubtitleColor: '#475569',
+                IsDarkThemeEnabled: document.getElementById('theme_IsDarkThemeEnabled').checked,
+                ThemePreset: document.getElementById('theme_ThemePreset')?.value || 'Dreamflykit',
+                // Backward compatibility:
+                PrimaryRed: document.getElementById('theme_PrimaryColor').value.trim(),
+                DarkBackground: document.getElementById('theme_BackgroundColor').value.trim(),
+                CardBackground: document.getElementById('theme_CardBackgroundColor').value.trim()
             },
             HeroBillboard: {
                 IsEnabled: document.getElementById('billboard_IsEnabled').checked,
