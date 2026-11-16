@@ -12,15 +12,74 @@
     var genres = Model.Genres ?? new List<Dreamflykit.Application.StoryBooksHub.Models.StoryBookGenreDto>();
     var languages = Model.Languages ?? new List<Dreamflykit.Application.StoryBooksHub.Models.StoryBookLanguageDto>();
     var preferences = Model.Preferences ?? new List<Dreamflykit.Application.StoryBooksHub.Models.StoryBookPreferenceDto>();
+
+    // Dynamic Dreamflykit Brand Colors & WCAG 2.1 Contrast Calculations
+    var primaryColor = !string.IsNullOrWhiteSpace(theme.PrimaryColor) ? theme.PrimaryColor : "#ea580c";
+    var secondaryColor = !string.IsNullOrWhiteSpace(theme.SecondaryColor) ? theme.SecondaryColor : "#034694";
+    var isDark = theme.IsDarkThemeEnabled;
+    var rawBg = !string.IsNullOrWhiteSpace(theme.BackgroundColor) ? theme.BackgroundColor : (isDark ? "#0f172a" : "#f8fafc");
+    var rawCardBg = !string.IsNullOrWhiteSpace(theme.CardBackgroundColor) ? theme.CardBackgroundColor : (isDark ? "#1e293b" : "#ffffff");
+
+    var bgLuminance = Dreamflykit.Application.StoryBooksHub.Models.StoryBooksThemeSettingsDto.GetLuminance(rawBg);
+    var isBgLight = !isDark && (bgLuminance > 0.45);
+
+    var bgColor = isDark && bgLuminance > 0.45 ? "#0f172a" : rawBg;
+    var cardBg = isDark && Dreamflykit.Application.StoryBooksHub.Models.StoryBooksThemeSettingsDto.GetLuminance(rawCardBg) > 0.45 ? "#1e293b" : rawCardBg;
+
+    var primaryContrast = Dreamflykit.Application.StoryBooksHub.Models.StoryBooksThemeSettingsDto.GetContrastTextColor(primaryColor, "#0f172a", "#ffffff");
+    var secondaryContrast = Dreamflykit.Application.StoryBooksHub.Models.StoryBooksThemeSettingsDto.GetContrastTextColor(secondaryColor, "#0f172a", "#ffffff");
+
+    var textPrimary = isBgLight ? "#0f172a" : "#ffffff";
+    var textSecondary = isBgLight ? "#475569" : "#cbd5e1";
+    var textMuted = isBgLight ? "#64748b" : "#94a3b8";
+    var borderColor = isBgLight ? "#e2e8f0" : "rgba(255, 255, 255, 0.12)";
+    var cardBorder = isBgLight ? "#e2e8f0" : "rgba(255, 255, 255, 0.12)";
+    var subnavBg = isBgLight ? "rgba(255, 255, 255, 0.96)" : "rgba(15, 23, 42, 0.96)";
+    var subbarBg = isBgLight ? "#ffffff" : "#1e293b";
+    var inputBg = isBgLight ? "#ffffff" : "#0f172a";
+    var inputBorder = isBgLight ? "#cbd5e1" : "rgba(255, 255, 255, 0.25)";
+    var heroGradient = isDark 
+        ? "linear-gradient(77deg, rgba(15, 23, 42, 0.98) 0%, rgba(15, 23, 42, 0.88) 50%, rgba(234, 88, 12, 0.3) 100%)"
+        : "linear-gradient(77deg, rgba(3, 70, 148, 0.95) 0%, rgba(15, 23, 42, 0.88) 50%, rgba(234, 88, 12, 0.35) 100%)";
 }
 
-<div class="sbf-netflix-container" id="booksflix-hub" data-brand="@theme.BrandName">
-    <!-- Netflix-Style Sticky Sub-Navigation -->
+<div class="sbf-netflix-container @(isBgLight ? "sbf-light-mode" : "sbf-dark-mode")" id="booksflix-hub" data-brand="@theme.BrandName"
+     style="--sbf-primary: @primaryColor;
+            --sbf-primary-contrast: @primaryContrast;
+            --sbf-secondary: @secondaryColor;
+            --sbf-secondary-contrast: @secondaryContrast;
+            --sbf-bg: @bgColor;
+            --sbf-card-bg: @cardBg;
+            --sbf-text-primary: @textPrimary;
+            --sbf-text-secondary: @textSecondary;
+            --sbf-text-muted: @textMuted;
+            --sbf-border: @borderColor;
+            --sbf-card-border: @cardBorder;
+            --sbf-subnav-bg: @subnavBg;
+            --sbf-subbar-bg: @subbarBg;
+            --sbf-input-bg: @inputBg;
+            --sbf-input-border: @inputBorder;
+            --sbf-hero-gradient: @heroGradient;">
+    <!-- Sticky Sub-Navigation -->
     <nav class="sbf-subnav" id="sbf-subnav" aria-label="BooksFlix Navigation">
         <div class="sbf-subnav-left">
-            <div class="sbf-brand-badge" title="BooksFlix - Dreamflykit Story Hub" onclick="switchNavTab('sbf-home')">
-                <span class="sbf-brand-n">B</span>
-                <span class="sbf-brand-title">@theme.BrandName</span>
+            <div class="sbf-brand-badge" title="@theme.BrandName - Dreamflykit Story Hub" onclick="switchNavTab('sbf-home')">
+                <span class="sbf-brand-n">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                </span>
+                <span class="sbf-brand-title">
+                    @if (string.Equals(theme.BrandName, "BOOKSFLIX", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <span class="sbf-brand-p1">BOOKS</span><span class="sbf-brand-p2">FLIX</span>
+                    }
+                    else
+                    {
+                        <span class="sbf-brand-p1">@theme.BrandName</span>
+                    }
+                </span>
             </div>
 
             <ul class="sbf-nav-links" id="sbf-main-tabs" role="tablist">
@@ -134,7 +193,7 @@
         <!-- Full-Width Hero Billboard Banner -->
         @if (billboard.IsEnabled)
         {
-            <div class="sbf-hero-banner sbf-billboard" style="background-image: linear-gradient(77deg, rgba(20,20,20,.95) 0%, rgba(20,20,20,.7) 45%, rgba(20,20,20,.15) 100%), url('@billboard.ImageUrl');">
+            <div class="sbf-hero-banner sbf-billboard" style="background-image: var(--sbf-hero-gradient), url('@billboard.ImageUrl');">
                 <div class="sbf-billboard-content">
                     @if (!string.IsNullOrWhiteSpace(billboard.TagBadge))
                     {
@@ -378,7 +437,7 @@
         <!-- USER REQUESTED: Full-Width Hero Banner for Story Books -->
         @if (sbBanner.IsEnabled)
         {
-            <div class="sbf-hero-banner" style="background-image: linear-gradient(77deg, rgba(20,20,20,.95) 0%, rgba(20,20,20,.7) 45%, rgba(20,20,20,.15) 100%), url('@sbBanner.ImageUrl');">
+            <div class="sbf-hero-banner" style="background-image: var(--sbf-hero-gradient), url('@sbBanner.ImageUrl');">
                 <div class="sbf-billboard-content">
                     <div class="sbf-billboard-badge">
                         <span class="sbf-top10-tag" id="sbf-sb-badge-tag">JOURNALS &amp; NOVELS</span>
@@ -483,7 +542,7 @@
         <!-- USER REQUESTED: Full-Width Hero Banner for New & Popular -->
         @if (npBanner.IsEnabled)
         {
-            <div class="sbf-hero-banner" style="background-image: linear-gradient(77deg, rgba(20,20,20,.95) 0%, rgba(20,20,20,.7) 45%, rgba(20,20,20,.15) 100%), url('@npBanner.ImageUrl');">
+            <div class="sbf-hero-banner" style="background-image: var(--sbf-hero-gradient), url('@npBanner.ImageUrl');">
                 <div class="sbf-billboard-content">
                     <div class="sbf-billboard-badge">
                         <span class="sbf-top10-tag">FRESH THIS WEEK</span>
@@ -577,7 +636,7 @@
         <!-- USER REQUESTED: Full-Width Hero Banner for Browse by Language -->
         @if (langBanner.IsEnabled)
         {
-            <div class="sbf-hero-banner" style="background-image: linear-gradient(77deg, rgba(20,20,20,.95) 0%, rgba(20,20,20,.7) 45%, rgba(20,20,20,.15) 100%), url('@langBanner.ImageUrl');">
+            <div class="sbf-hero-banner" style="background-image: var(--sbf-hero-gradient), url('@langBanner.ImageUrl');">
                 <div class="sbf-billboard-content">
                     <div class="sbf-billboard-badge">
                         <span class="sbf-top10-tag">WORLD LITERATURE</span>
@@ -742,35 +801,38 @@
 
 <style>
 /* ========================================================
-   BOOKSFLIX NETFLIX THEME STYLES
-   Dark palette: #141414, #181818, Red: #E50914, White: #FFF
+   DREAMFLYKIT STORY BOOKS & BOOKSFLIX MODERN BRAND THEME
+   Brand colors: Vibrant Orange (#ea580c), Royal Navy (#034694)
+   Light palette: #f8fafc, #ffffff, Slate text: #0f172a
    ======================================================== */
 .sbf-netflix-container {
-    background-color: #141414;
-    color: #FFFFFF;
+    background-color: var(--sbf-bg, #f8fafc);
+    color: var(--sbf-text-primary, #0f172a);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     min-height: 100vh;
     padding-bottom: 60px;
     position: relative;
     box-sizing: border-box;
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .sbf-netflix-container *, .sbf-netflix-container *::before, .sbf-netflix-container *::after {
     box-sizing: inherit;
 }
 
-/* Netflix Sticky Sub-Navbar */
+/* Sticky Sub-Navbar */
 .sbf-subnav {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 14px 40px;
-    background: linear-gradient(180deg, rgba(20,20,20,0.98) 0%, rgba(20,20,20,0.9) 70%, rgba(20,20,20,0.7) 100%);
+    background: var(--sbf-subnav-bg, rgba(255, 255, 255, 0.96));
     position: sticky;
     top: 0;
     z-index: 100;
     backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--sbf-border, #e2e8f0);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .sbf-subnav-left {
@@ -782,25 +844,43 @@
 .sbf-brand-badge {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     cursor: pointer;
     user-select: none;
+    text-decoration: none;
 }
 
 .sbf-brand-n {
-    color: #E50914;
-    font-size: 26px;
-    font-weight: 900;
-    font-family: "Impact", "Arial Black", sans-serif;
-    letter-spacing: -1px;
-    text-shadow: 0 2px 8px rgba(229, 9, 20, 0.4);
+    background: linear-gradient(135deg, var(--sbf-secondary, #034694) 0%, var(--sbf-primary, #ea580c) 100%);
+    color: #ffffff;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(234, 88, 12, 0.3);
+    flex-shrink: 0;
 }
 
 .sbf-brand-title {
-    color: #E50914;
     font-size: 20px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+}
+
+.sbf-brand-p1 {
+    color: var(--sbf-secondary, #034694);
+}
+
+.sbf-brand-p2 {
+    color: var(--sbf-primary, #ea580c);
+}
+
+.sbf-dark-mode .sbf-brand-p1 {
+    color: #38bdf8;
 }
 
 .sbf-nav-links {
@@ -814,9 +894,9 @@
 .sbf-tab-btn {
     background: none;
     border: none;
-    color: #E5E5E5;
+    color: var(--sbf-text-secondary, #475569);
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     padding: 6px 4px;
     transition: color 0.2s ease, font-weight 0.2s ease;
@@ -825,12 +905,12 @@
 }
 
 .sbf-tab-btn:hover {
-    color: #FFFFFF;
+    color: var(--sbf-primary, #ea580c);
 }
 
 .sbf-tab-btn.active {
-    color: #FFFFFF;
-    font-weight: 700;
+    color: var(--sbf-primary, #ea580c);
+    font-weight: 800;
 }
 
 .sbf-tab-btn.active::after {
@@ -840,7 +920,7 @@
     left: 0;
     width: 100%;
     height: 3px;
-    background-color: #E50914;
+    background-color: var(--sbf-primary, #ea580c);
     border-radius: 2px;
 }
 
@@ -854,21 +934,22 @@
 .sbf-search-box {
     display: flex;
     align-items: center;
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 4px;
+    background: var(--sbf-input-bg, #ffffff);
+    border: 1px solid var(--sbf-input-border, #cbd5e1);
+    border-radius: 6px;
     padding: 4px 8px;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .sbf-search-box:focus-within {
-    border-color: #E50914;
+    border-color: var(--sbf-primary, #ea580c);
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
 }
 
 .sbf-search-toggle {
     background: none;
     border: none;
-    color: #FFFFFF;
+    color: var(--sbf-text-secondary, #64748b);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -878,7 +959,7 @@
 .sbf-search-input {
     background: transparent;
     border: none;
-    color: #FFFFFF;
+    color: var(--sbf-text-primary, #0f172a);
     font-size: 13px;
     padding: 4px 8px;
     width: 180px;
@@ -891,7 +972,7 @@
 }
 
 .sbf-search-input::placeholder {
-    color: #888888;
+    color: var(--sbf-text-muted, #94a3b8);
 }
 
 .sbf-notifications-dropdown {
@@ -901,7 +982,7 @@
 .sbf-icon-btn {
     background: none;
     border: none;
-    color: #FFFFFF;
+    color: var(--sbf-text-primary, #0f172a);
     cursor: pointer;
     padding: 6px;
     display: flex;
@@ -913,8 +994,8 @@
     position: absolute;
     top: 2px;
     right: 2px;
-    background-color: #E50914;
-    color: #FFFFFF;
+    background-color: var(--sbf-primary, #ea580c);
+    color: var(--sbf-primary-contrast, #ffffff);
     font-size: 10px;
     font-weight: 700;
     width: 16px;
@@ -931,10 +1012,10 @@
     right: 0;
     top: 100%;
     width: 320px;
-    background: #181818;
-    border: 1px solid #333333;
-    border-radius: 6px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    background: var(--sbf-card-bg, #ffffff);
+    border: 1px solid var(--sbf-border, #e2e8f0);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     padding: 12px;
     z-index: 120;
 }
@@ -945,10 +1026,11 @@
 
 .sbf-flyout-header {
     font-size: 13px;
-    color: #CCCCCC;
+    color: var(--sbf-text-primary, #0f172a);
     padding-bottom: 8px;
-    border-bottom: 1px solid #282828;
+    border-bottom: 1px solid var(--sbf-border, #e2e8f0);
     margin-bottom: 8px;
+    font-weight: 700;
 }
 
 .sbf-flyout-list {
@@ -961,7 +1043,7 @@
     display: flex;
     gap: 10px;
     padding: 8px 4px;
-    border-bottom: 1px solid #222222;
+    border-bottom: 1px solid var(--sbf-border, #e2e8f0);
 }
 
 .sbf-flyout-list li:last-child {
@@ -969,19 +1051,24 @@
 }
 
 .sbf-notif-tag {
-    background: #E50914;
-    color: #FFF;
+    background: var(--sbf-primary, #ea580c);
+    color: var(--sbf-primary-contrast, #ffffff);
     font-size: 9px;
     font-weight: 800;
-    padding: 2px 5px;
-    border-radius: 3px;
+    padding: 2px 6px;
+    border-radius: 4px;
     height: fit-content;
 }
 
 .sbf-notif-text {
     font-size: 12px;
     margin: 0 0 2px 0;
-    color: #EEE;
+    color: var(--sbf-text-primary, #0f172a);
+    font-weight: 500;
+}
+
+.sbf-flyout-list small {
+    color: var(--sbf-text-muted, #94a3b8);
 }
 
 .sbf-avatar-btn {
@@ -990,7 +1077,8 @@
     gap: 6px;
     cursor: pointer;
     font-size: 13px;
-    color: #EEE;
+    color: var(--sbf-text-primary, #0f172a);
+    font-weight: 600;
 }
 
 .sbf-avatar-icon {
@@ -998,32 +1086,30 @@
 }
 
 .sbf-admin-pill {
-    background: rgba(229, 9, 20, 0.15);
-    border: 1px solid #E50914;
-    color: #FFFFFF;
+    background: rgba(234, 88, 12, 0.1);
+    border: 1px solid var(--sbf-primary, #ea580c);
+    color: var(--sbf-primary, #ea580c);
     font-size: 12px;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 4px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 6px;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: background 0.2s, color 0.2s;
 }
 
 .sbf-admin-pill:hover {
-    background: #E50914;
-    color: #FFFFFF;
+    background: var(--sbf-primary, #ea580c);
+    color: var(--sbf-primary-contrast, #ffffff);
 }
 
-/* ========================================================
-   USER REQUESTED: SUB-BAR WITH JOURNAL DROPDOWN (LEFT SIDE)
-   ======================================================== */
+/* Sticky Sub-Bar with Journal Dropdown */
 .sbf-subbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px 40px;
-    background: rgba(20, 20, 20, 0.95);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--sbf-subbar-bg, #ffffff);
+    border-bottom: 1px solid var(--sbf-border, #e2e8f0);
     position: sticky;
     top: 61px;
     z-index: 90;
@@ -1039,32 +1125,32 @@
 .sbf-journal-tag-label {
     font-size: 14px;
     font-weight: 700;
-    color: #E5E5E5;
-    letter-spacing: 0.5px;
+    color: var(--sbf-text-primary, #0f172a);
+    letter-spacing: 0.3px;
 }
 
 .sbf-journal-dropdown-bar {
-    background-color: #000000;
-    color: #FFFFFF;
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    background-color: var(--sbf-card-bg, #ffffff);
+    color: var(--sbf-text-primary, #0f172a);
+    border: 1px solid var(--sbf-input-border, #cbd5e1);
     font-size: 13.5px;
     font-weight: 700;
     padding: 7px 34px 7px 14px;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     outline: none;
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%2F%3E%3C%2Fsvg%3E");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23475569%22%20stroke-width%3D%222.5%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%2F%3E%3C%2Fsvg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
-    transition: border-color 0.2s, background-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
     min-width: 250px;
 }
 
 .sbf-journal-dropdown-bar:hover, .sbf-journal-dropdown-bar:focus {
-    border-color: #E50914;
-    background-color: #0c0c0c;
+    border-color: var(--sbf-primary, #ea580c);
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
 }
 
 .sbf-subbar-right {
@@ -1073,19 +1159,17 @@
 }
 
 .sbf-active-pill {
-    background: rgba(229, 9, 20, 0.15);
-    border: 1px solid rgba(229, 9, 20, 0.4);
-    color: #E50914;
+    background: rgba(234, 88, 12, 0.1);
+    border: 1px solid rgba(234, 88, 12, 0.3);
+    color: var(--sbf-primary, #ea580c);
     font-size: 12px;
     font-weight: 700;
-    padding: 4px 12px;
+    padding: 4px 14px;
     border-radius: 20px;
     letter-spacing: 0.3px;
 }
 
-/* ========================================================
-   USER REQUESTED: FULL-WIDTH HERO BANNER (FOR EVERY TAB)
-   ======================================================== */
+/* Full-Width Hero Banner */
 .sbf-hero-banner {
     position: relative;
     width: 100%;
@@ -1096,7 +1180,7 @@
     align-items: center;
     padding: 60px 50px 70px;
     margin-bottom: 24px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--sbf-border, #e2e8f0);
 }
 
 .sbf-billboard-content {
@@ -1112,21 +1196,22 @@
 }
 
 .sbf-top10-tag {
-    background: #E50914;
-    color: #FFFFFF;
+    background: var(--sbf-primary, #ea580c);
+    color: var(--sbf-primary-contrast, #ffffff);
     font-size: 11px;
     font-weight: 900;
-    padding: 3px 6px;
-    border-radius: 3px;
+    padding: 3px 8px;
+    border-radius: 4px;
     letter-spacing: 1px;
 }
 
 .sbf-badge-subtitle {
-    color: #CCCCCC;
+    color: #e2e8f0;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
 
 .sbf-billboard-title {
@@ -1134,6 +1219,7 @@
     font-weight: 900;
     margin: 0 0 12px 0;
     line-height: 1.15;
+    color: #ffffff;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
     letter-spacing: -0.5px;
 }
@@ -1144,36 +1230,37 @@
     flex-wrap: wrap;
     gap: 8px;
     font-size: 13px;
-    color: #CCCCCC;
+    color: #cbd5e1;
     margin-bottom: 8px;
 }
 
 .sbf-meta-author {
-    color: #FFFFFF;
-    font-weight: 600;
-}
-
-.sbf-meta-rating {
-    color: #46D369;
+    color: #ffffff;
     font-weight: 700;
 }
 
+.sbf-meta-rating {
+    color: #10b981;
+    font-weight: 800;
+}
+
 .sbf-meta-pill {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
-    padding: 1px 6px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 4px;
+    padding: 2px 8px;
     font-size: 11px;
+    color: #ffffff;
 }
 
 .sbf-billboard-genres {
-    color: #AAAAAA;
+    color: #cbd5e1;
     font-size: 13px;
     margin: 0 0 12px 0;
 }
 
 .sbf-billboard-synopsis {
-    color: #DDDDDD;
+    color: #f1f5f9;
     font-size: 15px;
     line-height: 1.55;
     margin: 0 0 20px 0;
@@ -1188,21 +1275,21 @@
 }
 
 .sbf-billboard-price {
-    font-size: 24px;
-    font-weight: 800;
-    color: #FFFFFF;
+    font-size: 26px;
+    font-weight: 900;
+    color: #ffffff;
 }
 
 .sbf-billboard-mrp {
     font-size: 16px;
-    color: #888888;
+    color: #94a3b8;
     text-decoration: line-through;
 }
 
 .sbf-billboard-discount {
-    font-size: 13px;
-    font-weight: 700;
-    color: #46D369;
+    font-size: 14px;
+    font-weight: 800;
+    color: #34d399;
 }
 
 .sbf-billboard-actions {
@@ -1217,64 +1304,71 @@
     align-items: center;
     gap: 8px;
     padding: 10px 24px;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
     border: none;
-    transition: transform 0.15s, opacity 0.15s;
+    transition: transform 0.15s, box-shadow 0.15s;
     outline: none;
 }
 
 .sbf-btn:hover {
-    transform: scale(1.03);
+    transform: translateY(-2px);
 }
 
 .sbf-btn-primary {
-    background-color: #FFFFFF;
-    color: #000000;
+    background-color: #ffffff;
+    color: var(--sbf-secondary, #034694);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .sbf-btn-primary:hover {
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: #f8fafc;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
 .sbf-btn-secondary {
-    background-color: rgba(109, 109, 110, 0.7);
-    color: #FFFFFF;
+    background-color: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    backdrop-filter: blur(4px);
 }
 
 .sbf-btn-secondary:hover {
-    background-color: rgba(109, 109, 110, 0.45);
+    background-color: rgba(15, 23, 42, 0.85);
 }
 
 .sbf-btn-cart {
-    background-color: #E50914;
-    color: #FFFFFF;
+    background-color: var(--sbf-primary, #ea580c);
+    color: var(--sbf-primary-contrast, #ffffff);
+    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.4);
 }
 
 .sbf-btn-cart:hover {
-    background-color: #f40612;
+    background-color: #c2410c;
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.5);
 }
 
 .sbf-billboard-uploading-tag {
     position: absolute;
     bottom: 20px;
     right: 40px;
-    background: rgba(0, 0, 0, 0.85);
-    border: 1px solid rgba(229, 9, 20, 0.8);
-    color: #FFFFFF;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid var(--sbf-primary, #ea580c);
+    color: #ffffff;
     font-size: 12px;
+    font-weight: 600;
     padding: 6px 14px;
-    border-radius: 4px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .sbf-badge-pulse {
-    color: #E50914;
+    color: var(--sbf-primary, #ea580c);
     animation: sbfPulse 1.5s infinite;
 }
 
@@ -1298,11 +1392,9 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ========================================================
-   SHELF SECTIONS & CAROUSELS
-   ======================================================== */
+/* Shelves & Carousels */
 .sbf-shelf-section {
-    padding: 12px 40px 28px;
+    padding: 16px 40px 32px;
     position: relative;
 }
 
@@ -1312,8 +1404,8 @@
 
 .sbf-shelf-title {
     font-size: 20px;
-    font-weight: 700;
-    color: #E5E5E5;
+    font-weight: 800;
+    color: var(--sbf-text-primary, #0f172a);
     margin: 0 0 4px 0;
     display: flex;
     align-items: center;
@@ -1321,12 +1413,12 @@
 }
 
 .sbf-red-mark {
-    color: #E50914;
+    color: var(--sbf-primary, #ea580c);
 }
 
 .sbf-shelf-subtitle {
     font-size: 13px;
-    color: #888888;
+    color: var(--sbf-text-muted, #64748b);
 }
 
 .sbf-carousel-wrapper {
@@ -1337,10 +1429,10 @@
 
 .sbf-carousel-track {
     display: flex;
-    gap: 14px;
+    gap: 16px;
     overflow-x: auto;
     scroll-behavior: smooth;
-    padding: 16px 4px 20px 4px;
+    padding: 12px 4px 18px 4px;
     scrollbar-width: none;
 }
 
@@ -1352,61 +1444,61 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(20, 20, 20, 0.8);
-    border: none;
-    color: #FFFFFF;
-    font-size: 28px;
+    background: var(--sbf-card-bg, #ffffff);
+    border: 1px solid var(--sbf-border, #e2e8f0);
+    color: var(--sbf-text-primary, #0f172a);
+    font-size: 24px;
     width: 38px;
-    height: 70px;
-    border-radius: 4px;
+    height: 64px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     z-index: 15;
-    transition: background 0.2s, opacity 0.2s;
-    opacity: 0.8;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .sbf-arrow:hover {
-    background: rgba(229, 9, 20, 0.8);
-    opacity: 1;
+    background: var(--sbf-primary, #ea580c);
+    color: var(--sbf-primary-contrast, #ffffff);
+    border-color: var(--sbf-primary, #ea580c);
 }
 
 .sbf-arrow-prev {
-    left: -20px;
+    left: -18px;
 }
 
 .sbf-arrow-next {
-    right: -20px;
+    right: -18px;
 }
 
-/* ========================================================
-   BOOK CARDS (Netflix Poster + Scale Hover)
-   ======================================================== */
+/* Book Cards */
 .sbf-book-card {
-    flex: 0 0 190px;
-    background: #181818;
-    border-radius: 6px;
+    flex: 0 0 196px;
+    background: var(--sbf-card-bg, #ffffff);
+    border-radius: 8px;
     overflow: hidden;
     position: relative;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, z-index 0.25s;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     cursor: pointer;
-    border: 1px solid #282828;
+    border: 1px solid var(--sbf-card-border, #e2e8f0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .sbf-book-card:hover {
-    transform: translateY(-6px) scale(1.04);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9), 0 0 10px rgba(229, 9, 20, 0.3);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(3, 70, 148, 0.12), 0 4px 8px rgba(234, 88, 12, 0.1);
+    border-color: var(--sbf-primary, #ea580c);
     z-index: 10;
-    border-color: #E50914;
 }
 
 .sbf-card-poster {
     position: relative;
     width: 100%;
     aspect-ratio: 2 / 3;
-    background: #202020;
+    background: #f1f5f9;
     overflow: hidden;
 }
 
@@ -1421,9 +1513,9 @@
     position: absolute;
     top: 8px;
     left: 8px;
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(15, 23, 42, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.4);
-    color: #FFFFFF;
+    color: #ffffff;
     font-size: 9px;
     font-weight: 700;
     padding: 2px 6px;
@@ -1436,8 +1528,8 @@
     position: absolute;
     top: 8px;
     right: 8px;
-    background: #E50914;
-    color: #FFFFFF;
+    background: var(--sbf-primary, #ea580c);
+    color: var(--sbf-primary-contrast, #ffffff);
     font-size: 9px;
     font-weight: 800;
     padding: 2px 6px;
@@ -1446,18 +1538,19 @@
 }
 
 .sbf-badge-new {
-    background: #46D369;
+    background: #10b981;
+    color: #ffffff;
 }
 
 .sbf-badge-lang {
-    background: #0284C7;
+    background: var(--sbf-secondary, #034694);
+    color: #ffffff;
 }
 
-/* Card Hover Action Bar */
 .sbf-card-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.85) 100%);
+    background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.8) 100%);
     display: flex;
     align-items: flex-end;
     justify-content: center;
@@ -1472,60 +1565,61 @@
 }
 
 .sbf-mini-btn {
-    background: rgba(42, 42, 42, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: #FFFFFF;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
     font-size: 13px;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.15s, transform 0.15s;
+    transition: background 0.15s, transform 0.15s, color 0.15s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .sbf-mini-btn:hover {
-    background: #FFFFFF;
-    color: #000000;
+    background: var(--sbf-primary, #ea580c);
+    color: var(--sbf-primary-contrast, #ffffff);
+    border-color: var(--sbf-primary, #ea580c);
     transform: scale(1.1);
 }
 
 .sbf-mini-play {
-    background: #FFFFFF;
-    color: #000000;
+    background: var(--sbf-secondary, #034694);
+    color: #ffffff;
+    border-color: var(--sbf-secondary, #034694);
 }
 
 .sbf-mini-play:hover {
-    background: #E50914;
-    color: #FFFFFF;
-    border-color: #E50914;
+    background: var(--sbf-primary, #ea580c);
+    color: var(--sbf-primary-contrast, #ffffff);
+    border-color: var(--sbf-primary, #ea580c);
 }
 
-/* Card Reading Progress Bar */
 .sbf-reading-bar-wrap {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 4px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .sbf-reading-bar-fill {
     height: 100%;
-    background: #E50914;
+    background: var(--sbf-primary, #ea580c);
 }
 
 .sbf-card-progress-text {
     font-size: 11px;
-    color: #E50914;
-    font-weight: 600;
+    color: var(--sbf-primary, #ea580c);
+    font-weight: 700;
     margin-bottom: 4px;
 }
 
-/* Card Information */
 .sbf-card-info {
     padding: 10px 12px 12px;
 }
@@ -1533,7 +1627,7 @@
 .sbf-card-title {
     font-size: 14px;
     font-weight: 700;
-    color: #FFFFFF;
+    color: var(--sbf-text-primary, #0f172a);
     margin: 0 0 2px 0;
     white-space: nowrap;
     overflow: hidden;
@@ -1542,7 +1636,7 @@
 
 .sbf-card-author {
     font-size: 12px;
-    color: #AAAAAA;
+    color: var(--sbf-text-muted, #64748b);
     margin: 0 0 6px 0;
     white-space: nowrap;
     overflow: hidden;
@@ -1558,20 +1652,21 @@
 }
 
 .sbf-star {
-    color: #46D369;
-    font-weight: 700;
+    color: #10b981;
+    font-weight: 800;
 }
 
 .sbf-tag-sm {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 1px 5px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1px 6px;
     border-radius: 3px;
-    color: #CCC;
+    color: var(--sbf-text-secondary, #475569);
+    font-weight: 500;
 }
 
 .sbf-tag-lang {
-    color: #0284C7;
-    font-weight: 600;
+    color: var(--sbf-secondary, #034694);
+    font-weight: 700;
 }
 
 .sbf-card-price-row {
@@ -1581,26 +1676,24 @@
 }
 
 .sbf-card-price {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 800;
-    color: #FFFFFF;
+    color: var(--sbf-text-primary, #0f172a);
 }
 
 .sbf-card-mrp {
     font-size: 11px;
-    color: #777777;
+    color: var(--sbf-text-muted, #94a3b8);
     text-decoration: line-through;
 }
 
 .sbf-card-disc {
-    font-size: 10px;
-    font-weight: 700;
-    color: #46D369;
+    font-size: 11px;
+    font-weight: 800;
+    color: #16a34a;
 }
 
-/* ========================================================
-   TOP 10 GIANT NUMBER SECTION (Authentic Netflix Style)
-   ======================================================== */
+/* Top 10 Giant Numbers */
 .sbf-top10-track {
     gap: 20px;
 }
@@ -1616,8 +1709,8 @@
     font-size: 140px;
     font-weight: 900;
     font-family: "Impact", "Arial Black", sans-serif;
-    color: #141414;
-    -webkit-text-stroke: 4px #595959;
+    color: var(--sbf-bg, #f8fafc);
+    -webkit-text-stroke: 4px var(--sbf-secondary, #034694);
     line-height: 1;
     margin-right: -24px;
     z-index: 1;
@@ -1626,17 +1719,15 @@
 }
 
 .sbf-top10-item:hover .sbf-top10-number {
-    -webkit-text-stroke-color: #E50914;
+    -webkit-text-stroke-color: var(--sbf-primary, #ea580c);
 }
 
 .sbf-top10-card {
-    flex: 0 0 170px;
+    flex: 0 0 176px;
     z-index: 2;
 }
 
-/* ========================================================
-   PANE HEADERS & CONTROLS
-   ======================================================== */
+/* Pane Headers */
 .sbf-pane-header {
     display: flex;
     align-items: center;
@@ -1644,7 +1735,7 @@
     flex-wrap: wrap;
     gap: 16px;
     padding: 24px 40px 18px;
-    border-bottom: 1px solid #242424;
+    border-bottom: 1px solid var(--sbf-border, #e2e8f0);
 }
 
 .sbf-pane-title-group {
@@ -1654,24 +1745,24 @@
 .sbf-pane-title {
     font-size: 26px;
     font-weight: 800;
-    color: #FFFFFF;
+    color: var(--sbf-text-primary, #0f172a);
     margin: 0 0 4px 0;
 }
 
 .sbf-pane-subtitle {
     font-size: 13px;
-    color: #888888;
+    color: var(--sbf-text-muted, #64748b);
     margin: 0;
 }
 
 .sbf-genre-status-badge {
-    background: #1f1f1f;
-    border: 1px solid #333;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
     padding: 4px 12px;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 12px;
     font-weight: 700;
-    color: #46D369;
+    color: #059669;
 }
 
 .sbf-select-custom {
@@ -1679,30 +1770,28 @@
 }
 
 .sbf-lang-dropdown {
-    background-color: #000000;
-    color: #FFFFFF;
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    background-color: var(--sbf-card-bg, #ffffff);
+    color: var(--sbf-text-primary, #0f172a);
+    border: 1px solid var(--sbf-input-border, #cbd5e1);
     font-size: 13px;
     font-weight: 600;
     padding: 8px 32px 8px 12px;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     outline: none;
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%2F%3E%3C%2Fsvg%3E");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23475569%22%20stroke-width%3D%222.5%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%2F%3E%3C%2Fsvg%3E");
     background-repeat: no-repeat;
     background-position: right 10px center;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .sbf-lang-dropdown:focus {
-    border-color: #E50914;
+    border-color: var(--sbf-primary, #ea580c);
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
 }
 
-/* ========================================================
-   BROWSE BY LANGUAGE HEADER (Exact to Screenshot 3)
-   ======================================================== */
 .sbf-language-header-row {
     display: flex;
     align-items: center;
@@ -1710,13 +1799,13 @@
     flex-wrap: wrap;
     gap: 20px;
     padding: 24px 40px 20px;
-    border-bottom: 1px solid #242424;
+    border-bottom: 1px solid var(--sbf-border, #e2e8f0);
 }
 
 .sbf-browse-title {
     font-size: 32px;
     font-weight: 800;
-    color: #FFFFFF;
+    color: var(--sbf-text-primary, #0f172a);
     margin: 0;
     letter-spacing: -0.5px;
 }
@@ -1730,16 +1819,13 @@
 
 .sbf-pref-label {
     font-size: 14px;
-    color: #CCCCCC;
-    font-weight: 500;
+    color: var(--sbf-text-secondary, #475569);
+    font-weight: 600;
 }
 
-/* ========================================================
-   RESPONSIVE BOOK GRID
-   ======================================================== */
 .sbf-books-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(186px, 1fr));
     gap: 20px;
     padding: 24px 40px;
 }
@@ -1752,7 +1838,7 @@
 .sbf-empty-state {
     text-align: center;
     padding: 60px 20px;
-    color: #888888;
+    color: var(--sbf-text-muted, #64748b);
 }
 
 .sbf-empty-icon {
@@ -1761,7 +1847,7 @@
 }
 
 .sbf-empty-state h3 {
-    color: #FFFFFF;
+    color: var(--sbf-text-primary, #0f172a);
     font-size: 18px;
     margin: 0 0 6px 0;
 }
@@ -1771,14 +1857,12 @@
     margin: 0 0 16px 0;
 }
 
-/* ========================================================
-   MODAL POPUP (Netflix Details Modal)
-   ======================================================== */
+/* Modals */
 .sbf-modal-backdrop {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(15, 23, 42, 0.7);
     z-index: 1000;
     align-items: center;
     justify-content: center;
@@ -1792,15 +1876,15 @@
 }
 
 .sbf-modal-content {
-    background: #181818;
-    color: #FFFFFF;
+    background: var(--sbf-card-bg, #ffffff);
+    color: var(--sbf-text-primary, #0f172a);
     width: 100%;
     max-width: 680px;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
     position: relative;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
-    border: 1px solid #333333;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--sbf-border, #e2e8f0);
     max-height: 90vh;
     overflow-y: auto;
 }
@@ -1809,9 +1893,9 @@
     position: absolute;
     top: 14px;
     right: 14px;
-    background: #181818;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #0f172a;
     font-size: 16px;
     width: 34px;
     height: 34px;
@@ -1821,12 +1905,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.15s;
+    transition: background 0.15s, color 0.15s;
 }
 
 .sbf-modal-close:hover {
-    background: #E50914;
-    border-color: #E50914;
+    background: var(--sbf-primary, #ea580c);
+    color: var(--sbf-primary-contrast, #ffffff);
+    border-color: var(--sbf-primary, #ea580c);
 }
 
 .sbf-modal-hero {
@@ -1841,17 +1926,18 @@
 .sbf-modal-hero-overlay {
     width: 100%;
     padding: 24px;
-    background: linear-gradient(180deg, transparent 0%, rgba(24, 24, 24, 0.95) 70%, #181818 100%);
+    background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.9) 70%, #0f172a 100%);
 }
 
 .sbf-modal-title {
     font-size: 26px;
     font-weight: 800;
     margin: 0 0 4px 0;
+    color: #ffffff;
 }
 
 .sbf-modal-author {
-    color: #AAAAAA;
+    color: #cbd5e1;
     font-size: 14px;
     margin: 0 0 10px 0;
 }
@@ -1874,17 +1960,18 @@
 }
 
 .sbf-modal-subhead {
-    font-size: 14px;
+    font-size: 13px;
     text-transform: uppercase;
-    color: #AAAAAA;
+    color: var(--sbf-text-muted, #64748b);
     margin: 0 0 8px 0;
     letter-spacing: 0.5px;
+    font-weight: 700;
 }
 
 .sbf-modal-synopsis {
     font-size: 14px;
     line-height: 1.6;
-    color: #CCCCCC;
+    color: var(--sbf-text-secondary, #475569);
     margin: 0 0 18px 0;
 }
 
@@ -1895,27 +1982,26 @@
 }
 
 .sbf-feature-pill {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
     padding: 4px 10px;
     border-radius: 4px;
     font-size: 12px;
-    color: #46D369;
+    color: #059669;
+    font-weight: 600;
 }
 
-/* ========================================================
-   FLOATING TOAST NOTIFICATION
-   ======================================================== */
+/* Toast */
 .sbf-toast {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    background: #181818;
-    color: #FFFFFF;
-    border-left: 4px solid #E50914;
+    background: #0f172a;
+    color: #ffffff;
+    border-left: 4px solid var(--sbf-primary, #ea580c);
     padding: 12px 20px;
-    border-radius: 4px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    border-radius: 6px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
     font-size: 14px;
     font-weight: 600;
     display: none;
@@ -2203,7 +2289,7 @@
 
         const heroBg = document.getElementById('modal-hero-bg');
         if (heroBg) {
-            heroBg.style.backgroundImage = `linear-gradient(180deg, rgba(20,20,20,.4) 0%, #181818 100%), url('${imgUrl || '/images/fashion-hub/uploading-soon-placeholder.svg'}')`;
+            heroBg.style.backgroundImage = `linear-gradient(180deg, rgba(3, 70, 148, 0.45) 0%, var(--sbf-card-bg) 100%), url('${imgUrl || '/images/fashion-hub/uploading-soon-placeholder.svg'}')`;
         }
 
         const cartBtn = document.getElementById('modal-cart-btn');
@@ -2240,11 +2326,12 @@
         if (btn.classList.contains('active')) {
             btn.classList.remove('active');
             btn.innerText = '♡';
+            btn.style.color = '';
             showToast(`Removed "${title}" from Wishlist`);
         } else {
             btn.classList.add('active');
             btn.innerText = '♥';
-            btn.style.color = '#E50914';
+            btn.style.color = 'var(--sbf-primary)';
             showToast(`Added "${title}" to Wishlist`);
         }
     };
