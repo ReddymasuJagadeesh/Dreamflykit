@@ -186,5 +186,136 @@ public class CategoryThreeSectionSliderTests
         dynamic val = jsonResult.Value!;
         Assert.True((bool)val.GetType().GetProperty("success")!.GetValue(val)!);
     }
+
+    [Fact]
+    public void CreateDefault_ContainsAll14FashionCategorySliders_WithAtLeast6UploadingSoonSlides()
+    {
+        // Arrange
+        var fashionSlugs = new[]
+        {
+            "men-clothing",
+            "women-clothing",
+            "men-footwear",
+            "women-footwear",
+            "watches",
+            "sunglasses",
+            "caps-hats",
+            "belts-wallets",
+            "socks",
+            "accessories",
+            "hoodies",
+            "sweatshirts",
+            "ethnic-wear",
+            "thermals"
+        };
+
+        // Act
+        var hub = CategoryThreeSectionHubDto.CreateDefault();
+
+        // Assert
+        foreach (var slug in fashionSlugs)
+        {
+            Assert.True(hub.Categories.ContainsKey(slug), $"Category '{slug}' must exist in CategoryThreeSectionHubDto.CreateDefault()");
+            var cfg = hub.Categories[slug];
+            Assert.NotNull(cfg);
+            Assert.True(cfg.IsEnabled, $"Category '{slug}' slider must be enabled by default");
+            Assert.True(cfg.Slides.Count >= 6, $"Category '{slug}' must have at least 6 slides for continuous 3-section loop");
+
+            foreach (var slide in cfg.Slides)
+            {
+                Assert.False(string.IsNullOrWhiteSpace(slide.Title), $"Slide in '{slug}' must have a title");
+                Assert.False(string.IsNullOrWhiteSpace(slide.BadgeText), $"Slide in '{slug}' must have a badge");
+                Assert.False(string.IsNullOrWhiteSpace(slide.PriceText), $"Slide in '{slug}' must have a price");
+                Assert.True(slide.IsUploadingSoon, $"Slide '{slide.Title}' in '{slug}' must have IsUploadingSoon == true by default");
+                Assert.Contains("uploading-soon", slide.ImageUrl, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+    }
+
+    [Theory]
+    [InlineData("men-clothing")]
+    [InlineData("women-clothing")]
+    [InlineData("men-footwear")]
+    [InlineData("women-footwear")]
+    [InlineData("watches")]
+    [InlineData("sunglasses")]
+    [InlineData("caps-hats")]
+    [InlineData("belts-wallets")]
+    [InlineData("socks")]
+    [InlineData("accessories")]
+    [InlineData("hoodies")]
+    [InlineData("sweatshirts")]
+    [InlineData("ethnic-wear")]
+    [InlineData("thermals")]
+    public void GetConfigForCategory_ReturnsCuratedConfig_WhenQueriedIndividually(string slug)
+    {
+        // Arrange
+        var hub = new CategoryThreeSectionHubDto();
+
+        // Act
+        var config = hub.GetConfigForCategory(slug);
+
+        // Assert
+        Assert.NotNull(config);
+        Assert.Equal(slug, config.CategorySlug);
+        Assert.True(config.IsEnabled);
+        Assert.True(config.Slides.Count >= 6);
+        Assert.All(config.Slides, s => Assert.True(s.IsUploadingSoon));
+    }
+
+    [Fact]
+    public async Task Service_GetAllSlidersAsync_MergesMissingFashionCategoriesIntoExistingJson()
+    {
+        // Arrange
+        var cache = new MemoryCache(new MemoryCacheOptions());
+        var envMock = new Mock<IWebHostEnvironment>();
+        var tempDir = Path.Combine(Path.GetTempPath(), "DreamflykitMergeTest_" + Guid.NewGuid().ToString("N"));
+        var dataDir = Path.Combine(tempDir, "data");
+        Directory.CreateDirectory(dataDir);
+        envMock.Setup(e => e.WebRootPath).Returns(tempDir);
+
+        // Pre-create JSON file containing only "electronics"
+        var partialHub = new CategoryThreeSectionHubDto();
+        partialHub.Categories["electronics"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "electronics",
+            CategoryName = "Electronics",
+            IsEnabled = true,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new() { Id = "e1", CategorySlug = "electronics", Title = "MacBook", IsUploadingSoon = true }
+            }
+        };
+        var filePath = Path.Combine(dataDir, "category_three_section_sliders.json");
+        await System.IO.File.WriteAllTextAsync(filePath, System.Text.Json.JsonSerializer.Serialize(partialHub));
+
+        var loggerMock = new Mock<ILogger<CategoryThreeSectionSliderService>>();
+        var service = new CategoryThreeSectionSliderService(cache, envMock.Object, loggerMock.Object);
+
+        try
+        {
+            // Act
+            var all = await service.GetAllSlidersAsync();
+
+            // Assert
+            Assert.True(all.Categories.ContainsKey("electronics"));
+            Assert.True(all.Categories.ContainsKey("men-clothing"));
+            Assert.True(all.Categories.ContainsKey("women-clothing"));
+            Assert.True(all.Categories.ContainsKey("watches"));
+            Assert.True(all.Categories.ContainsKey("thermals"));
+
+            // Check that the merged data was written back to disk
+            var diskContent = await System.IO.File.ReadAllTextAsync(filePath);
+            Assert.Contains("men-clothing", diskContent);
+            Assert.Contains("watches", diskContent);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, true);
+            }
+        }
+    }
 }
 

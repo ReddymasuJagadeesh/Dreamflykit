@@ -45,17 +45,28 @@ public sealed class CategoryThreeSectionHubDto
             return config;
         }
 
+        // Check if pre-configured default exists in CreateDefault
+        var defaults = CreateDefault();
+        if (defaults.Categories.TryGetValue(categorySlug, out var defConfig) && defConfig != null)
+        {
+            Categories[categorySlug] = defConfig;
+            return defConfig;
+        }
+
         // Return a sensible default if not explicitly registered
-        return new CategoryThreeSectionConfigDto
+        var name = System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(categorySlug.Replace("-", " "));
+        var fallback = new CategoryThreeSectionConfigDto
         {
             CategorySlug = categorySlug,
-            CategoryName = categorySlug.Replace("-", " "),
+            CategoryName = name,
             IsEnabled = true,
             AutoPlay = true,
             SlideIntervalSeconds = 4,
             TransitionDurationMs = 650,
-            Slides = CreateDefaultSlidesFor(categorySlug, categorySlug.Replace("-", " "))
+            Slides = CreateDefaultSlidesFor(categorySlug, name)
         };
+        Categories[categorySlug] = fallback;
+        return fallback;
     }
 
     public static CategoryThreeSectionHubDto CreateDefault()
@@ -994,7 +1005,1843 @@ public sealed class CategoryThreeSectionHubDto
             }
         };
 
+        // 14 FASHION CATEGORIES (SHOWCASE BELOW "SHOP BY CATEGORY")
+        AddMenClothingDefaults(hub);
+        AddWomenClothingDefaults(hub);
+        AddMenFootwearDefaults(hub);
+        AddWomenFootwearDefaults(hub);
+        AddWatchesDefaults(hub);
+        AddSunglassesDefaults(hub);
+        AddCapsHatsDefaults(hub);
+        AddBeltsWalletsDefaults(hub);
+        AddSocksDefaults(hub);
+        AddAccessoriesDefaults(hub);
+        AddHoodiesDefaults(hub);
+        AddSweatshirtsDefaults(hub);
+        AddEthnicWearDefaults(hub);
+        AddThermalsDefaults(hub);
+
         return hub;
+    }
+
+    private static void AddMenClothingDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["men-clothing"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "men-clothing",
+            CategoryName = "Men Clothing",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "men_cloth_1",
+                    CategorySlug = "men-clothing",
+                    BadgeText = "TAILORED WARMTH",
+                    Rating = "4.8",
+                    Title = "Men's Italian Wool Overcoat",
+                    Tagline = "Tailored structured cut & premium inner lining",
+                    PriceText = "From ₹3,799*",
+                    OriginalPriceText = "₹6,999",
+                    EmiBadgeText = "0% EMI ₹316/m",
+                    OfferDisclaimer = "*Winter Campus Special",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/men-clothing",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "men_cloth_2",
+                    CategorySlug = "men-clothing",
+                    BadgeText = "STREETWEAR ICON",
+                    Rating = "4.9",
+                    Title = "450GSM Heavyweight Fleece Hoodie",
+                    Tagline = "Pre-shrunk organic cotton & double-lined hood",
+                    PriceText = "From ₹1,899*",
+                    OriginalPriceText = "₹3,499",
+                    EmiBadgeText = "0% EMI ₹158/m",
+                    OfferDisclaimer = "*Lecture & Travel Favorite",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/hoodies",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "men_cloth_3",
+                    CategorySlug = "men-clothing",
+                    BadgeText = "CAMPUS FORMAL",
+                    Rating = "4.7",
+                    Title = "Supima Cotton Slim Business Shirt",
+                    Tagline = "Wrinkle-resistant luxury weave for presentations",
+                    PriceText = "From ₹1,499*",
+                    OriginalPriceText = "₹2,799",
+                    EmiBadgeText = "0% EMI ₹125/m",
+                    OfferDisclaimer = "*100% Long-Staple Cotton",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/men-clothing",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "men_cloth_4",
+                    CategorySlug = "men-clothing",
+                    BadgeText = "ALL-DAY COMFORT",
+                    Rating = "4.8",
+                    Title = "Italian Fit Stretch Chino Trousers",
+                    Tagline = "4-way flexible mobility with reinforced seams",
+                    PriceText = "From ₹1,699*",
+                    OriginalPriceText = "₹2,999",
+                    EmiBadgeText = "0% EMI ₹141/m",
+                    OfferDisclaimer = "*Dorm to Class Versatility",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/men-clothing",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "men_cloth_5",
+                    CategorySlug = "men-clothing",
+                    BadgeText = "RETRO ATHLETIC",
+                    Rating = "4.7",
+                    Title = "Suede Trim Varsity Bomber Jacket",
+                    Tagline = "Snap button front with thermal ribbed collar",
+                    PriceText = "From ₹2,799*",
+                    OriginalPriceText = "₹4,999",
+                    EmiBadgeText = "0% EMI ₹233/m",
+                    OfferDisclaimer = "*Includes Student Pass Deal",
+                    ThemeGlowColor = "#f59e0b",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/men-clothing",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "men_cloth_6",
+                    CategorySlug = "men-clothing",
+                    BadgeText = "CAMPUS LOUNGE",
+                    Rating = "4.8",
+                    Title = "Tapered French Terry Joggers",
+                    Tagline = "Moisture-wicking breathable gym & study pants",
+                    PriceText = "From ₹1,199*",
+                    OriginalPriceText = "₹2,199",
+                    EmiBadgeText = "0% EMI ₹100/m",
+                    OfferDisclaimer = "*Dual Zipper Pockets",
+                    ThemeGlowColor = "#06b6d4",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/men-clothing",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddWomenClothingDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["women-clothing"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "women-clothing",
+            CategoryName = "Women Clothing",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "wom_cloth_1",
+                    CategorySlug = "women-clothing",
+                    BadgeText = "PARISIAN CHIC",
+                    Rating = "4.9",
+                    Title = "Double-Breasted Wool Trench Coat",
+                    Tagline = "Storm flap collar with adjustable waist belt",
+                    PriceText = "From ₹3,999*",
+                    OriginalPriceText = "₹7,499",
+                    EmiBadgeText = "0% EMI ₹333/m",
+                    OfferDisclaimer = "*Autumn / Winter Edition",
+                    ThemeGlowColor = "#e11d48",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/women-clothing",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wom_cloth_2",
+                    CategorySlug = "women-clothing",
+                    BadgeText = "WARM KNIT",
+                    Rating = "4.8",
+                    Title = "Cashmere High-Neck Ribbed Sweater",
+                    Tagline = "Featherlight warmth for chilly lecture halls",
+                    PriceText = "From ₹2,299*",
+                    OriginalPriceText = "₹3,999",
+                    EmiBadgeText = "0% EMI ₹191/m",
+                    OfferDisclaimer = "*100% Anti-Pilling Blend",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/women-clothing",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wom_cloth_3",
+                    CategorySlug = "women-clothing",
+                    BadgeText = "EFFORTLESS ELEGANCE",
+                    Rating = "4.8",
+                    Title = "Floral Tiered Chiffon Midi Dress",
+                    Tagline = "Breathable lining & flattering cinched waist",
+                    PriceText = "From ₹1,899*",
+                    OriginalPriceText = "₹3,299",
+                    EmiBadgeText = "0% EMI ₹158/m",
+                    OfferDisclaimer = "*Day-to-Evening Versatility",
+                    ThemeGlowColor = "#ec4899",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/women-clothing",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wom_cloth_4",
+                    CategorySlug = "women-clothing",
+                    BadgeText = "CAMPUS DENIM",
+                    Rating = "4.7",
+                    Title = "High-Rise Relaxed Straight Jeans",
+                    Tagline = "Vintage wash denim with comfortable stretch",
+                    PriceText = "From ₹1,599*",
+                    OriginalPriceText = "₹2,899",
+                    EmiBadgeText = "0% EMI ₹133/m",
+                    OfferDisclaimer = "*Reinforced Riveted Pockets",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/women-clothing",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wom_cloth_5",
+                    CategorySlug = "women-clothing",
+                    BadgeText = "POWER SUITING",
+                    Rating = "4.8",
+                    Title = "Tailored Oversized Boyfriend Blazer",
+                    Tagline = "Padded shoulders with sleek interior pocket",
+                    PriceText = "From ₹2,999*",
+                    OriginalPriceText = "₹5,299",
+                    EmiBadgeText = "0% EMI ₹250/m",
+                    OfferDisclaimer = "*Internship & Presentation Fit",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/women-clothing",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wom_cloth_6",
+                    CategorySlug = "women-clothing",
+                    BadgeText = "LOUNGE CHIC",
+                    Rating = "4.7",
+                    Title = "Organic Cotton Waffle Co-ord Set",
+                    Tagline = "Relaxed drop-shoulder top with matching bottoms",
+                    PriceText = "From ₹1,699*",
+                    OriginalPriceText = "₹2,999",
+                    EmiBadgeText = "0% EMI ₹141/m",
+                    OfferDisclaimer = "*Ultra-Soft Cloud Fabric",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/women-clothing",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddMenFootwearDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["men-footwear"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "men-footwear",
+            CategoryName = "Men Footwear",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "men_foot_1",
+                    CategorySlug = "men-footwear",
+                    BadgeText = "HERITAGE COMFORT",
+                    Rating = "4.9",
+                    Title = "Handcrafted Full-Grain Oxford Shoes",
+                    Tagline = "Goodyear welted sole with memory foam footbed",
+                    PriceText = "From ₹2,999*",
+                    OriginalPriceText = "₹5,499",
+                    EmiBadgeText = "0% EMI ₹250/m",
+                    OfferDisclaimer = "*Formal & Interview Ready",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/men-footwear",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "men_foot_2",
+                    CategorySlug = "men-footwear",
+                    BadgeText = "ALL-DAY SNEAKER",
+                    Rating = "4.8",
+                    Title = "Air-Cushioned Campus Running Sneakers",
+                    Tagline = "Breathable mesh upper with shock-absorbing foam",
+                    PriceText = "From ₹2,299*",
+                    OriginalPriceText = "₹3,999",
+                    EmiBadgeText = "0% EMI ₹191/m",
+                    OfferDisclaimer = "*Tested for 20,000+ Steps/Day",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/men-footwear",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "men_foot_3",
+                    CategorySlug = "men-footwear",
+                    BadgeText = "WINTER BOOTS",
+                    Rating = "4.8",
+                    Title = "Waterproof Chelsea Suede Boots",
+                    Tagline = "Elastic side gussets & lugged non-slip rubber sole",
+                    PriceText = "From ₹3,499*",
+                    OriginalPriceText = "₹6,299",
+                    EmiBadgeText = "0% EMI ₹291/m",
+                    OfferDisclaimer = "*All-Weather Treated Leather",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/men-footwear",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "men_foot_4",
+                    CategorySlug = "men-footwear",
+                    BadgeText = "EASY SLIP-ON",
+                    Rating = "4.7",
+                    Title = "Suede Leather Penny Loafers",
+                    Tagline = "Hand-stitched moc toe with arch support",
+                    PriceText = "From ₹2,499*",
+                    OriginalPriceText = "₹4,299",
+                    EmiBadgeText = "0% EMI ₹208/m",
+                    OfferDisclaimer = "*Smart-Casual Campus Essential",
+                    ThemeGlowColor = "#f59e0b",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/men-footwear",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "men_foot_5",
+                    CategorySlug = "men-footwear",
+                    BadgeText = "OUTDOOR TRAIL",
+                    Rating = "4.9",
+                    Title = "High-Traction All-Terrain Trekker Boots",
+                    Tagline = "Ankle support cage with waterproof membrane",
+                    PriceText = "From ₹3,799*",
+                    OriginalPriceText = "₹6,999",
+                    EmiBadgeText = "0% EMI ₹316/m",
+                    OfferDisclaimer = "*Weekend Hiking & Snow Ready",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/men-footwear",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "men_foot_6",
+                    CategorySlug = "men-footwear",
+                    BadgeText = "RETRO VINTAGE",
+                    Rating = "4.7",
+                    Title = "Classic White Leather Court Sneakers",
+                    Tagline = "Clean minimalist silhouette with padded collar",
+                    PriceText = "From ₹1,899*",
+                    OriginalPriceText = "₹3,499",
+                    EmiBadgeText = "0% EMI ₹158/m",
+                    OfferDisclaimer = "*Matches Every Campus Outfit",
+                    ThemeGlowColor = "#06b6d4",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/men-footwear",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddWomenFootwearDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["women-footwear"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "women-footwear",
+            CategoryName = "Women Footwear",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "wom_foot_1",
+                    CategorySlug = "women-footwear",
+                    BadgeText = "ERGONOMIC HEELS",
+                    Rating = "4.8",
+                    Title = "Memory-Foam Pointed Block Pumps",
+                    Tagline = "50mm stable block heel with anti-blister padding",
+                    PriceText = "From ₹2,499*",
+                    OriginalPriceText = "₹4,499",
+                    EmiBadgeText = "0% EMI ₹208/m",
+                    OfferDisclaimer = "*Presentation & Formal Events",
+                    ThemeGlowColor = "#e11d48",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/women-footwear",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wom_foot_2",
+                    CategorySlug = "women-footwear",
+                    BadgeText = "CAMPUS TREND",
+                    Rating = "4.9",
+                    Title = "Chunky Platform Lightweight Sneakers",
+                    Tagline = "Ultra-lightweight EVA sole with cloud cushion",
+                    PriceText = "From ₹2,199*",
+                    OriginalPriceText = "₹3,799",
+                    EmiBadgeText = "0% EMI ₹183/m",
+                    OfferDisclaimer = "*Top Pick Among Students",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/women-footwear",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wom_foot_3",
+                    CategorySlug = "women-footwear",
+                    BadgeText = "COLD WEATHER",
+                    Rating = "4.8",
+                    Title = "Waterproof Chelsea Leather Ankle Boots",
+                    Tagline = "Deep grip lug tread & insulated microfiber lining",
+                    PriceText = "From ₹3,299*",
+                    OriginalPriceText = "₹5,899",
+                    EmiBadgeText = "0% EMI ₹274/m",
+                    OfferDisclaimer = "*Rain & Snow Protected",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/women-footwear",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wom_foot_4",
+                    CategorySlug = "women-footwear",
+                    BadgeText = "ELEGANT STRAP",
+                    Rating = "4.7",
+                    Title = "Square-Toe Mid Block-Heel Sandals",
+                    Tagline = "Ankle buckle strap with cushioned latex insole",
+                    PriceText = "From ₹1,899*",
+                    OriginalPriceText = "₹3,299",
+                    EmiBadgeText = "0% EMI ₹158/m",
+                    OfferDisclaimer = "*Farewell & Dinner Ready",
+                    ThemeGlowColor = "#ec4899",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/women-footwear",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wom_foot_5",
+                    CategorySlug = "women-footwear",
+                    BadgeText = "EVERYDAY COMFORT",
+                    Rating = "4.8",
+                    Title = "Foldable Leather Ballet Flats",
+                    Tagline = "Flexible skid-proof sole & soft arch padding",
+                    PriceText = "From ₹1,499*",
+                    OriginalPriceText = "₹2,699",
+                    EmiBadgeText = "0% EMI ₹125/m",
+                    OfferDisclaimer = "*Packs Flat in Bag",
+                    ThemeGlowColor = "#f59e0b",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/women-footwear",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wom_foot_6",
+                    CategorySlug = "women-footwear",
+                    BadgeText = "LUXURY SLIP-ON",
+                    Rating = "4.7",
+                    Title = "Horsebit Leather Driving Loafers",
+                    Tagline = "Buttery soft grain leather with metallic hardware",
+                    PriceText = "From ₹2,599*",
+                    OriginalPriceText = "₹4,699",
+                    EmiBadgeText = "0% EMI ₹216/m",
+                    OfferDisclaimer = "*Campus to City Commute",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/women-footwear",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddWatchesDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["watches"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "watches",
+            CategoryName = "Watches",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "wat_1",
+                    CategorySlug = "watches",
+                    BadgeText = "CHRONO MASTER",
+                    Rating = "4.9",
+                    Title = "Sapphire Crystal Chronograph Watch",
+                    Tagline = "Precision Japanese movement & 316L stainless steel",
+                    PriceText = "From ₹4,999*",
+                    OriginalPriceText = "₹8,999",
+                    EmiBadgeText = "0% EMI ₹416/m",
+                    OfferDisclaimer = "*Water Resistant 50M",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/watches",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wat_2",
+                    CategorySlug = "watches",
+                    BadgeText = "MECHANICAL ART",
+                    Rating = "4.8",
+                    Title = "Automatic Skeleton Exhibition Watch",
+                    Tagline = "Self-winding mechanical caliber & glass caseback",
+                    PriceText = "From ₹6,499*",
+                    OriginalPriceText = "₹11,999",
+                    EmiBadgeText = "0% EMI ₹541/m",
+                    OfferDisclaimer = "*Zero Battery Needed",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/watches",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wat_3",
+                    CategorySlug = "watches",
+                    BadgeText = "SMART GPS",
+                    Rating = "4.8",
+                    Title = "AMOLED All-Day Outdoor Smartwatch",
+                    Tagline = "Health tracking, GPS routes, and 12-day battery",
+                    PriceText = "From ₹3,999*",
+                    OriginalPriceText = "₹6,999",
+                    EmiBadgeText = "0% EMI ₹333/m",
+                    OfferDisclaimer = "*iOS & Android Compatible",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/watches",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wat_4",
+                    CategorySlug = "watches",
+                    BadgeText = "MINIMALIST LUXE",
+                    Rating = "4.7",
+                    Title = "Ultra-Slim Stainless Mesh Watch",
+                    Tagline = "6.8mm profile case with scratch-proof mineral glass",
+                    PriceText = "From ₹2,799*",
+                    OriginalPriceText = "₹4,899",
+                    EmiBadgeText = "0% EMI ₹233/m",
+                    OfferDisclaimer = "*Magnetic Quick-Clasp",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/watches",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wat_5",
+                    CategorySlug = "watches",
+                    BadgeText = "DEEP DIVER",
+                    Rating = "4.8",
+                    Title = "200M Professional Stainless Diver Watch",
+                    Tagline = "Unidirectional ceramic bezel with luminous hands",
+                    PriceText = "From ₹5,499*",
+                    OriginalPriceText = "₹9,499",
+                    EmiBadgeText = "0% EMI ₹458/m",
+                    OfferDisclaimer = "*Screw-Down Crown",
+                    ThemeGlowColor = "#06b6d4",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/watches",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "wat_6",
+                    CategorySlug = "watches",
+                    BadgeText = "RETRO DIGITAL",
+                    Rating = "4.7",
+                    Title = "Vintage Gold-Tone Illuminator Watch",
+                    Tagline = "Stopwatch, daily alarm, and retro electro backlight",
+                    PriceText = "From ₹1,699*",
+                    OriginalPriceText = "₹2,999",
+                    EmiBadgeText = "0% EMI ₹141/m",
+                    OfferDisclaimer = "*Iconic 90s Heritage",
+                    ThemeGlowColor = "#f59e0b",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/watches",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddSunglassesDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["sunglasses"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "sunglasses",
+            CategoryName = "Sunglasses",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "sun_1",
+                    CategorySlug = "sunglasses",
+                    BadgeText = "POLARIZED TITANIUM",
+                    Rating = "4.9",
+                    Title = "Ultra-Lightweight Titanium Aviator",
+                    Tagline = "100% UV400 polarized lenses with anti-glare coat",
+                    PriceText = "From ₹2,499*",
+                    OriginalPriceText = "₹4,499",
+                    EmiBadgeText = "0% EMI ₹208/m",
+                    OfferDisclaimer = "*Includes Hard Case & Cloth",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/sunglasses",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "sun_2",
+                    CategorySlug = "sunglasses",
+                    BadgeText = "TIMELESS SHADES",
+                    Rating = "4.8",
+                    Title = "Classic Matte Black Wayfarer Shades",
+                    Tagline = "Impact-resistant polycarbonate frame & TAC lenses",
+                    PriceText = "From ₹1,499*",
+                    OriginalPriceText = "₹2,699",
+                    EmiBadgeText = "0% EMI ₹125/m",
+                    OfferDisclaimer = "*Everyday Campus Staple",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/sunglasses",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "sun_3",
+                    CategorySlug = "sunglasses",
+                    BadgeText = "RETRO CIRCULAR",
+                    Rating = "4.7",
+                    Title = "Round Vintage Wireframe Sunglasses",
+                    Tagline = "Gold wire temples with green gradient tint",
+                    PriceText = "From ₹1,799*",
+                    OriginalPriceText = "₹3,199",
+                    EmiBadgeText = "0% EMI ₹150/m",
+                    OfferDisclaimer = "*Bohemian Festival Style",
+                    ThemeGlowColor = "#f59e0b",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/sunglasses",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "sun_4",
+                    CategorySlug = "sunglasses",
+                    BadgeText = "HALF-RIM CLUB",
+                    Rating = "4.8",
+                    Title = "Clubmaster Browline Sunglasses",
+                    Tagline = "Handmade acetate upper with silver metal rim",
+                    PriceText = "From ₹1,999*",
+                    OriginalPriceText = "₹3,499",
+                    EmiBadgeText = "0% EMI ₹166/m",
+                    OfferDisclaimer = "*Intellectual Classic",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/sunglasses",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "sun_5",
+                    CategorySlug = "sunglasses",
+                    BadgeText = "HIGH FASHION",
+                    Rating = "4.8",
+                    Title = "Modern Sculpted Cat-Eye Shades",
+                    Tagline = "Gradient UV400 lenses with premium acetate finish",
+                    PriceText = "From ₹2,199*",
+                    OriginalPriceText = "₹3,899",
+                    EmiBadgeText = "0% EMI ₹183/m",
+                    OfferDisclaimer = "*Runway Inspired Silhouette",
+                    ThemeGlowColor = "#ec4899",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/sunglasses",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "sun_6",
+                    CategorySlug = "sunglasses",
+                    BadgeText = "SPORT PERFORMANCE",
+                    Rating = "4.7",
+                    Title = "Wraparound Shield Running Sunglasses",
+                    Tagline = "Ventilated anti-fog lens with rubberized grip arms",
+                    PriceText = "From ₹1,899*",
+                    OriginalPriceText = "₹3,299",
+                    EmiBadgeText = "0% EMI ₹158/m",
+                    OfferDisclaimer = "*Cycling & Sports Ready",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/sunglasses",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddCapsHatsDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["caps-hats"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "caps-hats",
+            CategoryName = "Caps & Hats",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "cap_1",
+                    CategorySlug = "caps-hats",
+                    BadgeText = "VINTAGE WASH",
+                    Rating = "4.8",
+                    Title = "6-Panel Washed Cotton Dad Cap",
+                    Tagline = "Unstructured crown with pre-curved visor & brass clasp",
+                    PriceText = "From ₹699*",
+                    OriginalPriceText = "₹1,299",
+                    EmiBadgeText = "0% EMI ₹58/m",
+                    OfferDisclaimer = "*100% Breathable Cotton",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/caps-hats",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "cap_2",
+                    CategorySlug = "caps-hats",
+                    BadgeText = "WINTER WARMTH",
+                    Rating = "4.9",
+                    Title = "Merino Wool Ribbed Cuffed Beanie",
+                    Tagline = "Double-layer thermal knit with zero itchy feel",
+                    PriceText = "From ₹899*",
+                    OriginalPriceText = "₹1,599",
+                    EmiBadgeText = "0% EMI ₹75/m",
+                    OfferDisclaimer = "*Essential Cold Weather Gear",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/caps-hats",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "cap_3",
+                    CategorySlug = "caps-hats",
+                    BadgeText = "RETRO CORDUROY",
+                    Rating = "4.7",
+                    Title = "Vintage Corduroy 5-Panel Snapback",
+                    Tagline = "Soft wide-wale corduroy with embroidered crest",
+                    PriceText = "From ₹799*",
+                    OriginalPriceText = "₹1,499",
+                    EmiBadgeText = "0% EMI ₹66/m",
+                    OfferDisclaimer = "*Streetwear Daily Driver",
+                    ThemeGlowColor = "#f59e0b",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/caps-hats",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "cap_4",
+                    CategorySlug = "caps-hats",
+                    BadgeText = "REVERSIBLE SUN",
+                    Rating = "4.8",
+                    Title = "Reversible Heavy Cotton Bucket Hat",
+                    Tagline = "Solid neutral on one side, graphic print on reverse",
+                    PriceText = "From ₹849*",
+                    OriginalPriceText = "₹1,499",
+                    EmiBadgeText = "0% EMI ₹70/m",
+                    OfferDisclaimer = "*UPF 50+ Sun Protection",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/caps-hats",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "cap_5",
+                    CategorySlug = "caps-hats",
+                    BadgeText = "AERO VISOR",
+                    Rating = "4.7",
+                    Title = "Moisture-Wicking Athletic Visor",
+                    Tagline = "Quick-dry sweatband for running and tennis",
+                    PriceText = "From ₹599*",
+                    OriginalPriceText = "₹999",
+                    EmiBadgeText = "0% EMI ₹50/m",
+                    OfferDisclaimer = "*Ultra-Lightweight 42g",
+                    ThemeGlowColor = "#06b6d4",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/caps-hats",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "cap_6",
+                    CategorySlug = "caps-hats",
+                    BadgeText = "URBAN FLAT PEAK",
+                    Rating = "4.8",
+                    Title = "Structured Wool-Blend Snapback Cap",
+                    Tagline = "High-crown 6-panel fit with contrast under-visor",
+                    PriceText = "From ₹999*",
+                    OriginalPriceText = "₹1,799",
+                    EmiBadgeText = "0% EMI ₹83/m",
+                    OfferDisclaimer = "*Pro-Fit Streetwear",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/caps-hats",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddBeltsWalletsDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["belts-wallets"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "belts-wallets",
+            CategoryName = "Belts & Wallets",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "bw_1",
+                    CategorySlug = "belts-wallets",
+                    BadgeText = "DUAL STYLE",
+                    Rating = "4.9",
+                    Title = "Full-Grain Reversible Italian Leather Belt",
+                    Tagline = "Twist-lock buckle rotates between Black & Rich Brown",
+                    PriceText = "From ₹1,299*",
+                    OriginalPriceText = "₹2,499",
+                    EmiBadgeText = "0% EMI ₹108/m",
+                    OfferDisclaimer = "*100% Genuine Bovine Leather",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/belts-wallets",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "bw_2",
+                    CategorySlug = "belts-wallets",
+                    BadgeText = "RFID PROTECTED",
+                    Rating = "4.8",
+                    Title = "Slim RFID-Blocking Bifold Wallet",
+                    Tagline = "8 card slots, billfold, and pull-tab quick access",
+                    PriceText = "From ₹999*",
+                    OriginalPriceText = "₹1,899",
+                    EmiBadgeText = "0% EMI ₹83/m",
+                    OfferDisclaimer = "*Blocks 13.56 MHz RFID Scanners",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/belts-wallets",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "bw_3",
+                    CategorySlug = "belts-wallets",
+                    BadgeText = "AEROSPACE GRADE",
+                    Rating = "4.8",
+                    Title = "Minimalist Carbon Fiber Cardholder",
+                    Tagline = "Holds up to 12 cards with integrated cash strap",
+                    PriceText = "From ₹1,499*",
+                    OriginalPriceText = "₹2,699",
+                    EmiBadgeText = "0% EMI ₹125/m",
+                    OfferDisclaimer = "*Weighs Only 45 Grams",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/belts-wallets",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "bw_4",
+                    CategorySlug = "belts-wallets",
+                    BadgeText = "MICRO ADJUST",
+                    Rating = "4.7",
+                    Title = "Automatic Click-Ratchet Leather Belt",
+                    Tagline = "32 micro-adjust track positions for exact comfort",
+                    PriceText = "From ₹1,199*",
+                    OriginalPriceText = "₹2,199",
+                    EmiBadgeText = "0% EMI ₹100/m",
+                    OfferDisclaimer = "*No Holes, Never Stretches",
+                    ThemeGlowColor = "#f59e0b",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/belts-wallets",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "bw_5",
+                    CategorySlug = "belts-wallets",
+                    BadgeText = "TRAVEL PASSPORT",
+                    Rating = "4.9",
+                    Title = "All-in-One Zippered Passport Wallet",
+                    Tagline = "Holds passport, boarding pass, currencies & SIM cards",
+                    PriceText = "From ₹1,599*",
+                    OriginalPriceText = "₹2,999",
+                    EmiBadgeText = "0% EMI ₹133/m",
+                    OfferDisclaimer = "*International Flight Ready",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/belts-wallets",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "bw_6",
+                    CategorySlug = "belts-wallets",
+                    BadgeText = "VINTAGE PATINA",
+                    Rating = "4.7",
+                    Title = "Distressed Hunter Leather Bifold",
+                    Tagline = "Develops rich unique leather patina with daily use",
+                    PriceText = "From ₹1,199*",
+                    OriginalPriceText = "₹2,299",
+                    EmiBadgeText = "0% EMI ₹100/m",
+                    OfferDisclaimer = "*Handcrafted Saddle Stitch",
+                    ThemeGlowColor = "#ec4899",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/belts-wallets",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddSocksDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["socks"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "socks",
+            CategoryName = "Socks",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "soc_1",
+                    CategorySlug = "socks",
+                    BadgeText = "ANTI-SLIP LINER",
+                    Rating = "4.9",
+                    Title = "Bamboo Anti-Odor No-Show Loafer Socks (3-Pack)",
+                    Tagline = "Silicone heel grip prevents slipping into shoes",
+                    PriceText = "From ₹499*",
+                    OriginalPriceText = "₹899",
+                    EmiBadgeText = "0% EMI ₹41/m",
+                    OfferDisclaimer = "*Naturally Antibacterial Bamboo",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/socks",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "soc_2",
+                    CategorySlug = "socks",
+                    BadgeText = "SUB-ZERO WARMTH",
+                    Rating = "4.8",
+                    Title = "Merino Wool Thermal Winter Crew Socks (2-Pack)",
+                    Tagline = "Cushioned footbed & temperature regulating wool",
+                    PriceText = "From ₹899*",
+                    OriginalPriceText = "₹1,599",
+                    EmiBadgeText = "0% EMI ₹75/m",
+                    OfferDisclaimer = "*Tested for Below -10°C",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/socks",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "soc_3",
+                    CategorySlug = "socks",
+                    BadgeText = "CLASSIC ARGYLE",
+                    Rating = "4.7",
+                    Title = "Combed Cotton Argyle Business Socks (3-Pack)",
+                    Tagline = "Seamless hand-linked toe with non-binding cuff",
+                    PriceText = "From ₹599*",
+                    OriginalPriceText = "₹1,099",
+                    EmiBadgeText = "0% EMI ₹50/m",
+                    OfferDisclaimer = "*Interview & Formal Ready",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/socks",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "soc_4",
+                    CategorySlug = "socks",
+                    BadgeText = "COMPRESSION SUPPORT",
+                    Rating = "4.8",
+                    Title = "Graduated Arch Compression Athletic Socks (3-Pack)",
+                    Tagline = "Reduces foot fatigue during long days of walking",
+                    PriceText = "From ₹699*",
+                    OriginalPriceText = "₹1,299",
+                    EmiBadgeText = "0% EMI ₹58/m",
+                    OfferDisclaimer = "*15-20 mmHg Targeted Arch Band",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/socks",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "soc_5",
+                    CategorySlug = "socks",
+                    BadgeText = "PLUSH RUNNER",
+                    Rating = "4.7",
+                    Title = "Cushioned Terry Ankle Sports Socks (4-Pack)",
+                    Tagline = "Reinforced heel and toe with breathable instep mesh",
+                    PriceText = "From ₹499*",
+                    OriginalPriceText = "₹999",
+                    EmiBadgeText = "0% EMI ₹41/m",
+                    OfferDisclaimer = "*High-Wear Durability",
+                    ThemeGlowColor = "#06b6d4",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/socks",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "soc_6",
+                    CategorySlug = "socks",
+                    BadgeText = "ORGANIC ESSENTIAL",
+                    Rating = "4.8",
+                    Title = "Ribbed Organic Cotton Everyday Crew (5-Pack)",
+                    Tagline = "Soft breathable pure combed cotton in earth tones",
+                    PriceText = "From ₹799*",
+                    OriginalPriceText = "₹1,499",
+                    EmiBadgeText = "0% EMI ₹66/m",
+                    OfferDisclaimer = "*Dorm Laundry Certified",
+                    ThemeGlowColor = "#f59e0b",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/socks",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddAccessoriesDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["accessories"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "accessories",
+            CategoryName = "Accessories",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "acc_1",
+                    CategorySlug = "accessories",
+                    BadgeText = "WEATHERPROOF COMMUTE",
+                    Rating = "4.9",
+                    Title = "Water-Resistant Campus Tech Backpack",
+                    Tagline = "Dedicated 16\" laptop compartment & USB charging port",
+                    PriceText = "From ₹2,499*",
+                    OriginalPriceText = "₹4,499",
+                    EmiBadgeText = "0% EMI ₹208/m",
+                    OfferDisclaimer = "*YKK Zippers & Ergonomic Straps",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/accessories",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "acc_2",
+                    CategorySlug = "accessories",
+                    BadgeText = "100% SILK",
+                    Rating = "4.8",
+                    Title = "Pure Mulberry Silk Tie & Pocket Square Set",
+                    Tagline = "Hand-rolled edges with matching cufflinks & gift box",
+                    PriceText = "From ₹1,499*",
+                    OriginalPriceText = "₹2,799",
+                    EmiBadgeText = "0% EMI ₹125/m",
+                    OfferDisclaimer = "*Formal Presentation Polish",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/accessories",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "acc_3",
+                    CategorySlug = "accessories",
+                    BadgeText = "MONOGRAM STEEL",
+                    Rating = "4.7",
+                    Title = "Brushed Stainless Steel Cufflinks & Tie Clip",
+                    Tagline = "Laser-etched geometric design with bullet-back clasp",
+                    PriceText = "From ₹999*",
+                    OriginalPriceText = "₹1,799",
+                    EmiBadgeText = "0% EMI ₹83/m",
+                    OfferDisclaimer = "*Tarnish-Free 316L Steel",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/accessories",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "acc_4",
+                    CategorySlug = "accessories",
+                    BadgeText = "CASHMERE TOUCH",
+                    Rating = "4.8",
+                    Title = "Ultra-Soft Brushed Fringe Winter Scarf",
+                    Tagline = "Generous 180cm wrap with insulating warmth",
+                    PriceText = "From ₹1,199*",
+                    OriginalPriceText = "₹2,199",
+                    EmiBadgeText = "0% EMI ₹100/m",
+                    OfferDisclaimer = "*Unisex Campus Styling",
+                    ThemeGlowColor = "#f59e0b",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/accessories",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "acc_5",
+                    CategorySlug = "accessories",
+                    BadgeText = "HEAVY DUTY",
+                    Rating = "4.7",
+                    Title = "Tactical Metal Key Organizer & Carabiner",
+                    Tagline = "Holds 8 keys securely without jingling or scratches",
+                    PriceText = "From ₹699*",
+                    OriginalPriceText = "₹1,299",
+                    EmiBadgeText = "0% EMI ₹58/m",
+                    OfferDisclaimer = "*Titanium Alloy Clip",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/accessories",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "acc_6",
+                    CategorySlug = "accessories",
+                    BadgeText = "STORM PROOF",
+                    Rating = "4.8",
+                    Title = "Windproof Teflon Compact Automatic Umbrella",
+                    Tagline = "9-rib fiberglass frame withstands 60 mph gusts",
+                    PriceText = "From ₹899*",
+                    OriginalPriceText = "₹1,599",
+                    EmiBadgeText = "0% EMI ₹75/m",
+                    OfferDisclaimer = "*Auto Open/Close Pushbutton",
+                    ThemeGlowColor = "#06b6d4",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/accessories",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddHoodiesDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["hoodies"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "hoodies",
+            CategoryName = "Hoodies",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "hod_1",
+                    CategorySlug = "hoodies",
+                    BadgeText = "HEAVYWEIGHT 450GSM",
+                    Rating = "4.9",
+                    Title = "Custom Fit Heavyweight Fleece Hoodie",
+                    Tagline = "Pre-shrunk organic cotton with dense brushed interior",
+                    PriceText = "From ₹1,999*",
+                    OriginalPriceText = "₹3,799",
+                    EmiBadgeText = "0% EMI ₹166/m",
+                    OfferDisclaimer = "*Campus Cold Weather Essential",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/hoodies",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "hod_2",
+                    CategorySlug = "hoodies",
+                    BadgeText = "STREETWEAR DROP",
+                    Rating = "4.8",
+                    Title = "Acid-Washed Oversized Drop-Shoulder Hoodie",
+                    Tagline = "Vintage enzyme wash with distressed seam details",
+                    PriceText = "From ₹1,899*",
+                    OriginalPriceText = "₹3,499",
+                    EmiBadgeText = "0% EMI ₹158/m",
+                    OfferDisclaimer = "*Relaxed Boxy Silhouette",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/hoodies",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "hod_3",
+                    CategorySlug = "hoodies",
+                    BadgeText = "SHERPA LINED",
+                    Rating = "4.9",
+                    Title = "Thermal Sherpa-Lined Full Zip Hoodie",
+                    Tagline = "Ultra-warm faux fur fleece body with metal YKK zipper",
+                    PriceText = "From ₹2,499*",
+                    OriginalPriceText = "₹4,499",
+                    EmiBadgeText = "0% EMI ₹208/m",
+                    OfferDisclaimer = "*Replaces Light Winter Jacket",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/hoodies",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "hod_4",
+                    CategorySlug = "hoodies",
+                    BadgeText = "ACTIVE PERFORMANCE",
+                    Rating = "4.7",
+                    Title = "Moisture-Wicking Tech Fleece Hoodie",
+                    Tagline = "4-way athletic stretch with hidden zip phone pouch",
+                    PriceText = "From ₹1,799*",
+                    OriginalPriceText = "₹3,199",
+                    EmiBadgeText = "0% EMI ₹150/m",
+                    OfferDisclaimer = "*Gym & Early Morning Runs",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/hoodies",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "hod_5",
+                    CategorySlug = "hoodies",
+                    BadgeText = "MINIMAL EMBROIDERY",
+                    Rating = "4.8",
+                    Title = "Subtle Tone-on-Tone Embroidered Hoodie",
+                    Tagline = "Clean tonal chest branding & ribbed side gussets",
+                    PriceText = "From ₹1,699*",
+                    OriginalPriceText = "₹2,999",
+                    EmiBadgeText = "0% EMI ₹141/m",
+                    OfferDisclaimer = "*Lecture Hall Minimalist",
+                    ThemeGlowColor = "#f59e0b",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/hoodies",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "hod_6",
+                    CategorySlug = "hoodies",
+                    BadgeText = "PIGMENT DYED",
+                    Rating = "4.7",
+                    Title = "Vintage Pigment-Dyed Pullover Hoodie",
+                    Tagline = "Soft washed aesthetic that gets better with every wash",
+                    PriceText = "From ₹1,749*",
+                    OriginalPriceText = "₹3,199",
+                    EmiBadgeText = "0% EMI ₹145/m",
+                    OfferDisclaimer = "*100% Ring-Spun Cotton",
+                    ThemeGlowColor = "#ec4899",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/hoodies",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddSweatshirtsDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["sweatshirts"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "sweatshirts",
+            CategoryName = "Sweatshirts",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "swt_1",
+                    CategorySlug = "sweatshirts",
+                    BadgeText = "CAMPUS CLASSIC",
+                    Rating = "4.8",
+                    Title = "Brushed Fleece Crewneck Sweatshirt",
+                    Tagline = "380GSM comfortable daily cotton-poly fleece",
+                    PriceText = "From ₹1,399*",
+                    OriginalPriceText = "₹2,499",
+                    EmiBadgeText = "0% EMI ₹116/m",
+                    OfferDisclaimer = "*Everyday Lecture Staple",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/sweatshirts",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "swt_2",
+                    CategorySlug = "sweatshirts",
+                    BadgeText = "VARSITY HERITAGE",
+                    Rating = "4.9",
+                    Title = "Chenille Patch Letterman Sweatshirt",
+                    Tagline = "Vintage collegiate lettering with ribbed stripe cuffs",
+                    PriceText = "From ₹1,699*",
+                    OriginalPriceText = "₹2,999",
+                    EmiBadgeText = "0% EMI ₹141/m",
+                    OfferDisclaimer = "*Authentic Campus Spirit",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/sweatshirts",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "swt_3",
+                    CategorySlug = "sweatshirts",
+                    BadgeText = "QUARTER ZIP",
+                    Rating = "4.8",
+                    Title = "French Terry Quarter-Zip Pullover",
+                    Tagline = "Stand-up collar with brushed brass pull for easy layering",
+                    PriceText = "From ₹1,799*",
+                    OriginalPriceText = "₹3,299",
+                    EmiBadgeText = "0% EMI ₹150/m",
+                    OfferDisclaimer = "*Smart-Casual Presentation Look",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/sweatshirts",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "swt_4",
+                    CategorySlug = "sweatshirts",
+                    BadgeText = "RAW EDGE",
+                    Rating = "4.7",
+                    Title = "Raw-Hem Relaxed Boxy Sweatshirt",
+                    Tagline = "Drop-shoulder cut with subtle rolled unfinished hem",
+                    PriceText = "From ₹1,499*",
+                    OriginalPriceText = "₹2,699",
+                    EmiBadgeText = "0% EMI ₹125/m",
+                    OfferDisclaimer = "*Streetwear Aesthetic",
+                    ThemeGlowColor = "#f59e0b",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/sweatshirts",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "swt_5",
+                    CategorySlug = "sweatshirts",
+                    BadgeText = "THERMAL WAFFLE",
+                    Rating = "4.8",
+                    Title = "Heavy Waffle-Knit Layering Crew",
+                    Tagline = "Textured honeycomb weave traps body heat effectively",
+                    PriceText = "From ₹1,599*",
+                    OriginalPriceText = "₹2,799",
+                    EmiBadgeText = "0% EMI ₹133/m",
+                    OfferDisclaimer = "*Breathable Base Layer",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/sweatshirts",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "swt_6",
+                    CategorySlug = "sweatshirts",
+                    BadgeText = "MOCK NECK",
+                    Rating = "4.7",
+                    Title = "Structured Mock-Neck Minimalist Pullover",
+                    Tagline = "Clean architectural neck silhouette in dense fleece",
+                    PriceText = "From ₹1,649*",
+                    OriginalPriceText = "₹2,999",
+                    EmiBadgeText = "0% EMI ₹137/m",
+                    OfferDisclaimer = "*Modern European Campus Fit",
+                    ThemeGlowColor = "#06b6d4",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/sweatshirts",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddEthnicWearDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["ethnic-wear"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "ethnic-wear",
+            CategoryName = "Ethnic Wear",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "eth_1",
+                    CategorySlug = "ethnic-wear",
+                    BadgeText = "FESTIVE ROYAL",
+                    Rating = "4.9",
+                    Title = "Pure Silk Blend Embroidered Kurta Set",
+                    Tagline = "Intricate neckline embroidery with matching churidar",
+                    PriceText = "From ₹2,999*",
+                    OriginalPriceText = "₹5,499",
+                    EmiBadgeText = "0% EMI ₹250/m",
+                    OfferDisclaimer = "*Diwali & Campus Gala Ready",
+                    ThemeGlowColor = "#f59e0b",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/ethnic-wear",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "eth_2",
+                    CategorySlug = "ethnic-wear",
+                    BadgeText = "NEHRU STYLING",
+                    Rating = "4.8",
+                    Title = "Designer Jacquard Bandhgala Waistcoat",
+                    Tagline = "Mandarin collar with engraved brass buttons",
+                    PriceText = "From ₹1,999*",
+                    OriginalPriceText = "₹3,799",
+                    EmiBadgeText = "0% EMI ₹166/m",
+                    OfferDisclaimer = "*Pairs with Any Kurta or Shirt",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/ethnic-wear",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "eth_3",
+                    CategorySlug = "ethnic-wear",
+                    BadgeText = "HANDLOOM COTTON",
+                    Rating = "4.8",
+                    Title = "Breathable Daily Handloom Cotton Kurta",
+                    Tagline = "Lightweight textured khadi weave with side pockets",
+                    PriceText = "From ₹1,299*",
+                    OriginalPriceText = "₹2,299",
+                    EmiBadgeText = "0% EMI ₹108/m",
+                    OfferDisclaimer = "*All-Day Campus Comfort",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/ethnic-wear",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "eth_4",
+                    CategorySlug = "ethnic-wear",
+                    BadgeText = "TRADITIONAL ENSEMBLE",
+                    Rating = "4.7",
+                    Title = "Silk Blend Dhoti Kurta Two-Piece Set",
+                    Tagline = "Pre-pleated ready-to-wear dhoti with woven border",
+                    PriceText = "From ₹2,499*",
+                    OriginalPriceText = "₹4,499",
+                    EmiBadgeText = "0% EMI ₹208/m",
+                    OfferDisclaimer = "*Hassle-Free Traditional Draping",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/ethnic-wear",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "eth_5",
+                    CategorySlug = "ethnic-wear",
+                    BadgeText = "MODERN INDOWESTERN",
+                    Rating = "4.8",
+                    Title = "Asymmetric Hem Indowestern Kurta",
+                    Tagline = "Contemporary overlap styling with button placket",
+                    PriceText = "From ₹1,899*",
+                    OriginalPriceText = "₹3,499",
+                    EmiBadgeText = "0% EMI ₹158/m",
+                    OfferDisclaimer = "*Fusion Campus Celebrations",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/ethnic-wear",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "eth_6",
+                    CategorySlug = "ethnic-wear",
+                    BadgeText = "REGAL VELVET",
+                    Rating = "4.9",
+                    Title = "Velvet Zari Embroidered Sherwani Coat",
+                    Tagline = "Rich micro-velvet with antique gold threadwork",
+                    PriceText = "From ₹4,999*",
+                    OriginalPriceText = "₹9,999",
+                    EmiBadgeText = "0% EMI ₹416/m",
+                    OfferDisclaimer = "*Graduation & Wedding Ceremonies",
+                    ThemeGlowColor = "#ec4899",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/ethnic-wear",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
+    }
+
+    private static void AddThermalsDefaults(CategoryThreeSectionHubDto hub)
+    {
+        hub.Categories["thermals"] = new CategoryThreeSectionConfigDto
+        {
+            CategorySlug = "thermals",
+            CategoryName = "Thermals",
+            IsEnabled = true,
+            AutoPlay = true,
+            SlideIntervalSeconds = 4,
+            TransitionDurationMs = 650,
+            Slides = new List<CategorySliderSlideDto>
+            {
+                new()
+                {
+                    Id = "thm_1",
+                    CategorySlug = "thermals",
+                    BadgeText = "MERINO WOOL",
+                    Rating = "4.9",
+                    Title = "100% Merino Wool Base Layer Thermal Top",
+                    Tagline = "Ultra-fine 18.5 micron wool with natural odor resistance",
+                    PriceText = "From ₹1,899*",
+                    OriginalPriceText = "₹3,499",
+                    EmiBadgeText = "0% EMI ₹158/m",
+                    OfferDisclaimer = "*Active Body Heat Regulation",
+                    ThemeGlowColor = "#3b82f6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/thermals",
+                    DisplayOrder = 1,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "thm_2",
+                    CategorySlug = "thermals",
+                    BadgeText = "EXTREME WARMTH",
+                    Rating = "4.9",
+                    Title = "Sub-Zero Thermal Compression Leggings",
+                    Tagline = "Dense fleece interior rated for down to -20°C temperatures",
+                    PriceText = "From ₹1,499*",
+                    OriginalPriceText = "₹2,799",
+                    EmiBadgeText = "0% EMI ₹125/m",
+                    OfferDisclaimer = "*Snow & Freezing Campus Commute",
+                    ThemeGlowColor = "#ea580c",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/thermals",
+                    DisplayOrder = 2,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "thm_3",
+                    CategorySlug = "thermals",
+                    BadgeText = "SEAMLESS COMFORT",
+                    Rating = "4.8",
+                    Title = "Seamless Second-Skin Thermal Inner Set",
+                    Tagline = "Zero chafing flat-lock seams with 4-way stretch",
+                    PriceText = "From ₹2,299*",
+                    OriginalPriceText = "₹3,999",
+                    EmiBadgeText = "0% EMI ₹191/m",
+                    OfferDisclaimer = "*Top & Bottom Matching Pack",
+                    ThemeGlowColor = "#8b5cf6",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/thermals",
+                    DisplayOrder = 3,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "thm_4",
+                    CategorySlug = "thermals",
+                    BadgeText = "POLAR FLEECE",
+                    Rating = "4.7",
+                    Title = "Insulated Polar-Fleece Thermal Undershirt",
+                    Tagline = "Traps micro-air pockets to preserve core body warmth",
+                    PriceText = "From ₹1,199*",
+                    OriginalPriceText = "₹2,199",
+                    EmiBadgeText = "0% EMI ₹100/m",
+                    OfferDisclaimer = "*Lightweight Under-Clothing Fit",
+                    ThemeGlowColor = "#10b981",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/thermals",
+                    DisplayOrder = 4,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "thm_5",
+                    CategorySlug = "thermals",
+                    BadgeText = "MICRO SILK BLEND",
+                    Rating = "4.8",
+                    Title = "Silk-Touch Ultra-Thin Warmth Camisole / Top",
+                    Tagline = "Invisible under formal shirts and thin knits",
+                    PriceText = "From ₹999*",
+                    OriginalPriceText = "₹1,899",
+                    EmiBadgeText = "0% EMI ₹83/m",
+                    OfferDisclaimer = "*Featherlight 85g Layer",
+                    ThemeGlowColor = "#ec4899",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/thermals",
+                    DisplayOrder = 5,
+                    IsActive = true
+                },
+                new()
+                {
+                    Id = "thm_6",
+                    CategorySlug = "thermals",
+                    BadgeText = "ARCTIC HEAVYWEIGHT",
+                    Rating = "4.9",
+                    Title = "Double-Knitted Thermal Long Johns",
+                    Tagline = "Dual-layered ribbed knit with elasticized ankle cuffs",
+                    PriceText = "From ₹1,399*",
+                    OriginalPriceText = "₹2,599",
+                    EmiBadgeText = "0% EMI ₹116/m",
+                    OfferDisclaimer = "*Wind Chill Protected",
+                    ThemeGlowColor = "#06b6d4",
+                    ImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg",
+                    IsUploadingSoon = true,
+                    TargetUrl = "/category/fashion/thermals",
+                    DisplayOrder = 6,
+                    IsActive = true
+                }
+            }
+        };
     }
 
     public static List<CategorySliderSlideDto> CreateDefaultSlidesFor(string slug, string name)

@@ -6,11 +6,11 @@
     var allSliders = ViewBag.AllSliders as Dreamflykit.Application.CategoryShowcase.Models.CategoryThreeSectionHubDto;
     var slides = Model?.Slides?.OrderBy(s => s.DisplayOrder).ToList() ?? new List<Dreamflykit.Application.CategoryShowcase.Models.CategorySliderSlideDto>();
 
-    var availableCategories = new List<(string Slug, string Name, string Emoji)>
+    var mainStoreCategories = new List<(string Slug, string Name, string Emoji)>
     {
         ("electronics", "Electronics", "💻"),
         ("appliances", "Appliances", "📺"),
-        ("fashion", "Fashion", "👗"),
+        ("fashion", "Fashion Hub", "👗"),
         ("study-essentials", "Study Essentials", "🎓"),
         ("travel-gear", "Travel Gear", "✈️"),
         ("mobiles", "Mobiles", "📱"),
@@ -19,8 +19,30 @@
         ("food", "Food & Gourmet", "🍫"),
         ("story-books", "Story Books", "📚"),
         ("kitchen-appliances", "Kitchen Appliances", "🍳"),
-        ("room-living", "Room & Living", "🛋️")
+        ("room-living", "Room & Living", "🛋️"),
+        ("gaming-hub", "Gaming Hub", "🎮")
     };
+
+    var fashionCategories = new List<(string Slug, string Name, string Emoji)>
+    {
+        ("men-clothing", "Men Clothing", "👔"),
+        ("women-clothing", "Women Clothing", "👗"),
+        ("men-footwear", "Men Footwear", "👟"),
+        ("women-footwear", "Women Footwear", "👠"),
+        ("watches", "Watches", "⌚"),
+        ("sunglasses", "Sunglasses", "🕶️"),
+        ("caps-hats", "Caps & Hats", "🧢"),
+        ("belts-wallets", "Belts & Wallets", "👛"),
+        ("socks", "Socks", "🧦"),
+        ("accessories", "Accessories", "🎒"),
+        ("hoodies", "Hoodies", "🧥"),
+        ("sweatshirts", "Sweatshirts", "👕"),
+        ("ethnic-wear", "Ethnic Wear", "👑"),
+        ("thermals", "Thermals", "❄️")
+    };
+
+    var isFashionSubcategory = fashionCategories.Any(f => string.Equals(f.Slug, activeSlug, StringComparison.OrdinalIgnoreCase));
+    var previewUrl = isFashionSubcategory ? $"/category/fashion/{activeSlug}" : $"/category/{activeSlug}";
 }
 
 @Html.AntiForgeryToken()
@@ -43,7 +65,7 @@
         </div>
 
         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-            <a href="/category/@activeSlug" target="_blank" class="dk-btn" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 10px 18px; font-size: 13.5px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <a href="@previewUrl" target="_blank" class="dk-btn" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 10px 18px; font-size: 13.5px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
                 <span>👁️</span> Preview Live Category Store
             </a>
             <form asp-action="ResetDefaults" method="post" style="display: inline;" onsubmit="return confirm('Reset this category slider to default 6 curated slides?');">
@@ -67,22 +89,53 @@
         </div>
     }
 
-    <!-- CATEGORY SELECTION PILLS -->
-    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-        <label style="display: block; font-size: 12px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 10px; letter-spacing: 0.5px;">
-            Select Category to Configure:
-        </label>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            @foreach (var cat in availableCategories)
-            {
-                var isSelected = string.Equals(cat.Slug, activeSlug, StringComparison.OrdinalIgnoreCase);
-                <a href="/Admin/CategorySliders?categorySlug=@cat.Slug" 
-                   style="padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; @(isSelected ? "background: #ea580c; color: #ffffff; box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);" : "background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;")">
-                    <span>@cat.Emoji</span>
-                    <span>@cat.Name</span>
-                </a>
-            }
+    <!-- CATEGORY SELECTION TABS & PILLS -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px 20px; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+        
+        <!-- SECTION 1: MAIN STORE CATEGORIES -->
+        <div style="margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <label style="display: block; font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">
+                    🏬 Main Store Categories:
+                </label>
+                <span style="font-size: 11.5px; color: #94a3b8; font-weight: 600;">Top-level category landing pages</span>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                @foreach (var cat in mainStoreCategories)
+                {
+                    var isSelected = string.Equals(cat.Slug, activeSlug, StringComparison.OrdinalIgnoreCase);
+                    <a href="/Admin/CategorySliders?categorySlug=@cat.Slug" 
+                       style="padding: 7px 13px; border-radius: 8px; font-size: 12.5px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; @(isSelected ? "background: #ea580c; color: #ffffff; box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);" : "background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;")">
+                        <span>@cat.Emoji</span>
+                        <span>@cat.Name</span>
+                    </a>
+                }
+            </div>
         </div>
+
+        <div style="height: 1px; background: #f1f5f9; margin: 14px 0;"></div>
+
+        <!-- SECTION 2: FASHION CATEGORY PAGES -->
+        <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <label style="display: block; font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #ea580c; letter-spacing: 0.5px;">
+                    👗 Fashion Hub: "Shop by Category" Pages:
+                </label>
+                <span style="font-size: 11.5px; color: #ea580c; font-weight: 700;">3-Section slides below "Shop by Category"</span>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                @foreach (var cat in fashionCategories)
+                {
+                    var isSelected = string.Equals(cat.Slug, activeSlug, StringComparison.OrdinalIgnoreCase);
+                    <a href="/Admin/CategorySliders?categorySlug=@cat.Slug" 
+                       style="padding: 7px 13px; border-radius: 8px; font-size: 12.5px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; @(isSelected ? "background: #ea580c; color: #ffffff; box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);" : "background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa;")">
+                        <span>@cat.Emoji</span>
+                        <span>@cat.Name</span>
+                    </a>
+                }
+            </div>
+        </div>
+
     </div>
 
     <!-- GENERAL CONFIG CARD -->

@@ -74,6 +74,24 @@ public sealed class CategoryThreeSectionSliderService : ICategoryThreeSectionSli
                 data = CategoryThreeSectionHubDto.CreateDefault();
                 await SaveToFileAsync(data, ct);
             }
+            else
+            {
+                // Seamlessly merge any newly added defaults (such as fashion subcategories)
+                var defaults = CategoryThreeSectionHubDto.CreateDefault();
+                bool addedNew = false;
+                foreach (var kvp in defaults.Categories)
+                {
+                    if (!data.Categories.ContainsKey(kvp.Key))
+                    {
+                        data.Categories[kvp.Key] = kvp.Value;
+                        addedNew = true;
+                    }
+                }
+                if (addedNew)
+                {
+                    await SaveToFileAsync(data, ct);
+                }
+            }
 
             _cache.Set(CacheKey, data, TimeSpan.FromMinutes(30));
             return data;
