@@ -5,6 +5,8 @@
     var profile = Model.SelectedProfile ?? new();
     var countries = Model.Countries ?? new();
     var kits = profile.Kits ?? new();
+    var hub = Model.HubData ?? new();
+    var slider = hub.SliderSettings ?? new();
 }
 
 @Html.AntiForgeryToken()
@@ -87,6 +89,107 @@
 
     <!-- MAIN FORM CONTAINER -->
     <div style="display: grid; grid-template-columns: 1fr; gap: 24px;">
+
+        <!-- 0. TOP COUNTRY KITS CAROUSEL & MOTION CONTROLS CARD -->
+        <div class="dk-card" style="background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 24px; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                        <span style="background: #0284c7; color: #ffffff; font-size: 11px; font-weight: 900; padding: 3px 8px; border-radius: 4px;">HOME PAGE CAROUSEL</span>
+                        <span style="background: #ecfdf5; color: #047857; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; border: 1px solid #a7f3d0;">
+                            ✨ @countries.Count Top Destinations Active
+                        </span>
+                    </div>
+                    <h2 style="margin: 0; font-size: 19px; font-weight: 900; color: #0f172a;">Top Country Kits Carousel &amp; Motion Controls</h2>
+                    <p style="margin: 3px 0 0 0; font-size: 13px; color: #64748b;">
+                        Full admin control over single-line display, arrow hover movement direction (Right-to-Left / Left-to-Right), auto-scroll, and the "View Countries →" link.
+                    </p>
+                </div>
+
+                <button type="button" 
+                        id="btnSaveSliderSettings" 
+                        onclick="saveSliderSettings()" 
+                        style="background: #0284c7; color: #ffffff; border: none; padding: 10px 22px; font-size: 13.5px; font-weight: 800; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; box-shadow: 0 3px 10px rgba(2, 132, 199, 0.3);">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    Save Carousel Settings
+                </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <label class="ck-label">Carousel Section Title</label>
+                    <input type="text" id="slider_SectionTitle" class="ck-input" value="@slider.SectionTitle" placeholder="Top Country Kits" />
+                </div>
+
+                <div>
+                    <label class="ck-label">Carousel Subtitle</label>
+                    <input type="text" id="slider_SectionSubtitle" class="ck-input" value="@slider.SectionSubtitle" placeholder="Essential kits specially curated for students traveling to top study destinations." />
+                </div>
+
+                <div>
+                    <label class="ck-label">Header Link Text (Replaces "Find My Kit →")</label>
+                    <input type="text" id="slider_ViewAllText" class="ck-input" value="@slider.ViewAllText" placeholder="View Countries →" />
+                    <span style="font-size: 11px; color: #0284c7; margin-top: 3px; display: block;">✓ Currently set to: "@slider.ViewAllText"</span>
+                </div>
+
+                <div>
+                    <label class="ck-label">Header Link Target URL</label>
+                    <input type="text" id="slider_ViewAllUrl" class="ck-input" value="@slider.ViewAllUrl" placeholder="/Kits/FindMyKit" />
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px;">
+                <div>
+                    <label class="ck-label">Movement Direction (Admin Configured)</label>
+                    <select id="slider_MovementDirection" class="ck-input" style="font-weight: 700;">
+                        <option value="right-to-left" selected="@(string.Equals(slider.MovementDirection, "right-to-left", StringComparison.OrdinalIgnoreCase) ? "selected" : null)">⟵ Right to Left (Default)</option>
+                        <option value="left-to-right" selected="@(string.Equals(slider.MovementDirection, "left-to-right", StringComparison.OrdinalIgnoreCase) ? "selected" : null)">⟶ Left to Right</option>
+                    </select>
+                    <span style="font-size: 11px; color: #64748b; margin-top: 4px; display: block;">Gliding direction when cursor hovers over arrows or autoplay runs.</span>
+                </div>
+
+                <div>
+                    <label class="ck-label">Auto-Scroll Active</label>
+                    <select id="slider_AutoScroll" class="ck-input" style="font-weight: 700;">
+                        <option value="true" selected="@(slider.AutoScroll ? "selected" : null)">Enabled (Automatic Glide)</option>
+                        <option value="false" selected="@(!slider.AutoScroll ? "selected" : null)">Disabled (Arrow Navigation Only)</option>
+                    </select>
+                    <span style="font-size: 11px; color: #64748b; margin-top: 4px; display: block;">Controls whether the carousel advances automatically.</span>
+                </div>
+
+                <div>
+                    <label class="ck-label">Auto-Scroll Interval</label>
+                    <select id="slider_AutoScrollIntervalSeconds" class="ck-input" style="font-weight: 700;">
+                        <option value="2" selected="@(slider.AutoScrollIntervalSeconds == 2 ? "selected" : null)">2 Seconds (Fast)</option>
+                        <option value="3" selected="@(slider.AutoScrollIntervalSeconds == 3 ? "selected" : null)">3 Seconds</option>
+                        <option value="4" selected="@(slider.AutoScrollIntervalSeconds == 4 ? "selected" : null)">4 Seconds (Standard)</option>
+                        <option value="5" selected="@(slider.AutoScrollIntervalSeconds == 5 ? "selected" : null)">5 Seconds</option>
+                        <option value="6" selected="@(slider.AutoScrollIntervalSeconds == 6 ? "selected" : null)">6 Seconds (Relaxed)</option>
+                        <option value="8" selected="@(slider.AutoScrollIntervalSeconds == 8 ? "selected" : null)">8 Seconds</option>
+                    </select>
+                    <span style="font-size: 11px; color: #64748b; margin-top: 4px; display: block;">Interval between auto-slides.</span>
+                </div>
+
+                <div>
+                    <label class="ck-label">Arrow Hover Gliding</label>
+                    <select id="slider_HoverScrollEnabled" class="ck-input" style="font-weight: 700;">
+                        <option value="true" selected="@(slider.HoverScrollEnabled ? "selected" : null)">Enabled (Glide on Cursor Hover)</option>
+                        <option value="false" selected="@(!slider.HoverScrollEnabled ? "selected" : null)">Disabled (Click to Step Only)</option>
+                    </select>
+                    <span style="font-size: 11px; color: #64748b; margin-top: 4px; display: block;">Hovering cursor over arrows continuously moves carousel.</span>
+                </div>
+
+                <div>
+                    <label class="ck-label">Gliding Speed</label>
+                    <select id="slider_ScrollSpeed" class="ck-input" style="font-weight: 700;">
+                        <option value="slow" selected="@(string.Equals(slider.ScrollSpeed, "slow", StringComparison.OrdinalIgnoreCase) ? "selected" : null)">Slow &amp; Gentle</option>
+                        <option value="normal" selected="@(string.Equals(slider.ScrollSpeed, "normal", StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty(slider.ScrollSpeed) ? "selected" : null)">Normal (Recommended)</option>
+                        <option value="fast" selected="@(string.Equals(slider.ScrollSpeed, "fast", StringComparison.OrdinalIgnoreCase) ? "selected" : null)">Fast &amp; Swift</option>
+                    </select>
+                    <span style="font-size: 11px; color: #64748b; margin-top: 4px; display: block;">Hover glide movement speed.</span>
+                </div>
+            </div>
+        </div>
 
         <!-- 1. COUNTRY PROFILE & HERO BANNER CONFIG -->
         <div class="dk-card" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
@@ -393,8 +496,28 @@
                 <input type="text" id="new_Tagline" class="ck-input" placeholder="e.g. Innovation Meets Tradition" />
             </div>
             <div>
-                <label class="ck-label">Starting Price</label>
-                <input type="number" id="new_StartingPrice" class="ck-input" placeholder="5499" />
+                <label class="ck-label">Starting Price (₹)</label>
+                <input type="number" id="new_StartingPrice" class="ck-input" placeholder="4999" value="4999" />
+            </div>
+            <div>
+                <label class="ck-label">Landmark Image URL</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="new_LandmarkImageUrl" class="ck-input" placeholder="/images/countries/japan.webp" />
+                    <label class="dk-btn" style="background: #0284c7; color: #fff; padding: 7px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">
+                        <span>📷 Upload</span>
+                        <input type="file" accept="image/*" style="display: none;" onchange="uploadNewCountryImage(this)" />
+                    </label>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px;">
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: #334155; cursor: pointer;">
+                    <input type="checkbox" id="new_IsLandmarkUploadingSoon" style="width: 16px; height: 16px; accent-color: #0284c7;" />
+                    Show "UPLOADING SOON" Badge (if photo pending)
+                </label>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <label class="ck-label" style="margin: 0; white-space: nowrap;">Order:</label>
+                    <input type="number" id="new_DisplayOrder" class="ck-input" style="width: 70px; padding: 4px 8px;" value="@(countries.Count + 1)" />
+                </div>
             </div>
         </div>
 
@@ -457,12 +580,85 @@ function closeAddCountryModal() {
     document.getElementById('addCountryModal').style.display = 'none';
 }
 
+async function saveSliderSettings() {
+    const payload = {
+        SectionTitle: document.getElementById('slider_SectionTitle').value.trim() || 'Top Country Kits',
+        SectionSubtitle: document.getElementById('slider_SectionSubtitle').value.trim(),
+        ViewAllText: document.getElementById('slider_ViewAllText').value.trim() || 'View Countries →',
+        ViewAllUrl: document.getElementById('slider_ViewAllUrl').value.trim() || '/Kits/FindMyKit',
+        MovementDirection: document.getElementById('slider_MovementDirection').value,
+        AutoScroll: document.getElementById('slider_AutoScroll').value === 'true',
+        AutoScrollIntervalSeconds: parseInt(document.getElementById('slider_AutoScrollIntervalSeconds').value) || 4,
+        HoverScrollEnabled: document.getElementById('slider_HoverScrollEnabled').value === 'true',
+        ScrollSpeed: document.getElementById('slider_ScrollSpeed').value || 'normal'
+    };
+
+    const btn = document.getElementById('btnSaveSliderSettings');
+    const oldHtml = btn ? btn.innerHTML : '';
+    if (btn) btn.innerHTML = 'Saving...';
+
+    try {
+        const resp = await fetch('/Admin/CountryKits/SaveSliderSettings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': getVerificationToken(),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const res = await resp.json();
+        if (res.success) {
+            alert('✓ ' + (res.message || 'Carousel settings saved successfully!'));
+        } else {
+            alert('Failed to save settings: ' + (res.message || 'Error'));
+        }
+    } catch (e) {
+        alert('Network or server error: ' + e.message);
+    } finally {
+        if (btn) btn.innerHTML = oldHtml;
+    }
+}
+
+async function uploadNewCountryImage(fileInput) {
+    if (!fileInput.files || fileInput.files.length === 0) return;
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('targetField', 'new_LandmarkImageUrl');
+
+    try {
+        const resp = await fetch('/Admin/CountryKits/UploadImage', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': getVerificationToken(),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        });
+        const res = await resp.json();
+        if (res.success && res.url) {
+            document.getElementById('new_LandmarkImageUrl').value = res.url;
+            document.getElementById('new_IsLandmarkUploadingSoon').checked = false;
+            alert('✓ Landmark image uploaded successfully!');
+        } else {
+            alert('Upload failed: ' + (res.message || 'Error'));
+        }
+    } catch (e) {
+        alert('Upload error: ' + e.message);
+    }
+}
+
 async function submitAddCountry() {
     const name = document.getElementById('new_CountryName').value.trim();
     const slug = document.getElementById('new_CountrySlug').value.trim();
     const flag = document.getElementById('new_FlagEmoji').value.trim() || '🌍';
     const tagline = document.getElementById('new_Tagline').value.trim() || ('Study in ' + name);
     const startPrice = parseFloat(document.getElementById('new_StartingPrice').value) || 4999;
+    const landmarkUrl = document.getElementById('new_LandmarkImageUrl')?.value.trim() || '';
+    const isUploadingSoon = document.getElementById('new_IsLandmarkUploadingSoon')?.checked ?? true;
+    const displayOrder = parseInt(document.getElementById('new_DisplayOrder')?.value) || 0;
 
     if (!name) {
         alert('Please enter a country name.');
@@ -477,6 +673,9 @@ async function submitAddCountry() {
         HeroTitle: name + ' Student Kits',
         HeroSubtitle: 'Everything you need for a comfortable and successful study abroad journey in ' + name + '.',
         StartingPrice: startPrice,
+        LandmarkImageUrl: landmarkUrl || '/images/fashion-hub/uploading-soon-placeholder.svg',
+        IsLandmarkUploadingSoon: isUploadingSoon,
+        DisplayOrder: displayOrder,
         IsActive: true
     };
 

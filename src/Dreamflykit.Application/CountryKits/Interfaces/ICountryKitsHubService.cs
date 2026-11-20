@@ -9,5 +9,6 @@ public interface ICountryKitsHubService
     Task<bool> SaveCountryProfileAsync(CountryKitProfileDto profile, CancellationToken ct = default);
     Task<bool> DeleteCountryProfileAsync(string countrySlug, CancellationToken ct = default);
     Task<bool> ResetDefaultsAsync(string? countrySlug = null, CancellationToken ct = default);
+    Task<bool> SaveSliderSettingsAsync(CountryKitsSliderSettingsDto settings, CancellationToken ct = default);
 }
 

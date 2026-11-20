@@ -1,4 +1,15 @@
 {
+  "SliderSettings": {
+    "SectionTitle": "Top Country Kits",
+    "SectionSubtitle": "Essential kits specially curated for students traveling to top study destinations.",
+    "ViewAllText": "View Countries →",
+    "ViewAllUrl": "/Kits/FindMyKit",
+    "MovementDirection": "right-to-left",
+    "AutoScroll": true,
+    "AutoScrollIntervalSeconds": 4,
+    "HoverScrollEnabled": true,
+    "ScrollSpeed": "normal"
+  },
   "Countries": {
     "usa": {
       "CountrySlug": "usa",

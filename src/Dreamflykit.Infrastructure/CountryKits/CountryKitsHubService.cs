@@ -112,6 +112,19 @@ public sealed class CountryKitsHubService : ICountryKitsHubService
             data = CountryKitsHubDto.CreateDefault();
             await SaveToFileAsync(data, ct);
         }
+        else
+        {
+            if (data.SliderSettings == null)
+            {
+                data.SliderSettings = new CountryKitsSliderSettingsDto();
+                await SaveToFileAsync(data, ct);
+            }
+            else if (data.SliderSettings.ViewAllText == "Find My Kit →")
+            {
+                data.SliderSettings.ViewAllText = "View Countries →";
+                await SaveToFileAsync(data, ct);
+            }
+        }
 
         _cache.Set(CacheKey, data, TimeSpan.FromMinutes(30));
         return data;
@@ -245,6 +258,39 @@ public sealed class CountryKitsHubService : ICountryKitsHubService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error resetting defaults for CountryKitsHub");
+            return false;
+        }
+        finally
+        {
+            Semaphore.Release();
+        }
+    }
+
+    public async Task<bool> SaveSliderSettingsAsync(CountryKitsSliderSettingsDto settings, CancellationToken ct = default)
+    {
+        if (settings == null) return false;
+
+        await Semaphore.WaitAsync(ct);
+        try
+        {
+            var all = await LoadProfilesInternalAsync(ct);
+            all.SliderSettings = settings;
+
+            var success = await SaveToFileAsync(all, ct);
+            if (success)
+            {
+                _cache.Set(CacheKey, all, TimeSpan.FromMinutes(30));
+                if (_cacheService != null)
+                {
+                    await _cacheService.SetAsync(CacheKey, all, TimeSpan.FromHours(2), ct);
+                }
+                _logger.LogInformation("Saved Country Kits Slider Settings");
+            }
+            return success;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving Country Kits Slider Settings");
             return false;
         }
         finally

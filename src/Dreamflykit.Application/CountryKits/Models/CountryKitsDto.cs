@@ -49,8 +49,22 @@ public sealed class CountryKitProfileDto
     public int DisplayOrder { get; set; } = 1;
 }
 
+public sealed class CountryKitsSliderSettingsDto
+{
+    public string SectionTitle { get; set; } = "Top Country Kits";
+    public string SectionSubtitle { get; set; } = "Essential kits specially curated for students traveling to top study destinations.";
+    public string ViewAllText { get; set; } = "View Countries →";
+    public string ViewAllUrl { get; set; } = "/Kits/FindMyKit";
+    public string MovementDirection { get; set; } = "right-to-left"; // "right-to-left" or "left-to-right"
+    public bool AutoScroll { get; set; } = true;
+    public int AutoScrollIntervalSeconds { get; set; } = 4;
+    public bool HoverScrollEnabled { get; set; } = true;
+    public string ScrollSpeed { get; set; } = "normal"; // "slow", "normal", "fast"
+}
+
 public sealed class CountryKitsHubDto
 {
+    public CountryKitsSliderSettingsDto SliderSettings { get; set; } = new();
     public Dictionary<string, CountryKitProfileDto> Countries { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     public CountryKitProfileDto GetCountryProfile(string? countrySlug)
@@ -99,6 +113,19 @@ public sealed class CountryKitsHubDto
     public static CountryKitsHubDto CreateDefault()
     {
         var hub = new CountryKitsHubDto();
+
+        hub.SliderSettings = new CountryKitsSliderSettingsDto
+        {
+            SectionTitle = "Top Country Kits",
+            SectionSubtitle = "Essential kits specially curated for students traveling to top study destinations.",
+            ViewAllText = "View Countries →",
+            ViewAllUrl = "/Kits/FindMyKit",
+            MovementDirection = "right-to-left",
+            AutoScroll = true,
+            AutoScrollIntervalSeconds = 4,
+            HoverScrollEnabled = true,
+            ScrollSpeed = "normal"
+        };
 
         // 1. USA (Matches Screenshot 1 Exactly)
         hub.Countries["usa"] = new CountryKitProfileDto
