@@ -428,6 +428,141 @@ public class CountryKitsHubTests
 
     }
 
+    [Fact]
+    public void CountryKitsSliderSettingsDto_Defaults_AreValid()
+    {
+        var settings = new CountryKitsSliderSettingsDto();
+
+        Assert.Equal("Top Country Kits", settings.SectionTitle);
+        Assert.Equal("Essential kits specially curated for students traveling to top study destinations.", settings.SectionSubtitle);
+        Assert.Equal("View Countries →", settings.ViewAllText);
+        Assert.Equal("/Kits/FindMyKit", settings.ViewAllUrl);
+        Assert.Equal("right-to-left", settings.MovementDirection);
+        Assert.True(settings.AutoScroll);
+        Assert.Equal(4, settings.AutoScrollIntervalSeconds);
+        Assert.True(settings.HoverScrollEnabled);
+        Assert.Equal("normal", settings.ScrollSpeed);
+    }
+
+    [Fact]
+    public async Task CountryKitsHubService_SaveSliderSettingsAsync_PersistsAndCaches()
+    {
+        var service = new CountryKitsHubService(_cache, _envMock.Object, _loggerMock.Object);
+
+        var newSettings = new CountryKitsSliderSettingsDto
+        {
+            SectionTitle = "Global Study Abroad Kits",
+            SectionSubtitle = "Explore verified packages across all major nations.",
+            ViewAllText = "View All Destinations →",
+            ViewAllUrl = "/kits",
+            MovementDirection = "left-to-right",
+            AutoScroll = false,
+            AutoScrollIntervalSeconds = 6,
+            HoverScrollEnabled = true,
+            ScrollSpeed = "fast"
+        };
+
+        var saved = await service.SaveSliderSettingsAsync(newSettings);
+        Assert.True(saved);
+
+        var hub = await service.GetAllProfilesAsync();
+        Assert.NotNull(hub.SliderSettings);
+        Assert.Equal("Global Study Abroad Kits", hub.SliderSettings.SectionTitle);
+        Assert.Equal("View All Destinations →", hub.SliderSettings.ViewAllText);
+        Assert.Equal("left-to-right", hub.SliderSettings.MovementDirection);
+        Assert.False(hub.SliderSettings.AutoScroll);
+        Assert.Equal(6, hub.SliderSettings.AutoScrollIntervalSeconds);
+        Assert.Equal("fast", hub.SliderSettings.ScrollSpeed);
+    }
+
+    [Fact]
+    public async Task AdminCountryKitsController_SaveSliderSettings_ValidSettings_ReturnsSuccess()
+    {
+        var service = new CountryKitsHubService(_cache, _envMock.Object, _loggerMock.Object);
+        var mediaMock = new Mock<IMediaService>();
+        var urlMock = new Mock<IMediaUrlService>();
+        var controllerLoggerMock = new Mock<ILogger<CountryKitsController>>();
+
+        var controller = new CountryKitsController(service, mediaMock.Object, urlMock.Object, controllerLoggerMock.Object);
+
+        var settings = new CountryKitsSliderSettingsDto
+        {
+            SectionTitle = "Top Country Kits 2026",
+            ViewAllText = "View Countries →",
+            MovementDirection = "right-to-left",
+            AutoScroll = true,
+            AutoScrollIntervalSeconds = 3,
+            ScrollSpeed = "normal"
+        };
+
+        var result = await controller.SaveSliderSettings(settings, null, default);
+        var jsonResult = Assert.IsType<JsonResult>(result);
+
+        var prop = jsonResult.Value!.GetType().GetProperty("success");
+        Assert.NotNull(prop);
+        Assert.True((bool)prop.GetValue(jsonResult.Value)!);
+
+        var hub = await service.GetAllProfilesAsync();
+        Assert.Equal("Top Country Kits 2026", hub.SliderSettings.SectionTitle);
+        Assert.Equal("View Countries →", hub.SliderSettings.ViewAllText);
+        Assert.Equal(3, hub.SliderSettings.AutoScrollIntervalSeconds);
+    }
+
+    [Fact]
+    public async Task AdminCountryKitsController_SaveSliderSettings_NullSettings_ReturnsFailure()
+    {
+        var service = new CountryKitsHubService(_cache, _envMock.Object, _loggerMock.Object);
+        var mediaMock = new Mock<IMediaService>();
+        var urlMock = new Mock<IMediaUrlService>();
+        var controllerLoggerMock = new Mock<ILogger<CountryKitsController>>();
+
+        var controller = new CountryKitsController(service, mediaMock.Object, urlMock.Object, controllerLoggerMock.Object);
+
+        var result = await controller.SaveSliderSettings(null, null, default);
+        var jsonResult = Assert.IsType<JsonResult>(result);
+
+        var prop = jsonResult.Value!.GetType().GetProperty("success");
+        Assert.NotNull(prop);
+        Assert.False((bool)prop.GetValue(jsonResult.Value)!);
+    }
+
+    [Fact]
+    public async Task AdminCountryKitsController_AddCountry_WithLandmarkAndOrder_SavesCorrectly()
+    {
+        var service = new CountryKitsHubService(_cache, _envMock.Object, _loggerMock.Object);
+        var mediaMock = new Mock<IMediaService>();
+        var urlMock = new Mock<IMediaUrlService>();
+        var controllerLoggerMock = new Mock<ILogger<CountryKitsController>>();
+
+        var controller = new CountryKitsController(service, mediaMock.Object, urlMock.Object, controllerLoggerMock.Object);
+
+        var newCountry = new CountryKitProfileDto
+        {
+            CountryName = "Japan",
+            CountrySlug = "japan",
+            FlagEmoji = "🇯🇵",
+            Tagline = "Innovation Meets Heritage",
+            StartingPrice = 5999,
+            LandmarkImageUrl = "/images/countries/japan.webp",
+            IsLandmarkUploadingSoon = false,
+            DisplayOrder = 9
+        };
+
+        var result = await controller.AddCountry(newCountry, null, default);
+        var jsonResult = Assert.IsType<JsonResult>(result);
+
+        var prop = jsonResult.Value!.GetType().GetProperty("success");
+        Assert.NotNull(prop);
+        Assert.True((bool)prop.GetValue(jsonResult.Value)!);
+
+        var savedCountry = await service.GetCountryProfileAsync("japan");
+        Assert.NotNull(savedCountry);
+        Assert.Equal("Japan", savedCountry.CountryName);
+        Assert.Equal("🇯🇵", savedCountry.FlagEmoji);
+        Assert.Equal("/images/countries/japan.webp", savedCountry.LandmarkImageUrl);
+        Assert.False(savedCountry.IsLandmarkUploadingSoon);
+        Assert.Equal(9, savedCountry.DisplayOrder);
+    }
 }
 
 

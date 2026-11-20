@@ -104,6 +104,35 @@ public sealed class CountryKitsController : AdminBaseController
         }
     }
 
+    [HttpPost("SaveSliderSettings")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveSliderSettings(
+        [FromBody] CountryKitsSliderSettingsDto? jsonSettings,
+        [FromForm] CountryKitsSliderSettingsDto? formSettings,
+        CancellationToken cancellationToken)
+    {
+        var settings = jsonSettings ?? formSettings;
+        if (settings == null)
+        {
+            return Json(new { success = false, message = "Invalid carousel settings payload." });
+        }
+
+        try
+        {
+            var saved = await _countryKitsHubService.SaveSliderSettingsAsync(settings, cancellationToken);
+            if (saved)
+            {
+                return Json(new { success = true, message = "Top Country Kits carousel settings saved successfully!" });
+            }
+            return Json(new { success = false, message = "Failed to persist carousel settings." });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to save Top Country Kits carousel settings.");
+            return Json(new { success = false, message = "Error: " + ex.Message });
+        }
+    }
+
     [HttpPost("AddCountry")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddCountry(
@@ -133,6 +162,17 @@ public sealed class CountryKitsController : AdminBaseController
         if (string.IsNullOrWhiteSpace(model.Tagline))
         {
             model.Tagline = $"Study in {model.CountryName}";
+        }
+
+        if (string.IsNullOrWhiteSpace(model.LandmarkImageUrl))
+        {
+            model.LandmarkImageUrl = "/images/fashion-hub/uploading-soon-placeholder.svg";
+            model.IsLandmarkUploadingSoon = true;
+        }
+
+        if (model.StartingPrice <= 0)
+        {
+            model.StartingPrice = 4999;
         }
 
         if (model.Kits == null || model.Kits.Count == 0)

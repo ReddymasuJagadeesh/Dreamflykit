@@ -1282,6 +1282,34 @@ img {
     gap: 12px;
 }
 
+.dk-country-slider-container {
+    position: relative;
+    width: 100%;
+}
+
+.dk-country-slider-viewport {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.dk-country-slider-viewport::-webkit-scrollbar {
+    display: none;
+}
+
+.dk-country-slider-track {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap !important;
+    gap: 14px;
+    align-items: stretch;
+    width: max-content;
+}
+
 
 .dk-country-card {
     overflow: hidden;
