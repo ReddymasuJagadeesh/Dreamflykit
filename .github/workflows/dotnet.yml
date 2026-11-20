@@ -1,0 +1,69 @@
+
+name: Dreamflykit CI
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamflykit-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Restore, Build, Test and Docker Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Display SDK information
+        run: dotnet --info
+
+      - name: Restore web application dependencies
+        run: dotnet restore src/Dreamflykit.Web/Dreamflykit.Web.csproj
+
+      - name: Restore test project dependencies
+        run: dotnet restore tests/Dreamflykit.Tests/Dreamflykit.Tests.csproj
+
+      - name: Build web application
+        run: >
+          dotnet build src/Dreamflykit.Web/Dreamflykit.Web.csproj
+          --configuration Release
+          --no-restore
+
+      - name: Build test project
+        run: >
+          dotnet build tests/Dreamflykit.Tests/Dreamflykit.Tests.csproj
+          --configuration Release
+          --no-restore
+
+      - name: Run automated tests
+        run: >
+          dotnet test tests/Dreamflykit.Tests/Dreamflykit.Tests.csproj
+          --configuration Release
+          --no-build
+          --no-restore
+          --logger "console;verbosity=normal"
+
+      - name: Validate Docker image build
+        run: >
+          docker build
+          --pull
+          --tag dreamflykit-ci:${{ github.sha }}
+          .
